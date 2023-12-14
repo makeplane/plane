@@ -38,6 +38,7 @@ export abstract class BaseWorker {
   protected abstract onMessage(msg: ConsumeMessage | null): void;
 
   protected isRelevantMessage(msg: ConsumeMessage): boolean {
+    console.log(msg)
     // Check if the message's routing key matches this worker's routing key
     const messageRoutingKey = msg.properties.headers["routingKey"];
     return messageRoutingKey === this.routingKey;

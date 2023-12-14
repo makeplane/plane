@@ -38,14 +38,20 @@ export class MQSingleton {
   }
 
   // Send the message to the given queue
-  public async sendToQueue(queue: string, content: Buffer): Promise<boolean> {
+  public async sendToQueue(queue: string, content: Buffer): Promise<void> {
     if (!this.channel) {
       throw new Error("Channel not initialized");
     }
+    const exchange = "node_exchange";
+    const routingKey = "node.celery";
+    await this.channel.assertExchange(exchange, "direct", { durable: true });
     await this.channel.assertQueue(queue, { durable: true });
-    return this.channel.sendToQueue(queue, content, {
-      contentType: "application/json",
-    });
+    await this.channel.bindQueue(queue, exchange, routingKey);
+    try {
+      this.channel.publish(exchange, routingKey, content);
+    } catch (error) {
+      console.error("Error publishing message:", error);
+    }
   }
 
   // Receive the message from the given queue
@@ -57,7 +63,11 @@ export class MQSingleton {
       throw new Error("Channel not initialized");
     }
     logger.info("👂 Listening for incoming events");
+    const exchange = "django_exchange";
+    const routingKey = "django.node";
+    await this.channel.assertExchange(exchange, "direct", { durable: true });
     await this.channel.assertQueue(queue, { durable: true });
+    await this.channel.bindQueue(queue, exchange, routingKey);
     await this.channel.consume(queue, callback, { noAck: true });
   }
 }

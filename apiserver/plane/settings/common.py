@@ -5,6 +5,7 @@ import ssl
 import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
+from kombu import Exchange, Queue
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
@@ -273,21 +274,16 @@ SIMPLE_JWT = {
 # Celery Configuration
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
-CELERY_ACCEPT_CONTENT = ['json']
+CELERY_ACCEPT_CONTENT = ["json"]
 
 CELERY_BROKER_URL = RABBITMQ_URL
 CELERY_RESULT_BACKEND = REDIS_URL
 
-CELERY_QUEUES = {
-    'internal_tasks': {
-        'exchange': 'internal_exchange',
-        'routing_key': 'internal'
-    },
-    'external_tasks': {
-        'exchange': 'external_exchange',
-        'routing_key': 'external'
-    },
-}
+CELERY_QUEUES = (
+    Queue("internal_tasks", Exchange("internal_exchange"), routing_key="internal"),
+    Queue("external_tasks", Exchange("external_exchange"), routing_key="external"),
+    Queue('node_to_celery_queue', Exchange('node_exchange', type='direct'), routing_key='node.celery'),
+)
 
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
@@ -297,7 +293,9 @@ CELERY_IMPORTS = (
 
 # Sentry Settings
 # Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").startswith("https://"):
+if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
+    "SENTRY_DSN"
+).startswith("https://"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
         integrations=[

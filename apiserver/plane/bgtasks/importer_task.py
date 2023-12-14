@@ -2,7 +2,7 @@
 import json
 import requests
 import uuid
-from kombu import Connection, Exchange, Queue
+from kombu import Connection, Exchange, Queue, Producer
 
 # Django imports
 from django.conf import settings
@@ -177,7 +177,6 @@ def service_importer(service, importer_id):
                 project_id=importer.project_id,
             )
 
-
         import_data_json = json.dumps(
             ImporterSerializer(importer).data,
             cls=DjangoJSONEncoder,
@@ -185,23 +184,21 @@ def service_importer(service, importer_id):
 
         rabbit_url = settings.RABBITMQ_URL
 
-        print(rabbit_url)
-
+        # Establish a connection and send a message
         with Connection(rabbit_url) as conn:
-            exchange = Exchange("", type="direct", durable=True)
-            queue = Queue(name="importer", exchange=exchange, routing_key=service)
+            queue_name = "django_to_node_queue"
+            routing_key = "django.node"
+            exchange = Exchange("django_exchange", type="direct")
+            queue = Queue(name=queue_name, exchange=exchange, routing_key=routing_key)
             queue.maybe_bind(conn)
             queue.declare()
-
-            # Create a producer and send the message
-            with conn.Producer() as producer:
-                producer.publish(
-                    json.dumps(import_data_json),
-                    exchange=exchange,
-                    routing_key="importer",
-                    declare=[queue],
-                    headers={"routingKey": service},
-                )
+            producer = Producer(conn)
+            producer.publish(
+                import_data_json,
+                exchange=exchange,
+                routing_key=routing_key,
+                declare=[queue],
+            )
         # if settings.PROXY_BASE_URL:
         #     headers = {"Content-Type": "application/json"}
         #     import_data_json = json.dumps(
@@ -216,6 +213,7 @@ def service_importer(service, importer_id):
 
         return
     except Exception as e:
+        print(e)
         importer = Importer.objects.get(pk=importer_id)
         importer.status = "failed"
         importer.save()
