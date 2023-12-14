@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { PencilIcon, StarIcon, TrashIcon } from "lucide-react";
+import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
 import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IProjectView } from "types";
 // constants
@@ -29,6 +32,8 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { setToastAlert } = useToast();
+
   const {
     projectViews: projectViewsStore,
     user: { currentProjectRole },
@@ -46,10 +51,21 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     projectViewsStore.removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "View link copied to clipboard.",
+      });
+    });
+  };
+
   const totalFilters = calculateTotalFilters(view.query_data ?? {});
 
-  const isEditingAllowed =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -81,35 +97,36 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                   <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
-                  {isEditingAllowed && (
-                    <>
-                      {view.is_favorite ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleRemoveFromFavorites();
-                          }}
-                          className="grid place-items-center"
-                        >
-                          <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleAddToFavorites();
-                          }}
-                          className="grid place-items-center"
-                        >
-                          <StarIcon size={14} strokeWidth={2} />
-                        </button>
-                      )}
+                  {isEditingAllowed &&
+                    (view.is_favorite ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveFromFavorites();
+                        }}
+                        className="grid place-items-center"
+                      >
+                        <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddToFavorites();
+                        }}
+                        className="grid place-items-center"
+                      >
+                        <StarIcon size={14} strokeWidth={2} />
+                      </button>
+                    ))}
 
-                      <CustomMenu width="auto" ellipsis>
+                  <CustomMenu width="auto" ellipsis>
+                    {isEditingAllowed && (
+                      <>
                         <CustomMenu.MenuItem
                           onClick={(e) => {
                             e.preventDefault();
@@ -134,9 +151,15 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                             <span>Delete View</span>
                           </span>
                         </CustomMenu.MenuItem>
-                      </CustomMenu>
-                    </>
-                  )}
+                      </>
+                    )}
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <span className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-3 w-3" />
+                        <span>Copy view link</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
                 </div>
               </div>
             </div>

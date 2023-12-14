@@ -87,8 +87,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
 
-  const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateIssue = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -138,7 +137,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                     key={view.id}
                     onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
                   >
-                    {truncateText(view.name, 40)}
+                    <div className="flex items-center gap-1.5">
+                      <PhotoFilterIcon height={12} width={12} />
+                      {truncateText(view.name, 40)}
+                    </div>
                   </CustomMenu.MenuItem>
                 ))}
               </CustomMenu>
