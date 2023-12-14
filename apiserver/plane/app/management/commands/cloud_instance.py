@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
             if instance is None:
                 instance = Instance.objects.create(
-                    instance_name="Plane Free",
+                    instance_name="Plane Cloud US",
                     instance_id=secrets.token_hex(12),
                     license_key=None,
                     api_key=secrets.token_hex(8),
