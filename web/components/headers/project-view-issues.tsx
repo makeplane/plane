@@ -17,6 +17,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EFilterType } from "store/issues/types";
 import { EProjectStore } from "store/command-palette.store";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
@@ -35,6 +36,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     viewIssuesFilter: { issueFilters, updateFilters },
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentProjectRole },
   } = useMobxStore();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
@@ -84,6 +86,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
+
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
