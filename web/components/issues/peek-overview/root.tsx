@@ -32,7 +32,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const {
     user: { currentProjectRole },
-    issue: { removeIssueFromStructure },
     issueDetail: {
       createIssueComment,
       updateIssueComment,

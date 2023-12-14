@@ -48,7 +48,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const { issueFiltersStore, issueStore, viewId, issueActions } = props;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const {
     user: { currentProjectRole },
@@ -79,12 +79,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     },
     [issueActions]
   );
-
-  const updateIssue = async (projectId: string, issueId: string, payload: Partial<IIssue>) => {
-    if (!workspaceSlug) return;
-
-    await issueStore.updateIssue(workspaceSlug.toString(), projectId, issueId, payload, viewId);
-  };
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 

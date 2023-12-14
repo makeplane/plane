@@ -11,7 +11,7 @@ import { IIssue } from "types";
 export const ProjectViewGanttLayout: React.FC = observer(() => {
   const { viewIssues: projectIssueViewStore, viewIssuesFilter: projectIssueViewFiltersStore } = useMobxStore();
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {

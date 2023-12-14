@@ -183,7 +183,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
       await removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
       await mutate(SUB_ISSUES(parentIssue?.id));
     },
-    [removeIssue, projectId, user, workspaceSlug]
+    [removeIssue, projectId, user, workspaceSlug, parentIssue?.id]
   );
 
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
