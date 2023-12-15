@@ -51,5 +51,5 @@ jobs:
           gh pr create \
             --base $TARGET_BASE_BRANCH \
             --head $TARGET_BRANCH \
-            --title $PR_TITLE \
+            --fill-first \
             --repo $TARGET_REPO
