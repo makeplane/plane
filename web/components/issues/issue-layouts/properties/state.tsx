@@ -121,7 +121,10 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
               className={`flex h-5 w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
-              onClick={() => !storeStates && fetchProjectStates()}
+              onClick={(e) => {
+                e.stopPropagation();
+                !storeStates && fetchProjectStates();
+              }}
             >
               {label}
               {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -157,6 +160,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {({ selected }) => (
                         <>
