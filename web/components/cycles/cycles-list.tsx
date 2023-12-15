@@ -6,18 +6,16 @@ import { useApplication } from "hooks/store";
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
 // ui
 import { Loader } from "@plane/ui";
-// types
-import { ICycle } from "types";
 
 export interface ICyclesList {
-  cycles: ICycle[];
+  cycleIds: string[];
   filter: string;
   workspaceSlug: string;
   projectId: string;
 }
 
 export const CyclesList: FC<ICyclesList> = observer((props) => {
-  const { cycles, filter, workspaceSlug, projectId } = props;
+  const { cycleIds, filter, workspaceSlug, projectId } = props;
   // store hooks
   const {
     commandPalette: commandPaletteStore,
@@ -26,14 +24,14 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
 
   return (
     <>
-      {cycles ? (
+      {cycleIds ? (
         <>
-          {cycles.length > 0 ? (
+          {cycleIds.length > 0 ? (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
                 <div className="flex h-full w-full flex-col overflow-y-auto">
-                  {cycles.map((cycle) => (
-                    <CyclesListItem cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
+                  {cycleIds.map((cycleId) => (
+                    <CyclesListItem cycleId={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} />
                   ))}
                 </div>
                 <CyclePeekOverview

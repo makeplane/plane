@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useCycle } from "hooks/store";
 // components
 import {
   CycleAppliedFiltersRoot,
@@ -29,12 +30,13 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     projectId: string;
     cycleId: string;
   };
-
+  // store hooks
   const {
     cycle: cycleStore,
     cycleIssues: { loader, getIssues, fetchIssues },
     cycleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
+  const { getCycleById } = useCycle();
 
   useSWR(
     workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
@@ -48,7 +50,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
-  const cycleDetails = cycleId ? cycleStore.cycle_details[cycleId.toString()] : undefined;
+  const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const cycleStatus =
     cycleDetails?.start_date && cycleDetails?.end_date
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)

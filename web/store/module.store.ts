@@ -1,5 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import set from "lodash/set";
+import { set } from "lodash";
 // services
 import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";

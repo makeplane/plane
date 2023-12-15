@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { KeyedMutator } from "swr";
 // hooks
-import { useUser } from "hooks/store";
+import { useCycle, useUser } from "hooks/store";
 // services
 import { CycleService } from "services/cycle.service";
 // components
@@ -16,7 +16,7 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   workspaceSlug: string;
-  cycles: ICycle[];
+  cycleIds: string[];
   mutateCycles?: KeyedMutator<ICycle[]>;
 };
 
@@ -24,7 +24,7 @@ type Props = {
 const cycleService = new CycleService();
 
 export const CyclesListGanttChartView: FC<Props> = observer((props) => {
-  const { cycles, mutateCycles } = props;
+  const { cycleIds, mutateCycles } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -32,6 +32,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { getCycleById } = useCycle();
 
   const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
@@ -65,18 +66,21 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
     cycleService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload);
   };
 
-  const blockFormat = (blocks: ICycle[]) =>
-    blocks && blocks.length > 0
-      ? blocks
-          .filter((b) => b.start_date && b.end_date && new Date(b.start_date) <= new Date(b.end_date))
-          .map((block) => ({
-            data: block,
-            id: block.id,
-            sort_order: block.sort_order,
-            start_date: new Date(block.start_date ?? ""),
-            target_date: new Date(block.end_date ?? ""),
-          }))
-      : [];
+  const blockFormat = (blocks: (ICycle | null)[]) => {
+    if (!blocks) return [];
+
+    const filteredBlocks = blocks.filter((b) => b !== null && b.start_date && b.end_date);
+
+    const structuredBlocks = filteredBlocks.map((block) => ({
+      data: block,
+      id: block?.id ?? "",
+      sort_order: block?.sort_order ?? 0,
+      start_date: new Date(block?.start_date ?? ""),
+      target_date: new Date(block?.end_date ?? ""),
+    }));
+
+    return structuredBlocks;
+  };
 
   const isAllowed =
     currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
@@ -86,7 +90,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
       <GanttChartRoot
         title="Cycles"
         loaderTitle="Cycles"
-        blocks={cycles ? blockFormat(cycles) : null}
+        blocks={cycleIds ? blockFormat(cycleIds.map((c) => getCycleById(c))) : null}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
         sidebarToRender={(props) => <CycleGanttSidebar {...props} />}
         blockToRender={(data: ICycle) => <CycleGanttBlock data={data} />}
