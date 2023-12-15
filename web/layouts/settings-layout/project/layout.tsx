@@ -9,7 +9,7 @@ import { NotAuthorizedView } from "components/auth-screens";
 // ui
 import { Button, LayersIcon } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export interface IProjectSettingLayout {
   children: ReactNode;
@@ -25,7 +25,7 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
     membership: { currentProjectRole },
   } = useUser();
 
-  const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserWorkspaceRoles.VIEWER;
+  const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER;
 
   return restrictViewSettings ? (
     <NotAuthorizedView

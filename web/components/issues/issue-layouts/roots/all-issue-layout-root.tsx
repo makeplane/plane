@@ -16,7 +16,7 @@ import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { EIssueActions } from "../types";
 
 import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   type?: TStaticViewTypes | null;
@@ -62,7 +62,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
     const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
 
-    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
   const issuesResponse = getIssues;

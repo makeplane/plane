@@ -34,10 +34,6 @@ export interface IRecentPages {
   [key: string]: string[];
 }
 
-export interface RecentPagesResponse {
-  [key: string]: IPage[];
-}
-
 export interface IPageBlock {
   completed_at: Date | null;
   created_at: Date;

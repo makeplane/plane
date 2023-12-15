@@ -61,11 +61,10 @@ export interface IUserTheme {
 
 export interface IUserLite {
   avatar: string;
-  created_at: Date;
   display_name: string;
   email?: string;
   first_name: string;
-  readonly id: string;
+  id: string;
   is_bot: boolean;
   last_name: string;
 }

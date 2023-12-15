@@ -1,6 +1,5 @@
-import type { IUserLite, IWorkspace, IWorkspaceLite, IUserMemberLite, TStateGroups, IProjectViewProps } from ".";
-
-export type TUserProjectRole = 5 | 10 | 15 | 20;
+import { EUserProjectRoles } from "constants/project";
+import type { IUserLite, IWorkspace, IWorkspaceLite, TStateGroups } from ".";
 
 export interface IProject {
   archive_in: number;
@@ -34,7 +33,7 @@ export interface IProject {
   is_deployed: boolean;
   is_favorite: boolean;
   is_member: boolean;
-  member_role: TUserProjectRole | null;
+  member_role: EUserProjectRoles | null;
   members: IProjectMemberLite[];
   issue_views_view: boolean;
   module_view: boolean;
@@ -73,44 +72,12 @@ export interface IProjectMemberLite {
 
 export interface IProjectMember {
   id: string;
-  member: IUserMemberLite;
-  project: IProjectLite;
-  workspace: IWorkspaceLite;
-  comment: string;
-  role: TUserProjectRole;
-
-  preferences: ProjectPreferences;
-
-  view_props: IProjectViewProps;
-  default_props: IProjectViewProps;
-
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
-}
-
-export interface IProjectMemberInvitation {
-  id: string;
-
-  project: IProject;
-  workspace: IWorkspace;
-
-  email: string;
-  accepted: boolean;
-  token: string;
-  message: string;
-  responded_at: Date;
-  role: TUserProjectRole;
-
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
+  member: string;
+  role: EUserProjectRoles;
 }
 
 export interface IProjectBulkAddFormData {
-  members: { role: TUserProjectRole; member_id: string }[];
+  members: { role: EUserProjectRoles; member_id: string }[];
 }
 
 export interface IGithubRepository {

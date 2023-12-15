@@ -23,7 +23,7 @@ import { LinkModal, LinksList } from "components/core";
 // types
 import { IIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
@@ -295,10 +295,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                   handleDeleteLink={issueLinkDelete}
                   handleEditLink={handleEditLink}
                   userAuth={{
-                    isGuest: currentProjectRole === EUserWorkspaceRoles.GUEST,
-                    isViewer: currentProjectRole === EUserWorkspaceRoles.VIEWER,
-                    isMember: currentProjectRole === EUserWorkspaceRoles.MEMBER,
-                    isOwner: currentProjectRole === EUserWorkspaceRoles.ADMIN,
+                    isGuest: currentProjectRole === EUserProjectRoles.GUEST,
+                    isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
+                    isMember: currentProjectRole === EUserProjectRoles.MEMBER,
+                    isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                   }}
                 />
               ) : null}

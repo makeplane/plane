@@ -28,7 +28,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { ILinkDetails, IModule, ModuleLink } from "types";
 // constant
 import { MODULE_STATUS } from "constants/module";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -255,7 +255,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         : `${moduleDetails.total_issues}`
       : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
-  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -583,10 +583,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               handleEditLink={handleEditLink}
                               handleDeleteLink={handleDeleteLink}
                               userAuth={{
-                                isGuest: currentProjectRole === EUserWorkspaceRoles.GUEST,
-                                isViewer: currentProjectRole === EUserWorkspaceRoles.VIEWER,
-                                isMember: currentProjectRole === EUserWorkspaceRoles.MEMBER,
-                                isOwner: currentProjectRole === EUserWorkspaceRoles.ADMIN,
+                                isGuest: currentProjectRole === EUserProjectRoles.GUEST,
+                                isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
+                                isMember: currentProjectRole === EUserProjectRoles.MEMBER,
+                                isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                               }}
                             />
                           </>

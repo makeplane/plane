@@ -15,12 +15,8 @@ export interface ICycleStore {
   loader: boolean;
   error: any | null;
   // observables
-  cycleMap: {
-    [cycleId: string]: ICycle;
-  };
-  activeCycleMap: {
-    [cycleId: string]: ICycle;
-  };
+  cycleMap: Record<string, ICycle>;
+  activeCycleMap: Record<string, ICycle>;
   // computed
   projectAllCycles: string[] | null;
   projectCompletedCycles: string[] | null;
@@ -32,8 +28,8 @@ export interface ICycleStore {
   getActiveCycleById: (cycleId: string) => ICycle | null;
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
-  fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<Record<string, ICycle>>;
-  fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<Record<string, ICycle>>;
+  fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<ICycle[]>;
+  fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
   updateCycleDetails: (
@@ -52,10 +48,8 @@ export class CycleStore implements ICycleStore {
   loader: boolean = false;
   error: any | null = null;
   // observables
-  cycleMap: {
-    [cycleId: string]: ICycle;
-  } = {};
-  activeCycleMap: { [cycleId: string]: ICycle } = {};
+  cycleMap: Record<string, ICycle> = {};
+  activeCycleMap: Record<string, ICycle> = {};
   // root store
   rootStore;
   // services
@@ -196,7 +190,7 @@ export class CycleStore implements ICycleStore {
       const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId);
 
       runInAction(() => {
-        Object.values(cyclesResponse).forEach((cycle) => {
+        cyclesResponse.forEach((cycle) => {
           set(this.cycleMap, [cycle.id], cycle);
         });
         this.loader = false;
@@ -221,7 +215,7 @@ export class CycleStore implements ICycleStore {
       const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current");
 
       runInAction(() => {
-        Object.values(cyclesResponse).forEach((cycle) => {
+        cyclesResponse.forEach((cycle) => {
           set(this.activeCycleMap, [cycle.id], cycle);
         });
         this.loader = false;

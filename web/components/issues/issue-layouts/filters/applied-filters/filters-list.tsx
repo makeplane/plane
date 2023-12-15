@@ -17,7 +17,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -43,7 +43,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
-  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">

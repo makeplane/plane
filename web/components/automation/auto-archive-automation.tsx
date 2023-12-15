@@ -8,10 +8,9 @@ import { SelectMonthModal } from "components/automation";
 // icon
 import { ArchiveRestore } from "lucide-react";
 // constants
-import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
+import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 // types
 import { IProject } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -29,7 +28,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   } = useUser();
   const { currentProjectDetails } = useProject();
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <>

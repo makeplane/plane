@@ -9,9 +9,8 @@ import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleC
 import { ArchiveX } from "lucide-react";
 // types
 import { IProject } from "types";
-// fetch keys
-import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -55,7 +54,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     default_state: defaultState,
   };
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <>

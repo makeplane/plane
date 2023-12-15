@@ -22,7 +22,7 @@ export interface IWorkspaceRootStore {
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
   // actions
-  fetchWorkspaces: () => Promise<Record<string, IWorkspace>>;
+  fetchWorkspaces: () => Promise<IWorkspace[]>;
   createWorkspace: (data: Partial<IWorkspace>) => Promise<IWorkspace>;
   updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
   deleteWorkspace: (workspaceSlug: string) => Promise<void>;
@@ -126,7 +126,9 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       const workspaceResponse = await this.workspaceService.userWorkspaces();
 
       runInAction(() => {
-        this.workspaces = workspaceResponse;
+        workspaceResponse.forEach((workspace) => {
+          set(this.workspaces, [workspace.id], workspace);
+        });
         this.loader = false;
         this.error = null;
       });

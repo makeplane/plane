@@ -10,7 +10,7 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store_legacy/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -39,7 +39,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
 
-    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
   return (

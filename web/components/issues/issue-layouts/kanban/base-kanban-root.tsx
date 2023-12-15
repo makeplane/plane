@@ -30,7 +30,7 @@ import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store_legacy/command-palette.store";
 import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -118,7 +118,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const [dragState, setDragState] = useState<KanbanDragState>({});
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {

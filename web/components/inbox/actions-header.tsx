@@ -3,10 +3,9 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
 import { Popover } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -22,22 +21,25 @@ import { Button } from "@plane/ui";
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
 import type { TInboxStatus } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const InboxActionsHeader = observer(() => {
+  // states
   const [date, setDate] = useState(new Date());
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
   const [acceptIssueModal, setAcceptIssueModal] = useState(false);
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  // store hooks
+  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
 
-  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
-
-  const user = userStore?.currentUser;
-  const userRole = userStore.currentProjectRole;
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : null;
 
   const { setToastAlert } = useToast();
@@ -72,7 +74,7 @@ export const InboxActionsHeader = observer(() => {
   }, [issue]);
 
   const issueStatus = issue?.issue_inbox[0].status;
-  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -228,7 +230,7 @@ export const InboxActionsHeader = observer(() => {
                   </Button>
                 </div>
               )}
-              {(isAllowed || user?.id === issue?.created_by) && (
+              {(isAllowed || currentUser?.id === issue?.created_by) && (
                 <div className="flex-shrink-0">
                   <Button
                     variant="neutral-primary"

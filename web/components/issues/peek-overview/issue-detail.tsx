@@ -16,7 +16,7 @@ import { IIssue, IUser } from "types";
 // services
 import { FileService } from "services/file.service";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 const fileService = new FileService();
 
@@ -48,7 +48,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks

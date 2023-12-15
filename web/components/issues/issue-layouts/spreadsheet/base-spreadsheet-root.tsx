@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite";
 import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore:
@@ -53,7 +53,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
 
   const { currentProjectRole } = userStore;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const canEditProperties = (projectId: string | undefined) => {
     const isEditingAllowedBasedOnProject =

@@ -16,7 +16,7 @@ import { Loader, StateGroupIcon } from "@plane/ui";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IInboxIssue, IIssue } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
@@ -151,7 +151,7 @@ export const InboxMainContent: React.FC = observer(() => {
       </div>
     );
 
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

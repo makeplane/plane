@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // hooks
-import { useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProjectView, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
@@ -17,7 +16,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IProjectView } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   view: IProjectView;
@@ -34,21 +33,21 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const { projectViews: projectViewsStore } = useMobxStore();
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    projectViewsStore.addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    projectViewsStore.removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -65,7 +64,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
 
   const totalFilters = calculateTotalFilters(view.query_data ?? {});
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

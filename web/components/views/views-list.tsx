@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus, Search } from "lucide-react";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
 import { ProjectViewListItem } from "components/views";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -13,28 +11,23 @@ import { Input, Loader } from "@plane/ui";
 // assets
 import emptyView from "public/empty-state/empty_view.webp";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewsList = observer(() => {
   // states
   const [query, setQuery] = useState("");
-  // router
-  const router = useRouter();
-  const { projectId } = router.query;
   // store hooks
-  const { projectViews: projectViewsStore } = useMobxStore();
   const {
     commandPalette: { toggleCreateViewModal },
   } = useApplication();
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { projectViews, getViewById } = useProjectView();
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  if (!viewsList)
+  if (!projectViews)
     return (
       <Loader className="space-y-4 p-4">
         <Loader.Item height="72px" />
@@ -44,7 +37,9 @@ export const ProjectViewsList = observer(() => {
       </Loader>
     );
 
-  const filteredViewsList = viewsList.filter((v) => v.name.toLowerCase().includes(query.toLowerCase()));
+  const viewsList = projectViews.map((viewId) => getViewById(viewId));
+
+  const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <>

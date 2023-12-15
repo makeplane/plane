@@ -17,7 +17,7 @@ import {
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   issuesFilterStore:
@@ -50,7 +50,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   } = useMobxStore();
 
   const { enableIssueCreation } = issueStore?.viewFlags || {};
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const calendarPayload = calendarStore.calendarPayload;
 

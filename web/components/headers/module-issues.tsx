@@ -19,10 +19,10 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
 // store
 import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
+import { EUserProjectRoles } from "constants/project";
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
   // states
@@ -109,7 +109,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
 
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>

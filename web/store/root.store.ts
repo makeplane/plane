@@ -3,7 +3,7 @@ import { enableStaticRendering } from "mobx-react-lite";
 import { AppRootStore, IAppRootStore } from "./application";
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { CycleStore, ICycleStore } from "./cycle.store";
-import { IProjectViewsStore, ProjectViewsStore } from "./project-view.store";
+import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
@@ -22,7 +22,7 @@ export class RootStore {
   labelRoot: ILabelRootStore;
   cycle: ICycleStore;
   module: IModuleStore;
-  projectView: IProjectViewsStore;
+  projectView: IProjectViewStore;
   page: IPageStore;
   issue: IIssueRootStore;
   state: IStateStore;
@@ -38,7 +38,7 @@ export class RootStore {
     this.issue = new IssueRootStore(this);
     this.cycle = new CycleStore(this);
     this.module = new ModulesStore(this);
-    this.projectView = new ProjectViewsStore(this);
+    this.projectView = new ProjectViewStore(this);
     this.page = new PageStore(this);
   }
 }

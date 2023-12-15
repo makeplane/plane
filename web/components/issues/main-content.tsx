@@ -27,7 +27,7 @@ import { IIssue, IIssueActivity } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, SUB_ISSUES } from "constants/fetch-keys";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   issueDetails: IIssue;
@@ -151,7 +151,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       );
   };
 
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

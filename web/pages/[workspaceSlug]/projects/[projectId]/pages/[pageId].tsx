@@ -34,7 +34,7 @@ import { IPage, IIssue } from "types";
 // fetch-keys
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 // services
 const fileService = new FileService();
@@ -362,15 +362,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const isPageReadOnly =
     pageDetails?.is_locked ||
     pageDetails?.archived_at ||
-    (currentProjectRole && [EUserWorkspaceRoles.VIEWER, EUserWorkspaceRoles.GUEST].includes(currentProjectRole));
+    (currentProjectRole && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(currentProjectRole));
 
   const isCurrentUserOwner = pageDetails?.owned_by === currentUser?.id;
 
   const userCanDuplicate =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
-  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
   const userCanLock =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>

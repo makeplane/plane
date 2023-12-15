@@ -15,7 +15,8 @@ import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // types
-import { IProjectMember, TUserProjectRole } from "types";
+import { IProjectMember } from "types";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   member: IProjectMember;
@@ -136,7 +137,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               </div>
             }
             value={member.role}
-            onChange={(value: TUserProjectRole | undefined) => {
+            onChange={(value: EUserProjectRoles | undefined) => {
               if (!workspaceSlug || !projectId) return;
 
               updateMember(workspaceSlug.toString(), projectId.toString(), member.id, {

@@ -9,7 +9,7 @@ import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttCha
 // ui
 import { Loader } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 // assets
 import emptyModule from "public/empty-state/empty_modules.webp";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -27,7 +27,7 @@ export const ModulesListView: React.FC = observer(() => {
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!projectModules)
     return (

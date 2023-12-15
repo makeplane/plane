@@ -7,8 +7,9 @@ import { WorkspaceService } from "services/workspace.service";
 import { AuthService } from "services/auth.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
-import { IWorkspaceMemberMe, IProjectMember, TUserProjectRole, TUserWorkspaceRole } from "types";
+import { IWorkspaceMemberMe, IProjectMember, TUserWorkspaceRole } from "types";
 import { RootStore } from "./root";
+import { EUserProjectRoles } from "constants/project";
 
 export interface IUserStore {
   loader: boolean;
@@ -37,7 +38,7 @@ export interface IUserStore {
 
   currentProjectMemberInfo: IProjectMember | undefined;
   currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
-  currentProjectRole: TUserProjectRole | undefined;
+  currentProjectRole: EUserProjectRoles | undefined;
   currentWorkspaceRole: TUserWorkspaceRole | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;

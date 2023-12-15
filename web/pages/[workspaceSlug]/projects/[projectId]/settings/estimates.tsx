@@ -10,14 +10,15 @@ import { ProjectSettingHeader } from "components/headers";
 import { EstimatesList } from "components/estimates";
 // types
 import { NextPageWithLayout } from "types/app";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>

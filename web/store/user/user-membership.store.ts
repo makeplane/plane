@@ -5,8 +5,10 @@ import { ProjectMemberService } from "services/project";
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // interfaces
-import { IWorkspaceMemberMe, IProjectMember, TUserProjectRole, TUserWorkspaceRole } from "types";
+import { IWorkspaceMemberMe, IProjectMember } from "types";
 import { RootStore } from "../root.store";
+import { EUserProjectRoles } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IUserMembershipStore {
   workspaceMemberInfo: {
@@ -24,8 +26,8 @@ export interface IUserMembershipStore {
 
   currentProjectMemberInfo: IProjectMember | undefined;
   currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
-  currentProjectRole: TUserProjectRole | undefined;
-  currentWorkspaceRole: TUserWorkspaceRole | undefined;
+  currentProjectRole: EUserProjectRoles | undefined;
+  currentWorkspaceRole: EUserWorkspaceRoles | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;

@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // types
 import { IProject } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {};
 
@@ -60,7 +60,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   } = useUser();
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails, updateProject } = useProject();
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // toast alert
   const { setToastAlert } = useToast();
 

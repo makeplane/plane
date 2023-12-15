@@ -40,7 +40,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   control: any;
@@ -191,7 +191,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     setLinkModal(true);
   };
 
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state);
 

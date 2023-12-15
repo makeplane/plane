@@ -1,24 +1,21 @@
-import set from "lodash/set";
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { omit, set } from "lodash";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // services
 import { ViewService } from "services/view.service";
 import { RootStore } from "store/root.store";
 // types
 import { IProjectView } from "types";
 
-export interface IProjectViewsStore {
+export interface IProjectViewStore {
   // states
   loader: boolean;
   error: any | null;
-
   // observables
-  viewId: string | null;
-  viewMap: {
-    [projectId: string]: {
-      [viewId: string]: IProjectView;
-    };
-  };
-
+  viewMap: Record<string, IProjectView>;
+  // computed
+  projectViews: string[] | null;
+  // computed actions
+  getViewById: (viewId: string) => IProjectView;
   // actions
   fetchViews: (workspaceSlug: string, projectId: string) => Promise<IProjectView[]>;
   fetchViewDetails: (workspaceSlug: string, projectId: string, viewId: string) => Promise<IProjectView>;
@@ -34,22 +31,14 @@ export interface IProjectViewsStore {
   removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
 }
 
-export class ProjectViewsStore implements IProjectViewsStore {
+export class ProjectViewStore implements IProjectViewStore {
   // states
   loader: boolean = false;
   error: any | null = null;
-
   // observables
-  viewId: string | null = null;
-  viewMap: {
-    [projectId: string]: {
-      [viewId: string]: IProjectView;
-    };
-  } = {};
-
+  viewMap: Record<string, IProjectView> = {};
   // root store
   rootStore;
-
   // services
   viewService;
 
@@ -58,11 +47,12 @@ export class ProjectViewsStore implements IProjectViewsStore {
       // states
       loader: observable.ref,
       error: observable.ref,
-
       // observables
-      viewId: observable.ref,
       viewMap: observable,
-
+      // computed
+      projectViews: computed,
+      // computed actions
+      getViewById: action,
       // actions
       fetchViews: action,
       fetchViewDetails: action,
@@ -78,11 +68,19 @@ export class ProjectViewsStore implements IProjectViewsStore {
     this.viewService = new ViewService();
   }
 
-  setViewId = (viewId: string | null) => {
-    this.viewId = viewId;
-  };
+  get projectViews() {
+    const projectId = this.rootStore.app.router.projectId;
 
-  fetchViews = async (workspaceSlug: string, projectId: string): Promise<IProjectView[]> => {
+    if (!projectId) return null;
+
+    const viewIds = Object.keys(this.viewMap ?? {})?.filter((viewId) => this.viewMap?.[viewId]?.project === projectId);
+
+    return viewIds;
+  }
+
+  getViewById = (viewId: string) => this.viewMap?.[viewId] ?? null;
+
+  fetchViews = async (workspaceSlug: string, projectId: string) => {
     try {
       runInAction(() => {
         this.loader = true;
@@ -92,7 +90,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       runInAction(() => {
         this.loader = false;
-        set(this.viewMap, [projectId], response);
+        response.forEach((view) => {
+          set(this.viewMap, [view.id], view);
+        });
       });
 
       return response;
@@ -116,7 +116,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       runInAction(() => {
         this.loader = false;
-        set(this.viewMap, [projectId, viewId], response);
+        set(this.viewMap, [viewId], response);
       });
 
       return response;
@@ -136,7 +136,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       runInAction(() => {
         this.loader = false;
-        set(this.viewMap, [projectId, response.id], response);
+        set(this.viewMap, [response.id], response);
       });
 
       return response;
@@ -156,10 +156,10 @@ export class ProjectViewsStore implements IProjectViewsStore {
     data: Partial<IProjectView>
   ): Promise<IProjectView> => {
     try {
-      const currentView = this.viewMap[projectId][viewId];
+      const currentView = this.getViewById(viewId);
 
       runInAction(() => {
-        set(this.viewMap, [projectId, viewId], { ...currentView, ...data });
+        set(this.viewMap, [viewId], { ...currentView, ...data });
       });
 
       const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
@@ -178,10 +178,8 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
   deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<any> => {
     try {
-      if (!this.viewMap?.[projectId]?.[viewId]) return;
-
       runInAction(() => {
-        delete this.viewMap[projectId][viewId];
+        omit(this.viewMap, [viewId]);
       });
 
       await this.viewService.deleteView(workspaceSlug, projectId, viewId);
@@ -198,12 +196,12 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
   addViewToFavorites = async (workspaceSlug: string, projectId: string, viewId: string) => {
     try {
-      const currentView = this.viewMap[projectId][viewId];
+      const currentView = this.getViewById(viewId);
 
-      if (currentView.is_favorite) return;
+      if (currentView?.is_favorite) return;
 
       runInAction(() => {
-        set(this.viewMap, [projectId, viewId, "is_favorite"], true);
+        set(this.viewMap, [viewId, "is_favorite"], true);
       });
 
       await this.viewService.addViewToFavorites(workspaceSlug, projectId, {
@@ -213,19 +211,19 @@ export class ProjectViewsStore implements IProjectViewsStore {
       console.error("Failed to add view to favorites in view store", error);
 
       runInAction(() => {
-        set(this.viewMap, [projectId, viewId, "is_favorite"], false);
+        set(this.viewMap, [viewId, "is_favorite"], false);
       });
     }
   };
 
   removeViewFromFavorites = async (workspaceSlug: string, projectId: string, viewId: string) => {
     try {
-      const currentView = this.viewMap[projectId][viewId];
+      const currentView = this.getViewById(viewId);
 
-      if (!currentView.is_favorite) return;
+      if (!currentView?.is_favorite) return;
 
       runInAction(() => {
-        set(this.viewMap, [projectId, viewId, "is_favorite"], false);
+        set(this.viewMap, [viewId, "is_favorite"], false);
       });
 
       await this.viewService.removeViewFromFavorites(workspaceSlug, projectId, viewId);
@@ -233,7 +231,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
       console.error("Failed to remove view from favorites in view store", error);
 
       runInAction(() => {
-        set(this.viewMap, [projectId, viewId, "is_favorite"], true);
+        set(this.viewMap, [viewId, "is_favorite"], true);
       });
     }
   };

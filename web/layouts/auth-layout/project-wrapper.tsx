@@ -3,7 +3,16 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useApplication, useCycle, useLabel, useModule, useProjectState, useUser } from "hooks/store";
+import {
+  useApplication,
+  useCycle,
+  useLabel,
+  useModule,
+  useProject,
+  useProjectState,
+  useProjectView,
+  useUser,
+} from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Spinner } from "@plane/ui";
@@ -20,10 +29,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
   const {
-    project: { fetchProjectDetails, workspaceProjects },
     projectMember: { fetchProjectMembers },
     projectEstimates: { fetchProjectEstimates },
-    projectViews: { fetchAllViews },
     inbox: { fetchInboxesList, isInboxEnabled },
   } = useMobxStore();
   const {
@@ -32,8 +39,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
+  const { getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
+  const { fetchViews } = useProjectView();
   const { fetchProjectStates } = useProjectState();
   const {
     project: { fetchProjectLabels },
@@ -85,7 +94,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project views
   useSWR(
     workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchAllViews(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project inboxes if inbox is enabled
   useSWR(
@@ -99,8 +108,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     }
   );
 
-  const projectsList = workspaceSlug ? workspaceProjects : null;
-  const projectExists = projectId ? projectsList?.find((project) => project.id === projectId.toString()) : null;
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
   // check if the project member apis is loading
   if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)

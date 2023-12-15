@@ -9,7 +9,7 @@ import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 // images
 import { NewEmptyState } from "components/common/new-empty-state";
 import emptyProject from "public/empty-state/dashboard_empty_project.webp";
@@ -25,7 +25,13 @@ export const WorkspaceDashboardView = observer(() => {
     commandPalette: commandPaletteStore,
     eventTracker: { setTrackElement, postHogEventTracker },
   } = useApplication();
-  const { currentUser, dashboardInfo: workspaceDashboardInfo, fetchUserDashboardInfo, updateTourCompleted } = useUser();
+  const {
+    currentUser,
+    dashboardInfo: workspaceDashboardInfo,
+    fetchUserDashboardInfo,
+    updateTourCompleted,
+    membership: { currentProjectRole },
+  } = useUser();
   const { workspaceProjects } = useProject();
   // fetch user dashboard info
   useSWR(
@@ -33,7 +39,7 @@ export const WorkspaceDashboardView = observer(() => {
     workspaceSlug ? () => fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
   );
 
-  const isEditingAllowed = !!userStore.currentProjectRole && userStore.currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleTourCompleted = () => {
     updateTourCompleted()

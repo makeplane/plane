@@ -26,7 +26,7 @@ export interface IProjectStore {
   setSearchQuery: (query: string) => void;
   getProjectById: (projectId: string) => IProject | null;
 
-  fetchProjects: (workspaceSlug: string) => Promise<void>;
+  fetchProjects: (workspaceSlug: string) => Promise<IProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
 
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -146,11 +146,15 @@ export class ProjectStore implements IProjectStore {
    */
   fetchProjects = async (workspaceSlug: string) => {
     try {
-      const currentProjectMap = await this.projectService.getProjects(workspaceSlug);
+      const projectsResponse = await this.projectService.getProjects(workspaceSlug);
 
       runInAction(() => {
-        this.projectMap = currentProjectMap;
+        projectsResponse.forEach((project) => {
+          set(this.projectMap, [project.id], project);
+        });
       });
+
+      return projectsResponse;
     } catch (error) {
       console.log("Failed to fetch project from workspace store");
       throw error;

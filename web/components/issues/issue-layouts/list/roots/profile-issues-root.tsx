@@ -12,7 +12,7 @@ import { EIssueActions } from "../../types";
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store_legacy/project";
 import { EProjectStore } from "store_legacy/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
   const router = useRouter();
@@ -46,9 +46,9 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     console.log(
       projectId,
       currentWorkspaceUserProjectsRole,
-      !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER
+      !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER
     );
-    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
   return (

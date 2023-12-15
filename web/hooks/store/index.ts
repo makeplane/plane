@@ -5,6 +5,7 @@ export * from "./use-module";
 export * from "./use-page";
 export * from "./use-project-publish";
 export * from "./use-project-state";
+export * from "./use-project-view";
 export * from "./use-project";
 export * from "./use-user";
 export * from "./use-webhook";
