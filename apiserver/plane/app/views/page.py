@@ -157,10 +157,8 @@ class PageViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        pages = PageSerializer(queryset, many=True, fields=fields if fields else None).data
-        pages_dict = {str(page["id"]): page for page in pages}
-        return Response(pages_dict, status=status.HTTP_200_OK)
+        pages = PageSerializer(queryset, many=True).data
+        return Response(pages, status=status.HTTP_200_OK)
 
     def archive(self, request, slug, project_id, page_id):
         page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
@@ -206,15 +204,13 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def archive_list(self, request, slug, project_id):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         pages = Page.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
         ).filter(archived_at__isnull=False)
 
-        pages = PageSerializer(pages, many=True, fields=fields if fields else None).data
-        pages_dict = {str(page["id"]): page for page in pages}
-        return Response(pages_dict, status=status.HTTP_200_OK)
+        pages = PageSerializer(pages, many=True).data
+        return Response(pages, status=status.HTTP_200_OK)
 
 
     def destroy(self, request, slug, project_id, pk):

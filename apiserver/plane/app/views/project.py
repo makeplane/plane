@@ -181,8 +181,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 ).data,
             )
         projects = ProjectListSerializer(projects, many=True, fields=fields if fields else None).data
-        project_dict = {str(project["id"]): project for project in projects}
-        return Response(project_dict, status=status.HTTP_200_OK)
+        return Response(projects, status=status.HTTP_200_OK)
 
 
     def create(self, request, slug):

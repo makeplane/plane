@@ -282,9 +282,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
 
             return Response(data, status=status.HTTP_200_OK)
         
-        cycles = CycleSerializer(queryset, many=True, fields=fields if fields else None).data
-        cycle_dict = {str(cycle["id"]): cycle for cycle in cycles}
-        return Response(cycle_dict, status=status.HTTP_200_OK)
+        cycles = CycleSerializer(queryset, many=True).data
+        return Response(cycles, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         if (

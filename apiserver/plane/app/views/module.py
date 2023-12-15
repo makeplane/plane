@@ -157,8 +157,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         queryset = self.get_queryset()
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         modules = ModuleSerializer(queryset, many=True, fields=fields if fields else None).data
-        modules_dict = {str(module["id"]): module for module in modules}
-        return Response(modules_dict, status=status.HTTP_200_OK)
+        return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
         queryset = self.get_queryset().get(pk=pk)
