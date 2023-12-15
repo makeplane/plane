@@ -17,6 +17,7 @@
     "amqplib": "^0.10.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.29.1",
     "express": "^4.18.2",
     "postgres": "^3.4.1",
     "uuid": "^9.0.1",
@@ -28,7 +29,9 @@
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
     "@types/node": "^20.8.3",
+    "@types/pg": "^8.10.9",
     "concurrently": "^8.2.1",
+    "drizzle-kit": "^0.20.6",
     "nodemon": "^3.0.1",
     "typescript": "^5.2.2"
   }

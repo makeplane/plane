@@ -1,8 +1,9 @@
 // overnight js
 import { Request, Response } from "express";
 import { Controller, Post, Middleware } from "@overnightjs/core";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 // mq
-import { MQSingleton } from "../queue/mq.singleton";
+import { MQSingleton } from "../mq/singleton";
 // middleware
 import AuthKeyMiddlware from "../middleware/authkey.middleware";
 
@@ -11,8 +12,12 @@ export class JiraController {
   /**
    * This controller houses all routes for the Jira Importer
    */
+
+  // Initialize database and mq
+  db: PostgresJsDatabase;
   mq: MQSingleton;
-  constructor(mq: MQSingleton) {
+  constructor(db: PostgresJsDatabase, mq: MQSingleton) {
+    this.db = db;
     this.mq = mq;
   }
 

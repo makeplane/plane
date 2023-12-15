@@ -1,7 +1,7 @@
 // mq
 import { ConsumeMessage } from "amqplib";
 // mq single ton
-import { MQSingleton } from "../queue/mq.singleton";
+import { MQSingleton } from "../mq/singleton";
 // logger
 import { logger } from "../utils/logger";
 

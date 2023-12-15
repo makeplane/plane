@@ -5,18 +5,22 @@ import { Server } from "@overnightjs/core";
 import cors from "cors";
 import * as Sentry from "@sentry/node";
 import * as Tracing from "@sentry/tracing";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 // controllers
 import * as controllers from "./controller";
 // middlewares
 import loggerMiddleware from "./middleware/logger.middleware";
 // utils
 import { logger } from "./utils/logger";
+// db
+import { DatabaseSingleton } from "./db/singleton";
 // mq
-import { MQSingleton } from "./queue/mq.singleton";
+import { MQSingleton } from "./mq/singleton";
 
 class ApiServer extends Server {
   private readonly SERVER_STARTED = "🚀 Api server started on port: ";
   SERVER_PORT: number;
+  db: PostgresJsDatabase | null = null;
   mq: MQSingleton | null = null; // Declare the channel property
 
   constructor() {
@@ -51,6 +55,8 @@ class ApiServer extends Server {
       // setting up error logging and tracing.
       this.setupSentryInit();
     }
+    // setting up db
+    this.setupDatabase();
     // setting up controllers
     this.setupControllers();
     // not found page
@@ -64,16 +70,9 @@ class ApiServer extends Server {
     return this.app;
   }
 
-  // setup all the controllers
-  private setupControllers(): void {
-    const controllerInstances = [];
-    for (const name in controllers) {
-      if (Object.prototype.hasOwnProperty.call(controllers, name)) {
-        const Controller = (controllers as any)[name];
-        controllerInstances.push(new Controller(this.mq));
-      }
-    }
-    super.addControllers(controllerInstances);
+  // Setup the database
+  private setupDatabase(): void {
+    this.db = DatabaseSingleton.getInstance().db;
   }
 
   // Setup MQ and initialize channel
@@ -92,6 +91,20 @@ class ApiServer extends Server {
       logger.error("Failed to initialize MQ:", error);
     }
   }
+
+
+  // setup all the controllers
+  private setupControllers(): void {
+    const controllerInstances = [];
+    for (const name in controllers) {
+      if (Object.prototype.hasOwnProperty.call(controllers, name)) {
+        const Controller = (controllers as any)[name];
+        controllerInstances.push(new Controller(this.db, this.mq));
+      }
+    }
+    super.addControllers(controllerInstances);
+  }
+
 
   // This controller will return 404 for not found pages
   private setupNotFoundHandler(): void {
