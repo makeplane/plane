@@ -11,67 +11,47 @@ import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { EProjectStore } from "store_legacy/command-palette.store";
-import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+
+import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store/use-issues";
 
 export interface IKanBanLayout {}
 
 export const KanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    projectIssues: issueStore,
-    projectIssuesFilter: issuesFilterStore,
-    issueKanBanView: issueKanBanViewStore,
-    kanBanHelpers: kanBanHelperStore,
+    issue: { issueKanBanView: issueKanBanViewStore },
   } = useMobxStore();
+
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
   const issueActions = useMemo(
     () => ({
       [EIssueActions.UPDATE]: async (issue: IIssue) => {
         if (!workspaceSlug) return;
 
-        await issueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+        await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue);
       },
       [EIssueActions.DELETE]: async (issue: IIssue) => {
         if (!workspaceSlug) return;
 
-        await issueStore.removeIssue(workspaceSlug, issue.project, issue.id);
+        await issues.removeIssue(workspaceSlug, issue.project, issue.id);
       },
     }),
-    [issueStore]
+    [issues]
   );
-
-  const handleDragDrop = async (
-    source: any,
-    destination: any,
-    subGroupBy: string | null,
-    groupBy: string | null,
-    issues: IIssueResponse | undefined,
-    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
-  ) =>
-    await kanBanHelperStore.handleDragDrop(
-      source,
-      destination,
-      workspaceSlug,
-      projectId,
-      issueStore,
-      subGroupBy,
-      groupBy,
-      issues,
-      issueWithIds
-    );
 
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
-      issuesFilterStore={issuesFilterStore}
-      issueStore={issueStore}
+      issues={issues}
+      issuesFilter={issuesFilter}
       kanbanViewStore={issueKanBanViewStore}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
       currentStore={EProjectStore.PROJECT}
-      handleDragDrop={handleDragDrop}
     />
   );
 });

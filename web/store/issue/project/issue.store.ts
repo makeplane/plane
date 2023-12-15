@@ -14,6 +14,7 @@ import {
   TIssueGroupByOptions,
   TLoader,
   TUnGroupedIssues,
+  ViewFlags,
 } from "types";
 
 export interface IProjectIssues {
@@ -28,6 +29,7 @@ export interface IProjectIssues {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  viewFlags: ViewFlags;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
@@ -38,6 +40,12 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
   issueService;
   // root store
   rootIssueStore: IIssueRootStore;
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);

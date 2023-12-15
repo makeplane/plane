@@ -1,14 +1,28 @@
 import { Droppable } from "@hello-pangea/dnd";
 //types
-import { IIssue, IIssueDisplayProperties, IIssueResponse } from "types";
+import { IIssue } from "types";
 import { EIssueActions } from "../types";
 //components
 import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";
+import { IIssueStore } from "store/issue/issue.store";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProfileIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store_legacy/issues";
 
 interface IKanbanGroup {
   groupId: string;
-  issues: IIssueResponse;
+  issueMap: IIssueStore;
   issueIds: any;
+  issuesFilter:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
@@ -16,7 +30,6 @@ interface IKanbanGroup {
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   showEmptyGroup: boolean;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -36,14 +49,14 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     sub_group_id,
     group_by,
     sub_group_by,
-    issues,
+    issueMap,
+    issuesFilter,
     verticalPosition,
     issueIds,
     isDragDisabled,
     showEmptyGroup,
     handleIssues,
     quickActions,
-    displayProperties,
     canEditProperties,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -62,17 +75,17 @@ export const KanbanGroup = (props: IKanbanGroup) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {issues && !verticalPosition ? (
+            {!verticalPosition ? (
               <KanbanIssueBlocksList
                 sub_group_id={sub_group_id}
                 columnId={groupId}
-                issues={issues}
+                issueMap={issueMap}
                 issueIds={issueIds?.[groupId] || []}
+                issuesFilter={issuesFilter}
                 isDragDisabled={isDragDisabled}
                 showEmptyGroup={showEmptyGroup}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
-                displayProperties={displayProperties}
                 canEditProperties={canEditProperties}
               />
             ) : null}

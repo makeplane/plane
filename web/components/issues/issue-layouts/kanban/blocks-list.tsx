@@ -1,21 +1,33 @@
 import { memo } from "react";
 //types
-import { IIssueDisplayProperties, IIssue } from "types";
+import { IIssue } from "types";
 import { EIssueActions } from "../types";
-import { IIssueResponse } from "store_legacy/issues/types";
 // components
 import { KanbanIssueBlock } from "components/issues";
+import { IIssueStore } from "store/issue/issue.store";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProfileIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store_legacy/issues";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
-  issues: IIssueResponse;
+  issueMap: IIssueStore;
   issueIds: string[];
+  issuesFilter:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   isDragDisabled: boolean;
   showEmptyGroup: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
@@ -23,13 +35,13 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
   const {
     sub_group_id,
     columnId,
-    issues,
+    issueMap,
     issueIds,
+    issuesFilter,
     showEmptyGroup,
     isDragDisabled,
     handleIssues,
     quickActions,
-    displayProperties,
     canEditProperties,
   } = props;
 
@@ -38,19 +50,19 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
       {issueIds && issueIds.length > 0 ? (
         <>
           {issueIds.map((issueId, index) => {
-            if (!issues[issueId]) return null;
+            const issue = issueMap.allIssues[issueId];
 
-            const issue = issues[issueId];
+            if (!issue) return null;
 
             return (
               <KanbanIssueBlock
                 key={`kanban-issue-block-${issue.id}`}
                 index={index}
                 issue={issue}
+                issuesFilter={issuesFilter}
                 showEmptyGroup={showEmptyGroup}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
-                displayProperties={displayProperties}
                 columnId={columnId}
                 sub_group_id={sub_group_id}
                 isDragDisabled={isDragDisabled}

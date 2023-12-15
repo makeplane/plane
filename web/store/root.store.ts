@@ -11,7 +11,6 @@ import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IStateStore, StateStore } from "./state.store";
 import { IPageStore, PageStore } from "./page.store";
 import { ILabelRootStore, LabelRootStore } from "./label";
-
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {

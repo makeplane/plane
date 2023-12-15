@@ -272,3 +272,9 @@ export type TUnGroupedIssues = string[];
 export interface IIssueResponse {
   [issue_id: string]: IIssue;
 }
+
+export interface ViewFlags {
+  enableQuickAdd: boolean;
+  enableIssueCreation: boolean;
+  enableInlineEditing: boolean;
+}

@@ -6,17 +6,21 @@ import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import type { IIssue } from "types";
+import { useIssues } from "hooks/store/use-issues";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue;
+  dataId: string;
   onSubmit?: () => Promise<void>;
 };
 
 export const DeleteIssueModal: React.FC<Props> = (props) => {
-  const { data, isOpen, handleClose, onSubmit } = props;
+  const { dataId, isOpen, handleClose, onSubmit } = props;
+
+  const { issueMap } = useIssues();
+
+  const issue = issueMap.allIssues[dataId];
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -93,7 +97,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {issue?.project_detail?.identifier}-{issue?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This action cannot be
                       undone.

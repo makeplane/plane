@@ -1,17 +1,24 @@
 import { observer } from "mobx-react-lite";
-//mobx
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBan } from "./default";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 // types
-import { IIssue, IIssueDisplayProperties } from "types";
-import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import { IIssue } from "types";
+import { IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 // constants
 import { EIssueActions } from "../types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 import { IKanbanColumn, columnTypes, getKanbanColumns } from "./utils";
+import { IIssueStore } from "store/issue/issue.store";
+import { useLabel, useProject, useProjectState } from "hooks/store";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProfileIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store_legacy/issues";
 
 interface ISubGroupSwimlaneHeader {
   issueIds: any;
@@ -51,12 +58,17 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 );
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
-  issues: IIssueResponse;
+  issueMap: IIssueStore;
   issueIds: any;
   showEmptyGroup: boolean;
+  issuesFilter:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   isDragStarted?: boolean;
@@ -75,14 +87,14 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
-    issues,
+    issueMap,
     issueIds,
     sub_group_by,
     group_by,
     list,
     handleIssues,
     quickActions,
-    displayProperties,
+    issuesFilter,
     kanBanToggle,
     handleKanBanToggle,
     showEmptyGroup,
@@ -124,14 +136,14 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
             {!kanBanToggle?.subgroupByIssuesVisibility.includes(_list.id) && (
               <div className="relative">
                 <KanBan
-                  issues={issues}
+                  issueMap={issueMap}
                   issueIds={issueIds?.[_list.id]}
+                  issuesFilter={issuesFilter}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
                   sub_group_id={_list.id}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
-                  displayProperties={displayProperties}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
                   showEmptyGroup={showEmptyGroup}
@@ -150,13 +162,18 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 });
 
 export interface IKanBanSwimLanes {
-  issues: IIssueResponse;
+  issueMap: IIssueStore;
   issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issuesFilter:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   sub_group_by: string | null;
   group_by: string | null;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
@@ -177,13 +194,13 @@ export interface IKanBanSwimLanes {
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
   const {
-    issues,
+    issueMap,
     issueIds,
+    issuesFilter,
     sub_group_by,
     group_by,
     handleIssues,
     quickActions,
-    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
     showEmptyGroup,
@@ -196,16 +213,12 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     viewId,
   } = props;
 
-  const { project, projectLabel, projectMember, projectState } = useMobxStore();
+  const project = useProject();
+  const projectLabel = useLabel();
+  const projectState = useProjectState();
 
-  const groupByList = getKanbanColumns(group_by as columnTypes, project, projectLabel, projectMember, projectState);
-  const subGroupByList = getKanbanColumns(
-    sub_group_by as columnTypes,
-    project,
-    projectLabel,
-    projectMember,
-    projectState
-  );
+  const groupByList = getKanbanColumns(group_by as columnTypes, project, projectLabel, projectState);
+  const subGroupByList = getKanbanColumns(sub_group_by as columnTypes, project, projectLabel, projectState);
 
   if (!groupByList || !subGroupByList) return null;
 
@@ -224,14 +237,14 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
       {sub_group_by && (
         <SubGroupSwimlane
-          issues={issues}
+          issueMap={issueMap}
           list={subGroupByList}
           issueIds={issueIds}
+          issuesFilter={issuesFilter}
           group_by={group_by}
           sub_group_by={sub_group_by}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           showEmptyGroup={showEmptyGroup}
