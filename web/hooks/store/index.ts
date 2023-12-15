@@ -1,6 +1,7 @@
 export * from "./use-application";
 export * from "./use-cycle";
 export * from "./use-label";
+export * from "./use-member";
 export * from "./use-module";
 export * from "./use-page";
 export * from "./use-project-publish";

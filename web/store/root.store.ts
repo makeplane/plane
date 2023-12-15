@@ -11,6 +11,8 @@ import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IStateStore, StateStore } from "./state.store";
 import { IPageStore, PageStore } from "./page.store";
 import { ILabelRootStore, LabelRootStore } from "./label";
+import { IMemberRootStore, MemberRootStore } from "./member";
+
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
@@ -19,6 +21,7 @@ export class RootStore {
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
   labelRoot: ILabelRootStore;
+  memberRoot: IMemberRootStore;
   cycle: ICycleStore;
   module: IModuleStore;
   projectView: IProjectViewStore;
@@ -32,6 +35,7 @@ export class RootStore {
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.labelRoot = new LabelRootStore(this);
+    this.memberRoot = new MemberRootStore(this);
     // independent stores
     this.state = new StateStore(this);
     this.issue = new IssueRootStore(this);
