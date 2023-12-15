@@ -1,17 +1,12 @@
-import React from "react";
-
-import Image from "next/image";
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectService from "services/project.service";
+import { ProjectMemberService } from "services/project";
 // ui
-import { Avatar, CustomSearchSelect } from "components/ui";
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import User from "public/user.png";
+import { ChevronDown, UserCircle2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -20,14 +15,18 @@ type Props = {
   onChange: (val: string) => void;
 };
 
-export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
+const projectMemberService = new ProjectMemberService();
+
+export const SidebarLeadSelect: FC<Props> = (props) => {
+  const { value, onChange } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // fetch project members
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -36,7 +35,7 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -46,26 +45,30 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-        <UserCircleIcon className="h-5 w-5" />
-        <span>Lead</span>
+      <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+        <UserCircle2 className="h-4 w-4" />
+        <span className="text-base">Lead</span>
       </div>
-      <div className="sm:basis-1/2">
+      <div className="flex w-1/2 items-center rounded-sm">
         <CustomSearchSelect
+          className="w-full rounded-sm"
           value={value}
-          label={
-            <div className="flex items-center gap-2">
-              {selectedOption && <Avatar user={selectedOption} />}
-              {selectedOption ? (
-                selectedOption?.display_name
-              ) : (
-                <span className="text-custom-text-200">No lead</span>
-              )}
-            </div>
+          customButtonClassName="rounded-sm"
+          customButton={
+            selectedOption ? (
+              <div className="flex w-full items-center justify-start gap-2 p-0.5">
+                <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
+                <span className="text-sm text-custom-text-200">{selectedOption?.display_name}</span>
+              </div>
+            ) : (
+              <div className="group flex w-full items-center justify-between gap-2 p-1 text-sm text-custom-text-400">
+                <span>No lead</span>
+                <ChevronDown className="hidden h-3.5 w-3.5 group-hover:flex" />
+              </div>
+            )
           }
           options={options}
           maxHeight="md"
-          position="right"
           onChange={onChange}
         />
       </div>

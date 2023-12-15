@@ -19,17 +19,25 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, board } = router.query;
+  const { workspace_slug, project_slug, board, priorities, states, labels } = router.query as {
+    workspace_slug: string;
+    project_slug: string;
+    board: string;
+    priorities: string;
+    states: string;
+    labels: string;
+  };
 
   const handleBlockClick = () => {
     issueDetailStore.setPeekId(issue.id);
+    const params: any = { board: board, peekId: issue.id };
+    if (states && states.length > 0) params.states = states;
+    if (priorities && priorities.length > 0) params.priorities = priorities;
+    if (labels && labels.length > 0) params.labels = labels;
     router.push(
       {
-        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
-        query: {
-          board: board?.toString(),
-          peekId: issue.id,
-        },
+        pathname: `/${workspace_slug}/${project_slug}`,
+        query: { ...params },
       },
       undefined,
       { shallow: true }
@@ -38,14 +46,14 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center px-6 py-3.5 relative gap-10 bg-custom-background-100">
-      <div className="relative flex items-center gap-5 w-full flex-grow overflow-hidden">
+    <div className="relative flex items-center gap-10 bg-custom-background-100 p-3">
+      <div className="relative flex w-full flex-grow items-center gap-3 overflow-hidden">
         {/* id */}
-        <div className="flex-shrink-0 text-sm text-custom-text-300">
+        <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
           {projectStore?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <div onClick={handleBlockClick} className="font-medium text-sm truncate flex-grow cursor-pointer">
+        <div onClick={handleBlockClick} className="flex-grow cursor-pointer truncate text-sm font-medium">
           {issue.name}
         </div>
       </div>

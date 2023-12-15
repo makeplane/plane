@@ -1,114 +1,128 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-
-import useSWR, { mutate } from "swr";
-
-// services
-import modulesService from "services/modules.service";
+import { observer } from "mobx-react-lite";
+import { mutate } from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Spinner, CustomSelect, Tooltip } from "components/ui";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { CustomSearchSelect, DiceIcon, Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue, IModule } from "types";
+import { IIssue } from "types";
 // fetch-keys
-import { ISSUE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
+import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
-  handleModuleChange: (module: IModule) => void;
+  handleModuleChange?: (moduleId: string) => void;
   disabled?: boolean;
+  handleIssueUpdate?: () => void;
 };
 
-export const SidebarModuleSelect: React.FC<Props> = ({
-  issueDetail,
-  handleModuleChange,
-  disabled = false,
-}) => {
+export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
+  const { issueDetail, disabled = false, handleIssueUpdate, handleModuleChange } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+  // mobx store
+  const {
+    module: { projectModules },
+    moduleIssues: { removeIssueFromModule, addIssueToModule },
+  } = useMobxStore();
 
-  const { data: modules } = useSWR(
-    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const removeIssueFromModule = (bridgeId: string, moduleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+  const handleModuleStoreChange = async (moduleId: string) => {
+    if (!workspaceSlug || !issueDetail || !moduleId) return;
 
-    modulesService
-      .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueId as string));
+    setIsUpdating(true);
+    await addIssueToModule(workspaceSlug.toString(), moduleId, [issueDetail.id], false, projectId?.toString())
+      .then(async () => {
+        handleIssueUpdate && (await handleIssueUpdate());
+      })
+      .finally(() => {
+        setIsUpdating(false);
+      });
+  };
+
+  const handleRemoveIssueFromModule = (bridgeId: string, moduleId: string) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    setIsUpdating(true);
+    removeIssueFromModule(workspaceSlug.toString(), projectId.toString(), moduleId, issueDetail.id, bridgeId)
+      .then(async () => {
+        handleIssueUpdate && (await handleIssueUpdate());
+        mutate(ISSUE_DETAILS(issueDetail.id));
 
         mutate(MODULE_ISSUES(moduleId));
       })
       .catch((e) => {
         console.log(e);
+      })
+      .finally(() => {
+        setIsUpdating(false);
       });
   };
 
+  const options = projectModules?.map((module) => ({
+    value: module.id,
+    query: module.name,
+    content: (
+      <div className="flex items-center gap-1.5 truncate">
+        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
+          <DiceIcon />
+        </span>
+        <span className="flex-grow truncate">{module.name}</span>
+      </div>
+    ),
+  }));
+
   const issueModule = issueDetail?.issue_module;
 
+  const disableSelect = disabled || isUpdating;
+
   return (
-    <CustomSelect
-      customButton={
-        <div>
-          <Tooltip
-            position="left"
-            tooltipContent={`${
-              modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"
-            }`}
-          >
-            <button
-              type="button"
-              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
-                disabled ? "cursor-not-allowed" : ""
-              }`}
+    <div className="flex items-center gap-1">
+      <CustomSearchSelect
+        value={issueModule?.module_detail.id}
+        onChange={(value: any) => {
+          value === issueModule?.module_detail.id
+            ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
+            : handleModuleChange
+              ? handleModuleChange(value)
+              : handleModuleStoreChange(value);
+        }}
+        options={options}
+        customButton={
+          <div>
+            <Tooltip
+              position="left"
+              tooltipContent={`${projectModules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`}
             >
-              <span
-                className={`truncate ${
-                  issueModule ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+              <button
+                type="button"
+                className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
+                  disableSelect ? "cursor-not-allowed" : ""
+                } max-w-[10rem]`}
               >
-                {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
-              </span>
-            </button>
-          </Tooltip>
-        </div>
-      }
-      value={issueModule ? issueModule.module_detail?.id : null}
-      onChange={(value: any) => {
-        !value
-          ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
-          : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
-      }}
-      width="w-full"
-      position="right"
-      maxHeight="rg"
-      disabled={disabled}
-    >
-      {modules ? (
-        modules.length > 0 ? (
-          <>
-            {modules.map((option) => (
-              <CustomSelect.Option key={option.id} value={option.id}>
-                <Tooltip position="left-bottom" tooltipContent={option.name}>
-                  <span className="w-full truncate">{truncateText(option.name, 25)}</span>
-                </Tooltip>
-              </CustomSelect.Option>
-            ))}
-            <CustomSelect.Option value={null}>None</CustomSelect.Option>
-          </>
-        ) : (
-          <div className="text-center">No modules found</div>
-        )
-      ) : (
-        <Spinner />
-      )}
-    </CustomSelect>
+                <span
+                  className={`flex items-center gap-1.5 truncate ${
+                    issueModule ? "text-custom-text-100" : "text-custom-text-200"
+                  }`}
+                >
+                  <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
+                  <span className="truncate">
+                    {projectModules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
+                  </span>
+                </span>
+              </button>
+            </Tooltip>
+          </div>
+        }
+        width="max-w-[10rem]"
+        noChevron
+        disabled={disableSelect}
+      />
+      {isUpdating && <Spinner className="h-4 w-4" />}
+    </div>
   );
-};
+});

@@ -1,140 +1,72 @@
-import { Fragment } from "react";
-
-import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
+import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CycleForm } from "components/cycles";
-// helper
-import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IProject } from "types";
-// fetch keys
-import {
-  COMPLETED_CYCLES_LIST,
-  CURRENT_CYCLE_LIST,
-  CYCLES_LIST,
-  DRAFT_CYCLES_LIST,
-  INCOMPLETE_CYCLES_LIST,
-  PROJECT_DETAILS,
-  UPCOMING_CYCLES_LIST,
-} from "constants/fetch-keys";
+import type { CycleDateCheckData, ICycle } from "types";
 
 type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   data?: ICycle | null;
-  user: ICurrentUserResponse | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
-  isOpen,
-  handleClose,
-  data,
-  user,
-}) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+// services
+const cycleService = new CycleService();
 
+export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
+  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
+  // store
+  const {
+    cycle: cycleStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
+  // states
+  const [activeProject, setActiveProject] = useState<string>(projectId);
+  // toast
   const { setToastAlert } = useToast();
 
   const createCycle = async (payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
-
-    await cycleService
-      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, user)
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
-        switch (getDateRangeStatus(res.start_date, res.end_date)) {
-          case "completed":
-            mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
-            break;
-          case "current":
-            mutate(CURRENT_CYCLE_LIST(projectId.toString()));
-            break;
-          case "upcoming":
-            mutate(UPCOMING_CYCLES_LIST(projectId.toString()));
-            break;
-          default:
-            mutate(DRAFT_CYCLES_LIST(projectId.toString()));
-        }
-        mutate(INCOMPLETE_CYCLES_LIST(projectId.toString()));
-        mutate(CYCLES_LIST(projectId.toString()));
-
-        // update total cycles count in the project details
-        mutate<IProject>(
-          PROJECT_DETAILS(projectId.toString()),
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              total_cycles: prevData.total_cycles + 1,
-            };
-          },
-          false
-        );
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Cycle created successfully.",
         });
+        postHogEventTracker("CYCLE_CREATE", {
+          ...res,
+          state: "SUCCESS",
+        });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in creating cycle. Please try again.",
+          message: err.detail ?? "Error in creating cycle. Please try again.",
+        });
+        postHogEventTracker("CYCLE_CREATE", {
+          state: "FAILED",
         });
       });
   };
 
   const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
-
-    await cycleService
-      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, user)
-      .then((res) => {
-        switch (getDateRangeStatus(data?.start_date, data?.end_date)) {
-          case "completed":
-            mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
-            break;
-          case "current":
-            mutate(CURRENT_CYCLE_LIST(projectId.toString()));
-            break;
-          case "upcoming":
-            mutate(UPCOMING_CYCLES_LIST(projectId.toString()));
-            break;
-          default:
-            mutate(DRAFT_CYCLES_LIST(projectId.toString()));
-        }
-        mutate(CYCLES_LIST(projectId.toString()));
-        if (
-          getDateRangeStatus(data?.start_date, data?.end_date) !=
-          getDateRangeStatus(res.start_date, res.end_date)
-        ) {
-          switch (getDateRangeStatus(res.start_date, res.end_date)) {
-            case "completed":
-              mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
-              break;
-            case "current":
-              mutate(CURRENT_CYCLE_LIST(projectId.toString()));
-              break;
-            case "upcoming":
-              mutate(UPCOMING_CYCLES_LIST(projectId.toString()));
-              break;
-            default:
-              mutate(DRAFT_CYCLES_LIST(projectId.toString()));
-          }
-        }
-
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .patchCycle(workspaceSlug, selectedProjectId, cycleId, payload)
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -145,7 +77,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in updating cycle. Please try again.",
+          message: err.detail ?? "Error in updating cycle. Please try again.",
         });
       });
   };
@@ -153,11 +85,9 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   const dateChecker = async (payload: CycleDateCheckData) => {
     let status = false;
 
-    await cycleService
-      .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
-      .then((res) => {
-        status = res.status;
-      });
+    await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload).then((res) => {
+      status = res.status;
+    });
 
     return status;
   };
@@ -188,22 +118,20 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     if (isDateValid) {
       if (data) await updateCycle(data.id, payload);
       else await createCycle(payload);
-
       handleClose();
     } else
       setToastAlert({
         type: "error",
         title: "Error!",
-        message:
-          "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
+        message: "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
       });
   };
 
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
+    <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={Fragment}
+          as={React.Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -211,12 +139,13 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
-              as={Fragment}
+              as={React.Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -224,11 +153,12 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <CycleForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
-                  status={data ? true : false}
+                  projectId={activeProject}
+                  setActiveProject={setActiveProject}
                   data={data}
                 />
               </Dialog.Panel>

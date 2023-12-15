@@ -1,8 +1,8 @@
 "use client";
 
 export const IssueBlockUpVotes = ({ number }: { number: number }) => (
-  <div className="h-6 rounded flex px-1.5 pl-1 py-1 items-center border-[0.5px] border-custom-border-300 text-custom-text-300 text-xs">
-    <span className="material-symbols-rounded text-base !p-0 !m-0 text-custom-text-300">arrow_upward_alt</span>
+  <div className="flex h-6 items-center rounded border-[0.5px] border-custom-border-300 px-1.5 py-1 pl-1 text-xs text-custom-text-300">
+    <span className="material-symbols-rounded !m-0 !p-0 text-base text-custom-text-300">arrow_upward_alt</span>
     {number}
   </div>
 );

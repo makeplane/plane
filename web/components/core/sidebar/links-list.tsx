@@ -1,77 +1,100 @@
+// ui
+import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // icons
-import { ArrowTopRightOnSquareIcon, LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Icon } from "components/ui";
+import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { linkDetails, UserAuth } from "types";
+import { ILinkDetails, UserAuth } from "types";
+// hooks
+import useToast from "hooks/use-toast";
 
 type Props = {
-  links: linkDetails[];
+  links: ILinkDetails[];
   handleDeleteLink: (linkId: string) => void;
-  handleEditLink: (link: linkDetails) => void;
+  handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
 };
 
-export const LinksList: React.FC<Props> = ({
-  links,
-  handleDeleteLink,
-  handleEditLink,
-  userAuth,
-}) => {
+export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+  // toast
+  const { setToastAlert } = useToast();
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setToastAlert({
+      message: "The URL has been successfully copied to your clipboard",
+      type: "success",
+      title: "Copied to clipboard",
+    });
+  };
 
   return (
     <>
       {links.map((link) => (
-        <div key={link.id} className="relative">
-          {!isNotAllowed && (
-            <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
-              <button
-                type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
-                onClick={() => handleEditLink(link)}
-              >
-                <Icon iconName="edit" className="text-custom-text-200" />
-              </button>
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
-              >
-                <ArrowTopRightOnSquareIcon className="h-4 w-4 text-custom-text-200" />
-              </a>
-              <button
-                type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/20"
-                onClick={() => handleDeleteLink(link.id)}
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
+        <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
+          <div className="flex w-full items-start justify-between gap-2">
+            <div className="flex items-start gap-2 truncate">
+              <span className="py-1">
+                <LinkIcon className="h-3 w-3 flex-shrink-0" />
+              </span>
+              <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <span
+                  className="cursor-pointer truncate text-xs"
+                  onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
+                >
+                  {link.title && link.title !== "" ? link.title : link.url}
+                </span>
+              </Tooltip>
             </div>
-          )}
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative flex gap-2 rounded-md bg-custom-background-90 p-2"
-          >
-            <div className="mt-0.5">
-              <LinkIcon className="h-3.5 w-3.5" />
-            </div>
-            <div>
-              <h5 className="w-4/5 break-words">{link.title ?? link.url}</h5>
-              <p className="mt-0.5 text-custom-text-200">
-                Added {timeAgo(link.created_at)}
-                <br />
-                by{" "}
-                {link.created_by_detail.is_bot
-                  ? link.created_by_detail.first_name + " Bot"
-                  : link.created_by_detail.display_name}
-              </p>
-            </div>
-          </a>
+
+            {!isNotAllowed && (
+              <div className="z-[1] flex flex-shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleEditLink(link);
+                  }}
+                >
+                  <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                </button>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                >
+                  <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                </a>
+                <button
+                  type="button"
+                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeleteLink(link.id);
+                  }}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="px-5">
+            <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+              Added {timeAgo(link.created_at)}
+              <br />
+              by{" "}
+              {link.created_by_detail.is_bot
+                ? link.created_by_detail.first_name + " Bot"
+                : link.created_by_detail.display_name}
+            </p>
+          </div>
         </div>
       ))}
     </>

@@ -1,0 +1,230 @@
+
+services:
+  web:
+    container_name: web
+    platform: linux/amd64
+    image: makeplane/plane-frontend:latest
+    restart: always
+    command: /usr/local/bin/start.sh web/server.js web
+    environment:
+      - NEXT_PUBLIC_DEPLOY_URL=$SERVICE_FQDN_SPACE_8082
+    depends_on:
+      - api
+      - worker
+
+  space:
+    container_name: space
+    platform: linux/amd64
+    image: makeplane/plane-space:latest
+    restart: always
+    command: /usr/local/bin/start.sh space/server.js space
+    environment:
+      - SERVICE_FQDN_SPACE_8082=/api
+    depends_on:
+      - api
+      - worker
+      - web
+
+  api:
+    container_name: api
+    platform: linux/amd64
+    image: makeplane/plane-backend:latest
+    restart: always
+    command: ./bin/takeoff
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - SENTRY_DSN=${SENTRY_DSN:-""}
+      - PGUSER=${PGUSER:-plane}
+      - PGPASSWORD=${PGPASSWORD:-plane}
+      - PGHOST=${PGHOST:-plane-db}
+      - PGDATABASE=${PGDATABASE:-plane}
+      - DATABASE_URL=postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+      - REDIS_HOST=${REDIS_HOST:-plane-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_URL=redis://${REDIS_HOST}:6379/
+      - EMAIL_HOST=${EMAIL_HOST:-""}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-""}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-""}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_FROM=${EMAIL_FROM:-Team Plane <team@mailer.plane.so>}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-1}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
+      - AWS_REGION=${AWS_REGION:-""}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-access-key}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-secret-key}
+      - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-uploads}
+      - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-}
+      - GPT_ENGINE=${GPT_ENGINE:-gpt-3.5-turbo}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-""}
+      - DOCKERIZED=${DOCKERIZED:-1}
+      - USE_MINIO=${USE_MINIO:-1}
+      - NGINX_PORT=${NGINX_PORT:-8082}
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
+      - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
+      - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
+      - ENABLE_EMAIL_PASSWORD=${ENABLE_EMAIL_PASSWORD:-1}
+      - ENABLE_MAGIC_LINK_LOGIN=${ENABLE_MAGIC_LINK_LOGIN:-0}
+      - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
+      - WEB_URL=$SERVICE_FQDN_PLANE_8082
+    depends_on:
+      - plane-db
+      - plane-redis
+
+  worker:
+    container_name: bgworker
+    platform: linux/amd64
+    image: makeplane/plane-backend:latest
+    restart: always
+    command: ./bin/worker
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - SENTRY_DSN=${SENTRY_DSN:-""}
+      - PGUSER=${PGUSER:-plane}
+      - PGPASSWORD=${PGPASSWORD:-plane}
+      - PGHOST=${PGHOST:-plane-db}
+      - PGDATABASE=${PGDATABASE:-plane}
+      - DATABASE_URL=postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+      - REDIS_HOST=${REDIS_HOST:-plane-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_URL=redis://${REDIS_HOST}:6379/
+      - EMAIL_HOST=${EMAIL_HOST:-""}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-""}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-""}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_FROM=${EMAIL_FROM:-Team Plane <team@mailer.plane.so>}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-1}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
+      - AWS_REGION=${AWS_REGION:-""}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-access-key}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-secret-key}
+      - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-uploads}
+      - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-}
+      - GPT_ENGINE=${GPT_ENGINE:-gpt-3.5-turbo}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-""}
+      - DOCKERIZED=${DOCKERIZED:-1}
+      - USE_MINIO=${USE_MINIO:-1}
+      - NGINX_PORT=${NGINX_PORT:-8082}
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
+      - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
+      - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
+      - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  beat-worker:
+    container_name: beatworker
+    platform: linux/amd64
+    image: makeplane/plane-backend:latest
+    restart: always
+    command: ./bin/beat
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - SENTRY_DSN=${SENTRY_DSN:-""}
+      - PGUSER=${PGUSER:-plane}
+      - PGPASSWORD=${PGPASSWORD:-plane}
+      - PGHOST=${PGHOST:-plane-db}
+      - PGDATABASE=${PGDATABASE:-plane}
+      - DATABASE_URL=postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+      - REDIS_HOST=${REDIS_HOST:-plane-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_URL=redis://${REDIS_HOST}:6379/
+      - EMAIL_HOST=${EMAIL_HOST:-""}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-""}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-""}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_FROM=${EMAIL_FROM:-Team Plane <team@mailer.plane.so>}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-1}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
+      - AWS_REGION=${AWS_REGION:-""}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-access-key}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-secret-key}
+      - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-uploads}
+      - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-}
+      - GPT_ENGINE=${GPT_ENGINE:-gpt-3.5-turbo}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-""}
+      - DOCKERIZED=${DOCKERIZED:-1}
+      - USE_MINIO=${USE_MINIO:-1}
+      - NGINX_PORT=${NGINX_PORT:-8082}
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
+      - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
+      - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
+      - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  plane-db:
+    container_name: plane-db
+    image: postgres:15.2-alpine
+    restart: always
+    command: postgres -c 'max_connections=1000'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-plane}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-plane}
+      - POSTGRES_DB=${POSTGRES_DB:-plane}
+      - PGDATA=${PGDATA:-/var/lib/postgresql/data}
+
+  plane-redis:
+    container_name: plane-redis
+    image: redis:6.2.7-alpine
+    restart: always
+    volumes:
+      - redisdata:/data
+
+  plane-minio:
+    container_name: plane-minio
+    image: minio/minio
+    restart: always
+    command: server /export --console-address ":9090"
+    volumes:
+      - uploads:/export
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-access-key}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-secret-key}
+
+  createbuckets:
+    image: minio/mc
+    entrypoint: >
+      /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-access-key}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-secret-key}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-uploads}
+    depends_on:
+      - plane-minio
+
+  # Comment this if you already have a reverse proxy running
+  proxy:
+    container_name: proxy
+    platform: linux/amd64
+    image: makeplane/plane-proxy:latest
+    ports:
+      - 8082:80
+    environment:
+      - SERVICE_FQDN_PLANE_8082
+      - NGINX_PORT=${NGINX_PORT:-8082}
+      - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+      - BUCKET_NAME=${AWS_S3_BUCKET_NAME:-uploads}
+    depends_on:
+      - web
+      - api
+      - space
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:

@@ -1,34 +1,29 @@
-import React from "react";
+import { FC } from "react";
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type IssueLabelsListProps = {
-  labels?: (IIssueLabels | undefined)[];
+  labels?: (IIssueLabel | undefined)[];
   length?: number;
   showLength?: boolean;
 };
 
-export const IssueLabelsList: React.FC<IssueLabelsListProps> = ({
-  labels,
-  length = 5,
-  showLength = true,
-}) => (
-  <>
-    {labels && (
-      <>
-        <Tooltip
-          position="top"
-          tooltipHeading="Labels"
-          tooltipContent={labels.map((l) => l?.name).join(", ")}
-        >
-          <div className="flex items-center gap-1.5 px-2 py-1 text-custom-text-200 rounded shadow-sm border border-custom-border-300">
-            <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-            {`${labels.length} Labels`}
-          </div>
-        </Tooltip>
-      </>
-    )}
-  </>
-);
+export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
+  const { labels } = props;
+  return (
+    <>
+      {labels && (
+        <>
+          <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labels.map((l) => l?.name).join(", ")}>
+            <div className="flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200">
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+              {`${labels.length} Labels`}
+            </div>
+          </Tooltip>
+        </>
+      )}
+    </>
+  );
+};

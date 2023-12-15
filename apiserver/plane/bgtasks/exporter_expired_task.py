@@ -25,7 +25,7 @@ def delete_old_s3_link():
     for file_name, exporter_id in expired_exporter_history:
         # Delete object from S3
         if file_name:
-            if settings.DOCKERIZED and settings.USE_MINIO:
+            if settings.USE_MINIO:
                 s3.delete_file(settings.AWS_STORAGE_BUCKET_NAME, file_name)
             else:
                 s3.delete_file(settings.AWS_S3_BUCKET_NAME, file_name)

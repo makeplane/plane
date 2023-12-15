@@ -1,47 +1,61 @@
+"""Global Settings"""
+# Python imports
 import os
-import datetime
+import ssl
+import certifi
 from datetime import timedelta
+from urllib.parse import urlparse
+
+# Django imports
 from django.core.management.utils import get_random_secret_key
 
+# Third party imports
+import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+# Secret Key
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+# Allowed Hosts
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     # Inhouse apps
     "plane.analytics",
-    "plane.api",
+    "plane.app",
+    "plane.space",
     "plane.bgtasks",
     "plane.db",
     "plane.utils",
     "plane.web",
     "plane.middleware",
+    "plane.license",
+    "plane.api",
     # Third-party things
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
-    "taggit",
     "django_celery_beat",
+    "storages",
 ]
 
+# Middlewares
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -49,8 +63,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
- ]
+    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+]
 
+# Rest Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -60,13 +76,13 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
-AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",  # default
-    # "guardian.backends.ObjectPermissionBackend",
-)
+# Django Auth Backend
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)  # default
 
+# Root Urls
 ROOT_URLCONF = "plane.urls"
 
+# Templates
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -85,52 +101,76 @@ TEMPLATES = [
     },
 ]
 
+# Cookie Settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
-JWT_AUTH = {
-    "JWT_ENCODE_HANDLER": "rest_framework_jwt.utils.jwt_encode_handler",
-    "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
-    "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
-    "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler",
-    "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
-    "JWT_SECRET_KEY": SECRET_KEY,
-    "JWT_GET_USER_SECRET_KEY": None,
-    "JWT_PUBLIC_KEY": None,
-    "JWT_PRIVATE_KEY": None,
-    "JWT_ALGORITHM": "HS256",
-    "JWT_VERIFY": True,
-    "JWT_VERIFY_EXPIRATION": True,
-    "JWT_LEEWAY": 0,
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=604800),
-    "JWT_AUDIENCE": None,
-    "JWT_ISSUER": None,
-    "JWT_ALLOW_REFRESH": False,
-    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
-    "JWT_AUTH_HEADER_PREFIX": "JWT",
-    "JWT_AUTH_COOKIE": None,
-}
+# CORS Settings
+CORS_ALLOW_CREDENTIALS = True
+cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+# filter out empty strings
+cors_allowed_origins = [
+    origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()
+]
+if cors_allowed_origins:
+    CORS_ALLOWED_ORIGINS = cors_allowed_origins
+else:
+    CORS_ALLOW_ALL_ORIGINS = True
 
+# Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
 ASGI_APPLICATION = "plane.asgi.application"
 
 # Django Sites
-
 SITE_ID = 1
 
 # User Model
 AUTH_USER_MODEL = "db.User"
 
 # Database
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+if bool(os.environ.get("DATABASE_URL")):
+    # Parse database configuration from $DATABASE_URL
+    DATABASES = {
+        "default": dj_database_url.config(),
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_DB"),
+            "USER": os.environ.get("POSTGRES_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+            "HOST": os.environ.get("POSTGRES_HOST"),
+        }
+    }
 
+# Redis Config
+REDIS_URL = os.environ.get("REDIS_URL")
+REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
-# Password validation
+if REDIS_SSL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+            },
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
+    }
 
+# Password validations
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -146,8 +186,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Static files (CSS, JavaScript, Images)
+# Password reset time the number of seconds the uniquely generated uid will be valid
+PASSWORD_RESET_TIMEOUT = 3600
 
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static-assets", "collected-static")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
@@ -156,36 +198,49 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 MEDIA_ROOT = "mediafiles"
 MEDIA_URL = "/media/"
 
-
 # Internationalization
-
 LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
 
+# Timezones
 USE_TZ = True
+TIME_ZONE = "UTC"
 
+# Default Auto Field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# Host for sending e-mail.
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-# Port for sending e-mail.
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
-# Optional SMTP authentication information for EMAIL_HOST.
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1") == "1"
-EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "0") == "1"
-EMAIL_FROM = os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>")
+
+# Storage Settings
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+STORAGES["default"] = {
+    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+}
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+AWS_REGION = os.environ.get("AWS_REGION", "")
+AWS_DEFAULT_ACL = "public-read"
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = False
+AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get(
+    "MINIO_ENDPOINT_URL", None
+)
+if AWS_S3_ENDPOINT_URL:
+    parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
+    AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
+    AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
 
+# JWT Auth Configuration
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10080),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=43200),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=43200),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -211,7 +266,71 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
+
+# Celery Configuration
 CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_IMPORTS = ("plane.bgtasks.issue_automation_task","plane.bgtasks.exporter_expired_task")
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+
+if REDIS_SSL:
+    redis_url = os.environ.get("REDIS_URL")
+    broker_url = (
+        f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+    )
+    CELERY_BROKER_URL = broker_url
+    CELERY_RESULT_BACKEND = broker_url
+else:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+
+CELERY_IMPORTS = (
+    "plane.bgtasks.issue_automation_task",
+    "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.file_asset_task",
+)
+
+# Sentry Settings
+# Enable Sentry Settings
+if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").startswith("https://"):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN", ""),
+        integrations=[
+            DjangoIntegration(),
+            RedisIntegration(),
+            CeleryIntegration(monitor_beat_tasks=True),
+        ],
+        traces_sample_rate=1,
+        send_default_pii=True,
+        environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
+        profiles_sample_rate=1.0,
+    )
+
+
+# Application Envs
+PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
+SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+# Unsplash Access key
+UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
+# Github Access Token
+GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+# Analytics
+ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
+ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
+
+# Use Minio settings
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+
+# Posthog settings
+POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
+POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
+
+# instance key
+INSTANCE_KEY = os.environ.get(
+    "INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3"
+)
+
+# Skip environment variable configuration
+SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"

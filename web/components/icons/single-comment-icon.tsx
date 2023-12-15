@@ -2,12 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const SingleCommentCard: React.FC<Props> = ({
-  width = "24",
-  height = "24",
-  className,
-  color,
-}) => (
+export const SingleCommentCard: React.FC<Props> = ({ width = "24", height = "24", className, color }) => (
   <svg
     width={width}
     height={height}

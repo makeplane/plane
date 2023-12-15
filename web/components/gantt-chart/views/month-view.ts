@@ -3,12 +3,7 @@ import { ChartDataType, IGanttBlock } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
-import {
-  generateDate,
-  getWeekNumberByDate,
-  getNumberOfDaysInMonth,
-  getDatesBetweenTwoDates,
-} from "./helpers";
+import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from "./helpers";
 
 type GetAllDaysInMonthInMonthViewType = {
   date: any;
@@ -62,9 +57,7 @@ const getAllDaysInMonthInMonthView = (month: number, year: number): IMonthChild[
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
       active: false,
       today:
-        currentDate.getFullYear() === year &&
-        currentDate.getMonth() === month &&
-        currentDate.getDate() === _day + 1
+        currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === _day + 1
           ? true
           : false,
     });
@@ -100,16 +93,8 @@ export const generateMonthChart = (monthPayload: ChartDataType, side: null | "le
   if (side === null) {
     const currentDate = renderState.data.currentDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - range,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + range,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -124,16 +109,8 @@ export const generateMonthChart = (monthPayload: ChartDataType, side: null | "le
   } else if (side === "left") {
     const currentDate = renderState.data.startDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - range,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - 1,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -144,16 +121,8 @@ export const generateMonthChart = (monthPayload: ChartDataType, side: null | "le
   } else if (side === "right") {
     const currentDate = renderState.data.endDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + range,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -191,10 +160,7 @@ export const getNumberOfDaysBetweenTwoDatesInMonth = (startDate: Date, endDate: 
 };
 
 // calc item scroll position and width
-export const getMonthChartItemPositionWidthInMonth = (
-  chartData: ChartDataType,
-  itemData: IGanttBlock
-) => {
+export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, itemData: IGanttBlock) => {
   let scrollPosition: number = 0;
   let scrollWidth: number = 0;
 
@@ -207,9 +173,7 @@ export const getMonthChartItemPositionWidthInMonth = (
 
   // position code starts
   const positionTimeDifference: number = startDate.getTime() - itemStartDate.getTime();
-  const positionDaysDifference: number = Math.abs(
-    Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24))
-  );
+  const positionDaysDifference: number = Math.abs(Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24)));
   scrollPosition = positionDaysDifference * chartData.data.width;
 
   var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
@@ -221,9 +185,7 @@ export const getMonthChartItemPositionWidthInMonth = (
 
   // width code starts
   const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
-  const widthDaysDifference: number = Math.abs(
-    Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24))
-  );
+  const widthDaysDifference: number = Math.abs(Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24)));
   scrollWidth = (widthDaysDifference + 1) * chartData.data.width + 1;
   // width code ends
 

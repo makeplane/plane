@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 
 // ui
-import { Icon } from "components/ui";
-import { ChevronDown, PenSquare } from "lucide-react";
+import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
+import { EProjectStore } from "store/command-palette.store";
 
-export const WorkspaceSidebarQuickAction = () => {
-  const store: any = useMobxStore();
-
+export const WorkspaceSidebarQuickAction = observer(() => {
+  // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
+  const {
+    theme: themeStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
+
   const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
+
+  const isSidebarCollapsed = themeStore.sidebarCollapsed;
 
   return (
     <>
@@ -29,72 +37,56 @@ export const WorkspaceSidebarQuickAction = () => {
         }}
         fieldsToShow={["all"]}
       />
-
       <div
-        className={`flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${
-          store?.theme?.sidebarCollapsed ? "flex-col gap-1" : "gap-2"
+        className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
+          isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
         }`}
       >
         <div
-          className={`relative flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
-            store?.theme?.sidebarCollapsed
+          className={`group relative flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2 ${
+            isSidebarCollapsed
               ? "px-2 hover:bg-custom-sidebar-background-80"
-              : "px-3 shadow border-[0.5px] border-custom-border-300"
+              : "border-[0.5px] border-custom-border-200 px-3 shadow-custom-sidebar-shadow-2xs"
           }`}
         >
           <button
             type="button"
-            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 ${
-              store?.theme?.sidebarCollapsed ? "justify-center" : ""
+            className={`relative flex flex-shrink-0 flex-grow items-center gap-2 rounded py-1.5 outline-none ${
+              isSidebarCollapsed ? "justify-center" : ""
             }`}
             onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "c" });
-              document.dispatchEvent(e);
+              setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
             }}
           >
-            <Icon
-              iconName="edit_square"
-              className="!text-lg !leading-4 text-custom-sidebar-text-300"
-            />
-            {!store?.theme?.sidebarCollapsed && (
-              <span className="text-sm font-medium">New Issue</span>
-            )}
+            <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
+            {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
           </button>
 
           {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
             <>
-              <div
-                className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${
-                  store?.theme?.sidebarCollapsed ? "hidden" : "block"
-                }`}
-              />
+              <div className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${isSidebarCollapsed ? "hidden" : "block"}`} />
 
               <button
                 type="button"
-                className={`flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5 ${
-                  store?.theme?.sidebarCollapsed ? "hidden" : "block"
+                className={`ml-1.5 flex flex-shrink-0 items-center justify-center rounded py-1.5 ${
+                  isSidebarCollapsed ? "hidden" : "block"
                 }`}
               >
-                <ChevronDown
-                  size={16}
-                  className="!text-custom-sidebar-text-300 transform transition-transform duration-300 group-hover:rotate-180 rotate-0"
-                />
+                <ChevronUp className="h-4 w-4 rotate-180 transform !text-custom-sidebar-text-300 transition-transform duration-300 group-hover:rotate-0" />
               </button>
 
               <div
-                className={`fixed h-10 pt-2 w-[203px] left-4 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto ${
-                  store?.theme?.sidebarCollapsed ? "top-[5.5rem]" : "top-24"
+                className={`pointer-events-none fixed left-4 mt-0 h-10 w-[203px] pt-2 opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 ${
+                  isSidebarCollapsed ? "top-[5.5rem]" : "top-24"
                 }`}
               >
-                <div className="w-full h-full">
+                <div className="h-full w-full">
                   <button
                     onClick={() => setIsDraftIssueModalOpen(true)}
-                    className="w-full flex text-sm items-center rounded flex-shrink-0 py-[10px] px-3 bg-custom-background-100 shadow border-[0.5px] border-custom-border-300 text-custom-text-300"
+                    className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
                   >
-                    <PenSquare
-                      size={16}
-                      className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2"
-                    />
+                    <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
                     Last Drafted Issue
                   </button>
                 </div>
@@ -104,19 +96,16 @@ export const WorkspaceSidebarQuickAction = () => {
         </div>
 
         <button
-          className={`flex items-center justify-center rounded flex-shrink-0 p-2 ${
-            store?.theme?.sidebarCollapsed
+          className={`flex flex-shrink-0 items-center justify-center rounded p-2 outline-none ${
+            isSidebarCollapsed
               ? "hover:bg-custom-sidebar-background-80"
-              : "shadow border-[0.5px] border-custom-border-300"
+              : "border-[0.5px] border-custom-border-200 shadow-custom-sidebar-shadow-2xs"
           }`}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "k", ctrlKey: true, metaKey: true });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >
-          <Icon iconName="search" className="!text-lg !leading-4 text-custom-sidebar-text-300" />
+          <Search className="h-4 w-4 text-custom-sidebar-text-300" />
         </button>
       </div>
     </>
   );
-};
+});

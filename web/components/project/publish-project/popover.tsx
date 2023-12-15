@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // icons
-import { Icon } from "components/ui";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const CustomPopover = ({
   children,
@@ -18,16 +18,10 @@ export const CustomPopover = ({
     <Popover className="relative">
       {({ open }) => (
         <>
-          <Popover.Button
-            className={`${open ? "" : ""}  relative flex items-center gap-1 ring-0 outline-none`}
-          >
+          <Popover.Button className={`${open ? "" : ""}  relative flex items-center gap-1 outline-none ring-0`}>
             <div className="text-sm">{label ?? placeholder}</div>
-            <div className="w-5 h-5 grid place-items-center">
-              {!open ? (
-                <Icon iconName="expand_more" className="!text-base" />
-              ) : (
-                <Icon iconName="expand_less" className="!text-base" />
-              )}
+            <div className="grid h-5 w-5 place-items-center">
+              {!open ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
             </div>
           </Popover.Button>
 
@@ -41,7 +35,7 @@ export const CustomPopover = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel className="absolute right-0 z-10 mt-1 min-w-[150px]">
-              <div className="overflow-hidden rounded border border-custom-border-300 mt-1 overflow-y-auto bg-custom-background-90 shadow-custom-shadow-2xs focus:outline-none">
+              <div className="mt-1 overflow-hidden overflow-y-auto rounded border border-custom-border-300 bg-custom-background-90 shadow-custom-shadow-2xs focus:outline-none">
                 {children}
               </div>
             </Popover.Panel>

@@ -36,15 +36,13 @@ jobs:
       - name: Build Plane's Main App
         if: steps.changed-files.outputs.web_any_changed == 'true'
         run: |
-          cd web
           yarn
-          yarn build
+          yarn build --filter=web
 
       - name: Build Plane's Deploy App
         if: steps.changed-files.outputs.deploy_any_changed == 'true'
         run: |
-          cd space
           yarn 
-          yarn build
+          yarn build --filter=space
 
 

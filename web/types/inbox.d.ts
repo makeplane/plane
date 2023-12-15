@@ -1,23 +1,7 @@
-import { IIssue, IIssueFilterOptions, IIssueLabels } from "./issues";
+import { IIssue } from "./issues";
 import type { IProjectLite } from "./projects";
-import { IState } from "./state";
-import { IUserLite } from "./users";
 
-export interface IInboxIssue extends Partial<IIssue> {
-  bridge_id: string;
-  issue_inbox: {
-    duplicate_to: string | null;
-    snoozed_till: Date | null;
-    source: string;
-    status: -2 | -1 | 0 | 1 | 2;
-  }[];
-}
-
-export interface IInboxIssueDetail extends IIssue {
-  id: string;
-  project_detail: IProjectLite;
-  created_at: string;
-  updated_at: string;
+export interface IInboxIssue extends IIssue {
   issue_inbox: {
     duplicate_to: string | null;
     id: string;
@@ -25,11 +9,8 @@ export interface IInboxIssueDetail extends IIssue {
     source: string;
     status: -2 | -1 | 0 | 1 | 2;
   }[];
-  created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
 }
+
 export interface IInbox {
   id: string;
   project_detail: IProjectLite;
@@ -67,16 +48,11 @@ interface StatusDuplicate {
   duplicate_to: string;
 }
 
-export type TInboxStatus =
-  | StatusReject
-  | StatusSnoozed
-  | StatusAccepted
-  | StatusDuplicate
-  | StatePending;
+export type TInboxStatus = StatusReject | StatusSnoozed | StatusAccepted | StatusDuplicate | StatePending;
 
 export interface IInboxFilterOptions {
-  priority: string[] | null;
-  inbox_status: number[] | null;
+  priority?: string[] | null;
+  inbox_status?: number[] | null;
 }
 
 export interface IInboxQueryParams {

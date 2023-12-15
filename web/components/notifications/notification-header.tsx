@@ -1,10 +1,9 @@
 import React from "react";
-
-// components
-import { CustomMenu, Icon, Tooltip } from "components/ui";
+import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
+// ui
+import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
-
 // type
 import type { NotificationType, NotificationCount } from "types";
 
@@ -66,8 +65,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
   return (
     <>
       <div className="flex items-center justify-between px-5 pt-5">
-        <h2 className="text-xl font-semibold mb-2">Notifications</h2>
-        <div className="flex gap-x-4 justify-center items-center text-custom-text-200">
+        <h2 className="mb-2 text-xl font-semibold">Notifications</h2>
+        <div className="flex items-center justify-center gap-x-4 text-custom-text-200">
           <Tooltip tooltipContent="Refresh">
             <button
               type="button"
@@ -75,7 +74,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 notificationMutate();
               }}
             >
-              <Icon iconName="refresh" className={`${isRefreshing ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
             </button>
           </Tooltip>
           <Tooltip tooltipContent="Unread notifications">
@@ -87,24 +86,23 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setReadNotification((prev) => !prev);
               }}
             >
-              <Icon iconName="filter_list" />
+              <ListFilter className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
           <CustomMenu
             customButton={
               <div className="grid place-items-center ">
-                <Icon iconName="more_vert" />
+                <MoreVertical className="h-3.5 w-3.5" />
               </div>
             }
           >
-            <CustomMenu.MenuItem renderAs="button" onClick={markAllNotificationsAsRead}>
+            <CustomMenu.MenuItem onClick={markAllNotificationsAsRead}>
               <div className="flex items-center gap-2">
-                <Icon iconName="done_all" />
+                <CheckCheck className="h-3.5 w-3.5" />
                 Mark all as read
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              renderAs="button"
               onClick={() => {
                 setArchived(false);
                 setReadNotification(false);
@@ -112,12 +110,11 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               }}
             >
               <div className="flex items-center gap-2">
-                <Icon iconName="schedule" />
+                <Clock className="h-3.5 w-3.5" />
                 Show snoozed
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              renderAs="button"
               onClick={() => {
                 setSnoozed(false);
                 setReadNotification(false);
@@ -125,19 +122,19 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               }}
             >
               <div className="flex items-center gap-2">
-                <Icon iconName="archive" />
+                <ArchiveIcon className="h-3.5 w-3.5" />
                 Show archived
               </div>
             </CustomMenu.MenuItem>
           </CustomMenu>
           <Tooltip tooltipContent="Close">
             <button type="button" onClick={() => closePopover()}>
-              <Icon iconName="close" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
         </div>
       </div>
-      <div className="border-b border-custom-border-300 w-full px-5 mt-5">
+      <div className="mt-5 w-full border-b border-custom-border-300 px-5">
         {snoozed || archived || readNotification ? (
           <button
             type="button"
@@ -148,13 +145,13 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             }}
           >
             <h4 className="flex items-center gap-2 pb-4">
-              <Icon iconName="arrow_back" />
+              <ArrowLeft className="h-3.5 w-3.5" />
               <span className="ml-2 font-medium">
                 {snoozed
                   ? "Snoozed Notifications"
                   : readNotification
-                  ? "Unread Notifications"
-                  : "Archived Notifications"}
+                    ? "Unread Notifications"
+                    : "Archived Notifications"}
               </span>
             </h4>
           </button>
@@ -165,7 +162,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 type="button"
                 key={tab.value}
                 onClick={() => setSelectedTab(tab.value)}
-                className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium outline-none ${
+                className={`whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium outline-none ${
                   tab.value === selectedTab
                     ? "border-custom-primary-100 text-custom-primary-100"
                     : "border-transparent text-custom-text-200"
@@ -174,7 +171,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 {tab.label}
                 {tab.unreadCount && tab.unreadCount > 0 ? (
                   <span
-                    className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
+                    className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
                       tab.value === selectedTab
                         ? "bg-custom-primary-100 text-white"
                         : "bg-custom-background-80 text-custom-text-200"

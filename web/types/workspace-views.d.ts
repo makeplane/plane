@@ -1,4 +1,4 @@
-import { IWorkspaceGlobalViewProps } from "./view-props";
+import { IWorkspaceViewProps } from "./view-props";
 
 export interface IWorkspaceView {
   id: string;
@@ -10,8 +10,8 @@ export interface IWorkspaceView {
   updated_by: string;
   name: string;
   description: string;
-  query: IWorkspaceGlobalViewProps;
-  query_data: IWorkspaceGlobalViewProps;
+  query: any;
+  query_data: IWorkspaceViewProps;
   project: string;
   workspace: string;
   workspace_detail?: {
@@ -20,3 +20,5 @@ export interface IWorkspaceView {
     slug: string;
   };
 }
+
+export type TStaticViewTypes = "all-issues" | "assigned" | "created" | "subscribed";

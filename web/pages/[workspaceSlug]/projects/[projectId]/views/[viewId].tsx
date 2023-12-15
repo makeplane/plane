@@ -1,126 +1,58 @@
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// services
-import projectService from "services/project.service";
-import viewsService from "services/views.service";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
-// contexts
-import { IssueViewContextProvider } from "contexts/issue-view.context";
+import { AppLayout } from "layouts/app-layout";
 // components
-import { IssuesFilterView, IssuesView } from "components/core";
+import { ProjectViewLayoutRoot } from "components/issues";
+import { ProjectViewIssuesHeader } from "components/headers";
 // ui
-import { CustomMenu, EmptyState, PrimaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { StackedLayersIcon } from "components/icons";
-// images
+import { EmptyState } from "components/common";
+// assets
 import emptyView from "public/empty-state/view.svg";
-// helpers
-import { truncateText } from "helpers/string.helper";
-// fetch-keys
-import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys";
+// types
+import { NextPageWithLayout } from "types/app";
 
-const SingleView: React.FC = () => {
+const ProjectViewIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
 
-  const { data: activeProject } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { projectViews: projectViewsStore } = useMobxStore();
 
-  const { data: views } = useSWR(
-    workspaceSlug && projectId ? VIEWS_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => viewsService.getViews(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: viewDetails, error } = useSWR(
-    workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
+  const { error } = useSWR(
+    workspaceSlug && projectId && viewId ? `VIEW_DETAILS_${viewId.toString()}` : null,
     workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewDetails(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string
-          )
+      ? () => projectViewsStore.fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString())
       : null
   );
 
   return (
-    <IssueViewContextProvider>
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"} Views`}
-              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
-            />
-          </Breadcrumbs>
-        }
-        left={
-          <CustomMenu
-            label={
-              <>
-                <StackedLayersIcon height={12} width={12} />
-                {viewDetails?.name && truncateText(viewDetails.name, 40)}
-              </>
-            }
-            className="ml-1.5"
-            width="auto"
-          >
-            {views?.map((view) => (
-              <CustomMenu.MenuItem
-                key={view.id}
-                renderAs="a"
-                href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
-              >
-                {truncateText(view.name, 40)}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
-        }
-        right={
-          <div className="flex items-center gap-2">
-            <IssuesFilterView />
-            <PrimaryButton
-              className="flex items-center gap-2"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", { key: "c" });
-                document.dispatchEvent(e);
-              }}
-            >
-              <PlusIcon className="h-4 w-4" />
-              Add Issue
-            </PrimaryButton>
-          </div>
-        }
-      >
-        {error ? (
-          <EmptyState
-            image={emptyView}
-            title="View does not exist"
-            description="The view you are looking for does not exist or has been deleted."
-            primaryButton={{
-              text: "View other views",
-              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
-            }}
-          />
-        ) : (
-          <div className="h-full w-full flex flex-col">
-            <IssuesView />
-          </div>
-        )}
-      </ProjectAuthorizationWrapper>
-    </IssueViewContextProvider>
+    <>
+      {error ? (
+        <EmptyState
+          image={emptyView}
+          title="View does not exist"
+          description="The view you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other views",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+          }}
+        />
+      ) : (
+        <ProjectViewLayoutRoot />
+      )}
+    </>
   );
 };
 
-export default SingleView;
+ProjectViewIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectViewIssuesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
+
+export default ProjectViewIssuesPage;

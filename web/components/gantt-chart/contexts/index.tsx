@@ -6,10 +6,7 @@ import { allViewsWithData, currentViewDataWithView } from "../data";
 
 export const ChartContext = createContext<ChartContextReducer | undefined>(undefined);
 
-const chartReducer = (
-  state: ChartContextData,
-  action: ChartContextActionPayload
-): ChartContextData => {
+const chartReducer = (state: ChartContextData, action: ChartContextActionPayload): ChartContextData => {
   switch (action.type) {
     case "CURRENT_VIEW":
       return { ...state, currentView: action.payload };
@@ -50,9 +47,7 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   return (
-    <ChartContext.Provider
-      value={{ ...state, scrollLeft, updateScrollLeft, dispatch: handleDispatch }}
-    >
+    <ChartContext.Provider value={{ ...state, scrollLeft, updateScrollLeft, dispatch: handleDispatch }}>
       {children}
     </ChartContext.Provider>
   );

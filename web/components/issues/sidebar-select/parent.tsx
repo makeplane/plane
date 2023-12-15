@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // components
 import { ParentIssuesListModal } from "components/issues";
 // types
-import { IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   onChange: (value: string) => void;
@@ -13,11 +13,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarParentSelect: React.FC<Props> = ({
-  onChange,
-  issueDetails,
-  disabled = false,
-}) => {
+export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, disabled = false }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 
@@ -38,7 +34,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
       />
       <button
         type="button"
-        className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 ${
+        className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
           disabled ? "cursor-not-allowed" : "cursor-pointer "
         }`}
         onClick={() => setIsParentModalOpen(true)}

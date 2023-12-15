@@ -12,9 +12,7 @@ const getValueFromLocalStorage = (key: string, defaultValue: any) => {
 };
 
 const useLocalStorage = <T,>(key: string, initialValue: T) => {
-  const [storedValue, setStoredValue] = useState<T | null>(() =>
-    getValueFromLocalStorage(key, initialValue)
-  );
+  const [storedValue, setStoredValue] = useState<T | null>(() => getValueFromLocalStorage(key, initialValue));
 
   const setValue = useCallback(
     (value: T) => {
