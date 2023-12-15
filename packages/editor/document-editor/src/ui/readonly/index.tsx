@@ -106,10 +106,10 @@ const DocumentReadOnlyEditor = ({
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
       />
       <div className="flex h-full w-full overflow-y-auto">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
+        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-full">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             updatePageTitle={() => Promise.resolve()}
             readonly={true}
@@ -118,7 +118,7 @@ const DocumentReadOnlyEditor = ({
             documentDetails={documentDetails}
           />
         </div>
-        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-80" />
+        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-72" />
       </div>
     </div>
   );
