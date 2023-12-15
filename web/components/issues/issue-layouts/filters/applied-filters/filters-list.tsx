@@ -1,5 +1,7 @@
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { X } from "lucide-react";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import {
   AppliedDateFilters,
@@ -10,8 +12,6 @@ import {
   AppliedStateFilters,
   AppliedStateGroupFilters,
 } from "components/issues";
-// icons
-import { X } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -34,10 +34,10 @@ const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, projects, states } = props;
-
+  // store hooks
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
   if (!appliedFilters) return null;
 

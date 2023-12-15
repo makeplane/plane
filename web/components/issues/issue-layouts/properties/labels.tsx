@@ -1,15 +1,14 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
 import { usePopper } from "react-popper";
+import { Check, ChevronDown, Search, Tags } from "lucide-react";
+// hooks
+import { useApplication, useLabel } from "hooks/store";
 // components
 import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
-import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store_legacy/root";
 import { IIssueLabel } from "types";
 
 export interface IIssuePropertyLabels {
@@ -44,18 +43,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
     placeholderText,
   } = props;
-
-  const {
-    workspace: workspaceStore,
-    projectLabel: { fetchProjectLabels, labels },
-  }: RootStore = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
-
+  // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const {
+    project: { fetchProjectLabels, projectLabels: storeLabels },
+  } = useLabel();
 
   const fetchLabels = () => {
     setIsLoading(true);
@@ -65,7 +65,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   if (!value) return null;
 
   let projectLabels: IIssueLabel[] = defaultOptions;
-  const storeLabels = projectId && labels ? labels[projectId] : [];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
   const options = projectLabels.map((label) => ({

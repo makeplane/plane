@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
+import { useApplication, useCycle, useLabel, useModule, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Spinner } from "@plane/ui";
@@ -10,7 +11,6 @@ import { JoinProject } from "components/auth-screens";
 import { EmptyState } from "components/common";
 // images
 import emptyProject from "public/empty-state/project.svg";
-import { useApplication, useCycle, useModule, useProjectState, useUser } from "hooks/store";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
@@ -21,7 +21,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // store
   const {
     project: { fetchProjectDetails, workspaceProjects },
-    projectLabel: { fetchProjectLabels },
     projectMember: { fetchProjectMembers },
     projectEstimates: { fetchProjectEstimates },
     projectViews: { fetchAllViews },
@@ -36,6 +35,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
   const { fetchProjectStates } = useProjectState();
+  const {
+    project: { fetchProjectLabels },
+  } = useLabel();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;

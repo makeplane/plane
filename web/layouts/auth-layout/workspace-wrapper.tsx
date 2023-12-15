@@ -4,7 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject, useUser } from "hooks/store";
+import { useLabel, useProject, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { Button, Spinner } from "@plane/ui";
@@ -17,13 +17,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { children } = props;
   // store hooks
   const {
-    workspace: { fetchWorkspaceLabels },
     workspaceMember: { fetchWorkspaceMembers, fetchWorkspaceUserProjectsRole },
   } = useMobxStore();
   const {
     membership: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
   } = useUser();
   const { fetchProjects } = useProject();
+  const {
+    workspace: { fetchWorkspaceLabels },
+  } = useLabel();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
-
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
+import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
+// hooks
+import { useProject, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 import {
   SidebarAssigneeSelect,
   SidebarCycleSelect,
@@ -39,13 +39,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   // states
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-
+  // store hooks
   const {
-    user: { currentProjectRole },
     issueDetail: { fetchPeekIssueDetails },
-    project: { getProjectById },
   } = useMobxStore();
-
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getProjectById } = useProject();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

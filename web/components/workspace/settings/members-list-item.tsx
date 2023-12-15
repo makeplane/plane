@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { ChevronDown, Dot, XCircle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
@@ -35,17 +35,21 @@ type Props = {
 
 export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const { member } = props;
+  // states
+  const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
     workspaceMember: { removeMember, updateMember, updateMemberInvitation, deleteWorkspaceInvitation },
-    user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings, leaveWorkspace },
   } = useMobxStore();
-  // states
-  const [removeMemberModal, setRemoveMemberModal] = useState(false);
-  // hooks
+  const {
+    currentUser,
+    currentUserSettings,
+    membership: { currentWorkspaceMemberInfo, currentWorkspaceRole, leaveWorkspace },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleLeaveWorkspace = async () => {

@@ -1,32 +1,35 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { ArrowLeft } from "lucide-react";
 // hooks
+import { useLabel, useProject, useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-// icons
-import { ArrowLeft } from "lucide-react";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
-// helper
-import { renderEmoji } from "helpers/emoji.helper";
 
 export const ProjectArchivedIssuesHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     archivedIssueFilters: archivedIssueFiltersStore,
-    projectState: projectStateStore,
   } = useMobxStore();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
 
   // for archived issues list layout is the only option
   const activeLayout = "list";
@@ -118,9 +121,9 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.archived_issues[activeLayout] : undefined
             }
-            labels={projectLabels ?? undefined}
+            labels={projectLabels}
             members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+            states={projectStates}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">

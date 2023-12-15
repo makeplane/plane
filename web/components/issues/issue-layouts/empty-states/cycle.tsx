@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -28,13 +28,15 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId } = props;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-
+  // store hooks
+  const { cycleIssues: cycleIssueStore } = useMobxStore();
   const {
-    cycleIssues: cycleIssueStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole: userRole },
-  } = useMobxStore();
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole: userRole },
+  } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -72,7 +74,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("CYCLE_EMPTY_STATE");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+              toggleCreateIssueModal(true, EProjectStore.CYCLE);
             },
           }}
           secondaryButton={

@@ -2,7 +2,8 @@ import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
+// hooks
+import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -21,24 +22,31 @@ import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     viewId: string;
   };
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
     projectMember: { projectMembers },
-    projectState: projectStateStore,
     projectViews: projectViewsStore,
     viewIssuesFilter: { issueFilters, updateFilters },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
   } = useMobxStore();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -164,9 +172,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
-            labels={projectLabels ?? undefined}
+            labels={projectLabels}
             members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+            states={projectStates}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
@@ -184,7 +192,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+              toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
             }}
             size="sm"
             prependIcon={<Plus />}

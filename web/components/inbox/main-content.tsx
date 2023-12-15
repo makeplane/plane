@@ -4,9 +4,9 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
-
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useProjectState, useUser } from "hooks/store";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction, IssueUpdateStatus } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
@@ -28,19 +28,19 @@ const defaultValues: Partial<IInboxIssue> = {
 };
 
 export const InboxMainContent: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
-
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  // store hooks
+  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
   const {
-    inboxIssues: inboxIssuesStore,
-    inboxIssueDetails: inboxIssueDetailsStore,
-    user: { currentUser, currentProjectRole },
-    projectState: { states },
-  } = useMobxStore();
-
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectStates } = useProjectState();
+  // form info
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
@@ -60,9 +60,7 @@ export const InboxMainContent: React.FC = observer(() => {
 
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
   const issueDetails = inboxIssueId ? inboxIssueDetailsStore.issueDetails[inboxIssueId.toString()] : undefined;
-  const currentIssueState = projectId
-    ? states[projectId.toString()]?.find((s) => s.id === issueDetails?.state)
-    : undefined;
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetails?.state);
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {

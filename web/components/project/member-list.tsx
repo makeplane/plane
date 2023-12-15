@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
+import { useApplication } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
@@ -12,19 +13,19 @@ import { Button, Loader } from "@plane/ui";
 import { Search } from "lucide-react";
 
 export const ProjectMemberList: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    projectMember: { projectMembers, fetchProjectMembers },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const {
+    projectMember: { projectMembers, fetchProjectMembers },
+  } = useMobxStore();
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   const searchedMembers = (projectMembers ?? []).filter((member) => {
     const fullName = `${member.member.first_name} ${member.member.last_name}`.toLowerCase();

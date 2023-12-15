@@ -1,12 +1,12 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/router";
-import { useMobxStore } from "lib/mobx/store-provider";
 import { DraggableProvidedDragHandleProps, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { X, Pencil } from "lucide-react";
+// hooks
+import { useLabel } from "hooks/store";
 // types
 import { IIssueLabel } from "types";
-//icons
-import { X, Pencil } from "lucide-react";
-//components
+// components
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 
@@ -21,23 +21,21 @@ type Props = {
 
 export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   const { label, setIsUpdating, handleLabelDelete, draggableSnapshot, dragHandleProps, isChild } = props;
-
   const { combineTargetFor, isDragging } = draggableSnapshot;
-
+  // states
+  const [isEditLabelForm, setEditLabelForm] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const { projectLabel: projectLabelStore } = useMobxStore();
-
-  //state
-  const [isEditLabelForm, setEditLabelForm] = useState(false);
+  // store hooks
+  const {
+    project: { updateLabel },
+  } = useLabel();
 
   const removeFromGroup = (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
 
-    projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+    updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
       parent: null,
     });
   };

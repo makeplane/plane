@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
+import { Plus, Search } from "lucide-react";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectViewListItem } from "components/views";
@@ -11,22 +12,23 @@ import { NewEmptyState } from "components/common/new-empty-state";
 import { Input, Loader } from "@plane/ui";
 // assets
 import emptyView from "public/empty-state/empty_view.webp";
-// icons
-import { Plus, Search } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectViewsList = observer(() => {
+  // states
   const [query, setQuery] = useState("");
-
+  // router
   const router = useRouter();
   const { projectId } = router.query;
-
+  // store hooks
+  const { projectViews: projectViewsStore } = useMobxStore();
   const {
-    projectViews: projectViewsStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    commandPalette: { toggleCreateViewModal },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
 
@@ -79,7 +81,7 @@ export const ProjectViewsList = observer(() => {
           primaryButton={{
             icon: <Plus size={14} strokeWidth={2} />,
             text: "Build your first view",
-            onClick: () => commandPaletteStore.toggleCreateViewModal(true),
+            onClick: () => toggleCreateViewModal(true),
           }}
           disabled={!isEditingAllowed}
         />

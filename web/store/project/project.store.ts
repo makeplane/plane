@@ -8,22 +8,20 @@ import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
 
 export interface IProjectStore {
+  // states
   loader: boolean;
   error: any | null;
-
+  // observables
   searchQuery: string;
-  projectId: string | null;
   projectMap: {
     [projectId: string]: IProject; // projectId: project Info
   };
-
   // computed
   searchedProjects: string[];
   workspaceProjects: string[] | null;
   joinedProjects: string[];
   favoriteProjects: string[];
   currentProjectDetails: IProject | undefined;
-
   // actions
   setSearchQuery: (query: string) => void;
   getProjectById: (projectId: string) => IProject | null;
@@ -43,15 +41,14 @@ export interface IProjectStore {
 }
 
 export class ProjectStore implements IProjectStore {
+  // states
   loader: boolean = false;
   error: any | null = null;
-
-  projectId: string | null = null;
+  // observables
   searchQuery: string = "";
   projectMap: {
     [projectId: string]: IProject; // projectId: project Info
   } = {};
-
   // root store
   rootStore: RootStore;
   // service
@@ -62,24 +59,19 @@ export class ProjectStore implements IProjectStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // observable
+      // states
       loader: observable.ref,
       error: observable.ref,
-
+      // observables
       searchQuery: observable.ref,
-      projectId: observable.ref,
       projectMap: observable,
-
       // computed
       searchedProjects: computed,
       workspaceProjects: computed,
-
       currentProjectDetails: computed,
-
       joinedProjects: computed,
       favoriteProjects: computed,
-
-      // action
+      // actions
       setSearchQuery: action,
       fetchProjects: action,
       fetchProjectDetails: action,

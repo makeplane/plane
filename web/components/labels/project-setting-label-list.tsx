@@ -10,9 +10,8 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useLabel } from "hooks/store";
 import useDraggableInPortal from "hooks/use-draggable-portal";
 // components
 import {
@@ -32,23 +31,22 @@ import { IIssueLabel } from "types";
 const LABELS_ROOT = "labels.root";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const renderDraggable = useDraggableInPortal();
-
-  // store
-  const {
-    projectLabel: { fetchProjectLabels, projectLabels, updateLabelPosition, projectLabelsTree },
-  } = useMobxStore();
   // states
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
   const [isDraggingGroup, setIsDraggingGroup] = useState(false);
-  // ref
+  // refs
   const scrollToRef = useRef<HTMLFormElement>(null);
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const {
+    project: { fetchProjectLabels, projectLabels, updateLabelPosition, projectLabelsTree },
+  } = useLabel();
+  // portal
+  const renderDraggable = useDraggableInPortal();
 
   // api call to fetch project details
   useSWR(

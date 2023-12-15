@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
-// mobx store
+// hooks
+import { useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -12,8 +14,6 @@ import { SubIssuesRootList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
 // ui
 import { CustomMenu } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -43,13 +43,15 @@ const issueService = new IssueService();
 
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
-
+  // store hooks
   const {
-    user: { currentProjectRole },
     issue: { updateIssueStructure },
     projectIssues: { updateIssue, removeIssue },
   } = useMobxStore();
-
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
