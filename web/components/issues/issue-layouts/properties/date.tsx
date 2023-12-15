@@ -56,6 +56,7 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
         return (
           <>
             <Popover.Button
+              as="button"
               ref={dropdownBtn}
               className={`flex h-5 w-full items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 outline-none duration-300 ${
                 disabled
