@@ -3,7 +3,7 @@ name: Create Sync Action
 on:
   pull_request:
     branches:
-      - develop # Change this to preview
+      - preview 
     types:
       - closed
 env: 
@@ -33,24 +33,14 @@ jobs:
           sudo apt update
           sudo apt install gh -y
 
-      - name: Create Pull Request
+      - name: Push Changes to Target Repo
         env:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           TARGET_REPO="${{ secrets.SYNC_TARGET_REPO_NAME }}"
           TARGET_BRANCH="${{ secrets.SYNC_TARGET_BRANCH_NAME }}"
-          TARGET_BASE_BRANCH="${{ secrets.SYNC_TARGET_BASE_BRANCH_NAME }}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
-          PR_TITLE="${{secrets.SYNC_PR_TITLE}}"
 
           git checkout $SOURCE_BRANCH
           git remote add target-origin "https://$GH_TOKEN@github.com/$TARGET_REPO.git"
           git push target-origin $SOURCE_BRANCH:$TARGET_BRANCH
-
-
-          gh pr create \
-            --base $TARGET_BASE_BRANCH \
-            --head $TARGET_BRANCH \
-            --title "sync changes" \
-            --body "sync changes" \
-            --repo $TARGET_REPO
