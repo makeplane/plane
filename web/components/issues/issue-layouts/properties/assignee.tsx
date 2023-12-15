@@ -142,7 +142,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex w-full items-center justify-between gap-1 text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
           } ${buttonClassName}`}
-          onClick={() => (!projectMembers || projectMembers.length === 0) && getProjectMembers()}
+          onClick={() => (!projectId || !_members[projectId]) && getProjectMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
