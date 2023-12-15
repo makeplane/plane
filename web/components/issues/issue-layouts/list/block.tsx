@@ -25,20 +25,27 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
     handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
-  const handleIssuePeekOverview = () => {
+  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-    });
+    if (event.ctrlKey || event.metaKey) {
+      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
+      window.open(issueUrl, "_blank"); // Open link in a new tab
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      });
+    }
   };
 
   const canEditIssueProperties = canEditProperties(issue.project);
 
   return (
     <>
-      <div className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm">
+      <button
+        className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm w-full"
+        onClick={handleIssuePeekOverview}
+      >
         {displayProperties && displayProperties?.key && (
           <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
             {issue?.project_detail?.identifier}-{issue.sequence_id}
@@ -49,10 +56,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
         )}
         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-          <div
-            className="line-clamp-1 w-full cursor-pointer text-sm font-medium text-custom-text-100"
-            onClick={handleIssuePeekOverview}
-          >
+          <div className="line-clamp-1 w-full cursor-pointer text-sm font-medium text-custom-text-100 text-left">
             {issue.name}
           </div>
         </Tooltip>
@@ -75,7 +79,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             </div>
           )}
         </div>
-      </div>
+      </button>
     </>
   );
 };
