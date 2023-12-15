@@ -251,7 +251,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         <h3 className="text-lg">Attachments</h3>
         <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           <IssueAttachmentUpload disabled={uneditable} />
-          <IssueAttachments />
+          <IssueAttachments editable={!uneditable} />
         </div>
       </div>
       <div className="space-y-5 pt-3">
