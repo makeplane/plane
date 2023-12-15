@@ -1,4 +1,6 @@
 // types
+import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
+import { Briefcase, FileText, LayoutGrid } from "lucide-react";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -8,19 +10,17 @@ import {
 
 export const commandGroups: {
   [key: string]: {
-    icon: string;
+    icon: JSX.Element;
     itemName: (item: any) => React.ReactNode;
     path: (item: any) => string;
     title: string;
   };
 } = {
   cycle: {
-    icon: "contrast",
+    icon: <ContrastIcon className="h-3 w-3" />,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{cycle.project__identifier}</span>
-        {"- "}
-        {cycle.name}
+        <span className="text-xs text-custom-text-300">{cycle.project__identifier}</span> {cycle.name}
       </h6>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -28,11 +28,12 @@ export const commandGroups: {
     title: "Cycles",
   },
   issue: {
-    icon: "stack",
+    icon: <LayersIcon className="h-3 w-3" />,
     itemName: (issue: IWorkspaceIssueSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{issue.project__identifier}</span>
-        {"- "}
+        <span className="text-xs text-custom-text-300">
+          {issue.project__identifier}-{issue.sequence_id}
+        </span>{" "}
         {issue.name}
       </h6>
     ),
@@ -41,12 +42,10 @@ export const commandGroups: {
     title: "Issues",
   },
   issue_view: {
-    icon: "photo_filter",
+    icon: <PhotoFilterIcon className="h-3 w-3" />,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{view.project__identifier}</span>
-        {"- "}
-        {view.name}
+        <span className="text-xs text-custom-text-300">{view.project__identifier}</span> {view.name}
       </h6>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -54,12 +53,10 @@ export const commandGroups: {
     title: "Views",
   },
   module: {
-    icon: "dataset",
+    icon: <DiceIcon className="h-3 w-3" />,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{module.project__identifier}</span>
-        {"- "}
-        {module.name}
+        <span className="text-xs text-custom-text-300">{module.project__identifier}</span> {module.name}
       </h6>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -67,12 +64,10 @@ export const commandGroups: {
     title: "Modules",
   },
   page: {
-    icon: "article",
+    icon: <FileText className="h-3 w-3" />,
     itemName: (page: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{page.project__identifier}</span>
-        {"- "}
-        {page.name}
+        <span className="text-xs text-custom-text-300">{page.project__identifier}</span> {page.name}
       </h6>
     ),
     path: (page: IWorkspaceDefaultSearchResult) =>
@@ -80,14 +75,13 @@ export const commandGroups: {
     title: "Pages",
   },
   project: {
-    icon: "work",
+    icon: <Briefcase className="h-3 w-3" />,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
-    path: (project: IWorkspaceProjectSearchResult) =>
-      `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
+    path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
     title: "Projects",
   },
   workspace: {
-    icon: "grid_view",
+    icon: <LayoutGrid className="h-3 w-3" />,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",

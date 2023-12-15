@@ -1,14 +1,13 @@
-import React from "react";
-
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // layouts
-import { ProfileAuthWrapper } from "layouts/profile-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
+import { UserProfileHeader } from "components/headers";
 import {
   ProfileActivity,
   ProfilePriorityDistribution,
@@ -17,21 +16,22 @@ import {
   ProfileWorkload,
 } from "components/profile";
 // types
-import type { NextPage } from "next";
 import { IUserStateDistribution, TStateGroups } from "types";
+import { NextPageWithLayout } from "types/app";
 // constants
 import { USER_PROFILE_DATA } from "constants/fetch-keys";
 import { GROUP_CHOICES } from "constants/project";
 
-const ProfileOverview: NextPage = () => {
+// services
+const userService = new UserService();
+
+const ProfileOverviewPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
   const { data: userProfile } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_DATA(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId
-      ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString())
-      : null
+    workspaceSlug && userId ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString()) : null
   );
 
   const stateDistribution: IUserStateDistribution[] = Object.keys(GROUP_CHOICES).map((key) => {
@@ -42,21 +42,24 @@ const ProfileOverview: NextPage = () => {
   });
 
   return (
-    <ProfileAuthWrapper>
-      <div className="h-full w-full px-5 md:px-9 py-5 space-y-7 overflow-y-auto">
-        <ProfileStats userProfile={userProfile} />
-        <ProfileWorkload stateDistribution={stateDistribution} />
-        <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
-          <ProfilePriorityDistribution userProfile={userProfile} />
-          <ProfileStateDistribution
-            stateDistribution={stateDistribution}
-            userProfile={userProfile}
-          />
-        </div>
-        <ProfileActivity />
+    <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9">
+      <ProfileStats userProfile={userProfile} />
+      <ProfileWorkload stateDistribution={stateDistribution} />
+      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
+        <ProfilePriorityDistribution userProfile={userProfile} />
+        <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
       </div>
-    </ProfileAuthWrapper>
+      <ProfileActivity />
+    </div>
   );
 };
 
-export default ProfileOverview;
+ProfileOverviewPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<UserProfileHeader />}>
+      <ProfileAuthWrapper>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
+};
+
+export default ProfileOverviewPage;

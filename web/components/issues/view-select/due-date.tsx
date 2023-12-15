@@ -1,54 +1,53 @@
-import { useRouter } from "next/router";
-
 // ui
-import { CustomDatePicker, Tooltip } from "components/ui";
+import { CustomDatePicker } from "components/ui";
+import { Tooltip } from "@plane/ui";
+import { CalendarCheck } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
-// services
-import trackEventServices from "services/track-event.service";
+import {
+  findHowManyDaysLeft,
+  renderShortDate,
+  renderShortDateWithYearFormat,
+  renderShortMonthDate,
+} from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
-import useIssuesView from "hooks/use-issues-view";
+import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (date: string | null) => void;
   handleOnOpen?: () => void;
   handleOnClose?: () => void;
   tooltipPosition?: "top" | "bottom";
+  className?: string;
   noBorder?: boolean;
-  user: ICurrentUserResponse | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
 export const ViewDueDateSelect: React.FC<Props> = ({
   issue,
-  partialUpdateIssue,
+  onChange,
   handleOnOpen,
   handleOnClose,
   tooltipPosition = "top",
+  className = "",
   noBorder = false,
-  user,
-  isNotAllowed,
+  disabled,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { displayFilters } = useIssuesView();
-
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
+
+  const today = new Date();
+  const endDate = new Date(issue.target_date ?? "");
+  const areYearsEqual = endDate.getFullYear() === today.getFullYear();
 
   return (
     <Tooltip
       tooltipHeading="Due date"
-      tooltipContent={
-        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
-      }
+      tooltipContent={issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"}
       position={tooltipPosition}
     >
       <div
-        className={`group flex-shrink-0 relative max-w-[6.5rem] ${
+        className={`group max-w-[6.5rem] flex-shrink-0 ${className} ${
           issue.target_date === null
             ? ""
             : issue.target_date < new Date().toISOString()
@@ -57,38 +56,37 @@ export const ViewDueDateSelect: React.FC<Props> = ({
         }`}
       >
         <CustomDatePicker
-          placeholder="Due date"
           value={issue?.target_date}
-          onChange={(val) => {
-            partialUpdateIssue(
-              {
-                target_date: val,
-              },
-              issue
-            );
-            trackEventServices.trackIssuePartialPropertyUpdateEvent(
-              {
-                workspaceSlug,
-                workspaceId: issue.workspace,
-                projectId: issue.project_detail.id,
-                projectIdentifier: issue.project_detail.identifier,
-                projectName: issue.project_detail.name,
-                issueId: issue.id,
-              },
-              "ISSUE_PROPERTY_UPDATE_DUE_DATE",
-              user
-            );
-          }}
-          className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
-            displayFilters.layout === "kanban"
-              ? "bg-custom-background-90"
-              : "bg-custom-background-100"
-          }`}
+          onChange={onChange}
+          className={`bg-transparent ${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}`}
+          customInput={
+            <div
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
+                issue.target_date ? "pr-6 text-custom-text-300" : "text-custom-text-400"
+              }`}
+            >
+              {issue.target_date ? (
+                <>
+                  <CalendarCheck className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>
+                    {areYearsEqual
+                      ? renderShortDate(issue.target_date ?? "", "_ _")
+                      : renderShortMonthDate(issue.target_date ?? "", "_ _")}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <CalendarCheck className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>Due Date</span>
+                </>
+              )}
+            </div>
+          }
           minDate={minDate ?? undefined}
           noBorder={noBorder}
           handleOnOpen={handleOnOpen}
           handleOnClose={handleOnClose}
-          disabled={isNotAllowed}
+          disabled={disabled}
         />
       </div>
     </Tooltip>

@@ -1,134 +1,107 @@
-import React, { useEffect, useState } from "react";
-
+import { Fragment, useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
+import { Plus } from "lucide-react";
 // hooks
-import useLocalStorage from "hooks/use-local-storage";
-import useUserAuth from "hooks/use-user-auth";
-import useProjectDetails from "hooks/use-project-details";
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
-import {
-  ActiveCycleDetails,
-  AllCyclesList,
-  CompletedCyclesList,
-  CreateUpdateCycleModal,
-  DraftCyclesList,
-  UpcomingCyclesList,
-} from "components/cycles";
+import { CyclesHeader } from "components/headers";
+import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
-import { EmptyState, Icon, PrimaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Tooltip } from "@plane/ui";
 // images
-import emptyCycle from "public/empty-state/cycle.svg";
+import emptyCycle from "public/empty-state/empty_cycles.webp";
 // types
-import { SelectCycleType } from "types";
-import type { NextPage } from "next";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { TCycleView, TCycleLayout } from "types";
+import { NextPageWithLayout } from "types/app";
+// constants
+import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+// lib cookie
+import { setLocalStorage, getLocalStorage } from "lib/local-storage";
+import { NewEmptyState } from "components/common/new-empty-state";
+// TODO: use-local-storage  hook instead of lib file.
 
-const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
-
-const cycleViews = [
-  {
-    key: "list",
-    icon: "list",
-  },
-  {
-    key: "board",
-    icon: "dataset",
-  },
-  {
-    key: "gantt",
-    icon: "view_timeline",
-  },
-];
-
-const ProjectCycles: NextPage = () => {
-  const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
-  const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
-
-  const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "All");
-  const { storedValue: cyclesView, setValue: setCyclesView } = useLocalStorage("cycleView", "list");
-
-  const currentTabValue = (tab: string | null) => {
-    switch (tab) {
-      case "All":
-        return 0;
-      case "Active":
-        return 1;
-      case "Upcoming":
-        return 2;
-      case "Completed":
-        return 3;
-      case "Drafts":
-        return 4;
-      default:
-        return 0;
-    }
-  };
-
+const ProjectCyclesPage: NextPageWithLayout = observer(() => {
+  const [createModal, setCreateModal] = useState(false);
+  // store
+  const { cycle: cycleStore } = useMobxStore();
+  const { projectCycles } = cycleStore;
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, peekCycle } = router.query;
 
-  const { user } = useUserAuth();
-  const { projectDetails } = useProjectDetails();
+  const handleCurrentLayout = useCallback(
+    (_layout: TCycleLayout) => {
+      if (projectId) {
+        setLocalStorage(`cycle_layout:${projectId}`, _layout);
+        cycleStore.setCycleLayout(_layout);
+      }
+    },
+    [cycleStore, projectId]
+  );
+
+  const handleCurrentView = useCallback(
+    (_view: TCycleView) => {
+      if (projectId) {
+        setLocalStorage(`cycle_view:${projectId}`, _view);
+        cycleStore.setCycleView(_view);
+        if (_view === "draft" && cycleStore.cycleLayout === "gantt") {
+          handleCurrentLayout("list");
+        }
+      }
+    },
+    [cycleStore, projectId, handleCurrentLayout]
+  );
 
   useEffect(() => {
-    if (createUpdateCycleModal) return;
+    if (projectId) {
+      const _viewKey = `cycle_view:${projectId}`;
+      const _viewValue = getLocalStorage(_viewKey);
+      if (_viewValue && _viewValue !== cycleStore?.cycleView) cycleStore.setCycleView(_viewValue as TCycleView);
+      else handleCurrentView("all");
 
-    const timer = setTimeout(() => {
-      setSelectedCycle(undefined);
-      clearTimeout(timer);
-    }, 500);
-  }, [createUpdateCycleModal]);
+      const _layoutKey = `cycle_layout:${projectId}`;
+      const _layoutValue = getLocalStorage(_layoutKey);
+      if (_layoutValue && _layoutValue !== cycleStore?.cycleView)
+        cycleStore.setCycleLayout(_layoutValue as TCycleLayout);
+      else handleCurrentLayout("list");
+    }
+  }, [projectId, cycleStore, handleCurrentView, handleCurrentLayout]);
+
+  const cycleView = cycleStore?.cycleView;
+  const cycleLayout = cycleStore?.cycleLayout;
+  const totalCycles = projectCycles?.length ?? 0;
+
+  if (!workspaceSlug || !projectId) return null;
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Cycles`} />
-        </Breadcrumbs>
-      }
-      right={
-        <PrimaryButton
-          className="flex items-center gap-2"
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "q" });
-            document.dispatchEvent(e);
-          }}
-        >
-          <PlusIcon className="h-4 w-4" />
-          Add Cycle
-        </PrimaryButton>
-      }
-    >
-      <CreateUpdateCycleModal
-        isOpen={createUpdateCycleModal}
-        handleClose={() => setCreateUpdateCycleModal(false)}
-        data={selectedCycle}
-        user={user}
+    <>
+      <CycleCreateUpdateModal
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        isOpen={createModal}
+        handleClose={() => setCreateModal(false)}
       />
-      {projectDetails?.total_cycles === 0 ? (
-        <div className="h-full grid place-items-center">
-          <EmptyState
-            title="Plan your project with cycles"
-            description="Cycle is a custom time period in which a team works to complete items on their backlog."
+      {totalCycles === 0 ? (
+        <div className="grid h-full place-items-center">
+          <NewEmptyState
+            title="Group and timebox your work in Cycles."
+            description="Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team."
             image={emptyCycle}
+            comicBox={{
+              title: "Cycles are repetitive time-boxes.",
+              direction: "right",
+              description:
+                "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+            }}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
-              text: "New Cycle",
+              icon: <Plus className="h-4 w-4" />,
+              text: "Set your first cycle",
               onClick: () => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "q",
-                });
-                document.dispatchEvent(e);
+                setCreateModal(true);
               },
             }}
           />
@@ -136,95 +109,123 @@ const ProjectCycles: NextPage = () => {
       ) : (
         <Tab.Group
           as="div"
-          className="h-full flex flex-col overflow-hidden"
-          defaultIndex={currentTabValue(cycleTab)}
-          selectedIndex={currentTabValue(cycleTab)}
+          className="flex h-full flex-col overflow-hidden"
+          defaultIndex={CYCLE_TAB_LIST.findIndex((i) => i.key == cycleStore?.cycleView)}
+          selectedIndex={CYCLE_TAB_LIST.findIndex((i) => i.key == cycleStore?.cycleView)}
           onChange={(i) => {
-            switch (i) {
-              case 0:
-                return setCycleTab("All");
-              case 1:
-                return setCycleTab("Active");
-              case 2:
-                return setCycleTab("Upcoming");
-              case 3:
-                return setCycleTab("Completed");
-              case 4:
-                return setCycleTab("Drafts");
-              default:
-                return setCycleTab("All");
-            }
+            handleCurrentView(CYCLE_TAB_LIST[i].key as TCycleView);
           }}
         >
-          <div className="flex flex-col sm:flex-row gap-4 justify-between border-b border-custom-border-300 px-4 sm:px-5 pb-4 sm:pb-0">
+          <div className="flex flex-col items-end justify-between gap-4 border-b border-custom-border-200 px-4 pb-4 sm:flex-row sm:items-center sm:px-5 sm:pb-0">
             <Tab.List as="div" className="flex items-center overflow-x-scroll">
-              {tabsList.map((tab, index) => {
-                if (cyclesView === "gantt_chart" && (tab === "Active" || tab === "Drafts"))
-                  return null;
-
-                return (
-                  <Tab
-                    key={index}
-                    className={({ selected }) =>
-                      `border-b-2 p-4 text-sm font-medium outline-none ${
-                        selected
-                          ? "border-custom-primary-100 text-custom-primary-100"
-                          : "border-transparent"
-                      }`
-                    }
-                  >
-                    {tab}
-                  </Tab>
-                );
-              })}
+              {CYCLE_TAB_LIST.map((tab) => (
+                <Tab
+                  key={tab.key}
+                  className={({ selected }) =>
+                    `border-b-2 p-4 text-sm font-medium outline-none ${
+                      selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
+                    }`
+                  }
+                >
+                  {tab.name}
+                </Tab>
+              ))}
             </Tab.List>
-            <div className="justify-end sm:justify-start flex items-center gap-x-1">
-              {cycleViews.map((view) => {
-                if (cycleTab === "Active") return null;
-                if (view.key === "gantt" && cycleTab === "Drafts") return null;
+            {cycleStore?.cycleView != "active" && (
+              <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+                {CYCLE_VIEW_LAYOUTS.map((layout) => {
+                  if (layout.key === "gantt" && cycleStore?.cycleView === "draft") return null;
 
-                return (
-                  <button
-                    key={view.key}
-                    type="button"
-                    className={`grid h-8 w-8 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                      cyclesView === view.key
-                        ? "bg-custom-background-80 text-custom-text-100"
-                        : "text-custom-text-200"
-                    }`}
-                    onClick={() => setCyclesView(view.key)}
-                  >
-                    <Icon iconName={view.icon} className="!text-base" />
-                  </button>
-                );
-              })}
-            </div>
+                  return (
+                    <Tooltip key={layout.key} tooltipContent={layout.title}>
+                      <button
+                        type="button"
+                        className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
+                          cycleStore?.cycleLayout == layout.key
+                            ? "bg-custom-background-100 shadow-custom-shadow-2xs"
+                            : ""
+                        }`}
+                        onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
+                      >
+                        <layout.icon
+                          strokeWidth={2}
+                          className={`h-3.5 w-3.5 ${
+                            cycleStore?.cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                          }`}
+                        />
+                      </button>
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          <Tab.Panels as={React.Fragment}>
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              <AllCyclesList viewType={cyclesView} />
+
+          <Tab.Panels as={Fragment}>
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
+              {cycleView && cycleLayout && (
+                <CyclesView
+                  filter={"all"}
+                  layout={cycleLayout as TCycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
+              )}
             </Tab.Panel>
-            {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
-                <ActiveCycleDetails />
-              </Tab.Panel>
-            )}
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              <UpcomingCyclesList viewType={cyclesView} />
+
+            <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto p-4 sm:p-5">
+              <ActiveCycleDetails workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
             </Tab.Panel>
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              <CompletedCyclesList viewType={cyclesView} />
+
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
+              {cycleView && cycleLayout && (
+                <CyclesView
+                  filter={"upcoming"}
+                  layout={cycleLayout as TCycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
+              )}
             </Tab.Panel>
-            {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-                <DraftCyclesList viewType={cyclesView} />
-              </Tab.Panel>
-            )}
+
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
+              {cycleView && cycleLayout && workspaceSlug && projectId && (
+                <CyclesView
+                  filter={"completed"}
+                  layout={cycleLayout as TCycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
+              )}
+            </Tab.Panel>
+
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
+              {cycleView && cycleLayout && workspaceSlug && projectId && (
+                <CyclesView
+                  filter={"draft"}
+                  layout={cycleLayout as TCycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
+              )}
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       )}
-    </ProjectAuthorizationWrapper>
+    </>
+  );
+});
+
+ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 
-export default ProjectCycles;
+export default ProjectCyclesPage;

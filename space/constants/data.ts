@@ -1,6 +1,5 @@
 // interfaces
 import {
-  IIssueBoardViews,
   // priority
   TIssuePriorityKey,
   // state groups
@@ -8,14 +7,6 @@ import {
   IIssuePriorityFilters,
   IIssueGroup,
 } from "types/issue";
-// icons
-import {
-  BacklogStateIcon,
-  UnstartedStateIcon,
-  StartedStateIcon,
-  CompletedStateIcon,
-  CancelledStateIcon,
-} from "components/icons";
 
 // all issue views
 export const issueViews: any = {
@@ -92,35 +83,30 @@ export const issueGroups: IIssueGroup[] = [
     title: "Backlog",
     color: "#d9d9d9",
     className: `text-[#d9d9d9] bg-[#d9d9d9]/10`,
-    icon: BacklogStateIcon,
   },
   {
     key: "unstarted",
     title: "Unstarted",
     color: "#3f76ff",
     className: `text-[#3f76ff] bg-[#3f76ff]/10`,
-    icon: UnstartedStateIcon,
   },
   {
     key: "started",
     title: "Started",
     color: "#f59e0b",
     className: `text-[#f59e0b] bg-[#f59e0b]/10`,
-    icon: StartedStateIcon,
   },
   {
     key: "completed",
     title: "Completed",
     color: "#16a34a",
     className: `text-[#16a34a] bg-[#16a34a]/10`,
-    icon: CompletedStateIcon,
   },
   {
     key: "cancelled",
     title: "Cancelled",
     color: "#dc2626",
     className: `text-[#dc2626] bg-[#dc2626]/10`,
-    icon: CancelledStateIcon,
   },
 ];
 

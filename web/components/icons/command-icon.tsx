@@ -1,10 +1,11 @@
-import React from "react";
+import { FC } from "react";
 
 import type { Props } from "./types";
 
-export const CommandIcon: React.FC<Props> = ({
+export const CommandIcon: FC<Props> = ({
   width = "81",
   height = "80",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   color = "rgb(var(--color-text-200))",
   className,
 }) => (

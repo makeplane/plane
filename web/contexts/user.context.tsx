@@ -1,21 +1,22 @@
 import React, { createContext, ReactElement } from "react";
-
 import useSWR, { KeyedMutator } from "swr";
-
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 // types
-import type { ICurrentUserResponse, IUser } from "types";
+import type { IUser } from "types";
 
 interface IUserContextProps {
   user?: IUser;
   isUserLoading: boolean;
-  mutateUser: KeyedMutator<ICurrentUserResponse>;
+  mutateUser: KeyedMutator<IUser>;
   assignedIssuesLength?: number;
   workspaceInvitesLength?: number;
 }
+
+// services
+const userService = new UserService();
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
 
@@ -28,11 +29,9 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   return (
     <UserContext.Provider
       value={{
-        user: error ? undefined : data?.user,
-        isUserLoading: Boolean(data?.user === undefined && error === undefined),
+        user: error ? undefined : data,
+        isUserLoading: Boolean(data === undefined && error === undefined),
         mutateUser: mutate,
-        assignedIssuesLength: data?.assigned_issues ?? 0,
-        workspaceInvitesLength: data?.workspace_invites ?? 0,
       }}
     >
       {children}

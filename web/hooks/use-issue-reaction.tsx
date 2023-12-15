@@ -2,15 +2,14 @@ import useSWR from "swr";
 
 // fetch keys
 import { ISSUE_REACTION_LIST } from "constants/fetch-keys";
-
 // helpers
 import { groupReactions } from "helpers/emoji.helper";
-
 // services
-import reactionService from "services/reaction.service";
-
+import { IssueReactionService } from "services/issue";
 // hooks
 import useUser from "./use-user";
+
+const issueReactionService = new IssueReactionService();
 
 const useIssueReaction = (
   workspaceSlug?: string | string[] | null,
@@ -29,11 +28,7 @@ const useIssueReaction = (
       : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          reactionService.listIssueReactions(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            issueId.toString()
-          )
+          issueReactionService.listIssueReactions(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
@@ -48,12 +43,11 @@ const useIssueReaction = (
   const handleReactionCreate = async (reaction: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
-    const data = await reactionService.createIssueReaction(
+    const data = await issueReactionService.createIssueReaction(
       workspaceSlug.toString(),
       projectId.toString(),
       issueId.toString(),
-      { reaction },
-      user.user
+      { reaction }
     );
 
     mutateReaction((prev: any) => [...(prev || []), data]);
@@ -69,17 +63,15 @@ const useIssueReaction = (
     if (!workspaceSlug || !projectId || !issueId) return;
 
     mutateReaction(
-      (prevData: any) =>
-        prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      (prevData: any) => prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
       false
     );
 
-    await reactionService.deleteIssueReaction(
+    await issueReactionService.deleteIssueReaction(
       workspaceSlug.toString(),
       projectId.toString(),
       issueId.toString(),
-      reaction,
-      user.user
+      reaction
     );
 
     mutateReaction();

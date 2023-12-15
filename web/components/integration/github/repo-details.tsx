@@ -7,9 +7,9 @@ import useSWR from "swr";
 // react-hook-form
 import { UseFormSetValue } from "react-hook-form";
 // services
-import GithubIntegrationService from "services/integration/github.service";
+import { GithubIntegrationService } from "services/integrations";
 // ui
-import { Loader, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // types
 import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
 // fetch-keys
@@ -22,22 +22,18 @@ type Props = {
   setValue: UseFormSetValue<TFormValues>;
 };
 
-export const GithubRepoDetails: FC<Props> = ({
-  selectedRepo,
-  handleStepChange,
-  setUsers,
-  setValue,
-}) => {
+// services
+const githubIntegrationService = new GithubIntegrationService();
+
+export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { data: repoInfo } = useSWR(
-    workspaceSlug && selectedRepo
-      ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name)
-      : null,
+    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name) : null,
     workspaceSlug && selectedRepo
       ? () =>
-          GithubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
+          githubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
             owner: selectedRepo.owner.login,
             repo: selectedRepo.name,
           })
@@ -92,13 +88,16 @@ export const GithubRepoDetails: FC<Props> = ({
         </Loader>
       )}
       <div className="mt-6 flex items-center justify-end gap-2">
-        <SecondaryButton onClick={() => handleStepChange("import-data")}>Back</SecondaryButton>
-        <PrimaryButton
+        <Button variant="neutral-primary" onClick={() => handleStepChange("import-data")}>
+          Back
+        </Button>
+        <Button
+          variant="primary"
           onClick={() => handleStepChange("import-users")}
           disabled={!repoInfo || repoInfo.issue_count === 0}
         >
           Next
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   );

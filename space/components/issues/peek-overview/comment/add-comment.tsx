@@ -7,11 +7,13 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import { Comment } from "types/issue";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+// service
+import fileService from "services/file.service";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -27,7 +29,6 @@ export const AddComment: React.FC<Props> = observer((props) => {
   const {
     handleSubmit,
     control,
-    setValue,
     watch,
     formState: { isSubmitting },
     reset,
@@ -69,35 +70,46 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <TipTapEditor
-              workspaceSlug={workspace_slug as string}
+            <LiteTextEditorWithRef
+              onEnterKeyPress={(e) => {
+                userStore.requiredLogin(() => {
+                  handleSubmit(onSubmit)(e);
+                });
+              }}
+              cancelUploadImage={fileService.cancelUpload}
+              uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
+              deleteFile={fileService.deleteImage}
+              restoreFile={fileService.restoreImage}
               ref={editorRef}
               value={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                   ? watch("comment_html")
                   : value
               }
-              customClassName="p-3 min-h-[50px] shadow-sm"
+              customClassName="p-2"
+              editorContentCustomClassNames="min-h-[35px]"
               debouncedUpdatesEnabled={false}
               onChange={(comment_json: Object, comment_html: string) => {
                 onChange(comment_html);
               }}
+              submitButton={
+                <Button
+                  disabled={isSubmitting || disabled}
+                  variant="primary"
+                  type="submit"
+                  className="!px-2.5 !py-1.5 !text-xs"
+                  onClick={(e) => {
+                    userStore.requiredLogin(() => {
+                      handleSubmit(onSubmit)(e);
+                    });
+                  }}
+                >
+                  {isSubmitting ? "Adding..." : "Comment"}
+                </Button>
+              }
             />
           )}
         />
-
-        <SecondaryButton
-          onClick={(e) => {
-            userStore.requiredLogin(() => {
-              handleSubmit(onSubmit)(e);
-            });
-          }}
-          type="submit"
-          disabled={isSubmitting || disabled}
-          className="mt-2"
-        >
-          {isSubmitting ? "Adding..." : "Comment"}
-        </SecondaryButton>
       </div>
     </div>
   );

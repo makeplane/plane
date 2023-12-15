@@ -4,7 +4,6 @@ import io
 import json
 import boto3
 import zipfile
-from urllib.parse import urlparse, urlunparse
 
 # Django imports
 from django.conf import settings
@@ -83,6 +82,7 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
         "public-read",
         "application/zip",
     )
+
     presigned_url = s3.refresh_url(file_name, expires_in)
 
     exporter_instance = ExporterHistory.objects.get(token=token_id)

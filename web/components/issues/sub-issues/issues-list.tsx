@@ -1,13 +1,12 @@
-import React from "react";
-// swr
+import { useEffect } from "react";
 import useSWR from "swr";
 // components
 import { SubIssues } from "./issue";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
@@ -16,7 +15,7 @@ export interface ISubIssuesRootList {
   projectId: string;
   parentIssue: IIssue;
   spacingLeft?: number;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
@@ -27,7 +26,10 @@ export interface ISubIssuesRootList {
     issueId: string,
     issue?: IIssue | null
   ) => void;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
 }
+
+const issueService = new IssueService();
 
 export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   workspaceSlug,
@@ -41,17 +43,16 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
+  handleUpdateIssue,
 }) => {
   const { data: issues, isLoading } = useSWR(
+    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
     workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? SUB_ISSUES(parentIssue?.id)
-      : null,
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
+      ? () => issueService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoading) {
       handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
     } else {
@@ -59,37 +60,38 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
         handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
       }
     }
-  }, [isLoading]);
+  }, [handleIssuesLoader, isLoading, issuesLoader.sub_issues, parentIssue?.id]);
 
   return (
-    <div className="relative">
-      {issues &&
-        issues.sub_issues &&
-        issues.sub_issues.length > 0 &&
-        issues.sub_issues.map((issue: IIssue) => (
-          <SubIssues
-            key={`${issue?.id}`}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssue={parentIssue}
-            issue={issue}
-            spacingLeft={spacingLeft}
-            user={user}
-            editable={editable}
-            removeIssueFromSubIssues={removeIssueFromSubIssues}
-            issuesLoader={issuesLoader}
-            handleIssuesLoader={handleIssuesLoader}
-            copyText={copyText}
-            handleIssueCrudOperation={handleIssueCrudOperation}
-          />
-        ))}
+    <>
+      <div className="relative">
+        {issues &&
+          issues.sub_issues &&
+          issues.sub_issues.length > 0 &&
+          issues.sub_issues.map((issue: IIssue) => (
+            <SubIssues
+              key={`${issue?.id}`}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              parentIssue={parentIssue}
+              issue={issue}
+              spacingLeft={spacingLeft}
+              user={user}
+              editable={editable}
+              removeIssueFromSubIssues={removeIssueFromSubIssues}
+              issuesLoader={issuesLoader}
+              handleIssuesLoader={handleIssuesLoader}
+              copyText={copyText}
+              handleIssueCrudOperation={handleIssueCrudOperation}
+              handleUpdateIssue={handleUpdateIssue}
+            />
+          ))}
 
-      <div
-        className={`absolute top-0 bottom-0  ${
-          spacingLeft > 10 ? `border-l border-custom-border-100` : ``
-        }`}
-        style={{ left: `${spacingLeft - 12}px` }}
-      />
-    </div>
+        <div
+          className={`absolute bottom-0 top-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
+          style={{ left: `${spacingLeft - 12}px` }}
+        />
+      </div>
+    </>
   );
 };

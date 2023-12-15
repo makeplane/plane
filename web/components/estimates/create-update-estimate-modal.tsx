@@ -1,45 +1,27 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
-import { useForm } from "react-hook-form";
-// headless ui
+import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import estimatesService from "services/estimates.service";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
-// fetch-keys
-import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
+import { IEstimate, IEstimateFormData } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
-  user: ICurrentUserResponse | undefined;
 };
 
-type FormValues = {
-  name: string;
-  description: string;
-  value1: string;
-  value2: string;
-  value3: string;
-  value4: string;
-  value5: string;
-  value6: string;
-};
-
-const defaultValues: Partial<FormValues> = {
+const defaultValues = {
   name: "",
   description: "",
   value1: "",
@@ -50,11 +32,24 @@ const defaultValues: Partial<FormValues> = {
   value6: "",
 };
 
-export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
+type FormValues = typeof defaultValues;
+
+export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
+  const { handleClose, data, isOpen } = props;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  // store
   const {
-    register,
-    formState: { isSubmitting },
+    projectEstimates: { createEstimate, updateEstimate },
+  } = useMobxStore();
+
+  const {
+    formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
   } = useForm<FormValues>({
     defaultValues,
@@ -65,81 +60,47 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     reset();
   };
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
   const { setToastAlert } = useToast();
 
-  const createEstimate = async (payload: IEstimateFormData) => {
+  const handleCreateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    await estimatesService
-      .createEstimate(workspaceSlug as string, projectId as string, payload, user)
+    await createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
-        mutate(ESTIMATES_LIST(projectId as string));
         onClose();
       })
       .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Estimate with that name already exists. Please try again with another name.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Estimate could not be created. Please try again.",
-          });
-      });
-  };
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-  const updateEstimate = async (payload: IEstimateFormData) => {
-    if (!workspaceSlug || !projectId || !data) return;
-
-    mutate<IEstimate[]>(
-      ESTIMATES_LIST(projectId.toString()),
-      (prevData) =>
-        prevData?.map((p) => {
-          if (p.id === data.id)
-            return {
-              ...p,
-              name: payload.estimate.name,
-              description: payload.estimate.description,
-              points: p.points.map((point, index) => ({
-                ...point,
-                value: payload.estimate_points[index].value,
-              })),
-            };
-
-          return p;
-        }),
-      false
-    );
-
-    await estimatesService
-      .patchEstimate(
-        workspaceSlug as string,
-        projectId as string,
-        data?.id as string,
-        payload,
-        user
-      )
-      .then(() => {
-        mutate(ESTIMATES_LIST(projectId.toString()));
-        mutate(ESTIMATE_DETAILS(data.id));
-        handleClose();
-      })
-      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Estimate could not be updated. Please try again.",
+          message:
+            errorString ?? err.status === 400
+              ? "Estimate with that name already exists. Please try again with another name."
+              : "Estimate could not be created. Please try again.",
         });
       });
+  };
 
-    onClose();
+  const handleUpdateEstimate = async (payload: IEstimateFormData) => {
+    if (!workspaceSlug || !projectId || !data) return;
+
+    await updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
+      .then(() => {
+        onClose();
+      })
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
+
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: errorString ?? "Estimate could not be updated. Please try again.",
+        });
+      });
   };
 
   const onSubmit = async (formData: FormValues) => {
@@ -208,8 +169,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
       else payload.estimate_points.push({ ...point });
     }
 
-    if (data) await updateEstimate(payload);
-    else await createEstimate(payload);
+    if (data) await handleUpdateEstimate(payload);
+    else await handleCreateEstimate(payload);
   };
 
   useEffect(() => {
@@ -240,7 +201,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -254,142 +215,93 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
-                      <div className="text-lg font-medium leading-6">
-                        {data ? "Update" : "Create"} Estimate
-                      </div>
+                      <div className="text-lg font-medium leading-6">{data ? "Update" : "Create"} Estimate</div>
                       <div>
-                        <Input
-                          id="name"
+                        <Controller
+                          control={control}
                           name="name"
-                          type="name"
-                          placeholder="Title"
-                          autoComplete="off"
-                          className="resize-none text-xl"
-                          register={register}
+                          render={({ field: { value, onChange, ref } }) => (
+                            <Input
+                              id="name"
+                              name="name"
+                              type="name"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Title"
+                              className="w-full resize-none text-xl"
+                            />
+                          )}
                         />
                       </div>
                       <div>
-                        <TextArea
-                          id="description"
+                        <Controller
                           name="description"
-                          placeholder="Description"
-                          className="h-32 resize-none text-sm"
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Description"
+                              onChange={onChange}
+                              className="mt-3 h-32 resize-none text-sm"
+                              hasError={Boolean(errors?.description)}
+                            />
+                          )}
                         />
                       </div>
+
+                      {/* list of all the points */}
+                      {/* since they are all the same, we can use a loop to render them */}
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">1</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
-                                name="value1"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 1"
-                                autoComplete="off"
-                                register={register}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">2</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
-                                name="value2"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 2"
-                                autoComplete="off"
-                                register={register}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">3</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
-                                name="value3"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 3"
-                                autoComplete="off"
-                                register={register}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">4</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
-                                name="value4"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 4"
-                                autoComplete="off"
-                                register={register}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">5</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
-                                name="value5"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 5"
-                                autoComplete="off"
-                                register={register}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">6</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
-                                name="value6"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 6"
-                                autoComplete="off"
-                                register={register}
-                              />
-                            </span>
-                          </span>
-                        </div>
+                        {Array(6)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div className="flex items-center">
+                              <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                                <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
+                                <span className="rounded-r-lg bg-custom-background-100">
+                                  <Controller
+                                    control={control}
+                                    name={`value${i + 1}` as keyof FormValues}
+                                    render={({ field: { value, onChange, ref } }) => (
+                                      <Input
+                                        ref={ref}
+                                        type="text"
+                                        value={value}
+                                        onChange={onChange}
+                                        id={`value${i + 1}`}
+                                        name={`value${i + 1}`}
+                                        placeholder={`Point ${i + 1}`}
+                                        className="w-full rounded-l-none"
+                                        hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
+                                      />
+                                    )}
+                                  />
+                                </span>
+                              </span>
+                            </div>
+                          ))}
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {data
                           ? isSubmitting
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
-                      </PrimaryButton>
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -400,4 +312,4 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
       </Transition.Root>
     </>
   );
-};
+});

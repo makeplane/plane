@@ -7,13 +7,30 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
 # Module imports
 from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
+
+
+def get_default_properties():
+    return {
+        "assignee": True,
+        "start_date": True,
+        "due_date": True,
+        "labels": True,
+        "key": True,
+        "priority": True,
+        "state": True,
+        "sub_issue_count": True,
+        "link": True,
+        "attachment_count": True,
+        "estimate": True,
+        "created_on": True,
+        "updated_on": True,
+    }
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
@@ -39,7 +56,7 @@ class Issue(ProjectBaseModel):
         ("high", "High"),
         ("medium", "Medium"),
         ("low", "Low"),
-        ("none", "None")
+        ("none", "None"),
     )
     parent = models.ForeignKey(
         "self",
@@ -114,25 +131,8 @@ class Issue(ProjectBaseModel):
                     self.state = default_state
             except ImportError:
                 pass
-        else:
-            try:
-                from plane.db.models import State, PageBlock
 
-                # Check if the current issue state and completed state id are same
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
-                    # check if there are any page blocks
-                    PageBlock.objects.filter(issue_id=self.id).filter().update(
-                        completed_at=timezone.now()
-                    )
-                else:
-                    PageBlock.objects.filter(issue_id=self.id).filter().update(
-                        completed_at=None
-                    )
-                    self.completed_at = None
 
-            except ImportError:
-                pass
         if self._state.adding:
             # Get the maximum display_id value from the database
             last_id = IssueSequence.objects.filter(project=self.project).aggregate(
@@ -140,8 +140,10 @@ class Issue(ProjectBaseModel):
             )["largest"]
             # aggregate can return None! Check it first.
             # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id is not None:
+            if last_id:
                 self.sequence_id = last_id + 1
+            else:
+                self.sequence_id = 1
 
             largest_sort_order = Issue.objects.filter(
                 project=self.project, state=self.state
@@ -186,7 +188,7 @@ class IssueRelation(ProjectBaseModel):
         ("relates_to", "Relates To"),
         ("blocked_by", "Blocked By"),
     )
-        
+
     issue = models.ForeignKey(
         Issue, related_name="issue_relation", on_delete=models.CASCADE
     )
@@ -209,6 +211,25 @@ class IssueRelation(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.related_issue.name}"    
+    
+class IssueMention(ProjectBaseModel):
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_mention"
+    )
+    mention = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_mention",
+    )
+    class Meta:
+        unique_together = ["issue", "mention"]
+        verbose_name = "Issue Mention"
+        verbose_name_plural = "Issue Mentions"
+        db_table = "issue_mentions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.mention.email}" 
 
 
 class IssueAssignee(ProjectBaseModel):
@@ -327,7 +348,9 @@ class IssueComment(ProjectBaseModel):
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_comments")
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_comments"
+    )
     # System can also create comment
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -367,7 +390,7 @@ class IssueProperty(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="issue_property_user",
     )
-    properties = models.JSONField(default=dict)
+    properties = models.JSONField(default=get_default_properties)
 
     class Meta:
         verbose_name = "Issue Property"
@@ -392,6 +415,7 @@ class Label(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     color = models.CharField(max_length=255, blank=True)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         unique_together = ["name", "project"]
@@ -399,6 +423,18 @@ class Label(ProjectBaseModel):
         verbose_name_plural = "Labels"
         db_table = "labels"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            # Get the maximum sequence value from the database
+            last_id = Label.objects.filter(project=self.project).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
+            # if last_id is not None
+            if last_id is not None:
+                self.sort_order = last_id + 10000
+
+        super(Label, self).save(*args, **kwargs)
 
     def __str__(self):
         return str(self.name)
@@ -515,7 +551,10 @@ class IssueVote(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "actor",]
+        unique_together = [
+            "issue",
+            "actor",
+        ]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
         db_table = "issue_votes"

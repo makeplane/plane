@@ -1,34 +1,53 @@
-// hooks
-import useInboxView from "hooks/use-inbox-view";
+import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
+// types
+import { IInboxFilterOptions } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 import { INBOX_STATUS } from "constants/inbox";
 
-export const FiltersDropdown: React.FC = () => {
-  const { filters, setFilters, filtersLength } = useInboxView();
+export const FiltersDropdown: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, inboxId } = router.query;
+
+  const { inboxFilters: inboxFiltersStore } = useMobxStore();
+
+  const filters = inboxId ? inboxFiltersStore.inboxFilters[inboxId.toString()]?.filters : undefined;
+
+  let filtersLength = 0;
+  Object.keys(filters ?? {}).forEach((key) => {
+    const filterKey = key as keyof IInboxFilterOptions;
+
+    if (filters?.[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
+  });
 
   return (
     <div className="relative">
       <MultiLevelDropdown
         label="Filters"
         onSelect={(option) => {
-          const key = option.key as keyof typeof filters;
+          if (!workspaceSlug || !projectId || !inboxId) return;
 
-          const valueExists = (filters[key] as any[])?.includes(option.value);
+          const key = option.key as keyof IInboxFilterOptions;
+          const currentValue: any[] = filters?.[key] ?? [];
 
-          if (valueExists) {
-            setFilters({
-              [option.key]: ((filters[key] ?? []) as any[])?.filter((val) => val !== option.value),
+          const valueExists = currentValue.includes(option.value);
+
+          if (valueExists)
+            inboxFiltersStore.updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
+              [option.key]: currentValue.filter((val) => val !== option.value),
             });
-          } else {
-            setFilters({
-              [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+          else
+            inboxFiltersStore.updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
+              [option.key]: [...currentValue, option.value],
             });
-          }
         }}
         direction="right"
         height="rg"
@@ -70,10 +89,10 @@ export const FiltersDropdown: React.FC = () => {
         ]}
       />
       {filtersLength > 0 && (
-        <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-custom-text-100 bg-custom-background-80 border border-custom-border-200 z-10">
+        <div className="absolute -right-2 -top-2 z-10 grid h-4 w-4 place-items-center rounded-full border border-custom-border-200 bg-custom-background-80 text-[0.65rem] text-custom-text-100">
           <span>{filtersLength}</span>
         </div>
       )}
     </div>
   );
-};
+});

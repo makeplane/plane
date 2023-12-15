@@ -1,5 +1,5 @@
 // icons
-import { PlayIcon } from "@heroicons/react/24/outline";
+import { Triangle } from "lucide-react";
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "types";
 // constants
@@ -13,7 +13,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
   <div className="space-y-3 rounded-[10px] border border-custom-border-200 p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
-      <h4 className="text-custom-text-100 text-base font-medium">Total open tasks</h4>
+      <h4 className="text-base font-medium text-custom-text-100">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
     </div>
     <div className="space-y-6">
@@ -39,7 +39,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
             </div>
             <div className="bar relative h-1 w-full rounded bg-custom-background-80">
               <div
-                className="absolute top-0 left-0 h-1 rounded duration-300"
+                className="absolute left-0 top-0 h-1 rounded duration-300"
                 style={{
                   width: `${percentage}%`,
                   backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
@@ -52,7 +52,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
     </div>
     <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
       <p className="flex items-center gap-1 text-custom-text-200">
-        <PlayIcon className="h-4 w-4 -rotate-90" aria-hidden="true" />
+        <Triangle className="h-4 w-4" />
         <span>Estimate Demand:</span>
       </p>
       <p className="font-medium">

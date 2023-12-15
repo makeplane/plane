@@ -1,11 +1,9 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // ui
-import { Avatar, CustomSearchSelect, CustomSelect, Input } from "components/ui";
+import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // types
 import { IGithubRepoCollaborator } from "types";
 import { IUserDetails } from "./root";
@@ -34,13 +32,16 @@ const importOptions = [
   },
 ];
 
+// services
+const workspaceService = new WorkspaceService();
+
 export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, setUsers }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
 
   const options = members?.map((member) => ({
@@ -48,7 +49,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -60,7 +61,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
         <div className="relative h-8 w-8 flex-shrink-0 rounded">
           <img
             src={collaborator.avatar_url}
-            className="absolute top-0 left-0 h-full w-full object-cover rounded"
+            className="absolute left-0 top-0 h-full w-full rounded object-cover"
             alt={`${collaborator.login} GitHub user`}
           />
         </div>
@@ -69,11 +70,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
       <div>
         <CustomSelect
           value={users[index].import}
-          label={
-            <div className="text-xs">
-              {importOptions.find((o) => o.key === users[index].import)?.label}
-            </div>
-          }
+          label={<div className="text-xs">{importOptions.find((o) => o.key === users[index].import)?.label}</div>}
           onChange={(val: any) => {
             const newUsers = [...users];
             newUsers[index].import = val;
@@ -92,6 +89,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
       </div>
       {users[index].import === "invite" && (
         <Input
+          id="email"
           type="email"
           name={`userEmail${index}`}
           value={users[index].email}
@@ -101,7 +99,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
             setUsers(newUsers);
           }}
           placeholder="Enter email of the user"
-          className="py-1 text-xs"
+          className="w-full py-1 text-xs"
         />
       )}
       {users[index].import === "map" && members && (

@@ -6,7 +6,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 // components
-import { ReactionSelector, Tooltip } from "components/ui";
+import { ReactionSelector } from "components/ui";
+import { Tooltip } from "@plane/ui";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
   // router
@@ -57,7 +58,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
         selected={userReactions?.map((r) => r.reaction)}
         size="md"
       />
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2">
         {Object.keys(groupedReactions || {}).map((reaction) => {
           const reactions = groupedReactions?.[reaction] ?? [];
           const REACTIONS_LIMIT = 1000;
@@ -83,7 +84,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
                       handleReactionClick(reaction);
                     });
                   }}
-                  className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
+                  className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                     reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                       ? "bg-custom-primary-100/10"
                       : "bg-custom-background-80"

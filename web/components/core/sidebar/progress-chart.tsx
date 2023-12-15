@@ -57,8 +57,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
       const interval = Math.ceil(totalDates / maxDates);
       const limitedDates = [];
 
-      for (let i = 0; i < totalDates; i += interval)
-        limitedDates.push(renderShortNumericDateFormat(dates[i]));
+      for (let i = 0; i < totalDates; i += interval) limitedDates.push(renderShortNumericDateFormat(dates[i]));
 
       if (!limitedDates.includes(renderShortNumericDateFormat(dates[totalDates - 1])))
         limitedDates.push(renderShortNumericDateFormat(dates[totalDates - 1]));
@@ -68,7 +67,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
   };
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="flex w-full items-center justify-center">
       <LineGraph
         animate
         curve="monotoneX"

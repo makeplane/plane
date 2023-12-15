@@ -35,8 +35,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
             colors={(datum) => datum.data.color}
             tooltip={(datum) => (
               <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
-                <span className="text-custom-text-200 capitalize">{datum.datum.label} issues:</span>{" "}
-                {datum.datum.value}
+                <span className="capitalize text-custom-text-200">{datum.datum.label} issues:</span> {datum.datum.value}
               </div>
             )}
             margin={{
@@ -50,14 +49,11 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
             }}
           />
         </div>
-        <div className="flex sm:block items-center gap-3 flex-wrap justify-center sm:space-y-2 sm:self-end sm:justify-self-end sm:px-8 sm:pb-8">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:block sm:space-y-2 sm:self-end sm:justify-self-end sm:px-8 sm:pb-8">
           {groupedIssues?.map((cell) => (
             <div key={cell.state_group} className="flex items-center gap-2">
-              <div
-                className="h-2 w-2"
-                style={{ backgroundColor: STATE_GROUP_COLORS[cell.state_group] }}
-              />
-              <div className="capitalize text-custom-text-200 text-xs whitespace-nowrap">
+              <div className="h-2 w-2" style={{ backgroundColor: STATE_GROUP_COLORS[cell.state_group] }} />
+              <div className="whitespace-nowrap text-xs capitalize text-custom-text-200">
                 {cell.state_group}- {cell.state_count}
               </div>
             </div>

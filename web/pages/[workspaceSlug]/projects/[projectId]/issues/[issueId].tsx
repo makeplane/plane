@@ -1,40 +1,31 @@
-import React, { useCallback, useEffect } from "react";
-
+import React, { useCallback, useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
+import { IssueService } from "services/issue";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
+import { ProjectIssueDetailsHeader } from "components/headers";
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { EmptyState, Loader } from "components/ui";
-import { Breadcrumbs } from "components/breadcrumbs";
+import { EmptyState } from "components/common";
+import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { IIssue } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IIssue> = {
-  assignees_list: [],
   description: "",
   description_html: "",
   estimate_point: null,
   issue_cycle: null,
   issue_module: null,
-  labels_list: [],
   name: "",
   priority: "low",
   start_date: null,
@@ -42,12 +33,13 @@ const defaultValues: Partial<IIssue> = {
   target_date: null,
 };
 
-const IssueDetailsPage: NextPage = () => {
+// services
+const issueService = new IssueService();
+
+const IssueDetailsPage: NextPageWithLayout = () => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-  // console.log(workspaceSlug, "workspaceSlug")
-
-  const { user } = useUserAuth();
 
   const {
     data: issueDetails,
@@ -56,8 +48,7 @@ const IssueDetailsPage: NextPage = () => {
   } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -89,8 +80,8 @@ const IssueDetailsPage: NextPage = () => {
       delete payload.related_issues;
       delete payload.issue_relations;
 
-      await issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
+      await issueService
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -99,7 +90,7 @@ const IssueDetailsPage: NextPage = () => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateIssueDetails, user]
+    [workspaceSlug, issueId, projectId, mutateIssueDetails]
   );
 
   useEffect(() => {
@@ -108,31 +99,12 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, issueId]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            title={`${truncateText(issueDetails?.project_detail.name ?? "Project", 32)} Issues`}
-            link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
-            linkTruncate
-          />
-          <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
-              issueDetails?.sequence_id ?? "..."
-            } Details`}
-            unshrinkTitle
-          />
-        </Breadcrumbs>
-      }
-    >
+    <>
+      {" "}
       {error ? (
         <EmptyState
           image={emptyIssue}
@@ -145,10 +117,10 @@ const IssueDetailsPage: NextPage = () => {
         />
       ) : issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
-          <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
+          <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
-          <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 py-5 overflow-hidden">
+          <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
@@ -173,7 +145,15 @@ const IssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </>
+  );
+};
+
+IssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectIssueDetailsHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 

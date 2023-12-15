@@ -1,21 +1,17 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, UseFormWatch } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issues.service";
-import modulesService from "services/modules.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
+import { IssueService } from "services/issue";
+import { ModuleService } from "services/module.service";
 // components
 import { LinkModal, LinksList } from "components/core";
 import {
@@ -34,27 +30,17 @@ import {
   SidebarRelatesSelect,
 } from "components/issues";
 // ui
-import { CustomDatePicker, Icon } from "components/ui";
+import { CustomDatePicker } from "components/ui";
 // icons
-import {
-  LinkIcon,
-  CalendarDaysIcon,
-  TrashIcon,
-  PlusIcon,
-  Squares2X2Icon,
-  ChartBarIcon,
-  UserGroupIcon,
-  PlayIcon,
-  UserIcon,
-  RectangleGroupIcon,
-} from "@heroicons/react/24/outline";
+import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
+import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
+import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import { ContrastIcon } from "components/icons";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   control: any;
@@ -84,163 +70,85 @@ type Props = {
   uneditable?: boolean;
 };
 
-export const IssueDetailsSidebar: React.FC<Props> = ({
-  control,
-  submitChanges,
-  issueDetail,
-  watch: watchIssue,
-  fieldsToShow = ["all"],
-  uneditable = false,
-}) => {
+const issueService = new IssueService();
+const moduleService = new ModuleService();
+
+export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
+  const { control, submitChanges, issueDetail, watch: watchIssue, fieldsToShow = ["all"], uneditable = false } = props;
+
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
+
+  const {
+    user: { currentUser, currentProjectRole },
+    projectState: { states },
+    projectIssues: { removeIssue },
+    issueDetail: { createIssueLink, updateIssueLink, deleteIssueLink },
+  } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { user } = useUserAuth();
+  const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
   const { isEstimateActive } = useEstimateOption();
 
-  const { loading, handleSubscribe, handleUnsubscribe, subscribed } =
-    useUserIssueNotificationSubscription(workspaceSlug, projectId, issueId);
-
-  const { memberRole } = useProjectMyMembership();
+  const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
 
   const { setToastAlert } = useToast();
 
   const handleCycleChange = useCallback(
-    (cycleDetails: ICycle) => {
-      if (!workspaceSlug || !projectId || !issueDetail) return;
+    (cycleId: string) => {
+      if (!workspaceSlug || !projectId || !issueDetail || !currentUser) return;
 
-      issuesService
-        .addIssueToCycle(
-          workspaceSlug as string,
-          projectId as string,
-          cycleDetails.id,
-          {
-            issues: [issueDetail.id],
-          },
-          user
-        )
-        .then((res) => {
+      issueService
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId, {
+          issues: [issueDetail.id],
+        })
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
-    [workspaceSlug, projectId, issueId, issueDetail, user]
+    [workspaceSlug, projectId, issueId, issueDetail, currentUser]
   );
 
   const handleModuleChange = useCallback(
-    (moduleDetail: IModule) => {
-      if (!workspaceSlug || !projectId || !issueDetail) return;
+    (moduleId: string) => {
+      if (!workspaceSlug || !projectId || !issueDetail || !currentUser) return;
 
-      modulesService
-        .addIssuesToModule(
-          workspaceSlug as string,
-          projectId as string,
-          moduleDetail.id,
-          {
-            issues: [issueDetail.id],
-          },
-          user
-        )
-        .then((res) => {
+      moduleService
+        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId, {
+          issues: [issueDetail.id],
+        })
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
-    [workspaceSlug, projectId, issueId, issueDetail, user]
+    [workspaceSlug, projectId, issueId, issueDetail, currentUser]
   );
 
-  const handleCreateLink = async (formData: IIssueLink) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
-
-    const payload = { metadata: {}, ...formData };
-
-    await issuesService
-      .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
-      .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
-      .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "This URL already exists for this issue.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-      });
+  const issueLinkCreate = (formData: IIssueLink) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
   };
 
-  const handleUpdateLink = async (formData: IIssueLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
-
-    const payload = { metadata: {}, ...formData };
-
-    const updatedLinks = issueDetail.issue_link.map((l) =>
-      l.id === linkId
-        ? {
-            ...l,
-            title: formData.title,
-            url: formData.url,
-          }
-        : l
-    );
-
-    mutate<IIssue>(
-      ISSUE_DETAILS(issueDetail.id),
-      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
-      false
-    );
-
-    await issuesService
-      .updateIssueLink(
-        workspaceSlug as string,
-        projectId as string,
-        issueDetail.id,
-        linkId,
-        payload
-      )
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const issueLinkUpdate = (formData: IIssueLink, linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
   };
 
-  const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
-
-    const updatedLinks = issueDetail.issue_link.filter((l) => l.id !== linkId);
-
-    mutate<IIssue>(
-      ISSUE_DETAILS(issueDetail.id),
-      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
-      false
-    );
-
-    await issuesService
-      .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const issueLinkDelete = (linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    deleteIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -264,9 +172,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     fieldsToShow.includes("dueDate");
 
   const showThirdSection =
-    fieldsToShow.includes("all") ||
-    fieldsToShow.includes("cycle") ||
-    fieldsToShow.includes("module");
+    fieldsToShow.includes("all") || fieldsToShow.includes("cycle") || fieldsToShow.includes("module");
 
   const startDate = watchIssue("start_date");
   const targetDate = watchIssue("target_date");
@@ -277,12 +183,16 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setLinkModal(true);
   };
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetail?.state)
+    : undefined;
 
   return (
     <>
@@ -294,36 +204,53 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         }}
         data={selectedLinkToUpdate}
         status={selectedLinkToUpdate ? true : false}
-        createIssueLink={handleCreateLink}
-        updateIssueLink={handleUpdateLink}
+        createIssueLink={issueLinkCreate}
+        updateIssueLink={issueLinkUpdate}
       />
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueDetail ?? null}
-        user={user}
-      />
-      <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
+      {workspaceSlug && projectId && issueDetail && (
+        <DeleteIssueModal
+          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={deleteIssueModal}
+          data={issueDetail}
+          onSubmit={async () => {
+            await removeIssue(workspaceSlug.toString(), projectId.toString(), issueDetail.id);
+            router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+          }}
+        />
+      )}
+      <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
-          <h4 className="text-sm font-medium">
-            {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
-          </h4>
+          <div className="flex items-center gap-x-2">
+            {currentIssueState ? (
+              <StateGroupIcon
+                className="h-4 w-4"
+                stateGroup={currentIssueState.group}
+                color={currentIssueState.color}
+              />
+            ) : inboxIssueId ? (
+              <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
+            ) : null}
+            <h4 className="text-lg font-medium text-custom-text-300">
+              {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
+            </h4>
+          </div>
           <div className="flex flex-wrap items-center gap-2">
-            {issueDetail?.created_by !== user?.id &&
-              !issueDetail?.assignees.includes(user?.id ?? "") &&
+            {issueDetail?.created_by !== currentUser?.id &&
+              !issueDetail?.assignees.includes(currentUser?.id ?? "") &&
               !router.pathname.includes("[archivedIssueId]") &&
               (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
-                <button
-                  type="button"
-                  className="rounded-md flex items-center gap-2 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
+                <Button
+                  size="sm"
+                  prependIcon={<Bell className="h-3 w-3" />}
+                  variant="outline-primary"
+                  className="hover:!bg-custom-primary-100/20"
                   onClick={() => {
                     if (subscribed) handleUnsubscribe();
                     else handleSubscribe();
                   }}
                 >
-                  <Icon iconName="notifications" />
                   {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
-                </button>
+                </Button>
               )}
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
@@ -334,29 +261,29 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <LinkIcon className="h-3.5 w-3.5" />
               </button>
             )}
-            {!isNotAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
+            {isAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
                 onClick={() => setDeleteIssueModal(true)}
               >
-                <TrashIcon className="h-3.5 w-3.5" />
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
         </div>
 
-        <div className="h-full w-full px-5 overflow-y-auto">
+        <div className="h-full w-full overflow-y-auto px-5">
           <div className={`divide-y-2 divide-custom-border-200 ${uneditable ? "opacity-60" : ""}`}>
             {showFirstSection && (
               <div className="py-1">
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                      <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                       <p>State</p>
                     </div>
-                    <div className="sm:basis-1/2">
+                    <div>
                       <Controller
                         control={control}
                         name="state"
@@ -364,7 +291,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <SidebarStateSelect
                             value={value}
                             onChange={(val: string) => submitChanges({ state: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -377,15 +304,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Assignees</p>
                     </div>
-                    <div className="sm:basis-1/2">
+                    <div>
                       <Controller
                         control={control}
-                        name="assignees_list"
+                        name="assignees"
                         render={({ field: { value } }) => (
                           <SidebarAssigneeSelect
                             value={value}
-                            onChange={(val: string[]) => submitChanges({ assignees_list: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            onChange={(val: string[]) => submitChanges({ assignees: val })}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -395,10 +322,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
+                      <Signal className="h-4 w-4 flex-shrink-0" />
                       <p>Priority</p>
                     </div>
-                    <div className="sm:basis-1/2">
+                    <div>
                       <Controller
                         control={control}
                         name="priority"
@@ -406,37 +333,34 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <SidebarPrioritySelect
                             value={value}
                             onChange={(val) => submitChanges({ priority: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
                     </div>
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
-                  isEstimateActive && (
-                    <div className="flex flex-wrap items-center py-2">
-                      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                        <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
-                        <p>Estimate</p>
-                      </div>
-                      <div className="sm:basis-1/2">
-                        <Controller
-                          control={control}
-                          name="estimate_point"
-                          render={({ field: { value } }) => (
-                            <SidebarEstimateSelect
-                              value={value}
-                              onChange={(val: number | null) =>
-                                submitChanges({ estimate_point: val })
-                              }
-                              disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
-                            />
-                          )}
-                        />
-                      </div>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && isEstimateActive && (
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <Triangle className="h-4 w-4 flex-shrink-0 " />
+                      <p>Estimate</p>
                     </div>
-                  )}
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="estimate_point"
+                        render={({ field: { value } }) => (
+                          <SidebarEstimateSelect
+                            value={value}
+                            onChange={(val: number | null) => submitChanges({ estimate_point: val })}
+                            disabled={!isAllowed || uneditable}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {showSecondSection && (
@@ -444,7 +368,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <UserIcon className="h-4 w-4 flex-shrink-0" />
+                      <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
                       <p>Parent</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -458,7 +382,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               onChange(val);
                             }}
                             issueDetails={issueDetail}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -483,7 +407,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
@@ -504,7 +428,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
@@ -522,7 +446,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
@@ -540,13 +464,13 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Start date</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -562,9 +486,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 start_date: val,
                               })
                             }
-                            className="bg-custom-background-80 border-none"
+                            className="border-none bg-custom-background-80"
                             maxDate={maxDate ?? undefined}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -574,7 +498,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Due date</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -590,9 +514,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 target_date: val,
                               })
                             }
-                            className="bg-custom-background-80 border-none"
+                            className="border-none bg-custom-background-80"
                             minDate={minDate ?? undefined}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -609,11 +533,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Cycle</p>
                     </div>
-                    <div className="space-y-1 sm:w-1/2">
+                    <div className="space-y-1">
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
                         handleCycleChange={handleCycleChange}
-                        disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                        disabled={!isAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -621,14 +545,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
-                      <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
+                      <DiceIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Module</p>
                     </div>
-                    <div className="space-y-1 sm:w-1/2">
+                    <div className="space-y-1">
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
                         handleModuleChange={handleModuleChange}
-                        disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                        disabled={!isAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -637,20 +561,27 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
           {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
-            <SidebarLabelSelect
-              issueDetails={issueDetail}
-              issueControl={control}
-              watchIssue={watchIssue}
-              submitChanges={submitChanges}
-              isNotAllowed={isNotAllowed}
-              uneditable={uneditable ?? false}
-            />
+            <div className="flex flex-wrap items-start py-2">
+              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
+                <Tag className="h-4 w-4 flex-shrink-0" />
+                <p>Label</p>
+              </div>
+              <div className="space-y-1 sm:w-1/2">
+                <SidebarLabelSelect
+                  issueDetails={issueDetail}
+                  labelList={issueDetail?.labels ?? []}
+                  submitChanges={submitChanges}
+                  isNotAllowed={!isAllowed}
+                  uneditable={uneditable ?? false}
+                />
+              </div>
+            </div>
           )}
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
+            <div className={`py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <h4>Links</h4>
-                {!isNotAllowed && (
+                {isAllowed && (
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
@@ -659,24 +590,31 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     onClick={() => setLinkModal(true)}
                     disabled={uneditable}
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                   </button>
                 )}
               </div>
-              <div className="mt-2 space-y-2">
-                {issueDetail?.issue_link && issueDetail.issue_link.length > 0 ? (
-                  <LinksList
-                    links={issueDetail.issue_link}
-                    handleDeleteLink={handleDeleteLink}
-                    handleEditLink={handleEditLink}
-                    userAuth={memberRole}
-                  />
-                ) : null}
-              </div>
+              {issueDetail?.issue_link && issueDetail.issue_link.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  {
+                    <LinksList
+                      links={issueDetail.issue_link}
+                      handleDeleteLink={issueLinkDelete}
+                      handleEditLink={handleEditLink}
+                      userAuth={{
+                        isGuest: currentProjectRole === 5,
+                        isViewer: currentProjectRole === 10,
+                        isMember: currentProjectRole === 15,
+                        isOwner: currentProjectRole === 20,
+                      }}
+                    />
+                  }
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
     </>
   );
-};
+});
