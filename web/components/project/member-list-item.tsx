@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject, useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
@@ -28,14 +28,16 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
+  // store hooks
   const {
-    user: { currentUser, currentProjectMemberInfo, currentProjectRole, leaveProject },
     projectMember: { removeMemberFromProject, updateMember },
-    project: { fetchProjects },
   } = useMobxStore();
-  // hooks
+  const {
+    currentUser,
+    membership: { currentProjectMemberInfo, currentProjectRole, leaveProject },
+  } = useUser();
+  const { fetchProjects } = useProject();
+  // toast alert
   const { setToastAlert } = useToast();
 
   // derived values

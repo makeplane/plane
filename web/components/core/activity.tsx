@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useLabel } from "hooks/store";
 // hook
 import useEstimateOption from "hooks/use-estimate-option";
 // icons
@@ -27,7 +28,6 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "types";
-import { useEffect } from "react";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
@@ -74,11 +74,10 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 };
 
 const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
+  // store hooks
   const {
-    workspace: { labels, fetchWorkspaceLabels },
-  } = useMobxStore();
-
-  const workspaceLabels = labels[workspaceSlug];
+    workspaceLabel: { workspaceLabels, fetchWorkspaceLabels },
+  } = useLabel();
 
   useEffect(() => {
     if (!workspaceLabels) fetchWorkspaceLabels(workspaceSlug);

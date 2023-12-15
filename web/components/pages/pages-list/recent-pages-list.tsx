@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, usePage } from "hooks/store";
+import { useApplication, usePage, useUser } from "hooks/store";
 // components
 import { PagesListView } from "components/pages/pages-list";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -12,13 +12,20 @@ import { Loader } from "@plane/ui";
 import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const { recentProjectPages } = usePage();
 
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!recentProjectPages) {
     return (
@@ -64,6 +71,7 @@ export const RecentPagesList: FC = observer(() => {
               text: "Create your first page",
               onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
+            disabled={!isEditingAllowed}
           />
         </>
       )}

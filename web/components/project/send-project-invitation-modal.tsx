@@ -4,14 +4,14 @@ import { observer } from "mobx-react-lite";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
-// mobx store
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // services
 import { ProjectMemberService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
 // types
 import { IProjectMember, TUserProjectRole } from "types";
 // constants
@@ -47,19 +47,23 @@ const projectMemberService = new ProjectMemberService();
 
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const { isOpen, members, onClose, onSuccess } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
-    user: { currentProjectRole },
     workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
   } = useMobxStore();
-
+  const {
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  // form info
   const {
     formState: { errors, isSubmitting },
     reset,

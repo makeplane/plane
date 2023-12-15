@@ -2,7 +2,7 @@ import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -15,6 +15,7 @@ import { Plus } from "lucide-react";
 import emptyAnalytics from "public/empty-state/empty_analytics.webp";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // type
 import { NextPageWithLayout } from "types/app";
 
@@ -24,7 +25,12 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
     commandPalette: { toggleCreateProjectModal },
     eventTracker: { setTrackElement },
   } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const { workspaceProjects } = useProject();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -77,6 +83,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
                 toggleCreateProjectModal(true);
               },
             }}
+            disabled={!isEditingAllowed}
           />
         </>
       )}

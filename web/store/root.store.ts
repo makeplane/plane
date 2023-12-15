@@ -6,11 +6,11 @@ import { CycleStore, ICycleStore } from "./cycle.store";
 import { IProjectViewsStore, ProjectViewsStore } from "./project-view.store";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IUserStore, UserStore } from "./user";
-import { ILabelStore, LabelStore } from "./label.store";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IStateStore, StateStore } from "./state.store";
 import { IPageStore, PageStore } from "./page.store";
+import { ILabelRootStore, LabelRootStore } from "./label";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -19,11 +19,11 @@ export class RootStore {
   user: IUserStore;
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
+  labelRoot: ILabelRootStore;
   cycle: ICycleStore;
   module: IModuleStore;
   projectView: IProjectViewsStore;
   page: IPageStore;
-  label: ILabelStore;
   issue: IIssueRootStore;
   state: IStateStore;
 
@@ -32,8 +32,8 @@ export class RootStore {
     this.user = new UserStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
+    this.labelRoot = new LabelRootStore(this);
     // independent stores
-    this.label = new LabelStore(this);
     this.state = new StateStore(this);
     this.issue = new IssueRootStore(this);
     this.cycle = new CycleStore(this);

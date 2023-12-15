@@ -51,6 +51,9 @@ export const PROJECT_AUTOMATION_MONTHS = [
   { label: "12 Months", value: 12 },
 ];
 
+export const STATE_GROUP_KEYS = ["backlog", "unstarted", "started", "completed", "cancelled"];
+
+
 export const PROJECT_UNSPLASH_COVERS = [
   "https://images.unsplash.com/photo-1531045535792-b515d59c3d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
   "https://images.unsplash.com/photo-1693027407934-e3aa8a54c7ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",

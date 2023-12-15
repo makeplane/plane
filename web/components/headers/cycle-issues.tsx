@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -25,27 +25,34 @@ import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const CycleIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     cycleId: string;
   };
-
+  // store hooks
   const {
     cycle: cycleStore,
     projectIssuesFilter: projectIssueFiltersStore,
-    project: { currentProjectDetails },
     projectMember: { projectMembers },
-    projectLabel: { projectLabels },
-    projectState: projectStateStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
     cycleIssuesFilter: { issueFilters, updateFilters },
-    user: { currentProjectRole },
   } = useMobxStore();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
 
   const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
 
@@ -156,7 +163,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                       key={cycle.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
                     >
-                      {truncateText(cycle.name, 40)}
+                      <div className="flex items-center gap-1.5">
+                        <ContrastIcon className="h-3 w-3" />
+                        {truncateText(cycle.name, 40)}
+                      </div>
                     </CustomMenu.MenuItem>
                   ))}
                 </CustomMenu>
@@ -177,9 +187,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectLabels ?? undefined}
+              labels={projectLabels}
               members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+              states={projectStates}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -193,20 +203,23 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
+
           {canUserCreateIssue && (
-            <Button
-              onClick={() => {
-                setTrackElement("CYCLE_PAGE_HEADER");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
-              }}
-              size="sm"
-              prependIcon={<Plus />}
-            >
-              Add Issue
-            </Button>
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("CYCLE_PAGE_HEADER");
+                  toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                Add Issue
+              </Button>
+            </>
           )}
           <button
             type="button"

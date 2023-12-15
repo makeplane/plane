@@ -4,15 +4,13 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Plus, X } from "lucide-react";
 // hooks
+import { useLabel } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
-// icons
-import { Plus, X } from "lucide-react";
 // types
 import { IIssue, IIssueLabel } from "types";
 
@@ -40,8 +38,8 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
   // mobx store
   const {
-    projectLabel: { projectLabels, createLabel },
-  } = useMobxStore();
+    project: { projectLabels, createLabel },
+  } = useLabel();
   // form info
   const {
     handleSubmit,

@@ -3,12 +3,11 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
 import { MinusCircle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject, useProjectState, useUser, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // services
 import { IssueService, IssueCommentService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import {
   AddComment,
@@ -49,19 +48,19 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = router.query;
   // toast alert
   const { setToastAlert } = useToast();
-  // mobx store
   const {
-    user: { currentUser, currentProjectRole },
-    project: projectStore,
-    projectState: { states },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const { getProjectById } = useProject();
+  const { projectStates } = useProjectState();
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
-  const currentIssueState = projectId
-    ? states[projectId.toString()]?.find((s) => s.id === issueDetails.state)
-    : undefined;
+  const projectDetails = projectId ? getProjectById(projectId.toString()) : null;
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetails.state);
 
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
@@ -94,7 +93,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -117,7 +116,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -139,7 +138,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -216,7 +215,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             </CustomMenu>
           </div>
         ) : null}
-        <div className="mb-5 flex items-center">
+        <div className="mb-2.5 flex items-center">
           {currentIssueState && (
             <StateGroupIcon
               className="mr-3 h-4 w-4"
@@ -260,12 +259,12 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           activity={issueActivity}
           handleCommentUpdate={handleCommentUpdate}
           handleCommentDelete={handleCommentDelete}
-          showAccessSpecifier={projectDetails && projectDetails.is_deployed}
+          showAccessSpecifier={Boolean(projectDetails && projectDetails.is_deployed)}
         />
         <AddComment
           onSubmit={handleAddComment}
           disabled={uneditable}
-          showAccessSpecifier={projectDetails && projectDetails.is_deployed}
+          showAccessSpecifier={Boolean(projectDetails && projectDetails.is_deployed)}
         />
       </div>
     </>

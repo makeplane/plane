@@ -2,7 +2,8 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
+import { useLabel, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
@@ -16,6 +17,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EFilterType } from "store_legacy/issues/types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -28,19 +30,23 @@ type Props = {
 
 export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { activeLayout } = props;
-
+  // states
   const [createViewModal, setCreateViewModal] = useState(false);
-
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
-
+  const { workspaceSlug } = router.query;
+  // store hooks
   const {
-    workspace: { workspaceLabels },
     workspaceMember: { workspaceMembers },
     project: { workspaceProjects },
-
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const {
+    workspace: { workspaceLabels },
+  } = useLabel();
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -56,7 +62,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug.toString(), EFilterType.FILTERS, { [key]: newValues });
     },
     [workspaceSlug, issueFilters, updateFilters]
   );
@@ -64,7 +70,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug.toString(), EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, updateFilters]
   );
@@ -72,10 +78,12 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug.toString(), EFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, updateFilters]
   );
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -142,10 +150,11 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
               </FiltersDropdown>
             </>
           )}
-
-          <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
-            New View
-          </Button>
+          {isAuthorizedUser && (
+            <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
+              New View
+            </Button>
+          )}
         </div>
       </div>
     </>

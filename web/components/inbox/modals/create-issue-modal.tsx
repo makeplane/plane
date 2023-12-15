@@ -4,22 +4,22 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-
-// mobx store
+import { Sparkle } from "lucide-react";
+// hooks
+import { useApplication, useWorkspace } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
 import { FileService } from "services/file.service";
+import { AIService } from "services/ai.service";
 // components
 import { IssuePrioritySelect } from "components/issues/select";
+import { GptAssistantModal } from "components/core";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { IIssue } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
-import { GptAssistantModal } from "components/core";
-import { Sparkle } from "lucide-react";
-import useToast from "hooks/use-toast";
-import { AIService } from "services/ai.service";
 
 type Props = {
   isOpen: boolean;
@@ -40,30 +40,29 @@ const fileService = new FileService();
 
 export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
-
   // states
   const [createMore, setCreateMore] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
+  // refs
   const editorRef = useRef<any>(null);
-
+  // toast alert
   const { setToastAlert } = useToast();
   const editorSuggestion = useEditorSuggestions();
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     inboxId: string;
   };
-
+  // store hooks
+  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
   const {
-    inboxIssueDetails: inboxIssueDetailsStore,
-    trackEvent: { postHogEventTracker },
-    appConfig: { envConfig },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    config: { envConfig },
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
 
   const {
     control,

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useWorkspace } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
@@ -21,16 +20,17 @@ type Props = {
 };
 
 export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
+  // states
   const [isDeleting, setIsDeleting] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
-
+  // store hooks
+  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
   const {
-    inboxIssueDetails: inboxIssueDetailsStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
 
   const { setToastAlert } = useToast();
 

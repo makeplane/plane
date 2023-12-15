@@ -3,9 +3,10 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
+import { useProjectState, useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
@@ -32,7 +33,6 @@ import {
 // ui
 import { CustomDatePicker } from "components/ui";
 // icons
-import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -75,18 +75,21 @@ const moduleService = new ModuleService();
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { control, submitChanges, issueDetail, watch: watchIssue, fieldsToShow = ["all"], uneditable = false } = props;
-
+  // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-
+  // store hooks
   const {
-    user: { currentUser, currentProjectRole },
-    projectState: { states },
     projectIssues: { removeIssue },
     issueDetail: { createIssueLink, updateIssueLink, deleteIssueLink },
   } = useMobxStore();
-
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectStates } = useProjectState();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
@@ -190,9 +193,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
-  const currentIssueState = projectId
-    ? states[projectId.toString()]?.find((s) => s.id === issueDetail?.state)
-    : undefined;
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state);
 
   return (
     <>
@@ -572,7 +573,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   labelList={issueDetail?.labels ?? []}
                   submitChanges={submitChanges}
                   isNotAllowed={!isAllowed}
-                  uneditable={uneditable ?? false}
+                  uneditable={uneditable || !isAllowed}
                 />
               </div>
             </div>

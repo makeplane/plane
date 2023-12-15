@@ -3,11 +3,10 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
+import { useApplication, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -30,6 +29,8 @@ import {
 } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys
 import { CYCLE_STATUS } from "constants/cycle";
 
@@ -44,18 +45,21 @@ const cycleService = new CycleService();
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { cycleId, handleClose } = props;
-
+  // states
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
-
+  // store hooks
   const {
-    cycle: cycleDetailsStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getCycleById, updateCycleDetails } = useCycle();
 
-  const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
+  const cycleDetails = getCycleById(cycleId);
 
   const { setToastAlert } = useToast();
 
@@ -71,7 +75,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    cycleDetailsStore.patchCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
   };
 
   const handleCopyText = () => {
@@ -270,10 +274,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const endDate = new Date(watch("end_date") ?? cycleDetails.end_date ?? "");
+  const startDate = new Date(watch("start_date") ?? cycleDetails.start_date ?? "");
 
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+  const areYearsEqual =
+    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
@@ -285,6 +290,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? `${cycleDetails.total_issues}`
         : `${cycleDetails.total_issues}`
       : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -312,7 +319,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             <button onClick={handleCopyText}>
               <LinkIcon className="h-3 w-3 text-custom-text-300" />
             </button>
-            {!isCompleted && (
+            {!isCompleted && isEditingAllowed && (
               <CustomMenu width="lg" placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem
                   onClick={() => {
@@ -349,8 +356,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="relative flex h-full w-52 items-center gap-2.5">
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  disabled={isCompleted ?? false}
-                  className="cursor-default text-sm font-medium text-custom-text-300"
+                  className={`text-sm font-medium text-custom-text-300 ${
+                    isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                  }`}
+                  disabled={isCompleted || !isEditingAllowed}
                 >
                   {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
                 </Popover.Button>
@@ -373,10 +382,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           handleStartDateChange(val);
                         }
                       }}
-                      startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                      endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                      startDate={watch("start_date") ?? watch("end_date") ?? null}
+                      endDate={watch("end_date") ?? watch("start_date") ?? null}
                       maxDate={new Date(`${watch("end_date")}`)}
-                      selectsStart
+                      selectsStart={watch("end_date") ? true : false}
                     />
                   </Popover.Panel>
                 </Transition>
@@ -385,8 +394,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    disabled={isCompleted ?? false}
-                    className="cursor-default text-sm font-medium text-custom-text-300"
+                    className={`text-sm font-medium text-custom-text-300 ${
+                      isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                    }`}
+                    disabled={isCompleted || !isEditingAllowed}
                   >
                     {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
                   </Popover.Button>
@@ -409,10 +420,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                             handleEndDateChange(val);
                           }
                         }}
-                        startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                        endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                        startDate={watch("start_date") ?? watch("end_date") ?? null}
+                        endDate={watch("end_date") ?? watch("start_date") ?? null}
                         minDate={new Date(`${watch("start_date")}`)}
-                        selectsEnd
+                        selectsEnd={watch("start_date") ? true : false}
                       />
                     </Popover.Panel>
                   </Transition>

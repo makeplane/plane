@@ -9,10 +9,11 @@ import { TIssuePriorities } from "types";
 type Props = {
   handleRemove: (val: string) => void;
   values: string[];
+  editable: boolean | undefined;
 };
 
 export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, values } = props;
+  const { handleRemove, values, editable } = props;
 
   return (
     <>
@@ -20,13 +21,15 @@ export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
         <div key={priority} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
           <PriorityIcon priority={priority as TIssuePriorities} className={`h-3 w-3`} />
           {priority}
-          <button
-            type="button"
-            className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-            onClick={() => handleRemove(priority)}
-          >
-            <X size={10} strokeWidth={2} />
-          </button>
+          {editable && (
+            <button
+              type="button"
+              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              onClick={() => handleRemove(priority)}
+            >
+              <X size={10} strokeWidth={2} />
+            </button>
+          )}
         </div>
       ))}
     </>

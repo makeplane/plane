@@ -1,15 +1,21 @@
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
+import { ExistingIssuesListModal } from "components/core";
+// ui
 import { Button } from "@plane/ui";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
-import { ExistingIssuesListModal } from "components/core";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// types
 import { ISearchIssueResponse } from "types";
-import useToast from "hooks/use-toast";
-import { useState } from "react";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -21,13 +27,16 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, moduleId } = props;
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
-
+  // store hooks
+  const { moduleIssues: moduleIssueStore } = useMobxStore();
   const {
-    moduleIssues: moduleIssueStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole: userRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
@@ -43,6 +52,8 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
       })
     );
   };
+
+  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -62,7 +73,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("MODULE_EMPTY_STATE");
-              commandPaletteStore.toggleCreateIssueModal(true);
+              toggleCreateIssueModal(true);
             },
           }}
           secondaryButton={
@@ -70,10 +81,12 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
               variant="neutral-primary"
               prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
               onClick={() => setModuleIssuesListModal(true)}
+              disabled={!isEditingAllowed}
             >
               Add an existing issue
             </Button>
           }
+          disabled={!isEditingAllowed}
         />
       </div>
     </>

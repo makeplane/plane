@@ -2,7 +2,8 @@ import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
+// hooks
+import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -21,24 +22,31 @@ import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     viewId: string;
   };
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
     projectMember: { projectMembers },
-    projectState: projectStateStore,
     projectViews: projectViewsStore,
     viewIssuesFilter: { issueFilters, updateFilters },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
   } = useMobxStore();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -139,7 +147,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                     key={view.id}
                     onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
                   >
-                    {truncateText(view.name, 40)}
+                    <div className="flex items-center gap-1.5">
+                      <PhotoFilterIcon height={12} width={12} />
+                      {truncateText(view.name, 40)}
+                    </div>
                   </CustomMenu.MenuItem>
                 ))}
               </CustomMenu>
@@ -153,16 +164,17 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           onChange={(layout) => handleLayoutChange(layout)}
           selectedLayout={activeLayout}
         />
-        <FiltersDropdown title="Filters" placement="bottom-end">
+
+        <FiltersDropdown title="Filters" placement="bottom-end" disabled={!canUserCreateIssue}>
           <FilterSelection
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
-            labels={projectLabels ?? undefined}
+            labels={projectLabels}
             members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+            states={projectStates}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
@@ -176,18 +188,18 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>
-        {
+        {canUserCreateIssue && (
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+              toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
             }}
             size="sm"
             prependIcon={<Plus />}
           >
             Add Issue
           </Button>
-        }
+        )}
       </div>
     </div>
   );

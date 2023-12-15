@@ -42,8 +42,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   // root store
   rootStore;
   // sub-stores
-  webhook: WebhookStore;
-  apiToken: ApiTokenStore;
+  webhook: IWebhookStore;
+  apiToken: IApiTokenStore;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {

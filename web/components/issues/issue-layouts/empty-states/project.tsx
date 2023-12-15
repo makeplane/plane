@@ -1,9 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 // components
 import { NewEmptyState } from "components/common/new-empty-state";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
 import { EProjectStore } from "store_legacy/command-palette.store";
@@ -14,6 +16,11 @@ export const ProjectEmptyState: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
     eventTracker: { setTrackElement },
   } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="grid h-full w-full place-items-center">
@@ -35,6 +42,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
             commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
           },
         }}
+        disabled={!isEditingAllowed}
       />
     </div>
   );

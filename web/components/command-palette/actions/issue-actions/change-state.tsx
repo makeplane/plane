@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// cmdk
 import { Command } from "cmdk";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import { useProjectState } from "hooks/store";
 // ui
 import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
@@ -18,14 +18,14 @@ type Props = {
 
 export const ChangeIssueState: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store hooks
   const {
-    projectState: { projectStates },
     projectIssues: { updateIssue },
   } = useMobxStore();
+  const { projectStates } = useProjectState();
 
   const submitChanges = async (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;

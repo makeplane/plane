@@ -11,7 +11,7 @@ export class CycleService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<ICycle> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -22,8 +22,8 @@ export class CycleService extends APIService {
   async getCyclesWithParams(
     workspaceSlug: string,
     projectId: string,
-    cycleType: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
-  ): Promise<ICycle[]> {
+    cycleType?: "current"
+  ): Promise<Record<string, ICycle>> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
       params: {
         cycle_view: cycleType,

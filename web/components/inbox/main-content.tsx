@@ -4,9 +4,9 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
-
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useProjectState, useUser } from "hooks/store";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction, IssueUpdateStatus } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
@@ -28,19 +28,19 @@ const defaultValues: Partial<IInboxIssue> = {
 };
 
 export const InboxMainContent: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
-
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  // store hooks
+  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
   const {
-    inboxIssues: inboxIssuesStore,
-    inboxIssueDetails: inboxIssueDetailsStore,
-    user: { currentUser, currentProjectRole },
-    projectState: { states },
-  } = useMobxStore();
-
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectStates } = useProjectState();
+  // form info
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
@@ -60,9 +60,7 @@ export const InboxMainContent: React.FC = observer(() => {
 
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
   const issueDetails = inboxIssueId ? inboxIssueDetailsStore.issueDetails[inboxIssueId.toString()] : undefined;
-  const currentIssueState = projectId
-    ? states[projectId.toString()]?.find((s) => s.id === issueDetails?.state)
-    : undefined;
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetails?.state);
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
@@ -165,16 +163,16 @@ export const InboxMainContent: React.FC = observer(() => {
                 issueStatus === -2
                   ? "border-yellow-500 bg-yellow-500/10 text-yellow-500"
                   : issueStatus === -1
+                  ? "border-red-500 bg-red-500/10 text-red-500"
+                  : issueStatus === 0
+                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
                     ? "border-red-500 bg-red-500/10 text-red-500"
-                    : issueStatus === 0
-                      ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
-                        ? "border-red-500 bg-red-500/10 text-red-500"
-                        : "border-gray-500 bg-gray-500/10 text-custom-text-200"
-                      : issueStatus === 1
-                        ? "border-green-500 bg-green-500/10 text-green-500"
-                        : issueStatus === 2
-                          ? "border-gray-500 bg-gray-500/10 text-custom-text-200"
-                          : ""
+                    : "border-gray-500 bg-gray-500/10 text-custom-text-200"
+                  : issueStatus === 1
+                  ? "border-green-500 bg-green-500/10 text-green-500"
+                  : issueStatus === 2
+                  ? "border-gray-500 bg-gray-500/10 text-custom-text-200"
+                  : ""
               }`}
             >
               {issueStatus === -2 ? (
@@ -225,7 +223,7 @@ export const InboxMainContent: React.FC = observer(() => {
                 </>
               ) : null}
             </div>
-            <div className="mb-5 flex items-center">
+            <div className="mb-2.5 flex items-center">
               {currentIssueState && (
                 <StateGroupIcon
                   className="mr-3 h-4 w-4"

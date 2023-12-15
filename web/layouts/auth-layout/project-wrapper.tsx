@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
+import { useApplication, useCycle, useLabel, useModule, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Spinner } from "@plane/ui";
@@ -19,18 +20,24 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
   const {
-    user: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
     project: { fetchProjectDetails, workspaceProjects },
-    projectLabel: { fetchProjectLabels },
     projectMember: { fetchProjectMembers },
-    projectState: { fetchProjectStates },
     projectEstimates: { fetchProjectEstimates },
-    cycle: { fetchCycles },
-    module: { fetchModules },
     projectViews: { fetchAllViews },
     inbox: { fetchInboxesList, isInboxEnabled },
-    commandPalette: { toggleCreateProjectModal },
   } = useMobxStore();
+  const {
+    commandPalette: { toggleCreateProjectModal },
+  } = useApplication();
+  const {
+    membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
+  } = useUser();
+  const { fetchAllCycles } = useCycle();
+  const { fetchModules } = useModule();
+  const { fetchProjectStates } = useProjectState();
+  const {
+    project: { fetchProjectLabels },
+  } = useLabel();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -68,7 +75,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project cycles
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchCycles(workspaceSlug.toString(), projectId.toString(), "all") : null
+    workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project modules
   useSWR(
@@ -80,7 +87,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchAllViews(workspaceSlug.toString(), projectId.toString()) : null
   );
-  // TODO: fetching project pages
   // fetching project inboxes if inbox is enabled
   useSWR(
     workspaceSlug && projectId && isInboxEnabled ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}` : null,

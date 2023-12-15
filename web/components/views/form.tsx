@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-
-// mobx store
+// hooks
+import { useLabel, useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
@@ -25,12 +25,16 @@ const defaultValues: Partial<IProjectView> = {
   description: "",
 };
 
-export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
+export const ProjectViewForm: React.FC<Props> = observer((props) => {
+  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  // store hooks
   const {
-    projectLabel: { projectLabels },
-    projectState: projectStateStore,
     projectMember: { projectMembers },
   } = useMobxStore();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
 
   const {
     control,
@@ -176,7 +180,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
                     labels={projectLabels ?? undefined}
                     members={projectMembers?.map((m) => m.member) ?? undefined}
-                    states={projectStateStore.projectStates ?? undefined}
+                    states={projectStates}
                   />
                 </FiltersDropdown>
               )}
@@ -190,7 +194,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                 handleRemoveFilter={handleRemoveFilter}
                 labels={projectLabels ?? []}
                 members={projectMembers?.map((m) => m.member) ?? []}
-                states={projectStateStore.projectStates ?? []}
+                states={projectStates}
               />
             </div>
           )}
@@ -206,8 +210,8 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+            ? "Creating View..."
+            : "Create View"}
         </Button>
       </div>
     </form>

@@ -1,9 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase } from "lucide-react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectsHeader = observer(() => {
   // store hooks
@@ -11,7 +13,12 @@ export const ProjectsHeader = observer(() => {
     commandPalette: commandPaletteStore,
     eventTracker: { setTrackElement },
   } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { workspaceProjects, searchQuery, setSearchQuery } = useProject();
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -38,17 +45,18 @@ export const ProjectsHeader = observer(() => {
             />
           </div>
         )}
-
-        <Button
-          prependIcon={<Plus />}
-          size="sm"
-          onClick={() => {
-            setTrackElement("PROJECTS_PAGE_HEADER");
-            commandPaletteStore.toggleCreateProjectModal(true);
-          }}
-        >
-          Add Project
-        </Button>
+        {isAuthorizedUser && (
+          <Button
+            prependIcon={<Plus />}
+            size="sm"
+            onClick={() => {
+              setTrackElement("PROJECTS_PAGE_HEADER");
+              commandPaletteStore.toggleCreateProjectModal(true);
+            }}
+          >
+            Add Project
+          </Button>
+        )}
       </div>
     </div>
   );

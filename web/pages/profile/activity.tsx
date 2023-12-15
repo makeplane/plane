@@ -1,6 +1,5 @@
 import { ReactElement } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/router";
 import Link from "next/link";
 // services
 import { UserService } from "services/user.service";
@@ -23,9 +22,6 @@ import { NextPageWithLayout } from "types/app";
 const userService = new UserService();
 
 const ProfileActivityPage: NextPageWithLayout = () => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (

@@ -8,6 +8,8 @@ import { useApplication, useProject, useUser } from "hooks/store";
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // images
 import { NewEmptyState } from "components/common/new-empty-state";
 import emptyProject from "public/empty-state/dashboard_empty_project.webp";
@@ -30,6 +32,8 @@ export const WorkspaceDashboardView = observer(() => {
     workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
     workspaceSlug ? () => fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
   );
+
+  const isEditingAllowed = !!userStore.currentProjectRole && userStore.currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -90,6 +94,7 @@ export const WorkspaceDashboardView = observer(() => {
                   commandPaletteStore.toggleCreateProjectModal(true);
                 },
               }}
+              disabled={!isEditingAllowed}
             />
           )
         ) : null}
