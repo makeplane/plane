@@ -19,14 +19,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        if: steps.check_repo.outputs.is_correct_repo == 'true'
         uses: actions/checkout@v2
         with:
           persist-credentials: false
           fetch-depth: 0
 
       - name: Setup GH CLI
-        if: steps.check_repo.outputs.is_correct_repo == 'true'
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
           curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
@@ -36,7 +34,6 @@ jobs:
           sudo apt install gh -y
 
       - name: Create Pull Request
-        if: steps.check_repo.outputs.is_correct_repo == 'true'
         env:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
