@@ -21,7 +21,9 @@ export const KanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
+  const {
+    issue: { issueKanBanView: issueKanBanViewStore },
+  } = useMobxStore();
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
