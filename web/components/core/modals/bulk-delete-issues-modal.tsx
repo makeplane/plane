@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// react hook form
+import { observer } from "mobx-react-lite";
 import { SubmitHandler, useForm } from "react-hook-form";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+import useSWR from "swr";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // services
 import { IssueService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button, LayersIcon } from "@plane/ui";
 // icons
@@ -17,8 +17,6 @@ import { Search } from "lucide-react";
 import { IUser, IIssue } from "types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type FormInput = {
   delete_issue_ids: string[];

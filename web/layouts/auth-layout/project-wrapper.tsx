@@ -35,8 +35,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  console.log("hasPermissionToCurrentProject", hasPermissionToCurrentProject);
-
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${workspaceSlug.toString()}_${projectId.toString()}` : null,
