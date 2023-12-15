@@ -23,17 +23,14 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = router.query;
 
   const {
-    user: { hasPermissionToCurrentProject },
     moduleIssues: { loader, getIssues, fetchIssues },
     moduleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject && moduleId
-      ? `MODULE_ISSUES_V3_${workspaceSlug}_${projectId}_${moduleId}`
-      : null,
+    workspaceSlug && projectId && moduleId ? `MODULE_ISSUES_V3_${workspaceSlug}_${projectId}_${moduleId}` : null,
     async () => {
-      if (workspaceSlug && projectId && hasPermissionToCurrentProject && moduleId) {
+      if (workspaceSlug && projectId && moduleId) {
         await fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
         await fetchIssues(
           workspaceSlug.toString(),

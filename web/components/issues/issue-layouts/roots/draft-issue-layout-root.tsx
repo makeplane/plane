@@ -14,22 +14,16 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    user: { hasPermissionToCurrentProject },
     projectDraftIssuesFilter: { issueFilters, fetchFilters },
     projectDraftIssues: { loader, getIssues, fetchIssues },
   } = useMobxStore();
 
-  useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? `DRAFT_FILTERS_AND_ISSUES_${projectId.toString()}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && hasPermissionToCurrentProject) {
-        await fetchFilters(workspaceSlug.toString(), projectId.toString());
-        await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
-      }
+  useSWR(workspaceSlug && projectId ? `DRAFT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
+    if (workspaceSlug && projectId) {
+      await fetchFilters(workspaceSlug.toString(), projectId.toString());
+      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
     }
-  );
+  });
 
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 

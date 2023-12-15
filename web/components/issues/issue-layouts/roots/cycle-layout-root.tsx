@@ -27,18 +27,15 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const {
-    user: { hasPermissionToCurrentProject },
     cycle: cycleStore,
     cycleIssues: { loader, getIssues, fetchIssues },
     cycleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject && cycleId
-      ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}`
-      : null,
+    workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
     async () => {
-      if (workspaceSlug && projectId && hasPermissionToCurrentProject && cycleId) {
+      if (workspaceSlug && projectId && cycleId) {
         await fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
         await fetchIssues(
           workspaceSlug.toString(),

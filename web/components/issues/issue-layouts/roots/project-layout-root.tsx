@@ -22,22 +22,16 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    user: { hasPermissionToCurrentProject },
     projectIssues: { loader, getIssues, fetchIssues },
     projectIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
-  useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && hasPermissionToCurrentProject) {
-        await fetchFilters(workspaceSlug.toString(), projectId.toString());
-        await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
-      }
+  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
+    if (workspaceSlug && projectId) {
+      await fetchFilters(workspaceSlug.toString(), projectId.toString());
+      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
     }
-  );
+  });
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
