@@ -21,6 +21,7 @@ export interface EmailFormValues {
   EMAIL_HOST_PASSWORD: string;
   EMAIL_USE_TLS: string;
   // EMAIL_USE_SSL: string;
+  EMAIL_FROM: string;
 }
 
 export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
@@ -45,6 +46,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       EMAIL_HOST_PASSWORD: config["EMAIL_HOST_PASSWORD"],
       EMAIL_USE_TLS: config["EMAIL_USE_TLS"],
       // EMAIL_USE_SSL: config["EMAIL_USE_SSL"],
+      EMAIL_FROM: config["EMAIL_FROM"],
     },
   });
 
@@ -166,6 +168,31 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
               </button>
             )}
           </div>
+        </div>
+      </div>
+      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-2">
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm">From address</h4>
+          <Controller
+            control={control}
+            name="EMAIL_FROM"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="EMAIL_FROM"
+                name="EMAIL_FROM"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.EMAIL_FROM)}
+                placeholder="no-reply@projectplane.so"
+                className="w-full rounded-md font-medium"
+              />
+            )}
+          />
+          <p className="text-xs text-custom-text-400">
+            You will have to verify your email address to being sending emails.
+          </p>
         </div>
       </div>
 
