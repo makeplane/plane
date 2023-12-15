@@ -1,9 +1,14 @@
+import { DraggableLocation } from "@hello-pangea/dnd";
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { renderEmoji } from "helpers/emoji.helper";
 import { ReactElement } from "react";
-import { IProjectLabelStore, IProjectMemberStore, IProjectStateStore, IProjectStore } from "store_legacy/project";
-import { IIssue } from "types";
+import { IIssueStore } from "store/issue/issue.store";
+import { IProjectIssues } from "store/issue/project";
+import { ILabelRootStore } from "store/label";
+import { IProjectStore } from "store/project/project.store";
+import { IStateStore } from "store/state.store";
+import { IGroupedIssues, IIssue, ISubGroupedIssues, TUnGroupedIssues } from "types";
 
 export type columnTypes =
   | "project"
@@ -24,9 +29,9 @@ export interface IKanbanColumn {
 export const getKanbanColumns = (
   groupBy: columnTypes | null,
   project: IProjectStore,
-  projectLabel: IProjectLabelStore,
-  projectMember: IProjectMemberStore,
-  projectState: IProjectStateStore
+  projectLabel: ILabelRootStore,
+  projectState: IStateStore
+  //projectMember?: IProjectMemberStore,
 ): IKanbanColumn[] | undefined => {
   switch (groupBy) {
     case "project":
@@ -39,27 +44,32 @@ export const getKanbanColumns = (
       return getPriorityColumns();
     case "labels":
       return getLabelsColumns(projectLabel);
-    case "assignees":
-      return getAssigneeColumns(projectMember);
-    case "created_by":
-      return getCreatedByColumns(projectMember);
+    // case "assignees":
+    //   return getAssigneeColumns(projectMember);
+    // case "created_by":
+    //   return getCreatedByColumns(projectMember);
   }
 };
 
 const getProjectColumns = (project: IProjectStore): IKanbanColumn[] | undefined => {
-  const { workspaceProjects: projects } = project;
+  const { workspaceProjects: projectIds, projectMap } = project;
 
-  if (!projects) return;
+  if (!projectIds) return;
 
-  return projects.map((project) => ({
-    id: project.id,
-    name: project.name,
-    Icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
-    payload: { project: project.id },
-  }));
+  return projectIds.map((projectId) => {
+    const project = projectMap[projectId];
+
+    if (project)
+      return {
+        id: project.id,
+        name: project.name,
+        Icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
+        payload: { project: project.id },
+      };
+  });
 };
 
-const getStateColumns = (projectState: IProjectStateStore): IKanbanColumn[] | undefined => {
+const getStateColumns = (projectState: IStateStore): IKanbanColumn[] | undefined => {
   const { projectStates } = projectState;
   if (!projectStates) return;
 
@@ -101,8 +111,10 @@ const getPriorityColumns = () => {
   }));
 };
 
-const getLabelsColumns = (projectLabel: IProjectLabelStore) => {
-  const { projectLabels } = projectLabel;
+const getLabelsColumns = (projectLabel: ILabelRootStore) => {
+  const {
+    project: { projectLabels },
+  } = projectLabel;
 
   if (!projectLabels) return;
 
@@ -118,32 +130,185 @@ const getLabelsColumns = (projectLabel: IProjectLabelStore) => {
   }));
 };
 
-const getAssigneeColumns = (projectMember: IProjectMemberStore) => {
-  const { projectMembers: users } = projectMember;
-  if (!users) return;
+// const getAssigneeColumns = (projectMember: IProjectMemberStore) => {
+//   const { projectMembers: users } = projectMember;
+//   if (!users) return;
 
-  return users.map((user) => {
-    const member = user.member;
-    return {
-      id: member?.id,
-      name: member?.display_name || "",
-      Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-      payload: { assignees: [member?.id] },
-    };
-  });
+//   return users.map((user) => {
+//     const member = user.member;
+//     return {
+//       id: member?.id,
+//       name: member?.display_name || "",
+//       Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+//       payload: { assignees: [member?.id] },
+//     };
+//   });
+// };
+
+// const getCreatedByColumns = (projectMember: IProjectMemberStore) => {
+//   const { projectMembers: users } = projectMember;
+//   if (!users) return;
+
+//   return users.map((user) => {
+//     const member = user.member;
+//     return {
+//       id: member?.id,
+//       name: member?.display_name || "",
+//       Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+//       payload: { created_by: member?.id },
+//     };
+//   });
+// };
+
+export const handleDragDrop = async (
+  source: DraggableLocation | null,
+  destination: DraggableLocation | null,
+  workspaceSlug: string,
+  projectId: string, // projectId for all views or user id in profile issues
+  store: IProjectIssues,
+  subGroupBy: string | null,
+  groupBy: string | null,
+  issueMap: IIssueStore | undefined,
+  issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined,
+  viewId: string | null = null // it can be moduleId, cycleId
+) => {
+  if (!issueMap || !issueWithIds || !source || !destination) return;
+
+  let updateIssue: any = {};
+
+  const sourceColumnId = (source?.droppableId && source?.droppableId.split("__")) || null;
+  const destinationColumnId = (destination?.droppableId && destination?.droppableId.split("__")) || null;
+
+  if (!sourceColumnId || !destinationColumnId) return;
+
+  const sourceGroupByColumnId = sourceColumnId[0] || null;
+  const destinationGroupByColumnId = destinationColumnId[0] || null;
+
+  const sourceSubGroupByColumnId = sourceColumnId[1] || null;
+  const destinationSubGroupByColumnId = destinationColumnId[1] || null;
+
+  if (
+    !workspaceSlug ||
+    !projectId ||
+    !groupBy ||
+    !sourceGroupByColumnId ||
+    !destinationGroupByColumnId ||
+    !sourceSubGroupByColumnId ||
+    !sourceGroupByColumnId
+  )
+    return;
+
+  if (destinationGroupByColumnId === "issue-trash-box") {
+    const sourceIssues: string[] = subGroupBy
+      ? (issueWithIds as ISubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+      : (issueWithIds as IGroupedIssues)[sourceGroupByColumnId];
+
+    const [removed] = sourceIssues.splice(source.index, 1);
+
+    if (removed) {
+      if (viewId) return await store?.removeIssue(workspaceSlug, projectId, removed); //, viewId);
+      else return await store?.removeIssue(workspaceSlug, projectId, removed);
+    }
+  } else {
+    const sourceIssues = subGroupBy
+      ? (issueWithIds as ISubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+      : (issueWithIds as IGroupedIssues)[sourceGroupByColumnId];
+    const destinationIssues = subGroupBy
+      ? (issueWithIds as ISubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
+      : (issueWithIds as IGroupedIssues)[destinationGroupByColumnId];
+
+    const [removed] = sourceIssues.splice(source.index, 1);
+    const removedIssueDetail = issueMap.allIssues[removed];
+
+    if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
+      updateIssue = {
+        id: removedIssueDetail?.id,
+      };
+
+      // for both horizontal and vertical dnd
+      updateIssue = {
+        ...updateIssue,
+        ...handleSortOrder(destinationIssues, destination.index, issueMap),
+      };
+
+      if (sourceSubGroupByColumnId === destinationSubGroupByColumnId) {
+        if (sourceGroupByColumnId != destinationGroupByColumnId) {
+          if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
+          if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
+        }
+      } else {
+        if (subGroupBy === "state")
+          updateIssue = {
+            ...updateIssue,
+            state: destinationSubGroupByColumnId,
+            priority: destinationGroupByColumnId,
+          };
+        if (subGroupBy === "priority")
+          updateIssue = {
+            ...updateIssue,
+            state: destinationGroupByColumnId,
+            priority: destinationSubGroupByColumnId,
+          };
+      }
+    } else {
+      updateIssue = {
+        id: removedIssueDetail?.id,
+      };
+
+      // for both horizontal and vertical dnd
+      updateIssue = {
+        ...updateIssue,
+        ...handleSortOrder(destinationIssues, destination.index, issueMap),
+      };
+
+      // for horizontal dnd
+      if (sourceColumnId != destinationColumnId) {
+        if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
+        if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
+      }
+    }
+
+    if (updateIssue && updateIssue?.id) {
+      if (viewId) return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue); //, viewId);
+      else return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
+    }
+  }
 };
 
-const getCreatedByColumns = (projectMember: IProjectMemberStore) => {
-  const { projectMembers: users } = projectMember;
-  if (!users) return;
+const handleSortOrder = (destinationIssues: string[], destinationIndex: number, issueMap: IIssueStore) => {
+  const sortOrderDefaultValue = 65535;
+  let currentIssueState = {};
 
-  return users.map((user) => {
-    const member = user.member;
-    return {
-      id: member?.id,
-      name: member?.display_name || "",
-      Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-      payload: { created_by: member?.id },
+  if (destinationIssues && destinationIssues.length > 0) {
+    if (destinationIndex === 0) {
+      const destinationIssueId = destinationIssues[destinationIndex];
+      currentIssueState = {
+        ...currentIssueState,
+        sort_order: issueMap.allIssues[destinationIssueId].sort_order - sortOrderDefaultValue,
+      };
+    } else if (destinationIndex === destinationIssues.length) {
+      const destinationIssueId = destinationIssues[destinationIndex - 1];
+      currentIssueState = {
+        ...currentIssueState,
+        sort_order: issueMap.allIssues[destinationIssueId].sort_order + sortOrderDefaultValue,
+      };
+    } else {
+      const destinationTopIssueId = destinationIssues[destinationIndex - 1];
+      const destinationBottomIssueId = destinationIssues[destinationIndex];
+      currentIssueState = {
+        ...currentIssueState,
+        sort_order:
+          (issueMap.allIssues[destinationTopIssueId].sort_order +
+            issueMap.allIssues[destinationBottomIssueId].sort_order) /
+          2,
+      };
+    }
+  } else {
+    currentIssueState = {
+      ...currentIssueState,
+      sort_order: sortOrderDefaultValue,
     };
-  });
+  }
+
+  return currentIssueState;
 };

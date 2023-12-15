@@ -10,18 +10,31 @@ import { IssuePropertyAssignee } from "../properties/assignee";
 import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
+import { IIssue, IState, TIssuePriorities } from "types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProfileIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store_legacy/issues";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 export interface IKanBanProperties {
   issue: IIssue;
   handleIssues: (issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties | null;
+  issuesFilter:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   showEmptyGroup: boolean;
   isReadOnly: boolean;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const { issue, handleIssues, displayProperties, isReadOnly } = props;
+  const { issue, handleIssues, issuesFilter, isReadOnly } = props;
 
   const handleState = (state: IState) => {
     handleIssues({ ...issue, state: state.id });
@@ -55,7 +68,10 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
     <div className="flex flex-wrap items-center gap-2 whitespace-nowrap">
       {/* basic properties */}
       {/* state */}
-      {displayProperties && displayProperties?.state && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties && displayProperties?.state}
+      >
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
           value={issue?.state || null}
@@ -64,20 +80,27 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           disabled={isReadOnly}
           hideDropdownArrow
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* priority */}
-      {displayProperties && displayProperties?.priority && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties && displayProperties?.priority}
+      >
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
           disabled={isReadOnly}
           hideDropdownArrow
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* label */}
-      {displayProperties && displayProperties?.labels && (
+
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties && displayProperties?.labels}
+      >
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
@@ -86,30 +109,39 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           disabled={isReadOnly}
           hideDropdownArrow
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* start date */}
-      {displayProperties && displayProperties?.start_date && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties?.start_date}
+      >
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
           disabled={isReadOnly}
           type="start_date"
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
-      {displayProperties && displayProperties?.due_date && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties?.due_date}
+      >
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
           disabled={isReadOnly}
           type="target_date"
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* assignee */}
-      {displayProperties && displayProperties?.assignee && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties?.assignee}
+      >
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
@@ -119,10 +151,13 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           disabled={isReadOnly}
           multiple
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* estimates */}
-      {displayProperties && displayProperties?.estimate && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties?.estimate}
+      >
         <IssuePropertyEstimates
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
@@ -130,38 +165,49 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           disabled={isReadOnly}
           hideDropdownArrow
         />
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* extra render properties */}
       {/* sub-issues */}
-      {displayProperties && displayProperties?.sub_issue_count && !!issue?.sub_issues_count && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties?.sub_issue_count && !!issue?.sub_issues_count}
+      >
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* attachments */}
-      {displayProperties && displayProperties?.attachment_count && !!issue?.attachment_count && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) =>
+          displayProperties?.attachment_count && !!issue?.attachment_count
+        }
+      >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.attachment_count}</div>
           </div>
         </Tooltip>
-      )}
+      </WithDisplayPropertiesHOC>
 
       {/* link */}
-      {displayProperties && displayProperties?.link && !!issue?.link_count && (
+      <WithDisplayPropertiesHOC
+        issuesFilter={issuesFilter}
+        getShouldRenderProperty={(displayProperties) => displayProperties?.link && !!issue?.link_count}
+      >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
-      )}
+      </WithDisplayPropertiesHOC>
     </div>
   );
 });

@@ -408,3 +408,13 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return _groupedEmojis;
 };
+
+export enum EIssuesStoreType {
+  MODULE,
+  CYClE,
+  PROJECT,
+  VIEW,
+  DRAFT,
+  ARCHIVED,
+  GLOBAL,
+}

@@ -26,7 +26,7 @@ export class IssueStore implements IIssueStore {
 
     makeObservable(this, {
       // observable
-      allIssues: observable.ref,
+      allIssues: observable,
       // actions
       addIssue: action,
       updateIssue: action,
