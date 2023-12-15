@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -25,7 +25,8 @@ import {
 } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { ILinkDetails, IModule, ModuleLink } from "types";
+import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "types";
+import { EFilterType } from "store/issues/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -62,6 +63,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       updateModuleLink,
       deleteModuleLink,
     },
+    moduleIssuesFilter: { issueFilters, updateFilters },
     user: userStore,
   } = useMobxStore();
 
@@ -210,6 +212,25 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
     }
   };
+
+  const handleFiltersUpdate = useCallback(
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
+
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+        });
+      } else {
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, moduleId);
+    },
+    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
+  );
 
   useEffect(() => {
     if (moduleDetails)
@@ -544,6 +565,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               totalIssues={moduleDetails.total_issues}
                               module={moduleDetails}
                               isPeekView={Boolean(peekModule)}
+                              filters={issueFilters?.filters}
+                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}
