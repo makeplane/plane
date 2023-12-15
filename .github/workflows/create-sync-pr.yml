@@ -46,7 +46,8 @@ jobs:
           git push target-origin $SOURCE_BRANCH:$TARGET_BRANCH
       
       - name: Create Pull Request
-        
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           TARGET_REPO="${{ secrets.SYNC_TARGET_REPO_NAME }}"
           TARGET_BRANCH="${{ secrets.SYNC_TARGET_BRANCH_NAME }}"
