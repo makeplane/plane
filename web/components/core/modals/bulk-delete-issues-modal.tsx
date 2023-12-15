@@ -17,6 +17,8 @@ import { Search } from "lucide-react";
 import { IUser, IIssue } from "types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -30,17 +32,25 @@ type Props = {
 
 const issueService = new IssueService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
+export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
+  // states
+  const [query, setQuery] = useState("");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // states
-  const [query, setQuery] = useState("");
+  // store hooks
+  const {
+    user: { hasPermissionToCurrentProject },
+  } = useMobxStore();
   // fetching project issues.
   const { data: issues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId && hasPermissionToCurrentProject
+      ? PROJECT_ISSUES_LIST(workspaceSlug.toString(), projectId.toString())
+      : null,
+    workspaceSlug && projectId && hasPermissionToCurrentProject
+      ? () => issueService.getIssues(workspaceSlug.toString(), projectId.toString())
+      : null
   );
 
   const { setToastAlert } = useToast();
@@ -222,4 +232,4 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

@@ -9,19 +9,25 @@ import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot } from "compon
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
 
   const {
+    user: { hasPermissionToCurrentProject },
     projectArchivedIssues: { getIssues, fetchIssues },
     projectArchivedIssuesFilter: { fetchFilters },
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug, projectId);
-      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+  useSWR(
+    workspaceSlug && projectId && hasPermissionToCurrentProject
+      ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}`
+      : null,
+    async () => {
+      if (workspaceSlug && projectId && hasPermissionToCurrentProject) {
+        await fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
+      }
     }
-  });
+  );
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
