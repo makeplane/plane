@@ -181,7 +181,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
                       active && !selected ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
-                  onClick={(e) => e.preventDefault()}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>
