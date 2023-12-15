@@ -118,6 +118,7 @@ export const LinkModal: FC<Props> = (props) => {
                                 ref={ref}
                                 hasError={Boolean(errors.url)}
                                 placeholder="https://..."
+                                pattern="^(https?://).*"
                                 className="w-full"
                               />
                             )}
