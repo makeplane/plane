@@ -121,10 +121,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
 
   return (
     <>
-      <Draggable draggableId={draggableId} index={index}>
+      <Draggable draggableId={draggableId} index={index} isDragDisabled={!canEditIssueProperties}>
         {(provided, snapshot) => (
           <div
-            className="group/kanban-block relative p-1.5 hover:cursor-default"
+            className="group/kanban-block relative p-1.5"
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
