@@ -59,7 +59,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     </div>
   );
 
-  const isEditable = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
