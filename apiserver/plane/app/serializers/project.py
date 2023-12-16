@@ -21,6 +21,8 @@ from plane.utils.s3 import S3
 
 
 class BaseProjectSerializerMixin:
+    """abstract class for refresh cover image s3 link"""
+
     def refresh_cover_image(self, instance):
         if settings.AWS_S3_BUCKET_AUTH:
             cover_image = instance.cover_image

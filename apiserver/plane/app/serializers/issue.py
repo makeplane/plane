@@ -36,6 +36,8 @@ from plane.utils.parse_html import parse_text_to_html, refresh_url_content
 
 
 class BaseIssueSerializerMixin:
+    """abstract class for refresh s3 link in description htlm images"""
+
     def refresh_html_content(self, instance):
         if settings.AWS_S3_BUCKET_AUTH:
             html = parse_text_to_html(instance.description_html)

@@ -8,6 +8,8 @@ from django.conf import settings
 
 
 class S3:
+    """class for manage s3 operations (upload, delete, refresh url file)"""
+
     def __init__(self):
         if settings.USE_MINIO:
             self.client = boto3.client(
