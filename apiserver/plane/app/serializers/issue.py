@@ -1,5 +1,6 @@
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third Party imports
 from rest_framework import serializers
@@ -36,12 +37,13 @@ from plane.utils.parse_html import parse_text_to_html, refresh_url_content
 
 class BaseIssueSerializerMixin:
     def refresh_html_content(self, instance):
-        html = parse_text_to_html(instance.description_html)
-        refreshed, html = refresh_url_content(html)
+        if settings.AWS_S3_BUCKET_AUTH:
+            html = parse_text_to_html(instance.description_html)
+            refreshed, html = refresh_url_content(html)
 
-        if refreshed:
-            instance.description_html = html
-            instance.save()
+            if refreshed:
+                instance.description_html = html
+                instance.save()
 
 
 class IssueFlatSerializer(BaseSerializer, BaseIssueSerializerMixin):
