@@ -225,13 +225,17 @@ STORAGES["default"] = {
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
-AWS_REGION = os.environ.get("AWS_REGION", "")
-AWS_DEFAULT_ACL = "public-read"
-AWS_QUERYSTRING_AUTH = False
+AWS_REGION = os.environ.get("AWS_REGION", "us-east-2")
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_BUCKET_AUTH = True
+AWS_QUERYSTRING_AUTH = True
+AWS_DEFAULT_ACL = "private" if AWS_S3_BUCKET_AUTH else "public-read"
 AWS_S3_FILE_OVERWRITE = False
+AWS_S3_MAX_AGE_SECONDS = 60 * 60
 AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get(
     "MINIO_ENDPOINT_URL", None
 )
+
 if AWS_S3_ENDPOINT_URL:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
@@ -291,7 +295,9 @@ CELERY_IMPORTS = (
 
 # Sentry Settings
 # Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").startswith("https://"):
+if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
+    "SENTRY_DSN"
+).startswith("https://"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
         integrations=[
@@ -321,7 +327,7 @@ ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
 # Use Minio settings
-USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+USE_MINIO = 0
 
 # Posthog settings
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
