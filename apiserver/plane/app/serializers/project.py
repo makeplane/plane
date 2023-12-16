@@ -14,9 +14,20 @@ from plane.db.models import (
     ProjectDeployBoard,
     ProjectPublicMember,
 )
+from plane.utils.s3 import S3
 
 
-class ProjectSerializer(BaseSerializer):
+class BaseProjectSerializerMixin:
+    def refresh_cover_image(self, instance):
+        cover_image = instance.cover_image
+
+        if S3.verify_s3_url(cover_image) and S3.url_file_has_expired(cover_image):
+            s3 = S3()
+            instance.cover_image = s3.refresh_url(cover_image)
+            instance.save()
+
+
+class ProjectSerializer(BaseSerializer, BaseProjectSerializerMixin):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
     class Meta:
@@ -75,8 +86,12 @@ class ProjectSerializer(BaseSerializer):
         # If not same fail update
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
+    def to_representation(self, instance):
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
-class ProjectLiteSerializer(BaseSerializer):
+
+class ProjectLiteSerializer(BaseSerializer, BaseProjectSerializerMixin):
     class Meta:
         model = Project
         fields = [
@@ -90,8 +105,12 @@ class ProjectLiteSerializer(BaseSerializer):
         ]
         read_only_fields = fields
 
+    def to_representation(self, instance):
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
-class ProjectListSerializer(DynamicBaseSerializer):
+
+class ProjectListSerializer(DynamicBaseSerializer, BaseProjectSerializerMixin):
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
@@ -121,8 +140,12 @@ class ProjectListSerializer(DynamicBaseSerializer):
         model = Project
         fields = "__all__"
 
+    def to_representation(self, instance):
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
-class ProjectDetailSerializer(BaseSerializer):
+
+class ProjectDetailSerializer(BaseSerializer, BaseProjectSerializerMixin):
     # workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
@@ -138,6 +161,10 @@ class ProjectDetailSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = "__all__"
+
+    def to_representation(self, instance):
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
 
 class ProjectMemberSerializer(BaseSerializer):

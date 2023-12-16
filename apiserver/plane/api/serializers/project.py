@@ -2,22 +2,11 @@
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember
 from .base import BaseSerializer
-from plane.utils.s3 import S3
 
 
-class BaseProjectSerializerMixin:
-    def refresh_cover_image(self, instance):
-        cover_image = instance.cover_image
-
-        if S3.verify_s3_url(cover_image) and S3.url_file_has_expired(cover_image):
-            s3 = S3()
-            instance.cover_image = s3.refresh_url(cover_image)
-            instance.save()
-
-
-class ProjectSerializer(BaseSerializer, BaseProjectSerializerMixin):
+class ProjectSerializer(BaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
@@ -86,12 +75,8 @@ class ProjectSerializer(BaseSerializer, BaseProjectSerializerMixin):
         )
         return project
 
-    def to_representation(self, instance):
-        self.refresh_cover_image(instance)
-        return super().to_representation(instance)
 
-
-class ProjectLiteSerializer(BaseSerializer, BaseProjectSerializerMixin):
+class ProjectLiteSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = [
@@ -104,7 +89,3 @@ class ProjectLiteSerializer(BaseSerializer, BaseProjectSerializerMixin):
             "description",
         ]
         read_only_fields = fields
-
-    def to_representation(self, instance):
-        self.refresh_cover_image(instance)
-        return super().to_representation(instance)
