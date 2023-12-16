@@ -1,8 +1,4 @@
 from bs4 import BeautifulSoup
-from datetime import datetime, timezone
-from urllib.parse import urlparse, parse_qs
-
-from django.conf import settings
 
 from plane.utils.s3 import S3
 

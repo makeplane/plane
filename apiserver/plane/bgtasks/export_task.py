@@ -2,7 +2,6 @@
 import csv
 import io
 import json
-import boto3
 import zipfile
 
 # Django imports
@@ -12,7 +11,6 @@ from django.utils import timezone
 # Third party imports
 from celery import shared_task
 from sentry_sdk import capture_exception
-from botocore.client import Config
 from openpyxl import Workbook
 
 # Module imports
