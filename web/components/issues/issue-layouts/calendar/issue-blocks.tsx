@@ -10,6 +10,9 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssue } from "types";
 import { IIssueResponse } from "store/issues/types";
+import { useMobxStore } from "lib/mobx/store-provider";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   issues: IIssueResponse | undefined;
@@ -25,6 +28,11 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
+
+  // mobx store
+  const {
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
@@ -51,6 +59,8 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     </div>
   );
 
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
@@ -58,7 +68,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
         const issue = issues?.[issueId];
         return (
-          <Draggable key={issue.id} draggableId={issue.id} index={index}>
+          <Draggable key={issue.id} draggableId={issue.id} index={index} isDragDisabled={!isEditable}>
             {(provided, snapshot) => (
               <div
                 className="relative cursor-pointer p-1 px-2"
