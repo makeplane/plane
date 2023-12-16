@@ -1,3 +1,6 @@
+# Django imports
+from django.conf import settings
+
 # Third party imports
 from rest_framework import serializers
 
@@ -19,12 +22,13 @@ from plane.utils.s3 import S3
 
 class BaseProjectSerializerMixin:
     def refresh_cover_image(self, instance):
-        cover_image = instance.cover_image
+        if settings.AWS_S3_BUCKET_AUTH:
+            cover_image = instance.cover_image
 
-        if S3.verify_s3_url(cover_image) and S3.url_file_has_expired(cover_image):
-            s3 = S3()
-            instance.cover_image = s3.refresh_url(cover_image)
-            instance.save()
+            if S3.verify_s3_url(cover_image) and S3.url_file_has_expired(cover_image):
+                s3 = S3()
+                instance.cover_image = s3.refresh_url(cover_image)
+                instance.save()
 
 
 class ProjectSerializer(BaseSerializer, BaseProjectSerializerMixin):
