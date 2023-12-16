@@ -21,8 +21,6 @@ from plane.db.models import (
     IssueActivity,
     ProjectMember,
 )
-from plane.utils.parse_html import parse_text_to_html, refresh_url_content
-
 
 from .base import BaseSerializer
 from .cycle import CycleSerializer, CycleLiteSerializer
@@ -31,17 +29,7 @@ from .user import UserLiteSerializer
 from .state import StateLiteSerializer
 
 
-class BaseIssueSerializerMixin:
-    def refresh_html_content(self, instance):
-        html = parse_text_to_html(instance.description_html)
-        refreshed, html = refresh_url_content(html)
-
-        if refreshed:
-            instance.description_html = html
-            instance.save()
-
-
-class IssueSerializer(BaseSerializer, BaseIssueSerializerMixin):
+class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
             queryset=User.objects.values_list("id", flat=True)
@@ -238,7 +226,6 @@ class IssueSerializer(BaseSerializer, BaseIssueSerializerMixin):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-        self.refresh_html_content(instance)
         data = super().to_representation(instance)
         if "assignees" in self.fields:
             if "assignees" in self.expand:
