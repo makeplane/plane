@@ -111,7 +111,8 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const moduleId = this.rootStore.module.moduleId;
-      if (!workspaceSlug || !projectId || !moduleId) return;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
+      if (!workspaceSlug || !projectId || !hasPermissionToCurrentProject || !moduleId) return;
 
       const userFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);

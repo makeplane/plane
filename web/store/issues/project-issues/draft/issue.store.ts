@@ -63,7 +63,8 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
-      if (!workspaceSlug || !projectId) return;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
+      if (!workspaceSlug || !projectId || !hasPermissionToCurrentProject) return;
 
       const userFilters = this.rootStore?.projectDraftIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
