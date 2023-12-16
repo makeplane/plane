@@ -73,9 +73,7 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
 
     s3.upload_file(
         zip_file,
-        settings.AWS_STORAGE_BUCKET_NAME
-        if settings.USE_MINIO
-        else settings.AWS_S3_BUCKET_NAME,
+        settings.AWS_STORAGE_BUCKET_NAME,
         file_name,
         "public-read",
         "application/zip",
