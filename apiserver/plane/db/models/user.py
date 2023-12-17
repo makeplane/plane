@@ -17,6 +17,9 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+# Module imports
+from .base import BaseModel
+
 
 def get_default_onboarding():
     return {
@@ -65,7 +68,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     has_billing_address = models.BooleanField(default=False)
 
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
+    user_timezone = models.CharField(
+        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    )
 
     last_active = models.DateTimeField(default=timezone.now, null=True)
     last_login_time = models.DateTimeField(null=True)
@@ -122,6 +127,31 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.is_staff = True
 
         super(User, self).save(*args, **kwargs)
+
+
+class ConnectedAccount(BaseModel):
+    medium = models.CharField(
+        max_length=20,
+        choices=(
+            ("Google", "google"),
+            ("Github", "github"),
+        ),
+    )
+    last_connected_at = models.DateTimeField(default=timezone.now, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_connected_accounts",
+    )
+    access_token = models.CharField(max_length=255)
+    data = models.JSONField(default={})
+
+    class Meta:
+        unique_together = ["user", "medium"]
+        verbose_name = "ConnectedAccount"
+        verbose_name_plural = "ConnectedAccounts"
+        db_table = "connected_accounts"
+        ordering = ("-created_at",)
 
 
 @receiver(post_save, sender=User)

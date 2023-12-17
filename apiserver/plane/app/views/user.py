@@ -159,3 +159,8 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
             ).data,
         )
 
+
+class ConnectedAccountEndpoint(BaseAPIView):
+
+    def post(self, request):
+        pass
