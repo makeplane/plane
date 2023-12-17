@@ -144,7 +144,7 @@ class ConnectedAccount(BaseModel):
         related_name="user_connected_accounts",
     )
     access_token = models.CharField(max_length=255)
-    data = models.JSONField(default={})
+    data = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["user", "medium"]
