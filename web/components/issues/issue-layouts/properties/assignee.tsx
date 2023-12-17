@@ -144,7 +144,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           } ${buttonClassName}`}
           onClick={(e) => {
             e.stopPropagation();
-            !projectMembers && getWorkspaceMembers();
+            (!projectId || !_members[projectId]) && getProjectMembers();
           }}
         >
           {label}
