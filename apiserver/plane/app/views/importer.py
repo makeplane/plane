@@ -1,11 +1,14 @@
 # Python imports
 import uuid
+import json
+import requests 
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Django imports
+from django.conf import settings
 from django.db.models import Max, Q
 
 # Module imports
@@ -102,16 +105,31 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
             email = request.GET.get("email", "")
             cloud_hostname = request.GET.get("cloud_hostname", "")
 
-            response = jira_project_issue_summary(
-                email, api_token, project_key, cloud_hostname
-            )
-            if "error" in response:
-                return Response(response, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response(
-                    response,
-                    status=status.HTTP_200_OK,
+            if settings.SEGWAY_BASE_URL:
+                print("inside this it came ")
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-api-key": settings.SEGWAY_KEY,
+                }
+                data = {
+                    "project_key": project_key,
+                    "api_token": api_token,
+                    "email": email,
+                    "cloud_hostname": cloud_hostname,
+                }
+                res = requests.post(
+                    f"{settings.SEGWAY_BASE_URL}/api/jira",
+                    data=json.dumps(data),
+                    headers=headers,
                 )
+
+                if "error" in res.json():
+                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(
+                        res.json(),
+                        status=status.HTTP_200_OK,
+                    )
         return Response(
             {"error": "Service not supported yet"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -202,7 +220,42 @@ class ImportServiceEndpoint(BaseAPIView):
                 updated_by=request.user,
             )
 
-            service_importer.delay(service, importer.id)
+            if settings.SEGWAY_BASE_URL:
+                print("inside this it came ")
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-api-key": settings.SEGWAY_KEY,
+                }
+                data = {
+                    "metadata": metadata,
+                    "data": data,
+                    "config": config,
+                    "workspace_id": str(workspace.id),
+                    "project_id": str(project_id),
+                    "created_by": str(request.user.id),
+                }
+                res = requests.post(
+                    f"{settings.SEGWAY_BASE_URL}/api/jira/import",
+                    data=json.dumps(data),
+                    headers=headers,
+                )
+
+                if "error" in res.json():
+                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    importer = Importer.objects.get(pk=importer.id)
+                    importer.status = "processing"
+                    importer.save(update_fields=["status"])
+                    return Response(
+                        res.json(),
+                        status=status.HTTP_200_OK,
+                    )
+
+            # service_importer.apply_async(
+            #     args=[],
+            #     kwargs={"service": service, "importer_id": importer.id},
+            #     routing_key="internal",
+            # )
             serializer = ImporterSerializer(importer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

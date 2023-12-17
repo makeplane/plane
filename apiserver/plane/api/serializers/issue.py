@@ -54,10 +54,15 @@ class IssueSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "archived_at",
+            "external_id",
+            "external_source",
         ]
         exclude = [
             "description",
             "description_stripped",
+            "external_id",
+            "external_source",
         ]
 
     def validate(self, data):
