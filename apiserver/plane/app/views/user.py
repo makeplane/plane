@@ -1,10 +1,14 @@
 # Python import
 import os
+import requests
+
+# Django imports
+from django.utils import timezone
+
 
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-
 
 # Module imports
 from plane.app.serializers import (
@@ -12,9 +16,16 @@ from plane.app.serializers import (
     IssueActivitySerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
+    ConnectedAccountSerializer,
 )
 from plane.app.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember
+from plane.db.models import (
+    User,
+    IssueActivity,
+    WorkspaceMember,
+    ProjectMember,
+    ConnectedAccount,
+)
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 from django.db.models import Q, F, Count, Case, When, IntegerField
@@ -52,7 +63,12 @@ class UserEndpoint(BaseViewSet):
 
         # Instance admin check
         if InstanceAdmin.objects.filter(user=user).exists():
-            return Response({"error": "You cannot deactivate your account since you are an instance admin"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "error": "You cannot deactivate your account since you are an instance admin"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         projects_to_deactivate = []
         workspaces_to_deactivate = []
@@ -162,13 +178,115 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
 
 
 class ConnectedAccountEndpoint(BaseAPIView):
+    def get_access_token(self, request_token: str) -> str:
+        """Obtain the request token from github.
+        Given the client id, client secret and request issued out by GitHub, this method
+        should give back an access token
+        Parameters
+        ----------
+        CLIENT_ID: str
+            A string representing the client id issued out by github
+        CLIENT_SECRET: str
+            A string representing the client secret issued out by github
+        request_token: str
+            A string representing the request token issued out by github
+        Throws
+        ------
+        ValueError:
+            if CLIENT_ID or CLIENT_SECRET or request_token is empty or not a string
+        Returns
+        -------
+        access_token: str
+            A string representing the access token issued out by github
+        """
 
-    def post(self, request):
-        GITHUB_APP_CLIENT_ID, = get_configuration_value(
+        if not request_token:
+            raise ValueError("The request token has to be supplied!")
+
+        (CLIENT_SECRET, GITHUB_CLIENT_ID) = get_configuration_value(
             [
                 {
-                    "key": "GITHUB_APP_CLIENT_ID",
-                    "default": os.environ.get("GITHUB_APP_CLIENT_ID"),
+                    "key": "GITHUB_CLIENT_SECRET",
+                    "default": os.environ.get("GITHUB_CLIENT_SECRET", None),
+                },
+                {
+                    "key": "GITHUB_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_CLIENT_ID"),
                 },
             ]
         )
+
+        url = f"https://github.com/login/oauth/access_token?client_id={str(GITHUB_CLIENT_ID)}&client_secret={str(CLIENT_SECRET)}&code={str(request_token)}"
+
+        headers = {"accept": "application/json"}
+
+        res = requests.post(url, headers=headers)
+
+        data = res.json()
+
+        return data
+
+    def post(self, request):
+        # Get the medium and temporary code
+        medium = request.data.get("medium", False)
+        id_token = request.data.get("credential", False)
+
+        if medium == "github":
+            account_data = self.get_access_token(id_token)
+            # Get the values from the tokens
+            (
+                github_access_token,
+                github_refresh_token,
+                access_token_expired_at,
+                refresh_token_expired_at,
+            ) = (
+                account_data.get("access_token"),
+                account_data.get("refresh_token", None),
+                account_data.get("expires_in", None),
+                account_data.get("refresh_token_expires_in", None),
+            )
+            # Get the connected account
+            connected_account = ConnectedAccount.objects.filter(
+                user=request.user, medium=medium
+            ).first()
+
+            if access_token_expired_at:
+                access_token_expired_at = timezone.now() + timezone.timedelta(
+                    seconds=access_token_expired_at
+                )
+                refresh_token_expired_at = timezone.now() + timezone.timedelta(
+                    seconds=refresh_token_expired_at
+                )
+
+            # If the connected account exists
+            if connected_account:
+                connected_account.access_token = github_access_token
+                connected_account.refresh_token = github_refresh_token
+                connected_account.access_token_expired_at = access_token_expired_at
+                connected_account.refresh_token_expired_at = refresh_token_expired_at
+                connected_account.last_connected_at = timezone.now()
+                connected_account.save()
+            else:
+                # Create the connected account
+                connected_account = ConnectedAccount.objects.create(
+                    medium=medium,
+                    user=request.user,
+                    access_token=github_access_token,
+                    refresh_token=github_refresh_token,
+                    access_token_expired_at=access_token_expired_at,
+                    refresh_token_expired_at=refresh_token_expired_at,
+                    last_connected_at=timezone.now(),
+                )
+
+        serializer = ConnectedAccountSerializer(connected_account)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request):
+        connected_accounts = ConnectedAccount.objects.filter(user=request.user)
+        serializer = ConnectedAccountSerializer(connected_accounts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, medium):
+        connected_account = ConnectedAccount.objects.get(medium=medium, user=request.user)
+        connected_account.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

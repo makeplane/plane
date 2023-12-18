@@ -8,6 +8,7 @@ from plane.app.views import (
     UserActivityEndpoint,
     ChangePasswordEndpoint,
     SetUserPasswordEndpoint,
+    ConnectedAccountEndpoint,
     ## End User
     ## Workspaces
     UserWorkSpacesEndpoint,
@@ -94,6 +95,16 @@ urlpatterns = [
         "users/me/set-password/",
         SetUserPasswordEndpoint.as_view(),
         name="set-password",
+    ),
+    path(
+        "users/me/connected-accounts/",
+        ConnectedAccountEndpoint.as_view(),
+        name="connected-account",
+    ),
+    path(
+        "users/me/connected-accounts/<str:medium>/",
+        ConnectedAccountEndpoint.as_view(),
+        name="connected-account",
     ),
     ## End User Graph
 ]

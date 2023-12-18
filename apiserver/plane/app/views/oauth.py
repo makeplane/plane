@@ -296,6 +296,10 @@ class OauthEndpoint(BaseAPIView):
                 user=user, medium=medium
             ).first()
 
+            if access_token_expired_at:
+                access_token_expired_at = timezone.now() + timezone.timedelta(seconds=access_token_expired_at)
+                refresh_token_expired_at = timezone.now() + timezone.timedelta(seconds=refresh_token_expired_at)
+
             # If the connected account exists
             if connected_account:
                 connected_account.access_token = github_access_token
@@ -307,6 +311,7 @@ class OauthEndpoint(BaseAPIView):
             else:
                 # Create the connected account
                 ConnectedAccount.objects.create(
+                    medium=medium,
                     user=user,
                     access_token=github_access_token,
                     refresh_token=github_refresh_token,
