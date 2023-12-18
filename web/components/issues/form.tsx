@@ -227,6 +227,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     reset({
       ...defaultValues,
       ...initialData,
+      project: projectId,
     });
   }, [setFocus, initialData, reset]);
 

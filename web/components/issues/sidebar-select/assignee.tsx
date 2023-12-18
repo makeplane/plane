@@ -10,6 +10,7 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   value: string[];
+  projectId: string;
   onChange: (val: string[]) => void;
   disabled?: boolean;
 };
@@ -17,9 +18,9 @@ type Props = {
 // services
 const projectMemberService = new ProjectMemberService();
 
-export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
+export const SidebarAssigneeSelect: React.FC<Props> = ({ value, projectId, onChange, disabled = false }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
