@@ -145,7 +145,7 @@ class ConnectedAccount(BaseModel):
     )
     access_token = models.CharField(max_length=255)
     access_token_expired_at = models.DateTimeField(null=True)
-    refresh_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255, null=True)
     refresh_token_expired_at = models.DateTimeField(null=True)
     metadata = models.JSONField(default=dict)
     last_connected_at = models.DateTimeField(default=timezone.now)
