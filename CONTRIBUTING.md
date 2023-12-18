@@ -33,8 +33,8 @@ The backend is a django project which is kept inside apiserver
 1. Clone the repo
 
 ```bash
-git clone https://github.com/makeplane/plane
-cd plane
+git clone https://github.com/makeplane/plane.git [folder-name]
+cd [folder-name]
 chmod +x setup.sh
 ```
 
@@ -44,33 +44,12 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-3. Define `NEXT_PUBLIC_API_BASE_URL=http://localhost` in **web/.env** and **space/.env** file
+3. Start the containers
 
 ```bash
-echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> ./web/.env
+docker compose -f docker-compose-local.yml up
 ```
 
-```bash
-echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> ./space/.env
-```
-
-4. Run Docker compose up
-
-```bash
-docker compose up -d
-```
-
-5. Install dependencies
-
-```bash
-yarn install
-```
-
-6. Run the web app in development mode
-
-```bash
-yarn dev
-```
 
 ## Missing a Feature?
 

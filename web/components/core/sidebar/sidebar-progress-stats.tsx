@@ -14,6 +14,7 @@ import { SingleProgressStats } from "components/core";
 import { Avatar, StateGroupIcon } from "@plane/ui";
 // types
 import {
+  IIssueFilterOptions,
   IModule,
   TAssigneesDistribution,
   TCompletionChartDistribution,
@@ -35,6 +36,9 @@ type Props = {
   roundedTab?: boolean;
   noBackground?: boolean;
   isPeekView?: boolean;
+  isCompleted?: boolean;
+  filters?: IIssueFilterOptions;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
 };
 
 export const SidebarProgressStats: React.FC<Props> = ({
@@ -44,7 +48,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
   module,
   roundedTab,
   noBackground,
+  isCompleted = false,
   isPeekView = false,
+  filters,
+  handleFiltersUpdate,
 }) => {
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -140,20 +147,11 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     }
                     completed={assignee.completed_issues}
                     total={assignee.total_issues}
-                    {...(!isPeekView && {
-                      onClick: () => {
-                        // TODO: set filters here
-                        // if (filters?.assignees?.includes(assignee.assignee_id ?? ""))
-                        //   setFilters({
-                        //     assignees: filters?.assignees?.filter((a) => a !== assignee.assignee_id),
-                        //   });
-                        // else
-                        //   setFilters({
-                        //     assignees: [...(filters?.assignees ?? []), assignee.assignee_id ?? ""],
-                        //   });
-                      },
-                      // selected: filters?.assignees?.includes(assignee.assignee_id ?? ""),
-                    })}
+                    {...(!isPeekView &&
+                      !isCompleted && {
+                        onClick: () => handleFiltersUpdate("assignees", assignee.assignee_id ?? ""),
+                        selected: filters?.assignees?.includes(assignee.assignee_id ?? ""),
+                      })}
                   />
                 );
               else
@@ -200,17 +198,11 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 }
                 completed={label.completed_issues}
                 total={label.total_issues}
-                {...(!isPeekView && {
-                  // TODO: set filters here
-                  onClick: () => {
-                    // if (filters.labels?.includes(label.label_id ?? ""))
-                    //   setFilters({
-                    //     labels: filters?.labels?.filter((l) => l !== label.label_id),
-                    //   });
-                    // else setFilters({ labels: [...(filters?.labels ?? []), label.label_id ?? ""] });
-                  },
-                  // selected: filters?.labels?.includes(label.label_id ?? ""),
-                })}
+                {...(!isPeekView &&
+                  !isCompleted && {
+                    onClick: () => handleFiltersUpdate("labels", label.label_id ?? ""),
+                    selected: filters?.labels?.includes(label.label_id ?? `no-label-${index}`),
+                  })}
               />
             ))
           ) : (
