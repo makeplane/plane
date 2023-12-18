@@ -1,4 +1,3 @@
-import { Editor } from "@tiptap/react";
 import { useState } from "react";
 import { IMarking } from "..";
 

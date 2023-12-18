@@ -10,7 +10,7 @@ import { DocumentDetails } from "./types/editor-types";
 import { PageRenderer } from "./components/page-renderer";
 import { getMenuOptions } from "./utils/menu-options";
 import { useRouter } from "next/router";
-import { IEmbedConfig } from "./extensions/widgets/IssueEmbedWidget/types";
+import { IEmbedConfig } from "./extensions/widgets/issue-embed-widget/types";
 import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
