@@ -7,7 +7,6 @@ import {
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
-import { IIssueDisplayProperties } from "types";
 
 interface IWithDisplayPropertiesHOC {
   issuesFilter:
@@ -16,16 +15,17 @@ interface IWithDisplayPropertiesHOC {
     | ICycleIssuesFilterStore
     | IViewIssuesFilterStore
     | IProfileIssuesFilterStore;
-  getShouldRenderProperty: (displayProperties: IIssueDisplayProperties) => boolean;
+  shouldRenderProperty?: boolean;
+  displayPropertyKey: string;
   children: ReactNode;
 }
 export const WithDisplayPropertiesHOC = observer(
-  ({ issuesFilter, getShouldRenderProperty, children }: IWithDisplayPropertiesHOC) => {
-    const displayProperties = issuesFilter.issueFilters.displayProperties;
+  ({ issuesFilter, shouldRenderProperty = true, displayPropertyKey, children }: IWithDisplayPropertiesHOC) => {
+    const shouldDisplayPropertyFromFilters = issuesFilter.issueFilters.displayProperties[displayPropertyKey];
 
-    const shouldRenderProperty = getShouldRenderProperty(displayProperties);
+    const renderProperty = shouldDisplayPropertyFromFilters && shouldRenderProperty;
 
-    if (!shouldRenderProperty) return null;
+    if (!renderProperty) return null;
 
     return <>{children}</>;
   }

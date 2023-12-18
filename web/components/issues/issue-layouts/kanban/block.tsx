@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 // components
-import { KanBanProperties } from "./properties";
+import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
@@ -15,7 +15,6 @@ import {
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
-import { IssuesFilter } from "store/issue/base-issue-filter.store";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 interface IssueBlockProps {
@@ -70,10 +69,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
 
   return (
     <>
-      <WithDisplayPropertiesHOC
-        issuesFilter={issuesFilter}
-        getShouldRenderProperty={(displayProperties) => displayProperties?.key}
-      >
+      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {issue.project_detail.identifier}-{issue.sequence_id}
@@ -87,11 +83,11 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
         </div>
       </Tooltip>
       <div>
-        <KanBanProperties
+        <IssueProperties
+          className="flex flex-wrap items-center gap-2 whitespace-nowrap"
           issue={issue}
           issuesFilter={issuesFilter}
           handleIssues={updateIssue}
-          showEmptyGroup={showEmptyGroup}
           isReadOnly={isReadOnly}
         />
       </div>
