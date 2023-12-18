@@ -227,10 +227,9 @@ def handle_exceptions(task_func):
             data = kwargs.get('data')
             if data:
                 importer_id = data.get("importer_id")
-                status = data.get("status")
-                if importer_id and status:
+                if importer_id:
                     importer = Importer.objects.get(pk=importer_id)
-                    importer.status = status
+                    importer.status = "failed"
                     importer.reason = str(e)
                     importer.save(update_fields=["status", "reason"])
     return wrapper

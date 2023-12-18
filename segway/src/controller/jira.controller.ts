@@ -124,6 +124,7 @@ export class JiraController {
                 workspace_id: workspace_id,
                 project_id: project_id,
                 created_by: created_by,
+                importer_id: importer_id,
               },
             }, // kwargs
             other_data: {}, // other data
@@ -150,6 +151,7 @@ export class JiraController {
               workspace_id: workspace_id,
               project_id: project_id,
               created_by: created_by,
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
@@ -186,6 +188,7 @@ export class JiraController {
                   created_by: created_by,
                   external_id: statusCategory.id,
                   external_source: "jira",
+                  importer_id: importer_id,
                 },
               }, // kwargs
               other_data: {}, // other data
@@ -211,6 +214,7 @@ export class JiraController {
               issue_id: issue.id,
               module_id: issue.fields.parent?.id,
             });
+            continue;
           } else {
             child_issues.push(issue);
             continue;
@@ -273,6 +277,7 @@ export class JiraController {
               },
               labels_list: issue.fields.labels,
               parent_id: null,
+              importer_id: importer_id,
             },
           },
         };
@@ -330,6 +335,7 @@ export class JiraController {
               },
               labels_list: issue.fields.labels,
               parent_id: issue.fields.parent.id,
+              importer_id: importer_id,
             },
           },
         };
@@ -350,6 +356,7 @@ export class JiraController {
               created_by: created_by,
               external_id: module.id,
               external_source: "jira",
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
@@ -372,6 +379,7 @@ export class JiraController {
               project_id: project_id,
               created_by: created_by,
               external_source: "jira",
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
