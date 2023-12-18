@@ -92,7 +92,8 @@ export class JiraController {
       });
 
       // const result = await this.db.select().from('users');
-      const { email, api_token, project_key, cloud_hostname } = req.body.metadata;
+      const { email, api_token, project_key, cloud_hostname } =
+        req.body.metadata;
 
       const auth = {
         username: email,
@@ -128,7 +129,10 @@ export class JiraController {
             other_data: {}, // other data
           };
           members.push(user);
-          this.mq?.publish(jira_members, "plane.bgtasks.importer_task.members_sync");
+          this.mq?.publish(
+            jira_members,
+            "plane.bgtasks.importer_task.members_sync"
+          );
         }
       }
 
@@ -186,11 +190,13 @@ export class JiraController {
               }, // kwargs
               other_data: {}, // other data
             };
-            this.mq?.publish(statessync, "plane.bgtasks.importer_task.state_sync");
+            this.mq?.publish(
+              statessync,
+              "plane.bgtasks.importer_task.state_sync"
+            );
           }
         }
       }
-
 
       const modules = [];
       const child_issues = [];
@@ -205,12 +211,10 @@ export class JiraController {
               issue_id: issue.id,
               module_id: issue.fields.parent?.id,
             });
+          } else {
+            child_issues.push(issue);
+            continue;
           }
-        }
-
-        if (issue.fields.parent) {
-          child_issues.push(issue);
-          continue;
         }
 
         // skipping all the epics

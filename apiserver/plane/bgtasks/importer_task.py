@@ -2,7 +2,7 @@
 import json
 import requests
 import uuid
-
+from functools import wraps
 # Django imports
 from django.db.models import Q, Max
 from django.conf import settings
@@ -219,8 +219,26 @@ def service_importer(service, importer_id):
         capture_exception(e)
         return
 
+def handle_exceptions(task_func):
+    @wraps(task_func)
+    def wrapper(*args, **kwargs):
+        try:
+            return task_func(*args, **kwargs)
+        except Exception as e:
+            data = kwargs.get('data')
+            if data:
+                importer_id = data.get("importer_id")
+                status = data.get("status")
+                if importer_id and status:
+                    importer = Importer.objects.get(pk=importer_id)
+                    importer.status = status
+                    importer.reason = str(e)
+                    importer.save(update_fields=["status", "reason"])
+    return wrapper
+
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def members_sync(data):
     try:
         user = User.objects.get(email=data.get("email"))
@@ -276,6 +294,7 @@ def members_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def label_sync(data):
     existing_label = Label.objects.filter(
         project_id=data.get("project_id"),
@@ -293,6 +312,7 @@ def label_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def state_sync(data):
     try:
         state = State.objects.get(
@@ -327,6 +347,7 @@ def state_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def module_sync(data):
     try:
         _ = Module.objects.get(
@@ -348,6 +369,7 @@ def module_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def cycles_sync(data):
     try:
         _ = Cycle.objects.get(
@@ -367,7 +389,7 @@ def cycles_sync(data):
             external_source=data.get("external_source"),
         )
 
-
+@handle_exceptions
 def get_label_id(name, data):
     try:
         existing_label = (
@@ -383,7 +405,7 @@ def get_label_id(name, data):
     except Label.DoesNotExist:
         return None
 
-
+@handle_exceptions
 def get_state_id(name, data):
     try:
         existing_state = (
@@ -399,8 +421,17 @@ def get_state_id(name, data):
     except State.DoesNotExist:
         return None
 
+@handle_exceptions
+def get_user_id(name):
+    try:
+        existing_user = User.objects.filter(email=name).values("id").first()
+        return existing_user
+    except User.DoesNotExist:
+        return None
+
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def modules_issue_sync(data):
     module = Module.objects.get(
         external_id=data.get("module_id"),
@@ -426,6 +457,7 @@ def modules_issue_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def issue_sync(data):
     try:
         issue = Issue.objects.get(
@@ -529,14 +561,14 @@ def issue_sync(data):
         )
 
         # Attach Links
-        _ = IssueLink.objects.create(
-            issue=issue,
-            url=data.get("link", {}).get("url", "https://github.com"),
-            title=data.get("link", {}).get("title", "Original Issue"),
-            project_id=data.get("project_id"),
-            workspace_id=data.get("workspace_id"),
-            created_by_id=data.get("created_by"),
-        )
+        # _ = IssueLink.objects.create(
+        #     issue=issue,
+        #     url=data.get("link", {}).get("url", "https://github.com"),
+        #     title=data.get("link", {}).get("title", "Original Issue"),
+        #     project_id=data.get("project_id"),
+        #     workspace_id=data.get("workspace_id"),
+        #     created_by_id=data.get("created_by"),
+        # )
 
         # Sequences
         _ = IssueSequence.objects.create(
@@ -598,7 +630,7 @@ def issue_sync(data):
                 actor_id=data.get("created_by"),
                 project_id=data.get("project_id"),
                 workspace_id=data.get("workspace_id"),
-                created_by_id=data.get("created_by"),
+                created_by_id=get_user_id(comment.get("created_by")).get("id") if comment.get("created_by") else data.get("created_by"),
             )
             for comment in comments_list
         ]
@@ -607,6 +639,7 @@ def issue_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+@handle_exceptions
 def import_sync(data):
     importer = Importer.objects.get(pk=data.get("importer_id"))
     importer.status = data.get("status")
