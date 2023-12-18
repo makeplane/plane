@@ -1,33 +1,23 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // components
 import ToastAlert from "components/toast-alert";
 // services
-import projectService from "services/project.service";
-import cyclesService from "services/cycles.service";
-import modulesService from "services/modules.service";
-import viewsService from "services/views.service";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
+import { ProjectService, ProjectMemberService } from "services/project";
+import { CycleService } from "services/cycle.service";
+import { ModuleService } from "services/module.service";
+import { ViewService } from "services/view.service";
 // types
-import {
-  IIssueFilterOptions,
-  IProjectMember,
-  ICurrentUserResponse,
-  IIssueDisplayFilterOptions,
-  IProjectViewProps,
-} from "types";
+import { IIssueFilterOptions, IProjectMember, IIssueDisplayFilterOptions, IProjectViewProps } from "types";
 // fetch-keys
-import {
-  CYCLE_DETAILS,
-  MODULE_DETAILS,
-  USER_PROJECT_VIEW,
-  VIEW_DETAILS,
-} from "constants/fetch-keys";
+import { CYCLE_DETAILS, MODULE_DETAILS, USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
+
+const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
+const cycleService = new CycleService();
+const moduleService = new ModuleService();
+const viewService = new ViewService();
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
@@ -60,6 +50,7 @@ export const initialState: StateType = {
     labels: null,
     state: null,
     state_group: null,
+    mentions: null,
     subscriber: null,
     created_by: null,
     start_date: null,
@@ -122,11 +113,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
   }
 };
 
-const saveDataToServer = async (
-  workspaceSlug: string,
-  projectId: string,
-  state: IProjectViewProps
-) => {
+const saveDataToServer = async (workspaceSlug: string, projectId: string, state: IProjectViewProps) => {
   mutate<IProjectMember>(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     (prevData) => {
@@ -145,58 +132,22 @@ const saveDataToServer = async (
   });
 };
 
-const saveCycleFilters = async (
-  workspaceSlug: string,
-  projectId: string,
-  cycleId: string,
-  state: any,
-  user: ICurrentUserResponse | undefined
-) => {
-  await cyclesService.patchCycle(
-    workspaceSlug,
-    projectId,
-    cycleId,
-    {
-      ...state,
-    },
-    user
-  );
+const saveCycleFilters = async (workspaceSlug: string, projectId: string, cycleId: string, state: any) => {
+  await cycleService.patchCycle(workspaceSlug, projectId, cycleId, {
+    ...state,
+  });
 };
 
-const saveModuleFilters = async (
-  workspaceSlug: string,
-  projectId: string,
-  moduleId: string,
-  state: any,
-  user: ICurrentUserResponse | undefined
-) => {
-  await modulesService.patchModule(
-    workspaceSlug,
-    projectId,
-    moduleId,
-    {
-      ...state,
-    },
-    user
-  );
+const saveModuleFilters = async (workspaceSlug: string, projectId: string, moduleId: string, state: any) => {
+  await moduleService.patchModule(workspaceSlug, projectId, moduleId, {
+    ...state,
+  });
 };
 
-const saveViewFilters = async (
-  workspaceSlug: string,
-  projectId: string,
-  viewId: string,
-  state: any,
-  user: ICurrentUserResponse | undefined
-) => {
-  await viewsService.patchView(
-    workspaceSlug,
-    projectId,
-    viewId,
-    {
-      ...state,
-    },
-    user
-  );
+const saveViewFilters = async (workspaceSlug: string, projectId: string, viewId: string, state: any) => {
+  await viewService.patchView(workspaceSlug, projectId, viewId, {
+    ...state,
+  });
 };
 
 const setNewDefault = async (workspaceSlug: string, projectId: string, state: any) => {
@@ -225,48 +176,31 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { user } = useUserAuth();
-
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.projectMemberMe(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: viewDetails, mutate: mutateViewDetails } = useSWR(
     workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
     workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewDetails(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string
-          )
+      ? () => viewService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
   const { data: cycleDetails, mutate: mutateCycleDetails } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            cycleId.toString()
-          )
+      ? () => cycleService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
   const { data: moduleDetails, mutate: mutateModuleDetails } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
     workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            moduleId.toString()
-          )
+      ? () => moduleService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 
@@ -287,11 +221,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         order_by: displayFilter.order_by ?? state.display_filters?.order_by,
       };
 
-      if (
-        displayFilter.layout &&
-        displayFilter.layout === "kanban" &&
-        state.display_filters?.group_by === null
-      ) {
+      if (displayFilter.layout && displayFilter.layout === "kanban" && state.display_filters?.group_by === null) {
         additionalProperties.group_by = "state";
         dispatch({
           type: "SET_DISPLAY_FILTERS",
@@ -342,8 +272,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const setFilters = useCallback(
     (property: Partial<IIssueFilterOptions>, saveToServer = true) => {
       Object.keys(property).forEach((key) => {
-        if (property[key as keyof typeof property]?.length === 0)
-          property[key as keyof typeof property] = null;
+        if (property[key as keyof typeof property]?.length === 0) property[key as keyof typeof property] = null;
       });
 
       dispatch({
@@ -373,20 +302,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
 
-        saveCycleFilters(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          cycleId.toString(),
-          {
-            view_props: {
-              filters: {
-                ...state.filters,
-                ...property,
-              },
+        saveCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
+          view_props: {
+            filters: {
+              ...state.filters,
+              ...property,
             },
           },
-          user
-        );
+        });
       } else if (moduleId) {
         mutateModuleDetails((prevData: any) => {
           if (!prevData) return prevData;
@@ -402,20 +325,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
 
-        saveModuleFilters(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          moduleId.toString(),
-          {
-            view_props: {
-              filters: {
-                ...state.filters,
-                ...property,
-              },
+        saveModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+          view_props: {
+            filters: {
+              ...state.filters,
+              ...property,
             },
           },
-          user
-        );
+        });
       } else if (viewId) {
         mutateViewDetails((prevData: any) => {
           if (!prevData) return prevData;
@@ -428,18 +345,12 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
         if (saveToServer)
-          saveViewFilters(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string,
-            {
-              query_data: {
-                ...state.filters,
-                ...property,
-              },
+          saveViewFilters(workspaceSlug as string, projectId as string, viewId as string, {
+            query_data: {
+              ...state.filters,
+              ...property,
             },
-            user
-          );
+          });
       } else {
         mutateMyViewProps((prevData: any) => {
           if (!prevData) return prevData;
@@ -476,7 +387,6 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       mutateModuleDetails,
       viewId,
       mutateViewDetails,
-      user,
     ]
   );
 
@@ -508,10 +418,10 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           ...(cycleId
             ? cycleDetails?.view_props.filters
             : moduleId
-            ? moduleDetails?.view_props.filters
-            : viewId
-            ? viewDetails?.query_data
-            : myViewProps?.view_props?.filters),
+              ? moduleDetails?.view_props.filters
+              : viewId
+                ? viewDetails?.query_data
+                : myViewProps?.view_props?.filters),
         } as any,
       },
     });

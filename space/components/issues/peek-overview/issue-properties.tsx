@@ -1,5 +1,7 @@
 // hooks
 import useToast from "hooks/use-toast";
+// ui
+import { StateGroupIcon } from "@plane/ui";
 // icons
 import { Icon } from "components/ui";
 // helpers
@@ -55,15 +57,15 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
       )}
       <div className={`space-y-4 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-2 text-sm">
-          <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="radio_button_checked" className="!text-base flex-shrink-0" />
+          <div className="flex w-1/4 flex-shrink-0 items-center gap-2 font-medium">
+            <Icon iconName="radio_button_checked" className="flex-shrink-0 !text-base" />
             <span className="flex-grow truncate">State</span>
           </div>
           <div className="w-3/4">
             {stateGroup && (
-              <div className="inline-flex bg-custom-background-80 text-sm rounded px-2.5 py-0.5">
+              <div className="inline-flex rounded bg-custom-background-80 px-2.5 py-0.5 text-sm">
                 <div className="flex items-center gap-1.5 text-left text-custom-text-100">
-                  <stateGroup.icon />
+                  <StateGroupIcon stateGroup={state.group} color={state.color} />
                   {addSpaceIfCamelCase(state?.name ?? "")}
                 </div>
               </div>
@@ -72,26 +74,26 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="signal_cellular_alt" className="!text-base flex-shrink-0" />
+          <div className="flex w-1/4 flex-shrink-0 items-center gap-2 font-medium">
+            <Icon iconName="signal_cellular_alt" className="flex-shrink-0 !text-base" />
             <span className="flex-grow truncate">Priority</span>
           </div>
           <div className="w-3/4">
             <div
-              className={`inline-flex items-center gap-1.5 text-left text-sm capitalize rounded px-2.5 py-0.5 ${
+              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-left text-sm capitalize ${
                 priority?.key === "urgent"
                   ? "border-red-500/20 bg-red-500/20 text-red-500"
                   : priority?.key === "high"
-                  ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-                  : priority?.key === "medium"
-                  ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-                  : priority?.key === "low"
-                  ? "border-green-500/20 bg-green-500/20 text-green-500"
-                  : "bg-custom-background-80 border-custom-border-200"
+                    ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                    : priority?.key === "medium"
+                      ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                      : priority?.key === "low"
+                        ? "border-green-500/20 bg-green-500/20 text-green-500"
+                        : "border-custom-border-200 bg-custom-background-80"
               }`}
             >
               {priority && (
-                <span className="grid place-items-center -my-1">
+                <span className="-my-1 grid place-items-center">
                   <Icon iconName={priority?.icon!} />
                 </span>
               )}
@@ -100,14 +102,14 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+          <div className="flex w-1/4 flex-shrink-0 items-center gap-2 font-medium">
+            <Icon iconName="calendar_today" className="flex-shrink-0 !text-base" />
             <span className="flex-grow truncate">Due date</span>
           </div>
           <div>
             {issueDetails.target_date ? (
-              <div className="h-6 rounded flex items-center gap-1 px-2.5 py-1 border border-custom-border-100 text-custom-text-100 text-xs bg-custom-background-80">
-                <span className={`material-symbols-rounded text-sm -my-0.5 ${dueDateIcon.className}`}>
+              <div className="flex h-6 items-center gap-1 rounded border border-custom-border-100 bg-custom-background-80 px-2.5 py-1 text-xs text-custom-text-100">
+                <span className={`material-symbols-rounded -my-0.5 text-sm ${dueDateIcon.className}`}>
                   {dueDateIcon.iconName}
                 </span>
                 {renderFullDate(issueDetails.target_date)}

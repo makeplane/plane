@@ -1,21 +1,19 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-import { mutate } from "swr";
-
-// react-hook-form
+import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
+import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton } from "components/ui";
+import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
-// fetch-keys
-import { USER_WORKSPACES } from "constants/fetch-keys";
+import { IWorkspace } from "types";
 // constants
-import { ORGANIZATION_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -25,7 +23,6 @@ type Props = {
     organization_size: string;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
-  user: ICurrentUserResponse | undefined;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -33,40 +30,33 @@ type Props = {
   };
 };
 
-const restrictedUrls = [
-  "api",
-  "installations",
-  "404",
-  "create-workspace",
-  "error",
-  "invitations",
-  "magic-sign-in",
-  "onboarding",
-  "profile",
-  "reset-password",
-  "sign-up",
-  "spaces",
-  "workspace-member-invitation",
-];
+const workspaceService = new WorkspaceService();
 
-export const CreateWorkspaceForm: React.FC<Props> = ({
-  onSubmit,
-  defaultValues,
-  setDefaultValues,
-  user,
-  secondaryButton,
-  primaryButtonText = {
-    loading: "Creating...",
-    default: "Create Workspace",
-  },
-}) => {
+export const CreateWorkspaceForm: FC<Props> = observer((props) => {
+  const {
+    onSubmit,
+    defaultValues,
+    setDefaultValues,
+    secondaryButton,
+    primaryButtonText = {
+      loading: "Creating...",
+      default: "Create Workspace",
+    },
+  } = props;
+
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
+
+  const router = useRouter();
+
+  const {
+    workspace: workspaceStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     control,
     setValue,
@@ -78,32 +68,34 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     await workspaceService
       .workspaceSlugCheck(formData.slug)
       .then(async (res) => {
-        if (res.status === true && !restrictedUrls.includes(formData.slug)) {
+        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceService
-            .createWorkspace(formData, user)
+          await workspaceStore
+            .createWorkspace(formData)
             .then(async (res) => {
+              postHogEventTracker("WORKSPACE_CREATED", {
+                ...res,
+                state: "SUCCESS",
+              });
               setToastAlert({
                 type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
 
-              mutate<IWorkspace[]>(
-                USER_WORKSPACES,
-                (prevData) => [res, ...(prevData ?? [])],
-                false
-              );
               if (onSubmit) await onSubmit(res);
             })
-            .catch(() =>
+            .catch(() => {
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              })
-            );
+              });
+              postHogEventTracker("WORKSPACE_CREATED", {
+                state: "FAILED",
+              });
+            });
         } else setSlugError(true);
       })
       .catch(() => {
@@ -111,6 +103,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
+        });
+        postHogEventTracker("WORKSPACE_CREATED", {
+          state: "FAILED",
         });
       });
   };
@@ -128,54 +123,64 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceName">Workspace Name</label>
-          <Input
-            id="workspaceName"
+          <Controller
+            control={control}
             name="name"
-            register={register}
-            autoComplete="off"
-            onChange={(e) =>
-              setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
-            }
-            validations={{
+            rules={{
               required: "Workspace name is required",
               validate: (value) =>
-                /^[\w\s-]*$/.test(value) ||
-                `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
               maxLength: {
                 value: 80,
                 message: "Workspace name should not exceed 80 characters",
               },
             }}
-            placeholder="Enter workspace name..."
-            error={errors.name}
+            render={({ field: { value, ref, onChange } }) => (
+              <Input
+                id="workspaceName"
+                type="text"
+                value={value}
+                onChange={(e) => {
+                  onChange(e.target.value);
+                  setValue("name", e.target.value);
+                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                }}
+                ref={ref}
+                hasError={Boolean(errors.name)}
+                placeholder="Enter workspace name..."
+                className="w-full"
+              />
+            )}
           />
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">Workspace URL</label>
-          <div className="flex w-full items-center rounded-md border border-custom-border-200 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">
-              {window && window.location.host}/
-            </span>
-            <Input
-              id="workspaceUrl"
-              mode="trueTransparent"
-              autoComplete="off"
+          <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
+            <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
+            <Controller
+              control={control}
               name="slug"
-              register={register}
-              className="block w-full rounded-md bg-transparent py-2 !px-0 text-sm"
-              validations={{
+              rules={{
                 required: "Workspace URL is required",
               }}
-              onChange={(e) =>
-                /^[a-zA-Z0-9_-]+$/.test(e.target.value)
-                  ? setInvalidSlug(false)
-                  : setInvalidSlug(true)
-              }
+              render={({ field: { onChange, value, ref } }) => (
+                <Input
+                  id="workspaceUrl"
+                  type="text"
+                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+                  onChange={(e) => {
+                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true);
+                    onChange(e.target.value.toLowerCase());
+                  }}
+                  ref={ref}
+                  hasError={Boolean(errors.slug)}
+                  placeholder="Enter workspace url..."
+                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-sm"
+                />
+              )}
             />
           </div>
-          {slugError && (
-            <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
-          )}
+          {slugError && <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>}
           {invalidSlug && (
             <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
           )}
@@ -193,9 +198,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-200">Select organization size</span>
+                      <span className="text-custom-text-400">Select organization size</span>
                     )
                   }
+                  buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                   input
                   width="w-full"
                 >
@@ -216,10 +222,15 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+        <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-        </PrimaryButton>
+        </Button>
+        {!secondaryButton && (
+          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+            Go back
+          </Button>
+        )}
       </div>
     </form>
   );
-};
+});

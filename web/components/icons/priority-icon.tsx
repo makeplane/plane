@@ -14,12 +14,12 @@ export const PriorityIcon: React.FC<Props> = ({ priority, className = "" }) => {
       {priority === "urgent"
         ? "error"
         : priority === "high"
-        ? "signal_cellular_alt"
-        : priority === "medium"
-        ? "signal_cellular_alt_2_bar"
-        : priority === "low"
-        ? "signal_cellular_alt_1_bar"
-        : "block"}
+          ? "signal_cellular_alt"
+          : priority === "medium"
+            ? "signal_cellular_alt_2_bar"
+            : priority === "low"
+              ? "signal_cellular_alt_1_bar"
+              : "block"}
     </span>
   );
 };

@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="py-3 border border-custom-border-200 rounded-[10px]">
+  <div className="rounded-[10px] border border-custom-border-200 py-3">
     <h1 className="px-3 text-base font-medium">Issues closed in a year</h1>
     {defaultAnalytics.issue_completed_month_wise.length > 0 ? (
       <LineGraph
@@ -20,18 +20,15 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
           {
             id: "issues_closed",
             color: "rgb(var(--color-primary-100))",
-            data: MONTHS_LIST.map((month) => ({
-              x: month.label.substring(0, 3),
+            data: Object.entries(MONTHS_LIST).map(([index, month]) => ({
+              x: month.shortTitle,
               y:
-                defaultAnalytics.issue_completed_month_wise.find(
-                  (data) => data.month === month.value
-                )?.count || 0,
+                defaultAnalytics.issue_completed_month_wise.find((data) => data.month === parseInt(index, 10))?.count ||
+                0,
             })),
           },
         ]}
-        customYAxisTickValues={defaultAnalytics.issue_completed_month_wise.map(
-          (data) => data.count
-        )}
+        customYAxisTickValues={defaultAnalytics.issue_completed_month_wise.map((data) => data.count)}
         height="300px"
         colors={(datum) => datum.color}
         curve="monotoneX"

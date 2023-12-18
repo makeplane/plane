@@ -5,7 +5,13 @@ import {
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
-export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
+export const addSpaceIfCamelCase = (str: string) => {
+  if (str === undefined || str === null) return "";
+
+  if (typeof str !== "string") str = `${str}`;
+
+  return str.replace(/([a-z])([A-Z])/g, "$1 $2");
+};
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
@@ -56,6 +62,19 @@ export const copyTextToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
 
+/**
+ * @description: This function copies the url to clipboard after prepending the origin URL to it
+ * @param {string} path
+ * @example:
+ * const text = copyUrlToClipboard("path");
+ * copied URL: origin_url/path
+ */
+export const copyUrlToClipboard = async (path: string) => {
+  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+  await copyTextToClipboard(`${originUrl}/${path}`);
+};
+
 export const generateRandomColor = (string: string): string => {
   if (!string) return "rgb(var(--color-primary-100))";
 
@@ -98,10 +117,19 @@ export const getFirstCharacters = (str: string) => {
  */
 
 export const stripHTML = (html: string) => {
-  const tmp = document.createElement("DIV");
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || "";
+  const strippedText = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ""); // Remove script tags
+  return strippedText.replace(/<[^>]*>/g, ""); // Remove all other HTML tags
 };
+
+/**
+ *
+ * @example:
+ * const html = "<p>Some text</p>";
+ * const text = stripAndTruncateHTML(html);
+ * console.log(text); // Some text
+ */
+
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(stripHTML(html), length);
 
 /**
  * @description: This function return number count in string if number is more than 100 then it will return 99+
@@ -135,59 +163,64 @@ export const getFetchKeysForIssueMutation = (options: {
   moduleId?: string | string[];
   viewId?: string | string[];
   projectId: string;
-  calendarParams: any;
-  spreadsheetParams: any;
   viewGanttParams: any;
   ganttParams: any;
 }) => {
-  const {
-    cycleId,
-    moduleId,
-    viewId,
-    projectId,
-    calendarParams,
-    spreadsheetParams,
-    viewGanttParams,
-    ganttParams,
-  } = options;
-
-  const calendarFetchKey = cycleId
-    ? { calendarFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams) }
-    : moduleId
-    ? { calendarFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams) }
-    : viewId
-    ? { calendarFetchKey: VIEW_ISSUES(viewId.toString(), calendarParams) }
-    : {
-        calendarFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
-          projectId?.toString() ?? "",
-          calendarParams
-        ),
-      };
-
-  const spreadsheetFetchKey = cycleId
-    ? { spreadsheetFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams) }
-    : moduleId
-    ? { spreadsheetFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams) }
-    : viewId
-    ? { spreadsheetFetchKey: VIEW_ISSUES(viewId.toString(), spreadsheetParams) }
-    : {
-        spreadsheetFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
-          projectId?.toString() ?? "",
-          spreadsheetParams
-        ),
-      };
+  const { cycleId, moduleId, viewId, projectId, viewGanttParams, ganttParams } = options;
 
   const ganttFetchKey = cycleId
     ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
     : moduleId
-    ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
-    : viewId
-    ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
-    : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
+      ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
+      : viewId
+        ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
+        : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
 
   return {
-    ...calendarFetchKey,
-    ...spreadsheetFetchKey,
     ...ganttFetchKey,
   };
+};
+
+/**
+ * @returns {boolean} true if searchQuery is substring of text in the same order, false otherwise
+ * @description Returns true if searchQuery is substring of text in the same order, false otherwise
+ * @param {string} text string to compare from
+ * @param {string} searchQuery
+ * @example substringMatch("hello world", "hlo") => true
+ * @example substringMatch("hello world", "hoe") => false
+ */
+export const substringMatch = (text: string, searchQuery: string): boolean => {
+  try {
+    let searchIndex = 0;
+
+    for (let i = 0; i < text.length; i++) {
+      if (text[i].toLowerCase() === searchQuery[searchIndex]?.toLowerCase()) searchIndex++;
+
+      // All characters of searchQuery found in order
+      if (searchIndex === searchQuery.length) return true;
+    }
+
+    // Not all characters of searchQuery found in order
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**
+ * @returns {boolean} true if email is valid, false otherwise
+ * @description Returns true if email is valid, false otherwise
+ * @param {string} email string to check if it is a valid email
+ * @example checkEmailIsValid("hello world") => false
+ * @example checkEmailIsValid("example@plane.so") => true
+ */
+export const checkEmailValidity = (email: string): boolean => {
+  if (!email) return false;
+
+  const isEmailValid =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      email
+    );
+
+  return isEmailValid;
 };

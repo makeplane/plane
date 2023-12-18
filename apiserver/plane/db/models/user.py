@@ -86,6 +86,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     display_name = models.CharField(max_length=255, default="")
     is_tour_completed = models.BooleanField(default=False)
     onboarding_step = models.JSONField(default=get_default_onboarding)
+    use_case = models.TextField(blank=True, null=True)
 
     USERNAME_FIELD = "email"
 

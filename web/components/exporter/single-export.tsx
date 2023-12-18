@@ -1,6 +1,6 @@
-import React from "react";
+import { useState, FC } from "react";
 // ui
-import { PrimaryButton } from "components/ui"; // icons
+import { Button } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -11,9 +11,10 @@ type Props = {
   refreshing: boolean;
 };
 
-export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
+export const SingleExport: FC<Props> = ({ service, refreshing }) => {
   const provider = service.provider;
-  const [isLoading, setIsLoading] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState(false);
 
   const checkExpiry = (inputDateString: string) => {
     const currentDate = new Date();
@@ -29,13 +30,7 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
           <span>
             Export to{" "}
             <span className="font-medium">
-              {provider === "csv"
-                ? "CSV"
-                : provider === "xlsx"
-                ? "Excel"
-                : provider === "json"
-                ? "JSON"
-                : ""}
+              {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
             </span>{" "}
           </span>
           <span
@@ -43,12 +38,12 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
               service.status === "completed"
                 ? "bg-green-500/20 text-green-500"
                 : service.status === "processing"
-                ? "bg-yellow-500/20 text-yellow-500"
-                : service.status === "failed"
-                ? "bg-red-500/20 text-red-500"
-                : service.status === "expired"
-                ? "bg-orange-500/20 text-orange-500"
-                : ""
+                  ? "bg-yellow-500/20 text-yellow-500"
+                  : service.status === "failed"
+                    ? "bg-red-500/20 text-red-500"
+                    : service.status === "expired"
+                      ? "bg-orange-500/20 text-orange-500"
+                      : ""
             }`}
           >
             {refreshing ? "Refreshing..." : service.status}
@@ -64,9 +59,9 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
           {service.status == "completed" && (
             <div>
               <a target="_blank" href={service?.url} rel="noopener noreferrer">
-                <PrimaryButton className="w-full text-center">
+                <Button variant="primary" className="w-full">
                   {isLoading ? "Downloading..." : "Download"}
-                </PrimaryButton>
+                </Button>
               </a>
             </div>
           )}

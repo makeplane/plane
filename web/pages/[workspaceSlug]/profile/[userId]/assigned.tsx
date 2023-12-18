@@ -1,19 +1,21 @@
-import React from "react";
-
-// contexts
-import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
-import { ProfileAuthWrapper } from "layouts/profile-layout";
+import React, { ReactElement } from "react";
+// layouts
+import { AppLayout } from "layouts/app-layout";
+import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
-import { ProfileIssuesView } from "components/profile";
+import { UserProfileHeader } from "components/headers";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
+import { ProfileIssuesPage } from "components/profile/profile-issues";
 
-const ProfileAssignedIssues: NextPage = () => (
-  <ProfileIssuesContextProvider>
-    <ProfileAuthWrapper>
-      <ProfileIssuesView />
-    </ProfileAuthWrapper>
-  </ProfileIssuesContextProvider>
-);
+const ProfileAssignedIssuesPage: NextPageWithLayout = () => <ProfileIssuesPage type="assigned" />;
 
-export default ProfileAssignedIssues;
+ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<UserProfileHeader />}>
+      <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
+};
+
+export default ProfileAssignedIssuesPage;

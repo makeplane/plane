@@ -5,11 +5,12 @@ import useSWR from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // components
-import { Loader, MarkdownRenderer } from "components/ui";
+import { MarkdownRenderer } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { X } from "lucide-react";
 // helpers
 import { renderLongDateFormat } from "helpers/date-time.helper";
 
@@ -17,6 +18,9 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const { data: updates } = useSWR("PRODUCT_UPDATES", () => workspaceService.getProductUpdates());
@@ -36,7 +40,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 h-full w-full">
-          <div className="grid place-items-center h-full w-full p-4">
+          <div className="grid h-full w-full place-items-center p-4">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -46,24 +50,18 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-100 shadow-custom-shadow-rg] min-w-[100%] sm:min-w-[50%] sm:max-w-[50%]">
-                <div className="flex flex-col p-4 max-h-[90vh] w-full">
-                  <Dialog.Title
-                    as="h3"
-                    className="flex items-center justify-between text-lg font-semibold"
-                  >
+              <Dialog.Panel className="shadow-custom-shadow-rg] relative min-w-[100%] overflow-hidden rounded-lg border border-custom-border-100 bg-custom-background-100 sm:min-w-[50%] sm:max-w-[50%]">
+                <div className="flex max-h-[90vh] w-full flex-col p-4">
+                  <Dialog.Title as="h3" className="flex items-center justify-between text-lg font-semibold">
                     <span>Product Updates</span>
                     <span>
                       <button type="button" onClick={() => setIsOpen(false)}>
-                        <XMarkIcon
-                          className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
-                          aria-hidden="true"
-                        />
+                        <X className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                       </button>
                     </span>
                   </Dialog.Title>
                   {updates && updates.length > 0 ? (
-                    <div className="h-full overflow-y-auto mt-4 space-y-4">
+                    <div className="mt-4 h-full space-y-4 overflow-y-auto">
                       {updates.map((item, index) => (
                         <React.Fragment key={item.id}>
                           <div className="flex items-center gap-3 text-xs text-custom-text-200">
@@ -82,8 +80,8 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       ))}
                     </div>
                   ) : (
-                    <div className="grid place-items-center w-full mt-4">
-                      <Loader className="space-y-6 w-full">
+                    <div className="mt-4 grid w-full place-items-center">
+                      <Loader className="w-full space-y-6">
                         <div className="space-y-3">
                           <Loader.Item height="30px" />
                           <Loader.Item height="20px" width="80%" />

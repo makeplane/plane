@@ -1,22 +1,19 @@
 import { useEffect, Fragment } from "react";
 import { useRouter } from "next/router";
-// react-hook-form
-import { Controller, useForm } from "react-hook-form";
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// headless ui
+import { Controller, useForm } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
-// icons
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import { Check, ChevronDown } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { USER_ROLES } from "constants/workspace";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import UserService from "services/user.service";
+import { UserService } from "services/user.service";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 
 const defaultValues = {
   first_name: "",
@@ -57,18 +54,15 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
 
     const userService = new UserService();
 
-    await userService
-      .updateMe(payload)
-      .then((response) => {
-        userStore.setCurrentUser(response);
-        router.push(next_path?.toString() || "/");
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Details updated successfully.",
-        });
-      })
-      .catch((err) => {});
+    await userService.updateMe(payload).then((response) => {
+      userStore.setCurrentUser(response);
+      router.push(next_path?.toString() || "/");
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Details updated successfully.",
+      });
+    });
   };
 
   useEffect(() => {
@@ -83,14 +77,14 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
 
   return (
     <form
-      className="h-full w-full space-y-7 sm:space-y-10 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center"
+      className="h-full w-full space-y-7 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center sm:space-y-10"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="relative sm:text-lg">
-        <div className="text-gray-800 absolute -top-1 -left-3">{'"'}</div>
+        <div className="absolute -left-3 -top-1 text-gray-800">{'"'}</div>
         <h5>Hey there 👋🏻</h5>
-        <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
-        <h4 className="text-xl sm:text-2xl font-semibold">Set up your Plane profile.</h4>
+        <h5 className="mb-6 mt-5">Let{"'"}s get you onboard!</h5>
+        <h4 className="text-xl font-semibold sm:text-2xl">Set up your Plane profile.</h4>
       </div>
 
       <div className="space-y-7 sm:w-3/4 md:w-2/5">
@@ -99,6 +93,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
           <Input
             id="firstName"
             autoComplete="off"
+            className="w-full"
             placeholder="Enter your first name..."
             {...register("first_name", {
               required: "First name is required",
@@ -111,6 +106,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
           <Input
             id="lastName"
             autoComplete="off"
+            className="w-full"
             placeholder="Enter your last name..."
             {...register("last_name", {
               required: "Last name is required",
@@ -129,10 +125,10 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                 <Listbox as="div" value={value} onChange={onChange} className="relative flex-shrink-0 text-left">
                   <Listbox.Button
                     type="button"
-                    className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none px-3 py-2 text-sm`}
+                    className={`flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-300 px-3 py-2 text-sm shadow-sm duration-300 focus:outline-none`}
                   >
                     <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                    <ChevronDown className="h-3 w-3" aria-hidden="true" strokeWidth={2} />
                   </Listbox.Button>
 
                   <Transition
@@ -145,7 +141,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Listbox.Options
-                      className={`absolute z-10 border border-custom-border-300 mt-1 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none w-full max-h-36 left-0 origin-top-left`}
+                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none`}
                     >
                       <div className="space-y-1 p-2">
                         {USER_ROLES.map((role) => (
@@ -163,7 +159,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                                 <div className="flex items-center gap-2">
                                   <span>{role.label}</span>
                                 </div>
-                                {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+                                {selected && <Check className="h-3 w-3 flex-shrink-0" strokeWidth={2} />}
                               </div>
                             )}
                           </Listbox.Option>
@@ -179,9 +175,9 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
         </div>
       </div>
 
-      <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+      <Button variant="primary" type="submit" size="xl" disabled={!isValid} loading={isSubmitting}>
         {isSubmitting ? "Updating..." : "Continue"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 });

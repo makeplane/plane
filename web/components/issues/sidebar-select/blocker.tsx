@@ -10,10 +10,10 @@ import useUser from "hooks/use-user";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon } from "components/icons";
+import { X } from "lucide-react";
+import { BlockerIcon } from "@plane/ui";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
@@ -24,12 +24,10 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockerSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
+// services
+const issueService = new IssueService();
+
+export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -42,8 +40,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
     setIsBlockerModalOpen(false);
   };
 
-  const blockerIssue =
-    watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockerIssue = watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -71,8 +68,8 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
     if (!user) return;
 
-    issuesService
-      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
+    issueService
+      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, {
         related_list: [
           ...selectedIssues.map((issue) => ({
             issue: issue.blocker_issue_detail.id,
@@ -143,16 +140,15 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
+                        issueService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
                           relation.issue_detail?.id as string,
-                          relation.id,
-                          user
+                          relation.id
                         );
                       }}
                     >
-                      <XMarkIcon className="h-2 w-2" />
+                      <X className="h-2 w-2" />
                     </button>
                   </div>
                 ))
@@ -160,7 +156,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
           </div>
           <button
             type="button"
-            className={`bg-custom-background-80 text-xs text-custom-text-200 rounded px-2.5 py-0.5 ${
+            className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs text-custom-text-200 ${
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
             }`}
             onClick={() => setIsBlockerModalOpen(true)}

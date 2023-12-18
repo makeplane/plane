@@ -8,8 +8,8 @@ Before submitting a new issue, please search the [issues](https://github.com/mak
 
 While we want to fix all the [issues](https://github.com/makeplane/plane/issues), before fixing a bug we need to be able to reproduce and confirm it. Please provide us with a minimal reproduction scenario using a repository or [Gist](https://gist.github.com/). Having a live, reproducible scenario gives us the information without asking questions back & forth with additional questions like:
 
--   3rd-party libraries being used and their versions
--   a use-case that fails
+- 3rd-party libraries being used and their versions
+- a use-case that fails
 
 Without said minimal reproduction, we won't be able to investigate all [issues](https://github.com/makeplane/plane/issues), and the issue might not be resolved.
 
@@ -19,10 +19,10 @@ You can open a new issue with this [issue form](https://github.com/makeplane/pla
 
 ### Requirements
 
--   Node.js version v16.18.0
--   Python version 3.8+
--   Postgres version v14
--   Redis version v6.2.7
+- Node.js version v16.18.0
+- Python version 3.8+
+- Postgres version v14
+- Redis version v6.2.7
 
 ### Setup the project
 
@@ -33,8 +33,8 @@ The backend is a django project which is kept inside apiserver
 1. Clone the repo
 
 ```bash
-git clone https://github.com/makeplane/plane
-cd plane
+git clone https://github.com/makeplane/plane.git [folder-name]
+cd [folder-name]
 chmod +x setup.sh
 ```
 
@@ -44,33 +44,12 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-3. Define `NEXT_PUBLIC_API_BASE_URL=http://localhost` in **web/.env** and **space/.env** file
+3. Start the containers
 
 ```bash
-echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> ./web/.env
+docker compose -f docker-compose-local.yml up
 ```
 
-```bash
-echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> ./space/.env
-```
-
-4. Run Docker compose up
-
-```bash
-docker compose up -d
-```
-
-5. Install dependencies
-
-```bash
-yarn install
-```
-
-6. Run the web app in development mode
-
-```bash
-yarn dev
-```
 
 ## Missing a Feature?
 
@@ -81,8 +60,8 @@ If you would like to _implement_ it, an issue with your proposal must be submitt
 
 To ensure consistency throughout the source code, please keep these rules in mind as you are working:
 
--   All features or bug fixes must be tested by one or more specs (unit-tests).
--   We use [Eslint default rule guide](https://eslint.org/docs/rules/), with minor changes. An automated formatter is available using prettier.
+- All features or bug fixes must be tested by one or more specs (unit-tests).
+- We use [Eslint default rule guide](https://eslint.org/docs/rules/), with minor changes. An automated formatter is available using prettier.
 
 ## Need help? Questions and suggestions
 
@@ -90,11 +69,11 @@ Questions, suggestions, and thoughts are most welcome. We can also be reached in
 
 ## Ways to contribute
 
--   Try Plane Cloud and the self hosting platform and give feedback
--   Add new integrations
--   Help with open [issues](https://github.com/makeplane/plane/issues) or [create your own](https://github.com/makeplane/plane/issues/new/choose)
--   Share your thoughts and suggestions with us
--   Help create tutorials and blog posts
--   Request a feature by submitting a proposal
--   Report a bug
--   **Improve documentation** - fix incomplete or missing [docs](https://docs.plane.so/), bad wording, examples or explanations.
+- Try Plane Cloud and the self hosting platform and give feedback
+- Add new integrations
+- Help with open [issues](https://github.com/makeplane/plane/issues) or [create your own](https://github.com/makeplane/plane/issues/new/choose)
+- Share your thoughts and suggestions with us
+- Help create tutorials and blog posts
+- Request a feature by submitting a proposal
+- Report a bug
+- **Improve documentation** - fix incomplete or missing [docs](https://docs.plane.so/), bad wording, examples or explanations.

@@ -1,6 +1,17 @@
 export const THEMES = ["light", "dark", "light-contrast", "dark-contrast", "custom"];
 
-export const THEMES_OBJ = [
+export interface I_THEME_OPTION {
+  value: string;
+  label: string;
+  type: string;
+  icon: {
+    border: string;
+    color1: string;
+    color2: string;
+  };
+}
+
+export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     value: "system",
     label: "System Preference",

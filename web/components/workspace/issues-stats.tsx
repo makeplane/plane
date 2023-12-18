@@ -1,9 +1,9 @@
 // components
 import { ActivityGraph } from "components/workspace";
 // ui
-import { Loader, Tooltip } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Info } from "lucide-react";
 // types
 import { IUserWorkspaceDashboard } from "types";
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
   const { workspaceSlug } = router.query;
   return (
     <div className="grid grid-cols-1 rounded-[10px] border border-custom-border-200 bg-custom-background-100 lg:grid-cols-3">
-      <div className="grid grid-cols-1 divide-y divide-custom-border-200 border-b border-custom-border-200 lg:border-r lg:border-b-0">
+      <div className="grid grid-cols-1 divide-y divide-custom-border-200 border-b border-custom-border-200 lg:border-b-0 lg:border-r">
         <div className="flex">
           <div className="basis-1/2 p-4">
             <h4 className="text-sm">Issues assigned to you</h4>
@@ -25,7 +25,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
               {data ? (
                 <div
                   className="cursor-pointer"
-                  onClick={() => router.push(`/${workspaceSlug}/me/my-issues`)}
+                  onClick={() => router.push(`/${workspaceSlug}/workspace-views/assigned`)}
                 >
                   {data.assigned_issues_count}
                 </div>
@@ -77,13 +77,13 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
         </div>
       </div>
       <div className="p-4 lg:col-span-2">
-        <h3 className="mb-2 font-semibold capitalize flex items-center gap-2">
+        <h3 className="mb-2 flex items-center gap-2 font-semibold capitalize">
           Activity Graph
           <Tooltip
             tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
             className="w-72 border border-custom-border-200"
           >
-            <InformationCircleIcon className="h-3 w-3" />
+            <Info className="h-3 w-3" />
           </Tooltip>
         </h3>
         <ActivityGraph activities={data?.issue_activities} />

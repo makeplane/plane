@@ -1,29 +1,22 @@
-import React, { useEffect } from "react";
-
-import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
+import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ModuleForm } from "components/modules";
-// services
-import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import type { ICurrentUserResponse, IModule } from "types";
-// fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
+import type { IModule } from "types";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
   data?: IModule;
-  user: ICurrentUserResponse | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 const defaultValues: Partial<IModule> = {
@@ -31,18 +24,27 @@ const defaultValues: Partial<IModule> = {
   description: "",
   status: "backlog",
   lead: null,
-  members_list: [],
+  members: [],
 };
 
-export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose, data, workspaceSlug, projectId } = props;
+
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+
+  const {
+    project: projectStore,
+    module: moduleStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
     reset(defaultValues);
+    onClose();
   };
 
   const { reset } = useForm<IModule>({
@@ -50,10 +52,11 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
   });
 
   const createModule = async (payload: Partial<IModule>) => {
-    await modulesService
-      .createModule(workspaceSlug as string, projectId as string, payload, user)
-      .then(() => {
-        mutate(MODULE_LIST(projectId as string));
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await moduleStore
+      .createModule(workspaceSlug.toString(), selectedProjectId, payload)
+      .then((res) => {
         handleClose();
 
         setToastAlert({
@@ -61,30 +64,29 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
           title: "Success!",
           message: "Module created successfully.",
         });
+        postHogEventTracker("MODULE_CREATED", {
+          ...res,
+          state: "SUCCESS",
+        });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Module could not be created. Please try again.",
+          message: err.detail ?? "Module could not be created. Please try again.",
+        });
+        postHogEventTracker("MODULE_CREATED", {
+          state: "FAILED",
         });
       });
   };
 
   const updateModule = async (payload: Partial<IModule>) => {
-    await modulesService
-      .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
+    if (!workspaceSlug || !projectId || !data) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await moduleStore
+      .updateModuleDetails(workspaceSlug.toString(), selectedProjectId, data.id, payload)
       .then((res) => {
-        mutate<IModule[]>(
-          MODULE_LIST(projectId as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payload };
-
-              return p;
-            }),
-          false
-        );
         handleClose();
 
         setToastAlert({
@@ -92,12 +94,19 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
           title: "Success!",
           message: "Module updated successfully.",
         });
+        postHogEventTracker("MODULE_UPDATED", {
+          ...res,
+          state: "SUCCESS",
+        });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Module could not be updated. Please try again.",
+          message: err.detail ?? "Module could not be updated. Please try again.",
+        });
+        postHogEventTracker("MODULE_UPDATED", {
+          state: "FAILED",
         });
       });
   };
@@ -107,12 +116,31 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
     const payload: Partial<IModule> = {
       ...formData,
-      members_list: formData.members,
     };
-
     if (!data) await createModule(payload);
     else await updateModule(payload);
   };
+
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!isOpen) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (data && data.project) {
+      setActiveProject(data.project);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (projects && projects.length > 0 && !activeProject)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [activeProject, data, projectId, projects, isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -126,11 +154,11 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -140,11 +168,13 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <ModuleForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
                   status={data ? true : false}
+                  projectId={activeProject ?? ""}
+                  setActiveProject={setActiveProject}
                   data={data}
                 />
               </Dialog.Panel>
@@ -154,4 +184,4 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
       </Dialog>
     </Transition.Root>
   );
-};
+});

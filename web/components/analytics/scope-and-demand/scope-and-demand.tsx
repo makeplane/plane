@@ -3,16 +3,11 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import analyticsService from "services/analytics.service";
+import { AnalyticsService } from "services/analytics.service";
 // components
-import {
-  AnalyticsDemand,
-  AnalyticsLeaderboard,
-  AnalyticsScope,
-  AnalyticsYearWiseIssues,
-} from "components/analytics";
+import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
 
@@ -20,7 +15,12 @@ type Props = {
   fullScreen?: boolean;
 };
 
-export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
+// services
+const analyticsService = new AnalyticsService();
+
+export const ScopeAndDemand: React.FC<Props> = (props) => {
+  const { fullScreen = true } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -40,9 +40,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
     mutate: mutateDefaultAnalytics,
   } = useSWR(
     workspaceSlug ? DEFAULT_ANALYTICS(workspaceSlug.toString(), params) : null,
-    workspaceSlug
-      ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString(), params)
-      : null
+    workspaceSlug ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString(), params) : null
   );
 
   return (
@@ -53,7 +51,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
             <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "md:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope defaultAnalytics={defaultAnalytics} />
-              <AnalyticsLeaderboard
+              <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
                   avatar: user?.created_by__avatar,
                   firstName: user?.created_by__first_name,
@@ -63,10 +61,10 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   id: user?.created_by__id,
                 }))}
                 title="Most issues created"
-                emptyStateMessage="Co-workers and the number issues created by them appears here."
+                emptyStateMessage="Co-workers and the number of issues created by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
-              <AnalyticsLeaderboard
+              <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
                   avatar: user?.assignees__avatar,
                   firstName: user?.assignees__first_name,
@@ -76,7 +74,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   id: user?.assignees__id,
                 }))}
                 title="Most issues closed"
-                emptyStateMessage="Co-workers and the number issues closed by them appears here."
+                emptyStateMessage="Co-workers and the number of issues closed by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>
@@ -97,7 +95,9 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
           <div className="space-y-4 text-custom-text-200">
             <p className="text-sm">There was some error in fetching the data.</p>
             <div className="flex items-center justify-center gap-2">
-              <PrimaryButton onClick={() => mutateDefaultAnalytics()}>Refresh</PrimaryButton>
+              <Button variant="primary" onClick={() => mutateDefaultAnalytics()}>
+                Refresh
+              </Button>
             </div>
           </div>
         </div>

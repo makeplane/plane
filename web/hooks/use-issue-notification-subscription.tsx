@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-
 import useSWR from "swr";
-
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import userNotificationServices from "services/notifications.service";
+import { NotificationService } from "services/notification.service";
+
+const userNotificationServices = new NotificationService();
 
 const useUserIssueNotificationSubscription = (
   workspaceSlug?: string | string[] | null,
@@ -15,9 +15,7 @@ const useUserIssueNotificationSubscription = (
   const { user } = useUserAuth();
 
   const { data, error, mutate } = useSWR(
-    workspaceSlug && projectId && issueId
-      ? `SUBSCRIPTION_STATUE_${workspaceSlug}_${projectId}_${issueId}`
-      : null,
+    workspaceSlug && projectId && issueId ? `SUBSCRIPTION_STATUE_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
       ? () =>
           userNotificationServices.getIssueNotificationSubscriptionStatus(
@@ -39,11 +37,7 @@ const useUserIssueNotificationSubscription = (
     );
 
     userNotificationServices
-      .unsubscribeFromIssueNotifications(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issueId.toString()
-      )
+      .unsubscribeFromIssueNotifications(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       .then(() => {
         mutate({
           subscribed: false,
@@ -62,11 +56,7 @@ const useUserIssueNotificationSubscription = (
     );
 
     userNotificationServices
-      .subscribeToIssueNotifications(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issueId.toString()
-      )
+      .subscribeToIssueNotifications(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       .then(() => {
         mutate({
           subscribed: true,

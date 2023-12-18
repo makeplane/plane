@@ -1,31 +1,32 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectService from "services/project.service";
+import { ProjectMemberService } from "services/project";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   value: string[] | undefined;
   onChange: (val: string[]) => void;
+  disabled?: boolean;
 };
 
-export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
+// services
+const projectMemberService = new ProjectMemberService();
+
+export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -34,7 +35,7 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} showTooltip={false} />
         {member.member.display_name}
       </div>
     ),
@@ -42,29 +43,39 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-        <UserGroupIcon className="h-5 w-5" />
-        <span>Members</span>
+      <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+        <UserGroupIcon className="h-4 w-4" />
+        <span className="text-base">Members</span>
       </div>
-      <div className="sm:basis-1/2">
+      <div className="flex w-1/2 items-center rounded-sm ">
         <CustomSearchSelect
+          disabled={disabled}
+          className="w-full rounded-sm"
           value={value ?? []}
-          label={
-            <div className="flex items-center gap-2 text-custom-text-200">
-              {value && value.length > 0 && Array.isArray(value) ? (
-                <div className="flex items-center justify-center gap-2">
-                  <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-custom-text-200">{value.length} Assignees</span>
-                </div>
-              ) : (
-                "No members"
-              )}
-            </div>
+          customButtonClassName="rounded-sm"
+          customButton={
+            value && value.length > 0 && Array.isArray(value) ? (
+              <div className="px-1">
+                <AvatarGroup showTooltip={false}>
+                  {value.map((assigneeId) => {
+                    const member = members?.find((m) => m.member.id === assigneeId)?.member;
+
+                    if (!member) return null;
+
+                    return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+                  })}
+                </AvatarGroup>
+              </div>
+            ) : (
+              <div className="group flex w-full items-center justify-between gap-2 p-1 text-sm text-custom-text-400">
+                <span>No members</span>
+                {!disabled && <ChevronDown className="hidden h-3.5 w-3.5 group-hover:flex" />}
+              </div>
+            )
           }
           options={options}
           onChange={onChange}
           maxHeight="md"
-          position="right"
           multiple
         />
       </div>

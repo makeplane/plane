@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-
-import useSWR, { mutate } from "swr";
-
-// component
+import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // services
-import cyclesService from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
+import { useMobxStore } from "lib/mobx/store-provider";
 //icons
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, ExclamationIcon, TransferIcon } from "components/icons";
+import { ContrastIcon, TransferIcon } from "@plane/ui";
+import { AlertCircle, Search, X } from "lucide-react";
 // fetch-key
-import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
+import { INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
 import { ICycle } from "types";
 //helper
@@ -26,28 +23,29 @@ type Props = {
   handleClose: () => void;
 };
 
-export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) => {
+const cycleService = new CycleService();
+
+export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleClose }) => {
   const [query, setQuery] = useState("");
+
+  const { cycleIssues: cycleIssueStore } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { params } = useIssuesView();
-
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
-    await cyclesService
-      .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
-      .then((res) => {
-        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+    await cycleIssueStore
+      .transferIssuesFromCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Issues transfered successfully",
           message: "Issues have been transferred successfully",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -59,29 +57,23 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
   const filteredOptions =
     query === ""
       ? incompleteCycles
-      : incompleteCycles?.filter((option) =>
-          option.name.toLowerCase().includes(query.toLowerCase())
-        );
+      : incompleteCycles?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        handleClose();
-      }
-    };
-  }, [handleClose]);
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (e.key === "Escape") {
+  //       handleClose();
+  //     }
+  //   };
+  // }, [handleClose]);
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -94,7 +86,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10">
@@ -108,19 +100,19 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-90 py-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 py-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-3">
-                      <TransferIcon className="h-4 w-5" color="#495057" />
+                      <TransferIcon className="h-4 w-4" color="#495057" />
                       <h4 className="text-xl font-medium text-custom-text-100">Transfer Issues</h4>
                     </div>
                     <button onClick={handleClose}>
-                      <XMarkIcon className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">
-                    <MagnifyingGlassIcon className="h-4 w-4 text-custom-text-200" />
+                    <Search className="h-4 w-4 text-custom-text-200" />
                     <input
                       className="bg-custom-background-90 outline-none"
                       placeholder="Search for a cycle..."
@@ -153,14 +145,9 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                         ))
                       ) : (
                         <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-center text-custom-text-200">
-                            You don’t have any current cycle. Please create one to transfer the
-                            issues.
+                            You don’t have any current cycle. Please create one to transfer the issues.
                           </span>
                         </div>
                       )
@@ -176,4 +163,4 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
       </Dialog>
     </Transition.Root>
   );
-};
+});

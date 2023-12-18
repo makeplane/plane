@@ -24,26 +24,18 @@ export const MonthChartView: FC<any> = () => {
                   </div>
                 </div>
 
-                <div className="flex w-full h-[30px]">
+                <div className="flex h-[30px] w-full">
                   {block?.children &&
                     block?.children.length > 0 &&
                     block?.children.map((monthDay, _idx) => (
                       <div
                         key={`sub-title-${_idxRoot}-${_idx}`}
-                        className="flex-shrink-0 border-b py-1 text-center capitalize border-custom-border-200"
+                        className="flex-shrink-0 border-b border-custom-border-200 py-1 text-center capitalize"
                         style={{ width: `${currentViewData?.data.width}px` }}
                       >
-                        <div className="text-xs space-x-1">
-                          <span className="text-custom-text-200">
-                            {monthDay.dayData.shortTitle[0]}
-                          </span>{" "}
-                          <span
-                            className={
-                              monthDay.today
-                                ? "bg-custom-primary-100 text-white px-1 rounded-full"
-                                : ""
-                            }
-                          >
+                        <div className="space-x-1 text-xs">
+                          <span className="text-custom-text-200">{monthDay.dayData.shortTitle[0]}</span>{" "}
+                          <span className={monthDay.today ? "rounded-full bg-custom-primary-100 px-1 text-white" : ""}>
                             {monthDay.day}
                           </span>
                         </div>
@@ -62,10 +54,8 @@ export const MonthChartView: FC<any> = () => {
                       style={{ width: `${currentViewData?.data.width}px` }}
                     >
                       <div
-                        className={`relative h-full w-full flex-1 flex justify-center ${
-                          ["sat", "sun"].includes(monthDay?.dayData?.shortTitle || "")
-                            ? `bg-custom-background-90`
-                            : ``
+                        className={`relative flex h-full w-full flex-1 justify-center ${
+                          ["sat", "sun"].includes(monthDay?.dayData?.shortTitle || "") ? `bg-custom-background-90` : ``
                         }`}
                       >
                         {/* {monthDay?.today && (

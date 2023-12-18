@@ -3,6 +3,7 @@ import type { Props } from "./types";
 export const AlarmClockIcon: React.FC<Props> = ({
   width = "24",
   height = "24",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   color = "rgb(var(--color-text-200))",
   className,
 }) => (

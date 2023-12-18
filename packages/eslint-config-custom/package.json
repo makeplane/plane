@@ -1,16 +1,18 @@
 {
   "name": "eslint-config-custom",
-  "version": "0.13.2",
+  "private": true,
+  "version": "0.14.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "eslint": "^7.23.0",
     "eslint-config-next": "13.0.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-react": "7.31.8",
-    "eslint-config-turbo": "latest"
+    "eslint-config-turbo": "latest",
+    "eslint-plugin-react": "7.31.8"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
     "typescript": "^4.7.4"
   },
   "publishConfig": {

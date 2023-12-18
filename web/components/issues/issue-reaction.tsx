@@ -1,30 +1,36 @@
 // hooks
-import useUserAuth from "hooks/use-user-auth";
 import useIssueReaction from "hooks/use-issue-reaction";
 // components
 import { ReactionSelector } from "components/core";
 // string helpers
 import { renderEmoji } from "helpers/emoji.helper";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // types
 type Props = {
-  workspaceSlug?: string | string[];
-  projectId?: string | string[];
-  issueId?: string | string[];
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
 };
 
-export const IssueReaction: React.FC<Props> = (props) => {
+export const IssueReaction: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
 
-  const { user } = useUserAuth();
+  const {
+    user: { currentUser },
+  } = useMobxStore();
 
-  const { reactions, groupedReactions, handleReactionCreate, handleReactionDelete } =
-    useIssueReaction(workspaceSlug, projectId, issueId);
+  const { reactions, groupedReactions, handleReactionCreate, handleReactionDelete } = useIssueReaction(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
 
   const handleReactionClick = (reaction: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
-    const isSelected = reactions?.some((r) => r.actor === user?.id && r.reaction === reaction);
+    const isSelected = reactions?.some((r) => r.actor === currentUser?.id && r.reaction === reaction);
 
     if (isSelected) {
       handleReactionDelete(reaction);
@@ -34,13 +40,11 @@ export const IssueReaction: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className="flex gap-1.5 items-center mt-4">
+    <div className="mt-4 flex items-center gap-1.5">
       <ReactionSelector
         size="md"
         position="top"
-        value={
-          reactions?.filter((reaction) => reaction.actor === user?.id).map((r) => r.reaction) || []
-        }
+        value={reactions?.filter((reaction) => reaction.actor === currentUser?.id).map((r) => r.reaction) || []}
         onSelect={handleReactionClick}
       />
 
@@ -54,8 +58,8 @@ export const IssueReaction: React.FC<Props> = (props) => {
                 handleReactionClick(reaction);
               }}
               key={reaction}
-              className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
-                reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+              className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
+                reactions?.some((r) => r.actor === currentUser?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10"
                   : "bg-custom-background-80"
               }`}
@@ -63,7 +67,7 @@ export const IssueReaction: React.FC<Props> = (props) => {
               <span>{renderEmoji(reaction)}</span>
               <span
                 className={
-                  reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                  reactions?.some((r) => r.actor === currentUser?.id && r.reaction === reaction)
                     ? "text-custom-primary-100"
                     : ""
                 }
@@ -75,4 +79,4 @@ export const IssueReaction: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

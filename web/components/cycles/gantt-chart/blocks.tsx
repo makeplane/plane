@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
 
 // ui
-import { Tooltip } from "components/ui";
-// icons
-import { ContrastIcon } from "components/icons";
+import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
 import { getDateRangeStatus, renderShortDate } from "helpers/date-time.helper";
 // types
@@ -17,22 +15,22 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
 
   return (
     <div
-      className="flex items-center relative h-full w-full rounded"
+      className="relative flex h-full w-full items-center rounded"
       style={{
         backgroundColor:
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : "",
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
     >
-      <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">
@@ -44,9 +42,7 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
         }
         position="top-left"
       >
-        <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
-          {data?.name}
-        </div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
       </Tooltip>
     </div>
   );
@@ -60,7 +56,7 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
 
   return (
     <div
-      className="relative w-full flex items-center gap-2 h-full"
+      className="relative flex h-full w-full items-center gap-2"
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
     >
       <ContrastIcon
@@ -69,15 +65,15 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : ""
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : ""
         }`}
       />
-      <h6 className="text-sm font-medium flex-grow truncate">{data?.name}</h6>
+      <h6 className="flex-grow truncate text-sm font-medium">{data?.name}</h6>
     </div>
   );
 };

@@ -1,5 +1,4 @@
-export const getFileExtension = (filename: string) =>
-  filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
+export const getFileExtension = (filename: string) => filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
 
 export const getFileName = (fileName: string) => {
   const dotIndex = fileName.lastIndexOf(".");
