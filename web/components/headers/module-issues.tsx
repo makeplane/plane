@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
+import { useApplication, useLabel, useModule, useProject, useProjectState, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -24,6 +24,31 @@ import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 
+const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  // store hooks
+  const { getModuleById } = useModule();
+
+  const moduleDetail = getModuleById(moduleId);
+
+  if (!moduleDetail) return null;
+
+  return (
+    <CustomMenu.MenuItem
+      key={moduleDetail.id}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${moduleDetail.id}`)}
+    >
+      <div className="flex items-center gap-1.5">
+        <DiceIcon className="h-3 w-3" />
+        {truncateText(moduleDetail.name, 40)}
+      </div>
+    </CustomMenu.MenuItem>
+  );
+};
+
 export const ModuleIssuesHeader: React.FC = observer(() => {
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -36,10 +61,10 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    module: moduleStore,
     projectMember: { projectMembers },
     moduleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
+  const { projectModules, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -105,8 +130,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
-  const modulesList = projectId ? moduleStore.modules[projectId.toString()] : undefined;
-  const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
+  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -157,16 +181,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {modulesList?.map((module) => (
-                    <CustomMenu.MenuItem
-                      key={module.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <DiceIcon className="h-3 w-3" />
-                        {truncateText(module.name, 40)}
-                      </div>
-                    </CustomMenu.MenuItem>
+                  {projectModules?.map((moduleId) => (
+                    <ModuleDropdownOption moduleId={moduleId} />
                   ))}
                 </CustomMenu>
               }

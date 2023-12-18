@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle } from "hooks/store";
 // ui
 import { Combobox } from "@headlessui/react";
 // icons
@@ -28,28 +28,28 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
     placement: "bottom-start",
   });
 
-  const { cycle: cycleStore } = useMobxStore();
+  const { projectAllCycles, fetchAllCycles, getCycleById } = useCycle();
 
   const fetchCycles = () => {
-    if (workspaceSlug && projectId) cycleStore.fetchCycles(workspaceSlug, projectId, "all");
+    if (workspaceSlug && projectId) fetchAllCycles(workspaceSlug, projectId);
   };
 
-  const cycles = cycleStore.projectCycles;
+  const selectedCycleId = projectAllCycles ? projectAllCycles?.find((cycleId) => cycleId === value) : null;
+  const selectedCycle = selectedCycleId ? getCycleById(selectedCycleId) : null;
 
-  const selectedCycle = cycles ? cycles?.find((i) => i.id === value) : undefined;
-
-  const options = cycles?.map((cycle) => ({
-    value: cycle.id,
-    query: cycle.name,
-    content: (
-      <div className="flex items-center gap-1.5 truncate">
-        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
-          <ContrastIcon />
-        </span>
-        <span className="flex-grow truncate">{cycle.name}</span>
-      </div>
-    ),
-  }));
+  const options = projectAllCycles?.map((cycleId) => {
+    const cycleDetail = getCycleById(cycleId);
+    return {
+      value: cycleId,
+      query: cycleDetail?.name ?? "",
+      content: (
+        <div className="flex items-center gap-1.5">
+          <ContrastIcon className="h-3 w-3" />
+          {cycleDetail?.name}
+        </div>
+      ),
+    };
+  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));

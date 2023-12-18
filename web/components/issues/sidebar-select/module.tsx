@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-// mobx store
+// hooks
+import { useModule } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { CustomSearchSelect, DiceIcon, Spinner, Tooltip } from "@plane/ui";
@@ -25,9 +26,9 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // mobx store
   const {
-    module: { projectModules },
     moduleIssues: { removeIssueFromModule, addIssueToModule },
   } = useMobxStore();
+  const { projectModules, getModuleById } = useModule();
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -63,18 +64,24 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
       });
   };
 
-  const options = projectModules?.map((module) => ({
-    value: module.id,
-    query: module.name,
-    content: (
-      <div className="flex items-center gap-1.5 truncate">
-        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
-          <DiceIcon />
-        </span>
-        <span className="flex-grow truncate">{module.name}</span>
-      </div>
-    ),
-  }));
+  const selectedModuleId = projectModules ? projectModules.find((moduleId) => moduleId === issueModule?.module) : null;
+  const selectedModule = selectedModuleId ? getModuleById(selectedModuleId) : null;
+
+  const options = projectModules?.map((moduleId) => {
+    const moduleDetail = getModuleById(moduleId);
+    return {
+      value: moduleId,
+      query: moduleDetail?.name ?? "",
+      content: (
+        <div className="flex items-center gap-1.5 truncate">
+          <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
+            <DiceIcon />
+          </span>
+          <span className="flex-grow truncate">{moduleDetail?.name}</span>
+        </div>
+      ),
+    };
+  });
 
   const issueModule = issueDetail?.issue_module;
 
@@ -88,15 +95,15 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
           value === issueModule?.module_detail.id
             ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
             : handleModuleChange
-              ? handleModuleChange(value)
-              : handleModuleStoreChange(value);
+            ? handleModuleChange(value)
+            : handleModuleStoreChange(value);
         }}
         options={options}
         customButton={
           <div>
             <Tooltip
               position="left"
-              tooltipContent={`${projectModules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`}
+              tooltipContent={`${selectedModule?.name ?? "No module"}`}
             >
               <button
                 type="button"
@@ -111,7 +118,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
                 >
                   <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
                   <span className="truncate">
-                    {projectModules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
+                    {selectedModule?.name ?? "No module"}
                   </span>
                 </span>
               </button>
