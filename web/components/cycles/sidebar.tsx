@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
@@ -29,7 +29,8 @@ import {
   renderShortMonthDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle } from "types";
+import { ICycle, IIssueFilterOptions } from "types";
+import { EFilterType } from "store/issues/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys
@@ -54,6 +55,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const {
     cycle: cycleDetailsStore,
+    cycleIssuesFilter: { issueFilters, updateFilters },
     trackEvent: { setTrackElement },
     user: { currentProjectRole },
   } = useMobxStore();
@@ -244,6 +246,25 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       }
     }
   };
+
+  const handleFiltersUpdate = useCallback(
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
+
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+        });
+      } else {
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
+    },
+    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
+  );
 
   const cycleStatus =
     cycleDetails?.start_date && cycleDetails?.end_date
@@ -538,6 +559,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                               }}
                               totalIssues={cycleDetails.total_issues}
                               isPeekView={Boolean(peekCycle)}
+                              isCompleted={isCompleted}
+                              filters={issueFilters?.filters}
+                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}

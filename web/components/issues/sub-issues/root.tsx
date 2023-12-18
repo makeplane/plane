@@ -176,6 +176,16 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
   );
 
+  const handleDeleteIssue = useCallback(
+    async (issue: IIssue) => {
+      if (!workspaceSlug || !projectId || !user) return;
+
+      await removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
+      await mutate(SUB_ISSUES(parentIssue?.id));
+    },
+    [removeIssue, projectId, user, workspaceSlug, parentIssue?.id]
+  );
+
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
@@ -236,6 +246,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               {issuesLoader.visibility.includes(parentIssue?.id) && workspaceSlug && projectId && (
                 <div className="border border-b-0 border-custom-border-100">
                   <SubIssuesRootList
+                    handleDeleteIssue={handleDeleteIssue}
                     workspaceSlug={workspaceSlug.toString()}
                     projectId={projectId.toString()}
                     parentIssue={parentIssue}

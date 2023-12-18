@@ -90,7 +90,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   return (
     <form
       onSubmit={handleSubmit(handleChangePassword)}
-      className="mx-auto mt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
+      className="mx-auto pt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
     >
       <h3 className="text-xl font-medium">Change password</h3>
       <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
