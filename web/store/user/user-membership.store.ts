@@ -7,6 +7,7 @@ import { WorkspaceService } from "services/workspace.service";
 // interfaces
 import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "types";
 import { RootStore } from "../root.store";
+// constants
 import { EUserProjectRoles } from "constants/project";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -128,15 +129,8 @@ export class UserMembershipStore implements IUserMembershipStore {
     try {
       const response = await this.workspaceService.workspaceMemberMe(workspaceSlug);
 
-      console.log("response", response);
-
-      let memberInfo = this.workspaceMemberInfo;
-      if (!memberInfo) memberInfo = {};
-      memberInfo[workspaceSlug] = { ...response };
-
       runInAction(() => {
-        this.workspaceMemberInfo = memberInfo;
-        // set(this.workspaceMemberInfo, [workspaceSlug], response);
+        set(this.workspaceMemberInfo, [workspaceSlug], response);
         set(this.hasPermissionToWorkspace, [workspaceSlug], true);
       });
 

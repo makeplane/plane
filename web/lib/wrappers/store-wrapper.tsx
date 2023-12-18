@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState, FC } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useTheme } from "next-themes";
@@ -15,10 +16,13 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
   const { children } = props;
   // states
   const [dom, setDom] = useState<any>();
+  // router
+  const router = useRouter();
   // store hooks
   const {
     config: { fetchAppConfig },
     theme: { sidebarCollapsed, toggleSidebar },
+    router: { setQuery },
   } = useApplication();
   const { currentUser } = useUser();
   // fetching application Config
@@ -32,9 +36,8 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
   useEffect(() => {
     const localValue = localStorage && localStorage.getItem("app_sidebar_collapsed");
     const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
-    if (localValue && sidebarCollapsed === undefined) {
-      toggleSidebar(localBoolValue);
-    }
+
+    if (localValue && sidebarCollapsed === undefined) toggleSidebar(localBoolValue);
   }, [sidebarCollapsed, currentUser, setTheme, toggleSidebar]);
 
   /**
@@ -42,16 +45,18 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
    */
   useEffect(() => {
     if (!currentUser) return;
-    if (window) {
-      setDom(window.document?.querySelector<HTMLElement>("[data-theme='custom']"));
-    }
+    if (window) setDom(window.document?.querySelector<HTMLElement>("[data-theme='custom']"));
+
     setTheme(currentUser?.theme?.theme || "system");
-    if (currentUser?.theme?.theme === "custom" && dom) {
-      applyTheme(currentUser?.theme?.palette, false);
-    } else unsetCustomCssVariables();
+    if (currentUser?.theme?.theme === "custom" && dom) applyTheme(currentUser?.theme?.palette, false);
+    else unsetCustomCssVariables();
   }, [currentUser, setTheme, dom]);
 
-  // TODO: set router values
+  useEffect(() => {
+    if (!router.query) return;
+
+    setQuery(router.query);
+  }, [router.query, setQuery]);
 
   return <>{children}</>;
 });

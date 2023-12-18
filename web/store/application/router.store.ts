@@ -1,10 +1,12 @@
-import { action, makeObservable, observable, computed } from "mobx";
+import { action, makeObservable, observable, computed, runInAction } from "mobx";
 import { ParsedUrlQuery } from "node:querystring";
 
 export interface IRouterStore {
+  // observables
   query: ParsedUrlQuery;
+  // actions
   setQuery: (query: ParsedUrlQuery) => void;
-
+  // computed
   workspaceSlug: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
@@ -18,13 +20,15 @@ export interface IRouterStore {
 }
 
 export class RouterStore implements IRouterStore {
+  // observables
   query: ParsedUrlQuery = {};
 
   constructor() {
     makeObservable(this, {
+      // observables
       query: observable,
+      // actions
       setQuery: action,
-
       //computed
       workspaceSlug: computed,
       projectId: computed,
@@ -39,9 +43,11 @@ export class RouterStore implements IRouterStore {
     });
   }
 
-  setQuery(query: ParsedUrlQuery) {
-    this.query = query;
-  }
+  setQuery = (query: ParsedUrlQuery) => {
+    runInAction(() => {
+      this.query = query;
+    });
+  };
 
   get workspaceSlug() {
     return this.query?.workspaceSlug?.toString();
