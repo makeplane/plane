@@ -14,6 +14,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
     cycleIssues: cycleIssueStore,
     cycleIssuesFilter: cycleIssueFilterStore,
     calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
+    cycle: { fetchCycleWithId },
   } = useMobxStore();
 
   const router = useRouter();
@@ -24,10 +25,12 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       if (!workspaceSlug || !cycleId) return;
 
       await cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
+      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
       await cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
+      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId || !projectId || !issue.bridge_id) return;
@@ -38,6 +41,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
         issue.id,
         issue.bridge_id
       );
+      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
     },
   };
 
