@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProjectView } from "hooks/store";
+import { useProjectState, useProjectView } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList } from "components/issues";
@@ -24,14 +24,13 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // store hooks
   const {
     projectLabel: { projectLabels },
-    projectState: projectStateStore,
     projectMember: { projectMembers },
     viewIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
+  const { projectStates } = useProjectState();
   const { getViewById, updateView } = useProjectView();
-
+  // derived values
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
-
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -101,7 +100,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
-        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStates}
       />
 
       {appliedFilters &&
