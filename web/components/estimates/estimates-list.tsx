@@ -7,6 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
 //hooks
 import useToast from "hooks/use-toast";
+import { useProject } from "hooks/store";
 // ui
 import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
@@ -24,9 +25,10 @@ export const EstimatesList: React.FC = observer(() => {
 
   // store
   const {
-    project: { currentProjectDetails, updateProject },
     projectEstimates: { projectEstimates, getProjectEstimateById },
   } = useMobxStore();
+
+  const { updateProject, currentProjectDetails } = useProject();
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
   const [estimateToDelete, setEstimateToDelete] = useState<string | null>(null);

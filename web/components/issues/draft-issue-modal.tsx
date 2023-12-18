@@ -17,6 +17,7 @@ import { DraftIssueForm } from "components/issues";
 import type { IIssue } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_DETAILS, USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
+import { useProject } from "hooks/store";
 
 interface IssuesModalProps {
   data?: IIssue | null;
@@ -64,10 +65,13 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { project: projectStore, user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
+  const { user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
+
+  // store
+  const { workspaceProjects } = useProject();
 
   const user = userStore.currentUser;
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+  const projects = workspaceProjects;
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
 
@@ -160,7 +164,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
-      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+      setActiveProject(projects?.find((id) => id === projectId) ?? projects?.[0] ?? null);
   }, [activeProject, data, projectId, projects, isOpen, prePopulateData]);
 
   const createDraftIssue = async (payload: Partial<IIssue>) => {

@@ -54,7 +54,6 @@ interface IBaseListRoot {
     [EIssueActions.UPDATE]?: (group_by: string | null, issue: IIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (group_by: string | null, issue: IIssue) => Promise<void>;
   };
-  getProjects: (projectStore: IProjectStore) => IProject[] | null;
   viewId?: string;
   currentStore: EProjectStore;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
@@ -67,7 +66,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     issueStore,
     QuickActions,
     issueActions,
-    getProjects,
     viewId,
     currentStore,
     addIssuesToView,
@@ -78,7 +76,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
   // mobx store
   const {
-    project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
     projectLabel: { projectLabels },
@@ -109,7 +106,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const priorities = ISSUE_PRIORITIES;
   const labels = projectLabels;
   const stateGroups = ISSUE_STATE_GROUPS;
-  const projects = getProjects(projectStore);
   const members = projectMembers?.map((m) => m.member) ?? null;
   const handleIssues = async (issue: IIssue, action: EIssueActions) => {
     if (issueActions[action]) {
@@ -149,7 +145,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             priorities={priorities}
             labels={labels}
             members={members}
-            projects={projects}
             issueIds={issueIds}
             showEmptyGroup={showEmptyGroup}
             viewId={viewId}

@@ -2,6 +2,8 @@ import React from "react";
 // components
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+// hooks
+import { useProject } from "hooks/store";
 // types
 import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
 import { IIssueResponse, IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
@@ -138,7 +140,6 @@ export interface IList {
   states: IState[] | null;
   labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
-  projects: IProject[] | null;
   stateGroups: any;
   priorities: any;
   quickAddCallback?: (
@@ -172,10 +173,13 @@ export const List: React.FC<IList> = (props) => {
     priorities,
     labels,
     members,
-    projects,
     currentStore,
     addIssuesToView,
   } = props;
+
+  const { projectMap, workspaceProjects } = useProject();
+
+  const projects = workspaceProjects?.map((project_id) => projectMap[project_id]);
 
   return (
     <div className="relative h-full w-full">

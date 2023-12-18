@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProject } from "hooks/store";
 // components
 import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
 import { ModuleGanttBlock } from "components/modules";
@@ -13,8 +13,8 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, module: moduleStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const { module: moduleStore } = useMobxStore();
+  const { currentProjectDetails } = useProject();
   const modules = moduleStore.projectModules;
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {

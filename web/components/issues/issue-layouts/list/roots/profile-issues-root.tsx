@@ -38,8 +38,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     },
   };
 
-  const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
-
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
 
@@ -57,7 +55,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       issueStore={profileIssuesStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       currentStore={EProjectStore.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />

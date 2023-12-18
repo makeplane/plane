@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
+import { useApplication, useLabel, useProject, useProjectState, useUser, useInbox } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -30,10 +30,10 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     projectMember: { projectMembers },
-    inbox: inboxStore,
     // issue filters
     projectIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
+  const { inboxesList, isInboxEnabled, getInboxId } = useInbox();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -92,7 +92,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId]?.[0] : undefined;
+  const inboxDetails = projectId ? inboxesList?.[projectId]?.[0] : undefined;
 
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
 
@@ -195,8 +195,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          {projectId && inboxStore.isInboxEnabled && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId)}`}>
+          {projectId && isInboxEnabled && inboxDetails && (
+            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${getInboxId(projectId)}`}>
               <span>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox

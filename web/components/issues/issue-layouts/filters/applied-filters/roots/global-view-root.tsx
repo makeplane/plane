@@ -14,7 +14,6 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
   const { workspaceSlug } = router.query as { workspaceSlug: string; globalViewId: string };
 
   const {
-    project: { workspaceProjects },
     workspace: { workspaceLabels },
     workspaceMember: { workspaceMembers },
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
@@ -79,7 +78,6 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
       <AppliedFiltersList
         labels={workspaceLabels ?? undefined}
         members={workspaceMembers?.map((m) => m.member)}
-        projects={workspaceProjects ?? undefined}
         appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}

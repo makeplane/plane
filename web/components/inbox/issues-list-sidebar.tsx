@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useInboxIssues } from "hooks/store";
 // components
 import { InboxIssueCard, InboxFiltersList } from "components/inbox";
 // ui
@@ -12,9 +12,9 @@ export const InboxIssuesListSidebar = observer(() => {
   const router = useRouter();
   const { inboxId, inboxIssueId } = router.query;
 
-  const { inboxIssues: inboxIssuesStore } = useMobxStore();
+  const { currentInboxIssues } = useInboxIssues();
 
-  const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
+  const issuesList = currentInboxIssues;
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -22,8 +22,8 @@ export const InboxIssuesListSidebar = observer(() => {
       {issuesList ? (
         issuesList.length > 0 ? (
           <div className="h-full divide-y divide-custom-border-200 overflow-auto">
-            {issuesList.map((issue) => (
-              <InboxIssueCard key={issue.id} active={issue.issue_inbox[0].id === inboxIssueId} issue={issue} />
+            {issuesList.map((id) => (
+              <InboxIssueCard key={id} active={id === inboxIssueId} issueId={id} />
             ))}
           </div>
         ) : (

@@ -35,15 +35,12 @@ export const ListLayout: FC = observer(() => {
     },
   };
 
-  const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
-
   return (
     <BaseListRoot
       issueFilterStore={projectIssuesFilterStore}
       issueStore={projectIssuesStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       currentStore={EProjectStore.PROJECT}
     />
   );

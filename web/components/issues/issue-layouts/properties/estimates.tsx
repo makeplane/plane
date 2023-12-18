@@ -3,6 +3,8 @@ import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+// hooks
+import { useProject } from "hooks/store";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
@@ -53,11 +55,12 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
   });
 
   const {
-    project: { project_details },
     projectEstimates: { projectEstimates },
   } = useMobxStore();
+  // store
+  const { getProjectById } = useProject();
 
-  const projectDetails = projectId ? project_details[projectId] : null;
+  const projectDetails = projectId ? getProjectById(projectId) : null;
   const isEstimateEnabled = projectDetails?.estimate !== null;
   const estimates = projectEstimates;
   const estimatePoints =

@@ -1,29 +1,32 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-
+import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
-// icons
-import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
+// hooks
+import { useInboxIssues } from "hooks/store";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
-// types
-import { IInboxIssue } from "types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
 type Props = {
-  issue: IInboxIssue;
   active: boolean;
+  issueId: string;
 };
 
 export const InboxIssueCard: React.FC<Props> = (props) => {
-  const { issue, active } = props;
-
+  const { active } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
+  // store hooks
+  const { getIssueById } = useInboxIssues();
+  const issue = getIssueById(inboxId as string, props.issueId);
 
-  const issueStatus = issue.issue_inbox[0].status;
+  const issueStatus = issue?.issue_inbox[0].status;
+
+  if (!issue) return null;
 
   return (
     <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.issue_inbox[0].id}`}>

@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
+import { useProject } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // helpers
@@ -57,8 +58,10 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       fetchPeekIssueDetails: fetchArchivedPeekIssueDetails,
     },
     archivedIssues: { deleteArchivedIssue },
-    project: { currentProjectDetails },
   } = useMobxStore();
+
+  // store
+  const { currentProjectDetails } = useProject();
 
   const { setToastAlert } = useToast();
 
