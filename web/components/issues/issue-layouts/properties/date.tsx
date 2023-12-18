@@ -56,12 +56,14 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
         return (
           <>
             <Popover.Button
+              as="button"
               ref={dropdownBtn}
               className={`flex h-5 w-full items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 outline-none duration-300 ${
                 disabled
                   ? "pointer-events-none cursor-not-allowed text-custom-text-200"
                   : "cursor-pointer hover:bg-custom-background-80"
               }`}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-center gap-2 overflow-hidden">
                 <dateOptionDetails.icon className="h-3 w-3" strokeWidth={2} />
@@ -92,7 +94,8 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
                 {({ close }) => (
                   <DatePicker
                     selected={value ? new Date(value) : new Date()}
-                    onChange={(val: any) => {
+                    onChange={(val: any, e) => {
+                      e?.stopPropagation();
                       if (onChange && val) {
                         onChange(renderDateFormat(val));
                         close();

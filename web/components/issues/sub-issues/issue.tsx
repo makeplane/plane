@@ -49,13 +49,17 @@ export const SubIssues: React.FC<ISubIssues> = ({
   const router = useRouter();
   const { peekProjectId, peekIssueId } = router.query;
 
-  const handleIssuePeekOverview = () => {
+  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-    });
+    if (event.ctrlKey || event.metaKey) {
+      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
+      window.open(issueUrl, "_blank"); // Open link in a new tab
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      });
+    }
   };
 
   return (
