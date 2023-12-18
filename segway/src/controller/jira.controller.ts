@@ -156,66 +156,58 @@ export class JiraController {
 
 
       // states
-      // const statusUrl = `https://${cloud_hostname}/rest/api/3/status/?jql=project={project_key}&expand=renderedFields`;
-      // const statusUrl = `https://${cloud_hostname}/rest/api/3/project/${project_key}/statuses`;
-      // const response = await axios.get(statusUrl, { auth, headers });
-      // console.log(response.data)
-      // for const (status of response.data) {
-      //   console.log(status)
-      // }
-      // const states = [];
+      const statusUrl = `https://${cloud_hostname}/rest/api/3/project/${project_key}/statuses`;
+      const response = await axios.get(statusUrl, { auth, headers });
 
-      // response?.data.forEach((status :any) => {
-      //   const { statusCategory, name, id } = status;
-      //   const group = statusCategory.name === "To Do" ? "unstarted" : statusCategory.name === "In Progress" ? "started" : statusCategory.name === "Done" ? "completed" : statusCategory.name;
-      //   const state = name;
-      //   // Check if both statusCategory.name and state are not the same
-      //   if (group !== state) {
-      //       states.push({ group, id, state });
-      //     }
-      // })
-      // for (const state of states) {
-      //   const statessync = {
-      //     args: [], // args
-      //     kwargs: {
-      //       data: {
-      //         type: "state.create",
-      //         data: state,
-      //         workspace_id: workspace_id,
-      //         project_id: project_id,
-      //         created_by: created_by,
-      //       },
+      if (response && response.data && response.data.length) {
+        const statusData = response.data[0];
+        if (statusData && statusData.statuses) {
+            for (const statusCategory of statusData.statuses) {
+              const state_name = statusCategory.name;
+              const state_group = statusCategory.statusCategory.name === "To Do" ? "unstarted" : statusCategory.statusCategory.name === "In Progress" ? "started" : statusCategory.statusCategory.name === "Done" ? "completed" : statusCategory.statusCategory.name;
+                const statessync = {
+                  args: [], // args
+                  kwargs: {
+                    data: {
+                      type: "state.create",
+                      state_name: state_name,
+                      state_group: state_group,
+                      workspace_id: workspace_id,
+                      project_id: project_id,
+                      created_by: created_by,
+                      external_id: statusCategory.id,
+                      external_source: "jira",
+                    },
 
-      //     }, // kwargs
-      //     other_data: {}, // other data
-      //   };
-      //   this.mq?.publish(statessync, "plane.bgtasks.importer_task.state_sync");
-      // }
+                  }, // kwargs
+                  other_data: {}, // other data
+                };
+                this.mq?.publish(statessync, "plane.bgtasks.importer_task.state_sync");
+            }
+        } 
+      } 
+
+      // // cycles
 
 
-
-      // cycles
-
-
-      // modules
+      const modules = [];
 
 
-
-      // issues
-      // let url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key} AND issueType=Epic OR issueType=Story OR issueType=Subtask OR issueType=Bug&fields=comment, summary, description, assignee, priority, status, labels, duedate, parent&maxResults=100&expand=renderedFields`
-  
-      // if (epics_to_modules) {
-      // url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key} AND issueType=Story OR issueType=Subtask OR issueType=Bug&fields=comment, summary, description, assignee, priority, status, labels, duedate, parent&maxResults=100&expand=renderedFields`
-      // }
-
-      let url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, summary, description, assignee, priority, status, labels, duedate, parent&expand=renderedFields`;
+      let url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent&maxResults=100&expand=renderedFields`;
 
       for await (const issue of loadIssues(url, auth)) {
+
+        // skipping all the epics
+        if (issue.fields.issuetype.name === "Epic"){
+          modules.push(issue)
+          continue;
+        };
 
         const user = members.find(
           (user) => user.username === issue.fields.assignee?.displayName
         );
 
+        // console.log(issue,"issues")
         // issue description
         let description = "";
         if (issue.renderedFields.description) {
@@ -244,8 +236,7 @@ export class JiraController {
               name: issue.fields.summary.substring(0, 250),
               description_html: description,
               assignee: user?.email,
-              // state: issue.fields.status.name.toLowerCase(),
-              state: false,
+              state: issue.fields.status.name,
               priority: issue.fields.priority.name.toLowerCase() === 'medium' ? 'medium' : issue.fields.priority.name.toLowerCase() === 'highest' ? 'high' : 'low',
               workspace_id: workspace_id,
               project_id: project_id,
@@ -264,6 +255,9 @@ export class JiraController {
         };
         this.mq?.publish(issuessync, "plane.bgtasks.importer_task.issue_sync");
       }
+
+
+      // modules
 
       return;
     } catch (error) {
