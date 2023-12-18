@@ -14,6 +14,7 @@ import { ILabelRootStore, LabelRootStore } from "./label";
 import { IMemberRootStore, MemberRootStore } from "./member";
 import { IInboxRootStore, InboxRootStore } from "./inbox";
 import { IProjectEstimateStore, ProjectEstimatesStore } from "./estimate.store";
+import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -28,6 +29,7 @@ export class RootStore {
   cycle: ICycleStore;
   module: IModuleStore;
   projectView: IProjectViewStore;
+  globalView: IGlobalViewStore;
   page: IPageStore;
   issue: IIssueRootStore;
   state: IStateStore;
@@ -45,6 +47,7 @@ export class RootStore {
     this.cycle = new CycleStore(this);
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewStore(this);
+    this.globalView = new GlobalViewStore(this);
     this.page = new PageStore(this);
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
