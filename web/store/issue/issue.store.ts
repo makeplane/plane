@@ -3,21 +3,21 @@ import get from "lodash/get";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { IIssueRootStore } from "./root.store";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueMap } from "types";
 
 export interface IIssueStore {
-  allIssues: { [key: string]: IIssue };
+  allIssues: IIssueMap;
   // actions
   addIssue(issues: IIssue[]): void;
   updateIssue(issueId: string, issue: Partial<IIssue>): void;
   removeIssue(issueId: string): void;
   // helper Methods
   getIssueById(id: string): undefined | IIssue;
-  getIssuesByKey(issueKey: string, value: string): undefined | { [key: string]: IIssue };
+  getIssuesByKey(issueKey: string, value: string): undefined | IIssueMap;
 }
 
 export class IssueStore implements IIssueStore {
-  allIssues: { [key: string]: IIssue } = {};
+  allIssues: IIssueMap = {};
   // root store
   rootStore: IIssueRootStore;
 
@@ -65,7 +65,7 @@ export class IssueStore implements IIssueStore {
 
   getIssuesByKey = (issueKey: keyof IIssue, value: string) => {
     if (!issueKey || !value || !this.allIssues) return undefined;
-    const filteredIssues: { [key: string]: IIssue } = {};
+    const filteredIssues: IIssueMap = {};
 
     Object.values(this.allIssues).forEach((issue) => {
       const issueKeyValue = get(issue, issueKey);

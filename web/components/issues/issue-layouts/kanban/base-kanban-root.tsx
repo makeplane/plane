@@ -77,13 +77,16 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { issueMap } = useIssues();
+  const {
+    issuesMap: { allIssues: issuesMap },
+  } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();
 
   const issueIds = issues?.getIssuesIds || [];
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
+  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
 
   const sub_group_by: string | null = displayFilters?.sub_group_by || null;
   const group_by: string | null = displayFilters?.group_by || null;
@@ -150,7 +153,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           issues,
           sub_group_by,
           group_by,
-          issueMap,
+          issuesMap,
           issueIds
         ).catch((err) => {
           setToastAlert({
@@ -199,7 +202,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       issues,
       sub_group_by,
       group_by,
-      issueMap,
+      issuesMap,
       issueIds
     ).finally(() => {
       setDeleteIssueModal(false);
@@ -251,9 +254,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           </div>
 
           <KanBanView
-            issueMap={issueMap}
+            issuesMap={issuesMap}
             issueIds={issueIds}
-            issuesFilter={issuesFilter}
+            displayProperties={displayProperties}
             sub_group_by={sub_group_by}
             group_by={group_by}
             handleIssues={handleIssues}
