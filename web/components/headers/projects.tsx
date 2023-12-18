@@ -5,6 +5,8 @@ import { Breadcrumbs, Button } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectsHeader = observer(() => {
   const router = useRouter();
@@ -15,9 +17,12 @@ export const ProjectsHeader = observer(() => {
     project: projectStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentWorkspaceRole },
   } = useMobxStore();
 
   const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : [];
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -44,17 +49,18 @@ export const ProjectsHeader = observer(() => {
             />
           </div>
         )}
-
-        <Button
-          prependIcon={<Plus />}
-          size="sm"
-          onClick={() => {
-            setTrackElement("PROJECTS_PAGE_HEADER");
-            commandPaletteStore.toggleCreateProjectModal(true);
-          }}
-        >
-          Add Project
-        </Button>
+        {isAuthorizedUser && (
+          <Button
+            prependIcon={<Plus />}
+            size="sm"
+            onClick={() => {
+              setTrackElement("PROJECTS_PAGE_HEADER");
+              commandPaletteStore.toggleCreateProjectModal(true);
+            }}
+          >
+            Add Project
+          </Button>
+        )}
       </div>
     </div>
   );

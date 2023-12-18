@@ -4,6 +4,8 @@ import { PlusIcon } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { NewEmptyState } from "components/common/new-empty-state";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
 import { EProjectStore } from "store/command-palette.store";
@@ -12,7 +14,10 @@ export const ProjectEmptyState: React.FC = observer(() => {
   const {
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentProjectRole },
   } = useMobxStore();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="grid h-full w-full place-items-center">
@@ -26,14 +31,19 @@ export const ProjectEmptyState: React.FC = observer(() => {
           description:
             "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
         }}
-        primaryButton={{
-          text: "Create your first issue",
-          icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => {
-            setTrackElement("PROJECT_EMPTY_STATE");
-            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
-          },
-        }}
+        primaryButton={
+          isEditingAllowed
+            ? {
+                text: "Create your first issue",
+                icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
+                onClick: () => {
+                  setTrackElement("PROJECT_EMPTY_STATE");
+                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                },
+              }
+            : null
+        }
+        disabled={!isEditingAllowed}
       />
     </div>
   );

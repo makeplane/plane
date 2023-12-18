@@ -30,18 +30,7 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const canUserCreatePage =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
-
-  const emptyStatePrimaryButton = canUserCreatePage
-    ? {
-        primaryButton: {
-          icon: <Plus className="h-4 w-4" />,
-          text: "Create your first page",
-          onClick: () => toggleCreatePageModal(true),
-        },
-      }
-    : {};
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -69,7 +58,16 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
                   "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
                 direction: "right",
               }}
-              {...emptyStatePrimaryButton}
+              primaryButton={
+                isEditingAllowed
+                  ? {
+                      icon: <Plus className="h-4 w-4" />,
+                      text: "Create your first page",
+                      onClick: () => toggleCreatePageModal(true),
+                    }
+                  : null
+              }
+              disabled={!isEditingAllowed}
             />
           )}
         </div>

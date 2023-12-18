@@ -11,10 +11,11 @@ type Props = {
   children: React.ReactNode;
   title?: string;
   placement?: Placement;
+  disabled?: boolean;
 };
 
 export const FiltersDropdown: React.FC<Props> = (props) => {
-  const { children, title = "Dropdown", placement } = props;
+  const { children, title = "Dropdown", placement, disabled = false } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -32,6 +33,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
           <>
             <Popover.Button as={React.Fragment}>
               <Button
+                disabled={disabled}
                 ref={setReferenceElement}
                 variant="neutral-primary"
                 size="sm"

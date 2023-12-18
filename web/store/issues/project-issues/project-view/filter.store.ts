@@ -170,7 +170,7 @@ export class ViewIssuesFilterStore extends IssueFilterBaseStore implements IView
 
       return filters;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, viewId);
+      console.log("error in viewFetchFilters", error);
       throw error;
     }
   };
@@ -216,7 +216,7 @@ export class ViewIssuesFilterStore extends IssueFilterBaseStore implements IView
       await this.fetchViewFilters(workspaceSlug, projectId, viewId);
       return;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, viewId);
+      console.log("error in viewFetchFilters", error);
       throw error;
     }
   };

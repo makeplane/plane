@@ -7,5 +7,8 @@ WORKDIR /app
 COPY . .
 RUN yarn global add turbo
 RUN yarn install
-EXPOSE 3000
+EXPOSE 4000
+ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
+
+VOLUME [ "/app/node_modules", "/app/space/node_modules"]
 CMD ["yarn","dev", "--filter=space"]

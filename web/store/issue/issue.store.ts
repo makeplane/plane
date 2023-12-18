@@ -82,9 +82,11 @@ export class IssueStore implements IIssueStore {
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
       if (
         workspaceSlug &&
         projectId &&
+        hasPermissionToCurrentProject &&
         this.rootStore.issueFilter.userFilters &&
         this.rootStore.issueFilter.userDisplayFilters
       )
@@ -108,8 +110,8 @@ export class IssueStore implements IIssueStore {
           : "grouped"
         : "ungrouped"
       : ungroupedLayouts.includes(issueLayout)
-        ? "ungrouped"
-        : null;
+      ? "ungrouped"
+      : null;
 
     return _issueState || null;
   }

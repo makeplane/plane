@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -14,6 +14,8 @@ import {
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
 } from "components/issues";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
@@ -107,6 +109,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  // ref
+  const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
@@ -151,6 +155,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
+  useOutsideClickDetector(issuePeekOverviewRef, () => removeRoutePeekId());
+
   return (
     <>
       {issue && !isArchived && (
@@ -178,6 +184,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
         {issueId === peekIssueId && (
           <div
+            ref={issuePeekOverviewRef}
             className={`fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300 
           ${peekMode === "side-peek" ? `bottom-0 right-0 top-0 w-full md:w-[50%]` : ``}
           ${peekMode === "modal" ? `left-[50%] top-[50%] h-5/6 w-5/6 -translate-x-[50%] -translate-y-[50%]` : ``}

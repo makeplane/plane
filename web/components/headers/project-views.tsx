@@ -7,14 +7,23 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { project: projectStore, commandPalette } = useMobxStore();
+  const {
+    project: projectStore,
+    commandPalette,
+    user: { currentProjectRole },
+  } = useMobxStore();
   const { currentProjectDetails } = projectStore;
+
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -50,18 +59,20 @@ export const ProjectViewsHeader: React.FC = observer(() => {
             </Breadcrumbs>
           </div>
         </div>
-        <div className="flex flex-shrink-0 items-center gap-2">
-          <div>
-            <Button
-              variant="primary"
-              size="sm"
-              prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
-              onClick={() => commandPalette.toggleCreateViewModal(true)}
-            >
-              Create View
-            </Button>
+        {canUserCreateIssue && (
+          <div className="flex flex-shrink-0 items-center gap-2">
+            <div>
+              <Button
+                variant="primary"
+                size="sm"
+                prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
+                onClick={() => commandPalette.toggleCreateViewModal(true)}
+              >
+                Create View
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
