@@ -49,7 +49,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {currentUser ? (
-        <div className="mx-auto mt-16 h-full w-full overflow-y-auto px-8 pb-8 lg:w-3/5">
+        <div className="mx-auto pt-16 h-full w-full overflow-y-auto px-8 pb-8 lg:w-3/5">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>

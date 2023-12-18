@@ -232,7 +232,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           />
         </div>
 
-        <div className="flex w-full items-center justify-between gap-10">
+        <div className="flex w-full items-baseline justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Identifier</h4>
             <Controller
@@ -246,8 +246,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   message: "Identifier must at least be of 1 character",
                 },
                 maxLength: {
-                  value: 12,
-                  message: "Identifier must at most be of 5 characters",
+                  value: 6,
+                  message: "Identifier must at most be of 6 characters",
                 },
               }}
               render={({ field: { value, ref } }) => (
@@ -265,6 +265,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 />
               )}
             />
+            <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
           </div>
 
           <div className="flex w-1/2 flex-col gap-1">

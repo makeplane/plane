@@ -177,7 +177,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => !storeLabels && fetchLabels()}
+          onClick={(e) => {
+            e.stopPropagation();
+            !storeLabels && fetchLabels();
+          }}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -214,6 +217,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                       selected ? "text-custom-text-100" : "text-custom-text-200"
                     }`
                   }
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>
