@@ -15,7 +15,8 @@ export interface IGlobalViewStore {
   // computed
   currentWorkspaceViews: string[] | null;
   // computed actions
-  getViewDetails: (viewId: string) => IWorkspaceView | null;
+  getSearchedViews: (searchQuery: string) => string[] | null;
+  getViewDetailsById: (viewId: string) => IWorkspaceView | null;
   // actions
   fetchAllGlobalViews: (workspaceSlug: string) => Promise<IWorkspaceView[]>;
   fetchGlobalViewDetails: (workspaceSlug: string, viewId: string) => Promise<IWorkspaceView>;
@@ -45,7 +46,8 @@ export class GlobalViewStore implements IGlobalViewStore {
       // computed
       currentWorkspaceViews: computed,
       // computed actions
-      getViewDetails: action,
+      getSearchedViews: action,
+      getViewDetailsById: action,
       // actions
       fetchAllGlobalViews: action,
       fetchGlobalViewDetails: action,
@@ -74,11 +76,24 @@ export class GlobalViewStore implements IGlobalViewStore {
     );
   }
 
+  getSearchedViews = (searchQuery: string) => {
+    const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspaceDetails) return null;
+
+    return (
+      Object.keys(this.globalViewMap ?? {})?.filter(
+        (viewId) =>
+          this.globalViewMap[viewId]?.workspace === currentWorkspaceDetails.id &&
+          this.globalViewMap[viewId]?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      ) ?? null
+    );
+  };
+
   /**
    * @description returns view details for given viewId
    * @param viewId
    */
-  getViewDetails = (viewId: string): IWorkspaceView | null => this.globalViewMap[viewId] ?? null;
+  getViewDetailsById = (viewId: string): IWorkspaceView | null => this.globalViewMap[viewId] ?? null;
 
   /**
    * @description fetch all global views for given workspace
@@ -172,7 +187,7 @@ export class GlobalViewStore implements IGlobalViewStore {
     viewId: string,
     data: Partial<IWorkspaceView>
   ): Promise<IWorkspaceView> => {
-    const viewToUpdate = { ...this.getViewDetails(viewId), ...data };
+    const viewToUpdate = { ...this.getViewDetailsById(viewId), ...data };
 
     try {
       runInAction(() => {
