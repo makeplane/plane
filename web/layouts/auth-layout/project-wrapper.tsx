@@ -6,6 +6,7 @@ import useSWR from "swr";
 import {
   useApplication,
   useCycle,
+  useEstimate,
   useLabel,
   useMember,
   useModule,
@@ -30,9 +31,6 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const {
-    projectEstimates: { fetchProjectEstimates },
-  } = useMobxStore();
   const { fetchInboxesList, isInboxEnabled } = useInbox();
   const {
     commandPalette: { toggleCreateProjectModal },
@@ -51,6 +49,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectLabels },
   } = useLabel();
+  const { fetchProjectEstimates } = useEstimate();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;

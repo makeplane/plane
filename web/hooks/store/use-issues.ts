@@ -12,9 +12,9 @@ export const useIssues = (storeType?: EIssuesStoreType) => {
       return {
         issues: context.issue.projectIssues,
         issuesFilter: context.issue.projectIssuesFilter,
-        issueMap: context.issue.issues,
+        issuesMap: context.issue.issues,
       };
     default:
-      return { issueMap: context.issue.issues };
+      return { issuesMap: context.issue.issues };
   }
 };

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -10,8 +10,9 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store_legacy/project";
 import { EProjectStore } from "store_legacy/command-palette.store";
+import { useIssues } from "hooks/store/use-issues";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ListLayout: FC = observer(() => {
   const router = useRouter();
@@ -20,25 +21,28 @@ export const ListLayout: FC = observer(() => {
   if (!workspaceSlug || !projectId) return null;
 
   // store
-  const { projectIssuesFilter: projectIssuesFilterStore, projectIssues: projectIssuesStore } = useMobxStore();
+  const { issuesFilter, issues } = useIssues(EIssuesStoreType.PROJECT);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-      await projectIssuesStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+        await issues.updateIssue(workspaceSlug, projectId, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-      await projectIssuesStore.removeIssue(workspaceSlug, projectId, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug, projectId, issue.id);
+      },
+    }),
+    [issues]
+  );
 
   return (
     <BaseListRoot
-      issueFilterStore={projectIssuesFilterStore}
-      issueStore={projectIssuesStore}
+      issuesFilter={issuesFilter}
+      issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       currentStore={EProjectStore.PROJECT}

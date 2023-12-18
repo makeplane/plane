@@ -13,6 +13,8 @@ import { IPageStore, PageStore } from "./page.store";
 import { ILabelRootStore, LabelRootStore } from "./label";
 import { IMemberRootStore, MemberRootStore } from "./member";
 import { IInboxRootStore, InboxRootStore } from "./inbox";
+import { IProjectEstimateStore, ProjectEstimatesStore } from "./estimate.store";
+import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -27,9 +29,11 @@ export class RootStore {
   cycle: ICycleStore;
   module: IModuleStore;
   projectView: IProjectViewStore;
+  globalView: IGlobalViewStore;
   page: IPageStore;
   issue: IIssueRootStore;
   state: IStateStore;
+  estimate: IProjectEstimateStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -40,11 +44,13 @@ export class RootStore {
     this.memberRoot = new MemberRootStore(this);
     this.inboxRoot = new InboxRootStore(this);
     // independent stores
-    this.state = new StateStore(this);
-    this.issue = new IssueRootStore(this);
     this.cycle = new CycleStore(this);
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewStore(this);
+    this.globalView = new GlobalViewStore(this);
     this.page = new PageStore(this);
+    this.issue = new IssueRootStore(this);
+    this.state = new StateStore(this);
+    this.estimate = new ProjectEstimatesStore(this);
   }
 }
