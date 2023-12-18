@@ -9,8 +9,8 @@ export interface IMemberRootStore {
   // observables
   memberMap: Record<string, IUserLite>;
   // sub-stores
-  workspaceMember: IWorkspaceMemberStore;
-  projectMember: IProjectMemberStore;
+  workspace: IWorkspaceMemberStore;
+  project: IProjectMemberStore;
 }
 
 export class MemberRootStore implements IMemberRootStore {
@@ -19,8 +19,8 @@ export class MemberRootStore implements IMemberRootStore {
   // root store
   rootStore: RootStore;
   // sub-stores
-  workspaceMember: IWorkspaceMemberStore;
-  projectMember: IProjectMemberStore;
+  workspace: IWorkspaceMemberStore;
+  project: IProjectMemberStore;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -31,7 +31,7 @@ export class MemberRootStore implements IMemberRootStore {
     // root store
     this.rootStore = _rootStore;
     // sub-stores
-    this.workspaceMember = new WorkspaceMemberStore(_rootStore);
-    this.projectMember = new ProjectMemberStore(_rootStore);
+    this.workspace = new WorkspaceMemberStore(_rootStore);
+    this.project = new ProjectMemberStore(_rootStore);
   }
 }

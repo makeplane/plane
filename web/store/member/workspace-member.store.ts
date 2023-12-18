@@ -53,7 +53,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.memberMap = this.rootStore.memberRoot.memberMap;
+    this.memberMap = this.rootStore.memberRoot?.memberMap;
     // services
     this.workspaceService = new WorkspaceService();
   }

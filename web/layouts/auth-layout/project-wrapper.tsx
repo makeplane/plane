@@ -7,6 +7,7 @@ import {
   useApplication,
   useCycle,
   useLabel,
+  useMember,
   useModule,
   useProject,
   useProjectState,
@@ -29,7 +30,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
   const {
-    projectMember: { fetchProjectMembers },
     projectEstimates: { fetchProjectEstimates },
     inbox: { fetchInboxesList, isInboxEnabled },
   } = useMobxStore();
@@ -43,6 +43,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
   const { fetchViews } = useProjectView();
+  const {
+    project: { fetchProjectMembers },
+  } = useMember();
   const { fetchProjectStates } = useProjectState();
   const {
     project: { fetchProjectLabels },

@@ -53,7 +53,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.memberMap = this.rootStore.memberRoot.memberMap;
+    this.memberMap = this.rootStore.memberRoot?.memberMap;
     // services
     this.projectMemberService = new ProjectMemberService();
   }

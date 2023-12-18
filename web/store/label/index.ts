@@ -1,4 +1,4 @@
-import { computed, observable, makeObservable } from "mobx";
+import { observable, makeObservable, action } from "mobx";
 import { RootStore } from "../root.store";
 // types
 import { IIssueLabel } from "types";
@@ -29,7 +29,7 @@ export class LabelRootStore implements ILabelRootStore {
       // observables
       labelMap: observable,
       // computed actions
-      getLabelById: computed,
+      getLabelById: action,
     });
 
     // root store

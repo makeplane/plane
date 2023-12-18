@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
@@ -73,7 +73,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
   // store hooks
   const {
-    project: projectStore,
     projectIssues: projectIssueStore,
     viewIssues: projectViewIssueStore,
     workspaceProfileIssues: profileIssueStore,
@@ -85,6 +84,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   } = useApplication();
   const { currentUser } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const { workspaceProjects } = useProject();
 
   const issueStores = {
     [EProjectStore.PROJECT]: {
@@ -115,8 +115,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[currentStore];
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } = useLocalStorage<any>(
     "draftedIssue",
@@ -213,9 +211,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (projects && projects.length > 0 && !activeProject)
-      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [data, projectId, projects, isOpen, activeProject]);
+    if (workspaceProjects && workspaceProjects.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjects?.[0] ?? null);
+  }, [data, projectId, workspaceProjects, isOpen, activeProject]);
 
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
@@ -382,7 +380,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (onSubmit) await onSubmit(payload);
   };
 
-  if (!projects || projects.length === 0) return null;
+  if (!workspaceProjects || workspaceProjects.length === 0) return null;
 
   return (
     <>
