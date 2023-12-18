@@ -58,7 +58,12 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         }}
         currentStore={EProjectStore.CYCLE}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        ellipsis
+        menuButtonOnClick={(e) => e.stopPropagation()}
+      >
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

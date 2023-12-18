@@ -308,8 +308,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               message: "Identifier must at least be of 1 character",
                             },
                             maxLength: {
-                              value: 12,
-                              message: "Identifier must at most be of 12 characters",
+                              value: 6,
+                              message: "Identifier must at most be of 6 characters",
                             },
                           }}
                           render={({ field: { value, onChange } }) => (

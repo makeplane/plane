@@ -182,6 +182,12 @@ export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesSt
 
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
+      runInAction(() => {
+        _issues = { ...this.issues };
+        _issues[workspaceViewId][issueId] = { ..._issues[workspaceViewId][issueId], ...response };
+        this.issues = _issues;
+      });
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");

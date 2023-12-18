@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -23,9 +23,17 @@ import {
   IProjectIssuesStore,
   IViewIssuesFilterStore,
   IViewIssuesStore,
+<<<<<<< HEAD
 } from "store_legacy/issues";
 import { TUnGroupedIssues } from "store_legacy/issues/types";
 import { EUserProjectRoles } from "constants/project";
+=======
+} from "store/issues";
+import { TUnGroupedIssues } from "store/issues/types";
+import { EIssueActions } from "../types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
 interface IBaseGanttRoot {
   issueFiltersStore:
@@ -35,11 +43,21 @@ interface IBaseGanttRoot {
     | IViewIssuesFilterStore;
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   viewId?: string;
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+  };
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
+<<<<<<< HEAD
   const { issueFiltersStore, issueStore, viewId } = props;
   // router
+=======
+  const { issueFiltersStore, issueStore, viewId, issueActions } = props;
+
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
   // store hooks
@@ -64,11 +82,14 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, payload, viewId);
   };
 
-  const updateIssue = async (projectId: string, issueId: string, payload: Partial<IIssue>) => {
-    if (!workspaceSlug) return;
-
-    await issueStore.updateIssue(workspaceSlug.toString(), projectId, issueId, payload, viewId);
-  };
+  const handleIssues = useCallback(
+    async (issue: IIssue, action: EIssueActions) => {
+      if (issueActions[action]) {
+        await issueActions[action]!(issue);
+      }
+    },
+    [issueActions]
+  );
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -102,8 +123,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => {
-            await updateIssue(peekProjectId.toString(), peekIssueId.toString(), issueToUpdate);
+          handleIssue={async (issueToUpdate, action) => {
+            await handleIssues(issueToUpdate as IIssue, action);
           }}
         />
       )}

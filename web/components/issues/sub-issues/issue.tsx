@@ -10,6 +10,7 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // types
 import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+import { EIssueActions } from "../issue-layouts/types";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -29,6 +30,7 @@ export interface ISubIssues {
     issue?: IIssue | null
   ) => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  handleDeleteIssue: (issue: IIssue) => Promise<void>;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -45,17 +47,22 @@ export const SubIssues: React.FC<ISubIssues> = ({
   copyText,
   handleIssueCrudOperation,
   handleUpdateIssue,
+  handleDeleteIssue,
 }) => {
   const router = useRouter();
   const { peekProjectId, peekIssueId } = router.query;
 
-  const handleIssuePeekOverview = () => {
+  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-    });
+    if (event.ctrlKey || event.metaKey) {
+      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
+      window.open(issueUrl, "_blank"); // Open link in a new tab
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      });
+    }
   };
 
   return (
@@ -65,7 +72,13 @@ export const SubIssues: React.FC<ISubIssues> = ({
           workspaceSlug={workspaceSlug}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
+          handleIssue={async (issueToUpdate, action) => {
+            if (action === EIssueActions.UPDATE) {
+              await handleUpdateIssue(issue, { ...issue, ...issueToUpdate });
+            } else if (action === EIssueActions.DELETE) {
+              await handleDeleteIssue(issue);
+            }
+          }}
         />
       )}
       <div>
@@ -176,6 +189,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
 
         {issuesLoader.visibility.includes(issue?.id) && issue?.sub_issues_count > 0 && (
           <SubIssuesRootList
+            handleDeleteIssue={handleDeleteIssue}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             parentIssue={issue}

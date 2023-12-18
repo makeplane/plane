@@ -2,8 +2,12 @@ import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+<<<<<<< HEAD
 // hooks
 import { useUser, useWorkspace } from "hooks/store";
+=======
+import useSWRImmutable from "swr/immutable";
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 // ui
 import { Spinner } from "@plane/ui";
 
@@ -29,7 +33,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   // fetching current user instance admin status
-  useSWR("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
+  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
     shouldRetryOnError: false,
   });
   // fetching user settings

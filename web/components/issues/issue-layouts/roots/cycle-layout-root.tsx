@@ -25,12 +25,17 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
+<<<<<<< HEAD
   const { workspaceSlug, projectId, cycleId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     cycleId: string;
   };
   // store hooks
+=======
+  const { workspaceSlug, projectId, cycleId } = router.query;
+
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
   const {
     cycleIssues: { loader, getIssues, fetchIssues },
     cycleIssuesFilter: { issueFilters, fetchFilters },
@@ -41,8 +46,13 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
     async () => {
       if (workspaceSlug && projectId && cycleId) {
-        await fetchFilters(workspaceSlug, projectId, cycleId);
-        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader", cycleId);
+        await fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        await fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          getIssues ? "mutation" : "init-loader",
+          cycleId.toString()
+        );
       }
     }
   );
@@ -70,7 +80,11 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         ) : (
           <>
             {Object.keys(getIssues ?? {}).length == 0 ? (
-              <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+              <CycleEmptyState
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                cycleId={cycleId?.toString()}
+              />
             ) : (
               <div className="h-full w-full overflow-auto">
                 {activeLayout === "list" ? (

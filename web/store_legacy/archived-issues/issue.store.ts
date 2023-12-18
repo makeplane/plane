@@ -87,10 +87,12 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
 
       if (
         workspaceSlug &&
         projectId &&
+        hasPermissionToCurrentProject &&
         this.rootStore.archivedIssueFilters.userDisplayFilters &&
         this.rootStore.archivedIssueFilters.userFilters
       )

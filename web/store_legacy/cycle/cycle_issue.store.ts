@@ -89,10 +89,12 @@ export class CycleIssueStore implements ICycleIssueStore {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const cycleId = this.rootStore.cycle.cycleId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
 
       if (
         workspaceSlug &&
         projectId &&
+        hasPermissionToCurrentProject &&
         cycleId &&
         this.rootStore.cycleIssueFilter.cycleFilters &&
         this.rootStore.issueFilter.userDisplayFilters
@@ -115,8 +117,8 @@ export class CycleIssueStore implements ICycleIssueStore {
         ? "groupWithSubGroups"
         : "grouped"
       : ungroupedLayouts.includes(issueLayout)
-        ? "ungrouped"
-        : null;
+      ? "ungrouped"
+      : null;
 
     return _issueState || null;
   }

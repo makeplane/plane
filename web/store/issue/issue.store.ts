@@ -28,19 +28,149 @@ export class IssueStore implements IIssueStore {
       // observable
       allIssues: observable,
       // actions
+<<<<<<< HEAD
       addIssue: action,
       updateIssue: action,
       removeIssue: action,
+=======
+      fetchIssues: action,
+      updateIssueStructure: action,
+      removeIssueFromStructure: action,
+      updateGanttIssueStructure: action,
+    });
+
+    this.rootStore = _rootStore;
+    this.issueService = new IssueService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
+      if (
+        workspaceSlug &&
+        projectId &&
+        hasPermissionToCurrentProject &&
+        this.rootStore.issueFilter.userFilters &&
+        this.rootStore.issueFilter.userDisplayFilters
+      )
+        this.fetchIssues(workspaceSlug, projectId, "mutation");
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
     });
   }
 
   addIssue = (issues: IIssue[]) => {
     if (issues && issues.length <= 0) return;
 
+<<<<<<< HEAD
     const _issues = { ...this.allIssues };
     issues.forEach((issue) => {
       _issues[issue.id] = issue;
     });
+=======
+    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
+    const issueGroup = this.rootStore?.issueFilter?.userDisplayFilters?.group_by || null;
+    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
+    if (!issueLayout) return null;
+
+    const _issueState = groupedLayouts.includes(issueLayout)
+      ? issueGroup
+        ? issueSubGroup
+          ? "groupWithSubGroups"
+          : "grouped"
+        : "ungrouped"
+      : ungroupedLayouts.includes(issueLayout)
+      ? "ungrouped"
+      : null;
+
+    return _issueState || null;
+  }
+
+  get getIssues() {
+    const projectId: string | null = this.rootStore?.project?.projectId;
+    const issueType = this.getIssueType;
+    if (!projectId || !issueType) return null;
+
+    return this.issues?.[projectId]?.[issueType] || null;
+  }
+
+  get getIssuesCount() {
+    const issueType = this.getIssueType;
+
+    let issuesCount = 0;
+
+    if (issueType === "grouped") {
+      const issues = this.getIssues as IIssueGroupedStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((group_id) => {
+        issuesCount += issues[group_id].length;
+      });
+    }
+
+    if (issueType === "groupWithSubGroups") {
+      const issues = this.getIssues as IIssueGroupWithSubGroupsStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((sub_group_id) => {
+        Object.keys(issues[sub_group_id]).map((group_id) => {
+          issuesCount += issues[sub_group_id][group_id].length;
+        });
+      });
+    }
+
+    if (issueType === "ungrouped") {
+      const issues = this.getIssues as IIssueUnGroupedStructure;
+
+      if (!issues) return 0;
+
+      issuesCount = issues.length;
+    }
+
+    return issuesCount;
+  }
+
+  updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const projectId: string | null = issue?.project;
+    const issueType = this.getIssueType;
+    if (!projectId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      const _currentIssueId = issues?.[group_id]?.find((_i) => _i?.id === issue.id);
+      issues = {
+        ...issues,
+        [group_id]: _currentIssueId
+          ? issues[group_id]?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+          : [...(issues?.[group_id] ?? []), issue],
+      };
+    }
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      const _currentIssueId = issues?.[sub_group_id]?.[group_id]?.find((_i) => _i?.id === issue.id);
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: _currentIssueId
+            ? issues?.[sub_group_id]?.[group_id]?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+            : [...(issues?.[sub_group_id]?.[group_id] ?? []), issue],
+        },
+      };
+    }
+    if (issueType === "ungrouped") {
+      issues = issues as IIssueUnGroupedStructure;
+      const _currentIssueId = issues?.find((_i) => _i?.id === issue.id);
+      issues = _currentIssueId
+        ? issues?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+        : [...(issues ?? []), issue];
+    }
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
     runInAction(() => {
       this.allIssues = _issues;

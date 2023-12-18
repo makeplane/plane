@@ -277,7 +277,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
+<<<<<<< HEAD
           handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
+=======
+          handleIssue={async (issueToUpdate, action: EIssueActions) =>
+            await handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, action)
+          }
+>>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
         />
       )}
     </>

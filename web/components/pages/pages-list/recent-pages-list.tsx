@@ -66,11 +66,15 @@ export const RecentPagesList: FC = observer(() => {
                 "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
               direction: "right",
             }}
-            primaryButton={{
-              icon: <Plus className="h-4 w-4" />,
-              text: "Create your first page",
-              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
-            }}
+            primaryButton={
+              isEditingAllowed
+                ? {
+                    icon: <Plus className="h-4 w-4" />,
+                    text: "Create your first page",
+                    onClick: () => commandPaletteStore.toggleCreatePageModal(true),
+                  }
+                : null
+            }
             disabled={!isEditingAllowed}
           />
         </>

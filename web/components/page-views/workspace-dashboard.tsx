@@ -93,13 +93,17 @@ export const WorkspaceDashboardView = observer(() => {
                 direction: "right",
                 description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
               }}
-              primaryButton={{
-                text: "Build your first project",
-                onClick: () => {
-                  setTrackElement("DASHBOARD_PAGE");
-                  commandPaletteStore.toggleCreateProjectModal(true);
-                },
-              }}
+              primaryButton={
+                isEditingAllowed
+                  ? {
+                      text: "Build your first project",
+                      onClick: () => {
+                        setTrackElement("DASHBOARD_PAGE");
+                        commandPaletteStore.toggleCreateProjectModal(true);
+                      },
+                    }
+                  : null
+              }
               disabled={!isEditingAllowed}
             />
           )
