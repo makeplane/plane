@@ -1,10 +1,10 @@
 import React from "react";
-// hooks
-import useEstimateOption from "hooks/use-estimate-option";
+import { observer } from "mobx-react-lite";
+import { Triangle } from "lucide-react";
+// store hooks
+import { useEstimate } from "hooks/store";
 // ui
 import { CustomSelect, Tooltip } from "@plane/ui";
-// icons
-import { Triangle } from "lucide-react";
 // types
 import { IIssue } from "types";
 
@@ -16,16 +16,11 @@ type Props = {
   disabled: boolean;
 };
 
-export const ViewEstimateSelect: React.FC<Props> = ({
-  issue,
-  onChange,
-  tooltipPosition = "top",
-  customButton = false,
-  disabled,
-}) => {
-  const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
+export const ViewEstimateSelect: React.FC<Props> = observer((props) => {
+  const { issue, onChange, tooltipPosition = "top", customButton = false, disabled } = props;
+  const { areEstimatesEnabledForCurrentProject, activeEstimateDetails, getEstimatePointValue } = useEstimate();
 
-  const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
+  const estimateValue = getEstimatePointValue(issue.estimate_point);
 
   const estimateLabels = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
@@ -36,7 +31,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
     </Tooltip>
   );
 
-  if (!isEstimateActive) return null;
+  if (!areEstimatesEnabledForCurrentProject) return null;
 
   return (
     <CustomSelect
@@ -56,7 +51,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
           None
         </>
       </CustomSelect.Option>
-      {estimatePoints?.map((estimate) => (
+      {activeEstimateDetails?.points?.map((estimate) => (
         <CustomSelect.Option key={estimate.id} value={estimate.key}>
           <>
             <Triangle className="h-3 w-3" />
@@ -66,4 +61,4 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       ))}
     </CustomSelect>
   );
-};
+});

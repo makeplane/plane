@@ -1,21 +1,22 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
+import { Triangle } from "lucide-react";
+// store hooks
+import { useEstimate } from "hooks/store";
 // ui
 import { CustomSelect } from "@plane/ui";
-// icons
-import { Triangle } from "lucide-react";
-// fetch-keys
-import useEstimateOption from "hooks/use-estimate-option";
 
 type Props = {
   value: number | null;
   onChange: (value: number | null) => void;
 };
 
-export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
-  const { isEstimateActive, estimatePoints } = useEstimateOption();
+export const IssueEstimateSelect: React.FC<Props> = observer((props) => {
+  const { value, onChange } = props;
 
-  if (!isEstimateActive) return null;
+  const { areEstimatesEnabledForCurrentProject, activeEstimateDetails } = useEstimate();
+
+  if (!areEstimatesEnabledForCurrentProject) return null;
 
   return (
     <CustomSelect
@@ -24,7 +25,7 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
         <div className="flex items-center justify-center gap-1 text-xs">
           <Triangle className={`h-3 w-3 ${value !== null ? "text-custom-text-200" : "text-custom-text-300"}`} />
           <span className={value !== null ? "text-custom-text-200" : "text-custom-text-300"}>
-            {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate"}
+            {activeEstimateDetails?.points?.find((e) => e.key === value)?.value ?? "Estimate"}
           </span>
         </div>
       }
@@ -40,8 +41,8 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
           None
         </>
       </CustomSelect.Option>
-      {estimatePoints &&
-        estimatePoints.map((point) => (
+      {activeEstimateDetails?.points &&
+        activeEstimateDetails.points?.map((point) => (
           <CustomSelect.Option key={point.key} value={point.key}>
             <>
               <span>
@@ -53,4 +54,4 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
         ))}
     </CustomSelect>
   );
-};
+});
