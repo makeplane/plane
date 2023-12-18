@@ -9,14 +9,7 @@ import { Tooltip } from "@plane/ui";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssue } from "types";
-<<<<<<< HEAD
 import { IIssueResponse } from "store_legacy/issues/types";
-=======
-import { IIssueResponse } from "store/issues/types";
-import { useMobxStore } from "lib/mobx/store-provider";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
 type Props = {
   issues: IIssueResponse | undefined;
@@ -33,24 +26,15 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
-  // mobx store
-  const {
-    user: { currentProjectRole },
-  } = useMobxStore();
-
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: IIssue, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-      });
-    }
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+    });
   };
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -67,8 +51,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     </div>
   );
 
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
   return (
     <>
       {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
@@ -76,14 +58,14 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
         const issue = issues?.[issueId];
         return (
-          <Draggable key={issue.id} draggableId={issue.id} index={index} isDragDisabled={!isEditable}>
+          <Draggable key={issue.id} draggableId={issue.id} index={index}>
             {(provided, snapshot) => (
               <div
                 className="relative cursor-pointer p-1 px-2"
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                onClick={(e) => handleIssuePeekOverview(issue, e)}
+                onClick={() => handleIssuePeekOverview(issue)}
               >
                 {issue?.tempId !== undefined && (
                   <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />

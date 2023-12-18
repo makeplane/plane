@@ -168,9 +168,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate, action: EIssueActions) =>
-            await handleIssues(issueToUpdate as IIssue, action)
-          }
+          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
         />
       )}
     </>

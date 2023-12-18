@@ -289,7 +289,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                         render={({ field: { value } }) => (
                           <SidebarStateSelect
                             value={value}
-                            projectId={projectId as string}
                             onChange={(val: string) => submitChanges({ state: val })}
                             disabled={!isAllowed || uneditable}
                           />
@@ -311,7 +310,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                         render={({ field: { value } }) => (
                           <SidebarAssigneeSelect
                             value={value}
-                            projectId={projectId as string}
                             onChange={(val: string[]) => submitChanges({ assignees: val })}
                             disabled={!isAllowed || uneditable}
                           />
@@ -384,7 +382,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                               onChange(val);
                             }}
                             issueDetails={issueDetail}
-                            projectId={projectId as string}
                             disabled={!isAllowed || uneditable}
                           />
                         )}
@@ -539,7 +536,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     <div className="space-y-1">
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
-                        projectId={projectId as string}
                         handleCycleChange={handleCycleChange}
                         disabled={!isAllowed || uneditable}
                       />
@@ -555,7 +551,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     <div className="space-y-1">
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
-                        projectId={projectId as string}
                         handleModuleChange={handleModuleChange}
                         disabled={!isAllowed || uneditable}
                       />
@@ -574,7 +569,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="space-y-1 sm:w-1/2">
                 <SidebarLabelSelect
                   issueDetails={issueDetail}
-                  projectId={projectId as string}
                   labelList={issueDetail?.labels ?? []}
                   submitChanges={submitChanges}
                   isNotAllowed={!isAllowed}

@@ -49,7 +49,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const { getProjectById } = useProject();
   // router
   const router = useRouter();
-  const { workspaceSlug, peekProjectId: projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const handleState = (_state: string) => {
     issueUpdate({ ...issue, state: _state });
@@ -118,12 +118,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>State</p>
             </div>
             <div>
-              <SidebarStateSelect
-                value={issue?.state || ""}
-                projectId={projectId as string}
-                onChange={handleState}
-                disabled={disableUserActions}
-              />
+              <SidebarStateSelect value={issue?.state || ""} onChange={handleState} disabled={disableUserActions} />
             </div>
           </div>
 
@@ -136,7 +131,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarAssigneeSelect
                 value={issue.assignees || []}
-                projectId={projectId as string}
                 onChange={handleAssignee}
                 disabled={disableUserActions}
               />
@@ -218,12 +212,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Parent</p>
             </div>
             <div>
-              <SidebarParentSelect
-                onChange={handleParent}
-                issueDetails={issue}
-                projectId={projectId as string}
-                disabled={disableUserActions}
-              />
+              <SidebarParentSelect onChange={handleParent} issueDetails={issue} disabled={disableUserActions} />
             </div>
           </div>
         </div>
@@ -239,7 +228,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarCycleSelect
                 issueDetail={issue}
-                projectId={projectId as string}
                 disabled={disableUserActions}
                 handleIssueUpdate={handleCycleOrModuleChange}
               />
@@ -254,7 +242,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarModuleSelect
                 issueDetail={issue}
-                projectId={projectId as string}
                 disabled={disableUserActions}
                 handleIssueUpdate={handleCycleOrModuleChange}
               />
@@ -268,7 +255,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div className="flex w-full flex-col gap-3">
               <SidebarLabelSelect
                 issueDetails={issue}
-                projectId={projectId as string}
                 labelList={issue.labels}
                 submitChanges={handleLabels}
                 isNotAllowed={disableUserActions}

@@ -111,8 +111,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const moduleId = this.rootStore.module.moduleId;
-      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
-      if (!workspaceSlug || !projectId || !hasPermissionToCurrentProject || !moduleId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
 
       const userFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
@@ -230,12 +229,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       });
 
       const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-
-      runInAction(() => {
-        _issues = { ...this.issues };
-        _issues[moduleId][issueId] = { ..._issues[moduleId][issueId], ...response };
-        this.issues = _issues;
-      });
 
       return response;
     } catch (error) {

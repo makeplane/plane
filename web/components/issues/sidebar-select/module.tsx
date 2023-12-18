@@ -1,40 +1,29 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-<<<<<<< HEAD
 import { mutate } from "swr";
 // hooks
 import { useModule } from "hooks/store";
-=======
-import useSWR, { mutate } from "swr";
-// mobx store
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { CustomSearchSelect, DiceIcon, Spinner, Tooltip } from "@plane/ui";
 // types
 import { IIssue } from "types";
 // fetch-keys
-import { ISSUE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
-// services
-import { ModuleService } from "services/module.service";
+import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
-  projectId: string;
   handleModuleChange?: (moduleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
 };
 
-// services
-const moduleService = new ModuleService();
-
 export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
-  const { issueDetail, projectId, disabled = false, handleIssueUpdate, handleModuleChange } = props;
+  const { issueDetail, disabled = false, handleIssueUpdate, handleModuleChange } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // mobx store
   const {
     moduleIssues: { removeIssueFromModule, addIssueToModule },
@@ -42,13 +31,6 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
   const { projectModules, getModuleById } = useModule();
 
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const { data: projectModules } = useSWR(
-    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => moduleService.getModules(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const handleModuleStoreChange = async (moduleId: string) => {
     if (!workspaceSlug || !issueDetail || !moduleId) return;

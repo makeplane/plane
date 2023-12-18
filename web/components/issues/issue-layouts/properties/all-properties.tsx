@@ -52,29 +52,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     handleIssues({ ...issue, assignees: ids });
   };
 
-<<<<<<< HEAD:web/components/issues/issue-layouts/properties/all-properties.tsx
   const handleStartDate = (date: string) => {
     handleIssues({ ...issue, start_date: date });
   };
 
   const handleTargetDate = (date: string) => {
     handleIssues({ ...issue, target_date: date });
-=======
-  const handleStartDate = (date: string | null) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, start_date: date }
-    );
-  };
-
-  const handleTargetDate = (date: string | null) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, target_date: date }
-    );
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434:web/components/issues/issue-layouts/kanban/properties.tsx
   };
 
   const handleEstimate = (value: number | null) => {
@@ -123,7 +106,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="start_date">
         <IssuePropertyDate
           value={issue?.start_date || null}
-          onChange={(date) => handleStartDate(date)}
+          onChange={(date: string) => handleStartDate(date)}
           disabled={isReadOnly}
           type="start_date"
         />
@@ -133,7 +116,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="due_date">
         <IssuePropertyDate
           value={issue?.target_date || null}
-          onChange={(date) => handleTargetDate(date)}
+          onChange={(date: string) => handleTargetDate(date)}
           disabled={isReadOnly}
           type="target_date"
         />

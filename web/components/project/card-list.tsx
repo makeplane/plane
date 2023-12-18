@@ -64,17 +64,13 @@ export const ProjectCardList = observer(() => {
             direction: "right",
             description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  text: "Start your first project",
-                  onClick: () => {
-                    setTrackElement("PROJECTS_EMPTY_STATE");
-                    commandPaletteStore.toggleCreateProjectModal(true);
-                  },
-                }
-              : null
-          }
+          primaryButton={{
+            text: "Start your first project",
+            onClick: () => {
+              setTrackElement("PROJECTS_EMPTY_STATE");
+              commandPaletteStore.toggleCreateProjectModal(true);
+            },
+          }}
           disabled={!isEditingAllowed}
         />
       )}

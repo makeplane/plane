@@ -20,7 +20,11 @@ import { Spinner } from "@plane/ui";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    moduleId: string;
+  };
 
   const {
     moduleIssues: { loader, getIssues, fetchIssues },
@@ -31,13 +35,8 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     workspaceSlug && projectId && moduleId ? `MODULE_ISSUES_V3_${workspaceSlug}_${projectId}_${moduleId}` : null,
     async () => {
       if (workspaceSlug && projectId && moduleId) {
-        await fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-        await fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          getIssues ? "mutation" : "init-loader",
-          moduleId.toString()
-        );
+        await fetchFilters(workspaceSlug, projectId, moduleId);
+        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader", moduleId);
       }
     }
   );
@@ -55,11 +54,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
       ) : (
         <>
           {Object.keys(getIssues ?? {}).length == 0 ? (
-            <ModuleEmptyState
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-              moduleId={moduleId?.toString()}
-            />
+            <ModuleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
           ) : (
             <div className="h-full w-full overflow-auto">
               {activeLayout === "list" ? (

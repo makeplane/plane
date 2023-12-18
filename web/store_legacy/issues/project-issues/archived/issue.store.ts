@@ -60,8 +60,7 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
-      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
-      if (!workspaceSlug || !projectId || !hasPermissionToCurrentProject) return;
+      if (!workspaceSlug || !projectId) return;
 
       const userFilters = this.rootStore?.projectArchivedIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");

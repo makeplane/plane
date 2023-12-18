@@ -33,30 +33,23 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetching workspace projects
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace ? () => fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
   // fetch workspace labels
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
   // fetch workspace user projects role
   useSWR(
-<<<<<<< HEAD
     workspaceSlug ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
     workspaceSlug ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString()) : null
-=======
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace
-      ? () => fetchWorkspaceUserProjectsRole(workspaceSlug.toString())
-      : null
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
   );
 
   // while data is being loaded

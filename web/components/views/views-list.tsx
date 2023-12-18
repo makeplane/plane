@@ -73,23 +73,11 @@ export const ProjectViewsList = observer(() => {
             description: "You can create a view from here with as many properties as filters as you see fit.",
             direction: "right",
           }}
-<<<<<<< HEAD
           primaryButton={{
             icon: <Plus size={14} strokeWidth={2} />,
             text: "Build your first view",
             onClick: () => toggleCreateViewModal(true),
           }}
-=======
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  icon: <Plus size={14} strokeWidth={2} />,
-                  text: "Build your first view",
-                  onClick: () => commandPaletteStore.toggleCreateViewModal(true),
-                }
-              : null
-          }
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
           disabled={!isEditingAllowed}
         />
       )}

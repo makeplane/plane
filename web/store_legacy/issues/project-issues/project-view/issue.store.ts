@@ -65,8 +65,7 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
-      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
-      if (!workspaceSlug || !projectId || !hasPermissionToCurrentProject) return;
+      if (!workspaceSlug || !projectId) return;
 
       const userFilters = this.rootStore?.viewIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
@@ -162,12 +161,6 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
       });
 
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-
-      runInAction(() => {
-        _issues = { ...this.issues };
-        _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...response };
-        this.issues = _issues;
-      });
 
       return response;
     } catch (error) {

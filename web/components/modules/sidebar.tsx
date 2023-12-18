@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -25,8 +25,7 @@ import {
 } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "types";
-import { EFilterType } from "store/issues/types";
+import { ILinkDetails, IModule, ModuleLink } from "types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
@@ -56,22 +55,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, peekModule } = router.query;
   // store hooks
   const {
-<<<<<<< HEAD
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-=======
-    module: {
-      moduleDetails: _moduleDetails,
-      updateModuleDetails,
-      createModuleLink,
-      updateModuleLink,
-      deleteModuleLink,
-    },
-    moduleIssuesFilter: { issueFilters, updateFilters },
-    user: userStore,
-  } = useMobxStore();
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
   const moduleDetails = getModuleById(moduleId);
 
@@ -217,25 +203,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
     }
   };
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, moduleId);
-    },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
-  );
 
   useEffect(() => {
     if (moduleDetails)
@@ -570,8 +537,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               totalIssues={moduleDetails.total_issues}
                               module={moduleDetails}
                               isPeekView={Boolean(peekModule)}
-                              filters={issueFilters?.filters}
-                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}
@@ -631,15 +596,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                               <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
                             </div>
-                            {isEditingAllowed && (
-                              <button
-                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
-                                onClick={() => setModuleLinkModal(true)}
-                              >
-                                <Plus className="h-3 w-3" />
-                                Add link
-                              </button>
-                            )}
+                            <button
+                              className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                              onClick={() => setModuleLinkModal(true)}
+                            >
+                              <Plus className="h-3 w-3" />
+                              Add link
+                            </button>
                           </div>
                         )}
                       </div>

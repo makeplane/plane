@@ -9,7 +9,7 @@ import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // icon
 import { Plus } from "lucide-react";
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 
 export const GlobalViewsHeader: React.FC = observer(() => {
   const [createViewModal, setCreateViewModal] = useState(false);
@@ -17,10 +17,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
-  const {
-    globalViews: globalViewsStore,
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+  const { globalViews: globalViewsStore } = useMobxStore();
 
   // bring the active view to the centre of the header
   useEffect(() => {
@@ -31,13 +28,11 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
   }, [globalViewId]);
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-
   const isTabSelected = (tabKey: string) => router.pathname.includes(tabKey);
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="group relative flex w-full items-center overflow-x-scroll border-b border-custom-border-200 px-4 py-2">
+      <div className="group relative flex w-full items-center overflow-x-scroll border-b border-custom-border-200 px-4">
         {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
           <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
             <span
@@ -67,15 +62,13 @@ export const GlobalViewsHeader: React.FC = observer(() => {
           </Link>
         ))}
 
-        {isAuthorizedUser && (
-          <button
-            type="button"
-            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 hover:border-custom-border-200 hover:text-custom-text-400"
-            onClick={() => setCreateViewModal(true)}
-          >
-            <Plus className="h-4 w-4 text-custom-primary-200" />
-          </button>
-        )}
+        <button
+          type="button"
+          className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
+          onClick={() => setCreateViewModal(true)}
+        >
+          <Plus className="h-4 w-4 text-custom-primary-200" />
+        </button>
       </div>
     </>
   );

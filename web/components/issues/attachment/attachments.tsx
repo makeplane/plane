@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -24,14 +24,7 @@ import { IIssueAttachment } from "types";
 const issueAttachmentService = new IssueAttachmentService();
 const projectMemberService = new ProjectMemberService();
 
-type Props = {
-  editable: boolean;
-};
-
-export const IssueAttachments: React.FC<Props> = (props) => {
-  const { editable } = props;
-
-  // states
+export const IssueAttachments = () => {
   const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
   const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
 
@@ -93,16 +86,14 @@ export const IssueAttachments: React.FC<Props> = (props) => {
               </div>
             </Link>
 
-            {editable && (
-              <button
-                onClick={() => {
-                  setDeleteAttachment(file);
-                  setAttachmentDeleteModal(true);
-                }}
-              >
-                <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setDeleteAttachment(file);
+                setAttachmentDeleteModal(true);
+              }}
+            >
+              <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+            </button>
           </div>
         ))}
     </>

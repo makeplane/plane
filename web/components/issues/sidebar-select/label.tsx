@@ -16,7 +16,6 @@ import { IIssue, IIssueLabel } from "types";
 
 type Props = {
   issueDetails: IIssue | undefined;
-  projectId: string;
   labelList: string[];
   submitChanges: (formData: any) => void;
   isNotAllowed: boolean;
@@ -29,12 +28,12 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
-  const { issueDetails, projectId, labelList, submitChanges, isNotAllowed, uneditable } = props;
+  const { issueDetails, labelList, submitChanges, isNotAllowed, uneditable } = props;
   // states
   const [createLabelForm, setCreateLabelForm] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // toast
   const { setToastAlert } = useToast();
   // mobx store

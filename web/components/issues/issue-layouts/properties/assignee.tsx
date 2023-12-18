@@ -42,7 +42,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   // store
   const {
     workspace: workspaceStore,
-    projectMember: { members: _members, fetchProjectMembers },
+    projectMember: { projectMembers: _projectMembers, fetchProjectMembers },
   } = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
   // states
@@ -51,14 +51,14 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const getProjectMembers = () => {
+  const getWorkspaceMembers = () => {
     setIsLoading(true);
     if (workspaceSlug && projectId) fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const updatedDefaultOptions: IProjectMember[] =
     defaultOptions.map((member: any) => ({ member: { ...member } })) ?? [];
-  const projectMembers = projectId && _members[projectId] ? _members[projectId] : updatedDefaultOptions;
+  const projectMembers = _projectMembers ?? updatedDefaultOptions;
 
   const options = projectMembers?.map((member) => ({
     value: member.member.id,
@@ -142,10 +142,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex w-full items-center justify-between gap-1 text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
           } ${buttonClassName}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            (!projectId || !_members[projectId]) && getProjectMembers();
-          }}
+          onClick={() => !projectMembers && getWorkspaceMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -171,7 +168,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {isLoading ? (
               <p className="text-center text-custom-text-200">Loading...</p>
-            ) : filteredOptions && filteredOptions.length > 0 ? (
+            ) : filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <Combobox.Option
                   key={option.value}
@@ -181,7 +178,6 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
                       active && !selected ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>

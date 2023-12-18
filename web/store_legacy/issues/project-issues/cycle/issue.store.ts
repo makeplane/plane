@@ -119,8 +119,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const cycleId = this.rootStore.cycle.cycleId;
-      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
-      if (!workspaceSlug || !projectId || !hasPermissionToCurrentProject || !cycleId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
 
       const userFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
@@ -238,12 +237,6 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       });
 
       const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-
-      runInAction(() => {
-        _issues = { ...this.issues };
-        _issues[cycleId][issueId] = { ..._issues[cycleId][issueId], ...response };
-        this.issues = _issues;
-      });
 
       return response;
     } catch (error) {

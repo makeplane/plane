@@ -15,7 +15,6 @@ import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   value: string;
-  projectId: string;
   onChange: (val: string) => void;
   disabled?: boolean;
 };
@@ -23,9 +22,9 @@ type Props = {
 // services
 const stateService = new ProjectStateService();
 
-export const SidebarStateSelect: React.FC<Props> = ({ value, projectId, onChange, disabled = false }) => {
+export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
-  const { workspaceSlug, inboxIssueId } = router.query;
+  const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,

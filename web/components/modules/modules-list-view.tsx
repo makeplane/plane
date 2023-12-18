@@ -94,15 +94,11 @@ export const ModulesListView: React.FC = observer(() => {
             description:
               "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  icon: <Plus className="h-4 w-4" />,
-                  text: "Build your first module",
-                  onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
-                }
-              : null
-          }
+          primaryButton={{
+            icon: <Plus className="h-4 w-4" />,
+            text: "Build your first module",
+            onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
+          }}
           disabled={!isEditingAllowed}
         />
       )}

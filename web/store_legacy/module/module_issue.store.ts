@@ -91,12 +91,10 @@ export class ModuleIssueStore implements IModuleIssueStore {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const moduleId = this.rootStore.module.moduleId;
-      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
 
       if (
         workspaceSlug &&
         projectId &&
-        hasPermissionToCurrentProject &&
         moduleId &&
         this.rootStore.moduleFilter.moduleFilters &&
         this.rootStore.issueFilter.userDisplayFilters
@@ -119,8 +117,8 @@ export class ModuleIssueStore implements IModuleIssueStore {
         ? "groupWithSubGroups"
         : "grouped"
       : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
+        ? "ungrouped"
+        : null;
 
     return _issueState || null;
   }

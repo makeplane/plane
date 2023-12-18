@@ -12,16 +12,15 @@ import { IIssue, ISearchIssueResponse } from "types";
 type Props = {
   onChange: (value: string) => void;
   issueDetails: IIssue | undefined;
-  projectId: string;
   disabled?: boolean;
 };
 
-export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, projectId, disabled = false }) => {
+export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, disabled = false }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 
   const router = useRouter();
-  const { issueId } = router.query;
+  const { projectId, issueId } = router.query;
 
   return (
     <>

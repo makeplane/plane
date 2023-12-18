@@ -11,7 +11,6 @@ import { IssueView } from "components/issues";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IIssueLink } from "types";
-import { EIssueActions } from "../issue-layouts/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -19,7 +18,7 @@ interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => Promise<void>;
+  handleIssue: (issue: Partial<IIssue>) => void;
   isArchived?: boolean;
   children?: ReactNode;
 }
@@ -31,6 +30,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { peekIssueId } = router.query;
 
   const {
+    user: { currentProjectRole },
+    issue: { removeIssueFromStructure },
     issueDetail: {
       createIssueComment,
       updateIssueComment,
@@ -57,7 +58,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     },
     archivedIssues: { deleteArchivedIssue },
     project: { currentProjectDetails },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -98,7 +98,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueUpdate = async (_data: Partial<IIssue>) => {
     if (handleIssue) {
-      await handleIssue(_data, EIssueActions.UPDATE);
+      await handleIssue(_data);
       fetchIssueActivity(workspaceSlug, projectId, issueId);
     }
   };
@@ -133,7 +133,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const handleDeleteIssue = async () => {
     if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else await handleIssue(issue!, EIssueActions.DELETE);
+    else removeIssueFromStructure(workspaceSlug, projectId, issue!);
     const { query } = router;
     if (query.peekIssueId) {
       setPeekId(null);
@@ -146,12 +146,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }
   };
 
-<<<<<<< HEAD
   const userRole = currentProjectRole ?? EUserProjectRoles.GUEST;
-=======
-  const userRole =
-    (currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId]) ?? EUserWorkspaceRoles.GUEST;
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
   return (
     <Fragment>

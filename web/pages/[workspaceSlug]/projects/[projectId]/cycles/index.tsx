@@ -78,17 +78,13 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
               description:
                 "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
             }}
-            primaryButton={
-              isEditingAllowed
-                ? {
-                    icon: <Plus className="h-4 w-4" />,
-                    text: "Set your first cycle",
-                    onClick: () => {
-                      setCreateModal(true);
-                    },
-                  }
-                : null
-            }
+            primaryButton={{
+              icon: <Plus className="h-4 w-4" />,
+              text: "Set your first cycle",
+              onClick: () => {
+                setCreateModal(true);
+              },
+            }}
             disabled={!isEditingAllowed}
           />
         </div>

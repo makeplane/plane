@@ -34,17 +34,13 @@ export const IssueColumn: React.FC<Props> = ({
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: IIssue, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-      });
-    }
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+    });
   };
 
   const paddingLeft = `${nestingLevel * 54}px`;
@@ -103,7 +99,7 @@ export const IssueColumn: React.FC<Props> = ({
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <div
               className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
-              onClick={(e) => handleIssuePeekOverview(issue, e)}
+              onClick={() => handleIssuePeekOverview(issue)}
             >
               {issue.name}
             </div>

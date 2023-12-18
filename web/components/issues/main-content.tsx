@@ -40,7 +40,7 @@ const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { issueDetails, submitChanges, uneditable } = props;
+  const { issueDetails, submitChanges, uneditable = false } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // router
@@ -151,13 +151,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       );
   };
 
-<<<<<<< HEAD
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-=======
-  const isAllowed =
-    (!!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER) ||
-    (uneditable !== undefined && !uneditable);
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
   return (
     <>
@@ -237,7 +231,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
-          isAllowed={isAllowed}
+          isAllowed={isAllowed || !uneditable}
         />
 
         {workspaceSlug && projectId && (
@@ -255,8 +249,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       <div className="flex flex-col gap-3 py-3">
         <h3 className="text-lg">Attachments</h3>
         <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          <IssueAttachmentUpload disabled={!isAllowed} />
-          <IssueAttachments editable={isAllowed} />
+          <IssueAttachmentUpload disabled={uneditable} />
+          <IssueAttachments />
         </div>
       </div>
       <div className="space-y-5 pt-3">
@@ -269,13 +263,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         />
         <AddComment
           onSubmit={handleAddComment}
-<<<<<<< HEAD
           disabled={uneditable}
           showAccessSpecifier={Boolean(projectDetails && projectDetails.is_deployed)}
-=======
-          disabled={!isAllowed}
-          showAccessSpecifier={projectDetails && projectDetails.is_deployed}
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
         />
       </div>
     </>

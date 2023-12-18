@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
@@ -28,8 +28,7 @@ import {
   renderShortMonthDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle, IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { ICycle } from "types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys
@@ -53,20 +52,12 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // store hooks
   const {
-<<<<<<< HEAD
     eventTracker: { setTrackElement },
   } = useApplication();
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, updateCycleDetails } = useCycle();
-=======
-    cycle: cycleDetailsStore,
-    cycleIssuesFilter: { issueFilters, updateFilters },
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
->>>>>>> a86dafc11c3e52699f4050e9d9c97393e29f0434
 
   const cycleDetails = getCycleById(cycleId);
 
@@ -254,25 +245,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       }
     }
   };
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
-    },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
-  );
 
   const cycleStatus =
     cycleDetails?.start_date && cycleDetails?.end_date
@@ -567,9 +539,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                               }}
                               totalIssues={cycleDetails.total_issues}
                               isPeekView={Boolean(peekCycle)}
-                              isCompleted={isCompleted}
-                              filters={issueFilters?.filters}
-                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}
