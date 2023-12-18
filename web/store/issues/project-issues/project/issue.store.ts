@@ -163,6 +163,12 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
+      runInAction(() => {
+        _issues = { ...this.issues };
+        _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...response };
+        this.issues = _issues;
+      });
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");

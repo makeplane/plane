@@ -231,6 +231,12 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
       const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
 
+      runInAction(() => {
+        _issues = { ...this.issues };
+        _issues[moduleId][issueId] = { ..._issues[moduleId][issueId], ...response };
+        this.issues = _issues;
+      });
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);

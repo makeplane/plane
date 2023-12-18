@@ -239,6 +239,12 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
 
+      runInAction(() => {
+        _issues = { ...this.issues };
+        _issues[cycleId][issueId] = { ..._issues[cycleId][issueId], ...response };
+        this.issues = _issues;
+      });
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
