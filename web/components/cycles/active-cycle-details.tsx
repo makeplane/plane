@@ -75,7 +75,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
 
   const { setToastAlert } = useToast();
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
@@ -94,7 +94,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   //     : null
   // ) as { data: IIssue[] | undefined };
 
-  if (!cycle)
+  if (!cycle && isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -187,12 +187,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         cycleStatus === "current"
                           ? "#09A953"
                           : cycleStatus === "upcoming"
-                            ? "#F7AE59"
-                            : cycleStatus === "completed"
-                              ? "#3F76FF"
-                              : cycleStatus === "draft"
-                                ? "rgb(var(--color-text-200))"
-                                : ""
+                          ? "#F7AE59"
+                          : cycleStatus === "completed"
+                          ? "#3F76FF"
+                          : cycleStatus === "draft"
+                          ? "rgb(var(--color-text-200))"
+                          : ""
                       }`}
                     />
                   </span>
@@ -207,12 +207,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       cycleStatus === "current"
                         ? "bg-green-600/5 text-green-600"
                         : cycleStatus === "upcoming"
-                          ? "bg-orange-300/5 text-orange-300"
-                          : cycleStatus === "completed"
-                            ? "bg-blue-500/5 text-blue-500"
-                            : cycleStatus === "draft"
-                              ? "bg-neutral-400/5 text-neutral-400"
-                              : ""
+                        ? "bg-orange-300/5 text-orange-300"
+                        : cycleStatus === "completed"
+                        ? "bg-blue-500/5 text-blue-500"
+                        : cycleStatus === "draft"
+                        ? "bg-neutral-400/5 text-neutral-400"
+                        : ""
                     }`}
                   >
                     {cycleStatus === "current" ? (

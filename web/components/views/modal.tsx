@@ -56,11 +56,11 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     await projectViewsStore
       .updateView(workspaceSlug, projectId, data?.id as string, payload)
       .then(() => handleClose())
-      .catch(() =>
+      .catch((err) =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Something went wrong. Please try again.",
+          message: err.detail ?? "Something went wrong. Please try again.",
         })
       );
   };

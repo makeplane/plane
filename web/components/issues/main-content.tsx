@@ -41,7 +41,7 @@ const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { issueDetails, submitChanges, uneditable = false } = props;
+  const { issueDetails, submitChanges, uneditable } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // router
@@ -152,7 +152,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       );
   };
 
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed =
+    (!!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER) ||
+    (uneditable !== undefined && !uneditable);
 
   return (
     <>
@@ -216,7 +218,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             </CustomMenu>
           </div>
         ) : null}
-        <div className="mb-5 flex items-center">
+        <div className="mb-2.5 flex items-center">
           {currentIssueState && (
             <StateGroupIcon
               className="mr-3 h-4 w-4"
@@ -232,7 +234,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
-          isAllowed={isAllowed || !uneditable}
+          isAllowed={isAllowed}
         />
 
         {workspaceSlug && projectId && (
@@ -250,8 +252,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       <div className="flex flex-col gap-3 py-3">
         <h3 className="text-lg">Attachments</h3>
         <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          <IssueAttachmentUpload disabled={uneditable} />
-          <IssueAttachments />
+          <IssueAttachmentUpload disabled={!isAllowed} />
+          <IssueAttachments editable={isAllowed} />
         </div>
       </div>
       <div className="space-y-5 pt-3">
@@ -264,7 +266,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         />
         <AddComment
           onSubmit={handleAddComment}
-          disabled={uneditable}
+          disabled={!isAllowed}
           showAccessSpecifier={projectDetails && projectDetails.is_deployed}
         />
       </div>

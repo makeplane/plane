@@ -19,6 +19,7 @@ import { TCycleView, TCycleLayout } from "types";
 import { NextPageWithLayout } from "types/app";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -27,7 +28,10 @@ import { NewEmptyState } from "components/common/new-empty-state";
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const {
+    cycle: cycleStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
   const { projectCycles } = cycleStore;
   // router
   const router = useRouter();
@@ -75,6 +79,8 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const cycleLayout = cycleStore?.cycleLayout;
   const totalCycles = projectCycles?.length ?? 0;
 
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
   if (!workspaceSlug || !projectId) return null;
 
   return (
@@ -97,13 +103,18 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
               description:
                 "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
             }}
-            primaryButton={{
-              icon: <Plus className="h-4 w-4" />,
-              text: "Set your first cycle",
-              onClick: () => {
-                setCreateModal(true);
-              },
-            }}
+            primaryButton={
+              isEditingAllowed
+                ? {
+                    icon: <Plus className="h-4 w-4" />,
+                    text: "Set your first cycle",
+                    onClick: () => {
+                      setCreateModal(true);
+                    },
+                  }
+                : null
+            }
+            disabled={!isEditingAllowed}
           />
         </div>
       ) : (
