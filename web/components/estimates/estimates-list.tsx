@@ -1,40 +1,36 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-// store
 import { observer } from "mobx-react-lite";
+import { Plus } from "lucide-react";
+// store hooks
+import { useEstimate } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
-//hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
-// icons
-import { Plus } from "lucide-react";
 // images
 import emptyEstimate from "public/empty-state/estimate.svg";
 // types
 import { IEstimate } from "types";
 
 export const EstimatesList: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    project: { currentProjectDetails, updateProject },
-    projectEstimates: { projectEstimates, getProjectEstimateById },
-  } = useMobxStore();
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
   const [estimateToDelete, setEstimateToDelete] = useState<string | null>(null);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
-  // hooks
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const {
+    project: { currentProjectDetails, updateProject },
+  } = useMobxStore();
+  const { projectEstimates, getProjectEstimateById } = useEstimate();
+  // toast alert
   const { setToastAlert } = useToast();
-  // derived values
-  const estimatesList = projectEstimates;
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -96,10 +92,10 @@ export const EstimatesList: React.FC = observer(() => {
         </div>
       </section>
 
-      {estimatesList ? (
-        estimatesList.length > 0 ? (
+      {projectEstimates ? (
+        projectEstimates.length > 0 ? (
           <section className="h-full overflow-y-auto bg-custom-background-100">
-            {estimatesList.map((estimate) => (
+            {projectEstimates.map((estimate) => (
               <EstimateListItem
                 key={estimate.id}
                 estimate={estimate}

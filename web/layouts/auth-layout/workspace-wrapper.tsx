@@ -52,17 +52,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString()) : null
   );
 
-  console.log("workspaceMemberInfo", membership.workspaceMemberInfo);
-  console.log("currentWorkspaceMemberInfo", membership.currentWorkspaceMemberInfo);
-  console.log("hasPermissionToCurrentWorkspace", membership.hasPermissionToCurrentWorkspace);
-
   // while data is being loaded
   if (!membership.currentWorkspaceMemberInfo && membership.hasPermissionToCurrentWorkspace === undefined) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          {/* <Spinner /> */}
-          Not allowed
+          <Spinner />
         </div>
       </div>
     );

@@ -1,11 +1,10 @@
 import React from "react";
-
-// hooks
-import useEstimateOption from "hooks/use-estimate-option";
+import { observer } from "mobx-react-lite";
+import { Triangle } from "lucide-react";
+// store hooks
+import { useEstimate } from "hooks/store";
 // ui
 import { CustomSelect } from "@plane/ui";
-// icons
-import { Triangle } from "lucide-react";
 
 type Props = {
   value: number | null;
@@ -13,10 +12,13 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
-  const { estimatePoints } = useEstimateOption();
+export const SidebarEstimateSelect: React.FC<Props> = observer((props) => {
+  const { value, onChange, disabled = false } = props;
 
-  const currentEstimate = estimatePoints?.find((e) => e.key === value)?.value;
+  const { activeEstimateDetails, getEstimatePointValue } = useEstimate();
+
+  const currentEstimate = getEstimatePointValue(value);
+
   return (
     <CustomSelect
       value={value}
@@ -43,8 +45,8 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
           None
         </>
       </CustomSelect.Option>
-      {estimatePoints &&
-        estimatePoints.map((point) => (
+      {activeEstimateDetails?.points &&
+        activeEstimateDetails?.points?.map((point) => (
           <CustomSelect.Option key={point.key} value={point.key}>
             <>
               <span>
@@ -56,4 +58,4 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
         ))}
     </CustomSelect>
   );
-};
+});

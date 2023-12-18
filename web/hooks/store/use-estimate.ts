@@ -2,10 +2,10 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "contexts/store-context";
 // types
-import { ICycleStore } from "store/cycle.store";
+import { IProjectEstimateStore } from "store/estimate.store";
 
-export const useCycle = (): ICycleStore => {
+export const useEstimate = (): IProjectEstimateStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useCycle must be used within StoreProvider");
-  return context.cycle;
+  return context.estimate;
 };
