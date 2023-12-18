@@ -1,34 +1,20 @@
 import { Droppable } from "@hello-pangea/dnd";
 //types
-import { IIssue } from "types";
+import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueMap, ISubGroupedIssues, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 //components
 import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";
-import { IIssueStore } from "store/issue/issue.store";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
 
 interface IKanbanGroup {
   groupId: string;
-  issueMap: IIssueStore;
-  issueIds: any;
-  issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
+  issuesMap: IIssueMap;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  showEmptyGroup: boolean;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -49,12 +35,11 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     sub_group_id,
     group_by,
     sub_group_by,
-    issueMap,
-    issuesFilter,
+    issuesMap,
+    displayProperties,
     verticalPosition,
     issueIds,
     isDragDisabled,
-    showEmptyGroup,
     handleIssues,
     quickActions,
     canEditProperties,
@@ -79,11 +64,10 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               <KanbanIssueBlocksList
                 sub_group_id={sub_group_id}
                 columnId={groupId}
-                issueMap={issueMap}
+                issuesMap={issuesMap}
                 issueIds={issueIds?.[groupId] || []}
-                issuesFilter={issuesFilter}
+                displayProperties={displayProperties}
                 isDragDisabled={isDragDisabled}
-                showEmptyGroup={showEmptyGroup}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
                 canEditProperties={canEditProperties}

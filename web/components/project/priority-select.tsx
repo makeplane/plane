@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
@@ -86,7 +86,7 @@ export const PrioritySelect: React.FC<Props> = ({
       onChange={onChange}
       disabled={disabled}
     >
-      <Combobox.Button as={React.Fragment}>
+      <Combobox.Button as={Fragment}>
         <button
           ref={setReferenceElement}
           type="button"

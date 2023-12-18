@@ -1,31 +1,17 @@
 import { memo } from "react";
 //types
-import { IIssue } from "types";
+import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";
-import { IIssueStore } from "store/issue/issue.store";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
-  issueMap: IIssueStore;
+  issuesMap: IIssueMap;
   issueIds: string[];
-  issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
+  displayProperties: IIssueDisplayProperties;
   isDragDisabled: boolean;
-  showEmptyGroup: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -35,10 +21,9 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
   const {
     sub_group_id,
     columnId,
-    issueMap,
+    issuesMap,
     issueIds,
-    issuesFilter,
-    showEmptyGroup,
+    displayProperties,
     isDragDisabled,
     handleIssues,
     quickActions,
@@ -50,17 +35,15 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
       {issueIds && issueIds.length > 0 ? (
         <>
           {issueIds.map((issueId, index) => {
-            const issue = issueMap.allIssues[issueId];
-
-            if (!issue) return null;
+            if (!issueId) return null;
 
             return (
               <KanbanIssueBlock
-                key={`kanban-issue-block-${issue.id}`}
+                key={`kanban-issue-block-${issueId}`}
                 index={index}
-                issue={issue}
-                issuesFilter={issuesFilter}
-                showEmptyGroup={showEmptyGroup}
+                issueId={issueId}
+                issuesMap={issuesMap}
+                displayProperties={displayProperties}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
                 columnId={columnId}

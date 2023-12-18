@@ -10,31 +10,19 @@ import { IssuePropertyAssignee } from "../properties/assignee";
 import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { IIssue, IState, TIssuePriorities } from "types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
+import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 export interface IIssueProperties {
   issue: IIssue;
   handleIssues: (issue: IIssue) => void;
-  issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
+  displayProperties: IIssueDisplayProperties | null;
   isReadOnly: boolean;
   className: string;
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, handleIssues, issuesFilter, isReadOnly, className } = props;
+  const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
 
   const handleState = (state: IState) => {
     handleIssues({ ...issue, state: state.id });
@@ -64,11 +52,13 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     handleIssues({ ...issue, estimate_point: value });
   };
 
+  if (!displayProperties) return null;
+
   return (
     <div className={className}>
       {/* basic properties */}
       {/* state */}
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="state">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
           value={issue?.state || null}
@@ -80,7 +70,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* priority */}
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="priority">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
@@ -91,7 +81,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* label */}
 
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="labels">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
@@ -103,7 +93,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* start date */}
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="start_date">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
@@ -113,7 +103,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="due_date">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
@@ -123,7 +113,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* assignee */}
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="assignee">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
@@ -136,7 +126,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* estimates */}
-      <WithDisplayPropertiesHOC issuesFilter={issuesFilter} displayPropertyKey="estimate">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
         <IssuePropertyEstimates
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
@@ -149,7 +139,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* extra render properties */}
       {/* sub-issues */}
       <WithDisplayPropertiesHOC
-        issuesFilter={issuesFilter}
+        displayProperties={displayProperties}
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={!!issue?.sub_issues_count}
       >
@@ -163,7 +153,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* attachments */}
       <WithDisplayPropertiesHOC
-        issuesFilter={issuesFilter}
+        displayProperties={displayProperties}
         displayPropertyKey="attachment_count"
         shouldRenderProperty={!!issue?.attachment_count}
       >
@@ -177,7 +167,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* link */}
       <WithDisplayPropertiesHOC
-        issuesFilter={issuesFilter}
+        displayProperties={displayProperties}
         displayPropertyKey="link"
         shouldRenderProperty={!!issue?.link_count}
       >

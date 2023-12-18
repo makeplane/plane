@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
@@ -13,6 +12,7 @@ import { observer } from "mobx-react-lite";
 import { IIssue, ISearchIssueResponse } from "types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 import useToast from "hooks/use-toast";
+import { useState } from "react";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -29,9 +29,9 @@ export const HeaderGroupByCard = observer(
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
+    const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 

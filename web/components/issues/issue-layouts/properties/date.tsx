@@ -1,4 +1,3 @@
-import React from "react";
 // headless ui
 import { Popover } from "@headlessui/react";
 // lucide icons
@@ -13,6 +12,7 @@ import { Tooltip } from "@plane/ui";
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
+import { useRef, useState } from "react";
 
 export interface IIssuePropertyDate {
   value: any;
@@ -37,10 +37,10 @@ const DATE_OPTIONS = {
 export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) => {
   const { value, onChange, disabled, type } = props;
 
-  const dropdownBtn = React.useRef<any>(null);
-  const dropdownOptions = React.useRef<any>(null);
+  const dropdownBtn = useRef<any>(null);
+  const dropdownOptions = useRef<any>(null);
 
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 

@@ -5,37 +5,31 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
 // types
-import { IIssue } from "types";
-// constants
-import { columnTypes, getKanbanColumns, IKanbanColumn } from "./utils";
-import { EIssueActions } from "../types";
-import { IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
-import { EProjectStore } from "store_legacy/command-palette.store";
-import { IIssueStore } from "store/issue/issue.store";
 import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
+  GroupByColumnTypes,
+  IGroupByColumn,
+  IGroupedIssues,
+  IIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  ISubGroupedIssues,
+  TUnGroupedIssues,
+} from "types";
+// constants
+import { EIssueActions } from "../types";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { useLabel, useProject, useProjectState } from "hooks/store";
+import { getGroupByColumns } from "../utils";
 
 export interface IGroupByKanBan {
-  issueMap: IIssueStore;
-  issueIds: any;
-  issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
+  issuesMap: IIssueMap;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  showEmptyGroup: boolean;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanBanToggle: any;
   handleKanBanToggle: any;
@@ -55,15 +49,14 @@ export interface IGroupByKanBan {
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const {
-    issueMap,
+    issuesMap,
     issueIds,
-    issuesFilter,
+    displayProperties,
     sub_group_by,
     group_by,
     sub_group_id = "null",
     isDragDisabled,
     handleIssues,
-    showEmptyGroup,
     quickActions,
     kanBanToggle,
     handleKanBanToggle,
@@ -81,17 +74,17 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const projectLabel = useLabel();
   const projectState = useProjectState();
 
-  const list = getKanbanColumns(group_by as columnTypes, project, projectLabel, projectState);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState);
 
   if (!list) return null;
 
-  const verticalAlignPosition = (_list: IKanbanColumn) => kanBanToggle?.groupByHeaderMinMax.includes(_list.id);
+  const verticalAlignPosition = (_list: IGroupByColumn) => kanBanToggle?.groupByHeaderMinMax.includes(_list.id);
 
   return (
     <div className="relative flex h-full w-full gap-3">
       {list &&
         list.length > 0 &&
-        list.map((_list: IKanbanColumn) => {
+        list.map((_list: IGroupByColumn) => {
           const verticalPosition = verticalAlignPosition(_list);
 
           return (
@@ -116,15 +109,14 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               )}
               <KanbanGroup
                 groupId={_list.id}
-                issueMap={issueMap}
+                issuesMap={issuesMap}
                 issueIds={issueIds}
-                issuesFilter={issuesFilter}
+                displayProperties={displayProperties}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
                 sub_group_id={sub_group_id}
                 isDragDisabled={isDragDisabled}
                 handleIssues={handleIssues}
-                showEmptyGroup={showEmptyGroup}
                 quickActions={quickActions}
                 enableQuickIssueCreate={enableQuickIssueCreate}
                 quickAddCallback={quickAddCallback}
@@ -141,14 +133,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 });
 
 export interface IKanBan {
-  issueMap: IIssueStore;
+  issuesMap: IIssueMap;
   issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
-  issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
+  displayProperties: IIssueDisplayProperties;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
@@ -173,9 +160,9 @@ export interface IKanBan {
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
-    issueMap,
+    issuesMap,
     issueIds,
-    issuesFilter,
+    displayProperties,
     sub_group_by,
     group_by,
     sub_group_id = "null",
@@ -183,7 +170,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     quickActions,
     kanBanToggle,
     handleKanBanToggle,
-    showEmptyGroup,
     enableQuickIssueCreate,
     quickAddCallback,
     viewId,
@@ -193,19 +179,20 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     canEditProperties,
   } = props;
 
-  const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
+  const {
+    issue: { issueKanBanView: issueKanBanViewStore },
+  } = useMobxStore();
 
   return (
     <div className="relative h-full w-full">
       <GroupByKanBan
-        issueMap={issueMap}
-        issuesFilter={issuesFilter}
+        issuesMap={issuesMap}
         issueIds={issueIds}
+        displayProperties={displayProperties}
         group_by={group_by}
         sub_group_by={sub_group_by}
         sub_group_id={sub_group_id}
         isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        showEmptyGroup={showEmptyGroup}
         handleIssues={handleIssues}
         quickActions={quickActions}
         kanBanToggle={kanBanToggle}
