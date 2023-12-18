@@ -27,10 +27,9 @@ const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store hooks
   const { getCycleById } = useCycle();
-
+  // derived values
   const cycle = getCycleById(cycleId);
 
   if (!cycle) return null;
@@ -130,8 +129,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
+  // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
-
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 

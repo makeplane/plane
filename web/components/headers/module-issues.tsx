@@ -28,10 +28,9 @@ const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store hooks
   const { getModuleById } = useModule();
-
+  // derived values
   const moduleDetail = getModuleById(moduleId);
 
   if (!moduleDetail) return null;
@@ -130,8 +129,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
+  // derived values
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
-
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 

@@ -64,9 +64,6 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
       });
   };
 
-  const selectedModuleId = projectModules ? projectModules.find((moduleId) => moduleId === issueModule?.module) : null;
-  const selectedModule = selectedModuleId ? getModuleById(selectedModuleId) : null;
-
   const options = projectModules?.map((moduleId) => {
     const moduleDetail = getModuleById(moduleId);
     return {
@@ -83,8 +80,9 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
     };
   });
 
+  // derived values
   const issueModule = issueDetail?.issue_module;
-
+  const selectedModule = issueModule?.module ? getModuleById(issueModule?.module) : null;
   const disableSelect = disabled || isUpdating;
 
   return (
@@ -101,10 +99,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
         options={options}
         customButton={
           <div>
-            <Tooltip
-              position="left"
-              tooltipContent={`${selectedModule?.name ?? "No module"}`}
-            >
+            <Tooltip position="left" tooltipContent={`${selectedModule?.name ?? "No module"}`}>
               <button
                 type="button"
                 className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
@@ -117,9 +112,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
                   }`}
                 >
                   <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
-                  <span className="truncate">
-                    {selectedModule?.name ?? "No module"}
-                  </span>
+                  <span className="truncate">{selectedModule?.name ?? "No module"}</span>
                 </span>
               </button>
             </Tooltip>
