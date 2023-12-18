@@ -233,6 +233,7 @@ class ImportServiceEndpoint(BaseAPIView):
                     "workspace_id": str(workspace.id),
                     "project_id": str(project_id),
                     "created_by": str(request.user.id),
+                    "importer_id": str(importer.id),
                 }
                 res = requests.post(
                     f"{settings.SEGWAY_BASE_URL}/api/jira/import",
