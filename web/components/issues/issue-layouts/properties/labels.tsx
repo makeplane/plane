@@ -107,7 +107,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             {projectLabels
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
-                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
+                <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name ?? ""}>
                   <div
                     key={label.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
@@ -145,14 +145,16 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         )
       ) : (
-        <div
-          className={`h-full flex items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
-            noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
-          }`}
-        >
-          <Tags className="h-3.5 w-3.5" strokeWidth={2} />
-          {placeholderText}
-        </div>
+        <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
+          <div
+            className={`h-full flex items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+              noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+            }`}
+          >
+            <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+            {placeholderText}
+          </div>
+        </Tooltip>
       )}
     </div>
   );
