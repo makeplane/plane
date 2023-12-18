@@ -1,12 +1,12 @@
 import { useContext } from "react";
 // mobx store
-import { MobxStoreContext } from "lib/mobx/store-provider";
+import { StoreContext } from "contexts/store-context";
 // types
 import { EIssuesStoreType } from "constants/issue";
 
 export const useIssues = (storeType?: EIssuesStoreType) => {
-  const context = useContext(MobxStoreContext);
-  if (context === undefined) throw new Error("useMobxStore must be used within MobxStoreProvider");
+  const context = useContext(StoreContext);
+  if (context === undefined) throw new Error("useIssues must be used within StoreProvider");
   switch (storeType) {
     case EIssuesStoreType.PROJECT:
       return {

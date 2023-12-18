@@ -1,11 +1,11 @@
 import { useContext } from "react";
 // mobx store
-import { MobxStoreContext } from "lib/mobx/store-provider";
+import { StoreContext } from "contexts/store-context";
 // types
 import { IStateStore } from "store/state.store";
 
 export const useProjectState = (): IStateStore => {
-  const context = useContext(MobxStoreContext);
-  if (context === undefined) throw new Error("useMobxStore must be used within MobxStoreProvider");
+  const context = useContext(StoreContext);
+  if (context === undefined) throw new Error("useProjectState must be used within StoreProvider");
   return context.state;
 };
