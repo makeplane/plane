@@ -11,6 +11,7 @@ import { IssueView } from "components/issues";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IIssueLink } from "types";
+import { EIssueActions } from "../issue-layouts/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -18,7 +19,7 @@ interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>) => void;
+  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => Promise<void>;
   isArchived?: boolean;
   children?: ReactNode;
 }
@@ -31,7 +32,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const {
     user: { currentProjectRole },
-    issue: { removeIssueFromStructure },
     issueDetail: {
       createIssueComment,
       updateIssueComment,
@@ -98,7 +98,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueUpdate = async (_data: Partial<IIssue>) => {
     if (handleIssue) {
-      await handleIssue(_data);
+      await handleIssue(_data, EIssueActions.UPDATE);
       fetchIssueActivity(workspaceSlug, projectId, issueId);
     }
   };
@@ -133,7 +133,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const handleDeleteIssue = async () => {
     if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else removeIssueFromStructure(workspaceSlug, projectId, issue!);
+    else await handleIssue(issue!, EIssueActions.DELETE);
     const { query } = router;
     if (query.peekIssueId) {
       setPeekId(null);
