@@ -221,7 +221,6 @@ def service_importer(service, importer_id):
 
 @shared_task(queue="segway_tasks")
 def members_sync(data):
-
     try:
         user = User.objects.get(email=data.get("email"))
         _ = WorkspaceMember.objects.get_or_create(
@@ -272,7 +271,7 @@ def members_sync(data):
                 str(new_user.id),
                 True,
                 f"{new_user.email} was imported to Plane from {service}",
-        )
+            )
 
 
 @shared_task(queue="segway_tasks")
@@ -294,19 +293,37 @@ def label_sync(data):
 
 @shared_task(queue="segway_tasks")
 def state_sync(data):
-    existing_state = State.objects.filter(
-        project_id=data.get("project_id"),
-        workspace_id=data.get("workspace_id"),
-        name__iexact=data.get("data"),
-    )
-
-    if not existing_state.exists():
-        State.objects.create(
+    try:
+        state = State.objects.get(
+            external_id=data.get("external_id"),
             project_id=data.get("project_id"),
             workspace_id=data.get("workspace_id"),
-            name=data.get("data"),
-            created_by_id=data.get("created_by"),
         )
+
+    except State.DoesNotExist:
+        existing_states = State.objects.filter(
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+            group=data.get("state_group"),
+            name__iexact=data.get("state_name"),
+        )
+
+        if existing_states.exists():
+            existing_state = existing_states.first()
+            print(existing_state,"existing_state")
+            existing_state.external_id = data.get("external_id")
+            existing_state.external_source = data.get("external_source")
+            existing_state.save()
+        else:
+            State.objects.create(
+                project_id=data.get("project_id"),
+                workspace_id=data.get("workspace_id"),
+                name=data.get("state_name"),
+                group=data.get("state_group"),
+                created_by_id=data.get("created_by"),
+                external_id=data.get("external_id"),
+                external_source=data.get("external_source"),
+            )
 
 
 @shared_task(queue="segway_tasks")
@@ -349,59 +366,74 @@ def get_label_id(name, data):
             project_id=data.get("project_id"),
             workspace_id=data.get("workspace_id"),
             name__iexact=name,
-        ).values("id")
+        ).values("id").first()
         return existing_label
     except Label.DoesNotExist:
         return None
 
 
-@shared_task(queue="segway_tasks")
-def issue_sync(data):
-
+def get_state_id(name, data):
     try:
-        issue = Issue.objects.get(external_id=data.get("external_id"), project_id=data.get("project_id"))
-        if issue:
-            issue.name = data.get("name")
-            issue.description_html = data.get("description")
-            issue.start_date = data.get("start_date")
-            issue.target_date = data.get("target_date")
-            issue.priority = data.get("priority")
-            
-            if data.get("assignee"):
-                user = User.objects.filter(email=data.get("assignee")).values("id")
-                # first get that issue assignee then check whether both are same or not if not then update the assignee
-                assignee = IssueAssignee.objects.filter(issue=issue, project_id=data.get("project_id"),workspace_id=data.get("workspace_id")).values("assignee_id__email")
-                if assignee != data.get("assignee"):
-                    assignee = IssueAssignee.objects.filter(issue=issue, project_id=data.get("project_id")).update(assignee_id=user)
+        existing_state = State.objects.filter(
+            name__iexact=name,
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+        ).values("id").first()
+        return existing_state
+    except State.DoesNotExist:
+        return None
 
-            # first get all the issue labels then check whether all are same or not if not then update the label
-            labels = IssueLabel.objects.filter(issue=issue, project_id=data.get("project_id"),workspace_id=data.get("workspace_id")).values("label_id__name")
-            # if labels != data.get("labels_list"):
 
-                
-            # if data.get("labels_list"):
-            #     labels_list = data.get("labels_list", [])
-            #     bulk_issue_labels = []
-            #     bulk_issue_labels = bulk_issue_labels + [
-            #         IssueLabel(
-            #             issue=issue,
-            #             label_id=get_label_id(name, data),
-            #             project_id=data.get("project_id"),
-            #             workspace_id=data.get("workspace_id"),
-            #             created_by_id=data.get("created_by"),
-            #         )
-            #         for name in labels_list
-            #     ]
+@shared_task(queue="segway_tasks")
+def issue_sync(data):    
+    print(data.get("external_id"), "external_id")
+    try:
+        issue = Issue.objects.get(
+            external_id=data.get("external_id"),
+            external_source=data.get("external_source"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+        )
+        # if issue:
+        #     issue.name = data.get("name")
+        #     issue.description_html = data.get("description")
+        #     issue.start_date = data.get("start_date")
+        #     issue.target_date = data.get("target_date")
+        #     issue.priority = data.get("priority")
 
-            #     _ = IssueLabel.objects.bulk_create(
-            #         bulk_issue_labels, batch_size=100, ignore_conflicts=True
-            #     )
+        #     if data.get("assignee"):
+        #         user = User.objects.filter(email=data.get("assignee")).values("id")
+        #         # first get that issue assignee then check whether both are same or not if not then update the assignee
+        #         assignee = IssueAssignee.objects.filter(issue=issue, project_id=data.get("project_id"),workspace_id=data.get("workspace_id")).values("assignee_id__email")
+        #         if assignee != data.get("assignee"):
+        #             assignee = IssueAssignee.objects.filter(issue=issue, project_id=data.get("project_id")).update(assignee_id=user)
 
-            issue.save()
+        #     # first get all the issue labels then check whether all are same or not if not then update the label
+        #     labels = IssueLabel.objects.filter(issue=issue, project_id=data.get("project_id"),workspace_id=data.get("workspace_id")).values("label_id__name")
+        # if labels != data.get("labels_list"):
+
+        # if data.get("labels_list"):
+        #     labels_list = data.get("labels_list", [])
+        #     bulk_issue_labels = []
+        #     bulk_issue_labels = bulk_issue_labels + [
+        #         IssueLabel(
+        #             issue=issue,
+        #             label_id=get_label_id(name, data),
+        #             project_id=data.get("project_id"),
+        #             workspace_id=data.get("workspace_id"),
+        #             created_by_id=data.get("created_by"),
+        #         )
+        #         for name in labels_list
+        #     ]
+
+        #     _ = IssueLabel.objects.bulk_create(
+        #         bulk_issue_labels, batch_size=100, ignore_conflicts=True
+        #     )
+
         # issue.save()
 
     except Issue.DoesNotExist:
-
+        print("issue does not exist")
         # Get the default state
         default_state = State.objects.filter(
             ~Q(name="Triage"), project_id=data.get("project_id"), default=True
@@ -414,9 +446,9 @@ def issue_sync(data):
             ).first()
 
         # Get the maximum sequence_id
-        last_id = IssueSequence.objects.filter(project_id=data.get("project_id")).aggregate(
-            largest=Max("sequence")
-        )["largest"]
+        last_id = IssueSequence.objects.filter(
+            project_id=data.get("project_id")
+        ).aggregate(largest=Max("sequence"))["largest"]
 
         last_id = 1 if last_id is None else last_id + 1
 
@@ -433,9 +465,10 @@ def issue_sync(data):
         issue = Issue.objects.create(
             project_id=data.get("project_id"),
             workspace_id=data.get("workspace_id"),
-            state_id=data.get("state")
-            if data.get("state", False)
-            else default_state.id,
+            state_id=get_state_id(data.get("state"), data).get("id") if get_state_id(data.get("state"), data) else None,
+            # state_id=default_state.id,
+            # if data.get("state", False)
+            # else default_state.id,
             name=data.get("name", "Issue Created through Importer"),
             description_html=data.get("description_html", "<p></p>"),
             sequence_id=last_id,
@@ -445,7 +478,7 @@ def issue_sync(data):
             priority=data.get("priority", "none"),
             created_by_id=data.get("created_by"),
             external_id=data.get("external_id"),
-            external_source=data.get("source"),
+            external_source=data.get("external_source"),
         )
 
         # Attach Links
@@ -472,7 +505,7 @@ def issue_sync(data):
         bulk_issue_labels = bulk_issue_labels + [
             IssueLabel(
                 issue=issue,
-                label_id=get_label_id(name, data),
+                label_id=get_label_id(name, data).get("id") if get_label_id(name, data) else None,
                 project_id=data.get("project_id"),
                 workspace_id=data.get("workspace_id"),
                 created_by_id=data.get("created_by"),
@@ -483,7 +516,6 @@ def issue_sync(data):
         _ = IssueLabel.objects.bulk_create(
             bulk_issue_labels, batch_size=100, ignore_conflicts=True
         )
-
 
         if data.get("assignee"):
             user = User.objects.filter(email=data.get("assignee")).values("id")
