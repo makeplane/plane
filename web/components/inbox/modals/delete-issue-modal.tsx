@@ -28,7 +28,6 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   const { workspaceSlug, projectId, inboxId } = router.query;
   // store hooks
   const { deleteIssue } = useInboxIssues();
-
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();

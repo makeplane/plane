@@ -22,8 +22,8 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, inboxId } = router.query;
   // store hooks
   const { getIssueById } = useInboxIssues();
+  // derived values
   const issue = getIssueById(inboxId as string, props.issueId);
-
   const issueStatus = issue?.issue_inbox[0].status;
 
   if (!issue) return null;

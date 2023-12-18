@@ -27,15 +27,11 @@ const defaultValues: Partial<IWorkspaceView> = {
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
     workspace: workspaceStore,
     workspaceMember: { workspaceMembers },
   } = useMobxStore();
-
   const {} = useProject();
 
   const {

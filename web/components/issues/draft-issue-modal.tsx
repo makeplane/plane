@@ -61,17 +61,15 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const [createMore, setCreateMore] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
   const [prePopulateData, setPreloadedData] = useState<Partial<IIssue> | undefined>(undefined);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
-  const { user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
-
   // store
+  const { user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
   const { workspaceProjects } = useProject();
-
-  const user = userStore.currentUser;
+  // derived values
   const projects = workspaceProjects;
+  const user = userStore.currentUser;
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
 

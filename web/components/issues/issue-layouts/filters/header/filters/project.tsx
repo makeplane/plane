@@ -17,7 +17,6 @@ type Props = {
 
 export const FilterProjects: React.FC<Props> = (props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
-
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);

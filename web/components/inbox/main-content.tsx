@@ -32,10 +32,8 @@ export const InboxMainContent: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
-
   // store hooks
   const { currentInboxIssues, fetchIssueDetails, getIssueById, updateIssue } = useInboxIssues();
-
   const {
     currentUser,
     membership: { currentProjectRole },

@@ -93,9 +93,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   );
 
   const inboxDetails = projectId ? inboxesList?.[projectId]?.[0] : undefined;
-
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
-
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 

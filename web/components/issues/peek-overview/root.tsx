@@ -26,10 +26,10 @@ interface IIssuePeekOverview {
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { workspaceSlug, projectId, issueId, handleIssue, children, isArchived = false } = props;
-
+  // router
   const router = useRouter();
   const { peekIssueId } = router.query;
-
+  //store
   const {
     user: { currentProjectRole },
     issue: { removeIssueFromStructure },
@@ -59,8 +59,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     },
     archivedIssues: { deleteArchivedIssue },
   } = useMobxStore();
-
-  // store
   const { currentProjectDetails } = useProject();
 
   const { setToastAlert } = useToast();

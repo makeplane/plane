@@ -27,7 +27,6 @@ export const EstimatesList: React.FC = observer(() => {
   const {
     projectEstimates: { projectEstimates, getProjectEstimateById },
   } = useMobxStore();
-
   const { updateProject, currentProjectDetails } = useProject();
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);

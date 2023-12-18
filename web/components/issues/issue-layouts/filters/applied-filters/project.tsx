@@ -13,7 +13,7 @@ type Props = {
 
 export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values, editable } = props;
-
+  // store hooks
   const { projectMap } = useProject();
 
   return (

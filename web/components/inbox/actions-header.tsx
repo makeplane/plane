@@ -38,9 +38,9 @@ export const InboxActionsHeader = observer(() => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-
+  // toast
   const { setToastAlert } = useToast();
-
+  // derived values
   const issue = getIssueById(inboxIssueId as string, inboxIssueId as string);
 
   const markInboxStatus = async (data: TInboxStatus) => {
