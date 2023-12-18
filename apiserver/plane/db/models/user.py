@@ -130,6 +130,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class ConnectedAccount(BaseModel):
+    # medium the account is connected to
     medium = models.CharField(
         max_length=20,
         choices=(
@@ -137,14 +138,17 @@ class ConnectedAccount(BaseModel):
             ("Github", "github"),
         ),
     )
-    last_connected_at = models.DateTimeField(default=timezone.now, null=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="user_connected_accounts",
     )
     access_token = models.CharField(max_length=255)
-    data = models.JSONField(default=dict)
+    access_token_expired_at = models.DateTimeField(null=True)
+    refresh_token = models.CharField(max_length=255)
+    refresh_token_expired_at = models.DateTimeField(null=True)
+    metadata = models.JSONField(default=dict)
+    last_connected_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ["user", "medium"]

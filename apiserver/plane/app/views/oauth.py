@@ -95,15 +95,14 @@ def get_access_token(request_token: str, client_id: str) -> str:
         ]
     )
 
-    url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={CLIENT_SECRET}&code={request_token}"
+    url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret=${CLIENT_SECRET}&code={request_token}"
     headers = {"accept": "application/json"}
 
     res = requests.post(url, headers=headers)
 
     data = res.json()
-    access_token = data["access_token"]
 
-    return access_token
+    return data
 
 
 def get_user_data(access_token: str) -> dict:
@@ -153,6 +152,9 @@ class OauthEndpoint(BaseAPIView):
             medium = request.data.get("medium", False)
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
+
+
+            print(request.data)
 
             GOOGLE_CLIENT_ID, GITHUB_CLIENT_ID = get_configuration_value(
                 [

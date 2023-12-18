@@ -1,3 +1,6 @@
+# Python import
+import os
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,14 +13,12 @@ from plane.app.serializers import (
     UserMeSerializer,
     UserMeSettingsSerializer,
 )
-
 from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
-
-
 from django.db.models import Q, F, Count, Case, When, IntegerField
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class UserEndpoint(BaseViewSet):
@@ -163,4 +164,11 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
 class ConnectedAccountEndpoint(BaseAPIView):
 
     def post(self, request):
-        pass
+        GITHUB_APP_CLIENT_ID, = get_configuration_value(
+            [
+                {
+                    "key": "GITHUB_APP_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_APP_CLIENT_ID"),
+                },
+            ]
+        )
