@@ -19,7 +19,7 @@ type Props = {
     icon?: any;
     text: string;
     onClick: () => void;
-  };
+  } | null;
   disabled?: boolean;
 };
 

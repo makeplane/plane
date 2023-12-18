@@ -626,13 +626,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                               <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
                             </div>
-                            <button
-                              className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
-                              onClick={() => setModuleLinkModal(true)}
-                            >
-                              <Plus className="h-3 w-3" />
-                              Add link
-                            </button>
+                            {isEditingAllowed && (
+                              <button
+                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                onClick={() => setModuleLinkModal(true)}
+                              >
+                                <Plus className="h-3 w-3" />
+                                Add link
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
