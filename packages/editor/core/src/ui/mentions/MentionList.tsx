@@ -1,6 +1,6 @@
 import { IMentionSuggestion } from "@plane/editor-types";
 import { Editor } from "@tiptap/react";
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 interface MentionListProps {
   items: IMentionSuggestion[];

@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 // @ts-nocheck
 import { NodeViewWrapper } from "@tiptap/react";
-import { cn } from "../../lib/utils";
+import { cn } from "src/lib/utils";
 import { useRouter } from "next/router";
 import { IMentionHighlight } from "@plane/editor-types";
 

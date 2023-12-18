@@ -21,10 +21,10 @@ import {
   toggleHeaderCell,
 } from "@tiptap/prosemirror-tables";
 
-import { tableControls } from "./table-controls";
-import { TableView } from "./table-view";
-import { createTable } from "./utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
+import { tableControls } from "src/ui/extensions/table/table/table-controls";
+import { TableView } from "src/ui/extensions/table/table/table-view";
+import { createTable } from "src/ui/extensions/table/table/utilities/create-table";
+import { deleteTableWhenAllCellsSelected } from "src/ui/extensions/table/table/utilities/delete-table-when-all-cells-selected";
 
 export interface TableOptions {
   HTMLAttributes: Record<string, any>;

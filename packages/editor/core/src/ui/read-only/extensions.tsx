@@ -8,14 +8,14 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import TableHeader from "../extensions/table/table-header/table-header";
-import Table from "../extensions/table/table";
-import TableCell from "../extensions/table/table-cell/table-cell";
-import TableRow from "../extensions/table/table-row/table-row";
+import TableHeader from "src/ui/extensions/table/table-header/table-header";
+import Table from "src/ui/extensions/table/table";
+import TableCell from "src/ui/extensions/table/table-cell/table-cell";
+import TableRow from "src/ui/extensions/table/table-row/table-row";
 
-import ReadOnlyImageExtension from "../extensions/image/read-only-image";
-import { isValidHttpUrl } from "../../lib/utils";
-import { Mentions } from "../mentions";
+import ReadOnlyImageExtension from "src/ui/extensions/image/read-only-image";
+import { isValidHttpUrl } from "src/lib/utils";
+import { Mentions } from "src/ui/mentions";
 import { IMentionSuggestion } from "@plane/editor-types";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {

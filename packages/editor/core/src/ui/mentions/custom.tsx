@@ -1,7 +1,7 @@
 import { Mention, MentionOptions } from "@tiptap/extension-mention";
 import { mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import mentionNodeView from "./mentionNodeView";
+import mentionNodeView from "src/ui/mentions/mentionNodeView";
 import { IMentionHighlight } from "@plane/editor-types";
 
 export interface CustomMentionOptions extends MentionOptions {

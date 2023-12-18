@@ -1,7 +1,7 @@
 // @ts-nocheck
 
-import suggestion from "./suggestion";
-import { CustomMention } from "./custom";
+import suggestion from "src/ui/mentions/suggestion";
+import { CustomMention } from "src/ui/mentions/custom";
 import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-types";
 
 export const Mentions = (mentionSuggestions: IMentionSuggestion[], mentionHighlights: IMentionHighlight[], readonly) =>

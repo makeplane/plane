@@ -1,8 +1,8 @@
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import UploadImagesPlugin from "../../plugins/upload-image";
+import UploadImagesPlugin from "src/ui/plugins/upload-image";
 import ImageExt from "@tiptap/extension-image";
-import { onNodeDeleted, onNodeRestored } from "../../plugins/delete-image";
+import { onNodeDeleted, onNodeRestored } from "src/ui/plugins/delete-image";
 import { DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface ImageNode extends ProseMirrorNode {

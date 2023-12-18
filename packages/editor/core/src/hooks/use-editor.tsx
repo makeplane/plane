@@ -1,9 +1,9 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject } from "react";
-import { CoreEditorProps } from "../props";
-import { CoreEditorExtensions } from "../extensions";
+import { CoreEditorProps } from "src/ui/props";
+import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
-import { getTrimmedHTML } from "../../lib/utils";
+import { getTrimmedHTML } from "src/lib/utils";
 import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-types";
 
 interface CustomEditorProps {

@@ -2,7 +2,7 @@ import { ReactRenderer } from "@tiptap/react";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 
-import MentionList from "./MentionList";
+import MentionList from "src/ui/mentions/MentionList";
 import { IMentionSuggestion } from "@plane/editor-types";
 
 const Suggestion = (suggestions: IMentionSuggestion[]) => ({
