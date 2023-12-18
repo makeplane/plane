@@ -12,18 +12,24 @@ export const CycleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
   const { cycleId, workspaceSlug } = router.query;
 
-  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    cycleIssuesFilter: cycleIssueFilterStore,
+    cycle: { fetchCycleWithId },
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
       await cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
+      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
       await cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
+      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
@@ -35,6 +41,7 @@ export const CycleGanttLayout: React.FC = observer(() => {
         issue.id,
         issue.bridge_id
       );
+      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
     },
   };
 

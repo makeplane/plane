@@ -83,6 +83,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     user: userStore,
     trackEvent: { postHogEventTracker },
     workspace: { currentWorkspace },
+    cycle: { fetchCycleWithId },
   } = useMobxStore();
 
   const user = userStore.currentUser;
@@ -221,7 +222,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, [issue.id]);
+    await cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, [issue.id]);
+    fetchCycleWithId(workspaceSlug, activeProject, cycleId);
   };
 
   const addIssueToModule = async (issue: IIssue, moduleId: string) => {
