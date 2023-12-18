@@ -25,6 +25,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssuesFilter: moduleIssueFilterStore,
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
     kanBanHelpers: kanBanHelperStore,
+    module: { fetchModuleDetails },
   } = useMobxStore();
 
   const issueActions = {
@@ -32,11 +33,13 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       if (!workspaceSlug || !moduleId) return;
 
       await moduleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId.toString());
+      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
       await moduleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
+      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
@@ -48,6 +51,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
         issue.id,
         issue.bridge_id
       );
+      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
     },
   };
 
