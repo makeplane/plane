@@ -158,6 +158,12 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
 
       const response = await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
 
+      runInAction(() => {
+        _issues = { ...this.issues };
+        _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...response };
+        this.issues = _issues;
+      });
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");

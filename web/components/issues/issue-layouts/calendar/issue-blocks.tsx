@@ -36,13 +36,17 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: IIssue) => {
+  const handleIssuePeekOverview = (issue: IIssue, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-    });
+    if (event.ctrlKey || event.metaKey) {
+      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
+      window.open(issueUrl, "_blank"); // Open link in a new tab
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      });
+    }
   };
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -75,7 +79,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                onClick={() => handleIssuePeekOverview(issue)}
+                onClick={(e) => handleIssuePeekOverview(issue, e)}
               >
                 {issue?.tempId !== undefined && (
                   <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />

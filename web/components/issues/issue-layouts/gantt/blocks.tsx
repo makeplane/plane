@@ -9,13 +9,17 @@ import { IIssue } from "types";
 export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
   const router = useRouter();
 
-  const handleIssuePeekOverview = () => {
+  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project },
-    });
+    if (event.ctrlKey || event.metaKey) {
+      const issueUrl = `/${data?.workspace_detail.slug}/projects/${data?.project_detail.id}/issues/${data?.id}`;
+      window.open(issueUrl, "_blank"); // Open link in a new tab
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project },
+      });
+    }
   };
 
   return (

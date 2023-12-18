@@ -93,6 +93,7 @@ export const PrioritySelect: React.FC<Props> = ({
           className={`flex h-full w-full items-center justify-between gap-1 ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
           } ${buttonClassName}`}
+          onClick={(e) => e.stopPropagation()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
@@ -127,6 +128,7 @@ export const PrioritySelect: React.FC<Props> = ({
                         active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {({ selected }) => (
                       <>

@@ -14,6 +14,7 @@ import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/f
 
 type Props = {
   issueDetail: IIssue | undefined;
+  projectId: string;
   handleCycleChange?: (cycleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
@@ -26,13 +27,15 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   const { issueDetail, disabled = false, handleIssueUpdate, handleCycleChange } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId: _projectId, peekProjectId } = router.query;
   // mobx store
   const {
     cycleIssues: { removeIssueFromCycle, addIssueToCycle },
   } = useMobxStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const projectId = _projectId ?? peekProjectId;
 
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
