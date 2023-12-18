@@ -4,7 +4,7 @@ import { Decoration, NodeView } from "@tiptap/pm/view";
 import tippy, { Instance, Props } from "tippy.js";
 
 import { Editor } from "@tiptap/core";
-import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/prosemirror-tables";
+import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 
 import icons from "src/ui/extensions/table/table/icons";
 

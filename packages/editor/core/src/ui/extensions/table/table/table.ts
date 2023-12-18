@@ -19,7 +19,7 @@ import {
   tableEditing,
   toggleHeader,
   toggleHeaderCell,
-} from "@tiptap/prosemirror-tables";
+} from "@tiptap/pm/tables";
 
 import { tableControls } from "src/ui/extensions/table/table/table-controls";
 import { TableView } from "src/ui/extensions/table/table/table-view";

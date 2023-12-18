@@ -1,11 +1,18 @@
-import { Icon } from "lucide-react";
+import { SVGProps } from "react";
 
 interface IAlertLabelProps {
-  Icon?: Icon;
+  Icon?: LucideIcon;
   backgroundColor: string;
   textColor?: string;
   label: string;
 }
+
+interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
+  size?: string | number;
+  absoluteStrokeWidth?: boolean;
+}
+
+type LucideIcon = (props: LucideProps) => JSX.Element;
 
 export const AlertLabel = (props: IAlertLabelProps) => {
   const { Icon, backgroundColor, textColor, label } = props;
