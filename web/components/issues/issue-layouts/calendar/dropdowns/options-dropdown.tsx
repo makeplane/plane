@@ -13,7 +13,7 @@ import { Check, ChevronUp } from "lucide-react";
 import { TCalendarLayouts } from "types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 import {
   ICycleIssuesFilterStore,
   IModuleIssuesFilterStore,
@@ -58,7 +58,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
@@ -75,7 +75,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
 
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         show_weekends: !showWeekends,

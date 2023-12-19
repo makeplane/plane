@@ -22,7 +22,7 @@ import { IProjectIssues } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";

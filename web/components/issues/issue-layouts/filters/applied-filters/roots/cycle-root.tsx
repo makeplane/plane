@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -40,7 +40,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
       updateFilters(
         workspaceSlug,
         projectId,
-        EFilterType.FILTERS,
+        EIssueFilterType.FILTERS,
         {
           [key]: null,
         },
@@ -55,7 +55,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     updateFilters(
       workspaceSlug,
       projectId,
-      EFilterType.FILTERS,
+      EIssueFilterType.FILTERS,
       {
         [key]: newValues,
       },
@@ -69,7 +69,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { ...newFilters }, cycleId);
+    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { ...newFilters }, cycleId);
   };
 
   // return if no filters are applied

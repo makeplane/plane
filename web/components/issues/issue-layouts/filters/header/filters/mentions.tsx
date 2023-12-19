@@ -1,28 +1,31 @@
-import React, { useState } from "react";
+import { useState } from "react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 // types
 import { IUserLite } from "types";
+import { observer } from "mobx-react-lite";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  members: IUserLite[] | undefined;
+  memberIds: string[] | undefined;
+  memberMap: Record<string, IUserLite>;
   searchQuery: string;
 };
 
-export const FilterMentions: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, members, searchQuery } = props;
+export const FilterMentions: React.FC<Props> = observer((props: Props) => {
+  const { appliedFilters, handleUpdate, memberIds, memberMap, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = members?.filter((member) =>
-    member.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = memberIds?.filter(
+    (memberId) =>
+      memberMap[memberId] && memberMap[memberId].display_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleViewToggle = () => {
@@ -44,15 +47,20 @@ export const FilterMentions: React.FC<Props> = (props) => {
           {filteredOptions ? (
             filteredOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((member) => (
-                  <FilterOption
-                    key={`mentions-${member.id}`}
-                    isChecked={appliedFilters?.includes(member.id) ? true : false}
-                    onClick={() => handleUpdate(member.id)}
-                    icon={<Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} size={"md"} />}
-                    title={member.display_name}
-                  />
-                ))}
+                {filteredOptions.slice(0, itemsToRender).map((memberId) => {
+                  const member = memberMap[memberId];
+
+                  if (!member) return null;
+                  return (
+                    <FilterOption
+                      key={`mentions-${member.id}`}
+                      isChecked={appliedFilters?.includes(member.id) ? true : false}
+                      onClick={() => handleUpdate(member.id)}
+                      icon={<Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} size={"md"} />}
+                      title={member.display_name}
+                    />
+                  );
+                })}
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
@@ -77,4 +85,4 @@ export const FilterMentions: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

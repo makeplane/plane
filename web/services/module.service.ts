@@ -2,7 +2,7 @@
 import { APIService } from "services/api.service";
 // types
 import type { IModule, IIssue, ILinkDetails, ModuleLink } from "types";
-import { IIssueResponse } from "store_legacy/issues/types";
+import { IIssueResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
 export class ModuleService extends APIService {

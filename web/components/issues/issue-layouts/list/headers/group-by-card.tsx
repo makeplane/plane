@@ -10,7 +10,7 @@ import { CustomMenu } from "@plane/ui";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import useToast from "hooks/use-toast";
 import { useState } from "react";
 

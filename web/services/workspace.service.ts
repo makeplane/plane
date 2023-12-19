@@ -16,7 +16,7 @@ import {
   IUserProjectsRole,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
-import { IIssueResponse } from "store_legacy/issues/types";
+import { IIssueResponse } from "types";
 
 export class WorkspaceService extends APIService {
   constructor() {

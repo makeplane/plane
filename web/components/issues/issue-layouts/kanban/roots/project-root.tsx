@@ -10,7 +10,7 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 
 import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store/use-issues";

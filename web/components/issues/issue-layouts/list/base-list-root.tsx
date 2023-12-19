@@ -11,7 +11,7 @@ import {
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
 import { observer } from "mobx-react-lite";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
 import { useRouter } from "next/router";
 import { EUserProjectRoles } from "constants/project";

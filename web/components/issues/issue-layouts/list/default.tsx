@@ -7,7 +7,7 @@ import { GroupByColumnTypes, IIssue, IIssueDisplayProperties, IIssueMap } from "
 import { IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 // constants
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { getGroupByColumns } from "../utils";
 

@@ -12,7 +12,7 @@ import { IIssue } from "types";
 // components
 import { BaseListRoot } from "../base-list-root";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 
 export interface IViewListLayout {}
 
