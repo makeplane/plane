@@ -1,31 +1,32 @@
 import { computed, makeObservable } from "mobx";
+import isEmpty from "lodash/isEmpty";
 // base class
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-import { isNil } from "constants/common";
 // types
 import { IssueRootStore } from "../root.store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
+import {
+  IIssueFilterOptions,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilters,
+  TIssueParams,
+} from "types";
 // constants
-import { EFilterType } from "constants/issue";
-
-interface IProjectIssuesFilters {
-  filters: IIssueFilterOptions | undefined;
-  displayFilters: IIssueDisplayFilterOptions | undefined;
-  displayProperties: IIssueDisplayProperties | undefined;
-}
+import { EIssueFilterType } from "constants/issue";
+import { isNil } from "constants/common";
 
 export interface IProjectIssuesFilter {
   // computed
-  issueFilters: IProjectIssuesFilters | undefined;
+  issueFilters: IIssueFilters | undefined;
   appliedFilters: TIssueParams[] | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => Promise<void>;
 }
@@ -36,7 +37,6 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
 
   constructor(_rootStore: IssueRootStore) {
     super(_rootStore);
-
     makeObservable(this, {
       // computed
       issueFilters: computed,
@@ -50,12 +50,14 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   get issueFilters() {
     const projectId = this.rootStore.projectId;
     if (!projectId) return undefined;
-    const displayFilters = this.rootStore.issuesFilter.issueDisplayFilters(projectId);
 
-    const _filters: IProjectIssuesFilters = {
-      filters: displayFilters?.filters,
-      displayFilters: displayFilters?.displayFilters,
-      displayProperties: displayFilters?.displayProperties,
+    const displayFilters = this.rootStore.issuesFilter.issueDisplayFilters(projectId);
+    if (!projectId || isEmpty(displayFilters)) return undefined;
+
+    const _filters: IIssueFilters = {
+      filters: isEmpty(displayFilters?.filters) ? undefined : displayFilters?.filters,
+      displayFilters: isEmpty(displayFilters?.displayFilters) ? undefined : displayFilters?.displayFilters,
+      displayProperties: isEmpty(displayFilters?.displayProperties) ? undefined : displayFilters?.displayProperties,
     };
 
     return _filters;
@@ -107,20 +109,21 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => {
     try {
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
             filterType,
             filters as IIssueFilterOptions
           );
+          this.rootStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
@@ -128,12 +131,14 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             filters as IIssueDisplayFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.rootStore.issuesFilter.updateDisplayProperties(
             workspaceSlug,
             projectId,
             filters as IIssueDisplayProperties
           );
+          break;
+        default:
           break;
       }
 

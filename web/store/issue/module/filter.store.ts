@@ -9,7 +9,7 @@ import { ModuleService } from "services/module.service";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // constants
 import { isNil } from "constants/common";
-import { EFilterType } from "constants/issue";
+import { EIssueFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
@@ -37,7 +37,7 @@ export interface IModuleIssuesFilter {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions
   ) => Promise<IModuleIssuesFilterOptions | undefined>;
 
@@ -45,7 +45,7 @@ export interface IModuleIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     moduleId?: string | undefined
   ) => Promise<void>;
@@ -180,7 +180,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions
   ) => {
     if (!moduleId) return;
@@ -191,7 +191,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
 
       const _filters = { filters: { ..._moduleIssueFilters[moduleId].filters } };
 
-      if (type === EFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
+      if (type === EIssueFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
 
       _moduleIssueFilters[moduleId] = { filters: _filters.filters };
 
@@ -225,7 +225,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     moduleId?: string | undefined
   ) => {
@@ -233,7 +233,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
       if (!moduleId) throw new Error();
 
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           await this.updateModuleFilters(
             workspaceSlug,
             projectId,
@@ -242,7 +242,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             filters as IIssueFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
@@ -250,7 +250,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             filters as IIssueDisplayFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.rootStore.issuesFilter.updateDisplayProperties(
             workspaceSlug,
             projectId,

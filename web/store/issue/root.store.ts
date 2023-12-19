@@ -21,13 +21,14 @@ import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
 
 export interface IIssueRootStore {
-  currentUserId: string | undefined;
   workspaceSlug: string | undefined;
-  profileView: string | undefined;
+  userId: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
   moduleId: string | undefined;
-  projectViewId: string | undefined;
+  viewId: string | undefined;
+
+  profileView: string | undefined;
   states: any | undefined;
   labels: any | undefined;
   members: any | undefined;
@@ -65,12 +66,13 @@ export interface IIssueRootStore {
 }
 
 export class IssueRootStore {
-  currentUserId: string | undefined = undefined;
-  workspaceSlug: string | undefined = undefined;
-  projectId: string | undefined = undefined;
-  cycleId: string | undefined = undefined;
+  workspaceSlug: string | undefined = "plane";
+  userId: string | undefined = undefined;
+  projectId: string | undefined = "02c3e1d5-d7e2-401d-a773-45ecba45d745";
+  cycleId: string | undefined = "937e7405-aa19-4930-b12b-3d1203c03487";
   moduleId: string | undefined = undefined;
-  projectViewId: string | undefined = undefined;
+  viewId: string | undefined = undefined;
+
   profileView: string | undefined = undefined;
   states: any | undefined = undefined;
   labels: any | undefined = undefined;
@@ -109,12 +111,12 @@ export class IssueRootStore {
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
-      currentUserId: observable.ref,
+      userId: observable.ref,
       workspaceSlug: observable.ref,
       projectId: observable.ref,
       cycleId: observable.ref,
       moduleId: observable.ref,
-      projectViewId: observable.ref,
+      viewId: observable.ref,
       profileView: observable.ref,
       states: observable,
       labels: observable,
@@ -123,15 +125,15 @@ export class IssueRootStore {
     });
 
     autorun(() => {
-      if (rootStore?.user?.currentUser?.id) this.currentUserId = rootStore?.user?.currentUser?.id;
-      if (rootStore?.workspace?.currentWorkspace?.slug)
-        this.workspaceSlug = rootStore?.workspace?.currentWorkspace?.slug;
-      if (rootStore?.project?.projects?.projectId) this.projectId = rootStore?.project?.projects?.projectId;
-      if (rootStore?.cycle?.cycleId) this.cycleId = rootStore?.cycle?.cycleId;
-      if (rootStore?.module?.moduleId) this.moduleId = rootStore?.module?.moduleId;
-      if (rootStore?.projectView?.viewId) this.projectViewId = rootStore?.projectView?.viewId;
+      if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
+      if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
+      if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
+      if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
+      if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
+      if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
 
       // if (rootStore?.workspace?.profileView) this.profileView = rootStore?.workspace?.profileView;
+      // if (rootStore?.user?.currentUser?.id) this.userId = rootStore?.user?.currentUser?.id;
       // if (rootStore?.states) this.states = rootStore?.states;
       // if (rootStore?.labels) this.labels = rootStore?.labels;
       // if (rootStore?.members) this.members = rootStore?.members;

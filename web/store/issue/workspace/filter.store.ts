@@ -7,7 +7,7 @@ import { WorkspaceService } from "services/workspace.service";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // constants
 import { isNil } from "constants/common";
-import { EFilterType } from "constants/issue";
+import { EIssueFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
@@ -47,7 +47,7 @@ export interface IWorkspaceIssuesFilter {
   fetchWorkspaceProperties: (workspaceSlug: string) => Promise<IWorkspaceProperties>;
   updateWorkspaceProperties: (
     workspaceSlug: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => Promise<IWorkspaceProperties>;
 
@@ -57,7 +57,7 @@ export interface IWorkspaceIssuesFilter {
   fetchFilters: (workspaceSlug: string, view: TIssueViewTypes) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => Promise<void>;
 }
@@ -145,7 +145,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
         target_date: _filters?.filters?.target_date || null,
       };
 
-      const currentUserId = this.rootStore.currentUserId;
+      const currentUserId = this.rootStore.userId;
       if (currentUserId && this.currentView === "assigned")
         filters = {
           ...filters,
@@ -228,7 +228,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   updateWorkspaceProperties = async (
     workspaceSlug: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => {
     try {
@@ -244,13 +244,13 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       switch (type) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           _filters.filters = { ..._filters.filters, ...(filters as IIssueFilterOptions) };
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           _filters.displayFilters = { ..._filters.displayFilters, ...(filters as IIssueDisplayFilterOptions) };
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           _filters.displayProperties = { ..._filters.displayProperties, ...(filters as IIssueDisplayProperties) };
           break;
       }
@@ -408,20 +408,20 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   updateFilters = async (
     workspaceSlug: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => {
     try {
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           if (["all-issues", "assigned", "created", "subscribed"].includes(this.currentView))
             await this.updateWorkspaceProperties(workspaceSlug, filterType, filters as IIssueDisplayFilterOptions);
           else await this.updateWorkspaceViewFilters(workspaceSlug, filters as IIssueFilterOptions);
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.updateWorkspaceProperties(workspaceSlug, filterType, filters as IIssueDisplayFilterOptions);
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.updateWorkspaceProperties(workspaceSlug, filterType, filters as IIssueDisplayProperties);
           break;
       }
