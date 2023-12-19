@@ -1,7 +1,7 @@
 # Python imports
 import uuid
 import json
-import requests 
+import requests
 
 # Third party imports
 from rest_framework import status
@@ -37,9 +37,6 @@ from plane.app.serializers import (
     IssueFlatSerializer,
     ModuleSerializer,
 )
-from plane.utils.integrations.github import get_github_repo_details
-from plane.utils.importers.jira import jira_project_issue_summary
-from plane.bgtasks.importer_task import service_importer
 from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
 
@@ -49,7 +46,6 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
         if service == "github":
             owner = request.GET.get("owner", False)
             repo = request.GET.get("repo", False)
-
             if not owner or not repo:
                 return Response(
                     {"error": "Owner and repo are required"},
@@ -64,7 +60,10 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 "access_tokens_url", False
             )
 
-            if not access_tokens_url:
+            installtion_id = workspace_integration.config.get("installation_id", False)
+
+            # Check for the access token url
+            if not access_tokens_url or not installtion_id:
                 return Response(
                     {
                         "error": "There was an error during the installation of the GitHub app. To resolve this issue, we recommend reinstalling the GitHub app."
@@ -72,18 +71,33 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            issue_count, labels, collaborators = get_github_repo_details(
-                access_tokens_url, owner, repo
-            )
+            # Request segway for the required information
+            if settings.SEGWAY_BASE_URL:
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-api-key": settings.SEGWAY_KEY,
+                }
+                data = {
+                    "owner": owner,
+                    "repo": repo,
+                    "installationId": installtion_id,
+                }
+                res = requests.post(
+                    f"{settings.SEGWAY_BASE_URL}/api/github",
+                    data=json.dumps(data),
+                    headers=headers,
+                )
+                if "error" in res.json():
+                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(
+                        res.json(),
+                        status=status.HTTP_200_OK,
+                    )
             return Response(
-                {
-                    "issue_count": issue_count,
-                    "labels": labels,
-                    "collaborators": collaborators,
-                },
-                status=status.HTTP_200_OK,
+                {"error": "Inetgration service is not available please try later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-
         if service == "jira":
             # Check for all the keys
             params = {
@@ -105,7 +119,6 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
             cloud_hostname = request.GET.get("cloud_hostname", "")
 
             if settings.SEGWAY_BASE_URL:
-                print("inside this it came ")
                 headers = {
                     "Content-Type": "application/json",
                     "x-api-key": settings.SEGWAY_KEY,
@@ -129,6 +142,11 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                         res.json(),
                         status=status.HTTP_200_OK,
                     )
+
+            return Response(
+                {"error": "Inetgration service is not available please try later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return Response(
             {"error": "Service not supported yet"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -141,6 +159,12 @@ class ImportServiceEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug, service):
+        if service not in ["github", "jira"]:
+            return Response(
+                {"error": "Servivce not supported yet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         project_id = request.data.get("project_id", False)
 
         if not project_id:
@@ -148,122 +172,81 @@ class ImportServiceEndpoint(BaseAPIView):
                 {"error": "Project ID is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         workspace = Workspace.objects.get(slug=slug)
 
-        if service == "github":
-            data = request.data.get("data", False)
-            metadata = request.data.get("metadata", False)
-            config = request.data.get("config", False)
-            if not data or not metadata or not config:
-                return Response(
-                    {"error": "Data, config and metadata are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            api_token = APIToken.objects.filter(
-                user=request.user, workspace=workspace
-            ).first()
-            if api_token is None:
-                api_token = APIToken.objects.create(
-                    user=request.user,
-                    label="Importer",
-                    workspace=workspace,
-                )
-
-            importer = Importer.objects.create(
-                service=service,
-                project_id=project_id,
-                status="queued",
-                initiated_by=request.user,
-                data=data,
-                metadata=metadata,
-                token=api_token,
-                config=config,
-                created_by=request.user,
-                updated_by=request.user,
+        # Validate the data
+        data = request.data.get("data", False)
+        metadata = request.data.get("metadata", False)
+        config = request.data.get("config", False)
+        if not data or not metadata or not config:
+            return Response(
+                {"error": "Data, config and metadata are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            service_importer.delay(service, importer.id)
-            serializer = ImporterSerializer(importer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        if service == "jira":
-            data = request.data.get("data", False)
-            metadata = request.data.get("metadata", False)
-            config = request.data.get("config", False)
-            if not data or not metadata:
-                return Response(
-                    {"error": "Data, config and metadata are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            api_token = APIToken.objects.filter(
-                user=request.user, workspace=workspace
-            ).first()
-            if api_token is None:
-                api_token = APIToken.objects.create(
-                    user=request.user,
-                    label="Importer",
-                    workspace=workspace,
-                )
-
-            importer = Importer.objects.create(
-                service=service,
-                project_id=project_id,
-                status="queued",
-                initiated_by=request.user,
-                data=data,
-                metadata=metadata,
-                token=api_token,
-                config=config,
-                created_by=request.user,
-                updated_by=request.user,
+        # Get the api token -- # derecated
+        api_token = APIToken.objects.filter(
+            user=request.user, workspace=workspace
+        ).first()
+        if api_token is None:
+            api_token = APIToken.objects.create(
+                user=request.user,
+                label="Importer",
+                workspace=workspace,
+            )
+        
+        # Create an import
+        importer = Importer.objects.create(
+            service=service,
+            project_id=project_id,
+            status="queued",
+            initiated_by=request.user,
+            data=data,
+            metadata=metadata,
+            token=api_token,
+            config=config,
+            created_by=request.user,
+            updated_by=request.user,
             )
 
-            if settings.SEGWAY_BASE_URL:
-                print("inside this it came ")
-                headers = {
-                    "Content-Type": "application/json",
-                    "x-api-key": settings.SEGWAY_KEY,
-                }
-                data = {
-                    "metadata": metadata,
-                    "data": data,
-                    "config": config,
-                    "workspace_id": str(workspace.id),
-                    "project_id": str(project_id),
-                    "created_by": str(request.user.id),
-                    "importer_id": str(importer.id),
-                }
-                res = requests.post(
-                    f"{settings.SEGWAY_BASE_URL}/api/jira/import",
-                    data=json.dumps(data),
-                    headers=headers,
+        # Push it to segway
+        if settings.SEGWAY_BASE_URL:
+            headers = {
+                "Content-Type": "application/json",
+                "x-api-key": settings.SEGWAY_KEY,
+            }
+            data = {
+                "metadata": metadata,
+                "data": data,
+                "config": config,
+                "workspace_id": str(workspace.id),
+                "project_id": str(project_id),
+                "created_by": str(request.user.id),
+                "importer_id": str(importer.id),
+            }
+            res = requests.post(
+                f"{settings.SEGWAY_BASE_URL}/api/github/import",
+                data=json.dumps(data),
+                headers=headers,
+            )
+
+            if "error" in res.json():
+                return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
+            else:
+                importer.status = "processing"
+                importer.save(update_fields=["status"])
+                return Response(
+                    res.json(),
+                    status=status.HTTP_200_OK,
                 )
+        else:
+            importer.status = "failed"
+            importer.reason = "Segway base url is not present"
+            importer.save(update_fields=["status", "reason"])
 
-                if "error" in res.json():
-                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    importer = Importer.objects.get(pk=importer.id)
-                    importer.status = "processing"
-                    importer.save(update_fields=["status"])
-                    return Response(
-                        res.json(),
-                        status=status.HTTP_200_OK,
-                    )
-
-            # service_importer.apply_async(
-            #     args=[],
-            #     kwargs={"service": service, "importer_id": importer.id},
-            #     routing_key="internal",
-            # )
-            serializer = ImporterSerializer(importer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(
-            {"error": "Servivce not supported yet"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        # return the response
+        serializer = ImporterSerializer(importer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):
         imports = (
