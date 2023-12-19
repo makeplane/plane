@@ -27,7 +27,6 @@ export interface IIssueRootStore {
   cycleId: string | undefined;
   moduleId: string | undefined;
   viewId: string | undefined;
-
   profileView: string | undefined;
   states: any | undefined;
   labels: any | undefined;
@@ -72,7 +71,6 @@ export class IssueRootStore {
   cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
   viewId: string | undefined = undefined;
-
   profileView: string | undefined = undefined;
   states: any | undefined = undefined;
   labels: any | undefined = undefined;
@@ -139,15 +137,15 @@ export class IssueRootStore {
       // if (rootStore?.projects) this.projects = rootStore?.projects;
     });
 
-    this.issues = new IssueStore(this);
+    this.issues = new IssueStore();
 
     this.issuesFilter = new IssuesFilter(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
-    this.workspaceIssues = new WorkspaceIssues();
+    this.workspaceIssues = new WorkspaceIssues(this);
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
-    this.profileIssues = new ProfileIssues();
+    this.profileIssues = new ProfileIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this);
@@ -156,16 +154,16 @@ export class IssueRootStore {
     this.cycleIssues = new CycleIssues(this);
 
     this.moduleIssuesFilter = new ModuleIssuesFilter(this);
-    this.moduleIssues = new ModuleIssues();
+    this.moduleIssues = new ModuleIssues(this);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
-    this.projectViewIssues = new ProjectViewIssues();
+    this.projectViewIssues = new ProjectViewIssues(this);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
-    this.archivedIssues = new ArchivedIssues();
+    this.archivedIssues = new ArchivedIssues(this);
 
     this.draftIssuesFilter = new DraftIssuesFilter(this);
-    this.draftIssues = new DraftIssues();
+    this.draftIssues = new DraftIssues(this);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
   }

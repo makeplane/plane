@@ -16,7 +16,7 @@ export interface IWorkspaceIssues {
   issues: { [workspace_view: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
-  getIssuesIds: TUnGroupedIssues | undefined;
+  groupedIssueIds: TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (workspaceSlug: string, workspaceViewId: string, loadType: TLoader) => Promise<IIssueResponse>;
   createIssue: (
@@ -66,7 +66,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       issues: observable.ref,
       // computed
       getIssues: computed,
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -96,7 +96,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     return this.issues[currentView];
   }
 
-  get getIssuesIds() {
+  get groupedIssueIds() {
     const currentView = this.rootStore.workspaceIssuesFilter?.currentView;
     const displayFilters = this.rootStore?.workspaceIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
