@@ -17,7 +17,12 @@ import {
   TLoader,
   TUnGroupedIssues,
 } from "types";
-import { ViewFlags } from "store_legacy/issues/types";
+
+export interface ViewFlags {
+  enableQuickAdd: boolean;
+  enableIssueCreation: boolean;
+  enableInlineEditing: boolean;
+}
 
 export interface ICycleIssues {
   // observable
