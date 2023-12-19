@@ -64,6 +64,14 @@ export type TIssueParams =
 
 export type TCalendarLayouts = "month" | "week";
 
+export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+
+export interface IWorkspaceIssueDisplayFilterOptions {
+  order_by?: string | undefined;
+  type?: "active" | "backlog" | null;
+  sub_issue?: boolean;
+}
+
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
   mentions?: string[] | null;

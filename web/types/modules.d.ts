@@ -1,13 +1,13 @@
 import type {
-  IUser,
   IUserLite,
   IIssue,
-  IProject,
-  IWorkspace,
   IWorkspaceLite,
   IProjectLite,
   IIssueFilterOptions,
   ILinkDetails,
+  TAssigneesDistribution,
+  TCompletionChartDistribution,
+  TLabelsDistribution,
 } from "types";
 
 export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";

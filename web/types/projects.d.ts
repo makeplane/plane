@@ -1,4 +1,4 @@
-import type { IUserLite, IWorkspace, IWorkspaceLite, IUserMemberLite, TStateGroups, IProjectViewProps } from ".";
+import type { IUserLite, IWorkspace, IWorkspaceLite, IUserMemberLite, TStateGroups, IProjectViewProps, IUser } from ".";
 
 export type TUserProjectRole = 5 | 10 | 15 | 20;
 
@@ -36,11 +36,8 @@ export interface IProject {
   is_member: boolean;
   member_role: TUserProjectRole | null;
   members: IProjectMemberLite[];
-  issue_views_view: boolean;
-  module_view: boolean;
   name: string;
   network: number;
-  page_view: boolean;
   project_lead: IUserLite | string | null;
   sort_order: number | null;
   total_cycles: number;

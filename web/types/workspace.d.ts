@@ -12,7 +12,6 @@ export interface IWorkspace {
   logo: string | null;
   slug: string;
   readonly total_members: number;
-  readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
   organization_size: string;

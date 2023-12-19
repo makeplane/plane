@@ -1,3 +1,6 @@
+import { IProject } from "./projects";
+import { IWorkspace } from "./workspace";
+
 export interface IEstimate {
   id: string;
   created_at: Date;
