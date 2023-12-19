@@ -31,13 +31,13 @@ import {
   toggleTaskList,
   toggleUnderline,
 } from "src/lib/editor-commands";
-import { UploadImage } from "@plane/editor-core";
+import { LucideIconType, UploadImage } from "@plane/editor-core";
 
 export interface EditorMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIconType;
 }
 
 export const HeadingOneItem = (editor: Editor): EditorMenuItem => ({

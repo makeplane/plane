@@ -1,6 +1,6 @@
+import { LucideIconType } from "@plane/editor-core";
 import { CustomMenu } from "@plane/ui";
 import { MoreVertical } from "lucide-react";
-import { SVGProps } from "react";
 
 type TMenuItems =
   | "archive_page"
@@ -12,17 +12,10 @@ type TMenuItems =
   | "copy_page_link"
   | "duplicate_page";
 
-interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
-  size?: string | number;
-  absoluteStrokeWidth?: boolean;
-}
-
-type LucideIcon = (props: LucideProps) => JSX.Element;
-
 export interface IVerticalDropdownItemProps {
   key: number;
   type: TMenuItems;
-  Icon: LucideIcon;
+  Icon: LucideIconType;
   label: string;
   action: () => Promise<void> | void;
 }

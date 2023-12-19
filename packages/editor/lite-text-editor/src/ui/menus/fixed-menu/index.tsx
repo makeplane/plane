@@ -9,27 +9,21 @@ import {
   ImageItem,
   isCellSelection,
   ItalicItem,
+  LucideIconType,
   NumberedListItem,
   QuoteItem,
   StrikeThroughItem,
   TableItem,
   UnderLineItem,
+  UploadImage,
 } from "@plane/editor-core";
 import { Tooltip } from "@plane/ui";
-import type { SVGProps } from "react";
-import { UploadImage } from "@plane/editor-core";
 
-interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
-  size?: string | number;
-  absoluteStrokeWidth?: boolean;
-}
-
-type LucideIcon = (props: LucideProps) => JSX.Element;
 export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: LucideIcon;
+  icon: LucideIconType;
 }
 
 type EditorBubbleMenuProps = {

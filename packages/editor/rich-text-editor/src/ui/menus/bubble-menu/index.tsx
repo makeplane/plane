@@ -1,6 +1,5 @@
 import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
 import { FC, useEffect, useState } from "react";
-import { BoldIcon } from "lucide-react";
 
 import { NodeSelector } from "src/ui/menus/bubble-menu/node-selector";
 import { LinkSelector } from "src/ui/menus/bubble-menu/link-selector";
@@ -10,6 +9,7 @@ import {
   CodeItem,
   isCellSelection,
   ItalicItem,
+  LucideIconType,
   StrikeThroughItem,
   UnderLineItem,
 } from "@plane/editor-core";
@@ -18,7 +18,7 @@ export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIconType;
 }
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;

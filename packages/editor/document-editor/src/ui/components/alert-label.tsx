@@ -1,7 +1,7 @@
-import { Lock } from "lucide-react";
+import { LucideIconType } from "@plane/editor-core";
 
 interface IAlertLabelProps {
-  Icon?: typeof Lock;
+  Icon?: LucideIconType;
   backgroundColor: string;
   textColor?: string;
   label: string;
