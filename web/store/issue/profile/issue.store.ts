@@ -111,7 +111,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
     if (!currentUserId || !this.currentUserIssueTab || !this.issues || !this.issues[currentUserId]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);

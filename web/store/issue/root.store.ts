@@ -123,14 +123,13 @@ export class IssueRootStore {
     });
 
     autorun(() => {
-      // if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
-      // if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
-      // if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
-      // if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
-      // if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
-      // if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
+      if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
+      if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
+      if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
+      if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
+      if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
+      if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
       // if (rootStore?.workspace?.profileView) this.profileView = rootStore?.workspace?.profileView;
-      // if (rootStore?.user?.currentUser?.id) this.userId = rootStore?.user?.currentUser?.id;
       // if (rootStore?.states) this.states = rootStore?.states;
       // if (rootStore?.labels) this.labels = rootStore?.labels;
       // if (rootStore?.members) this.members = rootStore?.members;
