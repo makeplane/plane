@@ -218,9 +218,9 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     cycleId?: string | undefined
   ) => {
-    try {
-      if (!cycleId) return;
+    if (!cycleId) return;
 
+    try {
       switch (filterType) {
         case EIssueFilterType.FILTERS:
           await this.updateCycleFilters(workspaceSlug, projectId, cycleId, filterType, filters as IIssueFilterOptions);
@@ -247,6 +247,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
 
       return;
     } catch (error) {
+      this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };

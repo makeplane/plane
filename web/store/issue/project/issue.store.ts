@@ -158,9 +158,10 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       if (!issueId || !this.issues[projectId]) return;
 
       const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
-      runInAction(() => {
-        this.issues[projectId].splice(issueIndex, 1);
-      });
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[projectId].splice(issueIndex, 1);
+        });
 
       this.rootStore.issues.removeIssue(issueId);
 
@@ -175,16 +176,19 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue) => {
     try {
+      runInAction(() => {
+        this.issues[projectId].push(data.id);
+        this.rootStore.issues.addIssue([data]);
+      });
+
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       const quickAddIssueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === data.id);
-      runInAction(() => {
-        this.issues[projectId].splice(quickAddIssueIndex, 1);
-        this.rootStore.issues.removeIssue(data.id);
-
-        this.issues[projectId].push(response.id);
-        this.rootStore.issues.addIssue([response]);
-      });
+      if (quickAddIssueIndex >= 0)
+        runInAction(() => {
+          this.issues[projectId].splice(quickAddIssueIndex, 1);
+          this.rootStore.issues.removeIssue(data.id);
+        });
 
       return response;
     } catch (error) {

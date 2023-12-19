@@ -66,10 +66,10 @@ export interface IIssueRootStore {
 }
 
 export class IssueRootStore {
-  workspaceSlug: string | undefined = "plane";
+  workspaceSlug: string | undefined = undefined;
   userId: string | undefined = undefined;
-  projectId: string | undefined = "02c3e1d5-d7e2-401d-a773-45ecba45d745";
-  cycleId: string | undefined = "937e7405-aa19-4930-b12b-3d1203c03487";
+  projectId: string | undefined = undefined;
+  cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
   viewId: string | undefined = undefined;
 
@@ -125,13 +125,12 @@ export class IssueRootStore {
     });
 
     autorun(() => {
-      if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
-      if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
-      if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
-      if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
-      if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
-      if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
-
+      // if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
+      // if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
+      // if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
+      // if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
+      // if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
+      // if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
       // if (rootStore?.workspace?.profileView) this.profileView = rootStore?.workspace?.profileView;
       // if (rootStore?.user?.currentUser?.id) this.userId = rootStore?.user?.currentUser?.id;
       // if (rootStore?.states) this.states = rootStore?.states;
