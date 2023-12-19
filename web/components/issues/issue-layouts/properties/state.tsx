@@ -15,9 +15,9 @@ import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
 
 export interface IIssuePropertyState {
-  view?: "profile" | "workspace" | "project";
   projectId: string | null;
-  value: IState;
+  value: any | string | null;
+  defaultOptions?: any;
   onChange: (state: IState) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -29,9 +29,9 @@ export interface IIssuePropertyState {
 
 export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props) => {
   const {
-    view,
     projectId,
     value,
+    defaultOptions = [],
     onChange,
     disabled,
     hideDropdownArrow = false,
@@ -41,7 +41,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     placement,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const { workspace: workspaceStore, projectState: projectStateStore }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -49,26 +49,28 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectStates: IState[] = [];
-  const projectStatesByGroup = projectId && projectStore?.states?.[projectId];
-  if (projectStatesByGroup)
-    for (const group in projectStatesByGroup) projectStates.push(...projectStatesByGroup[group]);
+  let projectStates: IState[] = defaultOptions;
+  const storeStates = projectId ? projectStateStore.states[projectId] : [];
+  if (storeStates && storeStates.length > 0) projectStates = storeStates;
 
   const fetchProjectStates = () => {
     setIsLoading(true);
     if (workspaceSlug && projectId)
       workspaceSlug &&
         projectId &&
-        projectStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
+        projectStateStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
+
+  const selectedOption: IState | undefined =
+    (projectStates && value && projectStates?.find((state) => state.id === value)) || undefined;
 
   const dropdownOptions = projectStates?.map((state) => ({
     value: state.id,
     query: state.name,
     content: (
-      <div className="flex items-center gap-2">
+      <div className="flex w-full items-center gap-2 overflow-hidden">
         <StateGroupIcon stateGroup={state.group} color={state.color} />
-        {state.name}
+        <div className="line-clamp-1 inline-block w-full truncate">{state.name}</div>
       </div>
     ),
   }));
@@ -91,10 +93,10 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       : dropdownOptions?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
-        {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
-        <span className="truncate">{value?.name ?? "State"}</span>
+    <Tooltip tooltipHeading="State" tooltipContent={selectedOption?.name ?? ""} position="top">
+      <div className="flex w-full items-center gap-2 text-custom-text-200">
+        {selectedOption && <StateGroupIcon stateGroup={selectedOption?.group as any} color={selectedOption?.color} />}
+        <span className="line-clamp-1 inline-block truncate">{selectedOption?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -104,8 +106,8 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       {workspaceSlug && projectId && (
         <Combobox
           as="div"
-          className={`flex-shrink-0 text-left ${className}`}
-          value={value.id}
+          className={`w-auto max-w-full flex-shrink-0 text-left ${className}`}
+          value={selectedOption?.id}
           onChange={(data: string) => {
             const selectedState = projectStates?.find((state) => state.id === data);
             if (selectedState) onChange(selectedState);
@@ -116,10 +118,13 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
+              className={`flex h-5 w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
-              onClick={() => !projectStatesByGroup && fetchProjectStates()}
+              onClick={(e) => {
+                e.stopPropagation();
+                !storeStates && fetchProjectStates();
+              }}
             >
               {label}
               {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -127,7 +132,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
           </Combobox.Button>
           <Combobox.Options className="fixed z-10">
             <div
-              className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+              className={`my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -135,14 +140,14 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
               <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
                 <Search className="h-3.5 w-3.5 text-custom-text-300" />
                 <Combobox.Input
-                  className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search"
                   displayValue={(assigned: any) => assigned?.name}
                 />
               </div>
-              <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+              <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
                   <p className="text-center text-custom-text-200">Loading...</p>
                 ) : filteredOptions.length > 0 ? (
@@ -151,15 +156,20 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {({ selected }) => (
                         <>
                           {option.content}
-                          {selected && <Check className="h-3.5 w-3.5" />}
+                          {selected && (
+                            <div className="flex-shrink-0">
+                              <Check className="h-3.5 w-3.5" />
+                            </div>
+                          )}
                         </>
                       )}
                     </Combobox.Option>

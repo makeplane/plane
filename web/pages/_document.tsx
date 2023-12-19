@@ -12,9 +12,7 @@ import Script from "next/script";
 
 class MyDocument extends Document {
   render() {
-    const isSessionRecorderEnabled = parseInt(
-      process.env.NEXT_PUBLIC_ENABLE_SESSION_RECORDER || "0"
-    );
+    const isSessionRecorderEnabled = parseInt(process.env.NEXT_PUBLIC_ENABLE_SESSION_RECORDER || "0");
 
     return (
       <Html>

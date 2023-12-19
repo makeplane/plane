@@ -7,14 +7,15 @@ export * from "./delete-issue-modal";
 export * from "./description-form";
 export * from "./form";
 export * from "./issue-layouts";
+export * from "./peek-overview";
 export * from "./main-content";
 export * from "./modal";
 export * from "./parent-issues-list-modal";
 export * from "./sidebar";
 export * from "./label";
 export * from "./issue-reaction";
-export * from "./peek-overview";
 export * from "./confirm-issue-discard";
+export * from "./issue-update-status";
 
 // draft issue
 export * from "./draft-issue-form";

@@ -1,10 +1,12 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -25,7 +27,6 @@ import { ActiveCycleProgressStats } from "components/cycles";
 import { ViewIssueLabel } from "components/issues";
 // icons
 import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
-
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -65,12 +66,12 @@ interface IActiveCycleDetails {
   projectId: string;
 }
 
-export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
+export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   const router = useRouter();
 
   const { workspaceSlug, projectId } = props;
 
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -79,7 +80,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId] || null;
+  const activeCycle = cycleStore.cycles?.[projectId]?.current || null;
   const cycle = activeCycle ? activeCycle[0] : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
@@ -93,7 +94,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
   //     : null
   // ) as { data: IIssue[] | undefined };
 
-  if (isLoading)
+  if (!cycle && isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -102,7 +103,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
 
   if (!cycle)
     return (
-      <div className="h-full grid place-items-center text-center">
+      <div className="grid h-full place-items-center text-center">
         <div className="space-y-2">
           <div className="mx-auto flex justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" viewBox="0 0 66 66" fill="none">
@@ -116,13 +117,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
           <h4 className="text-sm text-custom-text-200">No active cycle</h4>
           <button
             type="button"
-            className="text-custom-primary-100 text-sm outline-none"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "q",
-              });
-              document.dispatchEvent(e);
-            }}
+            className="text-sm text-custom-primary-100 outline-none"
+            onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
           >
             Create a new cycle
           </button>
@@ -147,7 +143,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -160,7 +156,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -177,11 +173,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
   }));
 
   return (
-    <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-custom-background-100 border border-custom-border-200">
-      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:divide-y-0 lg:divide-x lg:grid-cols-3">
+    <div className="grid-row-2 grid divide-y rounded-[10px] border border-custom-border-200 bg-custom-background-100 shadow">
+      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
         <div className="flex flex-col text-xs">
           <div className="h-full w-full">
-            <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
+            <div className="flex h-60 flex-col justify-between gap-5 rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
                   <span className="h-5 w-5">
@@ -254,7 +250,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                         handleRemoveFromFavorites(e);
                       }}
                     >
-                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 fill-orange-400 text-orange-400" />
                     </button>
                   ) : (
                     <button
@@ -321,21 +317,21 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
               </div>
 
               <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-                <a className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
+                <span className="w-full rounded-md bg-custom-primary px-4 py-2 text-center text-sm font-medium text-white hover:bg-custom-primary/90">
                   View Cycle
-                </a>
+                </span>
               </Link>
             </div>
           </div>
         </div>
-        <div className="grid col-span-2 grid-cols-1 divide-y border-custom-border-200 md:divide-y-0 md:divide-x md:grid-cols-2">
+        <div className="col-span-2 grid grid-cols-1 divide-y border-custom-border-200 md:grid-cols-2 md:divide-x md:divide-y-0">
           <div className="flex h-60 flex-col border-custom-border-200">
-            <div className="flex h-full w-full flex-col text-custom-text-200 p-4">
+            <div className="flex h-full w-full flex-col p-4 text-custom-text-200">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
                 <LinearProgressIndicator data={progressIndicatorData} />
               </div>
-              <div className="flex flex-col mt-2 gap-1 items-center">
+              <div className="mt-2 flex flex-col items-center gap-1">
                 {Object.keys(groupedIssues).map((group, index) => (
                   <SingleProgressStats
                     key={index}
@@ -357,12 +353,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
               </div>
             </div>
           </div>
-          <div className="border-custom-border-200 h-60 overflow-y-scroll">
+          <div className="h-60 overflow-y-scroll border-custom-border-200">
             <ActiveCycleProgressStats cycle={cycle} />
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:divide-y-0 lg:divide-x lg:grid-cols-2">
+      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
         <div className="flex flex-col justify-between p-4">
           <div>
             <div className="text-custom-primary">High Priority Issues</div>
@@ -373,7 +369,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                     <div
                       key={issue.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
-                      className="flex flex-wrap cursor-pointer rounded-md items-center justify-between gap-2 border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
+                      className="flex cursor-pointer flex-wrap items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
                     >
                       <div className="flex flex-col gap-1">
                         <div>
@@ -392,7 +388,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div
-                          className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm flex-shrink-0 ${
+                          className={`grid h-6 w-6 flex-shrink-0 place-items-center items-center rounded border shadow-sm ${
                             issue.priority === "urgent"
                               ? "border-red-500/20 bg-red-500/20 text-red-500"
                               : "border-orange-500/20 bg-orange-500/20 text-orange-500"
@@ -418,7 +414,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                     </div>
                   ))
                 ) : (
-                  <div className="grid place-items-center text-custom-text-200 text-sm text-center">
+                  <div className="grid place-items-center text-center text-sm text-custom-text-200">
                     No issues present in the cycle.
                   </div>
                 )
@@ -485,4 +481,4 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       </div>
     </div>
   );
-};
+});

@@ -19,22 +19,34 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EFilterType } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const CycleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const {
-    issueFilter: issueFilterStore,
     cycle: cycleStore,
-    cycleIssueFilter: cycleIssueFilterStore,
-    project: projectStore,
+    projectIssuesFilter: projectIssueFiltersStore,
+    project: { currentProjectDetails },
+    projectMember: { projectMembers },
+    projectLabel: { projectLabels },
+    projectState: projectStateStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+    cycleIssuesFilter: { issueFilters, updateFilters },
+    user: { currentProjectRole },
   } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -46,62 +58,51 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          layout,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId || !cycleId) return;
-
-      const newValues = cycleIssueFilterStore.cycleFilters?.[key] ?? [];
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (cycleIssueFilterStore.cycleFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
-        [key]: newValues,
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, cycleId);
     },
-    [cycleId, cycleIssueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, cycleId);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const cyclesList = projectId ? cycleStore.cycles[projectId.toString()] : undefined;
+  const cyclesList = cycleStore.projectCycles;
   const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
+
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -110,7 +111,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -121,7 +122,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 ) : currentProjectDetails?.icon_prop ? (
                   renderEmoji(currentProjectDetails.icon_prop)
                 ) : (
-                  <span className="flex items-center justify-center h-4 w-4 rounded bg-gray-700 uppercase text-white">
+                  <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
                     {currentProjectDetails?.name.charAt(0)}
                   </span>
                 )
@@ -139,7 +140,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               type="component"
               component={
                 <CustomMenu
-                  placement="bottom-start"
                   label={
                     <>
                       <ContrastIcon className="h-3 w-3" />
@@ -148,13 +148,17 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   }
                   className="ml-1.5 flex-shrink-0"
                   width="auto"
+                  placement="bottom-start"
                 >
                   {cyclesList?.map((cycle) => (
                     <CustomMenu.MenuItem
                       key={cycle.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
                     >
-                      {truncateText(cycle.name, 40)}
+                      <div className="flex items-center gap-1.5">
+                        <ContrastIcon className="h-3 w-3" />
+                        {truncateText(cycle.name, 40)}
+                      </div>
                     </CustomMenu.MenuItem>
                   ))}
                 </CustomMenu>
@@ -170,42 +174,45 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={cycleIssueFilterStore.cycleFilters}
+              filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
-              members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-              states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
+              members={projectMembers?.map((m) => m.member)}
+              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={issueFilterStore.userDisplayFilters}
-              displayProperties={issueFilterStore.userDisplayProperties}
-              handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-              handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
-          <Button
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
-            Add Issue
-          </Button>
+
+          {canUserCreateIssue && (
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("CYCLE_PAGE_HEADER");
+                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                Add Issue
+              </Button>
+            </>
+          )}
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useTheme } from "next-themes";
+import { observer } from "mobx-react-lite";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
@@ -30,14 +31,23 @@ import type { IWorkspaceMemberInvitation } from "types";
 import { ROLE } from "constants/workspace";
 // components
 import { EmptyState } from "components/common";
+// mobx-store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
 
-const UserInvitationsPage: NextPageWithLayout = () => {
+const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
+
+  // store
+  const {
+    workspace: { workspaceSlug },
+    user: { currentUserSettings },
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
 
   const router = useRouter();
 
@@ -50,6 +60,12 @@ const UserInvitationsPage: NextPageWithLayout = () => {
   const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>("USER_WORKSPACE_INVITATIONS", () =>
     workspaceService.userWorkspaceInvitations()
   );
+
+  const redirectWorkspaceSlug =
+    workspaceSlug ||
+    currentUserSettings?.workspace?.last_workspace_slug ||
+    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    "";
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
@@ -73,10 +89,15 @@ const UserInvitationsPage: NextPageWithLayout = () => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(() => {
+      .then((res) => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
+        postHogEventTracker("MEMBER_ACCEPTED", {
+          ...res,
+          state: "SUCCESS",
+          accepted_from: "App",
+        });
         userService
           .updateUser({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
@@ -103,10 +124,10 @@ const UserInvitationsPage: NextPageWithLayout = () => {
   };
 
   return (
-    <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
+    <div className="flex h-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
       <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-        <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-200 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
-        <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 sm:py-5 left-5 sm:left-1/2 md:left-1/3 sm:-translate-x-[15px] top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12">
+        <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-custom-border-200 sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
+        <div className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3">
           <div className="h-[30px] w-[133px]">
             {theme === "light" ? (
               <Image src={BlackHorizontalLogo} alt="Plane black logo" />
@@ -115,24 +136,24 @@ const UserInvitationsPage: NextPageWithLayout = () => {
             )}
           </div>
         </div>
-        <div className="absolute sm:fixed text-custom-text-100 text-sm right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
+        <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
           {user?.email}
         </div>
       </div>
       {invitations ? (
         invitations.length > 0 ? (
-          <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
+          <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
             <div className="w-full space-y-10">
               <h5 className="text-lg">We see that someone has invited you to</h5>
               <h4 className="text-2xl font-semibold">Join a workspace</h4>
-              <div className="max-h-[37vh] md:w-3/5 space-y-4 overflow-y-auto">
+              <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                 {invitations.map((invitation) => {
                   const isSelected = invitationsRespond.includes(invitation.id);
 
                   return (
                     <div
                       key={invitation.id}
-                      className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
+                      className={`flex cursor-pointer items-center gap-2 rounded border px-3.5 py-5 ${
                         isSelected
                           ? "border-custom-primary-100"
                           : "border-custom-border-200 hover:bg-custom-background-80"
@@ -140,7 +161,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
                       onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                     >
                       <div className="flex-shrink-0">
-                        <div className="grid place-items-center h-9 w-9 rounded">
+                        <div className="grid h-9 w-9 place-items-center rounded">
                           {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
                             <img
                               src={invitation.workspace.logo}
@@ -150,7 +171,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
                               alt={invitation.workspace.name}
                             />
                           ) : (
-                            <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
+                            <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
                               {invitation.workspace.name[0]}
                             </span>
                           )}
@@ -180,24 +201,24 @@ const UserInvitationsPage: NextPageWithLayout = () => {
                 >
                   Accept & Join
                 </Button>
-                <Link href="/">
-                  <a>
+                <Link href={`/${redirectWorkspaceSlug}`}>
+                  <span>
                     <Button variant="neutral-primary" size="md">
                       Go Home
                     </Button>
-                  </a>
+                  </span>
                 </Link>
               </div>
             </div>
           </div>
         ) : (
-          <div className="fixed top-0 left-0 h-full w-full grid place-items-center">
+          <div className="fixed left-0 top-0 grid h-full w-full place-items-center">
             <EmptyState
               title="No pending invites"
               description="You can see here if someone invites you to a workspace."
               image={emptyInvitation}
               primaryButton={{
-                text: "Back to Dashboard",
+                text: "Back to dashboard",
                 onClick: () => router.push("/"),
               }}
             />
@@ -206,7 +227,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
       ) : null}
     </div>
   );
-};
+});
 
 UserInvitationsPage.getLayout = function getLayout(page: ReactElement) {
   return (

@@ -1,16 +1,13 @@
 import { Fragment, useState } from "react";
-
-import { observer } from "mobx-react-lite";
-
-// hooks
 import { usePopper } from "react-popper";
-import useEstimateOption from "hooks/use-estimate-option";
-// ui
-import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+// ui
 import { Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IIssuePropertyEstimates {
   view?: "profile" | "workspace" | "project";
@@ -27,7 +24,6 @@ export interface IIssuePropertyEstimates {
 
 export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observer((props) => {
   const {
-    view,
     projectId,
     value,
     onChange,
@@ -44,8 +40,6 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  const { isEstimateActive, estimatePoints } = useEstimateOption();
-
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
     modifiers: [
@@ -57,6 +51,17 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       },
     ],
   });
+
+  const {
+    project: { project_details },
+    projectEstimates: { projectEstimates },
+  } = useMobxStore();
+
+  const projectDetails = projectId ? project_details[projectId] : null;
+  const isEstimateEnabled = projectDetails?.estimate !== null;
+  const estimates = projectEstimates;
+  const estimatePoints =
+    projectDetails && isEstimateEnabled ? estimates?.find((e) => e.id === projectDetails.estimate)?.points : null;
 
   const options: { value: number | null; query: string; content: any }[] | undefined = (estimatePoints ?? []).map(
     (estimate) => ({
@@ -87,12 +92,14 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
   const selectedEstimate = estimatePoints?.find((e) => e.key === value);
   const label = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={selectedEstimate?.value ?? "None"} position="top">
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+      <div className="flex w-full cursor-pointer items-center gap-2 text-custom-text-200">
         <Triangle className="h-3 w-3" strokeWidth={2} />
         <span className="truncate">{selectedEstimate?.value ?? "None"}</span>
       </div>
     </Tooltip>
   );
+
+  if (!isEstimateEnabled) return null;
 
   return (
     <Combobox
@@ -106,9 +113,10 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none ${
+          className={`flex h-5 w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
+          onClick={(e) => e.stopPropagation()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -116,7 +124,7 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       </Combobox.Button>
       <Combobox.Options className="fixed z-10">
         <div
-          className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          className={`my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -124,14 +132,14 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
           <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
             <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Combobox.Input
-              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
               displayValue={(assigned: any) => assigned?.name}
             />
           </div>
-          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+          <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
@@ -139,10 +147,11 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                         active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {({ selected }) => (
                       <>

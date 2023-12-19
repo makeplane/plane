@@ -15,7 +15,7 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
     query: project.name + project.identifier,
     content: (
       <div className="flex items-center gap-2">
-        <span className="text-custom-text-200 text-[0.65rem]">{project.identifier}</span>
+        <span className="text-[0.65rem] text-custom-text-200">{project.identifier}</span>
         {project.name}
       </div>
     ),
@@ -34,7 +34,7 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
               .join(", ")
           : "All projects"
       }
-      optionsClassName="min-w-full"
+      optionsClassName="min-w-full max-w-[20rem]"
       multiple
     />
   );

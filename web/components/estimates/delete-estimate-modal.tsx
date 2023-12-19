@@ -40,16 +40,22 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
 
     const estimateId = data?.id!;
 
-    projectEstimatesStore.deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId).catch((err) => {
-      const error = err?.error;
-      const errorString = Array.isArray(error) ? error[0] : error;
+    projectEstimatesStore
+      .deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
+      .then(() => {
+        setIsDeleteLoading(false);
+        handleClose();
+      })
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: errorString ?? "Estimate could not be deleted. Please try again",
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: errorString ?? "Estimate could not be deleted. Please try again",
+        });
       });
-    });
   };
 
   useEffect(() => {
@@ -73,7 +79,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -87,7 +93,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -106,11 +112,13 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button
                       variant="danger"
+                      size="sm"
+                      tabIndex={1}
                       onClick={() => {
                         setIsDeleteLoading(true);
                         handleEstimateDelete();

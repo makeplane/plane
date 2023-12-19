@@ -11,19 +11,20 @@ import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+import useToast from "hooks/use-toast";
 
 type Props = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
-  labelToUpdate: IIssueLabels | null;
+  labelToUpdate?: IIssueLabel;
   onClose?: () => void;
 };
 
-const defaultValues: Partial<IIssueLabels> = {
+const defaultValues: Partial<IIssueLabel> = {
   name: "",
   color: "rgb(var(--color-text-200))",
 };
@@ -39,6 +40,8 @@ export const CreateUpdateLabelInline = observer(
     // store
     const { projectLabel: projectLabelStore } = useMobxStore();
 
+    const { setToastAlert } = useToast();
+
     const {
       handleSubmit,
       control,
@@ -47,7 +50,7 @@ export const CreateUpdateLabelInline = observer(
       watch,
       setValue,
       setFocus,
-    } = useForm<IIssueLabels>({
+    } = useForm<IIssueLabel>({
       defaultValues,
     });
 
@@ -57,16 +60,26 @@ export const CreateUpdateLabelInline = observer(
       if (onClose) onClose();
     };
 
-    const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
+    const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
-      await projectLabelStore.createLabel(workspaceSlug.toString(), projectId.toString(), formData).then(() => {
-        handleClose();
-        reset(defaultValues);
-      });
+      await projectLabelStore
+        .createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+        .then(() => {
+          handleClose();
+          reset(defaultValues);
+        })
+        .catch((error) => {
+          setToastAlert({
+            title: "Oops!",
+            type: "error",
+            message: error?.error ?? "Error while adding the label",
+          });
+          reset(formData);
+        });
     };
 
-    const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
+    const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
       await projectLabelStore
@@ -74,6 +87,14 @@ export const CreateUpdateLabelInline = observer(
         .then(() => {
           reset(defaultValues);
           handleClose();
+        })
+        .catch((error) => {
+          setToastAlert({
+            title: "Oops!",
+            type: "error",
+            message: error?.error ?? "Error while updating the label",
+          });
+          reset(formData);
         });
     };
 
@@ -107,9 +128,7 @@ export const CreateUpdateLabelInline = observer(
           e.preventDefault();
           handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
         }}
-        className={`flex scroll-m-8 items-center gap-2 rounded border border-custom-border-200 bg-custom-background-100 px-3.5 py-2 ${
-          labelForm ? "" : "hidden"
-        }`}
+        className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
       >
         <div className="flex-shrink-0">
           <Popover className="relative z-10 flex h-full w-full items-center justify-center">
@@ -137,7 +156,7 @@ export const CreateUpdateLabelInline = observer(
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                  <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                     <Controller
                       name="color"
                       control={control}
@@ -167,6 +186,7 @@ export const CreateUpdateLabelInline = observer(
                 id="labelName"
                 name="name"
                 type="text"
+                autoFocus
                 value={value}
                 onChange={onChange}
                 ref={ref}
@@ -177,10 +197,10 @@ export const CreateUpdateLabelInline = observer(
             )}
           />
         </div>
-        <Button variant="neutral-primary" onClick={() => handleClose()}>
+        <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
+        <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
           {isUpdating ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"}
         </Button>
       </form>

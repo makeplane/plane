@@ -36,7 +36,7 @@ export interface ICycleIssueStore {
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   updateGanttIssueStructure: (workspaceSlug: string, cycleId: string, issue: IIssue, payload: IBlockUpdateData) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => void;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, bridgeId: string) => void;
 }
 
@@ -89,10 +89,12 @@ export class CycleIssueStore implements ICycleIssueStore {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const cycleId = this.rootStore.cycle.cycleId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
 
       if (
         workspaceSlug &&
         projectId &&
+        hasPermissionToCurrentProject &&
         cycleId &&
         this.rootStore.cycleIssueFilter.cycleFilters &&
         this.rootStore.issueFilter.userDisplayFilters
@@ -250,7 +252,7 @@ export class CycleIssueStore implements ICycleIssueStore {
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
+    this.rootStore.projectIssues.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
@@ -322,19 +324,11 @@ export class CycleIssueStore implements ICycleIssueStore {
     }
   };
 
-  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     try {
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.issueService.addIssueToCycle(
-        workspaceSlug,
-        projectId,
-        cycleId,
-        {
-          issues: [issueId],
-        },
-        user
-      );
+      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: issueIds,
+      });
 
       this.fetchIssues(workspaceSlug, projectId, cycleId);
     } catch (error) {

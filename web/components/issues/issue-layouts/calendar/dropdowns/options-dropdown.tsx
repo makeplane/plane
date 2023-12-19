@@ -13,12 +13,29 @@ import { Check, ChevronUp } from "lucide-react";
 import { TCalendarLayouts } from "types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
+import { EFilterType } from "store/issues/types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
-export const CalendarOptionsDropdown: React.FC = observer(() => {
+interface ICalendarHeader {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+}
+
+export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
+  const { issuesFilterStore } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
+  const { calendar: calendarStore } = useMobxStore();
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -35,18 +52,16 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
     ],
   });
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
-  const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
+  const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        calendar: {
-          ...issueFilterStore.userDisplayFilters.calendar,
-          layout,
-        },
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+      calendar: {
+        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+        layout,
       },
     });
 
@@ -56,16 +71,14 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
   };
 
   const handleToggleWeekends = () => {
-    const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
+    const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
     if (!workspaceSlug || !projectId) return;
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        calendar: {
-          ...issueFilterStore.userDisplayFilters.calendar,
-          show_weekends: !showWeekends,
-        },
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+      calendar: {
+        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+        show_weekends: !showWeekends,
       },
     });
   };
@@ -78,13 +91,13 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
             <button
               type="button"
               ref={setReferenceElement}
-              className={`outline-none bg-custom-background-80 text-xs rounded flex items-center gap-1.5 px-2.5 py-1 hover:bg-custom-background-80 ${
+              className={`flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
                 open ? "text-custom-text-100" : "text-custom-text-200"
               }`}
             >
               <div className="font-medium">Options</div>
               <div
-                className={`w-3.5 h-3.5 flex items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
+                className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
               >
                 <ChevronUp width={12} strokeWidth={2} />
               </div>
@@ -104,14 +117,14 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className="absolute right-0 z-10 mt-1 bg-custom-background-100 border border-custom-border-200 shadow-custom-shadow-sm rounded min-w-[12rem] p-1 overflow-hidden"
+                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 p-1 shadow-custom-shadow-sm"
               >
                 <div>
                   {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
                     <button
                       key={layout}
                       type="button"
-                      className="text-xs hover:bg-custom-background-80 w-full text-left px-1 py-1.5 rounded flex items-center justify-between gap-2"
+                      className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                       onClick={() => handleLayoutChange(layoutDetails.key)}
                     >
                       {layoutDetails.title}
@@ -120,7 +133,7 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
                   ))}
                   <button
                     type="button"
-                    className="text-xs hover:bg-custom-background-80 w-full text-left px-1 py-1.5 rounded flex items-center justify-between gap-2"
+                    className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                     onClick={handleToggleWeekends}
                   >
                     Show weekends

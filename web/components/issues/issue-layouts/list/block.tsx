@@ -1,65 +1,85 @@
+import { useRouter } from "next/router";
 // components
-import { KanBanProperties } from "./properties";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { ListProperties } from "./properties";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueDisplayProperties } from "types";
+import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
   columnId: string;
+
   issue: IIssue;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
-  isReadonly?: boolean;
-  showEmptyGroup?: boolean;
+  displayProperties: IIssueDisplayProperties | undefined;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties, showEmptyGroup, isReadonly } = props;
-
+  const { columnId, issue, handleIssues, quickActions, displayProperties, canEditProperties } = props;
+  // router
+  const router = useRouter();
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    handleIssues(group_by, issueToUpdate, "update");
+    handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
+
+  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const { query } = router;
+    if (event.ctrlKey || event.metaKey) {
+      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
+      window.open(issueUrl, "_blank"); // Open link in a new tab
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      });
+    }
+  };
+
+  const canEditIssueProperties = canEditProperties(issue.project);
 
   return (
     <>
-      <div className="text-sm p-3 relative bg-custom-background-100 flex items-center gap-3">
-        {display_properties && display_properties?.key && (
-          <div className="flex-shrink-0 text-xs text-custom-text-300 font-medium">
+      <button
+        className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm w-full"
+        onClick={handleIssuePeekOverview}
+      >
+        {displayProperties && displayProperties?.key && (
+          <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
         )}
-        {issue?.tempId !== undefined && (
-          <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
-        )}
-        <IssuePeekOverview
-          workspaceSlug={issue?.workspace_detail?.slug}
-          projectId={issue?.project_detail?.id}
-          issueId={issue?.id}
-          isArchived={issue?.archived_at !== null}
-          handleIssue={(issueToUpdate) => {
-            handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
-          }}
-        >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-            <div className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full">{issue.name}</div>
-          </Tooltip>
-        </IssuePeekOverview>
 
-        <div className="ml-auto flex-shrink-0 flex items-center gap-2">
-          <KanBanProperties
-            columnId={columnId}
-            issue={issue}
-            isReadonly={isReadonly}
-            handleIssues={updateIssue}
-            display_properties={display_properties}
-            showEmptyGroup={showEmptyGroup}
-          />
-          {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+        {issue?.tempId !== undefined && (
+          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+        )}
+        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <div className="line-clamp-1 w-full cursor-pointer text-sm font-medium text-custom-text-100 text-left">
+            {issue.name}
+          </div>
+        </Tooltip>
+
+        <div className="ml-auto flex flex-shrink-0 items-center gap-2">
+          {!issue?.tempId ? (
+            <>
+              <ListProperties
+                columnId={columnId}
+                issue={issue}
+                isReadonly={!canEditIssueProperties}
+                handleIssues={updateIssue}
+                displayProperties={displayProperties}
+              />
+              {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+            </>
+          ) : (
+            <div className="h-4 w-4">
+              <Spinner className="h-4 w-4" />
+            </div>
+          )}
         </div>
-      </div>
+      </button>
     </>
   );
 };

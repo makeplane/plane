@@ -1,9 +1,7 @@
-import { IMentionHighlight, IMentionSuggestion } from "@plane/rich-text-editor";
-import useUser from "./use-user";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-const useEditorSuggestions = (_workspaceSlug: string | undefined, _projectId: string | undefined) => {
+const useEditorSuggestions = () => {
   const { mentionsStore }: RootStore = useMobxStore();
 
   return {

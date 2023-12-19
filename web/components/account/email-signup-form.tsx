@@ -36,7 +36,7 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
+      <form className="mx-auto mt-10 w-full space-y-4 sm:w-[360px]" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-1">
           <Controller
             control={control}
@@ -58,7 +58,7 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
                 ref={ref}
                 hasError={Boolean(errors.email)}
                 placeholder="Enter your email address..."
-                className="border-custom-border-300 h-[46px] w-full"
+                className="h-[46px] w-full border-custom-border-300"
               />
             )}
           />
@@ -80,7 +80,7 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
                 ref={ref}
                 hasError={Boolean(errors.password)}
                 placeholder="Enter your password..."
-                className="border-custom-border-300 h-[46px] w-full"
+                className="h-[46px] w-full border-custom-border-300"
               />
             )}
           />
@@ -107,14 +107,16 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
                 ref={ref}
                 hasError={Boolean(errors.confirm_password)}
                 placeholder="Confirm your password..."
-                className="border-custom-border-300 h-[46px] w-full"
+                className="h-[46px] w-full border-custom-border-300"
               />
             )}
           />
         </div>
         <div className="text-right text-xs">
           <Link href="/">
-            <a className="text-custom-text-200 hover:text-custom-primary-100">Already have an account? Sign in.</a>
+            <span className="text-custom-text-200 hover:text-custom-primary-100">
+              Already have an account? Sign in.
+            </span>
           </Link>
         </div>
         <div>

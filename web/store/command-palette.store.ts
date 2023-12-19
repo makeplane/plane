@@ -1,9 +1,22 @@
-import { observable, action, makeObservable } from "mobx";
+import { observable, action, makeObservable, computed } from "mobx";
 // types
 import { RootStore } from "./root";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
+
+export enum EProjectStore {
+  PROJECT = "ProjectStore",
+  PROJECT_VIEW = "ProjectViewStore",
+  PROFILE = "ProfileStore",
+  MODULE = "ModuleStore",
+  CYCLE = "CycleStore",
+}
+
+export interface ModalData {
+  store: EProjectStore;
+  viewId: string;
+}
 
 export interface ICommandPaletteStore {
   isCommandPaletteOpen: boolean;
@@ -17,16 +30,21 @@ export interface ICommandPaletteStore {
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
 
+  // computed
+  isAnyModalOpen: boolean;
+
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
   toggleCreateProjectModal: (value?: boolean) => void;
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
   toggleCreatePageModal: (value?: boolean) => void;
-  toggleCreateIssueModal: (value?: boolean) => void;
+  toggleCreateIssueModal: (value?: boolean, storeType?: EProjectStore) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
+
+  createIssueStoreType: EProjectStore;
 }
 
 class CommandPaletteStore implements ICommandPaletteStore {
@@ -46,6 +64,8 @@ class CommandPaletteStore implements ICommandPaletteStore {
   projectService;
   pageService;
 
+  createIssueStoreType: EProjectStore = EProjectStore.PROJECT;
+
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
@@ -60,6 +80,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
       isDeleteIssueModalOpen: observable.ref,
       isBulkDeleteIssueModalOpen: observable.ref,
       // computed
+      isAnyModalOpen: computed,
       // projectPages: computed,
       // action
       toggleCommandPaletteModal: action,
@@ -79,8 +100,22 @@ class CommandPaletteStore implements ICommandPaletteStore {
     this.pageService = new PageService();
   }
 
+  get isAnyModalOpen() {
+    return Boolean(
+      this.isCreateIssueModalOpen ||
+        this.isCreateCycleModalOpen ||
+        this.isCreatePageModalOpen ||
+        this.isCreateProjectModalOpen ||
+        this.isCreateModuleModalOpen ||
+        this.isCreateViewModalOpen ||
+        this.isShortcutModalOpen ||
+        this.isBulkDeleteIssueModalOpen ||
+        this.isDeleteIssueModalOpen
+    );
+  }
+
   toggleCommandPaletteModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCommandPaletteOpen = value;
     } else {
       this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
@@ -88,7 +123,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleShortcutModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isShortcutModalOpen = value;
     } else {
       this.isShortcutModalOpen = !this.isShortcutModalOpen;
@@ -96,7 +131,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateProjectModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateProjectModalOpen = value;
     } else {
       this.isCreateProjectModalOpen = !this.isCreateProjectModalOpen;
@@ -104,7 +139,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateCycleModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateCycleModalOpen = value;
     } else {
       this.isCreateCycleModalOpen = !this.isCreateCycleModalOpen;
@@ -112,7 +147,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateViewModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateViewModalOpen = value;
     } else {
       this.isCreateViewModalOpen = !this.isCreateViewModalOpen;
@@ -120,23 +155,25 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreatePageModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreatePageModalOpen = value;
     } else {
       this.isCreatePageModalOpen = !this.isCreatePageModalOpen;
     }
   };
 
-  toggleCreateIssueModal = (value?: boolean) => {
-    if (value) {
+  toggleCreateIssueModal = (value?: boolean, storeType?: EProjectStore) => {
+    if (value !== undefined) {
       this.isCreateIssueModalOpen = value;
+      this.createIssueStoreType = storeType || EProjectStore.PROJECT;
     } else {
       this.isCreateIssueModalOpen = !this.isCreateIssueModalOpen;
+      this.createIssueStoreType = EProjectStore.PROJECT;
     }
   };
 
   toggleDeleteIssueModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isDeleteIssueModalOpen = value;
     } else {
       this.isDeleteIssueModalOpen = !this.isDeleteIssueModalOpen;
@@ -144,7 +181,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateModuleModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateModuleModalOpen = value;
     } else {
       this.isCreateModuleModalOpen = !this.isCreateModuleModalOpen;
@@ -152,7 +189,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleBulkDeleteIssueModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isBulkDeleteIssueModalOpen = value;
     } else {
       this.isBulkDeleteIssueModalOpen = !this.isBulkDeleteIssueModalOpen;

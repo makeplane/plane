@@ -133,7 +133,7 @@ export class CycleIssueFilterStore implements ICycleIssueFilterStore {
         },
       };
 
-      await this.cycleService.updateCycle(workspaceSlug, projectId, cycleId, payload, undefined);
+      await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, payload);
     } catch (error) {
       this.fetchCycleFilters(workspaceSlug, projectId, cycleId);
 

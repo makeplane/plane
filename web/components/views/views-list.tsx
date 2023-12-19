@@ -6,13 +6,15 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectViewListItem } from "components/views";
-import { EmptyState } from "components/common";
+import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Input, Loader } from "@plane/ui";
 // assets
-import emptyView from "public/empty-state/view.svg";
+import emptyView from "public/empty-state/empty_view.webp";
 // icons
 import { Plus, Search } from "lucide-react";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectViewsList = observer(() => {
   const [query, setQuery] = useState("");
@@ -20,9 +22,15 @@ export const ProjectViewsList = observer(() => {
   const router = useRouter();
   const { projectId } = router.query;
 
-  const { projectViews: projectViewsStore } = useMobxStore();
+  const {
+    projectViews: projectViewsStore,
+    commandPalette: commandPaletteStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!viewsList)
     return (
@@ -39,12 +47,12 @@ export const ProjectViewsList = observer(() => {
   return (
     <>
       {viewsList.length > 0 ? (
-        <div className="h-full w-full flex flex-col">
-          <div className="w-full flex flex-col overflow-hidden">
-            <div className="flex items-center gap-2.5 w-full px-5 py-3 border-b border-custom-border-200">
+        <div className="flex h-full w-full flex-col">
+          <div className="flex w-full flex-col overflow-hidden">
+            <div className="flex w-full items-center gap-2.5 border-b border-custom-border-200 px-5 py-3">
               <Search className="text-custom-text-200" size={14} strokeWidth={2} />
               <Input
-                className="w-full bg-transparent text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 !p-0 focus:outline-none"
+                className="w-full bg-transparent !p-0 text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
@@ -55,24 +63,29 @@ export const ProjectViewsList = observer(() => {
           {filteredViewsList.length > 0 ? (
             filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
           ) : (
-            <p className="text-custom-text-300 text-sm text-center mt-10">No results found</p>
+            <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
           )}
         </div>
       ) : (
-        <EmptyState
-          title="Get focused with views"
-          description="Views aid in saving your issues by applying various filters and grouping options."
+        <NewEmptyState
+          title="Save filtered views for your project. Create as many as you need."
+          description="Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best."
           image={emptyView}
-          primaryButton={{
-            icon: <Plus size={14} strokeWidth={2} />,
-            text: "New View",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "v",
-              });
-              document.dispatchEvent(e);
-            },
+          comicBox={{
+            title: "Views work atop Issue properties.",
+            description: "You can create a view from here with as many properties as filters as you see fit.",
+            direction: "right",
           }}
+          primaryButton={
+            isEditingAllowed
+              ? {
+                  icon: <Plus size={14} strokeWidth={2} />,
+                  text: "Build your first view",
+                  onClick: () => commandPaletteStore.toggleCreateViewModal(true),
+                }
+              : null
+          }
+          disabled={!isEditingAllowed}
         />
       )}
     </>

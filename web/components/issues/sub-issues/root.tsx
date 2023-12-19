@@ -22,6 +22,7 @@ import { IUser, IIssue, ISearchIssueResponse } from "types";
 import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
@@ -43,8 +44,11 @@ const issueService = new IssueService();
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
 
-  const { user: userStore, issue: issueStore, issueDetail: issueDetailStore } = useMobxStore();
-  const userRole = userStore.currentProjectRole;
+  const {
+    user: { currentProjectRole },
+    issue: { updateIssueStructure },
+    projectIssues: { updateIssue, removeIssue },
+  } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -126,7 +130,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
     if (!workspaceSlug || !projectId || !parentIssue || !issue?.id) return;
     issueService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null }, user)
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null })
       .then(async () => {
         if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
         handleIssuesLoader({ key: "delete", issueId: issue?.id });
@@ -166,22 +170,32 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
         ...data,
       };
 
-      issueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
+      updateIssueStructure(null, null, payload);
+      updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+    [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
   );
 
-  const isEditable = userRole === 5 || userRole === 10 ? false : true;
+  const handleDeleteIssue = useCallback(
+    async (issue: IIssue) => {
+      if (!workspaceSlug || !projectId || !user) return;
+
+      await removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
+      await mutate(SUB_ISSUES(parentIssue?.id));
+    },
+    [removeIssue, projectId, user, workspaceSlug, parentIssue?.id]
+  );
+
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
     if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
   };
 
   return (
-    <div className="w-full h-full space-y-2">
+    <div className="h-full w-full space-y-2">
       {!issues && isLoading ? (
-        <div className="py-3 text-center text-sm  text-custom-text-300 font-medium">Loading...</div>
+        <div className="py-3 text-center text-sm  font-medium text-custom-text-300">Loading...</div>
       ) : (
         <>
           {issues && issues?.sub_issues && issues?.sub_issues?.length > 0 ? (
@@ -189,10 +203,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               {/* header */}
               <div className="relative flex items-center gap-4 text-xs">
                 <div
-                  className="rounded border border-custom-border-100 shadow p-1.5 px-2 flex items-center gap-1 hover:bg-custom-background-80 transition-all cursor-pointer select-none"
+                  className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                   onClick={() => handleIssuesLoader({ key: "visibility", issueId: parentIssue?.id })}
                 >
-                  <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
+                  <div className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center">
                     {issuesLoader.visibility.includes(parentIssue?.id) ? (
                       <ChevronDown width={16} strokeWidth={2} />
                     ) : (
@@ -211,15 +225,15 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                 </div>
 
                 {isEditable && issuesLoader.visibility.includes(parentIssue?.id) && (
-                  <div className="ml-auto flex-shrink-0 flex items-center gap-2 select-none">
+                  <div className="ml-auto flex flex-shrink-0 select-none items-center gap-2">
                     <div
-                      className="hover:bg-custom-background-80 transition-all cursor-pointer p-1.5 px-2 rounded border border-custom-border-100 shadow"
+                      className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                       onClick={() => handleIssueCrudOperation("create", parentIssue?.id)}
                     >
                       Add sub-issue
                     </div>
                     <div
-                      className="hover:bg-custom-background-80 transition-all cursor-pointer p-1.5 px-2 rounded border border-custom-border-100 shadow"
+                      className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                       onClick={() => handleIssueCrudOperation("existing", parentIssue?.id)}
                     >
                       Add an existing issue
@@ -232,6 +246,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               {issuesLoader.visibility.includes(parentIssue?.id) && workspaceSlug && projectId && (
                 <div className="border border-b-0 border-custom-border-100">
                   <SubIssuesRootList
+                    handleDeleteIssue={handleDeleteIssue}
                     workspaceSlug={workspaceSlug.toString()}
                     projectId={projectId.toString()}
                     parentIssue={parentIssue}
@@ -256,7 +271,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                     </>
                   }
                   buttonClassName="whitespace-nowrap"
-                  // position="left"
+                  placement="bottom-end"
                   noBorder
                   noChevron
                 >
@@ -281,8 +296,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
             </>
           ) : (
             isEditable && (
-              <div className="flex justify-between items-center">
-                <div className="text-xs py-2 text-custom-text-300 italic">No Sub-Issues yet</div>
+              <div className="flex items-center justify-between">
+                <div className="py-2 text-xs italic text-custom-text-300">No Sub-Issues yet</div>
                 <div>
                   <CustomMenu
                     label={
@@ -292,7 +307,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
-                    // position="left"
+                    placement="bottom-end"
                     noBorder
                     noChevron
                   >
@@ -351,7 +366,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
             </>
           )}
           {isEditable &&
-            issueCrudOperation?.delete?.toggle &&
+            workspaceSlug &&
+            projectId &&
             issueCrudOperation?.delete?.issueId &&
             issueCrudOperation?.delete?.issue && (
               <DeleteIssueModal
@@ -361,6 +377,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                   handleIssueCrudOperation("delete", null, null);
                 }}
                 data={issueCrudOperation?.delete?.issue}
+                onSubmit={async () => {
+                  await removeIssue(
+                    workspaceSlug.toString(),
+                    projectId.toString(),
+                    issueCrudOperation?.delete?.issue?.id ?? ""
+                  );
+                }}
               />
             )}
         </>

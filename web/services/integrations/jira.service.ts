@@ -1,10 +1,7 @@
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IJiraMetadata, IJiraResponse, IJiraImporterForm, IUser } from "types";
-
-const trackEventService = new TrackEventService();
+import { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "types";
 
 export class JiraImporterService extends APIService {
   constructor() {
@@ -21,16 +18,9 @@ export class JiraImporterService extends APIService {
       });
   }
 
-  async createJiraImporter(
-    workspaceSlug: string,
-    data: IJiraImporterForm,
-    user: IUser | undefined
-  ): Promise<IJiraResponse> {
+  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IJiraResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
-      .then((response) => {
-        trackEventService.trackImporterEvent(response?.data, "JIRA_IMPORTER_CREATE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

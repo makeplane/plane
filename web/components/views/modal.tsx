@@ -8,6 +8,7 @@ import useToast from "hooks/use-toast";
 import { ProjectViewForm } from "components/views";
 // types
 import { IProjectView } from "types";
+import { debounce } from "lodash";
 
 type Props = {
   data?: IProjectView | null;
@@ -32,7 +33,16 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const createView = async (payload: IProjectView) => {
     await projectViewsStore
       .createView(workspaceSlug, projectId, payload)
-      .then(() => handleClose())
+      .then(() => {
+        console.log("after calling store");
+        handleClose();
+        console.log("after closing");
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View created successfully.",
+        });
+      })
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -46,11 +56,11 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     await projectViewsStore
       .updateView(workspaceSlug, projectId, data?.id as string, payload)
       .then(() => handleClose())
-      .catch(() =>
+      .catch((err) =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Something went wrong. Please try again.",
+          message: err.detail ?? "Something went wrong. Please try again.",
         })
       );
   };
@@ -59,6 +69,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     if (!data) await createView(formData);
     else await updateView(formData);
   };
+
+  const debouncedFormSubmit = debounce(handleFormSubmit, 10, { leading: false, trailing: true });
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -72,7 +84,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -86,11 +98,11 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <ProjectViewForm
                   data={data}
                   handleClose={handleClose}
-                  handleFormSubmit={handleFormSubmit}
+                  handleFormSubmit={debouncedFormSubmit as (formData: IProjectView) => Promise<void>}
                   preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>

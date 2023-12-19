@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -8,14 +8,15 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
+import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction, IssueUpdateStatus } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IInboxIssue, IIssue } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
@@ -30,10 +31,15 @@ export const InboxMainContent: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
-  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
+  // states
+  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
-  const user = userStore.currentUser;
-  const userRole = userStore.currentProjectRole;
+  const {
+    inboxIssues: inboxIssuesStore,
+    inboxIssueDetails: inboxIssueDetailsStore,
+    user: { currentUser, currentProjectRole },
+    projectState: { states },
+  } = useMobxStore();
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -54,6 +60,9 @@ export const InboxMainContent: React.FC = observer(() => {
 
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
   const issueDetails = inboxIssueId ? inboxIssueDetailsStore.issueDetails[inboxIssueId.toString()] : undefined;
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetails?.state)
+    : undefined;
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
@@ -128,7 +137,7 @@ export const InboxMainContent: React.FC = observer(() => {
 
   if (!inboxIssueId)
     return (
-      <div className="h-full p-4 grid place-items-center text-custom-text-200">
+      <div className="grid h-full place-items-center p-4 text-custom-text-200">
         <div className="grid h-full place-items-center">
           <div className="my-5 flex flex-col items-center gap-4">
             <Inbox size={60} strokeWidth={1.5} />
@@ -144,25 +153,27 @@ export const InboxMainContent: React.FC = observer(() => {
       </div>
     );
 
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       {issueDetails ? (
-        <div className="flex h-full overflow-auto divide-x">
-          <div className="basis-2/3 h-full overflow-auto p-5 space-y-3">
+        <div className="flex h-full divide-x overflow-auto">
+          <div className="h-full basis-2/3 space-y-3 overflow-auto p-5">
             <div
-              className={`flex items-center gap-2 p-3 text-sm border rounded-md ${
+              className={`flex items-center gap-2 rounded-md border p-3 text-sm ${
                 issueStatus === -2
-                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
+                  ? "border-yellow-500 bg-yellow-500/10 text-yellow-500"
                   : issueStatus === -1
-                  ? "text-red-500 border-red-500 bg-red-500/10"
+                  ? "border-red-500 bg-red-500/10 text-red-500"
                   : issueStatus === 0
                   ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
-                    ? "text-red-500 border-red-500 bg-red-500/10"
-                    : "text-custom-text-200 border-gray-500 bg-gray-500/10"
+                    ? "border-red-500 bg-red-500/10 text-red-500"
+                    : "border-gray-500 bg-gray-500/10 text-custom-text-200"
                   : issueStatus === 1
-                  ? "text-green-500 border-green-500 bg-green-500/10"
+                  ? "border-green-500 bg-green-500/10 text-green-500"
                   : issueStatus === 2
-                  ? "text-custom-text-200 border-gray-500 bg-gray-500/10"
+                  ? "border-gray-500 bg-gray-500/10 text-custom-text-200"
                   : ""
               }`}
             >
@@ -205,7 +216,7 @@ export const InboxMainContent: React.FC = observer(() => {
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issueDetails.issue_inbox[0].duplicate_to}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="underline flex items-center gap-2"
+                      className="flex items-center gap-2 underline"
                     >
                       this issue <ExternalLink size={12} strokeWidth={2} />
                     </a>
@@ -214,20 +225,38 @@ export const InboxMainContent: React.FC = observer(() => {
                 </>
               ) : null}
             </div>
+            <div className="mb-2.5 flex items-center">
+              {currentIssueState && (
+                <StateGroupIcon
+                  className="mr-3 h-4 w-4"
+                  stateGroup={currentIssueState.group}
+                  color={currentIssueState.color}
+                />
+              )}
+              <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issueDetails} />
+            </div>
             <div>
               <IssueDescriptionForm
+                setIsSubmitting={(value) => setIsSubmitting(value)}
+                isSubmitting={isSubmitting}
                 workspaceSlug={workspaceSlug as string}
                 issue={{
                   name: issueDetails.name,
                   description_html: issueDetails.description_html,
+                  id: issueDetails.id,
                 }}
                 handleFormSubmit={submitChanges}
-                isAllowed={userRole === 15 || userRole === 20 || user?.id === issueDetails.created_by}
+                isAllowed={isAllowed || currentUser?.id === issueDetails.created_by}
               />
             </div>
 
-            <IssueReaction projectId={projectId} workspaceSlug={workspaceSlug} issueId={issueDetails.id} />
-
+            {workspaceSlug && projectId && (
+              <IssueReaction
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={projectId.toString()}
+                issueId={issueDetails.id}
+              />
+            )}
             <InboxIssueActivity issueDetails={issueDetails} />
           </div>
 

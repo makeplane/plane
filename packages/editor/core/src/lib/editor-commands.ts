@@ -1,20 +1,21 @@
+import { UploadImage } from "@plane/editor-types";
 import { Editor, Range } from "@tiptap/core";
-import { UploadImage } from "../types/upload-image";
 import { startImageUpload } from "../ui/plugins/upload-image";
+import { findTableAncestor } from "./utils";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
-  else editor.chain().focus().toggleHeading({ level: 1 }).run()
+  else editor.chain().focus().toggleHeading({ level: 1 }).run();
 };
 
 export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
-  else editor.chain().focus().toggleHeading({ level: 2 }).run()
+  else editor.chain().focus().toggleHeading({ level: 2 }).run();
 };
 
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
-  else editor.chain().focus().toggleHeading({ level: 3 }).run()
+  else editor.chain().focus().toggleHeading({ level: 3 }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
@@ -32,10 +33,11 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleUnderline().run();
 };
 
-export const toggleCode = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleCode().run();
-  else editor.chain().focus().toggleCode().run();
+export const toggleCodeBlock = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+  else editor.chain().focus().toggleCodeBlock().run();
 };
+
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
   else editor.chain().focus().toggleOrderedList().run();
@@ -48,7 +50,7 @@ export const toggleBulletList = (editor: Editor, range?: Range) => {
 
 export const toggleTaskList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
-  else editor.chain().focus().toggleTaskList().run()
+  else editor.chain().focus().toggleTaskList().run();
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
@@ -62,6 +64,15 @@ export const toggleBlockquote = (editor: Editor, range?: Range) => {
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
+  if (typeof window !== "undefined") {
+    const selection: any = window?.getSelection();
+    if (selection.rangeCount !== 0) {
+      const range = selection.getRangeAt(0);
+      if (findTableAncestor(range.startContainer)) {
+        return;
+      }
+    }
+  }
   if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
   else editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
 };
@@ -74,7 +85,12 @@ export const setLinkEditor = (editor: Editor, url: string) => {
   editor.chain().focus().setLink({ href: url }).run();
 };
 
-export const insertImageCommand = (editor: Editor, uploadFile: UploadImage, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void, range?: Range) => {
+export const insertImageCommand = (
+  editor: Editor,
+  uploadFile: UploadImage,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+  range?: Range
+) => {
   if (range) editor.chain().focus().deleteRange(range).run();
   const input = document.createElement("input");
   input.type = "file";
@@ -88,4 +104,3 @@ export const insertImageCommand = (editor: Editor, uploadFile: UploadImage, setI
   };
   input.click();
 };
-

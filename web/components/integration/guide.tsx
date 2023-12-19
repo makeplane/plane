@@ -1,11 +1,8 @@
 import { useState } from "react";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
@@ -21,7 +18,7 @@ import { IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
-import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+import { IMPORTERS_LIST } from "constants/workspace";
 
 // services
 const integrationService = new IntegrationService();
@@ -76,10 +73,10 @@ const IntegrationGuide = () => {
                 </div>
               </a>
             </div> */}
-            {IMPORTERS_EXPORTERS_LIST.map((service) => (
+            {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -87,25 +84,25 @@ const IntegrationGuide = () => {
                   </div>
                   <div>
                     <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                    <p className="text-sm text-custom-text-200 tracking-tight">{service.description}</p>
+                    <p className="text-sm tracking-tight text-custom-text-200">{service.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
                   <Link href={`/${workspaceSlug}/settings/imports?provider=${service.provider}`}>
-                    <a>
+                    <span>
                       <Button variant="primary">{service.type}</Button>
-                    </a>
+                    </span>
                   </Link>
                 </div>
               </div>
             ))}
             <div>
-              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-200">
+              <div className="flex items-center border-b border-custom-border-100 pb-3.5 pt-7">
                 <h3 className="flex gap-2 text-xl font-medium">
                   Previous Imports
                   <button
                     type="button"
-                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
+                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
                       mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
@@ -132,7 +129,7 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-custom-text-200 px-4 py-6">No previous imports available.</p>
+                    <p className="px-4 py-6 text-sm text-custom-text-200">No previous imports available.</p>
                   )
                 ) : (
                   <Loader className="mt-6 grid grid-cols-1 gap-3">

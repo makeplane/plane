@@ -55,7 +55,7 @@ export interface IIssueLink {
   url: string;
 }
 
-export interface linkDetails {
+export interface ILinkDetails {
   created_at: Date;
   created_by: string;
   created_by_detail: IUserLite;
@@ -99,7 +99,7 @@ export interface IIssue {
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   issue_cycle: IIssueCycle | null;
-  issue_link: linkDetails[];
+  issue_link: ILinkDetails[];
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];
@@ -159,7 +159,7 @@ export type IssuePriorities = {
   user: string;
 };
 
-export interface IIssueLabels {
+export interface IIssueLabel {
   id: string;
   created_at: Date;
   updated_at: Date;
@@ -173,21 +173,28 @@ export interface IIssueLabels {
   workspace: string;
   workspace_detail: IWorkspaceLite;
   parent: string | null;
+  sort_order: number;
+}
+
+export interface IIssueLabelTree extends IIssueLabel {
+  children: IIssueLabel[] | undefined;
 }
 
 export interface IIssueActivity {
+  access?: "EXTERNAL" | "INTERNAL";
   actor: string;
   actor_detail: IUserLite;
   attachments: any[];
-  comment: string;
+  comment?: string;
+  comment_html?: string;
+  comment_stripped?: string;
   created_at: Date;
   created_by: string;
   field: string | null;
   id: string;
   issue: string | null;
-  issue_comment: string | null;
+  issue_comment?: string | null;
   issue_detail: {
-    description: any;
     description_html: string;
     id: string;
     name: string;
@@ -204,13 +211,7 @@ export interface IIssueActivity {
   updated_by: string;
   verb: string;
   workspace: string;
-}
-
-export interface IIssueComment extends IIssueActivity {
-  access: "EXTERNAL" | "INTERNAL";
-  comment_html: string;
-  comment_json: any;
-  comment_stripped: string;
+  workspace_detail?: IWorkspaceLite;
 }
 
 export interface IIssueLite {

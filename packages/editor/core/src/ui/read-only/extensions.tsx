@@ -16,11 +16,12 @@ import TableRow from "../extensions/table/table-row/table-row";
 import ReadOnlyImageExtension from "../extensions/image/read-only-image";
 import { isValidHttpUrl } from "../../lib/utils";
 import { Mentions } from "../mentions";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
+import { IMentionSuggestion } from "@plane/editor-types";
 
-export const CoreReadOnlyEditorExtensions = (
-  mentionConfig: { mentionSuggestions: IMentionSuggestion[], mentionHighlights: string[] },
-) => [
+export const CoreReadOnlyEditorExtensions = (mentionConfig: {
+  mentionSuggestions: IMentionSuggestion[];
+  mentionHighlights: string[];
+}) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -44,8 +45,7 @@ export const CoreReadOnlyEditorExtensions = (
     },
     code: {
       HTMLAttributes: {
-        class:
-          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
+        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
         spellcheck: "false",
       },
     },
@@ -57,41 +57,41 @@ export const CoreReadOnlyEditorExtensions = (
     },
     gapcursor: false,
   }),
-    Gapcursor,
-    TiptapLink.configure({
-      protocols: ["http", "https"],
-      validate: (url) => isValidHttpUrl(url),
-      HTMLAttributes: {
-        class:
-          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
-      },
-    }),
-    ReadOnlyImageExtension.configure({
-      HTMLAttributes: {
-        class: "rounded-lg border border-custom-border-300",
-      },
-    }),
-    TiptapUnderline,
-    TextStyle,
-    Color,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2",
-      },
-    }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "flex items-start my-4",
-      },
-      nested: true,
-    }),
-    Markdown.configure({
-      html: true,
-      transformCopiedText: true,
-    }),
-    Table,
-    TableHeader,
-    TableCell,
-    TableRow,
-    Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
-  ];
+  Gapcursor,
+  TiptapLink.configure({
+    protocols: ["http", "https"],
+    validate: (url) => isValidHttpUrl(url),
+    HTMLAttributes: {
+      class:
+        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+    },
+  }),
+  ReadOnlyImageExtension.configure({
+    HTMLAttributes: {
+      class: "rounded-lg border border-custom-border-300",
+    },
+  }),
+  TiptapUnderline,
+  TextStyle,
+  Color,
+  TaskList.configure({
+    HTMLAttributes: {
+      class: "not-prose pl-2",
+    },
+  }),
+  TaskItem.configure({
+    HTMLAttributes: {
+      class: "flex items-start my-4",
+    },
+    nested: true,
+  }),
+  Markdown.configure({
+    html: true,
+    transformCopiedText: true,
+  }),
+  Table,
+  TableHeader,
+  TableCell,
+  TableRow,
+  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
+];

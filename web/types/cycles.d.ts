@@ -1,13 +1,4 @@
-import type {
-  IUser,
-  IIssue,
-  IProject,
-  IProjectLite,
-  IWorkspace,
-  IWorkspaceLite,
-  IIssueFilterOptions,
-  IUserLite,
-} from "types";
+import type { IUser, IIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "types";
 
 export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
 
@@ -20,7 +11,7 @@ export interface ICycle {
   created_at: Date;
   created_by: string;
   description: string;
-  distribution: {
+  distribution?: {
     assignees: TAssigneesDistribution[];
     completion_chart: TCompletionChartDistribution;
     labels: TLabelsDistribution[];

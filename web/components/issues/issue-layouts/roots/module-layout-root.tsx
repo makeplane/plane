@@ -18,69 +18,65 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 
-type Props = {
-  openIssuesListModal: () => void;
-};
-
-export const ModuleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
+export const ModuleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
-    moduleIssue: moduleIssueStore,
-    moduleFilter: moduleIssueFilterStore,
+    moduleIssues: { loader, getIssues, fetchIssues },
+    moduleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
   useSWR(
-    workspaceSlug && projectId && moduleId ? `MODULE_FILTERS_AND_ISSUES_${moduleId.toString()}` : null,
+    workspaceSlug && projectId && moduleId ? `MODULE_ISSUES_V3_${workspaceSlug}_${projectId}_${moduleId}` : null,
     async () => {
       if (workspaceSlug && projectId && moduleId) {
-        // fetching the project display filters and display properties
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-        // fetching the module filters
-        await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
-
-        // fetching the module issues
-        await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
+        await fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
+        await fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          getIssues ? "mutation" : "init-loader",
+          moduleId.toString()
+        );
       }
     }
   );
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
-
-  const issueCount = moduleIssueStore.getIssuesCount;
-
-  if (!moduleIssueStore.getIssues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
+  const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
-      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ModuleEmptyState openIssuesListModal={openIssuesListModal} />
-      ) : (
-        <div className="h-full w-full overflow-auto">
-          {activeLayout === "list" ? (
-            <ModuleListLayout />
-          ) : activeLayout === "kanban" ? (
-            <ModuleKanBanLayout />
-          ) : activeLayout === "calendar" ? (
-            <ModuleCalendarLayout />
-          ) : activeLayout === "gantt_chart" ? (
-            <ModuleGanttLayout />
-          ) : activeLayout === "spreadsheet" ? (
-            <ModuleSpreadsheetLayout />
-          ) : null}
+
+      {loader === "init-loader" || !getIssues ? (
+        <div className="flex h-full w-full items-center justify-center">
+          <Spinner />
         </div>
+      ) : (
+        <>
+          {Object.keys(getIssues ?? {}).length == 0 ? (
+            <ModuleEmptyState
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              moduleId={moduleId?.toString()}
+            />
+          ) : (
+            <div className="h-full w-full overflow-auto">
+              {activeLayout === "list" ? (
+                <ModuleListLayout />
+              ) : activeLayout === "kanban" ? (
+                <ModuleKanBanLayout />
+              ) : activeLayout === "calendar" ? (
+                <ModuleCalendarLayout />
+              ) : activeLayout === "gantt_chart" ? (
+                <ModuleGanttLayout />
+              ) : activeLayout === "spreadsheet" ? (
+                <ModuleSpreadsheetLayout />
+              ) : null}
+            </div>
+          )}
+          {/* <ModuleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} /> */}
+        </>
       )}
     </div>
   );

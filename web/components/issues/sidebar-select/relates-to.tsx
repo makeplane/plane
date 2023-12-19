@@ -68,7 +68,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
     if (!user) return;
 
     issueService
-      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
+      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, {
         related_list: [
           ...selectedIssues.map((issue) => ({
             issue: issueId as string,
@@ -138,8 +138,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
                             workspaceSlug as string,
                             projectId as string,
                             issueId as string,
-                            relation.id,
-                            user
+                            relation.id
                           )
                           .then(() => {
                             submitChanges();
@@ -154,7 +153,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
           </div>
           <button
             type="button"
-            className={`bg-custom-background-80 text-xs text-custom-text-200 rounded px-2.5 py-0.5 ${
+            className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs text-custom-text-200 ${
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
             }`}
             onClick={() => setIsRelatesToModalOpen(true)}

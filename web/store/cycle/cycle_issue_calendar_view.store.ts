@@ -36,8 +36,8 @@ export class CycleIssueCalendarViewStore implements ICycleIssueCalendarViewStore
         projectId: projectId,
       };
 
-      const droppableSourceColumnId = source.droppableId;
-      const droppableDestinationColumnId = destination.droppableId;
+      const droppableSourceColumnId = source?.droppableId || null;
+      const droppableDestinationColumnId = destination?.droppableId || null;
 
       if (droppableSourceColumnId === droppableDestinationColumnId) return;
 
@@ -76,7 +76,7 @@ export class CycleIssueCalendarViewStore implements ICycleIssueCalendarViewStore
         this.rootStore.cycleIssue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,

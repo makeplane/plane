@@ -1,27 +1,32 @@
 import { FC } from "react";
-// types
-import { ICycle } from "types";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclePeekOverview, CyclesBoardCard } from "components/cycles";
+// types
+import { ICycle } from "types";
 
 export interface ICyclesBoard {
   cycles: ICycle[];
   filter: string;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string;
+  peekCycle: string | undefined;
 }
 
-export const CyclesBoard: FC<ICyclesBoard> = (props) => {
+export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
   const { cycles, filter, workspaceSlug, projectId, peekCycle } = props;
+
+  const { commandPalette: commandPaletteStore } = useMobxStore();
 
   return (
     <>
       {cycles.length > 0 ? (
         <div className="h-full w-full">
-          <div className="flex justify-between h-full w-full">
+          <div className="flex h-full w-full justify-between">
             <div
-              className={`grid grid-cols-1 gap-6 p-8 h-full w-full overflow-y-auto ${
+              className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
                 peekCycle
                   ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
                   : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
@@ -38,7 +43,7 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
           </div>
         </div>
       ) : (
-        <div className="h-full grid place-items-center text-center">
+        <div className="grid h-full place-items-center text-center">
           <div className="space-y-2">
             <div className="mx-auto flex justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" viewBox="0 0 66 66" fill="none">
@@ -52,13 +57,8 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
             <h4 className="text-sm text-custom-text-200">{filter === "all" ? "No cycles" : `No ${filter} cycles`}</h4>
             <button
               type="button"
-              className="text-custom-primary-100 text-sm outline-none"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "q",
-                });
-                document.dispatchEvent(e);
-              }}
+              className="text-sm text-custom-primary-100 outline-none"
+              onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
             >
               Create a new cycle
             </button>
@@ -67,4 +67,4 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
       )}
     </>
   );
-};
+});

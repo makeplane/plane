@@ -22,7 +22,7 @@ export interface IInboxStore {
   };
 
   // actions
-  setInboxId: (inboxId: string) => void;
+  setInboxId: (inboxId: string | null) => void;
 
   getInboxId: (projectId: string) => string | null;
 
@@ -100,7 +100,7 @@ export class InboxStore implements IInboxStore {
     return this.inboxesList[projectId]?.[0]?.id ?? null;
   };
 
-  setInboxId = (inboxId: string) => {
+  setInboxId = (inboxId: string | null) => {
     runInAction(() => {
       this.inboxId = inboxId;
     });

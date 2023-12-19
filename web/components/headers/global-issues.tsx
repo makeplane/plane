@@ -2,8 +2,6 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -14,9 +12,11 @@ import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plan
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TStaticViewTypes } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EFilterType } from "store/issues/types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -27,78 +27,63 @@ type Props = {
   activeLayout: "list" | "spreadsheet";
 };
 
-const STATIC_VIEW_TYPES: TStaticViewTypes[] = ["all-issues", "assigned", "created", "subscribed"];
-
 export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { activeLayout } = props;
 
   const [createViewModal, setCreateViewModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string };
 
   const {
-    globalViewFilters: globalViewFiltersStore,
-    workspaceFilter: workspaceFilterStore,
-    workspace: workspaceStore,
-    project: projectStore,
+    workspace: { workspaceLabels },
+    workspaceMember: { workspaceMembers },
+    project: { workspaceProjects },
+    user: { currentWorkspaceRole },
+    workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
-
-  const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !globalViewId) return;
-
-      const newValues = storedFilters?.[key] ?? [];
+      if (!workspaceSlug) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (storedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), {
-        [key]: newValues,
-      });
+      updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: newValues });
     },
-    [globalViewId, globalViewFiltersStore, storedFilters, workspaceSlug]
+    [workspaceSlug, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
-
-      workspaceFilterStore.updateWorkspaceFilters(workspaceSlug.toString(), {
-        display_filters: updatedDisplayFilter,
-      });
+      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [workspaceFilterStore, workspaceSlug]
+    [workspaceSlug, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug) return;
-
-      workspaceFilterStore.updateWorkspaceFilters(workspaceSlug.toString(), {
-        display_properties: property,
-      });
+      updateFilters(workspaceSlug, EFilterType.DISPLAY_PROPERTIES, property);
     },
-    [workspaceFilterStore, workspaceSlug]
+    [workspaceSlug, updateFilters]
   );
 
-  useSWR(
-    workspaceSlug ? "USER_WORKSPACE_DISPLAY_FILTERS" : null,
-    workspaceSlug ? () => workspaceFilterStore.fetchUserWorkspaceFilters(workspaceSlug.toString()) : null
-  );
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -115,13 +100,13 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           </Breadcrumbs>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+          <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {GLOBAL_VIEW_LAYOUTS.map((layout) => (
               <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
-                <a>
+                <span>
                   <Tooltip tooltipContent={layout.title}>
                     <div
-                      className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
                         activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
                       }`}
                     >
@@ -132,39 +117,39 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                       />
                     </div>
                   </Tooltip>
-                </a>
+                </span>
               </Link>
             ))}
           </div>
+
           {activeLayout === "spreadsheet" && (
             <>
-              {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
-                <FiltersDropdown title="Filters" placement="bottom-end">
-                  <FilterSelection
-                    filters={storedFilters ?? {}}
-                    handleFiltersUpdate={handleFiltersUpdate}
-                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                    labels={workspaceStore.workspaceLabels ?? undefined}
-                    members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
-                    projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
-                  />
-                </FiltersDropdown>
-              )}
-
+              <FiltersDropdown title="Filters" placement="bottom-end">
+                <FilterSelection
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  filters={issueFilters?.filters ?? {}}
+                  handleFiltersUpdate={handleFiltersUpdate}
+                  labels={workspaceLabels ?? undefined}
+                  members={workspaceMembers?.map((m) => m.member)}
+                  projects={workspaceProjects ?? undefined}
+                />
+              </FiltersDropdown>
               <FiltersDropdown title="Display" placement="bottom-end">
                 <DisplayFiltersSelection
-                  displayFilters={workspaceFilterStore.workspaceDisplayFilters}
-                  displayProperties={workspaceFilterStore.workspaceDisplayProperties}
-                  handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-                  handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  displayFilters={issueFilters?.displayFilters ?? {}}
+                  handleDisplayFiltersUpdate={handleDisplayFilters}
+                  displayProperties={issueFilters?.displayProperties ?? {}}
+                  handleDisplayPropertiesUpdate={handleDisplayProperties}
                 />
               </FiltersDropdown>
             </>
           )}
-          <Button variant="primary" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
-            New View
-          </Button>
+          {isAuthorizedUser && (
+            <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
+              New View
+            </Button>
+          )}
         </div>
       </div>
     </>

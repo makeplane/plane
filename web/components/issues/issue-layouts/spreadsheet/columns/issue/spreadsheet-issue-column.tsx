@@ -12,15 +12,8 @@ type Props = {
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: IIssueDisplayProperties;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  setIssuePeekOverView: React.Dispatch<
-    React.SetStateAction<{
-      workspaceSlug: string;
-      projectId: string;
-      issueId: string;
-    } | null>
-  >;
-  disableUserActions: boolean;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  canEditProperties: (projectId: string | undefined) => boolean;
   nestingLevel?: number;
 };
 
@@ -28,10 +21,9 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   issue,
   expandedIssues,
   setExpandedIssues,
-  setIssuePeekOverView,
   properties,
-  handleIssueAction,
-  disableUserActions,
+  quickActions,
+  canEditProperties,
   nestingLevel = 0,
 }) => {
   const handleToggleExpand = (issueId: string) => {
@@ -48,7 +40,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
@@ -57,11 +49,9 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
         properties={properties}
-        handleEditIssue={() => handleIssueAction(issue, "edit")}
-        handleDeleteIssue={() => handleIssueAction(issue, "delete")}
-        setIssuePeekOverView={setIssuePeekOverView}
-        disableUserActions={disableUserActions}
+        canEditProperties={canEditProperties}
         nestingLevel={nestingLevel}
+        quickActions={quickActions}
       />
 
       {isExpanded &&
@@ -75,9 +65,8 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}
             properties={properties}
-            handleIssueAction={handleIssueAction}
-            setIssuePeekOverView={setIssuePeekOverView}
-            disableUserActions={disableUserActions}
+            quickActions={quickActions}
+            canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
           />
         ))}

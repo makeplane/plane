@@ -117,7 +117,7 @@ export const ModuleForm: React.FC<Props> = ({
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   placeholder="Module Title"
-                  className="resize-none w-full placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                  className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
                 />
               )}
             />
@@ -182,18 +182,18 @@ export const ModuleForm: React.FC<Props> = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" onClick={handleClose}>
+      <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Module..."
               : "Update Module"
             : isSubmitting
-            ? "Creating Module..."
-            : "Create Module"}
+              ? "Creating Module..."
+              : "Create Module"}
         </Button>
       </div>
     </form>

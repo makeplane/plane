@@ -4,14 +4,12 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AIService } from "services/ai.service";
-import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
-import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -34,28 +32,17 @@ type FormData = {
 
 // services
 const aiService = new AIService();
-const trackEventService = new TrackEventService();
 
-export const GptAssistantModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  inset = "top-0 left-0",
-  content,
-  htmlContent,
-  onResponse,
-  projectId,
-  block,
-  issue,
-}) => {
+export const GptAssistantModal: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, inset = "top-0 left-0", content, htmlContent, onResponse, projectId } = props;
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { user } = useUserAuth();
-
   const editorRef = useRef<any>(null);
+  const responseRef = useRef<any>(null);
 
   const { setToastAlert } = useToast();
 
@@ -92,15 +79,10 @@ export const GptAssistantModal: React.FC<Props> = ({
     }
 
     await aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: content && content !== "" ? content : htmlContent ?? "",
-          task: formData.task,
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: content && content !== "" ? content : htmlContent ?? "",
+        task: formData.task,
+      })
       .then((res) => {
         setResponse(res.response_html);
         setFocus("task");
@@ -111,7 +93,7 @@ export const GptAssistantModal: React.FC<Props> = ({
       .catch((err) => {
         const error = err?.data?.error;
 
-        if (err.status === 429)
+        if (err?.status === 429)
           setToastAlert({
             type: "error",
             title: "Error!",
@@ -134,40 +116,48 @@ export const GptAssistantModal: React.FC<Props> = ({
     editorRef.current?.setEditorValue(htmlContent ?? `<p>${content}</p>`);
   }, [htmlContent, editorRef, content]);
 
+  useEffect(() => {
+    responseRef.current?.setEditorValue(`<p>${response}</p>`);
+  }, [response, responseRef]);
+
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
+      className={`absolute ${inset} z-20 flex w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
         isOpen ? "block" : "hidden"
       }`}
     >
-      {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
-        <div className="text-sm">
-          Content:
-          <RichReadOnlyEditorWithRef
-            value={htmlContent ?? `<p>${content}</p>`}
-            customClassName="-m-3"
-            noBorder
-            borderOnFocus={false}
-            ref={editorRef}
-          />
-        </div>
-      )}
-      {response !== "" && (
-        <div className="page-block-section text-sm">
-          Response:
-          <RichReadOnlyEditor
-            value={`<p>${response}</p>`}
-            customClassName="-mx-3 -my-3"
-            noBorder
-            borderOnFocus={false}
-          />
-        </div>
-      )}
-      {invalidResponse && (
-        <div className="text-sm text-red-500">
-          No response could be generated. This may be due to insufficient content or task information. Please try again.
-        </div>
-      )}
+      <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
+        {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
+          <div className="text-sm">
+            Content:
+            <RichReadOnlyEditorWithRef
+              value={htmlContent ?? `<p>${content}</p>`}
+              customClassName="-m-3"
+              noBorder
+              borderOnFocus={false}
+              ref={editorRef}
+            />
+          </div>
+        )}
+        {response !== "" && (
+          <div className="page-block-section text-sm">
+            Response:
+            <RichReadOnlyEditorWithRef
+              value={`<p>${response}</p>`}
+              customClassName="-mx-3 -my-3"
+              noBorder
+              borderOnFocus={false}
+              ref={responseRef}
+            />
+          </div>
+        )}
+        {invalidResponse && (
+          <div className="text-sm text-red-500">
+            No response could be generated. This may be due to insufficient content or task information. Please try
+            again.
+          </div>
+        )}
+      </div>
       <Controller
         control={control}
         name="task"
@@ -193,20 +183,16 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block && user)
-                trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
-              else if (issue && user)
-                trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response
           </Button>
         )}
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" onClick={onClose}>
+          <Button variant="neutral-primary" size="sm" onClick={onClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
+          <Button variant="primary" size="sm" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
             {isSubmitting ? "Generating response..." : response === "" ? "Generate response" : "Generate again"}
           </Button>
         </div>

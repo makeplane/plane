@@ -17,13 +17,16 @@ export const JiraGetImportDetail: React.FC = observer(() => {
   const { workspaceSlug } = router.query;
 
   const {
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
+  const {
     control,
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
-
-  const { project: projectStore } = useMobxStore();
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   return (
     <div className="h-full w-full space-y-8 overflow-y-auto">
@@ -32,10 +35,8 @@ export const JiraGetImportDetail: React.FC = observer(() => {
           <h3 className="font-semibold">Jira Personal Access Token</h3>
           <p className="text-sm text-custom-text-200">
             Get to know your access token by navigating to{" "}
-            <Link href="https://id.atlassian.com/manage-profile/security/api-tokens">
-              <a className="text-custom-primary underline" target="_blank" rel="noreferrer">
-                Atlassian Settings
-              </a>
+            <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
+              <span className="text-custom-primary underline">Atlassian Settings</span>
             </Link>
           </p>
         </div>
@@ -57,6 +58,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 ref={ref}
                 placeholder="XXXXXXXX"
                 className="w-full"
+                autoComplete="off"
               />
             )}
           />
@@ -95,7 +97,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-custom-text-200">Enter the Gmail account that you use in Jira account</p>
+          <p className="text-sm text-custom-text-200">Enter the Email account that you use in Jira account</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -191,8 +193,8 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                   <button
                     type="button"
                     onClick={() => {
-                      const event = new KeyboardEvent("keydown", { key: "p" });
-                      document.dispatchEvent(event);
+                      setTrackElement("JIRA_IMPORT_DETAIL");
+                      commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >

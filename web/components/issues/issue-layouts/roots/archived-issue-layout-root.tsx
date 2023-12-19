@@ -11,19 +11,22 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { archivedIssueFilters: archivedIssueFiltersStore, archivedIssues: archivedIssueStore } = useMobxStore();
+  const {
+    projectArchivedIssues: { getIssues, fetchIssues },
+    projectArchivedIssuesFilter: { fetchFilters },
+  } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await archivedIssueFiltersStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-      await archivedIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+      await fetchFilters(workspaceSlug.toString(), projectId.toString());
+      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
     }
   });
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ArchivedIssueAppliedFiltersRoot />
-      <div className="w-full h-full overflow-auto">
+      <div className="h-full w-full overflow-auto">
         <ArchivedIssueListLayout />
       </div>
     </div>

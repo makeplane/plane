@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IntegrationService } from "services/integrations";
 // layouts
@@ -16,26 +19,41 @@ import { Loader } from "@plane/ui";
 import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { APP_INTEGRATIONS } from "constants/fetch-keys";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-// services
 const integrationService = new IntegrationService();
 
-const WorkspaceIntegrationsPage: NextPageWithLayout = () => {
+const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // mobx store
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
 
-  const { data: appIntegrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug ? integrationService.getAppIntegrationsList() : null
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
+  if (!isAdmin)
+    return (
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+      </div>
+    );
+
+  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
   );
 
   return (
-    <section className="pr-9 py-8 w-full overflow-y-auto">
+    <section className="w-full overflow-y-auto py-8 pr-9">
       <IntegrationAndImportExportBanner bannerName="Integrations" />
       <div>
         {appIntegrations ? (
           appIntegrations.map((integration) => <SingleIntegrationCard key={integration.id} integration={integration} />)
         ) : (
-          <Loader className="space-y-2.5 mt-4">
+          <Loader className="mt-4 space-y-2.5">
             <Loader.Item height="89px" />
             <Loader.Item height="89px" />
           </Loader>
@@ -43,7 +61,7 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = () => {
       </div>
     </section>
   );
-};
+});
 
 WorkspaceIntegrationsPage.getLayout = function getLayout(page: ReactElement) {
   return (

@@ -1,29 +1,23 @@
-"use client"
-import * as React from 'react';
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from '@plane/editor-core';
-import { EditorBubbleMenu } from './menus/bubble-menu';
-import { RichTextEditorExtensions } from './extensions';
+"use client";
+import * as React from "react";
+import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from "@plane/editor-core";
+import { EditorBubbleMenu } from "./menus/bubble-menu";
+import { RichTextEditorExtensions } from "./extensions";
+import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-types";
 
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
-
-export type IMentionSuggestion = {
-  id: string;
-  type: string;
-  avatar: string;
-  title: string;
-  subtitle: string;
-  redirect_uri: string;
-}
-
-export type IMentionHighlight = string
-
-interface IRichTextEditor {
+export type IRichTextEditor = {
   value: string;
+  dragDropEnabled?: boolean;
   uploadFile: UploadImage;
+  restoreFile: RestoreImage;
   deleteFile: DeleteImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
+  cancelUploadImage?: () => any;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
@@ -33,9 +27,9 @@ interface IRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-}
+};
 
-interface RichTextEditorProps extends IRichTextEditor {
+export interface RichTextEditorProps extends IRichTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -46,6 +40,7 @@ interface EditorHandle {
 
 const RichTextEditor = ({
   onChange,
+  dragDropEnabled,
   debouncedUpdatesEnabled,
   setIsSubmitting,
   setShouldShowAlert,
@@ -54,11 +49,14 @@ const RichTextEditor = ({
   uploadFile,
   deleteFile,
   noBorder,
+  cancelUploadImage,
   borderOnFocus,
   customClassName,
+  restoreFile,
   forwardedRef,
   mentionHighlights,
-  mentionSuggestions
+  rerenderOnPropsChange,
+  mentionSuggestions,
 }: RichTextEditorProps) => {
   const editor = useEditor({
     onChange,
@@ -67,14 +65,21 @@ const RichTextEditor = ({
     setShouldShowAlert,
     value,
     uploadFile,
+    cancelUploadImage,
     deleteFile,
+    restoreFile,
     forwardedRef,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting),
+    rerenderOnPropsChange,
+    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting, dragDropEnabled),
     mentionHighlights,
-    mentionSuggestions
+    mentionSuggestions,
   });
 
-  const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });
+  const editorClassNames = getEditorClassNames({
+    noBorder,
+    borderOnFocus,
+    customClassName,
+  });
 
   if (!editor) return null;
 
@@ -84,7 +89,7 @@ const RichTextEditor = ({
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
       </div>
-    </EditorContainer >
+    </EditorContainer>
   );
 };
 
@@ -94,4 +99,4 @@ const RichTextEditorWithRef = React.forwardRef<EditorHandle, IRichTextEditor>((p
 
 RichTextEditorWithRef.displayName = "RichTextEditorWithRef";
 
-export { RichTextEditor, RichTextEditorWithRef};
+export { RichTextEditor, RichTextEditorWithRef };

@@ -40,7 +40,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       ? () =>
           issueService
             .getIssues(workspaceSlug as string, projectId as string)
-            .then((res) => res.filter((issue) => issue.id !== issueId))
+            .then((res) => Object.values(res ?? {}).filter((issue) => issue.id !== issueId))
       : null
   );
 
@@ -81,7 +81,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+              <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -94,7 +94,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                   <Combobox
                     value={selectedItem}
                     onChange={(value) => {
@@ -103,7 +103,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                   >
                     <div className="relative m-1">
                       <Search
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
@@ -121,7 +121,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
+                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
                             {filteredIssues.map((issue) => (
@@ -166,10 +166,10 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" onClick={handleSubmit}>
+                      <Button variant="primary" size="sm" onClick={handleSubmit}>
                         Mark as original
                       </Button>
                     </div>

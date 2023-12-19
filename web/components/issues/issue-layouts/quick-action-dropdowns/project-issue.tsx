@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -10,15 +12,13 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+import { IQuickActionProps } from "../list/list-view-types";
+import { EProjectStore } from "store/command-palette.store";
+// constant
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-type Props = {
-  issue: IIssue;
-  handleDelete: () => Promise<void>;
-  handleUpdate: (data: IIssue) => Promise<void>;
-};
-
-export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
-  const { issue, handleDelete, handleUpdate } = props;
+export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+  const { issue, handleDelete, handleUpdate, customActionButton } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -27,6 +27,12 @@ export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<IIssue | null>(null);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+
+  const { user: userStore } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const { setToastAlert } = useToast();
 
@@ -58,10 +64,16 @@ export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
         prePopulateData={!issueToEdit && createUpdateIssueModal ? { ...issue, name: `${issue.name} (copy)` } : {}}
         data={issueToEdit}
         onSubmit={async (data) => {
-          if (issueToEdit) handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
         }}
+        currentStore={EProjectStore.PROJECT}
       />
-      <CustomMenu placement="bottom-start" ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        ellipsis
+        menuButtonOnClick={(e) => e.stopPropagation()}
+      >
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();
@@ -74,43 +86,47 @@ export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
             Copy link
           </div>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIssueToEdit(issue);
-            setCreateUpdateIssueModal(true);
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <Pencil className="h-3 w-3" />
-            Edit issue
-          </div>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setCreateUpdateIssueModal(true);
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <Copy className="h-3 w-3" />
-            Make a copy
-          </div>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setDeleteIssueModal(true);
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <Trash2 className="h-3 w-3" />
-            Delete issue
-          </div>
-        </CustomMenu.MenuItem>
+        {isEditingAllowed && (
+          <>
+            <CustomMenu.MenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIssueToEdit(issue);
+                setCreateUpdateIssueModal(true);
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Pencil className="h-3 w-3" />
+                Edit issue
+              </div>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCreateUpdateIssueModal(true);
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Copy className="h-3 w-3" />
+                Make a copy
+              </div>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDeleteIssueModal(true);
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Trash2 className="h-3 w-3" />
+                Delete issue
+              </div>
+            </CustomMenu.MenuItem>
+          </>
+        )}
       </CustomMenu>
     </>
   );

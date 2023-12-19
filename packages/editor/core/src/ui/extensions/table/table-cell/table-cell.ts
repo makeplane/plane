@@ -1,7 +1,7 @@
-import { mergeAttributes, Node } from "@tiptap/core"
+import { mergeAttributes, Node } from "@tiptap/core";
 
 export interface TableCellOptions {
-  HTMLAttributes: Record<string, any>
+  HTMLAttributes: Record<string, any>;
 }
 
 export default Node.create<TableCellOptions>({
@@ -9,8 +9,8 @@ export default Node.create<TableCellOptions>({
 
   addOptions() {
     return {
-      HTMLAttributes: {}
-    }
+      HTMLAttributes: {},
+    };
   },
 
   content: "paragraph+",
@@ -18,24 +18,24 @@ export default Node.create<TableCellOptions>({
   addAttributes() {
     return {
       colspan: {
-        default: 1
+        default: 1,
       },
       rowspan: {
-        default: 1
+        default: 1,
       },
       colwidth: {
         default: null,
         parseHTML: (element) => {
-          const colwidth = element.getAttribute("colwidth")
-          const value = colwidth ? [parseInt(colwidth, 10)] : null
+          const colwidth = element.getAttribute("colwidth");
+          const value = colwidth ? [parseInt(colwidth, 10)] : null;
 
-          return value
-        }
+          return value;
+        },
       },
       background: {
-        default: "none"
-      }
-    }
+        default: "none",
+      },
+    };
   },
 
   tableRole: "cell",
@@ -43,16 +43,16 @@ export default Node.create<TableCellOptions>({
   isolating: true,
 
   parseHTML() {
-    return [{ tag: "td" }]
+    return [{ tag: "td" }];
   },
 
   renderHTML({ node, HTMLAttributes }) {
     return [
       "td",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        style: `background-color: ${node.attrs.background}`
+        style: `background-color: ${node.attrs.background}`,
       }),
-      0
-    ]
-  }
-})
+      0,
+    ];
+  },
+});

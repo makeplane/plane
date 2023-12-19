@@ -11,12 +11,12 @@ import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity, IIssueComment } from "types";
+import { IIssueActivity } from "types";
 import { History } from "lucide-react";
 
 type Props = {
   activity: IIssueActivity[] | undefined;
-  handleCommentUpdate: (commentId: string, data: Partial<IIssueComment>) => Promise<void>;
+  handleCommentUpdate: (commentId: string, data: Partial<IIssueActivity>) => Promise<void>;
   handleCommentDelete: (commentId: string) => Promise<void>;
   showAccessSpecifier?: boolean;
 };
@@ -61,7 +61,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                 <div className="relative pb-1">
                   {activity.length > 1 && index !== activity.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-custom-background-80"
+                      className="absolute left-5 top-5 -ml-px h-full w-0.5 bg-custom-background-80"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -82,7 +82,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                                 alt={activityItem.actor_detail.display_name}
                                 height={24}
                                 width={24}
-                                className="rounded-full h-full w-full object-cover"
+                                className="h-full w-full rounded-full object-cover"
                               />
                             ) : (
                               <div
@@ -98,18 +98,18 @@ export const IssueActivitySection: React.FC<Props> = ({
                       </div>
                     </div>
                     <div className="min-w-0 flex-1 py-3">
-                      <div className="text-xs text-custom-text-200 break-words">
+                      <div className="break-words text-xs text-custom-text-200">
                         {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                           <span className="text-gray font-medium">Plane</span>
                         ) : activityItem.actor_detail.is_bot ? (
                           <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
                         ) : (
                           <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
-                            <a className="text-gray font-medium">
+                            <span className="text-gray font-medium">
                               {activityItem.actor_detail.is_bot
                                 ? activityItem.actor_detail.first_name
                                 : activityItem.actor_detail.display_name}
-                            </a>
+                            </span>
                           </Link>
                         )}{" "}
                         {message}{" "}
@@ -130,7 +130,7 @@ export const IssueActivitySection: React.FC<Props> = ({
             return (
               <div key={activityItem.id} className="mt-4">
                 <CommentCard
-                  comment={activityItem as IIssueComment}
+                  comment={activityItem as IIssueActivity}
                   handleCommentDeletion={handleCommentDelete}
                   onSubmit={handleCommentUpdate}
                   showAccessSpecifier={showAccessSpecifier}

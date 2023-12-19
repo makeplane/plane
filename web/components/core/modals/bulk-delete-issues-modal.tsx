@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// react hook form
+import { observer } from "mobx-react-lite";
 import { SubmitHandler, useForm } from "react-hook-form";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+import useSWR from "swr";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // services
 import { IssueService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button, LayersIcon } from "@plane/ui";
 // icons
@@ -30,17 +30,25 @@ type Props = {
 
 const issueService = new IssueService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
-  const { isOpen, onClose, user } = props;
+export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose } = props;
+  // states
+  const [query, setQuery] = useState("");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // states
-  const [query, setQuery] = useState("");
+  // store hooks
+  const {
+    user: { hasPermissionToCurrentProject },
+  } = useMobxStore();
   // fetching project issues.
   const { data: issues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId && hasPermissionToCurrentProject
+      ? PROJECT_ISSUES_LIST(workspaceSlug.toString(), projectId.toString())
+      : null,
+    workspaceSlug && projectId && hasPermissionToCurrentProject
+      ? () => issueService.getIssues(workspaceSlug.toString(), projectId.toString())
+      : null
   );
 
   const { setToastAlert } = useToast();
@@ -78,14 +86,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
     await issueService
-      .bulkDeleteIssues(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          issue_ids: data.delete_issue_ids,
-        },
-        user
-      )
+      .bulkDeleteIssues(workspaceSlug as string, projectId as string, {
+        issue_ids: data.delete_issue_ids,
+      })
       .then(() => {
         setToastAlert({
           type: "success",
@@ -106,8 +109,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues ?? []
-      : issues?.filter(
+      ? Object.values(issues ?? {})
+      : Object.values(issues ?? {})?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
             `${issue.project_detail.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
@@ -116,7 +119,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto bg-custom-backdrop p-4 transition-opacity sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -126,8 +129,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative flex items-center justify-center w-full ">
-              <div className="w-full max-w-2xl transform   divide-y divide-custom-border-200 divide-opacity-10 rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+            <Dialog.Panel className="relative flex w-full items-center justify-center ">
+              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {
@@ -142,7 +145,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
                   >
                     <div className="relative m-1">
                       <Search
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
@@ -160,7 +163,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
+                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">
                               Select issues to delete
                             </h2>
                           )}
@@ -211,10 +214,10 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="danger" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                      <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
                         {isSubmitting ? "Deleting..." : "Delete selected issues"}
                       </Button>
                     </div>
@@ -227,4 +230,4 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

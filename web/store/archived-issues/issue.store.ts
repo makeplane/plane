@@ -87,10 +87,12 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
 
       if (
         workspaceSlug &&
         projectId &&
+        hasPermissionToCurrentProject &&
         this.rootStore.archivedIssueFilters.userDisplayFilters &&
         this.rootStore.archivedIssueFilters.userFilters
       )
@@ -138,7 +140,7 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       };
     }
 
-    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
+    const orderBy = this.rootStore?.archivedIssueFilters?.userDisplayFilters?.order_by || "";
     if (orderBy === "-created_at") {
       issues = sortArrayByDate(issues as any, "created_at");
     }

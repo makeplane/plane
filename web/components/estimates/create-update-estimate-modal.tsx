@@ -42,7 +42,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { projectEstimates: projectEstimatesStore } = useMobxStore();
+  const {
+    projectEstimates: { createEstimate, updateEstimate },
+  } = useMobxStore();
 
   const {
     formState: { errors, isSubmitting },
@@ -60,11 +62,10 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const createEstimate = async (payload: IEstimateFormData) => {
+  const handleCreateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectEstimatesStore
-      .createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
+    await createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
         onClose();
       })
@@ -83,13 +84,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const updateEstimate = async (payload: IEstimateFormData) => {
+  const handleUpdateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId || !data) return;
 
-    await projectEstimatesStore
-      .updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
+    await updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
       .then(() => {
-        handleClose();
+        onClose();
       })
       .catch((err) => {
         const error = err?.error;
@@ -101,8 +101,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
           message: errorString ?? "Estimate could not be updated. Please try again.",
         });
       });
-
-    onClose();
   };
 
   const onSubmit = async (formData: FormValues) => {
@@ -171,8 +169,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       else payload.estimate_points.push({ ...point });
     }
 
-    if (data) await updateEstimate(payload);
-    else await createEstimate(payload);
+    if (data) await handleUpdateEstimate(payload);
+    else await handleCreateEstimate(payload);
   };
 
   useEffect(() => {
@@ -203,7 +201,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -217,7 +215,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">{data ? "Update" : "Create"} Estimate</div>
@@ -235,7 +233,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                               ref={ref}
                               hasError={Boolean(errors.name)}
                               placeholder="Title"
-                              className="resize-none text-xl w-full"
+                              className="w-full resize-none text-xl"
                             />
                           )}
                         />
@@ -280,7 +278,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                                         id={`value${i + 1}`}
                                         name={`value${i + 1}`}
                                         placeholder={`Point ${i + 1}`}
-                                        className="rounded-l-none w-full"
+                                        className="w-full rounded-l-none"
                                         hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
                                       />
                                     )}
@@ -292,17 +290,17 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" type="submit" loading={isSubmitting}>
+                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {data
                           ? isSubmitting
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

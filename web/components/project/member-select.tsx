@@ -16,24 +16,20 @@ type Props = {
 
 export const MemberSelect: React.FC<Props> = observer((props) => {
   const { value, onChange, isDisabled = false } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    projectMember: { fetchProjectMembers, projectMembers },
+  } = useMobxStore();
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
   );
 
-  const members = projectStore.members?.[projectId?.toString()!];
-
-  const options = members?.map((member) => ({
+  const options = projectMembers?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -44,7 +40,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     ),
   }));
 
-  const selectedOption = members?.find((m) => m.member.id === value)?.member;
+  const selectedOption = projectMembers?.find((m) => m.member.id === value)?.member;
 
   return (
     <CustomSearchSelect
@@ -56,8 +52,8 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
             selectedOption?.display_name
           ) : (
             <div className="flex items-center gap-2">
-              <Ban className="h-3.5 w-3.5 text-custom-sidebar-text-400 rotate-90" />
-              <span className="text-sm py-0.5 text-custom-sidebar-text-400">None</span>
+              <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
+              <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
             </div>
           )}
         </div>
@@ -72,8 +68,8 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
             query: "none",
             content: (
               <div className="flex items-center gap-2">
-                <Ban className="h-3.5 w-3.5 text-custom-sidebar-text-400 rotate-90" />
-                <span className="text-sm py-0.5 text-custom-sidebar-text-400">None</span>
+                <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
+                <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
               </div>
             ),
           },

@@ -60,16 +60,4 @@ export class AppInstallationService extends APIService {
         throw error?.response;
       });
   }
-
-  async getSlackAuthDetails(code: string): Promise<any> {
-    const response = await this.request({
-      method: "post",
-      url: "/api/slack-redirect",
-      data: {
-        code,
-      },
-    });
-
-    return response.data;
-  }
 }

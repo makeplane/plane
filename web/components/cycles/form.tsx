@@ -79,7 +79,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     name="name"
                     type="text"
                     placeholder="Cycle Title"
-                    className="resize-none w-full placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                    className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
                     value={value}
                     inputSize="md"
                     onChange={onChange}
@@ -97,7 +97,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     id="cycle_description"
                     name="description"
                     placeholder="Description..."
-                    className="h-24 w-full resize-none text-sm"
+                    className="!h-24 w-full resize-none text-sm"
                     hasError={Boolean(errors?.description)}
                     value={value}
                     onChange={onChange}
@@ -135,18 +135,12 @@ export const CycleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-200 ">
-        <Button variant="neutral-primary" onClick={handleClose}>
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? "Updating Cycle..."
-              : "Update Cycle"
-            : isSubmitting
-            ? "Creating Cycle..."
-            : "Create Cycle"}
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          {data ? (isSubmitting ? "Updating" : "Update cycle") : isSubmitting ? "Creating" : "Create cycle"}
         </Button>
       </div>
     </form>

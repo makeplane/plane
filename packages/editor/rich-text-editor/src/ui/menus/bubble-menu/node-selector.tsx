@@ -1,10 +1,16 @@
-import { BulletListItem, cn, CodeItem, HeadingOneItem, HeadingThreeItem, HeadingTwoItem, NumberedListItem, QuoteItem, TodoListItem } from "@plane/editor-core";
-import { Editor } from "@tiptap/react";
 import {
-  Check,
-  ChevronDown,
-  TextIcon,
-} from "lucide-react";
+  BulletListItem,
+  cn,
+  HeadingOneItem,
+  HeadingThreeItem,
+  HeadingTwoItem,
+  NumberedListItem,
+  QuoteItem,
+  CodeItem,
+  TodoListItem,
+} from "@plane/editor-core";
+import { Editor } from "@tiptap/react";
+import { Check, ChevronDown, TextIcon } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 
 import { BubbleMenuItem } from ".";
@@ -21,10 +27,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
       name: "Text",
       icon: TextIcon,
       command: () => editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
-      isActive: () =>
-        editor.isActive("paragraph") &&
-        !editor.isActive("bulletList") &&
-        !editor.isActive("orderedList"),
+      isActive: () => editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
     },
     HeadingOneItem(editor),
     HeadingTwoItem(editor),
@@ -63,7 +66,9 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
               }}
               className={cn(
                 "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100",
-                { "bg-custom-primary-100/5 text-custom-text-100": activeItem.name === item.name }
+                {
+                  "bg-custom-primary-100/5 text-custom-text-100": activeItem.name === item.name,
+                }
               )}
             >
               <div className="flex items-center space-x-2">

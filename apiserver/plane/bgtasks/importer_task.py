@@ -13,7 +13,7 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.api.serializers import ImporterSerializer
+from plane.app.serializers import ImporterSerializer
 from plane.db.models import (
     Importer,
     WorkspaceMember,
@@ -72,6 +72,12 @@ def service_importer(service, importer_id):
                     or user.get("import", False) == "map"
                 ]
             )
+
+            # Check if any of the users are already member of workspace
+            _ = WorkspaceMember.objects.filter(
+                member__in=[user for user in workspace_users],
+                workspace_id=importer.workspace_id,
+            ).update(is_active=True)
 
             # Add new users to Workspace and project automatically
             WorkspaceMember.objects.bulk_create(

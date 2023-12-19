@@ -49,14 +49,14 @@ export const FilterMentions: React.FC<Props> = (props) => {
                     key={`mentions-${member.id}`}
                     isChecked={appliedFilters?.includes(member.id) ? true : false}
                     onClick={() => handleUpdate(member.id)}
-                    icon={<Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} />}
+                    icon={<Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} size={"md"} />}
                     title={member.display_name}
                   />
                 ))}
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="text-custom-primary-100 text-xs font-medium ml-8"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -64,7 +64,7 @@ export const FilterMentions: React.FC<Props> = (props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

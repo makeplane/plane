@@ -2,8 +2,9 @@
 import { BarDatum } from "@nivo/bar";
 // components
 import { CustomTooltip } from "./custom-tooltip";
+import { Tooltip } from "@plane/ui";
 // ui
-import { BarGraph, Tooltip } from "components/ui";
+import { BarGraph } from "components/ui";
 // helpers
 import { findStringWithMostCharacters } from "helpers/array.helper";
 import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
@@ -100,8 +101,8 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                               ? generateDisplayName(datum.value, analytics, params, "x_axis")[0].toUpperCase()
                               : "?"
                             : datum.value && datum.value !== "None"
-                            ? `${datum.value}`.toUpperCase()[0]
-                            : "?"}
+                              ? `${datum.value}`.toUpperCase()[0]
+                              : "?"}
                         </text>
                       </g>
                     </Tooltip>
@@ -112,8 +113,9 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                   <text
                     x={0}
                     y={datum.y}
-                    textAnchor="end"
+                    textAnchor={`${barGraphData.data.length > 7 ? "end" : "middle"}`}
                     fontSize={10}
+                    fill="rgb(var(--color-text-200))"
                     className={`${barGraphData.data.length > 7 ? "-rotate-45" : ""}`}
                   >
                     {generateDisplayName(datum.value, analytics, params, "x_axis")}

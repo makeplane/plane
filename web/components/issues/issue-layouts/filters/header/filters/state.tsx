@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IStateResponse } from "types";
+import { IState } from "types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   searchQuery: string;
-  states: IStateResponse | undefined;
+  states: IState[] | undefined;
 };
 
 export const FilterState: React.FC<Props> = (props) => {
@@ -22,11 +19,9 @@ export const FilterState: React.FC<Props> = (props) => {
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const statesList = getStatesList(states);
-
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredOptions = states?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const handleViewToggle = () => {
     if (!filteredOptions) return;
@@ -59,7 +54,7 @@ export const FilterState: React.FC<Props> = (props) => {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="text-custom-primary-100 text-xs font-medium ml-8"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -67,7 +62,7 @@ export const FilterState: React.FC<Props> = (props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

@@ -1,7 +1,10 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { useDropzone } from "react-dropzone";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueAttachmentService } from "services/issue";
 // hooks
@@ -10,8 +13,8 @@ import useToast from "hooks/use-toast";
 import { IIssueAttachment } from "types";
 // fetch-keys
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
-const maxFileSize = 5 * 1024 * 1024; // 5 MB
+// constants
+import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
   disabled?: boolean;
@@ -19,13 +22,19 @@ type Props = {
 
 const issueAttachmentService = new IssueAttachmentService();
 
-export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => {
+export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
+  const { disabled = false } = props;
+  // states
   const [isLoading, setIsLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles[0] || !workspaceSlug) return;
@@ -70,10 +79,12 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     onDrop,
-    maxSize: maxFileSize,
+    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
   });
+
+  const maxFileSize = envConfig?.file_size_limit ?? MAX_FILE_SIZE;
 
   const fileError =
     fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;
@@ -81,8 +92,8 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center h-[60px] border-2 border-dashed text-custom-primary bg-custom-primary/5 text-xs rounded-md px-4 ${
-        isDragActive ? "bg-custom-primary/10 border-custom-primary" : "border-custom-border-200"
+      className={`flex h-[60px] items-center justify-center rounded-md border-2 border-dashed bg-custom-primary/5 px-4 text-xs text-custom-primary ${
+        isDragActive ? "border-custom-primary bg-custom-primary/10" : "border-custom-border-200"
       } ${isDragReject ? "bg-red-100" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
       <input {...getInputProps()} />
@@ -99,4 +110,4 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
       </span>
     </div>
   );
-};
+});

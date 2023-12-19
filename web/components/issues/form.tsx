@@ -94,28 +94,28 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     fieldsToShow,
     handleFormDirty,
   } = props;
-
+  // states
   const [stateModal, setStateModal] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
-
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
+  // refs
   const editorRef = useRef<any>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user: userStore } = useMobxStore();
-
+  // store
+  const {
+    user: userStore,
+    appConfig: { envConfig },
+  } = useMobxStore();
   const user = userStore.currentUser;
-
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId);
-
+  // hooks
+  const editorSuggestion = useEditorSuggestions();
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     formState: { errors, isSubmitting, isDirty },
     handleSubmit,
@@ -188,15 +188,10 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: issueName,
-          task: "Generate a proper description for this issue.",
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: issueName,
+        task: "Generate a proper description for this issue.",
+      })
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -232,6 +227,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     reset({
       ...defaultValues,
       ...initialData,
+      project: projectId,
     });
   }, [setFocus, initialData, reset]);
 
@@ -272,9 +268,13 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               <Controller
                 control={control}
                 name="project"
-                render={({ field: { value, onChange } }) => (
+                rules={{
+                  required: true,
+                }}
+                render={({ field: { value, onChange }, fieldState: { error } }) => (
                   <IssueProjectSelect
                     value={value}
+                    error={error}
                     onChange={(val: string) => {
                       onChange(val);
                       setActiveProject(val);
@@ -335,8 +335,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         onChange={onChange}
                         ref={ref}
                         hasError={Boolean(errors.name)}
-                        placeholder="Title"
-                        className="resize-none text-xl w-full"
+                        placeholder="Issue Title"
+                        className="w-full resize-none text-xl focus:border-blue-400"
                       />
                     )}
                   />
@@ -344,7 +344,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
                 <div className="relative">
-                  <div className="flex justify-end">
+                  <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex rounded bg-custom-background-80">
                     {issueName && issueName !== "" && (
                       <button
                         type="button"
@@ -377,8 +377,10 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditorWithRef
+                        cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
+                        restoreFile={fileService.restoreImage}
                         ref={editorRef}
                         debouncedUpdatesEnabled={false}
                         value={
@@ -386,7 +388,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                             ? watch("description_html")
                             : value
                         }
-                        customClassName="min-h-[150px]"
+                        customClassName="min-h-[7rem] border-custom-border-100"
                         onChange={(description: Object, description_html: string) => {
                           onChange(description_html);
                           setValue("description", description);
@@ -396,21 +398,23 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                       />
                     )}
                   />
-                  <GptAssistantModal
-                    isOpen={gptAssistantModal}
-                    handleClose={() => {
-                      setGptAssistantModal(false);
-                      // this is done so that the title do not reset after gpt popover closed
-                      reset(getValues());
-                    }}
-                    inset="top-2 left-0"
-                    content=""
-                    htmlContent={watch("description_html")}
-                    onResponse={(response) => {
-                      handleAiAssistance(response);
-                    }}
-                    projectId={projectId}
-                  />
+                  {envConfig?.has_openai_configured && (
+                    <GptAssistantModal
+                      isOpen={gptAssistantModal}
+                      handleClose={() => {
+                        setGptAssistantModal(false);
+                        // this is done so that the title do not reset after gpt popover closed
+                        reset(getValues());
+                      }}
+                      inset="top-2 left-0"
+                      content=""
+                      htmlContent={watch("description_html")}
+                      onResponse={(response) => {
+                        handleAiAssistance(response);
+                      }}
+                      projectId={projectId}
+                    />
+                  )}
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-2">
@@ -537,47 +541,45 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <>
-                    <CustomMenu
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200"
-                        >
-                          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80">
-                            {watch("parent") ? (
-                              <>
-                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
-                                <span className="whitespace-nowrap text-custom-text-100">
-                                  {selectedParentIssue &&
-                                    `${selectedParentIssue.project__identifier}-
+                    {watch("parent") ? (
+                      <CustomMenu
+                        customButton={
+                          <button
+                            type="button"
+                            className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
+                          >
+                            <div className="flex items-center gap-1 text-custom-text-200">
+                              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                              <span className="whitespace-nowrap">
+                                {selectedParentIssue &&
+                                  `${selectedParentIssue.project__identifier}-
                                   ${selectedParentIssue.sequence_id}`}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
-                                <span className="whitespace-nowrap">Add Parent</span>
-                              </>
-                            )}
-                          </span>
-                        </button>
-                      }
-                    >
-                      {watch("parent") ? (
-                        <>
-                          <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                            Change parent issue
-                          </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
-                            Remove parent issue
-                          </CustomMenu.MenuItem>
-                        </>
-                      ) : (
+                              </span>
+                            </div>
+                          </button>
+                        }
+                        placement="bottom-start"
+                      >
                         <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                          Select Parent Issue
+                          Change parent issue
                         </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
+                        <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
+                          Remove parent issue
+                        </CustomMenu.MenuItem>
+                      </CustomMenu>
+                    ) : (
+                      <button
+                        type="button"
+                        className="flex w-min cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
+                        onClick={() => setParentIssueListModalOpen(true)}
+                      >
+                        <div className="flex items-center gap-1 text-custom-text-300">
+                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                          <span className="whitespace-nowrap">Add Parent</span>
+                        </div>
+                      </button>
+                    )}
+
                     <Controller
                       control={control}
                       name="parent"
@@ -599,24 +601,29 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-200 px-5 pt-5">
-          <div
-            className="flex cursor-pointer items-center gap-1"
-            onClick={() => setCreateMore((prevData) => !prevData)}
-          >
-            <span className="text-xs">Create more</span>
-            <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
+          {!status && (
+            <div
+              className="flex cursor-default items-center gap-1.5"
+              onClick={() => setCreateMore((prevData) => !prevData)}
+            >
+              <div className="flex cursor-pointer items-center justify-center">
+                <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+              </div>
+              <span className="text-xs">Create more</span>
+            </div>
+          )}
+          <div className="ml-auto flex items-center gap-2">
             <Button
               variant="neutral-primary"
+              size="sm"
               onClick={() => {
                 handleDiscardClose();
               }}
             >
               Discard
             </Button>
-            <Button variant="primary" type="submit" loading={isSubmitting}>
+            <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."

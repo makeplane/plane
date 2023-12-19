@@ -68,17 +68,17 @@ const SignUpPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
-      <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+      <div className="left-20 top-0 hidden h-screen w-[0.5px] border-r-[0.5px] border-custom-border-200 sm:fixed sm:block lg:left-32" />
+      <div className="fixed left-7 top-11 grid place-items-center bg-custom-background-100 sm:left-16 sm:top-12 sm:py-5 lg:left-28">
         <div className="grid place-items-center bg-custom-background-100">
           <div className="h-[30px] w-[30px]">
             <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
           </div>
         </div>
       </div>
-      <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
+      <div className="grid h-full w-full place-items-center overflow-y-auto px-7 py-5">
         <div>
-          <h1 className="text-2xl text-center font-">SignUp on Plane</h1>
+          <h1 className="font- text-center text-2xl">SignUp on Plane</h1>
           <EmailSignUpForm onSubmit={handleSignUp} />
         </div>
       </div>

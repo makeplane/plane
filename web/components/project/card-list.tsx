@@ -4,12 +4,13 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectCard } from "components/project";
-import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
 // images
-import emptyProject from "public/empty-state/project.svg";
+import emptyProject from "public/empty-state/empty_project.webp";
 // icons
-import { Plus } from "lucide-react";
+import { NewEmptyState } from "components/common/new-empty-state";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IProjectCardList {
   workspaceSlug: string;
@@ -18,9 +19,16 @@ export interface IProjectCardList {
 export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   const { workspaceSlug } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!projects) {
     return (
@@ -38,28 +46,39 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   return (
     <>
       {projects.length > 0 ? (
-        <div className="h-full p-8 overflow-y-auto">
-          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-            {projectStore.searchedProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+        <div className="h-full w-full overflow-y-auto p-8">
+          {projectStore.searchedProjects.length == 0 ? (
+            <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              {projectStore.searchedProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
         </div>
       ) : (
-        <EmptyState
+        <NewEmptyState
           image={emptyProject}
-          title="No projects yet"
-          description="Get started by creating your first project"
-          primaryButton={{
-            icon: <Plus className="h-4 w-4" />,
-            text: "New Project",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            },
+          title="Start a Project"
+          description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
+          comicBox={{
+            title: "Everything starts with a project in Plane",
+            direction: "right",
+            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
           }}
+          primaryButton={
+            isEditingAllowed
+              ? {
+                  text: "Start your first project",
+                  onClick: () => {
+                    setTrackElement("PROJECTS_EMPTY_STATE");
+                    commandPaletteStore.toggleCreateProjectModal(true);
+                  },
+                }
+              : null
+          }
+          disabled={!isEditingAllowed}
         />
       )}
     </>

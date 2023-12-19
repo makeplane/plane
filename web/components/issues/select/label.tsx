@@ -3,16 +3,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Transition } from "@headlessui/react";
 import { usePopper } from "react-popper";
-// services
-import { IssueLabelService } from "services/issue";
+import { observer } from "mobx-react-lite";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
-// types
-import type { IIssueLabels } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,16 +17,21 @@ type Props = {
   onChange: (value: string[]) => void;
   projectId: string;
   label?: JSX.Element;
+  disabled?: boolean;
 };
 
-const issueLabelService = new IssueLabelService();
+export const IssueLabelSelect: React.FC<Props> = observer((props) => {
+  const { setIsOpen, value, onChange, projectId, label, disabled = false } = props;
 
-export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId, label }) => {
   // states
   const [query, setQuery] = useState("");
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const {
+    projectLabel: { labels, fetchProjectLabels },
+  } = useMobxStore();
 
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -38,24 +40,31 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     placement: "bottom-start",
   });
 
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    projectId ? PROJECT_ISSUE_LABELS(projectId) : null,
-    workspaceSlug && projectId
-      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId)
-      : null
+  const issueLabels = labels?.[projectId] || [];
+
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUE_LABELS_${projectId.toUpperCase()}` : null,
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId) : null
   );
 
   const filteredOptions =
     query === "" ? issueLabels : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <Combobox as="div" value={value} onChange={(val) => onChange(val)} className="relative flex-shrink-0" multiple>
+    <Combobox
+      as="div"
+      value={value}
+      onChange={(val) => onChange(val)}
+      className="relative flex-shrink-0"
+      multiple
+      disabled={disabled}
+    >
       {({ open }: any) => (
         <>
           <Combobox.Button as={Fragment}>
             <div
               ref={setReferenceElement}
-              className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200"
+              className="flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
             >
               {label ? (
                 label
@@ -68,10 +77,10 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                   />
                 </span>
               ) : (
-                <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
-                  <Tag className="h-3.5 w-3.5 text-custom-text-200" />
-                  <span className=" text-custom-text-200">Label</span>
-                </span>
+                <div className="flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
+                  <Tag className="h-3 w-3 text-custom-text-300" />
+                  <span className="text-custom-text-300">Label</span>
+                </div>
               )}
             </div>
           </Combobox.Button>
@@ -97,7 +106,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 <div className="flex w-full items-center justify-start rounded-sm  border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
                   <Search className="h-3 w-3 text-custom-text-200" />
                   <Combobox.Input
-                    className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
+                    className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 focus:outline-none"
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search for label..."
                     displayValue={(assigned: any) => assigned?.name}
@@ -186,7 +195,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                   )}
                   <button
                     type="button"
-                    className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
+                    className="flex w-full select-none items-center rounded px-1 py-2 hover:bg-custom-background-80"
                     onClick={() => setIsOpen(true)}
                   >
                     <span className="flex items-center justify-start gap-1 text-custom-text-200">
@@ -202,4 +211,4 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       )}
     </Combobox>
   );
-};
+});

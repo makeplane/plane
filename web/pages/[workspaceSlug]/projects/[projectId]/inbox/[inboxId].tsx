@@ -25,9 +25,9 @@ const ProjectInboxPage: NextPageWithLayout = () => {
   );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <InboxActionsHeader />
-      <div className="grid grid-cols-4 flex-1 divide-x divide-custom-border-200 overflow-hidden">
+      <div className="grid flex-1 grid-cols-4 divide-x divide-custom-border-200 overflow-hidden">
         <InboxIssuesListSidebar />
         <div className="col-span-3 h-full overflow-auto">
           <InboxMainContent />

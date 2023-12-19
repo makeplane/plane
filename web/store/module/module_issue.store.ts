@@ -40,7 +40,7 @@ export interface IModuleIssueStore {
     payload: IBlockUpdateData
   ) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<any>;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, bridgeId: string) => Promise<any>;
 }
 
@@ -91,10 +91,12 @@ export class ModuleIssueStore implements IModuleIssueStore {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       const moduleId = this.rootStore.module.moduleId;
+      const hasPermissionToCurrentProject = this.rootStore.user.hasPermissionToCurrentProject;
 
       if (
         workspaceSlug &&
         projectId &&
+        hasPermissionToCurrentProject &&
         moduleId &&
         this.rootStore.moduleFilter.moduleFilters &&
         this.rootStore.issueFilter.userDisplayFilters
@@ -260,7 +262,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
+    this.rootStore.projectIssues.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
@@ -337,19 +339,11 @@ export class ModuleIssueStore implements IModuleIssueStore {
     }
   };
 
-  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
+  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.moduleService.addIssuesToModule(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        {
-          issues: [issueId],
-        },
-        user
-      );
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: issueIds,
+      });
 
       this.fetchIssues(workspaceSlug, projectId, moduleId);
     } catch (error) {

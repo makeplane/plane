@@ -15,11 +15,11 @@ type Props = {
 export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIssues }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project, issue.id, isExpanded);
 
   return (
     <>
-      <div className="flex items-center justify-center text-xs h-full w-full">
+      <div className="flex h-11 w-full items-center justify-center text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80">
         {renderLongDetailDateFormat(issue.created_at)}
       </div>
 
@@ -28,7 +28,9 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIss
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetCreatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          <div className="h-11">
+            <SpreadsheetCreatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          </div>
         ))}
     </>
   );

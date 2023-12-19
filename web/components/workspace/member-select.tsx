@@ -11,7 +11,7 @@ import { IWorkspaceMember } from "types";
 
 export interface IWorkspaceMemberSelect {
   value: IWorkspaceMember | undefined;
-  onChange: (value: IWorkspaceMember) => void;
+  onChange: (value: string) => void;
   options: IWorkspaceMember[];
   placeholder?: string;
   disabled?: boolean;
@@ -48,10 +48,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       : options?.filter((option) => option.member.display_name.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div
-      className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
-            "
-    >
+    <div className="flex w-full items-center justify-between gap-2 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1.5 text-xs text-custom-text-300">
       {value ? (
         <>
           <Avatar name={value?.member.display_name} src={value?.member.avatar} />
@@ -67,12 +64,18 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
   );
 
   return (
-    <Listbox as="div" className={`flex-shrink-0 text-left`} value={value} onChange={onChange} disabled={disabled}>
+    <Listbox
+      as="div"
+      className={`flex-shrink-0 text-left`}
+      value={value?.member.id}
+      onChange={onChange}
+      disabled={disabled}
+    >
       <Listbox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs ${
+          className={`flex w-full items-center justify-between gap-1 text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           }`}
         >
@@ -81,7 +84,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       </Listbox.Button>
       <Listbox.Options>
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1`}
+          className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100  px-2 py-2.5 text-xs focus:outline-none`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -89,36 +92,46 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
             <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Input
-              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 border-none focus:outline-none"
+              className="w-full border-none bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
             />
           </div>
-          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+          <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
-                filteredOptions.map((workspaceMember: IWorkspaceMember) => (
+                <>
+                  {filteredOptions.map((workspaceMember: IWorkspaceMember) => (
+                    <Listbox.Option
+                      key={workspaceMember.id}
+                      value={workspaceMember.member.id}
+                      className={({ active, selected }) =>
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
+                          active && !selected ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {() => (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
+                            {workspaceMember.member.display_name}
+                          </div>
+                          {value && value.member.id === workspaceMember.member.id && <Check className="h-3.5 w-3.5" />}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
                   <Listbox.Option
-                    key={workspaceMember.id}
-                    value={workspaceMember}
-                    className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                    }
+                    value=""
+                    className="flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
-                    {({ selected }) => (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
-                          {workspaceMember.member.display_name}
-                        </div>
-                        {selected && <Check className="h-3.5 w-3.5" />}
-                      </>
-                    )}
+                    <span className="flex items-center justify-start gap-1 text-custom-text-200">
+                      <span>No Lead</span>
+                    </span>
                   </Listbox.Option>
-                ))
+                </>
               ) : (
                 <span className="flex items-center gap-2 p-1">
                   <p className="text-left text-custom-text-200 ">No matching results</p>

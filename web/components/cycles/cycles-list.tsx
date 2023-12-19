@@ -1,7 +1,9 @@
 import { FC } from "react";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
-
 // ui
 import { Loader } from "@plane/ui";
 // types
@@ -14,8 +16,13 @@ export interface ICyclesList {
   projectId: string;
 }
 
-export const CyclesList: FC<ICyclesList> = (props) => {
+export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { cycles, filter, workspaceSlug, projectId } = props;
+
+  const {
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   return (
     <>
@@ -23,8 +30,8 @@ export const CyclesList: FC<ICyclesList> = (props) => {
         <>
           {cycles.length > 0 ? (
             <div className="h-full overflow-y-auto">
-              <div className="flex justify-between h-full w-full">
-                <div className="flex flex-col h-full w-full overflow-y-auto">
+              <div className="flex h-full w-full justify-between">
+                <div className="flex h-full w-full flex-col overflow-y-auto">
                   {cycles.map((cycle) => (
                     <CyclesListItem cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
                   ))}
@@ -36,7 +43,7 @@ export const CyclesList: FC<ICyclesList> = (props) => {
               </div>
             </div>
           ) : (
-            <div className="h-full grid place-items-center text-center">
+            <div className="grid h-full place-items-center text-center">
               <div className="space-y-2">
                 <div className="mx-auto flex justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" viewBox="0 0 66 66" fill="none">
@@ -52,12 +59,10 @@ export const CyclesList: FC<ICyclesList> = (props) => {
                 </h4>
                 <button
                   type="button"
-                  className="text-custom-primary-100 text-sm outline-none"
+                  className="text-sm text-custom-primary-100 outline-none"
                   onClick={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "q",
-                    });
-                    document.dispatchEvent(e);
+                    setTrackElement("CYCLES_PAGE_EMPTY-STATE");
+                    commandPaletteStore.toggleCreateCycleModal(true);
                   }}
                 >
                   Create a new cycle
@@ -75,4 +80,4 @@ export const CyclesList: FC<ICyclesList> = (props) => {
       )}
     </>
   );
-};
+});

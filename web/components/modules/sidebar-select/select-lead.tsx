@@ -2,7 +2,7 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
@@ -13,12 +13,13 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 type Props = {
   value: string | null | undefined;
   onChange: (val: string) => void;
+  disabled?: boolean;
 };
 
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const SidebarLeadSelect: FC<Props> = (props) => {
-  const { value, onChange } = props;
+  const { value, onChange, disabled = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -26,7 +27,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -49,21 +50,22 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
         <UserCircle2 className="h-4 w-4" />
         <span className="text-base">Lead</span>
       </div>
-      <div className="flex items-center w-1/2 rounded-sm">
+      <div className="flex w-1/2 items-center rounded-sm">
         <CustomSearchSelect
+          disabled={disabled}
           className="w-full rounded-sm"
           value={value}
           customButtonClassName="rounded-sm"
           customButton={
             selectedOption ? (
-              <div className="flex items-center justify-start gap-2 p-0.5 w-full">
+              <div className="flex w-full items-center justify-start gap-2 p-0.5">
                 <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
                 <span className="text-sm text-custom-text-200">{selectedOption?.display_name}</span>
               </div>
             ) : (
-              <div className="group flex items-center justify-between gap-2 p-1 text-sm text-custom-text-400 w-full">
+              <div className="group flex w-full items-center justify-between gap-2 p-1 text-sm text-custom-text-400">
                 <span>No lead</span>
-                <ChevronDown className="h-3.5 w-3.5 hidden group-hover:flex" />
+                {!disabled && <ChevronDown className="hidden h-3.5 w-3.5 group-hover:flex" />}
               </div>
             )
           }

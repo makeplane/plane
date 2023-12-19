@@ -1,8 +1,10 @@
 # Environment Variables
+
 ​
-Environment variables are distributed in various files. Please refer them carefully. 
+Environment variables are distributed in various files. Please refer them carefully.
 
 ## {PROJECT_FOLDER}/.env
+
 File is available in the project root folder​
 
 ```
@@ -29,42 +31,37 @@ AWS_S3_BUCKET_NAME="uploads"
 FILE_SIZE_LIMIT=5242880
 ​
 # GPT settings
-OPENAI_API_BASE="https://api.openai.com/v1" # change if using a custom endpoint
-OPENAI_API_KEY="sk-" # add your openai key here
-GPT_ENGINE="gpt-3.5-turbo" # use "gpt-4" if you have access
+OPENAI_API_BASE="https://api.openai.com/v1" # deprecated
+OPENAI_API_KEY="sk-" # deprecated
+GPT_ENGINE="gpt-3.5-turbo" # deprecated
 ​
-# Settings related to Docker
-DOCKERIZED=1
 # set to 1 If using the pre-configured minio setup
 USE_MINIO=1
 ​
 # Nginx Configuration
 NGINX_PORT=80
 ```
+
 ​
+
 ## {PROJECT_FOLDER}/web/.env.example
+
 ​
+
 ```
-# Enable/Disable OAUTH - default 0 for selfhosted instance
-NEXT_PUBLIC_ENABLE_OAUTH=0
 # Public boards deploy URL
 NEXT_PUBLIC_DEPLOY_URL="http://localhost/spaces"
 ```
-​
-## {PROJECT_FOLDER}/spaces/.env.example
-​
-```
-# Flag to toggle OAuth
-NEXT_PUBLIC_ENABLE_OAUTH=0
-```
-​
+
+
 ## {PROJECT_FOLDER}/apiserver/.env
+
 ​
+
 ```
 # Backend
 # Debug value for api server use it as 0 for production use
 DEBUG=0
-DJANGO_SETTINGS_MODULE="plane.settings.selfhosted"
 ​
 # Error logs
 SENTRY_DSN=""
@@ -101,24 +98,22 @@ AWS_S3_BUCKET_NAME="uploads"
 FILE_SIZE_LIMIT=5242880
 ​
 # GPT settings
-OPENAI_API_BASE="https://api.openai.com/v1" # change if using a custom endpoint
-OPENAI_API_KEY="sk-" # add your openai key here
-GPT_ENGINE="gpt-3.5-turbo" # use "gpt-4" if you have access
+OPENAI_API_BASE="https://api.openai.com/v1" # deprecated
+OPENAI_API_KEY="sk-" # deprecated
+GPT_ENGINE="gpt-3.5-turbo" # deprecated
 ​
+# Settings related to Docker
+DOCKERIZED=1  # Deprecated
+
 # Github
 GITHUB_CLIENT_SECRET="" # For fetching release notes
 ​
-# Settings related to Docker
-DOCKERIZED=1
 # set to 1 If using the pre-configured minio setup
 USE_MINIO=1
 ​
 # Nginx Configuration
 NGINX_PORT=80
 ​
-# Default Creds
-DEFAULT_EMAIL="captain@plane.so"
-DEFAULT_PASSWORD="password123"
 ​
 # SignUps
 ENABLE_SIGNUP="1"
@@ -126,7 +121,9 @@ ENABLE_SIGNUP="1"
 # Email Redirection URL
 WEB_URL="http://localhost"
 ```
+
 ## Updates​
+
 - The environment variable NEXT_PUBLIC_API_BASE_URL has been removed from both the web and space projects.
 - The naming convention for containers and images has been updated.
 - The plane-worker image will no longer be maintained, as it has been merged with plane-backend.

@@ -11,12 +11,12 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { LayerStackIcon } from "@plane/ui";
 import { Search } from "lucide-react";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  parent: IIssueLabels | undefined;
+  parent: IIssueLabel | undefined;
 };
 
 export const LabelsListModal: React.FC<Props> = observer((props) => {
@@ -27,7 +27,9 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { projectLabel: projectLabelStore, project: projectStore } = useMobxStore();
+  const {
+    projectLabel: { projectLabels, fetchProjectLabels, updateLabel },
+  } = useMobxStore();
 
   // states
   const [query, setQuery] = useState("");
@@ -35,28 +37,24 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   // api call to fetch project details
   useSWR(
     workspaceSlug && projectId ? "PROJECT_LABELS" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   // derived values
-  const issueLabels = projectStore.labels?.[projectId?.toString()!] ?? null;
-
-  const filteredLabels: IIssueLabels[] =
+  const filteredLabels: IIssueLabel[] =
     query === ""
-      ? issueLabels ?? []
-      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
+      ? projectLabels ?? []
+      : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
 
   const handleModalClose = () => {
     handleClose();
     setQuery("");
   };
 
-  const addChildLabel = async (label: IIssueLabels) => {
+  const addChildLabel = async (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+    await updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
       parent: parent?.id!,
     });
   };
@@ -73,7 +71,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -86,11 +84,11 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
               <Combobox>
                 <div className="relative m-1">
                   <Search
-                    className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                     aria-hidden="true"
                   />
                   <Combobox.Input
@@ -104,11 +102,11 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                   {filteredLabels.length > 0 && (
                     <li className="p-2">
                       {query === "" && (
-                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
+                        <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {
-                          const children = issueLabels?.filter((l) => l.parent === label.id);
+                          const children = projectLabels?.filter((l) => l.parent === label.id);
 
                           if (
                             (label.parent === "" || label.parent === null) && // issue does not have any other parent
@@ -128,7 +126,6 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                                 }
                                 onClick={() => {
                                   addChildLabel(label);
-                                  handleClose();
                                 }}
                               >
                                 <span
@@ -147,7 +144,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                 </Combobox.Options>
 
                 {query !== "" && filteredLabels.length === 0 && (
-                  <div className="py-14 px-6 text-center sm:px-14">
+                  <div className="px-6 py-14 text-center sm:px-14">
                     <LayerStackIcon
                       className="mx-auto h-6 w-6 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"

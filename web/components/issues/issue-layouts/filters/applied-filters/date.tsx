@@ -36,9 +36,9 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((date) => (
-        <div key={date} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
+        <div key={date} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
           <span className="normal-case">{getDateLabel(date)}</span>
           <button
             type="button"
@@ -49,6 +49,6 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 });

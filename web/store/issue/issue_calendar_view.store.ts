@@ -35,8 +35,8 @@ export class IssueCalendarViewStore implements IIssueCalendarViewStore {
         projectId: projectId,
       };
 
-      const droppableSourceColumnId = source.droppableId;
-      const droppableDestinationColumnId = destination.droppableId;
+      const droppableSourceColumnId = source?.droppableId || null;
+      const droppableDestinationColumnId = destination?.droppableId || null;
 
       if (droppableSourceColumnId === droppableDestinationColumnId) return;
 
@@ -75,7 +75,7 @@ export class IssueCalendarViewStore implements IIssueCalendarViewStore {
         this.rootStore.issue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,

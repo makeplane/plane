@@ -2,12 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const BlockerIcon: React.FC<ISvgIcons> = ({
-  height = "24",
-  width = "24",
-  className = "",
-  ...rest
-}) => (
+export const BlockerIcon: React.FC<ISvgIcons> = ({ height = "24", width = "24", className = "", ...rest }) => (
   <svg
     height={height}
     width={width}

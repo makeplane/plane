@@ -7,12 +7,11 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
-  ModuleKanBanLayout,
-  ModuleListLayout,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
-  ProjectViewEmptyState,
   ProjectViewGanttLayout,
+  ProjectViewKanBanLayout,
+  ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
@@ -22,62 +21,43 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
-    projectViews: projectViewsStore,
-    projectViewIssues: projectViewIssuesStore,
-    projectViewFilters: projectViewFiltersStore,
+    viewIssues: { loader, getIssues, fetchIssues },
+    viewIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
-  useSWR(
-    workspaceSlug && projectId && viewId ? `PROJECT_VIEW_FILTERS_AND_ISSUES_${viewId.toString()}` : null,
-    async () => {
-      if (workspaceSlug && projectId && viewId) {
-        // fetching the project display filters and display properties
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-
-        // fetching the view details
-        await projectViewsStore.fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString());
-        // fetching the view issues
-        await projectViewIssuesStore.fetchViewIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          viewId.toString(),
-          projectViewFiltersStore.storedFilters[viewId.toString()] ?? {}
-        );
-      }
+  useSWR(workspaceSlug && projectId && viewId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
+    if (workspaceSlug && projectId && viewId) {
+      await fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
+      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
     }
-  );
+  });
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
-
-  const issueCount = projectViewIssuesStore.getIssuesCount;
-
-  if (!projectViewIssuesStore.getIssues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   return (
-    <div className="relative h-full w-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
-      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ProjectViewEmptyState />
-      ) : (
-        <div className="h-full w-full overflow-y-auto">
-          {activeLayout === "list" ? (
-            <ModuleListLayout />
-          ) : activeLayout === "kanban" ? (
-            <ModuleKanBanLayout />
-          ) : activeLayout === "calendar" ? (
-            <ProjectViewCalendarLayout />
-          ) : activeLayout === "gantt_chart" ? (
-            <ProjectViewGanttLayout />
-          ) : activeLayout === "spreadsheet" ? (
-            <ProjectViewSpreadsheetLayout />
-          ) : null}
+
+      {loader === "init-loader" ? (
+        <div className="flex h-full w-full items-center justify-center">
+          <Spinner />
         </div>
+      ) : (
+        <>
+          <div className="relative h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ProjectViewListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ProjectViewKanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <ProjectViewCalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <ProjectViewGanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectViewSpreadsheetLayout />
+            ) : null}
+          </div>
+        </>
       )}
     </div>
   );

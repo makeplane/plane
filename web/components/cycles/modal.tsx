@@ -24,33 +24,48 @@ const cycleService = new CycleService();
 export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const {
+    cycle: cycleStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
   // states
   const [activeProject, setActiveProject] = useState<string>(projectId);
   // toast
   const { setToastAlert } = useToast();
 
-  const createCycle = async (payload: Partial<ICycle>) =>
-    cycleStore
-      .createCycle(workspaceSlug, projectId, payload)
-      .then(() => {
+  const createCycle = async (payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .createCycle(workspaceSlug, selectedProjectId, payload)
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Cycle created successfully.",
         });
+        postHogEventTracker("CYCLE_CREATE", {
+          ...res,
+          state: "SUCCESS",
+        });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in creating cycle. Please try again.",
+          message: err.detail ?? "Error in creating cycle. Please try again.",
+        });
+        postHogEventTracker("CYCLE_CREATE", {
+          state: "FAILED",
         });
       });
+  };
 
-  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) =>
-    cycleStore
-      .updateCycle(workspaceSlug, projectId, cycleId, payload)
+  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .patchCycle(workspaceSlug, selectedProjectId, cycleId, payload)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -58,13 +73,14 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Cycle updated successfully.",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in updating cycle. Please try again.",
+          message: err.detail ?? "Error in updating cycle. Please try again.",
         });
       });
+  };
 
   const dateChecker = async (payload: CycleDateCheckData) => {
     let status = false;
@@ -123,7 +139,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -137,7 +153,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <CycleForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}

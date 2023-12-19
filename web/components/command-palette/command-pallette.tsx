@@ -4,7 +4,6 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
@@ -30,9 +29,14 @@ export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
   // store
-  const { commandPalette, theme: themeStore } = useMobxStore();
   const {
-    isCommandPaletteOpen,
+    commandPalette,
+    theme: { toggleSidebar },
+    user: { currentUser },
+    trackEvent: { setTrackElement },
+    projectIssues: { removeIssue },
+  } = useMobxStore();
+  const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
     toggleCreateIssueModal,
@@ -52,10 +56,9 @@ export const CommandPalette: FC = observer(() => {
     toggleBulkDeleteIssueModal,
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
+    isAnyModalOpen,
+    createIssueStoreType,
   } = commandPalette;
-  const { toggleSidebar } = themeStore;
-
-  const { user } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -111,10 +114,12 @@ export const CommandPalette: FC = observer(() => {
           e.preventDefault();
           toggleSidebar();
         }
-      } else {
+      } else if (!isAnyModalOpen) {
         if (keyPressed === "c") {
+          setTrackElement("SHORTCUT_KEY");
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
+          setTrackElement("SHORTCUT_KEY");
           toggleCreateProjectModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
@@ -146,6 +151,8 @@ export const CommandPalette: FC = observer(() => {
       toggleCreateIssueModal,
       projectId,
       workspaceSlug,
+      isAnyModalOpen,
+      setTrackElement,
     ]
   );
 
@@ -154,12 +161,7 @@ export const CommandPalette: FC = observer(() => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  if (!user) return null;
-
-  const deleteIssue = () => {
-    toggleCommandPaletteModal(false);
-    toggleDeleteIssueModal(true);
-  };
+  if (!currentUser) return null;
 
   return (
     <>
@@ -203,8 +205,6 @@ export const CommandPalette: FC = observer(() => {
           <CreateUpdatePageModal
             isOpen={isCreatePageModalOpen}
             handleClose={() => toggleCreatePageModal(false)}
-            user={user}
-            workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
         </>
@@ -216,13 +216,18 @@ export const CommandPalette: FC = observer(() => {
         prePopulateData={
           cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }
+        currentStore={createIssueStoreType}
       />
 
-      {issueId && issueDetails && (
+      {workspaceSlug && projectId && issueId && issueDetails && (
         <DeleteIssueModal
           handleClose={() => toggleDeleteIssueModal(false)}
           isOpen={isDeleteIssueModalOpen}
           data={issueDetails}
+          onSubmit={async () => {
+            await removeIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString());
+            router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+          }}
         />
       )}
 
@@ -231,15 +236,9 @@ export const CommandPalette: FC = observer(() => {
         onClose={() => {
           toggleBulkDeleteIssueModal(false);
         }}
-        user={user}
+        user={currentUser}
       />
-      <CommandModal
-        deleteIssue={deleteIssue}
-        isPaletteOpen={isCommandPaletteOpen}
-        closePalette={() => {
-          toggleCommandPaletteModal(false);
-        }}
-      />
+      <CommandModal />
     </>
   );
 });

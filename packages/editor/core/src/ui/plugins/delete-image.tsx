@@ -1,6 +1,6 @@
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { DeleteImage } from "../../types/delete-image";
+import { DeleteImage, RestoreImage } from "@plane/editor-types";
 
 const deleteKey = new PluginKey("delete-image");
 const IMAGE_NODE_TYPE = "image";
@@ -55,7 +55,7 @@ const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
 
 export default TrackImageDeletionPlugin;
 
-async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
+export async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
   try {
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
     const resStatus = await deleteImage(assetUrlWithWorkspaceId);
@@ -64,5 +64,17 @@ async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<voi
     }
   } catch (error) {
     console.error("Error deleting image: ", error);
+  }
+}
+
+export async function onNodeRestored(src: string, restoreImage: RestoreImage): Promise<void> {
+  try {
+    const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
+    const resStatus = await restoreImage(assetUrlWithWorkspaceId);
+    if (resStatus === 204) {
+      console.log("Image restored successfully");
+    }
+  } catch (error) {
+    console.error("Error restoring image: ", error);
   }
 }

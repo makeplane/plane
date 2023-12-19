@@ -15,7 +15,7 @@ export interface ICyclesView {
   layout: TCycleLayout;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string;
+  peekCycle: string | undefined;
 }
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
@@ -30,7 +30,14 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
-  const cyclesList = cycleStore.cycles?.[projectId];
+  const cyclesList =
+    filter === "completed"
+      ? cycleStore.projectCompletedCycles
+      : filter === "draft"
+        ? cycleStore.projectDraftCycles
+        : filter === "upcoming"
+          ? cycleStore.projectUpcomingCycles
+          : cycleStore.projectCycles;
 
   return (
     <>
@@ -59,7 +66,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
               peekCycle={peekCycle}
             />
           ) : (
-            <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3 p-8">
+            <Loader className="grid grid-cols-1 gap-9 p-8 md:grid-cols-2 lg:grid-cols-3">
               <Loader.Item height="200px" />
               <Loader.Item height="200px" />
               <Loader.Item height="200px" />

@@ -4,11 +4,7 @@ import { Decoration, NodeView } from "@tiptap/pm/view";
 import tippy, { Instance, Props } from "tippy.js";
 
 import { Editor } from "@tiptap/core";
-import {
-  CellSelection,
-  TableMap,
-  updateColumnsOnResize,
-} from "@tiptap/prosemirror-tables";
+import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/prosemirror-tables";
 
 import icons from "./icons";
 
@@ -18,7 +14,7 @@ export function updateColumns(
   table: HTMLElement,
   cellMinWidth: number,
   overrideCol?: number,
-  overrideValue?: any,
+  overrideValue?: any
 ) {
   let totalWidth = 0;
   let fixedWidth = true;
@@ -31,8 +27,7 @@ export function updateColumns(
     const { colspan, colwidth } = row.child(i).attrs;
 
     for (let j = 0; j < colspan; j += 1, col += 1) {
-      const hasWidth =
-        overrideCol === col ? overrideValue : colwidth && colwidth[j];
+      const hasWidth = overrideCol === col ? overrideValue : colwidth && colwidth[j];
       const cssWidth = hasWidth ? `${hasWidth}px` : "";
 
       totalWidth += hasWidth || cellMinWidth;
@@ -42,8 +37,7 @@ export function updateColumns(
       }
 
       if (!nextDOM) {
-        colgroup.appendChild(document.createElement("col")).style.width =
-          cssWidth;
+        colgroup.appendChild(document.createElement("col")).style.width = cssWidth;
       } else {
         if (nextDOM.style.width !== cssWidth) {
           nextDOM.style.width = cssWidth;
@@ -98,14 +92,12 @@ const columnsToolboxItems = [
   {
     label: "Add Column Before",
     icon: icons.insertLeftTableIcon,
-    action: ({ editor }: { editor: Editor }) =>
-      editor.chain().focus().addColumnBefore().run(),
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addColumnBefore().run(),
   },
   {
     label: "Add Column After",
     icon: icons.insertRightTableIcon,
-    action: ({ editor }: { editor: Editor }) =>
-      editor.chain().focus().addColumnAfter().run(),
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addColumnAfter().run(),
   },
   {
     label: "Pick Column Color",
@@ -131,8 +123,7 @@ const columnsToolboxItems = [
   {
     label: "Delete Column",
     icon: icons.deleteColumn,
-    action: ({ editor }: { editor: Editor }) =>
-      editor.chain().focus().deleteColumn().run(),
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteColumn().run(),
   },
 ];
 
@@ -140,14 +131,12 @@ const rowsToolboxItems = [
   {
     label: "Add Row Above",
     icon: icons.insertTopTableIcon,
-    action: ({ editor }: { editor: Editor }) =>
-      editor.chain().focus().addRowBefore().run(),
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addRowBefore().run(),
   },
   {
     label: "Add Row Below",
     icon: icons.insertBottomTableIcon,
-    action: ({ editor }: { editor: Editor }) =>
-      editor.chain().focus().addRowAfter().run(),
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addRowAfter().run(),
   },
   {
     label: "Pick Row Color",
@@ -159,11 +148,7 @@ const rowsToolboxItems = [
     }: {
       editor: Editor;
       triggerButton: HTMLButtonElement;
-      controlsContainer:
-        | Element
-        | "parent"
-        | ((ref: Element) => Element)
-        | undefined;
+      controlsContainer: Element | "parent" | ((ref: Element) => Element) | undefined;
     }) => {
       createColorPickerToolbox({
         triggerButton,
@@ -177,8 +162,7 @@ const rowsToolboxItems = [
   {
     label: "Delete Row",
     icon: icons.deleteRow,
-    action: ({ editor }: { editor: Editor }) =>
-      editor.chain().focus().deleteRow().run(),
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteRow().run(),
   },
 ];
 
@@ -202,6 +186,7 @@ function createToolbox({
           "div",
           {
             className: "toolboxItem",
+            itemType: "button",
             onClick() {
               onClickItem(item);
             },
@@ -212,9 +197,9 @@ function createToolbox({
               innerHTML: item.icon,
             }),
             h("div", { className: "label" }, item.label),
-          ],
-        ),
-      ),
+          ]
+        )
+      )
     ),
     ...tippyOptions,
   });
@@ -253,6 +238,7 @@ function createColorPickerToolbox({
           "div",
           {
             className: "toolboxItem",
+            itemType: "button",
             onClick: () => {
               onSelectColor(value);
               colorPicker.hide();
@@ -270,11 +256,11 @@ function createColorPickerToolbox({
               {
                 className: "label",
               },
-              key,
+              key
             ),
-          ],
-        ),
-      ),
+          ]
+        )
+      )
     ),
     onHidden: (instance) => {
       instance.destroy();
@@ -317,7 +303,7 @@ export class TableView implements NodeView {
     cellMinWidth: number,
     decorations: Decoration[],
     editor: Editor,
-    getPos: () => number,
+    getPos: () => number
   ) {
     this.node = node;
     this.cellMinWidth = cellMinWidth;
@@ -331,28 +317,32 @@ export class TableView implements NodeView {
       this.rowsControl = h(
         "div",
         { className: "rowsControl" },
-        h("button", {
+        h("div", {
+          itemType: "button",
+          className: "rowsControlDiv",
           onClick: () => this.selectRow(),
-        }),
+        })
       );
 
       this.columnsControl = h(
         "div",
         { className: "columnsControl" },
-        h("button", {
+        h("div", {
+          itemType: "button",
+          className: "columnsControlDiv",
           onClick: () => this.selectColumn(),
-        }),
+        })
       );
 
       this.controls = h(
         "div",
         { className: "tableControls", contentEditable: "false" },
         this.rowsControl,
-        this.columnsControl,
+        this.columnsControl
       );
 
       this.columnsToolbox = createToolbox({
-        triggerButton: this.columnsControl.querySelector("button"),
+        triggerButton: this.columnsControl.querySelector(".columnsControlDiv"),
         items: columnsToolboxItems,
         tippyOptions: {
           ...defaultTippyOptions,
@@ -391,7 +381,7 @@ export class TableView implements NodeView {
     this.colgroup = h(
       "colgroup",
       null,
-      Array.from({ length: this.map.width }, () => 1).map(() => h("col")),
+      Array.from({ length: this.map.width }, () => 1).map(() => h("col"))
     );
     this.tbody = h("tbody");
     this.table = h("table", null, this.colgroup, this.tbody);
@@ -402,7 +392,7 @@ export class TableView implements NodeView {
         className: "tableWrapper controls--disabled",
       },
       this.controls,
-      this.table,
+      this.table
     );
 
     this.render();
@@ -428,18 +418,11 @@ export class TableView implements NodeView {
 
   render() {
     if (this.colgroup.children.length !== this.map.width) {
-      const cols = Array.from({ length: this.map.width }, () => 1).map(() =>
-        h("col"),
-      );
+      const cols = Array.from({ length: this.map.width }, () => 1).map(() => h("col"));
       this.colgroup.replaceChildren(...cols);
     }
 
-    updateColumnsOnResize(
-      this.node,
-      this.colgroup,
-      this.table,
-      this.cellMinWidth,
-    );
+    updateColumnsOnResize(this.node, this.colgroup, this.table, this.cellMinWidth);
   }
 
   ignoreMutation() {
@@ -447,9 +430,7 @@ export class TableView implements NodeView {
   }
 
   updateControls() {
-    const { hoveredTable: table, hoveredCell: cell } = Object.values(
-      this.decorations,
-    ).reduce(
+    const { hoveredTable: table, hoveredCell: cell } = Object.values(this.decorations).reduce(
       (acc, curr) => {
         if (curr.spec.hoveredCell !== undefined) {
           acc["hoveredCell"] = curr.spec.hoveredCell;
@@ -460,7 +441,7 @@ export class TableView implements NodeView {
         }
         return acc;
       },
-      {} as Record<string, HTMLElement>,
+      {} as Record<string, HTMLElement>
     ) as any;
 
     if (table === undefined || cell === undefined) {
@@ -475,9 +456,7 @@ export class TableView implements NodeView {
     const tableRect = this.table.getBoundingClientRect();
     const cellRect = cellDom.getBoundingClientRect();
 
-    this.columnsControl.style.left = `${
-      cellRect.left - tableRect.left - this.table.parentElement!.scrollLeft
-    }px`;
+    this.columnsControl.style.left = `${cellRect.left - tableRect.left - this.table.parentElement!.scrollLeft}px`;
     this.columnsControl.style.width = `${cellRect.width}px`;
 
     this.rowsControl.style.top = `${cellRect.top - tableRect.top}px`;
@@ -487,22 +466,14 @@ export class TableView implements NodeView {
   selectColumn() {
     if (!this.hoveredCell) return;
 
-    const colIndex = this.map.colCount(
-      this.hoveredCell.pos - (this.getPos() + 1),
-    );
+    const colIndex = this.map.colCount(this.hoveredCell.pos - (this.getPos() + 1));
     const anchorCellPos = this.hoveredCell.pos;
-    const headCellPos =
-      this.map.map[colIndex + this.map.width * (this.map.height - 1)] +
-      (this.getPos() + 1);
+    const headCellPos = this.map.map[colIndex + this.map.width * (this.map.height - 1)] + (this.getPos() + 1);
 
-    const cellSelection = CellSelection.create(
-      this.editor.view.state.doc,
-      anchorCellPos,
-      headCellPos,
-    );
+    const cellSelection = CellSelection.create(this.editor.view.state.doc, anchorCellPos, headCellPos);
     this.editor.view.dispatch(
       // @ts-ignore
-      this.editor.state.tr.setSelection(cellSelection),
+      this.editor.state.tr.setSelection(cellSelection)
     );
   }
 
@@ -510,21 +481,13 @@ export class TableView implements NodeView {
     if (!this.hoveredCell) return;
 
     const anchorCellPos = this.hoveredCell.pos;
-    const anchorCellIndex = this.map.map.indexOf(
-      anchorCellPos - (this.getPos() + 1),
-    );
-    const headCellPos =
-      this.map.map[anchorCellIndex + (this.map.width - 1)] +
-      (this.getPos() + 1);
+    const anchorCellIndex = this.map.map.indexOf(anchorCellPos - (this.getPos() + 1));
+    const headCellPos = this.map.map[anchorCellIndex + (this.map.width - 1)] + (this.getPos() + 1);
 
-    const cellSelection = CellSelection.create(
-      this.editor.state.doc,
-      anchorCellPos,
-      headCellPos,
-    );
+    const cellSelection = CellSelection.create(this.editor.state.doc, anchorCellPos, headCellPos);
     this.editor.view.dispatch(
       // @ts-ignore
-      this.editor.view.state.tr.setSelection(cellSelection),
+      this.editor.view.state.tr.setSelection(cellSelection)
     );
   }
 }

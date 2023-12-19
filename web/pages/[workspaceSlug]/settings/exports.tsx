@@ -1,4 +1,6 @@
-import { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // layout
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -7,21 +9,35 @@ import { WorkspaceSettingHeader } from "components/headers";
 import ExportGuide from "components/exporter/guide";
 // types
 import { NextPageWithLayout } from "types/app";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-const ExportsPage: NextPageWithLayout = () => (
-  <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
-    <WorkspaceSettingLayout>
-      <div className="pr-9 py-8 w-full overflow-y-auto">
-        <div className="flex items-center py-3.5 border-b border-custom-border-200">
-          <h3 className="text-xl font-medium">Exports</h3>
-        </div>
-        <ExportGuide />
+const ExportsPage: NextPageWithLayout = observer(() => {
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
+
+  const hasPageAccess =
+    currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
+
+  if (!hasPageAccess)
+    return (
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
       </div>
-    </WorkspaceSettingLayout>
-  </AppLayout>
-);
+    );
 
-ExportsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <div className="w-full overflow-y-auto py-8 pr-9">
+      <div className="flex items-center border-b border-custom-border-100 py-3.5">
+        <h3 className="text-xl font-medium">Exports</h3>
+      </div>
+      <ExportGuide />
+    </div>
+  );
+});
+
+ExportsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
     <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>

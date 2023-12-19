@@ -27,9 +27,7 @@ export const IssueListView = observer(() => {
                 ))}
               </div>
             ) : (
-              <div className="px-6 py-3.5 text-sm text-custom-text-200 bg-custom-background-100">
-                No Issues are available.
-              </div>
+              <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues.</div>
             )}
           </div>
         ))}

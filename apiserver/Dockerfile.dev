@@ -27,7 +27,8 @@ WORKDIR /code
 COPY requirements.txt ./requirements.txt
 ADD requirements ./requirements
 
-RUN pip install -r requirements.txt --compile --no-cache-dir
+# Install the local development settings
+RUN pip install -r requirements/local.txt --compile --no-cache-dir
 
 RUN addgroup -S plane && \
     adduser -S captain -G plane
@@ -48,5 +49,5 @@ USER captain
 # Expose container port and run entry point script
 EXPOSE 8000
 
-# CMD [ "./bin/takeoff" ]
+CMD [ "./bin/takeoff.local" ]
 

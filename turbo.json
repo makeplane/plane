@@ -1,13 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
+    "NODE_ENV",
     "NEXT_PUBLIC_API_BASE_URL",
     "NEXT_PUBLIC_DEPLOY_URL",
     "NEXT_PUBLIC_SENTRY_DSN",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
-    "NEXT_PUBLIC_GITHUB_APP_NAME",
     "NEXT_PUBLIC_ENABLE_SENTRY",
-    "NEXT_PUBLIC_ENABLE_OAUTH",
     "NEXT_PUBLIC_TRACK_EVENTS",
     "NEXT_PUBLIC_PLAUSIBLE_DOMAIN",
     "NEXT_PUBLIC_CRISP_ID",
@@ -17,17 +16,18 @@
     "NEXT_PUBLIC_DEPLOY_WITH_NGINX",
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
-    "SLACK_OAUTH_URL",
-    "SLACK_CLIENT_ID",
-    "SLACK_CLIENT_SECRET",
     "JITSU_TRACKER_ACCESS_KEY",
-    "JITSU_TRACKER_HOST",
-    "UNSPLASH_ACCESS_KEY"
+    "JITSU_TRACKER_HOST"
   ],
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "dist/**"
+      ]
     },
     "web#develop": {
       "cache": false,
@@ -35,6 +35,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -44,6 +45,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -52,6 +54,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -60,19 +63,38 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
     "@plane/lite-text-editor#build": {
       "cache": true,
-      "dependsOn": ["@plane/editor-core#build"]
+      "dependsOn": [
+        "@plane/editor-core#build",
+        "@plane/editor-extensions#build",
+        "@plane/editor-types#build"
+      ]
     },
     "@plane/rich-text-editor#build": {
       "cache": true,
-      "dependsOn": ["@plane/editor-core#build"]
+      "dependsOn": [
+        "@plane/editor-core#build",
+        "@plane/editor-extensions#build",
+        "@plane/editor-types#build"
+      ]
+    },
+    "@plane/document-editor#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/editor-core#build",
+        "@plane/editor-extensions#build",
+        "@plane/editor-types#build"
+      ]
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "lint": {

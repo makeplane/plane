@@ -17,10 +17,10 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
   const { projectDetails, handleDelete } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-400">
+    <Disclosure as="div" className="border-t border-custom-border-100">
       {({ open }) => (
         <div className="w-full">
-          <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+          <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
             <span className="text-xl tracking-tight">Delete Project</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </Disclosure.Button>

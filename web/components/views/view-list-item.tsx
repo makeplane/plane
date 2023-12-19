@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
+import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu } from "@plane/ui";
-// icons
-import { PencilIcon, Sparkles, StarIcon, TrashIcon } from "lucide-react";
+import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
+// helpers
+import { calculateTotalFilters } from "helpers/filter.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IProjectView } from "types";
-// helpers
-import { truncateText } from "helpers/string.helper";
-import { calculateTotalFilters } from "helpers/filter.helper";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   view: IProjectView;
@@ -30,7 +32,12 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { projectViews: projectViewsStore } = useMobxStore();
+  const { setToastAlert } = useToast();
+
+  const {
+    projectViews: projectViewsStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
@@ -44,7 +51,21 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     projectViewsStore.removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "View link copied to clipboard.",
+      });
+    });
+  };
+
   const totalFilters = calculateTotalFilters(view.query_data ?? {});
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -58,80 +79,91 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
+      <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-          <a className="flex items-center justify-between relative rounded p-4 w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-4">
-                <div className="grid place-items-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
-                  <Sparkles size={14} strokeWidth={2} />
+          <div className="relative flex w-full items-center justify-between rounded p-4">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex items-center gap-4 overflow-hidden">
+                <div className="grid h-10 w-10 flex-shrink-0 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
+                  <PhotoFilterIcon className="h-3.5 w-3.5" />
                 </div>
-                <div className="flex flex-col">
-                  <p className="truncate text-sm leading-4 font-medium">{truncateText(view.name, 75)}</p>
-                  {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
+                <div className="flex flex-col overflow-hidden ">
+                  <p className="truncate break-all text-sm font-medium  leading-4">{view.name}</p>
+                  {view?.description && <p className="break-all text-xs text-custom-text-200">{view.description}</p>}
                 </div>
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 hidden group-hover:block">
+                  <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
+                  {isEditingAllowed &&
+                    (view.is_favorite ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveFromFavorites();
+                        }}
+                        className="grid place-items-center"
+                      >
+                        <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddToFavorites();
+                        }}
+                        className="grid place-items-center"
+                      >
+                        <StarIcon size={14} strokeWidth={2} />
+                      </button>
+                    ))}
 
-                  {view.is_favorite ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleRemoveFromFavorites();
-                      }}
-                      className="grid place-items-center"
-                    >
-                      <StarIcon className="text-orange-400" fill="#f6ad55" size={14} strokeWidth={2} />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAddToFavorites();
-                      }}
-                      className="grid place-items-center"
-                    >
-                      <StarIcon size={14} strokeWidth={2} />
-                    </button>
-                  )}
                   <CustomMenu width="auto" ellipsis>
-                    <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setCreateUpdateViewModal(true);
-                      }}
-                    >
+                    {isEditingAllowed && (
+                      <>
+                        <CustomMenu.MenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setCreateUpdateViewModal(true);
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <PencilIcon size={14} strokeWidth={2} />
+                            <span>Edit View</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setDeleteViewModal(true);
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <TrashIcon size={14} strokeWidth={2} />
+                            <span>Delete View</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      </>
+                    )}
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
                       <span className="flex items-center justify-start gap-2">
-                        <PencilIcon size={14} strokeWidth={2} />
-                        <span>Edit View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setDeleteViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <TrashIcon size={14} strokeWidth={2} />
-                        <span>Delete View</span>
+                        <LinkIcon className="h-3 w-3" />
+                        <span>Copy view link</span>
                       </span>
                     </CustomMenu.MenuItem>
                   </CustomMenu>
                 </div>
               </div>
             </div>
-          </a>
+          </div>
         </Link>
       </div>
     </>

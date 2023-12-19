@@ -11,19 +11,18 @@ import { IssuePropertyDate } from "../properties/date";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue, IState, TIssuePriorities } from "types";
+import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 
-export interface IKanBanProperties {
+export interface IListProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue) => void;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadonly?: boolean;
-  showEmptyGroup?: boolean;
 }
 
-export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties, isReadonly, showEmptyGroup } = props;
+export const ListProperties: FC<IListProperties> = observer((props) => {
+  const { columnId: group_id, issue, handleIssues, displayProperties, isReadonly } = props;
 
   const handleState = (state: IState) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
@@ -41,11 +40,11 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
   };
 
-  const handleStartDate = (date: string) => {
+  const handleStartDate = (date: string | null) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, start_date: date });
   };
 
-  const handleTargetDate = (date: string) => {
+  const handleTargetDate = (date: string | null) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, target_date: date });
   };
 
@@ -54,13 +53,14 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
   };
 
   return (
-    <div className="relative flex gap-2 overflow-x-auto whitespace-nowrap">
+    <div className="relative flex items-center gap-2 overflow-x-auto whitespace-nowrap">
       {/* basic properties */}
       {/* state */}
-      {display_properties && display_properties?.state && (
+      {displayProperties && displayProperties?.state && (
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
-          value={issue?.state_detail || null}
+          value={issue?.state || null}
+          defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
           hideDropdownArrow
           onChange={handleState}
           disabled={isReadonly}
@@ -68,7 +68,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* priority */}
-      {display_properties && display_properties?.priority && (
+      {displayProperties && displayProperties?.priority && (
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
@@ -78,10 +78,11 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* label */}
-      {display_properties && display_properties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
+      {displayProperties && displayProperties?.labels && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
+          defaultOptions={issue?.label_details ? issue.label_details : []}
           onChange={handleLabel}
           disabled={isReadonly}
           hideDropdownArrow
@@ -89,10 +90,11 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* assignee */}
-      {display_properties && display_properties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
+      {displayProperties && displayProperties?.assignee && (
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
+          defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={isReadonly}
@@ -101,27 +103,27 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* start date */}
-      {display_properties && display_properties?.start_date && (showEmptyGroup || issue?.start_date) && (
+      {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
           value={issue?.start_date || null}
-          onChange={(date: string) => handleStartDate(date)}
+          onChange={(date) => handleStartDate(date)}
           disabled={isReadonly}
-          placeHolder="Start date"
+          type="start_date"
         />
       )}
 
       {/* target/due date */}
-      {display_properties && display_properties?.due_date && (showEmptyGroup || issue?.target_date) && (
+      {displayProperties && displayProperties?.due_date && (
         <IssuePropertyDate
           value={issue?.target_date || null}
-          onChange={(date: string) => handleTargetDate(date)}
+          onChange={(date) => handleTargetDate(date)}
           disabled={isReadonly}
-          placeHolder="Target date"
+          type="target_date"
         />
       )}
 
       {/* estimates */}
-      {display_properties && display_properties?.estimate && (
+      {displayProperties && displayProperties?.estimate && (
         <IssuePropertyEstimates
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
@@ -133,9 +135,9 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
 
       {/* extra render properties */}
       {/* sub-issues */}
-      {display_properties && display_properties?.sub_issue_count && (
+      {displayProperties && displayProperties?.sub_issue_count && !!issue?.sub_issues_count && (
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
-          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.sub_issues_count}</div>
           </div>
@@ -143,9 +145,9 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* attachments */}
-      {display_properties && display_properties?.attachment_count && (
+      {displayProperties && displayProperties?.attachment_count && !!issue?.attachment_count && (
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.attachment_count}</div>
           </div>
@@ -153,9 +155,9 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* link */}
-      {display_properties && display_properties?.link && (
+      {displayProperties && displayProperties?.link && !!issue?.link_count && (
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.link_count}</div>
           </div>

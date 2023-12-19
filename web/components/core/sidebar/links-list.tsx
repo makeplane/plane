@@ -1,35 +1,57 @@
+// ui
+import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // icons
-import { ExternalLinkIcon } from "@plane/ui";
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { linkDetails, UserAuth } from "types";
+import { ILinkDetails, UserAuth } from "types";
+// hooks
+import useToast from "hooks/use-toast";
 
 type Props = {
-  links: linkDetails[];
+  links: ILinkDetails[];
   handleDeleteLink: (linkId: string) => void;
-  handleEditLink: (link: linkDetails) => void;
+  handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
 };
 
 export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+  // toast
+  const { setToastAlert } = useToast();
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setToastAlert({
+      message: "The URL has been successfully copied to your clipboard",
+      type: "success",
+      title: "Copied to clipboard",
+    });
+  };
 
   return (
     <>
       {links.map((link) => (
         <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
-          <div className="flex items-start justify-between gap-2 w-full">
-            <div className="flex items-start gap-2">
+          <div className="flex w-full items-start justify-between gap-2">
+            <div className="flex items-start gap-2 truncate">
               <span className="py-1">
                 <LinkIcon className="h-3 w-3 flex-shrink-0" />
               </span>
-              <span className="text-xs break-all">{link.title && link.title !== "" ? link.title : link.url}</span>
+              <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <span
+                  className="cursor-pointer truncate text-xs"
+                  onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
+                >
+                  {link.title && link.title !== "" ? link.title : link.url}
+                </span>
+              </Tooltip>
             </div>
 
-            {!isNotAllowed && (
-              <div className="flex items-center gap-2 flex-shrink-0 z-[1]">
+            <div className="z-[1] flex flex-shrink-0 items-center gap-2">
+              {!isNotAllowed && (
                 <button
                   type="button"
                   className="flex items-center justify-center p-1 hover:bg-custom-background-80"
@@ -39,16 +61,18 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                     handleEditLink(link);
                   }}
                 >
-                  <Pencil className="h-3 w-3 text-custom-text-200 stroke-[1.5]" />
+                  <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
                 </button>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
-                >
-                  <ExternalLinkIcon className="h-3 w-3 text-custom-text-200 stroke-[1.5]" />
-                </a>
+              )}
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+              >
+                <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              </a>
+              {!isNotAllowed && (
                 <button
                   type="button"
                   className="flex items-center justify-center p-1 hover:bg-custom-background-80"
@@ -60,11 +84,11 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <div className="px-5">
-            <p className="text-xs mt-0.5 text-custom-text-300 stroke-[1.5]">
+            <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
               Added {timeAgo(link.created_at)}
               <br />
               by{" "}

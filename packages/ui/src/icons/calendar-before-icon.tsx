@@ -2,17 +2,8 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const CalendarBeforeIcon: React.FC<ISvgIcons> = ({
-  className = "fill-current",
-  ...rest
-}) => (
-  <svg
-    viewBox="0 0 24 24"
-    className={`${className} `}
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...rest}
-  >
+export const CalendarBeforeIcon: React.FC<ISvgIcons> = ({ className = "fill-current", ...rest }) => (
+  <svg viewBox="0 0 24 24" className={`${className} `} fill="none" xmlns="http://www.w3.org/2000/svg" {...rest}>
     <g clipPath="url(#clip0_3309_70907)">
       <path
         d="M10.6125 16.5V15.375H14.625V7.3125H3.375V11.4375H2.25V3.75C2.25 3.45 2.3625 3.1875 2.5875 2.9625C2.8125 2.7375 3.075 2.625 3.375 2.625H4.59375V1.5H5.8125V2.625H12.1875V1.5H13.4062V2.625H14.625C14.925 2.625 15.1875 2.7375 15.4125 2.9625C15.6375 3.1875 15.75 3.45 15.75 3.75V15.375C15.75 15.675 15.6375 15.9375 15.4125 16.1625C15.1875 16.3875 14.925 16.5 14.625 16.5H10.6125ZM3.375 6.1875H14.625V3.75H3.375V6.1875Z"

@@ -91,7 +91,7 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
+        <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
           <div className="flex items-start gap-4">
             <div className="h-10 w-10 flex-shrink-0">
               <Image
@@ -101,7 +101,7 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
             </div>
             <div>
               <h3 className="flex items-center gap-4 text-sm font-medium">{integration.integration_detail.title}</h3>
-              <p className="text-sm text-custom-text-200 tracking-tight">
+              <p className="text-sm tracking-tight text-custom-text-200">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>

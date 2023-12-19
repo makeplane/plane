@@ -22,6 +22,7 @@ import { Button } from "@plane/ui";
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
 import type { TInboxStatus } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const InboxActionsHeader = observer(() => {
   const [date, setDate] = useState(new Date());
@@ -71,7 +72,7 @@ export const InboxActionsHeader = observer(() => {
   }, [issue]);
 
   const issueStatus = issue?.issue_inbox[0].status;
-  const isAllowed = userRole === 15 || userRole === 20;
+  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -116,7 +117,7 @@ export const InboxActionsHeader = observer(() => {
           <DeleteInboxIssueModal data={issue} isOpen={deleteIssueModal} onClose={() => setDeleteIssueModal(false)} />
         </>
       )}
-      <div className="grid grid-cols-4 border-b border-custom-border-200 divide-x divide-custom-border-200">
+      <div className="grid grid-cols-4 divide-x divide-custom-border-200 border-b border-custom-border-200">
         <div className="col-span-1 flex justify-between p-4">
           <div className="flex items-center gap-2">
             <Inbox className="text-custom-text-200" size={16} strokeWidth={2} />
@@ -125,7 +126,7 @@ export const InboxActionsHeader = observer(() => {
           <FiltersDropdown />
         </div>
         {inboxIssueId && (
-          <div className="flex justify-between items-center gap-4 px-4 col-span-3">
+          <div className="col-span-3 flex items-center justify-between gap-4 px-4">
             <div className="flex items-center gap-x-2">
               <button
                 type="button"
@@ -151,7 +152,7 @@ export const InboxActionsHeader = observer(() => {
                 {currentIssueIndex + 1}/{issuesList?.length ?? 0}
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex flex-wrap items-center gap-3">
               {isAllowed && (issueStatus === 0 || issueStatus === -2) && (
                 <div className="flex-shrink-0">
                   <Popover className="relative">
@@ -160,9 +161,9 @@ export const InboxActionsHeader = observer(() => {
                         Snooze
                       </Button>
                     </Popover.Button>
-                    <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
+                    <Popover.Panel className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-custom-background-100 p-2 shadow-lg">
                       {({ close }) => (
-                        <div className="w-full h-full flex flex-col gap-y-1">
+                        <div className="flex h-full w-full flex-col gap-y-1">
                           <DatePicker
                             selected={date ? new Date(date) : null}
                             onChange={(val) => {

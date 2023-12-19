@@ -26,7 +26,11 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
+  const {
+    inboxIssueDetails: inboxIssueDetailsStore,
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -48,7 +52,17 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           title: "Success!",
           message: "Issue deleted successfully.",
         });
-
+        postHogEventTracker(
+          "ISSUE_DELETED",
+          {
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!,
+          }
+        );
         // remove inboxIssueId from the url
         router.push({
           pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
@@ -56,13 +70,24 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
 
         handleClose();
       })
-      .catch(() =>
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Issue could not be deleted. Please try again.",
-        })
-      )
+        });
+        postHogEventTracker(
+          "ISSUE_DELETED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!,
+          }
+        );
+      })
       .finally(() => setIsDeleting(false));
   };
 
@@ -78,7 +103,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -92,7 +117,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -112,10 +137,10 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" onClick={handleDelete} loading={isDeleting}>
+                    <Button variant="danger" size="sm" tabIndex={1} onClick={handleDelete} loading={isDeleting}>
                       {isDeleting ? "Deleting..." : "Delete Issue"}
                     </Button>
                   </div>

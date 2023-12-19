@@ -8,21 +8,49 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
+import { IGroupedIssues, IIssueResponse } from "store/issues/types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
-  issues: IIssueGroupedStructure | null;
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+  issues: IIssueResponse | undefined;
+  groupedIssueIds: IGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
-  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, layout, showWeekends, handleIssues, quickActions } = props;
+  const { issuesFilterStore, issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } =
+    props;
 
-  const { calendar: calendarStore } = useMobxStore();
+  const {
+    calendar: calendarStore,
+    projectIssues: issueStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
+
+  const { enableIssueCreation } = issueStore?.viewFlags || {};
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const calendarPayload = calendarStore.calendarPayload;
 
@@ -30,39 +58,47 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   if (!calendarPayload)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <Spinner />
       </div>
     );
 
   return (
     <>
-      <div className="h-full w-full flex flex-col overflow-hidden">
-        <CalendarHeader />
+      <div className="flex h-full w-full flex-col overflow-hidden">
+        <CalendarHeader issuesFilterStore={issuesFilterStore} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" && (
-            <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+            <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays
+                    issuesFilterStore={issuesFilterStore}
                     key={weekIndex}
                     week={week}
                     issues={issues}
+                    groupedIssueIds={groupedIssueIds}
                     enableQuickIssueCreate
-                    handleIssues={handleIssues}
+                    disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                     quickActions={quickActions}
+                    quickAddCallback={quickAddCallback}
+                    viewId={viewId}
                   />
                 ))}
             </div>
           )}
           {layout === "week" && (
             <CalendarWeekDays
+              issuesFilterStore={issuesFilterStore}
               week={calendarStore.allDaysOfActiveWeek}
               issues={issues}
+              groupedIssueIds={groupedIssueIds}
               enableQuickIssueCreate
-              handleIssues={handleIssues}
+              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
               quickActions={quickActions}
+              quickAddCallback={quickAddCallback}
+              viewId={viewId}
             />
           )}
         </div>

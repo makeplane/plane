@@ -5,12 +5,12 @@ import { IssuePropertyLabels } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, IIssueLabels } from "types";
+import { IIssue, IIssueLabel } from "types";
 
 type Props = {
   issue: IIssue;
-  onChange: (formData: Partial<IIssue>) => void;
-  labels: IIssueLabels[] | undefined;
+  onChange: (issue: IIssue, formData: Partial<IIssue>) => void;
+  labels: IIssueLabel[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -20,20 +20,26 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
       <IssuePropertyLabels
-        projectId={issue.project_detail.id ?? null}
+        projectId={issue.project_detail?.id ?? null}
         value={issue.labels}
-        onChange={(data) => onChange({ labels: data })}
-        className="h-full w-full"
-        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
-        noLabelBorder
+        defaultOptions={issue?.label_details ? issue.label_details : []}
+        onChange={(data) => {
+          onChange(issue, { labels: data });
+          if (issue.parent) {
+            mutateSubIssues(issue, { assignees: data });
+          }
+        }}
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
+        buttonClassName="px-2.5 h-full"
         hideDropdownArrow
         maxRender={1}
         disabled={disabled}
+        placeholderText="Select labels"
       />
 
       {isExpanded &&
@@ -41,14 +47,16 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetLabelColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            labels={labels}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetLabelColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              labels={labels}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );

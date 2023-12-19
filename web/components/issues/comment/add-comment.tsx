@@ -11,17 +11,17 @@ import { Button } from "@plane/ui";
 import { Globe2, Lock } from "lucide-react";
 
 // types
-import type { IIssueComment } from "types";
+import type { IIssueActivity } from "types";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 
-const defaultValues: Partial<IIssueComment> = {
+const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",
   comment_html: "",
 };
 
 type Props = {
   disabled?: boolean;
-  onSubmit: (data: IIssueComment) => Promise<void>;
+  onSubmit: (data: IIssueActivity) => Promise<void>;
   showAccessSpecifier?: boolean;
 };
 
@@ -50,18 +50,18 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     control,
     formState: { isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<IIssueComment>({ defaultValues });
+  } = useForm<IIssueActivity>({ defaultValues });
 
-  const handleAddComment = async (formData: IIssueComment) => {
+  const handleAddComment = async (formData: IIssueActivity) => {
     if (!formData.comment_html || isSubmitting) return;
 
     await onSubmit(formData).then(() => {
@@ -84,29 +84,38 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                 render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
                   <LiteTextEditorWithRef
                     onEnterKeyPress={handleSubmit(handleAddComment)}
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
+                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
-                    customClassName="p-3 min-h-[100px] shadow-sm"
+                    customClassName="p-2 h-full"
+                    editorContentCustomClassNames="min-h-[35px]"
                     debouncedUpdatesEnabled={false}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier
-                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
                         : undefined
                     }
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}
+                    submitButton={
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="!px-2.5 !py-1.5 !text-xs"
+                        disabled={isSubmitting || disabled}
+                      >
+                        {isSubmitting ? "Adding..." : "Comment"}
+                      </Button>
+                    }
                   />
                 )}
               />
             )}
           />
-
-          <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
-            {isSubmitting ? "Adding..." : "Comment"}
-          </Button>
         </div>
       </form>
     </div>

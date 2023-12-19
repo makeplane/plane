@@ -17,13 +17,10 @@ export interface InputColorPickerProps {
 }
 
 export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
-  const { value, hasError, onChange, name, className, style, placeholder } =
-    props;
+  const { value, hasError, onChange, name, className, style, placeholder } = props;
 
-  const [referenceElement, setReferenceElement] =
-    React.useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] =
-    React.useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "auto",
@@ -52,10 +49,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
         style={style}
       />
 
-      <Popover
-        as="div"
-        className="absolute top-1/2 -translate-y-1/2 right-1 z-10"
-      >
+      <Popover as="div" className="absolute right-1 top-1/2 z-10 -translate-y-1/2">
         {({ open }) => {
           if (open) {
           }

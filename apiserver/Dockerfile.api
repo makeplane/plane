@@ -43,8 +43,7 @@ USER captain
 COPY manage.py manage.py
 COPY plane plane/
 COPY templates templates/
-
-COPY gunicorn.config.py ./
+COPY package.json package.json
 USER root
 RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/

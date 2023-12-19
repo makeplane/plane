@@ -44,6 +44,7 @@ export class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
   }
 
   get canUserDragDrop() {
+    if (this.rootStore.issueDetail.peekId) return false;
     if (
       this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&
       this.rootStore?.issueFilter?.userDisplayFilters?.order_by === "sort_order" &&
@@ -94,9 +95,9 @@ export class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
       };
 
       // source, destination group and sub group id
-      let droppableSourceColumnId = source.droppableId;
+      let droppableSourceColumnId = source?.droppableId || null;
       droppableSourceColumnId = droppableSourceColumnId ? droppableSourceColumnId.split("__") : null;
-      let droppableDestinationColumnId = destination.droppableId;
+      let droppableDestinationColumnId = destination?.droppableId || null;
       droppableDestinationColumnId = droppableDestinationColumnId ? droppableDestinationColumnId.split("__") : null;
       if (!droppableSourceColumnId || !droppableDestinationColumnId) return null;
 
@@ -288,7 +289,7 @@ export class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
         this.rootStore.moduleIssue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,
@@ -314,9 +315,9 @@ export class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
       };
 
       // source, destination group and sub group id
-      let droppableSourceColumnId = source.droppableId;
+      let droppableSourceColumnId = source?.droppableId || null;
       droppableSourceColumnId = droppableSourceColumnId ? droppableSourceColumnId.split("__") : null;
-      let droppableDestinationColumnId = destination.droppableId;
+      let droppableDestinationColumnId = destination?.droppableId || null;
       droppableDestinationColumnId = droppableDestinationColumnId ? droppableDestinationColumnId.split("__") : null;
       if (!droppableSourceColumnId || !droppableDestinationColumnId) return null;
 
@@ -436,7 +437,7 @@ export class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
         this.rootStore.moduleIssue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,

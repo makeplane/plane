@@ -7,21 +7,29 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
-import { EmptyState } from "components/common";
 // ui
 import { Loader } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // assets
-import emptyModule from "public/empty-state/module.svg";
+import emptyModule from "public/empty-state/empty_modules.webp";
+import { NewEmptyState } from "components/common/new-empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
 
-  const { module: moduleStore } = useMobxStore();
+  const {
+    module: moduleStore,
+    commandPalette: commandPaletteStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
   const modulesList = moduleStore.projectModules;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!modulesList)
     return (
@@ -41,8 +49,8 @@ export const ModulesListView: React.FC = observer(() => {
         <>
           {modulesView === "list" && (
             <div className="h-full overflow-y-auto">
-              <div className="flex justify-between h-full w-full">
-                <div className="flex flex-col h-full w-full overflow-y-auto">
+              <div className="flex h-full w-full justify-between">
+                <div className="flex h-full w-full flex-col overflow-y-auto">
                   {modulesList.map((module) => (
                     <ModuleListItem key={module.id} module={module} />
                   ))}
@@ -56,9 +64,9 @@ export const ModulesListView: React.FC = observer(() => {
           )}
           {modulesView === "grid" && (
             <div className="h-full w-full">
-              <div className="flex justify-between h-full w-full">
+              <div className="flex h-full w-full justify-between">
                 <div
-                  className={`grid grid-cols-1 gap-6 p-8 h-full w-full overflow-y-auto ${
+                  className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
                     peekModule
                       ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
@@ -78,20 +86,26 @@ export const ModulesListView: React.FC = observer(() => {
           {modulesView === "gantt_chart" && <ModulesListGanttChartView />}
         </>
       ) : (
-        <EmptyState
-          title="Manage your project with modules"
-          description="Modules are smaller, focused projects that help you group and organize issues."
+        <NewEmptyState
+          title="Map your project milestones to Modules and track aggregated work easily."
+          description="A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone."
           image={emptyModule}
-          primaryButton={{
-            icon: <Plus className="h-4 w-4" />,
-            text: "New Module",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "m",
-              });
-              document.dispatchEvent(e);
-            },
+          comicBox={{
+            title: "Modules help group work by hierarchy.",
+            direction: "right",
+            description:
+              "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
           }}
+          primaryButton={
+            isEditingAllowed
+              ? {
+                  icon: <Plus className="h-4 w-4" />,
+                  text: "Build your first module",
+                  onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
+                }
+              : null
+          }
+          disabled={!isEditingAllowed}
         />
       )}
     </>

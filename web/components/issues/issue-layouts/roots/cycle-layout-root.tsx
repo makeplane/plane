@@ -20,36 +20,34 @@ import { Spinner } from "@plane/ui";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
-type Props = {
-  openIssuesListModal: () => void;
-};
-
-export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
+export const CycleLayoutRoot: React.FC = observer(() => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
     cycle: cycleStore,
-    cycleIssue: cycleIssueStore,
-    cycleIssueFilter: cycleIssueFilterStore,
+    cycleIssues: { loader, getIssues, fetchIssues },
+    cycleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId && cycleId ? `CYCLE_FILTERS_AND_ISSUES_${cycleId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId && cycleId) {
-      // fetching the project display filters and display properties
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-      // fetching the cycle filters
-      await cycleIssueFilterStore.fetchCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
-
-      // fetching the cycle issues
-      await cycleIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+  useSWR(
+    workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
+    async () => {
+      if (workspaceSlug && projectId && cycleId) {
+        await fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        await fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          getIssues ? "mutation" : "init-loader",
+          cycleId.toString()
+        );
+      }
     }
-  });
+  );
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const cycleDetails = cycleId ? cycleStore.cycle_details[cycleId.toString()] : undefined;
   const cycleStatus =
@@ -57,37 +55,42 @@ export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal 
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "draft";
 
-  const issueCount = cycleIssueStore.getIssuesCount;
-
-  if (!cycleIssueStore.getIssues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
-
   return (
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
-      <div className="relative w-full h-full flex flex-col overflow-hidden">
+
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
-        {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-          <CycleEmptyState openIssuesListModal={openIssuesListModal} />
-        ) : (
-          <div className="w-full h-full overflow-auto">
-            {activeLayout === "list" ? (
-              <CycleListLayout />
-            ) : activeLayout === "kanban" ? (
-              <CycleKanBanLayout />
-            ) : activeLayout === "calendar" ? (
-              <CycleCalendarLayout />
-            ) : activeLayout === "gantt_chart" ? (
-              <CycleGanttLayout />
-            ) : activeLayout === "spreadsheet" ? (
-              <CycleSpreadsheetLayout />
-            ) : null}
+
+        {loader === "init-loader" || !getIssues ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
           </div>
+        ) : (
+          <>
+            {Object.keys(getIssues ?? {}).length == 0 ? (
+              <CycleEmptyState
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                cycleId={cycleId?.toString()}
+              />
+            ) : (
+              <div className="h-full w-full overflow-auto">
+                {activeLayout === "list" ? (
+                  <CycleListLayout />
+                ) : activeLayout === "kanban" ? (
+                  <CycleKanBanLayout />
+                ) : activeLayout === "calendar" ? (
+                  <CycleCalendarLayout />
+                ) : activeLayout === "gantt_chart" ? (
+                  <CycleGanttLayout />
+                ) : activeLayout === "spreadsheet" ? (
+                  <CycleSpreadsheetLayout />
+                ) : null}
+              </div>
+            )}
+          </>
         )}
       </div>
     </>
