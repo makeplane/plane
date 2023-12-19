@@ -21,6 +21,7 @@ from plane.app.views import (
     IssueArchiveViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    BulkIssueOperationsEndpoint,
 )
 
 
@@ -311,5 +312,10 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
+        BulkIssueOperationsEndpoint.as_view(),
+        name="bulk-issue-operation",
     ),
 ]

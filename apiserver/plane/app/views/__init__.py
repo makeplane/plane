@@ -80,6 +80,7 @@ from .issue import (
     IssueReactionViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    BulkIssueOperationsEndpoint,
 )
 
 from .auth_extended import (
