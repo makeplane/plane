@@ -10,6 +10,10 @@ import AuthKeyMiddleware from "../middleware/authkey.middleware";
 import axios, { AxiosResponse } from "axios";
 
 import { loadIssues, loadComments } from "../utils/paginator";
+import { generatePayload } from "utils/helper";
+import { EJiraStatus } from "utils/constant";
+
+const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task";
 
 @Controller("api/jira")
 export class JiraController {
@@ -92,8 +96,8 @@ export class JiraController {
       });
 
       // const result = await this.db.select().from('users');
-      const { email, api_token, project_key, cloud_hostname } =
-        req.body.metadata;
+      const { metadata, workspace_id, project_id, created_by, importer_id, users} = req.body;
+      const { email, api_token, project_key, cloud_hostname } = metadata;
 
       const auth = {
         username: email,
@@ -104,36 +108,20 @@ export class JiraController {
         Accept: "application/json",
       };
 
-      const workspace_id = req.body.workspace_id;
-      const project_id = req.body.project_id;
-      const created_by = req.body.created_by;
-      const importer_id = req.body.importer_id;
-
-      const users = req.body.data.users;
-
       // users
       let members = [];
       for (const user of users) {
-        if (user?.import == "invite" || user?.import == "map") {
-          const jira_members = {
-            args: [], // args
-            kwargs: {
-              data: {
-                type: "user.create",
-                email: user.email,
-                workspace_id: workspace_id,
-                project_id: project_id,
-                created_by: created_by,
-                importer_id: importer_id,
-              },
-            }, // kwargs
-            other_data: {}, // other data
-          };
+        if (user?.import === "invite" || user?.import === "map") {
+          const jira_members = generatePayload({
+            type: "user.create",
+            email: user.email,
+            workspace_id,
+            project_id,
+            created_by,
+            importer_id,
+          });
           members.push(user);
-          this.mq?.publish(
-            jira_members,
-            "plane.bgtasks.importer_task.members_sync"
-          );
+          this.mq?.publish(jira_members, `${IMPORTER_TASK_ROUTE}.members_sync`);
         }
       }
 
@@ -142,21 +130,15 @@ export class JiraController {
       const labelsResponse = await axios.get(labelsUrl, { auth, headers });
       const labels = labelsResponse.data.values;
       for (const label of labels) {
-        const labelssync = {
-          args: [], // args
-          kwargs: {
-            data: {
-              type: "label.create",
-              data: label,
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by: created_by,
-              importer_id: importer_id,
-            },
-          }, // kwargs
-          other_data: {}, // other data
-        };
-        this.mq?.publish(labelssync, "plane.bgtasks.importer_task.label_sync");
+        const labelsSync = generatePayload({
+          type: "label.create",
+          data: label,
+          workspace_id,
+          project_id,
+          created_by,
+          importer_id,
+        });
+        this.mq?.publish(labelsSync, `${IMPORTER_TASK_ROUTE}.label_sync`);
       }
 
       // states
@@ -169,34 +151,21 @@ export class JiraController {
           for (const statusCategory of statusData.statuses) {
             const state_name = statusCategory.name;
             const state_group =
-              statusCategory.statusCategory.name === "To Do"
-                ? "unstarted"
-                : statusCategory.statusCategory.name === "In Progress"
-                  ? "started"
-                  : statusCategory.statusCategory.name === "Done"
-                    ? "completed"
-                    : statusCategory.statusCategory.name;
-            const statessync = {
-              args: [], // args
-              kwargs: {
-                data: {
-                  type: "state.create",
-                  state_name: state_name,
-                  state_group: state_group,
-                  workspace_id: workspace_id,
-                  project_id: project_id,
-                  created_by: created_by,
-                  external_id: statusCategory.id,
-                  external_source: "jira",
-                  importer_id: importer_id,
-                },
-              }, // kwargs
-              other_data: {}, // other data
-            };
-            this.mq?.publish(
-              statessync,
-              "plane.bgtasks.importer_task.state_sync"
-            );
+              EJiraStatus[
+                statusCategory.statusCategory.name as keyof typeof EJiraStatus
+              ];
+            const statesSync = generatePayload({
+              type: "state.create",
+              state_name,
+              state_group,
+              workspace_id,
+              project_id,
+              created_by,
+              external_id: statusCategory.id,
+              external_source: "jira",
+              importer_id,
+            });
+            this.mq?.publish(statesSync, `${IMPORTER_TASK_ROUTE}.state_sync`);
           }
         }
       }
@@ -209,13 +178,13 @@ export class JiraController {
 
       for await (const issue of loadIssues(url, auth)) {
         if (issue.fields.parent) {
-          if (issue.fields.parent?.fields?.issuetype?.name == "Epic") {
+          if (issue.fields.parent?.fields?.issuetype?.name === "Epic") {
             module_issues.push({
               issue_id: issue.id,
               module_id: issue.fields.parent?.id,
             });
-            continue;
           } else {
+            // skipping all the child issues
             child_issues.push(issue);
             continue;
           }
@@ -249,39 +218,34 @@ export class JiraController {
           }
         }
 
-        const issuessync = {
-          args: [], // args
-          kwargs: {
-            data: {
-              type: "issue.create",
-              name: issue.fields.summary.substring(0, 250),
-              description_html: issue.renderedFields.description ?? null,
-              assignee: user?.email,
-              state: issue.fields.status.name,
-              priority:
-                issue.fields.priority.name.toLowerCase() === "medium"
-                  ? "medium"
-                  : issue.fields.priority.name.toLowerCase() === "highest"
-                    ? "high"
-                    : "low",
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by: created_by,
-              external_id: issue.id,
-              external_source: "jira",
-              comments_list: comments_list,
-              target_date: issue.fields.duedate,
-              link: {
-                title: `Original Issue in Jira ${issue.key}`,
-                url: `https://${cloud_hostname}/browse/${issue.key}`,
-              },
-              labels_list: issue.fields.labels,
-              parent_id: null,
-              importer_id: importer_id,
-            },
+        const issuesSync = generatePayload({
+          type: "issue.create",
+          name: issue.fields.summary.substring(0, 250),
+          description_html: issue.renderedFields.description ?? null,
+          assignee: user?.email,
+          state: issue.fields.status.name,
+          priority:
+            issue.fields.priority.name.toLowerCase() === "medium"
+              ? "medium"
+              : issue.fields.priority.name.toLowerCase() === "highest"
+                ? "high"
+                : "low",
+          workspace_id,
+          project_id,
+          created_by,
+          external_id: issue.id,
+          external_source: "jira",
+          comments_list: comments_list,
+          target_date: issue.fields.duedate,
+          link: {
+            title: `Original Issue in Jira ${issue.key}`,
+            url: `https://${cloud_hostname}/browse/${issue.key}`,
           },
-        };
-        this.mq?.publish(issuessync, "plane.bgtasks.importer_task.issue_sync");
+          labels_list: issue.fields.labels,
+          parent_id: null,
+          importer_id,
+        });
+        this.mq?.publish(issuesSync, `${IMPORTER_TASK_ROUTE}.issue_sync`);
       }
 
       for (const issue of child_issues) {
@@ -307,105 +271,81 @@ export class JiraController {
           }
         }
 
-        const issuessync = {
-          args: [], // args
-          kwargs: {
-            data: {
-              type: "issue.create",
-              name: issue.fields.summary.substring(0, 250),
-              description_html: issue.renderedFields?.description,
-              assignee: user?.email,
-              state: issue.fields.status.name,
-              priority:
-                issue.fields.priority.name.toLowerCase() === "medium"
-                  ? "medium"
-                  : issue.fields.priority.name.toLowerCase() === "highest"
-                    ? "high"
-                    : "low",
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by: created_by,
-              external_id: issue.id,
-              external_source: "jira",
-              comments_list: comments_list,
-              target_date: issue.fields.duedate,
-              link: {
-                title: `Original Issue in Jira ${issue.key}`,
-                url: `https://${cloud_hostname}/browse/${issue.key}`,
-              },
-              labels_list: issue.fields.labels,
-              parent_id: issue.fields.parent.id,
-              importer_id: importer_id,
-            },
+        const issuesSync = generatePayload({
+          type: "issue.create",
+          name: issue.fields.summary.substring(0, 250),
+          description_html: issue.renderedFields?.description,
+          assignee: user?.email,
+          state: issue.fields.status.name,
+          priority:
+            issue.fields.priority.name.toLowerCase() === "medium"
+              ? "medium"
+              : issue.fields.priority.name.toLowerCase() === "highest"
+                ? "high"
+                : "low",
+          workspace_id,
+          project_id,
+          created_by,
+          external_id: issue.id,
+          external_source: "jira",
+          comments_list: comments_list,
+          target_date: issue.fields.duedate,
+          link: {
+            title: `Original Issue in Jira ${issue.key}`,
+            url: `https://${cloud_hostname}/browse/${issue.key}`,
           },
-        };
-        this.mq?.publish(issuessync, "plane.bgtasks.importer_task.issue_sync");
+          labels_list: issue.fields.labels,
+          parent_id: issue.fields.parent.id,
+          importer_id,
+        });
+        this.mq?.publish(issuesSync, `${IMPORTER_TASK_ROUTE}.issue_sync`);
       }
 
       // modules
       for (const module of modules) {
-        const modulessync = {
-          args: [], // args
-          kwargs: {
-            data: {
-              type: "module.create",
-              name: module.fields.summary.substring(0, 250),
-              description_html: module.renderedFields?.description,
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by: created_by,
-              external_id: module.id,
-              external_source: "jira",
-              importer_id: importer_id,
-            },
-          }, // kwargs
-          other_data: {}, // other data
-        };
-        this.mq?.publish(
-          modulessync,
-          "plane.bgtasks.importer_task.module_sync"
-        );
+        const modulesSync = generatePayload({
+          type: "module.create",
+          name: module.fields.summary.substring(0, 250),
+          description_html: module.renderedFields?.description,
+          workspace_id,
+          project_id,
+          created_by,
+          external_id: module.id,
+          external_source: "jira",
+          importer_id,
+        });
+        this.mq?.publish(modulesSync, `${IMPORTER_TASK_ROUTE}.module_sync`);
       }
 
+      // module issues
       for (const module_issue of module_issues) {
-        const modules_issue_sync = {
-          args: [], // args
-          kwargs: {
-            data: {
-              type: "module.create",
-              module_id: module_issue.module_id,
-              issue_id: module_issue.issue_id,
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by: created_by,
-              external_source: "jira",
-              importer_id: importer_id,
-            },
-          }, // kwargs
-          other_data: {}, // other data
-        };
+        const modules_issue_sync = generatePayload({
+          type: "module.create",
+          module_id: module_issue.module_id,
+          issue_id: module_issue.issue_id,
+          workspace_id,
+          project_id,
+          created_by,
+          external_source: "jira",
+          importer_id,
+        });
         this.mq?.publish(
           modules_issue_sync,
-          "plane.bgtasks.importer_task.modules_issue_sync"
+          `${IMPORTER_TASK_ROUTE}.modules_issue_sync`
         );
       }
 
-      const import_sync = {
-        args: [], // args
-        kwargs: {
-          data: {
-            type: "import.create",
-            workspace_id: workspace_id,
-            project_id: project_id,
-            created_by: created_by,
-            importer_id: importer_id,
-            status: "completed",
-          },
-        }, // kwargs
-        other_data: {}, // other data
-      };
+      // import sync
+      const import_sync = generatePayload({
+        type: "import.create",
+        workspace_id: workspace_id,
+        project_id: project_id,
+        created_by: created_by,
+        importer_id: importer_id,
+        status: "completed",
+      });
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_sync");
+      this.mq?.publish(import_sync, `${IMPORTER_TASK_ROUTE}.import_sync`);
 
       return;
     } catch (error) {
@@ -413,22 +353,16 @@ export class JiraController {
       const project_id = req.body.project_id;
       const created_by = req.body.created_by;
       const importer_id = req.body.importer_id;
-      const import_sync = {
-        args: [], // args
-        kwargs: {
-          data: {
-            type: "import.create",
-            workspace_id: workspace_id,
-            project_id: project_id,
-            created_by: created_by,
-            importer_id: importer_id,
-            status: "failed",
-          },
-        }, // kwargs
-        other_data: {}, // other data
-      };
+      const import_sync = generatePayload({
+        type: "import.create",
+        workspace_id: workspace_id,
+        project_id: project_id,
+        created_by: created_by,
+        importer_id: importer_id,
+        status: "failed",
+      });
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_sync");
+      this.mq?.publish(import_sync, `${IMPORTER_TASK_ROUTE}.import_sync`);
 
       return res.json({ message: "Server error", error: error });
     }
