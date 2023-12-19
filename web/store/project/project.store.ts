@@ -6,6 +6,7 @@ import { IProject } from "types";
 //services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
+import { orderArrayBy } from "helpers/array.helper";
 
 export interface IProjectStore {
   // states
@@ -123,7 +124,11 @@ export class ProjectStore implements IProjectStore {
 
     const projectIds = Object.keys(this.projectMap);
 
-    return projectIds?.filter((projectId) => this.projectMap[projectId].is_member);
+    return orderArrayBy(
+      projectIds?.filter((projectId) => this.projectMap[projectId].is_member),
+      "sort_order",
+      "ascending"
+    );
   }
 
   get favoriteProjects() {
@@ -131,7 +136,11 @@ export class ProjectStore implements IProjectStore {
 
     const projectIds = Object.keys(this.projectMap);
 
-    return projectIds?.filter((projectId) => this.projectMap[projectId].is_favorite);
+    return orderArrayBy(
+      projectIds?.filter((projectId) => this.projectMap[projectId].is_favorite),
+      "sort_order",
+      "ascending"
+    );
   }
 
   setSearchQuery = (query: string) => {

@@ -24,13 +24,14 @@ import useToast from "hooks/use-toast";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IProject } from "types";
+import { IProjectMap } from "types";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
 
 type Props = {
-  project: IProject;
+  projectId: string;
+  projectMap: IProjectMap;
   provided?: DraggableProvided;
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
@@ -72,7 +73,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  const { projectId, projectMap, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store hooks
   const {
     theme: themeStore,
@@ -81,10 +82,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId: URLProjectId } = router.query;
   // toast alert
   const { setToastAlert } = useToast();
   // states
+  const project = projectMap[projectId];
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -135,7 +137,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
-      <Disclosure key={`${project.id} ${projectId}`} defaultOpen={projectId === project.id}>
+      <Disclosure key={`${project.id} ${URLProjectId}`} defaultOpen={URLProjectId === project.id}>
         {({ open }) => (
           <>
             <div
