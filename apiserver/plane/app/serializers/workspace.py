@@ -88,7 +88,6 @@ class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
-    workspace = WorkSpaceSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
 
