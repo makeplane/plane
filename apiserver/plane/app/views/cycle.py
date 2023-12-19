@@ -29,8 +29,9 @@ from plane.app.serializers import (
     CycleFavoriteSerializer,
     IssueStateSerializer,
     CycleWriteSerializer,
+    CycleUserPropertiesSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
 from plane.db.models import (
     User,
     Cycle,
@@ -40,6 +41,7 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     Label,
+    CycleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -769,3 +771,32 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
+    
+
+class CycleUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def post(self, request, slug, project_id, cycle_id):
+        cycle_properties = CycleUserProperties.objects.get(
+            user=request.user,
+            cycle_id=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+        if request.data.get("view_props", None) is None:
+            return Response({"error": "view_props is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        cycle_properties.view_props = request.data.get("view_props", {})
+        cycle_properties.save()
+
+        serializer = CycleUserPropertiesSerializer(cycle_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug, project_id, cycle_id):
+        cycle_properties, _ = CycleUserProperties.objects.get_or_create(
+            user=request.user, project_id=project_id, cycle_id=cycle_id, workspace__slug=slug
+        )
+        serializer = CycleUserPropertiesSerializer(cycle_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)
