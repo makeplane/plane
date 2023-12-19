@@ -21,8 +21,9 @@ from plane.app.serializers import (
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
     IssueStateSerializer,
+    ModuleUserPropertiesSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
 from plane.db.models import (
     Module,
     ModuleIssue,
@@ -32,6 +33,7 @@ from plane.db.models import (
     ModuleFavorite,
     IssueLink,
     IssueAttachment,
+    ModuleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -527,3 +529,33 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
         module_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class ModuleUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def post(self, request, slug, project_id, module_id):
+        module_properties = ModuleUserProperties.objects.get(
+            user=request.user,
+            module_id=module_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+        if request.data.get("view_props", None) is None:
+            return Response({"error": "view_props is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        module_properties.view_props = request.data.get("view_props", {})
+        module_properties.save()
+
+        serializer = ModuleUserPropertiesSerializer(module_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug, project_id, module_id):
+        module_properties, _ = ModuleUserProperties.objects.get_or_create(
+            user=request.user, project_id=project_id, module_id=module_id, workspace__slug=slug
+        )
+        serializer = ModuleUserPropertiesSerializer(module_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    

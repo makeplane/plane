@@ -39,6 +39,7 @@ from .cycle import (
     CycleIssueSerializer,
     CycleFavoriteSerializer,
     CycleWriteSerializer,
+    CycleUserPropertiesSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (
@@ -69,6 +70,7 @@ from .module import (
     ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
+    ModuleUserPropertiesSerializer,
 )
 
 from .api import APITokenSerializer, APITokenReadSerializer
