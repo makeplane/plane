@@ -21,6 +21,7 @@ export interface IPageStore {
   publicProjectPages: string[] | null;
   recentProjectPages: IRecentPages | null;
   archivedProjectPages: string[] | null;
+  // fetch page information actions
   getUnArchivedPageById: (pageId: string) => IPage | null;
   getArchivedPageById: (pageId: string) => IPage | null;
   // fetch actions

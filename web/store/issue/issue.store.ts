@@ -5,7 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { IIssueRootStore } from "./root.store";
 // types
-import { IIssue } from "types";
+import { IIssue, NestedKeyOf } from "types";
 
 export interface IIssueStore {
   issuesMap: { [issue_id: string]: IIssue };
@@ -15,7 +15,7 @@ export interface IIssueStore {
   removeIssue(issueId: string): void;
   // helper Methods
   getIssueById(id: string): undefined | IIssue;
-  getIssuesByKey(issueKey: string, value: string): undefined | { [key: string]: IIssue };
+  getIssuesByKey(issueKey: NestedKeyOf<IIssue>, value: string): undefined | { [key: string]: IIssue }; // TODO: Change this approach
 }
 
 export class IssueStore implements IIssueStore {

@@ -157,6 +157,8 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     try {
       if (!issueId || !this.issues[projectId]) return;
 
+      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+
       const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
       if (issueIndex >= 0)
         runInAction(() => {
@@ -164,9 +166,6 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         });
 
       this.rootStore.issues.removeIssue(issueId);
-
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
-
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");

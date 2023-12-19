@@ -13,7 +13,7 @@ export interface IProjectViewStore {
   // observables
   viewMap: Record<string, IProjectView>;
   // computed
-  projectViews: string[] | null;
+  projectViews: string[] | null; // TODO: rename to projectViewIds
   // computed actions
   getViewById: (viewId: string) => IProjectView;
   // actions

@@ -13,9 +13,7 @@ export interface IInboxFiltersStore {
   loader: boolean;
   error: any | null;
   // observables
-  inboxFilters: {
-    [inboxId: string]: { filters: IInboxFilterOptions };
-  };
+  inboxFilters: Record<string, { filters: IInboxFilterOptions }>;
   // computed
   appliedFilters: IInboxQueryParams | null;
   // actions

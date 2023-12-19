@@ -16,9 +16,9 @@ export interface ICycleStore {
   error: any | null;
   // observables
   cycleMap: Record<string, ICycle>;
-  activeCycleMap: Record<string, ICycle>;
+  activeCycleMap: Record<string, ICycle>; // TODO: Merge these two into single map
   // computed
-  projectAllCycles: string[] | null;
+  projectAllCycles: string[] | null; // TODO: rename this to projectCycles
   projectCompletedCycles: string[] | null;
   projectUpcomingCycles: string[] | null;
   projectDraftCycles: string[] | null;
@@ -231,6 +231,13 @@ export class CycleStore implements ICycleStore {
     }
   };
 
+  /**
+   *
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
   fetchCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
       const response = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);

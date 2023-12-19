@@ -36,8 +36,8 @@ export class RootStore {
   estimate: IProjectEstimateStore;
 
   constructor() {
-    this.app = new AppRootStore(this);
-    this.user = new UserStore(this);
+    this.app = new AppRootStore(this); // TODO: rename to appRoot Store
+    this.user = new UserStore(this); // TODO: rename to userRoot Store
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.labelRoot = new LabelRootStore(this);

@@ -6,6 +6,7 @@ import { ProjectEstimateService } from "services/project";
 import { RootStore } from "store/root.store";
 import { IEstimate, IEstimateFormData } from "types";
 
+// TODO: rename to IEstimateStore
 export interface IProjectEstimateStore {
   // states
   loader: boolean;

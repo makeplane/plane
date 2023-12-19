@@ -13,7 +13,7 @@ export interface IInboxIssuesStore {
   loader: boolean;
   error: any | null;
   // observables
-  issueMap: { [inboxId: string]: Record<string, IInboxIssue> };
+  issueMap: Record<string, Record<string, IInboxIssue>>; // {inboxId: {issueId: IInboxIssue}}
   // computed
   currentInboxIssues: string[] | null;
   // computed actions
