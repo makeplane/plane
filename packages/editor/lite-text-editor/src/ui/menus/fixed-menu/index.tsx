@@ -17,7 +17,7 @@ import {
 } from "@plane/editor-core";
 import { Tooltip } from "@plane/ui";
 import type { SVGProps } from "react";
-import { UploadImage } from "@plane/editor-types";
+import { UploadImage } from "@plane/editor-core";
 
 interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
   size?: string | number;
