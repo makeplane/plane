@@ -30,7 +30,6 @@
   "dependencies": {
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
-    "@plane/editor-types": "*",
     "@plane/ui": "*",
     "@tiptap/core": "^2.1.7",
     "@tiptap/extension-placeholder": "^2.1.11",

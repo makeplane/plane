@@ -1,19 +1,9 @@
 import { Editor } from "@tiptap/react";
-import {
-  Archive,
-  ArchiveIcon,
-  ArchiveRestoreIcon,
-  ClipboardIcon,
-  Copy,
-  Link,
-  Lock,
-  Unlock,
-  XCircle,
-} from "lucide-react";
+import { Archive, ArchiveRestoreIcon, ClipboardIcon, Copy, Link, Lock, Unlock } from "lucide-react";
 import { NextRouter } from "next/router";
-import { IVerticalDropdownItemProps } from "../components/vertical-dropdown-menu";
-import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "../types/menu-actions";
-import { copyMarkdownToClipboard, CopyPageLink } from "./menu-actions";
+import { IVerticalDropdownItemProps } from "src/ui/components/vertical-dropdown-menu";
+import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
+import { copyMarkdownToClipboard, CopyPageLink } from "src/utils/menu-actions";
 
 export interface MenuOptionsProps {
   editor: Editor;

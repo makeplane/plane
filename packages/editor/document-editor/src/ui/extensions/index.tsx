@@ -1,11 +1,11 @@
 import Placeholder from "@tiptap/extension-placeholder";
-import { IssueWidgetExtension } from "./widgets/issue-embed-widget";
+import { IssueWidgetExtension } from "src/ui/extensions/widgets/issue-embed-widget";
 
-import { IIssueEmbedConfig } from "./widgets/issue-embed-widget/types";
+import { IIssueEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
-import { ISlashCommandItem, UploadImage } from "@plane/editor-types";
-import { IssueSuggestions } from "./widgets/issue-embed-suggestion-list";
+import { ISlashCommandItem, UploadImage } from "@plane/editor-core";
+import { IssueSuggestions } from "src/ui/extensions/widgets/issue-embed-suggestion-list";
 import { LayersIcon } from "@plane/ui";
 
 export const DocumentEditorExtensions = (

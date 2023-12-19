@@ -1,3 +1,3 @@
-export { DocumentEditor, DocumentEditorWithRef } from "./ui";
-export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef } from "./ui/readonly";
-export { FixedMenu } from "./ui/menu/fixed-menu";
+export { DocumentEditor, DocumentEditorWithRef } from "src/ui";
+export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef } from "src/ui/readonly";
+export { FixedMenu } from "src/ui/menu/fixed-menu";
