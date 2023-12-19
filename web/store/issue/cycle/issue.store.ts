@@ -59,10 +59,10 @@ export interface ICycleIssues {
   ) => Promise<IIssue | undefined>;
   addIssueToCycle: (
     workspaceSlug: string,
+    projectId: string,
     cycleId: string,
     issueIds: string[],
-    fetchAfterAddition?: boolean,
-    projectId?: string
+    fetchAfterAddition?: boolean
   ) => Promise<IIssue>;
   removeIssueFromCycle: (
     workspaceSlug: string,
@@ -321,10 +321,10 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
   addIssueToCycle = async (
     workspaceSlug: string,
+    projectId: string,
     cycleId: string,
     issueIds: string[],
-    fetchAfterAddition = true,
-    projectId?: string
+    fetchAfterAddition = true
   ) => {
     const activeProjectId = this.rootStore.projectId;
     if (!activeProjectId && !projectId) return;

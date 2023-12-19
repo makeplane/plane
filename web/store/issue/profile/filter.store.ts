@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // constants
 import { isNil } from "constants/common";
-import { EFilterType } from "constants/issue";
+import { EIssueFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
@@ -40,7 +40,7 @@ export interface IProfileIssuesFilter {
   fetchDisplayFilters: (workspaceSlug: string) => Promise<IProjectIssuesFiltersOptions>;
   updateDisplayFilters: (
     workspaceSlug: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions
   ) => Promise<IProjectIssuesFiltersOptions>;
   fetchDisplayProperties: (workspaceSlug: string) => Promise<IIssueDisplayProperties>;
@@ -51,7 +51,7 @@ export interface IProfileIssuesFilter {
   fetchFilters: (workspaceSlug: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => Promise<void>;
 }
@@ -152,7 +152,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
   updateDisplayFilters = async (
     workspaceSlug: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions
   ) => {
     try {
@@ -166,8 +166,8 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
         displayFilters: { ..._projectIssueFilters[workspaceSlug].displayFilters },
       };
 
-      if (type === EFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
-      else if (type === EFilterType.DISPLAY_FILTERS)
+      if (type === EIssueFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
+      else if (type === EIssueFilterType.DISPLAY_FILTERS)
         _filters.displayFilters = { ..._filters.displayFilters, ...filters };
 
       // set sub_group_by to null if group_by is set to null
@@ -320,18 +320,18 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
   updateFilters = async (
     workspaceSlug: string,
 
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => {
     try {
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           await this.updateDisplayFilters(workspaceSlug, filterType, filters as IIssueFilterOptions);
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.updateDisplayFilters(workspaceSlug, filterType, filters as IIssueDisplayFilterOptions);
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.updateDisplayProperties(workspaceSlug, filters as IIssueDisplayProperties);
           break;
       }

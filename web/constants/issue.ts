@@ -2,8 +2,9 @@
 import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
 // types
 import {
-  IIssueDisplayProperties,
   IIssueFilterOptions,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
   TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueLayouts,
@@ -13,7 +14,18 @@ import {
   TStateGroups,
 } from "types";
 
-export enum EFilterType {
+export enum EIssuesStoreType {
+  // GLOBAL = "GLOBAL",
+  // PROFILE = "PROFILE",
+  PROJECT = "PROJECT",
+  CYCLE = "CYCLE",
+  // MODULE = "MODULE",
+  // PROJECT_VIEW = "PROJECT_VIEW",
+  // ARCHIVED = "ARCHIVED",
+  // DRAFT = "DRAFT",
+}
+
+export enum EIssueFilterType {
   FILTERS = "filters",
   DISPLAY_FILTERS = "display_filters",
   DISPLAY_PROPERTIES = "display_properties",
@@ -408,13 +420,3 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return _groupedEmojis;
 };
-
-export enum EIssuesStoreType {
-  MODULE,
-  CYClE,
-  PROJECT,
-  VIEW,
-  DRAFT,
-  ARCHIVED,
-  GLOBAL,
-}

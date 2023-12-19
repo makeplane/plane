@@ -1,4 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import set from "lodash/set";
+import isEmpty from "lodash/isEmpty";
 // base class
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // services
@@ -7,45 +9,45 @@ import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// constants
-import { isNil } from "constants/common";
-import { EFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
+import {
+  IIssueFilterOptions,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilters,
+  TIssueParams,
+} from "types";
+// constants
+import { EIssueFilterType } from "constants/issue";
+import { isNil } from "constants/common";
 
 interface ICycleIssuesFilterOptions {
   filters: IIssueFilterOptions;
 }
 
-interface IProjectIssuesFilters {
-  filters: IIssueFilterOptions | undefined;
-  displayFilters: IIssueDisplayFilterOptions | undefined;
-  displayProperties: IIssueDisplayProperties | undefined;
-}
-
 export interface ICycleIssuesFilter {
   // observable
   loader: boolean;
-  filters: { [cycleId: string]: ICycleIssuesFilterOptions } | undefined;
+  filters: { [cycleId: string]: ICycleIssuesFilterOptions };
   // computed
-  issueFilters: IProjectIssuesFilters | undefined;
+  issueFilters: IIssueFilters | undefined;
   appliedFilters: TIssueParams[] | undefined;
   // actions
-  fetchCycleFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<IIssueFilterOptions>;
+  fetchCycleFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   updateCycleFilters: (
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions
-  ) => Promise<ICycleIssuesFilterOptions>;
+  ) => Promise<void>;
 
-  fetchFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  fetchFilters: (workspaceSlug: string, projectId: string, cycleId?: string | undefined) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     cycleId?: string | undefined
   ) => Promise<void>;
@@ -54,7 +56,7 @@ export interface ICycleIssuesFilter {
 export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleIssuesFilter {
   // observables
   loader: boolean = false;
-  filters: { [projectId: string]: ICycleIssuesFilterOptions } | undefined = undefined;
+  filters: { [projectId: string]: ICycleIssuesFilterOptions } = {};
   // root store
   rootStore;
   // services
@@ -69,7 +71,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     makeObservable(this, {
       // observables
       loader: observable.ref,
-      filters: observable.ref,
+      filters: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
@@ -95,11 +97,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
 
     const displayFilters = this.rootStore.issuesFilter.issueDisplayFilters(projectId);
     const cycleFilters = this.filters?.[cycleId];
+    if (isEmpty(displayFilters) || isEmpty(cycleFilters)) return undefined;
 
-    const _filters: IProjectIssuesFilters = {
-      filters: cycleFilters?.filters,
-      displayFilters: displayFilters?.displayFilters,
-      displayProperties: displayFilters?.displayProperties,
+    const _filters: IIssueFilters = {
+      filters: isEmpty(cycleFilters?.filters) ? undefined : cycleFilters?.filters,
+      displayFilters: isEmpty(displayFilters?.displayFilters) ? undefined : displayFilters?.displayFilters,
+      displayProperties: isEmpty(displayFilters?.displayProperties) ? undefined : displayFilters?.displayProperties,
     };
 
     return _filters;
@@ -156,22 +159,10 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
         target_date: cycleFilters?.view_props?.filters?.target_date || null,
       };
 
-      const issueFilters: ICycleIssuesFilterOptions = {
-        filters: filters,
-      };
-
-      let _filters = { ...this.filters };
-      if (!_filters) _filters = {};
-      if (!_filters[cycleId]) _filters[cycleId] = { filters: {} };
-      _filters[cycleId] = issueFilters;
-
       runInAction(() => {
-        this.filters = _filters;
+        set(this.filters, [cycleId, "filters"], filters);
       });
-
-      return filters;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };
@@ -180,41 +171,40 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions
   ) => {
     try {
-      let _cycleIssueFilters = { ...this.filters };
-      if (!_cycleIssueFilters) _cycleIssueFilters = {};
-      if (!_cycleIssueFilters[cycleId]) _cycleIssueFilters[cycleId] = { filters: {} };
+      const _filters = {
+        filters: this.filters[cycleId].filters as IIssueFilterOptions,
+      };
 
-      const _filters = { filters: { ..._cycleIssueFilters[cycleId].filters } };
+      if (type === EIssueFilterType.FILTERS) {
+        _filters.filters = { ..._filters.filters, ...filters };
 
-      if (type === EFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
-
-      _cycleIssueFilters[cycleId] = { filters: _filters.filters };
-
-      runInAction(() => {
-        this.filters = _cycleIssueFilters;
-      });
+        const updated_filters = filters as IIssueFilterOptions;
+        runInAction(() => {
+          Object.keys(updated_filters).forEach((_key) => {
+            set(this.filters, [cycleId, "filters", _key], updated_filters[_key as keyof IIssueFilterOptions]);
+          });
+        });
+      }
 
       await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, {
         view_props: { filters: _filters.filters },
       });
-
-      return _filters;
     } catch (error) {
       this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };
 
-  fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+  fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string | undefined = undefined) => {
     try {
       await this.rootStore.issuesFilter.fetchDisplayFilters(workspaceSlug, projectId);
       await this.rootStore.issuesFilter.fetchDisplayProperties(workspaceSlug, projectId);
+      if (!cycleId) return;
       await this.fetchCycleFilters(workspaceSlug, projectId, cycleId);
-      return;
     } catch (error) {
       this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
@@ -224,17 +214,19 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     cycleId?: string | undefined
   ) => {
     try {
-      if (!cycleId) throw new Error();
+      if (!cycleId) return;
+
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           await this.updateCycleFilters(workspaceSlug, projectId, cycleId, filterType, filters as IIssueFilterOptions);
+          this.rootStore.cycleIssues.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
@@ -242,12 +234,14 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             filters as IIssueDisplayFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.rootStore.issuesFilter.updateDisplayProperties(
             workspaceSlug,
             projectId,
             filters as IIssueDisplayProperties
           );
+          break;
+        default:
           break;
       }
 

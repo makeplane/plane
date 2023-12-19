@@ -1,49 +1,39 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
+import set from "lodash/set";
+import isEmpty from "lodash/isEmpty";
 // types
 import { IIssueRootStore } from "./root.store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IIssueFilters } from "types";
 // constants
-import { EFilterType } from "constants/issue";
+import { EIssueFilterType } from "constants/issue";
 // services
 import { IssueService } from "services/issue";
 import { ProjectMemberService, ProjectService } from "services/project";
 
-interface IProjectIssuesFiltersOptions {
-  filters: IIssueFilterOptions;
-  displayFilters: IIssueDisplayFilterOptions;
-}
-
-interface IProjectIssuesDisplayOptions {
-  filters: IIssueFilterOptions;
-  displayFilters: IIssueDisplayFilterOptions;
-  displayProperties: IIssueDisplayProperties;
-}
-
 export interface IIssuesFilter {
   // observables
-  projectIssueFilters: { [projectId: string]: IProjectIssuesDisplayOptions } | undefined;
-  // computed
-  // helpers
-  issueDisplayFilters: (projectId: string) => IProjectIssuesDisplayOptions | undefined;
+  projectIssueFilters: { [projectId: string]: IIssueFilters };
+  // helper methods
+  issueDisplayFilters: (projectId: string) => IIssueFilters | undefined;
   // actions
-  fetchDisplayFilters: (workspaceSlug: string, projectId: string) => Promise<IProjectIssuesFiltersOptions>;
+  fetchDisplayFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateDisplayFilters: (
     workspaceSlug: string,
     projectId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions
-  ) => Promise<IProjectIssuesFiltersOptions>;
-  fetchDisplayProperties: (workspaceSlug: string, projectId: string) => Promise<IIssueDisplayProperties>;
+  ) => Promise<void>;
+  fetchDisplayProperties: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateDisplayProperties: (
     workspaceSlug: string,
     projectId: string,
     properties: IIssueDisplayProperties
-  ) => Promise<IIssueDisplayProperties>;
+  ) => Promise<void>;
 }
 
 export class IssuesFilter implements IIssuesFilter {
   // observables
-  projectIssueFilters: { [projectId: string]: IProjectIssuesDisplayOptions } | undefined = undefined;
+  projectIssueFilters: { [projectId: string]: IIssueFilters } = {};
   // root store
   rootStore;
   // services
@@ -54,8 +44,7 @@ export class IssuesFilter implements IIssuesFilter {
   constructor(_rootStore: IIssueRootStore) {
     makeObservable(this, {
       // observables
-      projectIssueFilters: observable.ref,
-      // computed
+      projectIssueFilters: observable,
       // actions
       fetchDisplayFilters: action,
       updateDisplayFilters: action,
@@ -70,9 +59,7 @@ export class IssuesFilter implements IIssuesFilter {
     this.issueService = new IssueService();
   }
 
-  // computed
-
-  // helpers
+  // helper methods
   issueDisplayFilters = (projectId: string) => {
     if (!projectId) return undefined;
     return this.projectIssueFilters?.[projectId] || undefined;
@@ -81,7 +68,8 @@ export class IssuesFilter implements IIssuesFilter {
   // actions
   fetchDisplayFilters = async (workspaceSlug: string, projectId: string) => {
     try {
-      const _filters = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
+      // TODO: replace any and add view_props in the project member types
+      const _filters: any = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
 
       const filters: IIssueFilterOptions = {
         assignees: _filters?.view_props?.filters?.assignees || null,
@@ -112,25 +100,10 @@ export class IssuesFilter implements IIssuesFilter {
         type: _filters?.view_props?.display_filters?.type || null,
       };
 
-      const issueFilters: IProjectIssuesFiltersOptions = {
-        filters: filters,
-        displayFilters: displayFilters,
-      };
-
-      let _projectIssueFilters = this.projectIssueFilters;
-      if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId])
-        _projectIssueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[projectId] = {
-        ..._projectIssueFilters[projectId],
-        ...issueFilters,
-      };
-
       runInAction(() => {
-        this.projectIssueFilters = _projectIssueFilters;
+        set(this.projectIssueFilters, [projectId, "filters"], filters);
+        set(this.projectIssueFilters, [projectId, "displayFilters"], displayFilters);
       });
-
-      return issueFilters;
     } catch (error) {
       throw error;
     }
@@ -139,53 +112,61 @@ export class IssuesFilter implements IIssuesFilter {
   updateDisplayFilters = async (
     workspaceSlug: string,
     projectId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions
   ) => {
     try {
-      let _projectIssueFilters = { ...this.projectIssueFilters };
-      if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId])
-        _projectIssueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
+      if (isEmpty(this.projectIssueFilters) || isEmpty(this.projectIssueFilters[projectId])) return;
 
       const _filters = {
-        filters: { ..._projectIssueFilters[projectId].filters },
-        displayFilters: { ..._projectIssueFilters[projectId].displayFilters },
+        filters: this.projectIssueFilters[projectId].filters as IIssueFilterOptions,
+        displayFilters: this.projectIssueFilters[projectId].displayFilters as IIssueDisplayFilterOptions,
       };
 
-      if (type === EFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
-      else if (type === EFilterType.DISPLAY_FILTERS)
+      if (type === EIssueFilterType.FILTERS) {
+        _filters.filters = { ..._filters.filters, ...filters };
+
+        const updated_filters = filters as IIssueFilterOptions;
+        runInAction(() => {
+          Object.keys(updated_filters).forEach((_key) => {
+            set(
+              this.projectIssueFilters,
+              [projectId, "filters", _key],
+              updated_filters[_key as keyof IIssueFilterOptions]
+            );
+          });
+        });
+      } else if (type === EIssueFilterType.DISPLAY_FILTERS) {
         _filters.displayFilters = { ..._filters.displayFilters, ...filters };
+        // set sub_group_by to null if group_by is set to null
+        if (_filters.displayFilters.group_by === null) _filters.displayFilters.sub_group_by = null;
 
-      // set sub_group_by to null if group_by is set to null
-      if (_filters.displayFilters.group_by === null) _filters.displayFilters.sub_group_by = null;
+        // set sub_group_by to null if layout is switched to kanban group_by and sub_group_by are same
+        if (
+          _filters.displayFilters.layout === "kanban" &&
+          _filters.displayFilters.group_by === _filters.displayFilters.sub_group_by
+        )
+          _filters.displayFilters.sub_group_by = null;
 
-      // set sub_group_by to null if layout is switched to kanban group_by and sub_group_by are same
-      if (
-        _filters.displayFilters.layout === "kanban" &&
-        _filters.displayFilters.group_by === _filters.displayFilters.sub_group_by
-      )
-        _filters.displayFilters.sub_group_by = null;
+        // set group_by to state if layout is switched to kanban and group_by is null
+        if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null)
+          _filters.displayFilters.group_by = "state";
 
-      // set group_by to state if layout is switched to kanban and group_by is null
-      if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null)
-        _filters.displayFilters.group_by = "state";
-
-      _projectIssueFilters[projectId] = {
-        filters: _filters.filters,
-        displayFilters: _filters.displayFilters,
-        displayProperties: _projectIssueFilters[projectId].displayProperties,
-      };
-
-      runInAction(() => {
-        this.projectIssueFilters = _projectIssueFilters;
-      });
+        const updated_filters = _filters.displayFilters as IIssueDisplayFilterOptions;
+        runInAction(() => {
+          Object.keys(updated_filters).forEach((_key) => {
+            set(
+              this.projectIssueFilters,
+              [projectId, "displayFilters", _key],
+              updated_filters[_key as keyof IIssueDisplayFilterOptions]
+            );
+          });
+        });
+      }
 
       await this.projectService.setProjectView(workspaceSlug, projectId, {
         view_props: { filters: _filters.filters, display_filters: _filters.displayFilters },
       });
-
-      return _filters;
     } catch (error) {
       this.fetchDisplayFilters(workspaceSlug, projectId);
       throw error;
@@ -212,17 +193,9 @@ export class IssuesFilter implements IIssuesFilter {
         updated_on: _issueDisplayProperties?.properties?.updated_on || false,
       };
 
-      let _projectIssueFilters = { ...this.projectIssueFilters };
-      if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId])
-        _projectIssueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[projectId] = { ..._projectIssueFilters[projectId], displayProperties: displayProperties };
-
       runInAction(() => {
-        this.projectIssueFilters = _projectIssueFilters;
+        set(this.projectIssueFilters, [projectId, "displayProperties"], displayProperties);
       });
-
-      return displayProperties;
     } catch (error) {
       throw error;
     }
@@ -230,21 +203,22 @@ export class IssuesFilter implements IIssuesFilter {
 
   updateDisplayProperties = async (workspaceSlug: string, projectId: string, properties: IIssueDisplayProperties) => {
     try {
-      let _issueFilters = { ...this.projectIssueFilters };
-      if (!_issueFilters) _issueFilters = {};
-      if (!_issueFilters[projectId])
-        _issueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
-
-      const updatedDisplayProperties = { ..._issueFilters[projectId].displayProperties, ...properties };
-      _issueFilters[projectId] = { ..._issueFilters[projectId], displayProperties: updatedDisplayProperties };
+      if (isEmpty(this.projectIssueFilters) || isEmpty(this.projectIssueFilters[projectId])) return;
 
       runInAction(() => {
-        this.projectIssueFilters = _issueFilters;
+        Object.keys(properties).forEach((_key) => {
+          set(
+            this.projectIssueFilters,
+            [projectId, "displayProperties", _key],
+            properties[_key as keyof IIssueDisplayProperties]
+          );
+        });
       });
 
-      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, updatedDisplayProperties);
-
-      return properties;
+      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, {
+        ...this.projectIssueFilters[projectId]?.displayProperties,
+        ...properties,
+      });
     } catch (error) {
       this.fetchDisplayProperties(workspaceSlug, projectId);
       throw error;
