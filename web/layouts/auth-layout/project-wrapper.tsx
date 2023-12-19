@@ -14,6 +14,7 @@ import {
   useProjectState,
   useProjectView,
   useUser,
+  useInbox,
 } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -30,9 +31,7 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const {
-    inbox: { fetchInboxesList, isInboxEnabled },
-  } = useMobxStore();
+  const { fetchInboxesList, isInboxEnabled } = useInbox();
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();

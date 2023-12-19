@@ -1,12 +1,13 @@
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+// hooks
+import { useLabel, useProject, useProjectState } from "hooks/store";
 // types
 import { GroupByColumnTypes, IIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 // constants
 import { EProjectStore } from "store_legacy/command-palette.store";
-import { useLabel, useProject, useProjectState } from "hooks/store";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { getGroupByColumns } from "../utils";
 
@@ -133,7 +134,6 @@ export interface IList {
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,

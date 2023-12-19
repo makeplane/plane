@@ -2,10 +2,10 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "contexts/store-context";
 // types
-import { IInboxRootStore } from "store/inbox";
+import { IInboxStore } from "store/inbox/inbox.store";
 
-export const useInbox = (): IInboxRootStore => {
+export const useInbox = (): IInboxStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useInbox must be used within StoreProvider");
-  return context.inboxRoot;
+  return context.inboxRoot.inbox;
 };

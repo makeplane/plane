@@ -3,6 +3,8 @@ export * from "./use-cycle";
 export * from "./use-estimate";
 export * from "./use-global-view";
 export * from "./use-inbox";
+export * from "./use-inbox-filters";
+export * from "./use-inbox-issues";
 export * from "./use-label";
 export * from "./use-member";
 export * from "./use-module";

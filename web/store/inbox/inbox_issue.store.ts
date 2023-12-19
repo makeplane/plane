@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction, autorun } from "mobx";
+import { observable, action, makeObservable, runInAction, autorun, computed } from "mobx";
 import { set } from "lodash";
 // services
 import { InboxService } from "services/inbox.service";
@@ -13,9 +13,11 @@ export interface IInboxIssuesStore {
   loader: boolean;
   error: any | null;
   // observables
-  issueMap: Record<string, IInboxIssue>;
+  issueMap: { [inboxId: string]: Record<string, IInboxIssue> };
+  // computed
+  currentInboxIssues: string[] | null;
   // computed actions
-  getIssueById: (issueId: string) => IInboxIssue | null;
+  getIssueById: (inboxId: string, issueId: string) => IInboxIssue | null;
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInboxIssue[]>;
   fetchIssueDetails: (
@@ -52,7 +54,7 @@ export class InboxIssuesStore implements IInboxIssuesStore {
   loader: boolean = false;
   error: any | null = null;
   // observables
-  issueMap: Record<string, IInboxIssue> = {};
+  issueMap: { [inboxId: string]: Record<string, IInboxIssue> } = {};
   // root store
   rootStore;
   // services
@@ -65,6 +67,8 @@ export class InboxIssuesStore implements IInboxIssuesStore {
       error: observable.ref,
       // observables
       issueMap: observable,
+      // computed
+      currentInboxIssues: computed,
       // computed actions
       getIssueById: action,
       // actions
@@ -93,7 +97,13 @@ export class InboxIssuesStore implements IInboxIssuesStore {
     });
   }
 
-  getIssueById = (issueId: string): IInboxIssue | null => this.issueMap[issueId] ?? null;
+  get currentInboxIssues() {
+    const inboxId = this.rootStore.app.router.inboxId;
+    if (!inboxId) return null;
+    return Object.keys(this.issueMap?.[inboxId] ?? {}) ?? null;
+  }
+
+  getIssueById = (inboxId: string, issueId: string): IInboxIssue | null => this.issueMap?.[inboxId]?.[issueId] ?? null;
 
   fetchIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
     try {
@@ -108,7 +118,7 @@ export class InboxIssuesStore implements IInboxIssuesStore {
       runInAction(() => {
         this.loader = false;
         issuesResponse.forEach((issue) => {
-          set(this.issueMap, issue.issue_inbox?.[0].id, issue);
+          set(this.issueMap, [inboxId, issue.issue_inbox?.[0].id], issue);
         });
       });
 
@@ -133,7 +143,7 @@ export class InboxIssuesStore implements IInboxIssuesStore {
 
       runInAction(() => {
         this.loader = false;
-        set(this.issueMap, issueId, issueResponse);
+        set(this.issueMap, [inboxId, issueId], issueResponse);
       });
 
       return issueResponse;
@@ -162,7 +172,7 @@ export class InboxIssuesStore implements IInboxIssuesStore {
       const response = await this.inboxService.createInboxIssue(workspaceSlug, projectId, inboxId, payload);
 
       runInAction(() => {
-        set(this.issueMap, response.issue_inbox?.[0].id, response);
+        set(this.issueMap, [inboxId, response.issue_inbox?.[0].id], response);
       });
 
       return response;
@@ -182,11 +192,11 @@ export class InboxIssuesStore implements IInboxIssuesStore {
     issueId: string,
     data: Partial<IInboxIssue>
   ) => {
-    const issueDetails = this.rootStore.inboxRoot.inboxIssues.getIssueById(issueId);
+    const issueDetails = this.rootStore.inboxRoot.inboxIssues.getIssueById(inboxId, issueId);
 
     try {
       runInAction(() => {
-        set(this.issueMap, issueId, {
+        set(this.issueMap, [inboxId, issueId], {
           ...issueDetails,
           ...data,
         });
@@ -212,11 +222,11 @@ export class InboxIssuesStore implements IInboxIssuesStore {
     issueId: string,
     data: TInboxStatus
   ) => {
-    const issueDetails = this.rootStore.inboxRoot.inboxIssues.getIssueById(issueId);
+    const issueDetails = this.rootStore.inboxRoot.inboxIssues.getIssueById(inboxId, issueId);
 
     try {
       runInAction(() => {
-        set(this.issueMap, [issueId, "issue_inbox", 0], {
+        set(this.issueMap, [inboxId, issueId, "issue_inbox", 0], {
           ...issueDetails?.issue_inbox?.[0],
           ...data,
         });
@@ -238,7 +248,7 @@ export class InboxIssuesStore implements IInboxIssuesStore {
   deleteIssue = async (workspaceSlug: string, projectId: string, inboxId: string, issueId: string) => {
     try {
       runInAction(() => {
-        delete this.issueMap[issueId];
+        delete this.issueMap?.[inboxId]?.[issueId];
       });
 
       await this.inboxService.deleteInboxIssue(workspaceSlug, projectId, inboxId, issueId);

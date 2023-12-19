@@ -38,10 +38,6 @@ export const CycleListLayout: React.FC = observer(() => {
       await cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
     },
   };
-  const getProjects = (projectStore: IProjectStore) => {
-    if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug] || null;
-  };
 
   return (
     <BaseListRoot
@@ -49,7 +45,6 @@ export const CycleListLayout: React.FC = observer(() => {
       issueStore={cycleIssueStore}
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       viewId={cycleId}
       currentStore={EProjectStore.CYCLE}
       addIssuesToView={(issues: string[]) => cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, issues)}

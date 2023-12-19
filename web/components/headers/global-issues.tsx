@@ -38,7 +38,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     workspaceMember: { workspaceMembers },
-    project: { workspaceProjects },
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const {
@@ -136,7 +135,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                   handleFiltersUpdate={handleFiltersUpdate}
                   labels={workspaceLabels ?? undefined}
                   members={workspaceMembers?.map((m) => m.member)}
-                  projects={workspaceProjects ?? undefined}
                 />
               </FiltersDropdown>
               <FiltersDropdown title="Display" placement="bottom-end">

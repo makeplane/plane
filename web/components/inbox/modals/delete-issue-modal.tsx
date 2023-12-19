@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
+import { useApplication, useInbox, useWorkspace } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // icons
@@ -12,6 +12,7 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 // types
 import type { IInboxIssue } from "types";
+import { useInboxIssues } from "hooks/store/use-inbox-issues";
 
 type Props = {
   data: IInboxIssue;
@@ -26,7 +27,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
   // store hooks
-  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
+  const { deleteIssue } = useInboxIssues();
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
@@ -44,8 +45,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
 
     setIsDeleting(true);
 
-    inboxIssueDetailsStore
-      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
+    deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
       .then(() => {
         setToastAlert({
           type: "success",
