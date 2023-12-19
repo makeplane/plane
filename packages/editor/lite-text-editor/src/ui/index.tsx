@@ -9,8 +9,8 @@ import {
   getEditorClassNames,
   useEditor,
 } from "@plane/editor-core";
-import { FixedMenu } from "./menus/fixed-menu";
-import { LiteTextEditorExtensions } from "./extensions";
+import { FixedMenu } from "src/ui/menus/fixed-menu";
+import { LiteTextEditorExtensions } from "src/ui/extensions";
 
 interface ILiteTextEditor {
   value: string;
