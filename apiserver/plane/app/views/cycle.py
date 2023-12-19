@@ -778,7 +778,7 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
         ProjectLitePermission,
     ]
 
-    def post(self, request, slug, project_id, cycle_id):
+    def patch(self, request, slug, project_id, cycle_id):
         cycle_properties = CycleUserProperties.objects.get(
             user=request.user,
             cycle_id=cycle_id,

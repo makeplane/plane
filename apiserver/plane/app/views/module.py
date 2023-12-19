@@ -536,7 +536,7 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         ProjectLitePermission,
     ]
 
-    def post(self, request, slug, project_id, module_id):
+    def patch(self, request, slug, project_id, module_id):
         module_properties = ModuleUserProperties.objects.get(
             user=request.user,
             module_id=module_id,
