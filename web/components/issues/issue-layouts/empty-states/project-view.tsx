@@ -6,7 +6,7 @@ import { useApplication } from "hooks/store";
 import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -10,9 +10,9 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Loader, ToggleSwitch } from "@plane/ui";
 import { CustomPopover } from "./popover";
-import { IProjectPublishSettings, TProjectPublishViews } from "store_legacy/project";
 // types
 import { IProject } from "types";
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
 
 type Props = {
   isOpen: boolean;
@@ -264,10 +264,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -281,7 +281,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-200"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

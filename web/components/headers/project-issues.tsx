@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useProject, useProjectState, useUser, useInbox } from "hooks/store";
+import { useApplication, useLabel, useProject, useProjectState, useUser, useInbox, useMember } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -14,12 +14,12 @@ import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EFilterType } from "store_legacy/issues/types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
+import { useIssues } from "hooks/store/use-issues";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -28,11 +28,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
+
   const {
-    projectMember: { projectMembers },
-    // issue filters
-    projectIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    project: { projectMembers },
+  } = useMember();
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const { inboxesList, isInboxEnabled, getInboxId } = useInbox();
   const {
     commandPalette: { toggleCreateIssueModal },
@@ -63,7 +65,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
     },
     [workspaceSlug, projectId, issueFilters, updateFilters]
   );
@@ -71,7 +73,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -79,7 +81,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -87,7 +89,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -178,7 +180,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              memberIds={projectMembers}
               states={projectStates}
             />
           </FiltersDropdown>

@@ -10,7 +10,7 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { useIssues } from "hooks/store/use-issues";
 import { EIssuesStoreType } from "constants/issue";
 

@@ -24,7 +24,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    issues: { loader, getIssues, fetchIssues },
+    issues: { loader, getIssuesIds, fetchIssues },
     issuesFilter: { issueFilters, fetchFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
 
@@ -33,7 +33,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId) {
         await fetchFilters(workspaceSlug, projectId);
-        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+        await fetchIssues(workspaceSlug, projectId, getIssuesIds ? "mutation" : "init-loader");
       }
     },
     { revalidateOnFocus: false, refreshInterval: 600000, revalidateOnMount: true }
@@ -68,13 +68,13 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {loader === "init-loader" || !getIssues ? (
+      {loader === "init-loader" || !getIssuesIds ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          {Object.keys(getIssues ?? {}).length == 0 ? (
+          {(getIssuesIds ?? {}).length == 0 ? (
             <ProjectEmptyState />
           ) : (
             <div className="relative h-full w-full overflow-auto">

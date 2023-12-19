@@ -12,7 +12,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 // constant
 import { EUserProjectRoles } from "constants/project";
 
