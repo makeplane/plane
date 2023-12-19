@@ -163,10 +163,6 @@ export const List: React.FC<IList> = (props) => {
     currentStore,
     addIssuesToView,
   } = props;
-  // store hooks
-  const { projectMap, workspaceProjects } = useProject();
-  // derived
-  const projects = workspaceProjects?.map((project_id) => projectMap[project_id]);
 
   return (
     <div className="relative h-full w-full">

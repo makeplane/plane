@@ -41,7 +41,7 @@ export const InboxActionsHeader = observer(() => {
   // toast
   const { setToastAlert } = useToast();
   // derived values
-  const issue = getIssueById(inboxIssueId as string, inboxIssueId as string);
+  const issue = getIssueById(inboxId as string, inboxIssueId as string);
 
   const markInboxStatus = async (data: TInboxStatus) => {
     if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !issue) return;
