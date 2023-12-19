@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } 
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
-import tippy, { inlinePositioning } from "tippy.js";
-import type { UploadImage, ISlashCommandItem, CommandProps } from "@plane/editor-types";
+import tippy from "tippy.js";
 import {
   CaseSensitive,
   Code2,
@@ -19,6 +18,9 @@ import {
   Table,
 } from "lucide-react";
 import {
+  UploadImage,
+  ISlashCommandItem,
+  CommandProps,
   cn,
   insertTableCommand,
   toggleBlockquote,
@@ -318,7 +320,7 @@ const renderItems = () => {
       });
 
       // @ts-ignore
-      popup = tippy("#editor-container", {
+      popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: () => document.body,
         content: component.element,
@@ -327,6 +329,7 @@ const renderItems = () => {
         interactive: true,
         trigger: "manual",
         // inlinePositioning: true,
+        flip: true,
         placement: "bottom-start",
       });
     },
