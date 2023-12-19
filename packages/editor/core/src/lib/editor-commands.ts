@@ -1,4 +1,4 @@
-import { UploadImage } from "@plane/editor-types";
+import { UploadImage } from "@plane/editor-core";
 import { Editor, Range } from "@tiptap/core";
 import { startImageUpload } from "src/ui/plugins/upload-image";
 import { findTableAncestor } from "src/lib/utils";

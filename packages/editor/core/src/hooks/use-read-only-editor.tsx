@@ -3,7 +3,7 @@ import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
-import { IMentionSuggestion } from "@plane/editor-types";
+import { IMentionSuggestion } from "@plane/editor-core";
 
 interface CustomReadOnlyEditorProps {
   value: string;

@@ -1,4 +1,4 @@
-import { IMentionSuggestion } from "@plane/editor-types";
+import { IMentionSuggestion } from "@plane/editor-core";
 import { Editor } from "@tiptap/react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
