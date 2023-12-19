@@ -9,6 +9,8 @@ import showdown from "showdown";
 // octokit
 import { Octokit } from "octokit";
 import { getOctokit } from "../utils/github.authentication";
+// logger
+import { logger } from "../utils/logger"
 // mq
 import { MQSingleton } from "../mq/singleton";
 // middleware
@@ -27,7 +29,7 @@ export class GithubController {
     this.mq = mq;
   }
 
-  private countAllPages = async (
+  private getAllEntities = async (
     octokit: Octokit,
     requestPath: string,
     requestParams: any
@@ -39,7 +41,7 @@ export class GithubController {
 
     do {
       results = await octokit.request(requestPath, { ...requestParams, page });
-      returnData.push(results.data)
+      returnData.push(...results.data)
       page++;
     } while (results.data.length !== 0);
 
@@ -98,14 +100,15 @@ export class GithubController {
       const totalIssues = openIssuesCount + closedIssuesCount;
 
       // Fetch total labels count
-      const labels = await this.countAllPages(
+      const labels = await this.getAllEntities(
         octokit,
         "GET /repos/{owner}/{repo}/labels",
         { owner, repo }
       );
 
+
       // Fetch total collaborators count
-      const collaborators = await this.countAllPages(
+      const collaborators = await this.getAllEntities(
         octokit,
         "GET /repos/{owner}/{repo}/collaborators",
         { owner, repo }
@@ -119,7 +122,7 @@ export class GithubController {
         collaborators,
       });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
@@ -140,7 +143,7 @@ export class GithubController {
       });
       return res.status(200).json(data);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
@@ -163,7 +166,7 @@ export class GithubController {
 
       return res.status(200).json(data);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
@@ -180,8 +183,6 @@ export class GithubController {
       created_by,
       importer_id,
     } = req.body;
-
-    console.log(req.body)
 
     try {
       res.status(200).json({
@@ -203,7 +204,7 @@ export class GithubController {
                 email: user.email,
                 workspace_id: workspace_id,
                 project_id: project_id,
-                created_by: created_by,
+                created_by_id: created_by,
               },
             }, // kwargs
             other_data: {}, // other data
@@ -216,9 +217,6 @@ export class GithubController {
         }
       }
 
-
-
-      console.log("Labels")
 
       // Labels
       const githubLabels = await octokit.paginate(
@@ -233,22 +231,23 @@ export class GithubController {
         }
       );
       for await (const label of githubLabels) {
-        const labelssync = {
+        const labelSync = {
           args: [], // args
           kwargs: {
             data: {
               external_source: "github",
               external_id: label.id,
+              color: `#${label.color}`,
               type: "label.create",
               name: label.name,
               workspace_id: workspace_id,
               project_id: project_id,
-              created_by: created_by,
+              created_by_id: created_by,
             },
           }, // kwargs
           other_data: {}, // other data
         };
-        this.mq?.publish(labelssync, "plane.bgtasks.importer_task.label_sync");
+        this.mq?.publish(labelSync, "plane.bgtasks.importer_task.label_sync");
       }
 
       const converter = new showdown.Converter({ optionKey: "value" });
@@ -257,6 +256,7 @@ export class GithubController {
       const githubIssues = await octokit.paginate(
         octokit.rest.issues.listForRepo,
         {
+          state: "all",
           owner: owner,
           repo: repo,
           headers: {
@@ -301,7 +301,7 @@ export class GithubController {
                 state: issue.state,
                 workspace_id: workspace_id,
                 project_id: project_id,
-                created_by: created_by,
+                created_by_id: created_by,
                 external_id: issue.id,
                 external_source: "github",
                 comments_list: this.githubCommentCreator(
@@ -332,7 +332,7 @@ export class GithubController {
             type: "import.create",
             workspace_id: workspace_id,
             project_id: project_id,
-            created_by: created_by,
+            created_by_id: created_by,
             importer_id: importer_id,
             status: "completed",
           },
@@ -344,7 +344,7 @@ export class GithubController {
 
       return;
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       const import_sync = {
         args: [], // args
         kwargs: {
@@ -352,7 +352,7 @@ export class GithubController {
             type: "import.create",
             workspace_id: workspace_id,
             project_id: project_id,
-            created_by: created_by,
+            created_by_id: created_by,
             importer_id: importer_id,
             status: "failed",
           },
