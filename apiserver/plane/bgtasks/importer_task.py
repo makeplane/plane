@@ -302,16 +302,17 @@ def label_sync(data):
     existing_label = Label.objects.filter(
         project_id=data.get("project_id"),
         workspace_id=data.get("workspace_id"),
-        name__iexact=data.get("data"),
+        name__iexact=data.get("name"),
         external_id=data.get("external_id", None),
         external_source=data.get("external_source"),
     )
 
-    if not existing_label.exists() and data.get("data"):
+    if not existing_label.exists() and data.get("name"):
         Label.objects.create(
             project_id=data.get("project_id"),
             workspace_id=data.get("workspace_id"),
             name=data.get("name"),
+            color=data.get("color"),
             created_by_id=data.get("created_by"),
             external_id=data.get("external_id", None),
             external_source=data.get("external_source"),
@@ -555,14 +556,13 @@ def issue_sync(data):
         bulk_issue_labels = bulk_issue_labels + [
             IssueLabel(
                 issue=issue,
-                label_id=get_label_id(name, data).get("id")
-                if get_label_id(name, data)
-                else None,
+                label_id=get_label_id(label.get("name"), data).get("id"),
                 project_id=data.get("project_id"),
                 workspace_id=data.get("workspace_id"),
                 created_by_id=data.get("created_by_id"),
             )
-            for name in labels_list
+            for label in labels_list
+            if get_label_id(label.get("name"), data).get("id")
         ]
 
         _ = IssueLabel.objects.bulk_create(
@@ -604,11 +604,15 @@ def issue_sync(data):
                 created_by_id=get_user_id(comment.get("created_by")).get("id")
                 if comment.get("created_by_id")
                 else data.get("created_by_id"),
+                external_id=comment.get("external_id"),
+                external_source=comment.get("external_source"),
             )
             for comment in comments_list
         ]
+        _ = IssueComment.objects.bulk_create(
+            bulk_issue_comments, batch_size=100
+        )
 
-        _ = IssueComment.objects.bulk_create(bulk_issue_comments, batch_size=100)
 
 
 @shared_task(queue="segway_tasks")
