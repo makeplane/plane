@@ -85,7 +85,7 @@ export class JiraController {
 
   @Post("import")
   @Middleware([AuthKeyMiddleware])
-  private async JiraImport(req: Request, res: Response) {
+  private async import(req: Request, res: Response) {
     try {
       res.status(200).json({
         message: "Successful",
@@ -112,7 +112,7 @@ export class JiraController {
       const users = req.body.data.users;
 
       // users
-      let members = [];
+      const members = [];
       for (const user of users) {
         if (user?.import == "invite" || user?.import == "map") {
           const jira_members = {
@@ -145,8 +145,9 @@ export class JiraController {
           args: [], // args
           kwargs: {
             data: {
+              external_source: "jira",
               type: "label.create",
-              data: label,
+              name: label,
               workspace_id: workspace_id,
               project_id: project_id,
               created_by: created_by,
@@ -202,7 +203,7 @@ export class JiraController {
       const child_issues = [];
       const module_issues = [];
 
-      let url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic&maxResults=100&expand=renderedFields`;
+      const url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic&maxResults=100&expand=renderedFields`;
 
       for await (const issue of loadIssues(url, auth)) {
         if (issue.fields.parent) {
@@ -228,8 +229,8 @@ export class JiraController {
         );
 
         // issue comments
-        let comments_list = [];
-        let comment_url = `https://${cloud_hostname}/rest/api/3/issue/${issue.id}/comment?expand=renderedBody`;
+        const comments_list = [];
+        const comment_url = `https://${cloud_hostname}/rest/api/3/issue/${issue.id}/comment?expand=renderedBody`;
         const commentResponse = await axios.get(comment_url, { auth, headers });
         if (
           commentResponse &&
@@ -285,8 +286,8 @@ export class JiraController {
         );
 
         // issue comments
-        let comments_list = [];
-        let comment_url = `https://${cloud_hostname}/rest/api/3/issue/${issue.id}/comment?expand=renderedBody`;
+        const comments_list = [];
+        const comment_url = `https://${cloud_hostname}/rest/api/3/issue/${issue.id}/comment?expand=renderedBody`;
         const commentResponse = await axios.get(comment_url, { auth, headers });
         if (
           commentResponse &&

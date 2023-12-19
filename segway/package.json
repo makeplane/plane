@@ -25,6 +25,7 @@
     "node-fetch": "^3.3.2",
     "octokit": "^3.1.2",
     "postgres": "^3.4.1",
+    "showdown": "^2.1.0",
     "uuid": "^9.0.1",
     "winston": "^3.10.0",
     "zod": "^3.22.4"
@@ -36,6 +37,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.8.3",
     "@types/pg": "^8.10.9",
+    "@types/showdown": "^2.0.6",
     "concurrently": "^8.2.1",
     "drizzle-kit": "^0.20.6",
     "nodemon": "^3.0.1",
