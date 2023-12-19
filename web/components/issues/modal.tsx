@@ -84,7 +84,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   } = useApplication();
   const { currentUser } = useUser();
   const { currentWorkspace } = useWorkspace();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjects } = useProject();
 
   const issueStores = {
     [EProjectStore.PROJECT]: {

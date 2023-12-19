@@ -20,7 +20,7 @@ export const ProjectCardList = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { workspaceProjects, searchedProjects, getProjectById } = useProject();
+  const { workspaceProjectIds: workspaceProjects, searchedProjects, getProjectById } = useProject();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

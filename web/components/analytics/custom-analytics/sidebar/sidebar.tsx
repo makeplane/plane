@@ -38,7 +38,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
   // store hooks
   const { currentUser } = useUser();
-  const { workspaceProjects, getProjectById } = useProject();
+  const { workspaceProjectIds: workspaceProjects, getProjectById } = useProject();
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { fetchModuleDetails, getModuleById } = useModule();
 

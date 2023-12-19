@@ -32,7 +32,7 @@ export const WorkspaceDashboardView = observer(() => {
     updateTourCompleted,
     membership: { currentProjectRole },
   } = useUser();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjects } = useProject();
   // fetch user dashboard info
   useSWR(
     workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,

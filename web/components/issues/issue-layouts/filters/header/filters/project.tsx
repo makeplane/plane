@@ -21,7 +21,7 @@ export const FilterProjects: React.FC<Props> = (props) => {
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store
-  const { getProjectById, workspaceProjects } = useProject();
+  const { getProjectById, workspaceProjectIds: workspaceProjects } = useProject();
   // derived values
   const projects = workspaceProjects?.map((projectId) => getProjectById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;

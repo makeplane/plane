@@ -34,7 +34,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjects } = useProject();
   const { createModule, updateModuleDetails } = useModule();
   // toast alert
   const { setToastAlert } = useToast();

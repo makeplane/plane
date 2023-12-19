@@ -16,7 +16,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
     eventTracker: { setTrackElement },
   } = useApplication();
-  const { workspaceProjects, getProjectById } = useProject();
+  const { workspaceProjectIds: workspaceProjects, getProjectById } = useProject();
   // form info
   const {
     control,

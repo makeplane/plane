@@ -16,7 +16,7 @@ export const ProjectsHeader = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { workspaceProjects, searchQuery, setSearchQuery } = useProject();
+  const { workspaceProjectIds: workspaceProjects, searchQuery, setSearchQuery } = useProject();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 

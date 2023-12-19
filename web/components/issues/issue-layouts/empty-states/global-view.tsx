@@ -14,7 +14,7 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
     commandPalette: { toggleCreateIssueModal, toggleCreateProjectModal },
     eventTracker: { setTrackElement },
   } = useApplication();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjects } = useProject();
 
   return (
     <div className="grid h-full w-full place-items-center">

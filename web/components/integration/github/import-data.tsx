@@ -22,7 +22,7 @@ type Props = {
 export const GithubImportData: FC<Props> = observer((props) => {
   const { handleStepChange, integration, control, watch } = props;
   // store hooks
-  const { workspaceProjects, getProjectById } = useProject();
+  const { workspaceProjectIds: workspaceProjects, getProjectById } = useProject();
 
   const options = workspaceProjects?.map((projectId) => {
     const projectDetails = getProjectById(projectId);

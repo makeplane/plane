@@ -28,7 +28,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjects } = useProject();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
