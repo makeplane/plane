@@ -1,0 +1,17 @@
+.EmojiPickerReact {
+  --epr-emoji-size: 24px !important;
+  --epr-picker-border-radius: 4px !important;
+  --epr-horizontal-padding: 8px !important;
+  --epr-emoji-padding: 4px !important;
+}
+.epr-emoji-category-label {
+  font-size: 14px !important;
+}
+.epr-category-nav,
+.epr-header-overlay {
+  padding: 12px 8px !important;
+}
+.epr-search {
+  font-size: 14px !important;
+  height: 36px !important;
+}
