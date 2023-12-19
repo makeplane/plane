@@ -38,15 +38,12 @@ export const ProjectViewListLayout: React.FC = observer(() => {
     },
   };
 
-  const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
-
   return (
     <BaseListRoot
       issueFilterStore={projectViewIssueFilterStore}
       issueStore={projectViewIssueStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       currentStore={EProjectStore.PROJECT_VIEW}
     />
   );

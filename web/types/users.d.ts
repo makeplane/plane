@@ -1,3 +1,4 @@
+import { EUserProjectRoles } from "constants/project";
 import { IIssueActivity, IIssueLite, TStateGroups } from ".";
 
 export interface IUser {
@@ -61,11 +62,10 @@ export interface IUserTheme {
 
 export interface IUserLite {
   avatar: string;
-  created_at: Date;
   display_name: string;
   email?: string;
   first_name: string;
-  readonly id: string;
+  id: string;
   is_bot: boolean;
   last_name: string;
 }
@@ -163,7 +163,7 @@ export interface IUserProfileProjectSegregation {
 }
 
 export interface IUserProjectsRole {
-  [project_id: string]: number;
+  [project_id: string]: EUserProjectRoles;
 }
 
 // export interface ICurrentUser {

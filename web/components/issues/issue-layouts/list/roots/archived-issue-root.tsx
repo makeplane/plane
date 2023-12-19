@@ -28,18 +28,12 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     },
   };
 
-  const getProjects = (projectStore: IProjectStore) => {
-    if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug.toString()] || null;
-  };
-
   return (
     <BaseListRoot
       issueFilterStore={archivedIssueFiltersStore}
       issueStore={archivedIssueStore}
       QuickActions={ArchivedIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       currentStore={EProjectStore.PROJECT}
     />
   );

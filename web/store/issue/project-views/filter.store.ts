@@ -9,7 +9,7 @@ import { ViewService } from "services/view.service";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // constants
 import { isNil } from "constants/common";
-import { EFilterType } from "constants/issue";
+import { EIssueFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
@@ -37,7 +37,7 @@ export interface IProjectViewIssuesFilter {
     workspaceSlug: string,
     projectId: string,
     viewId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions
   ) => Promise<IViewIssuesFilterOptions | undefined>;
 
@@ -45,7 +45,7 @@ export interface IProjectViewIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     viewId?: string | undefined
   ) => Promise<void>;
@@ -90,7 +90,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
   get issueFilters() {
     const projectId = this.rootStore.projectId;
-    const viewId = this.rootStore.projectViewId;
+    const viewId = this.rootStore.viewId;
     if (!projectId || !viewId) return undefined;
 
     const displayFilters = this.rootStore.issuesFilter.issueDisplayFilters(projectId);
@@ -180,7 +180,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     workspaceSlug: string,
     projectId: string,
     viewId: string,
-    type: EFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions
   ) => {
     if (!viewId) return;
@@ -191,7 +191,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
       const _filters = { filters: { ..._moduleIssueFilters[viewId].filters } };
 
-      if (type === EFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
+      if (type === EIssueFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
 
       _moduleIssueFilters[viewId] = { filters: _filters.filters };
 
@@ -225,7 +225,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     viewId?: string | undefined
   ) => {
@@ -233,10 +233,10 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
       if (!viewId) throw new Error();
 
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           await this.updateViewFilters(workspaceSlug, projectId, viewId, filterType, filters as IIssueFilterOptions);
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
@@ -244,7 +244,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             filters as IIssueDisplayFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.rootStore.issuesFilter.updateDisplayProperties(
             workspaceSlug,
             projectId,

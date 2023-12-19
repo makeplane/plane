@@ -25,12 +25,11 @@ type Props = {
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
   labels?: IIssueLabel[] | undefined;
   members?: IUserLite[] | undefined;
-  projects?: IProject[] | undefined;
   states?: IState[] | undefined;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, projects, states } = props;
+  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, states } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -144,7 +143,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           <div className="py-2">
             <FilterProjects
               appliedFilters={filters.project ?? null}
-              projects={projects}
               handleUpdate={(val) => handleFiltersUpdate("project", val)}
               searchQuery={filtersSearchQuery}
             />

@@ -13,9 +13,10 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // services
 import { ProjectMemberService } from "services/project";
 // types
-import { IProjectMember, TUserProjectRole } from "types";
+import { IProjectMember } from "types";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { ROLE } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +26,7 @@ type Props = {
 };
 
 type member = {
-  role: TUserProjectRole;
+  role: EUserProjectRoles;
   member_id: string;
 };
 
@@ -267,8 +268,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     width="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
-                                      if (parseInt(key) > (currentProjectRole ?? EUserWorkspaceRoles.GUEST))
-                                        return null;
+                                      if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>

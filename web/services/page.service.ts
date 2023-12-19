@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import { IPage, IPageBlock, RecentPagesResponse, IIssue } from "types";
+import { IPage, IPageBlock, IIssue } from "types";
 
 export class PageService extends APIService {
   constructor() {
@@ -50,7 +50,7 @@ export class PageService extends APIService {
       });
   }
 
-  async getProjectPages(workspaceSlug: string, projectId: string): Promise<Record<string, IPage>> {
+  async getProjectPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -66,18 +66,6 @@ export class PageService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
       params: {
         page_view: pageType,
-      },
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getRecentPages(workspaceSlug: string, projectId: string): Promise<RecentPagesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
-      params: {
-        page_view: "recent",
       },
     })
       .then((response) => response?.data)
@@ -189,7 +177,7 @@ export class PageService extends APIService {
       });
   }
 
-  async getArchivedPages(workspaceSlug: string, projectId: string): Promise<Record<string, IPage>> {
+  async getArchivedPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-pages/`)
       .then((response) => response?.data)
       .catch((error) => {

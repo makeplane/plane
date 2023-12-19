@@ -19,11 +19,7 @@ export class CycleService extends APIService {
       });
   }
 
-  async getCyclesWithParams(
-    workspaceSlug: string,
-    projectId: string,
-    cycleType?: "current"
-  ): Promise<Record<string, ICycle>> {
+  async getCyclesWithParams(workspaceSlug: string, projectId: string, cycleType?: "current"): Promise<ICycle[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
       params: {
         cycle_view: cycleType,

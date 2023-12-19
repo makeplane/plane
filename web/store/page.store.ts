@@ -21,11 +21,12 @@ export interface IPageStore {
   publicProjectPages: string[] | null;
   recentProjectPages: IRecentPages | null;
   archivedProjectPages: string[] | null;
+  // fetch page information actions
   getUnArchivedPageById: (pageId: string) => IPage | null;
   getArchivedPageById: (pageId: string) => IPage | null;
   // fetch actions
-  fetchProjectPages: (workspaceSlug: string, projectId: string) => Promise<Record<string, IPage>>;
-  fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => Promise<Record<string, IPage>>;
+  fetchProjectPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
+  fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
   // favorites actions
   addToFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
   removeFromFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
@@ -202,10 +203,11 @@ export class PageStore implements IPageStore {
       const response = await this.pageService.getProjectPages(workspaceSlug, projectId);
 
       runInAction(() => {
-        Object.values(response).forEach((page) => {
+        response.forEach((page) => {
           set(this.pages, [page.id], page);
         });
       });
+
       return response;
     } catch (error) {
       throw error;
@@ -223,7 +225,7 @@ export class PageStore implements IPageStore {
       const response = await this.pageService.getArchivedPages(workspaceSlug, projectId);
 
       runInAction(() => {
-        Object.values(response).forEach((page) => {
+        response.forEach((page) => {
           set(this.archivedPages, [page.id], page);
         });
       });

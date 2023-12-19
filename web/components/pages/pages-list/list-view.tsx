@@ -12,7 +12,7 @@ import { Loader } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/empty_page.png";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type IPagesListView = {
   pages: string[];
@@ -31,7 +31,7 @@ export const PagesListView: FC<IPagesListView> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

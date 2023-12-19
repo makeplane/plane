@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
-// mobx store
+// hooks
+import { useApplication, useLabel, useProject, useProjectState, useUser, useInbox } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -14,31 +15,37 @@ import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
     projectMember: { projectMembers },
-    projectState: projectStateStore,
-    inbox: inboxStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
     // issue filters
     projectIssuesFilter: { issueFilters, updateFilters },
-    projectIssues: {},
-    user: { currentProjectRole },
   } = useMobxStore();
+  const { inboxesList, isInboxEnabled, getInboxId } = useInbox();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -85,12 +92,10 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId]?.[0] : undefined;
-
+  const inboxDetails = projectId ? inboxesList?.[projectId]?.[0] : undefined;
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
-
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -172,9 +177,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectLabels ?? undefined}
+              labels={projectLabels}
               members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+              states={projectStates}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -188,8 +193,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          {projectId && inboxStore.isInboxEnabled && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId)}`}>
+          {projectId && isInboxEnabled && inboxDetails && (
+            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${getInboxId(projectId)}`}>
               <span>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
@@ -211,7 +216,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("PROJECT_PAGE_HEADER");
-                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                  toggleCreateIssueModal(true, EProjectStore.PROJECT);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

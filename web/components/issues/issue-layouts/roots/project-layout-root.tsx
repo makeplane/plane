@@ -1,11 +1,8 @@
-import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// TODO: update this
-import useStoreIssues from "hooks/use-store-issues";
 // components
 import {
   ListLayout,
@@ -17,6 +14,8 @@ import {
   ProjectEmptyState,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
+import { useIssues } from "hooks/store/use-issues";
+import { EIssuesStoreType } from "constants/issue";
 // hooks
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
@@ -25,16 +24,20 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    projectIssues: { loader, getIssues, fetchIssues },
-    projectIssuesFilter: { issueFilters, fetchFilters },
-  } = useMobxStore();
+    issues: { loader, getIssues, fetchIssues },
+    issuesFilter: { issueFilters, fetchFilters },
+  } = useIssues(EIssuesStoreType.PROJECT);
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug, projectId);
-      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
-    }
-  });
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await fetchFilters(workspaceSlug, projectId);
+        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+      }
+    },
+    { revalidateOnFocus: false, refreshInterval: 600000, revalidateOnMount: true }
+  );
 
   // TODO: update this
   // const {

@@ -39,18 +39,12 @@ export const ModuleListLayout: React.FC = observer(() => {
     },
   };
 
-  const getProjects = (projectStore: IProjectStore) => {
-    if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug] || null;
-  };
-
   return (
     <BaseListRoot
       issueFilterStore={moduleIssueFilterStore}
       issueStore={moduleIssueStore}
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       viewId={moduleId}
       currentStore={EProjectStore.MODULE}
       addIssuesToView={(issues: string[]) => moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, issues)}

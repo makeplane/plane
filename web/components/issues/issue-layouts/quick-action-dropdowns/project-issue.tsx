@@ -14,7 +14,7 @@ import { IIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 // constant
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, customActionButton } = props;
@@ -30,7 +30,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
     membership: { currentProjectRole },
   } = useUser();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const { setToastAlert } = useToast();
 

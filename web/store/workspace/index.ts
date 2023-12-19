@@ -1,6 +1,7 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { RootStore } from "../root.store";
-import { set } from "lodash";
+import keyBy from "lodash/keyBy";
+import set from "lodash/set";
 // types
 import { IWorkspace } from "types";
 // services
@@ -22,7 +23,7 @@ export interface IWorkspaceRootStore {
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
   // actions
-  fetchWorkspaces: () => Promise<Record<string, IWorkspace>>;
+  fetchWorkspaces: () => Promise<IWorkspace[]>;
   createWorkspace: (data: Partial<IWorkspace>) => Promise<IWorkspace>;
   updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
   deleteWorkspace: (workspaceSlug: string) => Promise<void>;
@@ -40,7 +41,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   // services
   workspaceService;
   // root store
-  rootStore;
+  router;
+  user;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
@@ -68,7 +70,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     // services
     this.workspaceService = new WorkspaceService();
     // root store
-    this.rootStore = _rootStore;
+    this.router = _rootStore.app.router;
+    this.user = _rootStore.user;
     // sub-stores
     this.webhook = new WebhookStore(_rootStore);
     this.apiToken = new ApiTokenStore(_rootStore);
@@ -78,12 +81,9 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * computed value of current workspace based on workspace slug saved in the query store
    */
   get currentWorkspace() {
-    const workspaceSlug = this.rootStore.app.router.workspaceSlug;
-
+    const workspaceSlug = this.router.workspaceSlug;
     if (!workspaceSlug) return null;
-
     const workspaceDetails = Object.values(this.workspaces ?? {})?.find((w) => w.slug === workspaceSlug);
-
     return workspaceDetails || null;
   }
 
@@ -92,13 +92,9 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    */
   get workspacesCreatedByCurrentUser() {
     if (!this.workspaces) return null;
-
-    const user = this.rootStore.user.currentUser;
-
+    const user = this.user.currentUser;
     if (!user) return null;
-
     const userWorkspaces = Object.values(this.workspaces ?? {})?.filter((w) => w.created_by === user?.id);
-
     return userWorkspaces || null;
   }
 
@@ -113,36 +109,17 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * get workspace info from the array of workspaces in the store using workspace id
    * @param workspaceId
    */
-  getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null;
+  getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null; // TODO: use undefined instead of null
 
   /**
    * fetch user workspaces from API
    */
   fetchWorkspaces = async () => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const workspaceResponse = await this.workspaceService.userWorkspaces();
-
-      runInAction(() => {
-        this.workspaces = workspaceResponse;
-        this.loader = false;
-        this.error = null;
-      });
-
-      return workspaceResponse;
-    } catch (error) {
-      console.log("Failed to fetch user workspaces in workspace store", error);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-        this.workspaces = {};
-      });
-
-      throw error;
-    }
+    const workspaceResponse = await this.workspaceService.userWorkspaces();
+    runInAction(() => {
+      this.workspaces = keyBy(workspaceResponse, "id");
+    });
+    return workspaceResponse;
   };
 
   /**
@@ -161,7 +138,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        set(this.workspaces, response.id, response);
+        this.workspaces = set(this.workspaces, response.id, response);
       });
 
       return response;

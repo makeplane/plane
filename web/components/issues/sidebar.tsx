@@ -5,11 +5,10 @@ import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useProjectState, useUser } from "hooks/store";
+import { useEstimate, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
-import useEstimateOption from "hooks/use-estimate-option";
 // services
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
@@ -40,7 +39,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   control: any;
@@ -89,11 +88,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { projectStates } = useProjectState();
+  const { areEstimatesEnabledForCurrentProject } = useEstimate();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
-
-  const { isEstimateActive } = useEstimateOption();
 
   const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
     workspaceSlug,
@@ -191,7 +189,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     setLinkModal(true);
   };
 
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state);
 
@@ -341,27 +339,28 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     </div>
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && isEstimateActive && (
-                  <div className="flex flex-wrap items-center py-2">
-                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <Triangle className="h-4 w-4 flex-shrink-0 " />
-                      <p>Estimate</p>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
+                  areEstimatesEnabledForCurrentProject && (
+                    <div className="flex flex-wrap items-center py-2">
+                      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                        <Triangle className="h-4 w-4 flex-shrink-0 " />
+                        <p>Estimate</p>
+                      </div>
+                      <div className="sm:basis-1/2">
+                        <Controller
+                          control={control}
+                          name="estimate_point"
+                          render={({ field: { value } }) => (
+                            <SidebarEstimateSelect
+                              value={value}
+                              onChange={(val: number | null) => submitChanges({ estimate_point: val })}
+                              disabled={!isAllowed || uneditable}
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="sm:basis-1/2">
-                      <Controller
-                        control={control}
-                        name="estimate_point"
-                        render={({ field: { value } }) => (
-                          <SidebarEstimateSelect
-                            value={value}
-                            onChange={(val: number | null) => submitChanges({ estimate_point: val })}
-                            disabled={!isAllowed || uneditable}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                )}
+                  )}
               </div>
             )}
             {showSecondSection && (

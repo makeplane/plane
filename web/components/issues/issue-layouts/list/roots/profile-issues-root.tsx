@@ -12,7 +12,7 @@ import { EIssueActions } from "../../types";
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store_legacy/project";
 import { EProjectStore } from "store_legacy/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
   const router = useRouter();
@@ -38,17 +38,15 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     },
   };
 
-  const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
-
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
 
     console.log(
       projectId,
       currentWorkspaceUserProjectsRole,
-      !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER
+      !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER
     );
-    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
   return (
@@ -57,7 +55,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       issueStore={profileIssuesStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
       currentStore={EProjectStore.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />

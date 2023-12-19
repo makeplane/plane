@@ -26,7 +26,7 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export interface IPagesListItem {
   workspaceSlug: string;
@@ -168,11 +168,11 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
 
   const userCanEdit =
     isCurrentUserOwner ||
-    (currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole));
+    (currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole));
   const userCanChangeAccess = isCurrentUserOwner;
-  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
+  const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

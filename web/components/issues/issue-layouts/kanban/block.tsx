@@ -1,39 +1,38 @@
 import { memo } from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import isEqual from "lodash/isEqual";
 // components
-import { KanBanProperties } from "./properties";
+import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssueDisplayProperties, IIssue } from "types";
+import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { EIssueActions } from "../types";
 import { useRouter } from "next/router";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 interface IssueBlockProps {
   sub_group_id: string;
   columnId: string;
   index: number;
-  issue: IIssue;
+  issueId: string;
+  issuesMap: IIssueMap;
+  displayProperties: IIssueDisplayProperties;
   isDragDisabled: boolean;
-  showEmptyGroup: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 interface IssueDetailsBlockProps {
   issue: IIssue;
-  showEmptyGroup: boolean;
+  displayProperties: IIssueDisplayProperties;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   isReadOnly: boolean;
 }
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
-  const { issue, showEmptyGroup, handleIssues, quickActions, displayProperties, isReadOnly } = props;
+  const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
 
   const router = useRouter();
 
@@ -52,25 +51,25 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
 
   return (
     <>
-      {displayProperties && displayProperties?.key && (
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {issue.project_detail.identifier}-{issue.sequence_id}
           </div>
           <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
         </div>
-      )}
+      </WithDisplayPropertiesHOC>
       <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
         <div className="line-clamp-2 text-sm font-medium text-custom-text-100" onClick={handleIssuePeekOverview}>
           {issue.name}
         </div>
       </Tooltip>
       <div>
-        <KanBanProperties
+        <IssueProperties
+          className="flex flex-wrap items-center gap-2 whitespace-nowrap"
           issue={issue}
-          handleIssues={updateIssue}
           displayProperties={displayProperties}
-          showEmptyGroup={showEmptyGroup}
+          handleIssues={updateIssue}
           isReadOnly={isReadOnly}
         />
       </div>
@@ -78,33 +77,29 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
   );
 };
 
-const validateMemo = (prevProps: IssueDetailsBlockProps, nextProps: IssueDetailsBlockProps) => {
-  if (prevProps.issue !== nextProps.issue) return false;
-  if (!isEqual(prevProps.displayProperties, nextProps.displayProperties)) {
-    return false;
-  }
-  return true;
-};
-
-const KanbanIssueMemoBlock = memo(KanbanIssueDetailsBlock, validateMemo);
+const KanbanIssueMemoBlock = memo(KanbanIssueDetailsBlock);
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   const {
     sub_group_id,
     columnId,
     index,
-    issue,
+    issueId,
+    issuesMap,
+    displayProperties,
     isDragDisabled,
-    showEmptyGroup,
     handleIssues,
     quickActions,
-    displayProperties,
     canEditProperties,
   } = props;
 
-  let draggableId = issue.id;
+  let draggableId = issueId;
   if (columnId) draggableId = `${draggableId}__${columnId}`;
   if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
+
+  const issue = issuesMap[issueId];
+
+  if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project);
 
@@ -128,10 +123,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
             >
               <KanbanIssueMemoBlock
                 issue={issue}
-                showEmptyGroup={showEmptyGroup}
+                displayProperties={displayProperties}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
-                displayProperties={displayProperties}
                 isReadOnly={!canEditIssueProperties}
               />
             </div>

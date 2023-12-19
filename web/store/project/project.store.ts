@@ -6,6 +6,7 @@ import { IProject } from "types";
 //services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
+import { orderArrayBy } from "helpers/array.helper";
 
 export interface IProjectStore {
   // states
@@ -26,7 +27,7 @@ export interface IProjectStore {
   setSearchQuery: (query: string) => void;
   getProjectById: (projectId: string) => IProject | null;
 
-  fetchProjects: (workspaceSlug: string) => Promise<void>;
+  fetchProjects: (workspaceSlug: string) => Promise<IProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
 
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -123,7 +124,11 @@ export class ProjectStore implements IProjectStore {
 
     const projectIds = Object.keys(this.projectMap);
 
-    return projectIds?.filter((projectId) => this.projectMap[projectId].is_member);
+    return orderArrayBy(
+      projectIds?.filter((projectId) => this.projectMap[projectId].is_member),
+      "sort_order",
+      "ascending"
+    );
   }
 
   get favoriteProjects() {
@@ -131,7 +136,11 @@ export class ProjectStore implements IProjectStore {
 
     const projectIds = Object.keys(this.projectMap);
 
-    return projectIds?.filter((projectId) => this.projectMap[projectId].is_favorite);
+    return orderArrayBy(
+      projectIds?.filter((projectId) => this.projectMap[projectId].is_favorite),
+      "sort_order",
+      "ascending"
+    );
   }
 
   setSearchQuery = (query: string) => {
@@ -146,11 +155,15 @@ export class ProjectStore implements IProjectStore {
    */
   fetchProjects = async (workspaceSlug: string) => {
     try {
-      const currentProjectMap = await this.projectService.getProjects(workspaceSlug);
+      const projectsResponse = await this.projectService.getProjects(workspaceSlug);
 
       runInAction(() => {
-        this.projectMap = currentProjectMap;
+        projectsResponse.forEach((project) => {
+          set(this.projectMap, [project.id], project);
+        });
       });
+
+      return projectsResponse;
     } catch (error) {
       console.log("Failed to fetch project from workspace store");
       throw error;

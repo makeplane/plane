@@ -1,22 +1,21 @@
 import { Droppable } from "@hello-pangea/dnd";
 //types
-import { IIssue, IIssueDisplayProperties, IIssueResponse } from "types";
+import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueMap, ISubGroupedIssues, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 //components
 import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";
 
 interface IKanbanGroup {
   groupId: string;
-  issues: IIssueResponse;
-  issueIds: any;
+  issuesMap: IIssueMap;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  showEmptyGroup: boolean;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -36,14 +35,13 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     sub_group_id,
     group_by,
     sub_group_by,
-    issues,
+    issuesMap,
+    displayProperties,
     verticalPosition,
     issueIds,
     isDragDisabled,
-    showEmptyGroup,
     handleIssues,
     quickActions,
-    displayProperties,
     canEditProperties,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -62,17 +60,16 @@ export const KanbanGroup = (props: IKanbanGroup) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {issues && !verticalPosition ? (
+            {!verticalPosition ? (
               <KanbanIssueBlocksList
                 sub_group_id={sub_group_id}
                 columnId={groupId}
-                issues={issues}
+                issuesMap={issuesMap}
                 issueIds={issueIds?.[groupId] || []}
+                displayProperties={displayProperties}
                 isDragDisabled={isDragDisabled}
-                showEmptyGroup={showEmptyGroup}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
-                displayProperties={displayProperties}
                 canEditProperties={canEditProperties}
               />
             ) : null}

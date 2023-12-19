@@ -22,7 +22,8 @@ import { IUser, IIssue, ISearchIssueResponse } from "types";
 import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
@@ -178,7 +179,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
   );
 
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
     if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));

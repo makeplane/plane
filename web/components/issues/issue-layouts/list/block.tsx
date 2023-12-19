@@ -1,29 +1,32 @@
 import { useRouter } from "next/router";
 // components
-import { ListProperties } from "./properties";
+import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayProperties } from "types";
+import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
-  columnId: string;
-
-  issue: IIssue;
+  issueId: string;
+  issuesMap: IIssueMap;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, displayProperties, canEditProperties } = props;
+  const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // router
   const router = useRouter();
-  const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
+  const updateIssue = (issueToUpdate: IIssue) => {
     handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
+
+  const issue = issuesMap[issueId];
+
+  if (!issue) return null;
 
   const handleIssuePeekOverview = () => {
     const { query } = router;
@@ -60,14 +63,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
         <div className="ml-auto flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (
             <>
-              <ListProperties
-                columnId={columnId}
+              <IssueProperties
+                className="relative flex items-center gap-2 overflow-x-auto whitespace-nowrap"
                 issue={issue}
-                isReadonly={!canEditIssueProperties}
+                isReadOnly={!canEditIssueProperties}
                 handleIssues={updateIssue}
                 displayProperties={displayProperties}
               />
-              {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+              {quickActions(issue)}
             </>
           ) : (
             <div className="h-4 w-4">

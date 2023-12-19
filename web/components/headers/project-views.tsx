@@ -8,7 +8,7 @@ import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
@@ -24,7 +24,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
 
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>

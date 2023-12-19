@@ -1,10 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useLabel } from "hooks/store";
-// hook
-import useEstimateOption from "hooks/use-estimate-option";
+// store hooks
+import { useEstimate, useLabel } from "hooks/store";
 // icons
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
@@ -76,7 +74,7 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
   // store hooks
   const {
-    workspaceLabel: { workspaceLabels, fetchWorkspaceLabels },
+    workspace: { workspaceLabels, fetchWorkspaceLabels },
   } = useLabel();
 
   useEffect(() => {
@@ -94,16 +92,21 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
   );
 });
 
-const EstimatePoint = ({ point }: { point: string }) => {
-  const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
+const EstimatePoint = observer((props: { point: string }) => {
+  const { point } = props;
+  const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
   const currentPoint = Number(point) + 1;
+
+  const estimateValue = getEstimatePointValue(Number(point));
 
   return (
     <span className="font-medium text-custom-text-100">
-      {isEstimateActive ? estimateValue : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+      {areEstimatesEnabledForCurrentProject
+        ? estimateValue
+        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
     </span>
   );
-};
+});
 
 const activityDetails: {
   [key: string]: {

@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
+import { useProjectState, useProjectView } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList } from "components/issues";
@@ -13,23 +14,23 @@ import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store_legacy/issues/types";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     viewId: string;
   };
-
+  // store hooks
   const {
     projectLabel: { projectLabels },
-    projectState: projectStateStore,
     projectMember: { projectMembers },
-    projectViews: projectViewsStore,
     viewIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
-
-  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
-
+  const { projectStates } = useProjectState();
+  const { getViewById, updateView } = useProjectView();
+  // derived values
+  const viewDetails = viewId ? getViewById(viewId.toString()) : null;
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -83,7 +84,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
 
-    projectViewsStore.updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
+    updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
       query_data: {
         ...viewDetails.query_data,
         ...(appliedFilters ?? {}),
@@ -99,7 +100,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
-        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStates}
       />
 
       {appliedFilters &&

@@ -108,6 +108,12 @@ export interface IIssueDisplayProperties {
   updated_on?: boolean;
 }
 
+export interface IIssueFilters {
+  filters: IIssueFilterOptions | undefined;
+  displayFilters: IIssueDisplayFilterOptions | undefined;
+  displayProperties: IIssueDisplayProperties | undefined;
+}
+
 export interface IWorkspaceIssueFilterOptions {
   assignees?: string[] | null;
   created_by?: string[] | null;

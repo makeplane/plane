@@ -1,3 +1,4 @@
+import { EUserWorkspaceRoles } from "constants/workspace";
 import type { IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "types";
 
 export type TUserWorkspaceRole = 5 | 10 | 15 | 20;
@@ -58,15 +59,9 @@ export type Properties = {
 };
 
 export interface IWorkspaceMember {
-  company_role: string | null;
-  created_at: Date;
-  created_by: string;
   id: string;
   member: IUserLite;
-  role: TUserWorkspaceRole;
-  updated_at: Date;
-  updated_by: string;
-  workspace: IWorkspaceLite;
+  role: EUserWorkspaceRoles;
 }
 
 export interface IWorkspaceMemberMe {

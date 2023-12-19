@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
+import { useApplication, useCycle, useLabel, useProject, useProjectState, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -19,10 +19,33 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
-
 import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
+import { EUserProjectRoles } from "constants/project";
+
+const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getCycleById } = useCycle();
+  // derived values
+  const cycle = getCycleById(cycleId);
+
+  if (!cycle) return null;
+
+  return (
+    <CustomMenu.MenuItem
+      key={cycle.id}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
+    >
+      <div className="flex items-center gap-1.5">
+        <ContrastIcon className="h-3 w-3" />
+        {truncateText(cycle.name, 40)}
+      </div>
+    </CustomMenu.MenuItem>
+  );
+};
 
 export const CycleIssuesHeader: React.FC = observer(() => {
   // states
@@ -36,11 +59,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    cycle: cycleStore,
     projectIssuesFilter: projectIssueFiltersStore,
     projectMember: { projectMembers },
     cycleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
+  const { projectAllCycles, getCycleById } = useCycle();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -106,11 +129,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const cyclesList = cycleStore.projectCycles;
-  const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
-
+  // derived values
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -158,16 +180,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {cyclesList?.map((cycle) => (
-                    <CustomMenu.MenuItem
-                      key={cycle.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <ContrastIcon className="h-3 w-3" />
-                        {truncateText(cycle.name, 40)}
-                      </div>
-                    </CustomMenu.MenuItem>
+                  {projectAllCycles?.map((cycleId) => (
+                    <CycleDropdownOption key={cycleId} cycleId={cycleId} />
                   ))}
                 </CustomMenu>
               }

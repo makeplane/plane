@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import { KeyedMutator } from "swr";
 import type {
   IState,
@@ -271,4 +272,30 @@ export type TUnGroupedIssues = string[];
 
 export interface IIssueResponse {
   [issue_id: string]: IIssue;
+}
+
+export interface ViewFlags {
+  enableQuickAdd: boolean;
+  enableIssueCreation: boolean;
+  enableInlineEditing: boolean;
+}
+
+export type GroupByColumnTypes =
+  | "project"
+  | "state"
+  | "state_detail.group"
+  | "priority"
+  | "labels"
+  | "assignees"
+  | "created_by";
+
+export interface IGroupByColumn {
+  id: string;
+  name: string;
+  Icon: ReactElement;
+  payload: Partial<IIssue>;
+}
+
+export interface IIssueMap {
+  [key: string]: IIssue;
 }

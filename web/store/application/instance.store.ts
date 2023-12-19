@@ -33,7 +33,7 @@ export class InstanceStore implements IInstanceStore {
   constructor() {
     makeObservable(this, {
       // observable
-      loader: observable.ref,
+      loader: observable.ref, // TODO: Remove loader and error and handle it in the component.
       error: observable.ref,
       instance: observable,
       instanceAdmins: observable,
@@ -84,16 +84,11 @@ export class InstanceStore implements IInstanceStore {
    * fetch instance admins from API
    */
   fetchInstanceAdmins = async () => {
-    try {
-      const instanceAdmins = await this.instanceService.getInstanceAdmins();
-      runInAction(() => {
-        this.instanceAdmins = instanceAdmins;
-      });
-      return instanceAdmins;
-    } catch (error) {
-      console.log("Error while fetching the instance admins");
-      throw error;
-    }
+    const instanceAdmins = await this.instanceService.getInstanceAdmins();
+    runInAction(() => {
+      this.instanceAdmins = instanceAdmins;
+    });
+    return instanceAdmins;
   };
 
   /**
@@ -101,29 +96,11 @@ export class InstanceStore implements IInstanceStore {
    * @param data
    */
   updateInstanceInfo = async (data: Partial<IInstance>) => {
-    try {
-      runInAction(() => {
-        this.loader = true;
-        this.error = null;
-      });
-
-      const response = await this.instanceService.updateInstanceInfo(data);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = null;
-        this.instance = response;
-      });
-
-      return response;
-    } catch (error) {
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
+    runInAction(() => {
+      this.instance = response;
+    });
+    const response = await this.instanceService.updateInstanceInfo(data);
+    return response;
   };
 
   /**

@@ -31,7 +31,7 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.labelMap = this.rootStore.labelRoot.labelMap;
+    this.labelMap = this.rootStore.labelRoot?.labelMap;
     // services
     this.issueLabelService = new IssueLabelService();
   }

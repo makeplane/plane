@@ -1,8 +1,8 @@
-import { IIssueUnGroupedStructure } from "store_legacy/issue";
-import { SpreadsheetView } from "./spreadsheet-view";
 import { FC, useCallback } from "react";
-import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import {
   ICycleIssuesFilterStore,
@@ -14,11 +14,16 @@ import {
   IViewIssuesFilterStore,
   IViewIssuesStore,
 } from "store_legacy/issues";
-import { observer } from "mobx-react-lite";
+import { IIssueUnGroupedStructure } from "store_legacy/issue";
+// views
+import { SpreadsheetView } from "./spreadsheet-view";
+// types
+import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore:
@@ -39,21 +44,21 @@ interface IBaseSpreadsheetRoot {
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions, canEditPropertiesBasedOnProject } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  // store hooks
   const {
     projectMember: { projectMembers },
-    projectState: projectStateStore,
     projectLabel: { projectLabels },
     user: userStore,
   } = useMobxStore();
-
+  const { projectStates } = useProjectState()
+  // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
-
   const { currentProjectRole } = userStore;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  // user role validation
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const canEditProperties = (projectId: string | undefined) => {
     const isEditingAllowedBasedOnProject =
@@ -114,7 +119,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       )}
       members={projectMembers?.map((m) => m.member)}
       labels={projectLabels || undefined}
-      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
+      states={projectStates}
       handleIssues={handleIssues}
       canEditProperties={canEditProperties}
       quickAddCallback={issueStore.quickAddIssue}

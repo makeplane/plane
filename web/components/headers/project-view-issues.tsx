@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useProject, useProjectState, useUser } from "hooks/store";
+import { useApplication, useLabel, useProject, useProjectState, useProjectView, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -16,10 +16,9 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
-
 import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
@@ -32,7 +31,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     projectMember: { projectMembers },
-    projectViews: projectViewsStore,
     viewIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const {
@@ -43,6 +41,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { projectViews, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },
@@ -93,11 +92,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
-  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
+  const viewDetails = viewId ? getViewById(viewId.toString()) : null;
 
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -142,17 +140,23 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 className="ml-1.5"
                 placement="bottom-start"
               >
-                {viewsList?.map((view) => (
-                  <CustomMenu.MenuItem
-                    key={view.id}
-                    onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <PhotoFilterIcon height={12} width={12} />
-                      {truncateText(view.name, 40)}
-                    </div>
-                  </CustomMenu.MenuItem>
-                ))}
+                {projectViews?.map((viewId) => {
+                  const view = getViewById(viewId);
+
+                  if (!view) return;
+
+                  return (
+                    <CustomMenu.MenuItem
+                      key={viewId}
+                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${viewId}`)}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <PhotoFilterIcon height={12} width={12} />
+                        {truncateText(view.name, 40)}
+                      </div>
+                    </CustomMenu.MenuItem>
+                  );
+                })}
               </CustomMenu>
             }
           />

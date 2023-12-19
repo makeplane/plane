@@ -5,7 +5,7 @@ import { useApplication, useUser } from "hooks/store";
 // components
 import { NewEmptyState } from "components/common/new-empty-state";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
 import { EProjectStore } from "store_legacy/command-palette.store";
@@ -20,7 +20,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <div className="grid h-full w-full place-items-center">

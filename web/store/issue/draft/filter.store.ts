@@ -5,7 +5,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // constants
 import { isNil } from "constants/common";
-import { EFilterType } from "constants/issue";
+import { EIssueFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
@@ -25,7 +25,7 @@ export interface IDraftIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => Promise<void>;
 }
@@ -104,12 +104,12 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EFilterType,
+    filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => {
     try {
       switch (filterType) {
-        case EFilterType.FILTERS:
+        case EIssueFilterType.FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
@@ -117,7 +117,7 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
             filters as IIssueFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_FILTERS:
+        case EIssueFilterType.DISPLAY_FILTERS:
           await this.rootStore.issuesFilter.updateDisplayFilters(
             workspaceSlug,
             projectId,
@@ -125,7 +125,7 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
             filters as IIssueDisplayFilterOptions
           );
           break;
-        case EFilterType.DISPLAY_PROPERTIES:
+        case EIssueFilterType.DISPLAY_PROPERTIES:
           await this.rootStore.issuesFilter.updateDisplayProperties(
             workspaceSlug,
             projectId,

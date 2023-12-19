@@ -8,7 +8,7 @@ import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const PagesHeader = observer(() => {
   // router
@@ -24,7 +24,7 @@ export const PagesHeader = observer(() => {
   const { currentProjectDetails } = useProject();
 
   const canUserCreatePage =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">

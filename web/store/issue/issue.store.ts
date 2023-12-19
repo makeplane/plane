@@ -1,32 +1,30 @@
-import get from "lodash/get";
+import set from "lodash/set";
+import isEmpty from "lodash/isEmpty";
 // store
 import { action, makeObservable, observable, runInAction } from "mobx";
-import { IIssueRootStore } from "./root.store";
 // types
 import { IIssue } from "types";
 
 export interface IIssueStore {
-  allIssues: { [key: string]: IIssue };
+  // observables
+  issuesMap: Record<string, IIssue>; // Record defines issue_id as key and IIssue as value
   // actions
   addIssue(issues: IIssue[]): void;
   updateIssue(issueId: string, issue: Partial<IIssue>): void;
   removeIssue(issueId: string): void;
-  // helper Methods
-  getIssueById(id: string): undefined | IIssue;
-  getIssuesByKey(issueKey: string, value: string): undefined | { [key: string]: IIssue };
+  // helper methods
+  getIssueById(issueId: string): undefined | IIssue;
+  getIssuesByIds(issueIds: string[]): undefined | Record<string, IIssue>; // Record defines issue_id as key and IIssue as value
 }
 
 export class IssueStore implements IIssueStore {
-  allIssues: { [key: string]: IIssue } = {};
-  // root store
-  rootStore: IIssueRootStore;
+  // observables
+  issuesMap: { [issue_id: string]: IIssue } = {};
 
-  constructor(rootStore: IIssueRootStore) {
-    this.rootStore = rootStore;
-
+  constructor() {
     makeObservable(this, {
       // observable
-      allIssues: observable.ref,
+      issuesMap: observable,
       // actions
       addIssue: action,
       updateIssue: action,
@@ -34,46 +32,72 @@ export class IssueStore implements IIssueStore {
     });
   }
 
+  // actions
+  /**
+   * @description This method will add issues to the issuesMap
+   * @param {IIssue[]} issues
+   * @returns {void}
+   */
   addIssue = (issues: IIssue[]) => {
     if (issues && issues.length <= 0) return;
-
-    const _issues = { ...this.allIssues };
-    issues.forEach((issue) => {
-      _issues[issue.id] = issue;
-    });
-
     runInAction(() => {
-      this.allIssues = _issues;
+      issues.forEach((issue) => {
+        set(this.issuesMap, issue.id, issue);
+      });
     });
   };
 
+  /**
+   * @description This method will update the issue in the issuesMap
+   * @param {string} issueId
+   * @param {Partial<IIssue>} issue
+   * @returns {void}
+   */
   updateIssue = (issueId: string, issue: Partial<IIssue>) => {
-    if (!issue || !issueId || !this.allIssues[issueId]) return;
-    this.allIssues[issueId] = { ...this.allIssues[issueId], ...issue };
+    if (!issue || !issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    runInAction(() => {
+      Object.keys(issue).forEach((key) => {
+        set(this.issuesMap, [issueId, key], issue[key as keyof IIssue]);
+      });
+    });
   };
 
+  /**
+   * @description This method will remove the issue from the issuesMap
+   * @param {string} issueId
+   * @returns {void}
+   */
   removeIssue = (issueId: string) => {
-    if (issueId) return;
-    delete this.allIssues[issueId];
+    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    runInAction(() => {
+      delete this.issuesMap[issueId];
+    });
   };
 
   // helper methods
-  getIssueById = (id: string) => {
-    if (!id) return undefined;
-    return this.allIssues[id];
+  /**
+   * @description This method will return the issue from the issuesMap
+   * @param {string} issueId
+   * @returns {IIssue | undefined}
+   */
+  getIssueById = (issueId: string) => {
+    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
+    return this.issuesMap[issueId];
   };
 
-  getIssuesByKey = (issueKey: keyof IIssue, value: string) => {
-    if (!issueKey || !value || !this.allIssues) return undefined;
+  /**
+   * @description This method will return the issues from the issuesMap
+   * @param {string[]} issueIds
+   * @returns {Record<string, IIssue> | undefined}
+   */
+  getIssuesByIds = (issueIds: string[]) => {
+    if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return undefined;
     const filteredIssues: { [key: string]: IIssue } = {};
-
-    Object.values(this.allIssues).forEach((issue) => {
-      const issueKeyValue = get(issue, issueKey);
-      if (issueKeyValue == value) {
+    Object.values(this.issuesMap).forEach((issue) => {
+      if (issueIds.includes(issue.id)) {
         filteredIssues[issue.id] = issue;
       }
     });
-
-    return filteredIssues;
+    return isEmpty(filteredIssues) ? undefined : filteredIssues;
   };
 }

@@ -6,8 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useWorkspace, useInboxIssues } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
@@ -57,7 +56,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     inboxId: string;
   };
   // store hooks
-  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
+  const { createIssue } = useInboxIssues();
   const {
     config: { envConfig },
     eventTracker: { postHogEventTracker },
@@ -84,8 +83,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
-    await inboxIssueDetailsStore
-      .createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
+    await createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
       .then((res) => {
         if (!createMore) {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`);

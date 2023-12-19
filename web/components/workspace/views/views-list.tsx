@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// store hooks
+import { useGlobalView } from "hooks/store";
 // components
 import { GlobalViewListItem } from "components/workspace";
 // ui
@@ -14,21 +13,19 @@ type Props = {
 };
 
 export const GlobalViewsList: React.FC<Props> = observer((props) => {
+  const { searchQuery } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { searchQuery } = props;
-
-  const { globalViews: globalViewsStore } = useMobxStore();
+  // store hooks
+  const { fetchAllGlobalViews, currentWorkspaceViews, getSearchedViews } = useGlobalView();
 
   useSWR(
     workspaceSlug ? `GLOBAL_VIEWS_LIST_${workspaceSlug.toString()}` : null,
-    workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchAllGlobalViews(workspaceSlug.toString()) : null
   );
 
-  const viewsList = globalViewsStore.globalViewsList;
-
-  if (!viewsList)
+  if (!currentWorkspaceViews)
     return (
       <Loader className="space-y-4 p-4">
         <Loader.Item height="72px" />
@@ -38,12 +35,12 @@ export const GlobalViewsList: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const filteredViewsList = viewsList.filter((v) => v.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredViewsList = getSearchedViews(searchQuery);
 
   return (
     <>
-      {filteredViewsList.map((view) => (
-        <GlobalViewListItem key={view.id} view={view} />
+      {filteredViewsList?.map((viewId) => (
+        <GlobalViewListItem key={viewId} viewId={viewId} />
       ))}
     </>
   );

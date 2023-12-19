@@ -18,15 +18,16 @@ import {
 } from "./project-views";
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
+import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
 
 export interface IIssueRootStore {
-  currentUserId: string | undefined;
   workspaceSlug: string | undefined;
-  profileView: string | undefined;
+  userId: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
   moduleId: string | undefined;
-  projectViewId: string | undefined;
+  viewId: string | undefined;
+  profileView: string | undefined;
   states: any | undefined;
   labels: any | undefined;
   members: any | undefined;
@@ -59,15 +60,17 @@ export interface IIssueRootStore {
 
   draftIssuesFilter: IDraftIssuesFilter;
   draftIssues: IDraftIssues;
+
+  issueKanBanView: IIssueKanBanViewStore;
 }
 
 export class IssueRootStore {
-  currentUserId: string | undefined = undefined;
   workspaceSlug: string | undefined = undefined;
+  userId: string | undefined = undefined;
   projectId: string | undefined = undefined;
   cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
-  projectViewId: string | undefined = undefined;
+  viewId: string | undefined = undefined;
   profileView: string | undefined = undefined;
   states: any | undefined = undefined;
   labels: any | undefined = undefined;
@@ -102,14 +105,16 @@ export class IssueRootStore {
   draftIssuesFilter: IDraftIssuesFilter;
   draftIssues: IDraftIssues;
 
+  issueKanBanView: IIssueKanBanViewStore;
+
   constructor(rootStore: RootStore) {
     makeObservable(this, {
-      currentUserId: observable.ref,
+      userId: observable.ref,
       workspaceSlug: observable.ref,
       projectId: observable.ref,
       cycleId: observable.ref,
       moduleId: observable.ref,
-      projectViewId: observable.ref,
+      viewId: observable.ref,
       profileView: observable.ref,
       states: observable,
       labels: observable,
@@ -118,30 +123,29 @@ export class IssueRootStore {
     });
 
     autorun(() => {
-      if (rootStore?.user?.currentUser?.id) this.currentUserId = rootStore?.user?.currentUser?.id;
-      if (rootStore?.workspace?.currentWorkspace?.slug)
-        this.workspaceSlug = rootStore?.workspace?.currentWorkspace?.slug;
-      if (rootStore?.project?.projects?.projectId) this.projectId = rootStore?.project?.projects?.projectId;
-      if (rootStore?.cycle?.cycleId) this.cycleId = rootStore?.cycle?.cycleId;
-      if (rootStore?.module?.moduleId) this.moduleId = rootStore?.module?.moduleId;
-      if (rootStore?.projectView?.viewId) this.projectViewId = rootStore?.projectView?.viewId;
-
+      // if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
+      // if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
+      // if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
+      // if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
+      // if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
+      // if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
       // if (rootStore?.workspace?.profileView) this.profileView = rootStore?.workspace?.profileView;
+      // if (rootStore?.user?.currentUser?.id) this.userId = rootStore?.user?.currentUser?.id;
       // if (rootStore?.states) this.states = rootStore?.states;
       // if (rootStore?.labels) this.labels = rootStore?.labels;
       // if (rootStore?.members) this.members = rootStore?.members;
       // if (rootStore?.projects) this.projects = rootStore?.projects;
     });
 
-    this.issues = new IssueStore(this);
+    this.issues = new IssueStore();
 
     this.issuesFilter = new IssuesFilter(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
-    this.workspaceIssues = new WorkspaceIssues();
+    this.workspaceIssues = new WorkspaceIssues(this);
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
-    this.profileIssues = new ProfileIssues();
+    this.profileIssues = new ProfileIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this);
@@ -150,15 +154,17 @@ export class IssueRootStore {
     this.cycleIssues = new CycleIssues(this);
 
     this.moduleIssuesFilter = new ModuleIssuesFilter(this);
-    this.moduleIssues = new ModuleIssues();
+    this.moduleIssues = new ModuleIssues(this);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
-    this.projectViewIssues = new ProjectViewIssues();
+    this.projectViewIssues = new ProjectViewIssues(this);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
-    this.archivedIssues = new ArchivedIssues();
+    this.archivedIssues = new ArchivedIssues(this);
 
     this.draftIssuesFilter = new DraftIssuesFilter(this);
-    this.draftIssues = new DraftIssues();
+    this.draftIssues = new DraftIssues(this);
+
+    this.issueKanBanView = new IssueKanBanViewStore(this);
   }
 }

@@ -23,7 +23,7 @@ export class WorkspaceService extends APIService {
     super(API_BASE_URL);
   }
 
-  async userWorkspaces(): Promise<Record<string, IWorkspace>> {
+  async userWorkspaces(): Promise<IWorkspace[]> {
     return this.get("/api/users/me/workspaces/")
       .then((response) => response?.data)
       .catch((error) => {

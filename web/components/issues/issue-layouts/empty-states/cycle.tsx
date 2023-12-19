@@ -16,7 +16,7 @@ import emptyIssue from "public/empty-state/issue.svg";
 import { ISearchIssueResponse } from "types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -54,7 +54,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
     });
   };
 
-  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

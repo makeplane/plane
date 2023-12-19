@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProject } from "hooks/store";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
@@ -27,15 +27,12 @@ const defaultValues: Partial<IWorkspaceView> = {
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
     workspace: workspaceStore,
-    project: projectStore,
     workspaceMember: { workspaceMembers },
   } = useMobxStore();
+  const {} = useProject();
 
   const {
     formState: { errors, isSubmitting },
@@ -148,7 +145,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                     labels={workspaceStore.workspaceLabels ?? undefined}
                     members={workspaceMembers?.map((m) => m.member) ?? undefined}
-                    projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
                   />
                 </FiltersDropdown>
               )}
@@ -178,8 +174,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+            ? "Creating View..."
+            : "Create View"}
         </Button>
       </div>
     </form>

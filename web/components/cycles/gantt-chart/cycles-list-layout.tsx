@@ -12,7 +12,7 @@ import { CycleGanttBlock } from "components/cycles";
 // types
 import { ICycle } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string;
@@ -83,7 +83,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   };
 
   const isAllowed =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="h-full w-full overflow-y-auto">

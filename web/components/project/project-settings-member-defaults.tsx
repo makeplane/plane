@@ -15,7 +15,7 @@ import { IProject, IUserLite, IWorkspace } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -32,7 +32,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   } = useUser();
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
   // form info

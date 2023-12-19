@@ -32,7 +32,6 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   };
   // store hooks
   const {
-    cycle: cycleStore,
     cycleIssues: { loader, getIssues, fetchIssues },
     cycleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();

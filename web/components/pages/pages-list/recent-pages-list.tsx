@@ -13,7 +13,7 @@ import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks
@@ -25,7 +25,7 @@ export const RecentPagesList: FC = observer(() => {
 
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!recentProjectPages) {
     return (

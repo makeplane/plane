@@ -14,7 +14,8 @@ import { ProjectSettingHeader } from "components/headers";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IProject } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 const AutomationSettingsPage: NextPageWithLayout = observer(() => {
   // router
@@ -40,7 +41,7 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
     });
   };
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>

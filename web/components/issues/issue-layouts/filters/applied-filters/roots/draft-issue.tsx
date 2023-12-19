@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
+// hooks
+import { useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
@@ -10,16 +10,17 @@ import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store_legacy/issues/types";
 
 export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  // store hooks
   const {
     projectDraftIssuesFilter: { issueFilters, updateFilters },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
-    projectState: projectStateStore,
   } = useMobxStore();
-
+  const { projectStates } = useProjectState();
+  // derived values
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -71,7 +72,7 @@ export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
-        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStates}
       />
 
       <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />

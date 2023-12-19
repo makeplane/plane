@@ -12,15 +12,13 @@ export interface IModuleStore {
   loader: boolean;
   error: any | null;
   // observables
-  moduleMap: {
-    [moduleId: string]: IModule;
-  };
+  moduleMap: Record<string, IModule>;
   // computed
   projectModules: string[] | null;
   // computed actions
   getModuleById: (moduleId: string) => IModule | null;
   // actions
-  fetchModules: (workspaceSlug: string, projectId: string) => void;
+  fetchModules: (workspaceSlug: string, projectId: string) => Promise<IModule[]>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
   updateModuleDetails: (
@@ -53,9 +51,7 @@ export class ModulesStore implements IModuleStore {
   loader: boolean = false;
   error: any | null = null;
   // observables
-  moduleMap: {
-    [moduleId: string]: IModule;
-  } = {};
+  moduleMap: Record<string, IModule> = {};
   // root store
   rootStore;
   // services
@@ -108,7 +104,6 @@ export class ModulesStore implements IModuleStore {
   getModuleById = (moduleId: string) => this.moduleMap?.[moduleId] || null;
 
   // actions
-
   fetchModules = async (workspaceSlug: string, projectId: string) => {
     try {
       runInAction(() => {
@@ -119,12 +114,14 @@ export class ModulesStore implements IModuleStore {
       const modulesResponse = await this.moduleService.getModules(workspaceSlug, projectId);
 
       runInAction(() => {
-        Object.values(modulesResponse).forEach((module) => {
+        modulesResponse.forEach((module) => {
           set(this.moduleMap, [module.id], module);
         });
         this.loader = false;
         this.error = null;
       });
+
+      return modulesResponse;
     } catch (error) {
       console.error("Failed to fetch modules list in module store", error);
 
@@ -132,6 +129,8 @@ export class ModulesStore implements IModuleStore {
         this.loader = false;
         this.error = error;
       });
+
+      throw error;
     }
   };
 

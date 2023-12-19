@@ -15,7 +15,7 @@ import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { ISearchIssueResponse } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -53,7 +53,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     );
   };
 
-  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

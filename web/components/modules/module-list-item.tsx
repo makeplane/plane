@@ -15,7 +15,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   moduleId: string;
@@ -38,7 +38,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
