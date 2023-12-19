@@ -1,6 +1,6 @@
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
 import Placeholder from "@tiptap/extension-placeholder";
-import { UploadImage } from "@plane/editor-types";
+import { UploadImage } from "@plane/editor-core";
 
 export const RichTextEditorExtensions = (
   uploadFile: UploadImage,

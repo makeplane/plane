@@ -3,7 +3,7 @@ import * as React from "react";
 import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from "@plane/editor-core";
 import { EditorBubbleMenu } from "./menus/bubble-menu";
 import { RichTextEditorExtensions } from "./extensions";
-import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-types";
+import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-core";
 
 export type IRichTextEditor = {
   value: string;
