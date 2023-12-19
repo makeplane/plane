@@ -163,6 +163,9 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 #editor-container {
+  top: 0;
+  left: 0;
+
   table {
     border-collapse: collapse;
     table-layout: fixed;

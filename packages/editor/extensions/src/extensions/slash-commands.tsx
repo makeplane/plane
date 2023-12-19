@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } 
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
-import tippy from "tippy.js";
+import tippy, { inlinePositioning } from "tippy.js";
 import type { UploadImage, ISlashCommandItem, CommandProps } from "@plane/editor-types";
 import {
   CaseSensitive,
@@ -318,13 +318,15 @@ const renderItems = () => {
       });
 
       // @ts-ignore
-      popup = tippy("body", {
+      popup = tippy("#editor-container", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector("#editor-container"),
+        appendTo: () => document.body,
         content: component.element,
+        inlinePositioning: true,
         showOnCreate: true,
         interactive: true,
         trigger: "manual",
+        // inlinePositioning: true,
         placement: "bottom-start",
       });
     },

@@ -8,12 +8,13 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import TableHeader from "src/ui/extensions/table/table-header/table-header";
-import Table from "src/ui/extensions/table/table";
-import TableCell from "src/ui/extensions/table/table-cell/table-cell";
-import TableRow from "src/ui/extensions/table/table-row/table-row";
+import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
+import { Table } from "src/ui/extensions/table/table";
+import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
+import { TableRow } from "src/ui/extensions/table/table-row/table-row";
+import { HorizontalRule } from "src/ui/extensions/horizontal-rule";
 
-import ReadOnlyImageExtension from "src/ui/extensions/image/read-only-image";
+import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
 import { IMentionSuggestion } from "@plane/editor-types";
@@ -71,6 +72,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       class: "rounded-lg border border-custom-border-300",
     },
   }),
+  HorizontalRule,
   TiptapUnderline,
   TextStyle,
   Color,

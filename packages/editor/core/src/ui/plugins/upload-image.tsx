@@ -4,7 +4,7 @@ import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
 
 const uploadKey = new PluginKey("upload-image");
 
-const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
+export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
   new Plugin({
     key: uploadKey,
     state: {
@@ -59,8 +59,6 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
       },
     },
   });
-
-export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);

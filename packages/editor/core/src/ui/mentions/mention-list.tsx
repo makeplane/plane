@@ -9,7 +9,7 @@ interface MentionListProps {
 }
 
 // eslint-disable-next-line react/display-name
-const MentionList = forwardRef((props: MentionListProps, ref) => {
+export const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = (index: number) => {
@@ -98,5 +98,3 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
 });
 
 MentionList.displayName = "MentionList";
-
-export default MentionList;

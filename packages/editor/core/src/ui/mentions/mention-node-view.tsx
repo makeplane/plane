@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { IMentionHighlight } from "@plane/editor-types";
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
+export const MentionNodeView = (props) => {
   const router = useRouter();
   const highlights = props.extension.options.mentionHighlights as IMentionHighlight[];
 

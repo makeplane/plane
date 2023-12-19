@@ -72,7 +72,7 @@ declare module "@tiptap/core" {
   }
 }
 
-export default Node.create({
+export const Table = Node.create({
   name: "table",
 
   addOptions() {

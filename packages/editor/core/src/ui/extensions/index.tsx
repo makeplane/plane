@@ -7,13 +7,13 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 
-import TableHeader from "src/ui/extensions/table/table-header/table-header";
-import Table from "src/ui/extensions/table/table";
-import TableCell from "src/ui/extensions/table/table-cell/table-cell";
-import TableRow from "src/ui/extensions/table/table-row/table-row";
-import HorizontalRule from "src/ui/extensions/horizontal-rule";
+import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
+import { Table } from "src/ui/extensions/table/table";
+import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
+import { TableRow } from "src/ui/extensions/table/table-row/table-row";
+import { HorizontalRule } from "src/ui/extensions/horizontal-rule";
 
-import ImageExtension from "src/ui/extensions/image";
+import { ImageExtension } from "src/ui/extensions/image";
 
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";

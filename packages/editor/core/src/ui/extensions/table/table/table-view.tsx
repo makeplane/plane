@@ -6,7 +6,7 @@ import tippy, { Instance, Props } from "tippy.js";
 import { Editor } from "@tiptap/core";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 
-import icons from "src/ui/extensions/table/table/icons";
+import { icons } from "src/ui/extensions/table/table/icons";
 
 export function updateColumns(
   node: ProseMirrorNode,

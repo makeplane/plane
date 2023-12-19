@@ -12,7 +12,7 @@ interface ImageNode extends ProseMirrorNode {
   };
 }
 
-const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
+export const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
   new Plugin({
     key: deleteKey,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
@@ -52,8 +52,6 @@ const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
       return null;
     },
   });
-
-export default TrackImageDeletionPlugin;
 
 export async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
   try {
