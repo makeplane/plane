@@ -22,3 +22,10 @@ export { useReadOnlyEditor } from "src/hooks/use-read-only-editor";
 // helper items
 export * from "src/ui/menus/menu-items";
 export * from "src/lib/editor-commands";
+
+// types
+export type { DeleteImage } from "src/types/delete-image";
+export type { UploadImage } from "src/types/upload-image";
+export type { RestoreImage } from "src/types/restore-image";
+export type { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
+export type { ISlashCommandItem, CommandProps } from "src/types/slash-commands-suggestion";

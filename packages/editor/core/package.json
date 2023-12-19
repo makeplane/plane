@@ -28,7 +28,6 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@plane/editor-types": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
     "@tiptap/extension-code-block-lowlight": "^2.1.13",

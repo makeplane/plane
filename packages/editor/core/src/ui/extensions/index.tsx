@@ -22,7 +22,7 @@ import { CustomKeymap } from "src/ui/extensions/keymap";
 import { CustomCodeBlock } from "src/ui/extensions/code";
 import { CustomQuoteExtension } from "src/ui/extensions/quote";
 import { ListKeymap } from "src/ui/extensions/custom-list-keymap";
-import { IMentionSuggestion, DeleteImage, RestoreImage } from "@plane/editor-types";
+import { IMentionSuggestion, DeleteImage, RestoreImage } from "@plane/editor-core";
 
 export const CoreEditorExtensions = (
   mentionConfig: {

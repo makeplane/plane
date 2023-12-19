@@ -2,7 +2,7 @@
 
 import { Suggestion } from "src/ui/mentions/suggestion";
 import { CustomMention } from "src/ui/mentions/custom";
-import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-types";
+import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-core";
 
 export const Mentions = (mentionSuggestions: IMentionSuggestion[], mentionHighlights: IMentionHighlight[], readonly) =>
   CustomMention.configure({

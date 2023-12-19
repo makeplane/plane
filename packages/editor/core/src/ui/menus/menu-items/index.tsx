@@ -31,7 +31,7 @@ import {
   toggleTaskList,
   toggleUnderline,
 } from "src/lib/editor-commands";
-import { UploadImage } from "@plane/editor-types";
+import { UploadImage } from "@plane/editor-core";
 
 export interface EditorMenuItem {
   name: string;
