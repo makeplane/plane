@@ -38,7 +38,7 @@ from plane.app.serializers import (
 )
 from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
-
+from plane.bgtasks.importer_task import service_importer
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
@@ -56,14 +56,10 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 integration__provider="github", workspace__slug=slug
             )
 
-            access_tokens_url = workspace_integration.metadata.get(
-                "access_tokens_url", False
-            )
-
             installtion_id = workspace_integration.config.get("installation_id", False)
 
-            # Check for the access token url
-            if not access_tokens_url or not installtion_id:
+            # Check for the installation id
+            if not installtion_id:
                 return Response(
                     {
                         "error": "There was an error during the installation of the GitHub app. To resolve this issue, we recommend reinstalling the GitHub app."
@@ -164,6 +160,13 @@ class ImportServiceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if service == "github":
+            workspace_integration = WorkspaceIntegration.objects.get(
+                integration__provider="github", workspace__slug=slug
+            )
+
+            installation_id = workspace_integration.config.get("installation_id", False)
+
         project_id = request.data.get("project_id", False)
 
         if not project_id:
@@ -183,6 +186,10 @@ class ImportServiceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Update config
+        if config and service == "github":
+            config.update({"installation_id": installation_id})
+
         # Get the api token -- # derecated
         api_token = APIToken.objects.filter(
             user=request.user, workspace=workspace
@@ -193,7 +200,7 @@ class ImportServiceEndpoint(BaseAPIView):
                 label="Importer",
                 workspace=workspace,
             )
-        
+
         # Create an import
         importer = Importer.objects.create(
             service=service,
@@ -206,7 +213,7 @@ class ImportServiceEndpoint(BaseAPIView):
             config=config,
             created_by=request.user,
             updated_by=request.user,
-            )
+        )
 
         # Push it to segway
         if settings.SEGWAY_BASE_URL:
@@ -230,14 +237,12 @@ class ImportServiceEndpoint(BaseAPIView):
             )
 
             if "error" in res.json():
-                return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
+                importer.status = "failed"
+                importer.reason = str(res.json())
+                importer.save()
             else:
                 importer.status = "processing"
                 importer.save(update_fields=["status"])
-                return Response(
-                    res.json(),
-                    status=status.HTTP_200_OK,
-                )
         else:
             importer.status = "failed"
             importer.reason = "Segway base url is not present"
