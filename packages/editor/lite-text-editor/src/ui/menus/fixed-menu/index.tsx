@@ -127,8 +127,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
       <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 p-1">
         <div className="flex items-stretch">
           <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 pr-2.5">
-            {basicTextFormattingItems.map((item, index) => (
-              <Tooltip key={index} tooltipContent={<span className="capitalize">{item.name}</span>}>
+            {basicTextFormattingItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button
                   type="button"
                   onClick={item.command}
@@ -150,8 +150,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             ))}
           </div>
           <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5">
-            {listFormattingItems.map((item, index) => (
-              <Tooltip key={index} tooltipContent={<span className="capitalize">{item.name}</span>}>
+            {listFormattingItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button
                   type="button"
                   onClick={item.command}
@@ -173,8 +173,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             ))}
           </div>
           <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5">
-            {userActionItems.map((item, index) => (
-              <Tooltip key={index} tooltipContent={<span className="capitalize">{item.name}</span>}>
+            {userActionItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button
                   type="button"
                   onClick={item.command}
@@ -196,8 +196,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             ))}
           </div>
           <div className="flex items-stretch gap-0.5 pl-2.5">
-            {complexItems.map((item, index) => (
-              <Tooltip key={index} tooltipContent={<span className="capitalize">{item.name}</span>}>
+            {complexItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button
                   type="button"
                   onClick={item.command}

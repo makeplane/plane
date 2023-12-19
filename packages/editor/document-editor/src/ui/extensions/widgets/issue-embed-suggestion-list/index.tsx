@@ -19,7 +19,7 @@ export interface IIssueListSuggestion {
 
 export const IssueSuggestions = (suggestions: any[]) => {
   const mappedSuggestions: IIssueListSuggestion[] = suggestions.map((suggestion): IIssueListSuggestion => {
-    let transactionId = uuidv4();
+    const transactionId = uuidv4();
     return {
       title: suggestion.name,
       priority: suggestion.priority.toString(),
