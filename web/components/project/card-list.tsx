@@ -20,11 +20,11 @@ export const ProjectCardList = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { workspaceProjectIds: workspaceProjects, searchedProjects, getProjectById } = useProject();
+  const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!workspaceProjects)
+  if (!workspaceProjectIds)
     return (
       <Loader className="grid grid-cols-3 gap-4">
         <Loader.Item height="100px" />
@@ -38,7 +38,7 @@ export const ProjectCardList = observer(() => {
 
   return (
     <>
-      {workspaceProjects.length > 0 ? (
+      {workspaceProjectIds.length > 0 ? (
         <div className="h-full w-full overflow-y-auto p-8">
           {searchedProjects.length == 0 ? (
             <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>

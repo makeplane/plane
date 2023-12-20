@@ -22,9 +22,9 @@ type Props = {
 export const GithubImportData: FC<Props> = observer((props) => {
   const { handleStepChange, integration, control, watch } = props;
   // store hooks
-  const { workspaceProjectIds: workspaceProjects, getProjectById } = useProject();
+  const { workspaceProjectIds, getProjectById } = useProject();
 
-  const options = workspaceProjects?.map((projectId) => {
+  const options = workspaceProjectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
 
     return {
@@ -70,7 +70,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
             <p className="text-xs text-custom-text-200">Select the project to import the issues to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
-            {workspaceProjects && (
+            {workspaceProjectIds && (
               <Controller
                 control={control}
                 name="project"

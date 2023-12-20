@@ -16,7 +16,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
     eventTracker: { setTrackElement },
   } = useApplication();
-  const { workspaceProjectIds: workspaceProjects, getProjectById } = useProject();
+  const { workspaceProjectIds, getProjectById } = useProject();
   // form info
   const {
     control,
@@ -173,8 +173,8 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                   </span>
                 }
               >
-                {workspaceProjects && workspaceProjects.length > 0 ? (
-                  workspaceProjects.map((projectId) => {
+                {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
+                  workspaceProjectIds.map((projectId) => {
                     const projectDetails = getProjectById(projectId);
 
                     if (!projectDetails) return;

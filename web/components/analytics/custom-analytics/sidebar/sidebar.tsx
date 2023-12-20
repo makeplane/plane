@@ -38,7 +38,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
   // store hooks
   const { currentUser } = useUser();
-  const { workspaceProjectIds: workspaceProjects, getProjectById } = useProject();
+  const { workspaceProjectIds, getProjectById } = useProject();
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { fetchModuleDetails, getModuleById } = useModule();
 
@@ -136,7 +136,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
     fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
   }, [moduleId, moduleDetails, fetchModuleDetails, projectId, workspaceSlug]);
 
-  const selectedProjects = params.project && params.project.length > 0 ? params.project : workspaceProjects;
+  const selectedProjects = params.project && params.project.length > 0 ? params.project : workspaceProjectIds;
 
   return (
     <div

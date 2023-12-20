@@ -14,11 +14,11 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
     commandPalette: { toggleCreateIssueModal, toggleCreateProjectModal },
     eventTracker: { setTrackElement },
   } = useApplication();
-  const { workspaceProjectIds: workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
 
   return (
     <div className="grid h-full w-full place-items-center">
-      {!workspaceProjects || workspaceProjects?.length === 0 ? (
+      {!workspaceProjectIds || workspaceProjectIds?.length === 0 ? (
         <EmptyState
           image={emptyProject}
           title="No projects yet"

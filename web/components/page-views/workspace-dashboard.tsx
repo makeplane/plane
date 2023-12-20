@@ -32,7 +32,7 @@ export const WorkspaceDashboardView = observer(() => {
     updateTourCompleted,
     membership: { currentProjectRole },
   } = useUser();
-  const { workspaceProjectIds: workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
   // fetch user dashboard info
   useSWR(
     workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
@@ -68,8 +68,8 @@ export const WorkspaceDashboardView = observer(() => {
       <div className="space-y-8 p-8">
         {currentUser && <UserGreetingsView user={currentUser} />}
 
-        {workspaceProjects ? (
-          workspaceProjects.length > 0 ? (
+        {workspaceProjectIds ? (
+          workspaceProjectIds.length > 0 ? (
             <div className="flex flex-col gap-8">
               <IssuesStats data={workspaceDashboardInfo} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">

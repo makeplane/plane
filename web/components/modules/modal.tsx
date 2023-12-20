@@ -34,7 +34,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { workspaceProjectIds: workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
   // toast alert
   const { setToastAlert } = useToast();
@@ -135,9 +135,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (workspaceProjects && workspaceProjects.length > 0 && !activeProject)
-      setActiveProject(projectId ?? workspaceProjects?.[0] ?? null);
-  }, [activeProject, data, projectId, workspaceProjects, isOpen]);
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+  }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
