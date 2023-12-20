@@ -61,7 +61,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     projectIssuesFilter: projectIssueFiltersStore,
     cycleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
-  const { projectAllCycles, getCycleById } = useCycle();
+  const { projectCycleIds, getCycleById } = useCycle();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -181,7 +181,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {projectAllCycles?.map((cycleId) => (
+                  {projectCycleIds?.map((cycleId) => (
                     <CycleDropdownOption key={cycleId} cycleId={cycleId} />
                   ))}
                 </CustomMenu>
