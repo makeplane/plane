@@ -45,8 +45,8 @@ def issue_view(apps, schema_editor):
                 access=global_view.access,
                 filters=global_view.query_data.get("filters", {}),
                 sort_order=global_view.sort_order,
-                created_by=global_view.created_by,
-                updated_by=global_view.updated_by,
+                created_by_id=global_view.created_by_id,
+                updated_by_id=global_view.updated_by_id,
             )
         )
     IssueView.objects.bulk_create(updated_issue_views, batch_size=100)
