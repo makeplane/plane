@@ -27,6 +27,7 @@ export interface ISubIssuesRootList {
     issue?: IIssue | null
   ) => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  handleDeleteIssue: (issue: IIssue) => Promise<void>
 }
 
 const issueService = new IssueService();
@@ -44,6 +45,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   copyText,
   handleIssueCrudOperation,
   handleUpdateIssue,
+  handleDeleteIssue
 }) => {
   const { data: issues, isLoading } = useSWR(
     workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
@@ -70,6 +72,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
           issues.sub_issues.length > 0 &&
           issues.sub_issues.map((issue: IIssue) => (
             <SubIssues
+            handleDeleteIssue={handleDeleteIssue}
               key={`${issue?.id}`}
               workspaceSlug={workspaceSlug}
               projectId={projectId}

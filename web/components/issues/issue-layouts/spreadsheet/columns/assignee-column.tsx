@@ -10,7 +10,7 @@ import { IIssue, IUserLite } from "types";
 type Props = {
   issue: IIssue;
   members: IUserLite[] | undefined;
-  onChange: (data: Partial<IIssue>) => void;
+  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -18,7 +18,7 @@ type Props = {
 export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
@@ -26,8 +26,13 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
         projectId={issue.project_detail?.id ?? null}
         value={issue.assignees}
         defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
-        onChange={(data) => onChange({ assignees: data })}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
+        onChange={(data) => {
+          onChange(issue, { assignees: data });
+          if (issue.parent) {
+            mutateSubIssues(issue, { assignees: data });
+          }
+        }}
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
         buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
         noLabelBorder
         hideDropdownArrow

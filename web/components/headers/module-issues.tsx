@@ -11,7 +11,7 @@ import { ProjectAnalyticsModal } from "components/analytics";
 // ui
 import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
 // icons
-import { ArrowRight, ContrastIcon, Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -143,7 +143,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 <CustomMenu
                   label={
                     <>
-                      <ContrastIcon className="h-3 w-3" />
+                      <DiceIcon className="h-3 w-3" />
                       {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
                     </>
                   }
@@ -156,7 +156,10 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                       key={module.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)}
                     >
-                      {truncateText(module.name, 40)}
+                      <div className="flex items-center gap-1.5">
+                        <DiceIcon className="h-3 w-3" />
+                        {truncateText(module.name, 40)}
+                      </div>
                     </CustomMenu.MenuItem>
                   ))}
                 </CustomMenu>
@@ -193,20 +196,23 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
+
           {canUserCreateIssue && (
-            <Button
-              onClick={() => {
-                setTrackElement("MODULE_PAGE_HEADER");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.MODULE);
-              }}
-              size="sm"
-              prependIcon={<Plus />}
-            >
-              Add Issue
-            </Button>
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("MODULE_PAGE_HEADER");
+                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.MODULE);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                Add Issue
+              </Button>
+            </>
           )}
           <button
             type="button"

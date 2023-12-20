@@ -138,7 +138,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                     key={view.id}
                     onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
                   >
-                    {truncateText(view.name, 40)}
+                    <div className="flex items-center gap-1.5">
+                      <PhotoFilterIcon height={12} width={12} />
+                      {truncateText(view.name, 40)}
+                    </div>
                   </CustomMenu.MenuItem>
                 ))}
               </CustomMenu>
@@ -152,7 +155,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           onChange={(layout) => handleLayoutChange(layout)}
           selectedLayout={activeLayout}
         />
-        <FiltersDropdown title="Filters" placement="bottom-end">
+
+        <FiltersDropdown title="Filters" placement="bottom-end" disabled={!canUserCreateIssue}>
           <FilterSelection
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
@@ -175,7 +179,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>
-        {
+        {canUserCreateIssue && (
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
@@ -186,7 +190,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           >
             Add Issue
           </Button>
-        }
+        )}
       </div>
     </div>
   );

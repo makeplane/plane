@@ -4,6 +4,8 @@ import { RootStore } from "../root";
 import { IState } from "types";
 // services
 import { ProjectService, ProjectStateService } from "services/project";
+// helpers
+import { sortStates } from "helpers/state.helper";
 import { groupByField } from "helpers/array.helper";
 
 export interface IProjectStateStore {
@@ -77,7 +79,7 @@ export class ProjectStateStore implements IProjectStateStore {
     if (!this.rootStore.project.projectId) return null;
     const states = this.states[this.rootStore.project.projectId];
     if (!states) return null;
-    return states;
+    return sortStates(states);
   }
 
   projectStateIds = () => {

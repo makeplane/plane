@@ -9,6 +9,8 @@ import { Loader } from "@plane/ui";
 import emptyProject from "public/empty-state/empty_project.webp";
 // icons
 import { NewEmptyState } from "components/common/new-empty-state";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IProjectCardList {
   workspaceSlug: string;
@@ -21,9 +23,11 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
     project: projectStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentWorkspaceRole },
   } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!projects) {
     return (
@@ -62,13 +66,18 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
             direction: "right",
             description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
           }}
-          primaryButton={{
-            text: "Start your first project",
-            onClick: () => {
-              setTrackElement("PROJECTS_EMPTY_STATE");
-              commandPaletteStore.toggleCreateProjectModal(true);
-            },
-          }}
+          primaryButton={
+            isEditingAllowed
+              ? {
+                  text: "Start your first project",
+                  onClick: () => {
+                    setTrackElement("PROJECTS_EMPTY_STATE");
+                    commandPaletteStore.toggleCreateProjectModal(true);
+                  },
+                }
+              : null
+          }
+          disabled={!isEditingAllowed}
         />
       )}
     </>

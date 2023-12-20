@@ -10,10 +10,11 @@ type Props = {
   handleRemove: (val: string) => void;
   projects: IProject[] | undefined;
   values: string[];
+  editable: boolean | undefined;
 };
 
 export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, projects, values } = props;
+  const { handleRemove, projects, values, editable } = props;
 
   return (
     <>
@@ -34,13 +35,15 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
               </span>
             )}
             <span className="normal-case">{projectDetails.name}</span>
-            <button
-              type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-              onClick={() => handleRemove(projectId)}
-            >
-              <X size={10} strokeWidth={2} />
-            </button>
+            {editable && (
+              <button
+                type="button"
+                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                onClick={() => handleRemove(projectId)}
+              >
+                <X size={10} strokeWidth={2} />
+              </button>
+            )}
           </div>
         );
       })}

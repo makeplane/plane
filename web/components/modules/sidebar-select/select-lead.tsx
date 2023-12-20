@@ -13,12 +13,13 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 type Props = {
   value: string | null | undefined;
   onChange: (val: string) => void;
+  disabled?: boolean;
 };
 
 const projectMemberService = new ProjectMemberService();
 
 export const SidebarLeadSelect: FC<Props> = (props) => {
-  const { value, onChange } = props;
+  const { value, onChange, disabled = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -51,6 +52,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
       </div>
       <div className="flex w-1/2 items-center rounded-sm">
         <CustomSearchSelect
+          disabled={disabled}
           className="w-full rounded-sm"
           value={value}
           customButtonClassName="rounded-sm"
@@ -63,7 +65,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
             ) : (
               <div className="group flex w-full items-center justify-between gap-2 p-1 text-sm text-custom-text-400">
                 <span>No lead</span>
-                <ChevronDown className="hidden h-3.5 w-3.5 group-hover:flex" />
+                {!disabled && <ChevronDown className="hidden h-3.5 w-3.5 group-hover:flex" />}
               </div>
             )
           }

@@ -19,23 +19,30 @@ export const CycleListLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
   // store
-  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    cycleIssuesFilter: cycleIssueFilterStore,
+    cycle: { fetchCycleWithId },
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
       await cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
+      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
     },
     [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
       await cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
     },
     [EIssueActions.REMOVE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
 
       await cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
     },
   };
   const getProjects = (projectStore: IProjectStore) => {

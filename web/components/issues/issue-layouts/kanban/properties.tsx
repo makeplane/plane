@@ -57,7 +57,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
     );
   };
 
-  const handleStartDate = (date: string) => {
+  const handleStartDate = (date: string | null) => {
     handleIssues(
       !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
       !group_id && group_id === "null" ? null : group_id,
@@ -65,7 +65,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
     );
   };
 
-  const handleTargetDate = (date: string) => {
+  const handleTargetDate = (date: string | null) => {
     handleIssues(
       !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
       !group_id && group_id === "null" ? null : group_id,
@@ -122,7 +122,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
           value={issue?.start_date || null}
-          onChange={(date: string) => handleStartDate(date)}
+          onChange={(date) => handleStartDate(date)}
           disabled={isReadOnly}
           type="start_date"
         />
@@ -132,7 +132,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {displayProperties && displayProperties?.due_date && (
         <IssuePropertyDate
           value={issue?.target_date || null}
-          onChange={(date: string) => handleTargetDate(date)}
+          onChange={(date) => handleTargetDate(date)}
           disabled={isReadOnly}
           type="target_date"
         />

@@ -165,16 +165,16 @@ export const InboxMainContent: React.FC = observer(() => {
                 issueStatus === -2
                   ? "border-yellow-500 bg-yellow-500/10 text-yellow-500"
                   : issueStatus === -1
+                  ? "border-red-500 bg-red-500/10 text-red-500"
+                  : issueStatus === 0
+                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
                     ? "border-red-500 bg-red-500/10 text-red-500"
-                    : issueStatus === 0
-                      ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
-                        ? "border-red-500 bg-red-500/10 text-red-500"
-                        : "border-gray-500 bg-gray-500/10 text-custom-text-200"
-                      : issueStatus === 1
-                        ? "border-green-500 bg-green-500/10 text-green-500"
-                        : issueStatus === 2
-                          ? "border-gray-500 bg-gray-500/10 text-custom-text-200"
-                          : ""
+                    : "border-gray-500 bg-gray-500/10 text-custom-text-200"
+                  : issueStatus === 1
+                  ? "border-green-500 bg-green-500/10 text-green-500"
+                  : issueStatus === 2
+                  ? "border-gray-500 bg-gray-500/10 text-custom-text-200"
+                  : ""
               }`}
             >
               {issueStatus === -2 ? (
@@ -225,7 +225,7 @@ export const InboxMainContent: React.FC = observer(() => {
                 </>
               ) : null}
             </div>
-            <div className="mb-5 flex items-center">
+            <div className="mb-2.5 flex items-center">
               {currentIssueState && (
                 <StateGroupIcon
                   className="mr-3 h-4 w-4"
