@@ -1,3 +1,7 @@
-export const handleViewSubmission = async (payload: any): Promise<boolean> => {
+import { TViewSubmissionPayload } from "types/slack";
+
+export const handleViewSubmission = async (
+  payload: TViewSubmissionPayload,
+): Promise<boolean> => {
   return true;
 };

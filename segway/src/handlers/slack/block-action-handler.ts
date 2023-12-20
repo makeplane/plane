@@ -1,3 +1,5 @@
-export const handleBlockAction = async (payload: any): Promise<boolean> => {
-  return true;
-};
+import { TBlockActionPayload } from "types/slack";
+
+export const handleBlockAction = async (
+  payload: TBlockActionPayload,
+): Promise<boolean> => {};

@@ -10,6 +10,8 @@ import {
 } from "../utils/slack/create-issue-modal";
 import { ProjectService } from "../services/project.service";
 import { convertProjectToOptions } from "../utils/slack/convert-project-to-options";
+import { processSlackPayload } from "../handlers/slack/core";
+import { TSlackPayload } from "types/slack";
 
 @Controller("api/slack")
 export class SlackController {
@@ -64,20 +66,17 @@ export class SlackController {
 
   @Post("events")
   async handleSlackEvents(req: Request, res: Response) {
-    const slackService = new SlackService();
-    const projectService = new ProjectService();
+    const payload = JSON.parse(req.body.payload) as TSlackPayload;
+    const success = processSlackPayload(payload);
 
-    const payload = JSON.parse(req.body.payload);
-    const selectedProjectId = payload.actions[0].selected_option.value;
+    if (!success) {
+      res.sendStatus(500);
+    }
+
+    // const selectedProjectId = payload.actions[0].selected_option.value;
     // const states = await projectService.getProjectStates(selectedProjectId);
     // const members = await projectService.getProjectMembers(selectedProjectId);
-    const labels = await projectService.getProjectLabels(selectedProjectId);
-
-    console.log(labels);
-
-    const viewId = payload.container.view_id;
-
-    await slackService.updateModal(viewId, CreateIssueModalViewFull);
+    // const labels = await projectService.getProjectLabels(selectedProjectId);
 
     res.sendStatus(200);
   }
