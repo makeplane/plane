@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 // ui
 import { Spinner } from "@plane/ui";
 // store
@@ -31,7 +32,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   // fetching current user instance admin status
-  useSWR("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
+  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
     shouldRetryOnError: false,
   });
   // fetching user settings

@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
 import { UserCog2 } from "lucide-react";
 // images
-import instanceSetupDone from "public/instance-setup-done.svg";
+import instanceSetupDone from "public/instance-setup-done.webp";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 import { useMobxStore } from "lib/mobx/store-provider";

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 # Django imports
 from django.db.models import Max, Q
-
+from django.conf import settings
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.db.models import (
@@ -41,7 +41,6 @@ from plane.app.permissions import WorkSpaceAdminPermission
 from plane.bgtasks.importer_task import service_importer
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
-
     def get(self, request, slug, service):
         if service == "github":
             owner = request.GET.get("owner", False)
@@ -153,6 +152,7 @@ class ImportServiceEndpoint(BaseAPIView):
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
+
     def post(self, request, slug, service):
         if service not in ["github", "jira"]:
             return Response(
@@ -262,9 +262,7 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(serializer.data)
 
     def delete(self, request, slug, service, pk):
-        importer = Importer.objects.get(
-            pk=pk, service=service, workspace__slug=slug
-        )
+        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
 
         if importer.imported_data is not None:
             # Delete all imported Issues
@@ -282,9 +280,7 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, service, pk):
-        importer = Importer.objects.get(
-            pk=pk, service=service, workspace__slug=slug
-        )
+        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
         serializer = ImporterSerializer(importer, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -520,9 +516,7 @@ class BulkImportModulesEndpoint(BaseAPIView):
                 [
                     ModuleLink(
                         module=module,
-                        url=module_data.get("link", {}).get(
-                            "url", "https://plane.so"
-                        ),
+                        url=module_data.get("link", {}).get("url", "https://plane.so"),
                         title=module_data.get("link", {}).get(
                             "title", "Original Issue"
                         ),

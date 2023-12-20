@@ -130,7 +130,7 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
           />
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" loading={isSubmitting}>
-          Go to board
+          Continue
         </Button>
         <p className="text-xs text-onboarding-text-200">
           When you click the button above, you agree with our{" "}

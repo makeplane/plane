@@ -40,11 +40,11 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
   };
 
-  const handleStartDate = (date: string) => {
+  const handleStartDate = (date: string | null) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, start_date: date });
   };
 
-  const handleTargetDate = (date: string) => {
+  const handleTargetDate = (date: string | null) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, target_date: date });
   };
 
@@ -106,7 +106,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
       {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
           value={issue?.start_date || null}
-          onChange={(date: string) => handleStartDate(date)}
+          onChange={(date) => handleStartDate(date)}
           disabled={isReadonly}
           type="start_date"
         />
@@ -116,7 +116,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
       {displayProperties && displayProperties?.due_date && (
         <IssuePropertyDate
           value={issue?.target_date || null}
-          onChange={(date: string) => handleTargetDate(date)}
+          onChange={(date) => handleTargetDate(date)}
           disabled={isReadonly}
           type="target_date"
         />

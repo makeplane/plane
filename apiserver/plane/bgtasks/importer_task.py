@@ -24,11 +24,15 @@ from plane.db.models import (
     IssueComment,
     IssueLink,
     ModuleIssue,
+    State,
+    Module,
+    Issue,
+    Cycle,
 )
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
-@shared_task
+@shared_task(queue="internal_tasks")
 def service_importer(service, importer_id):
     pass
 

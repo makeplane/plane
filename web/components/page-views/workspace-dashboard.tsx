@@ -8,6 +8,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // images
 import { NewEmptyState } from "components/common/new-empty-state";
 import emptyProject from "public/empty-state/dashboard_empty_project.webp";
@@ -35,6 +37,7 @@ export const WorkspaceDashboardView = observer(() => {
     workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
     workspaceSlug ? () => userStore.fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
   );
+  const isEditingAllowed = !!userStore.currentWorkspaceRole && userStore.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleTourCompleted = () => {
     userStore
@@ -89,13 +92,18 @@ export const WorkspaceDashboardView = observer(() => {
                 direction: "right",
                 description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
               }}
-              primaryButton={{
-                text: "Build your first project",
-                onClick: () => {
-                  setTrackElement("DASHBOARD_PAGE");
-                  commandPaletteStore.toggleCreateProjectModal(true);
-                },
-              }}
+              primaryButton={
+                isEditingAllowed
+                  ? {
+                      text: "Build your first project",
+                      onClick: () => {
+                        setTrackElement("DASHBOARD_PAGE");
+                        commandPaletteStore.toggleCreateProjectModal(true);
+                      },
+                    }
+                  : null
+              }
+              disabled={!isEditingAllowed}
             />
           )
         ) : null}

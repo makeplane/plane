@@ -17,7 +17,7 @@ from sentry_sdk import capture_exception
 from plane.license.utils.instance_value import get_email_configuration
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def forgot_password(first_name, email, uidb64, token, current_site):
     try:
         relative_link = (
@@ -51,7 +51,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
             port=int(EMAIL_PORT),
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
-            use_tls=bool(EMAIL_USE_TLS),
+            use_tls=EMAIL_USE_TLS == "1",
         )
 
         msg = EmailMultiAlternatives(

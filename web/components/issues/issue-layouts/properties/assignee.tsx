@@ -42,7 +42,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   // store
   const {
     workspace: workspaceStore,
-    projectMember: { projectMembers: _projectMembers, fetchProjectMembers },
+    projectMember: { members: _members, fetchProjectMembers },
   } = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
   // states
@@ -51,14 +51,14 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const getWorkspaceMembers = () => {
+  const getProjectMembers = () => {
     setIsLoading(true);
     if (workspaceSlug && projectId) fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const updatedDefaultOptions: IProjectMember[] =
     defaultOptions.map((member: any) => ({ member: { ...member } })) ?? [];
-  const projectMembers = _projectMembers ?? updatedDefaultOptions;
+  const projectMembers = projectId && _members[projectId] ? _members[projectId] : updatedDefaultOptions;
 
   const options = projectMembers?.map((member) => ({
     value: member.member.id,
@@ -100,7 +100,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
 
   const label = (
     <Tooltip tooltipHeading="Assignee" tooltipContent={getTooltipContent()} position="top">
-      <div className="flex h-full w-full cursor-pointer items-center gap-2 text-custom-text-200">
+      <div className="flex h-full w-full items-center gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
@@ -142,7 +142,10 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex w-full items-center justify-between gap-1 text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
           } ${buttonClassName}`}
-          onClick={() => !projectMembers && getWorkspaceMembers()}
+          onClick={(e) => {
+            e.stopPropagation();
+            (!projectId || !_members[projectId]) && getProjectMembers();
+          }}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -168,7 +171,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {isLoading ? (
               <p className="text-center text-custom-text-200">Loading...</p>
-            ) : filteredOptions.length > 0 ? (
+            ) : filteredOptions && filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <Combobox.Option
                   key={option.value}
@@ -178,6 +181,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
                       active && !selected ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>

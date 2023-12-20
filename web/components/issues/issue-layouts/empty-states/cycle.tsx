@@ -15,6 +15,8 @@ import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { ISearchIssueResponse } from "types";
 import { EProjectStore } from "store/command-palette.store";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -31,6 +33,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
     cycleIssues: cycleIssueStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentProjectRole: userRole },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -48,6 +51,8 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
       });
     });
   };
+
+  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -75,10 +80,12 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
               variant="neutral-primary"
               prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
               onClick={() => setCycleIssuesListModal(true)}
+              disabled={!isEditingAllowed}
             >
               Add an existing issue
             </Button>
           }
+          disabled={!isEditingAllowed}
         />
       </div>
     </>

@@ -65,7 +65,7 @@ def send_export_email(email, slug, csv_buffer, rows):
         port=int(EMAIL_PORT),
         username=EMAIL_HOST_USER,
         password=EMAIL_HOST_PASSWORD,
-        use_tls=bool(EMAIL_USE_TLS),
+        use_tls=EMAIL_USE_TLS == "1",
     )
 
     msg = EmailMultiAlternatives(
@@ -373,7 +373,7 @@ def generate_non_segmented_rows(
     return [tuple(row_zero)] + rows
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def analytic_export_task(email, data, slug):
     try:
         filters = issue_filters(data, "POST")

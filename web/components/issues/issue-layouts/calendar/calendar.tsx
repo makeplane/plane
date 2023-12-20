@@ -16,6 +16,8 @@ import {
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
 } from "store/issues";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   issuesFilterStore:
@@ -41,7 +43,14 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const { issuesFilterStore, issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } =
     props;
 
-  const { calendar: calendarStore } = useMobxStore();
+  const {
+    calendar: calendarStore,
+    projectIssues: issueStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
+
+  const { enableIssueCreation } = issueStore?.viewFlags || {};
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const calendarPayload = calendarStore.calendarPayload;
 
@@ -71,6 +80,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                     issues={issues}
                     groupedIssueIds={groupedIssueIds}
                     enableQuickIssueCreate
+                    disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                     quickActions={quickActions}
                     quickAddCallback={quickAddCallback}
                     viewId={viewId}
@@ -85,6 +95,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               issues={issues}
               groupedIssueIds={groupedIssueIds}
               enableQuickIssueCreate
+              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
               quickActions={quickActions}
               quickAddCallback={quickAddCallback}
               viewId={viewId}
