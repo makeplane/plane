@@ -259,7 +259,7 @@ def generate_xlsx(header, project_id, issues, files):
     files.append((f"{project_id}.xlsx", xlsx_file))
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
