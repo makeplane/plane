@@ -11,7 +11,7 @@ import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store_legacy/project";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 
 export interface IModuleListLayout {}
 

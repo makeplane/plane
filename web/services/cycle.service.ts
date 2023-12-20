@@ -4,7 +4,7 @@ import { APIService } from "services/api.service";
 import type { CycleDateCheckData, ICycle, IIssue } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "store_legacy/issues/types";
+import { IIssueResponse } from "types";
 
 export class CycleService extends APIService {
   constructor() {

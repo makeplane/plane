@@ -23,7 +23,7 @@ export interface IModuleIssues {
   issues: { [module_id: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -99,7 +99,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       issues: observable.ref,
       // computed
       getIssues: computed,
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -132,7 +132,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     return this.issues[moduleId];
   }
 
-  get getIssuesIds() {
+  get groupedIssueIds() {
     const moduleId = this.rootStore?.moduleId;
     const displayFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
 
@@ -143,7 +143,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
     if (!moduleId || !this.issues || !this.issues[moduleId]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[moduleId]);

@@ -13,7 +13,7 @@ import type {
 } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "store_legacy/issues/types";
+import { IIssueResponse } from "types";
 
 export class UserService extends APIService {
   constructor() {

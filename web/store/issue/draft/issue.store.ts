@@ -13,7 +13,7 @@ export interface IDraftIssues {
   issues: { [project_id: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
@@ -48,7 +48,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
       issues: observable.ref,
       // computed
       getIssues: computed,
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -76,7 +76,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     return this.issues[projectId];
   }
 
-  get getIssuesIds() {
+  get groupedIssueIds() {
     const projectId = this.rootStore.projectId;
     const displayFilters = this.rootStore?.draftIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
@@ -88,7 +88,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);

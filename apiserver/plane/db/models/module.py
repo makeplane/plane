@@ -6,6 +6,45 @@ from django.conf import settings
 from . import ProjectBaseModel
 
 
+def get_default_props():
+    return {
+        "filters": {
+            "priority": None,
+            "state": None,
+            "state_group": None,
+            "assignees": None,
+            "created_by": None,
+            "labels": None,
+            "start_date": None,
+            "target_date": None,
+            "subscriber": None,
+        },
+        "display_filters": {
+            "group_by": None,
+            "order_by": "-created_at",
+            "type": None,
+            "sub_issue": True,
+            "show_empty_groups": True,
+            "layout": "list",
+            "calendar_date_range": "",
+        },
+        "display_properties": {
+            "assignee": True,
+            "attachment_count": True,
+            "created_on": True,
+            "due_date": True,
+            "estimate": True,
+            "key": True,
+            "labels": True,
+            "link": True,
+            "priority": True,
+            "start_date": True,
+            "state": True,
+            "sub_issue_count": True,
+            "updated_on": True,
+        },
+    }
+
 class Module(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Module Name")
     description = models.TextField(verbose_name="Module Description", blank=True)
@@ -139,3 +178,26 @@ class ModuleFavorite(ProjectBaseModel):
     def __str__(self):
         """Return user and the module"""
         return f"{self.user.email} <{self.module.name}>"
+
+
+class ModuleUserProperties(ProjectBaseModel):
+    module = models.ForeignKey(
+        "db.Module", on_delete=models.CASCADE, related_name="module_user_properties"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="module_user_properties",
+    )
+    view_props = models.JSONField(default=get_default_props)
+
+
+    class Meta:
+        unique_together = ["module", "user"]
+        verbose_name = "Module User Property"
+        verbose_name_plural = "Module User Property"
+        db_table = "module_user_properties"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.module.name} {self.user.email}"

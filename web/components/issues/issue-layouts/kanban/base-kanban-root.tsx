@@ -22,7 +22,7 @@ import { IProjectIssues } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
@@ -77,13 +77,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    issuesMap: { allIssues: issuesMap },
-  } = useIssues();
+  const { issueMap } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();
 
-  const issueIds = issues?.getIssuesIds || [];
+  const issueIds = issues?.groupedIssueIds || [];
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
@@ -153,7 +151,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           issues,
           sub_group_by,
           group_by,
-          issuesMap,
+          issueMap,
           issueIds
         ).catch((err) => {
           setToastAlert({
@@ -202,7 +200,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       issues,
       sub_group_by,
       group_by,
-      issuesMap,
+      issueMap,
       issueIds
     ).finally(() => {
       setDeleteIssueModal(false);
@@ -254,7 +252,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           </div>
 
           <KanBanView
-            issuesMap={issuesMap}
+            issuesMap={issueMap}
             issueIds={issueIds}
             displayProperties={displayProperties}
             sub_group_by={sub_group_by}

@@ -66,7 +66,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
    */
   get projectLabels() {
     const projectId = this.rootStore.app.router.query?.projectId;
-    if (!projectId) return;
+    if (!projectId || !this.labelMap) return;
     return Object.values(this.labelMap).filter((label) => label.project === projectId);
   }
 

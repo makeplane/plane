@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
@@ -6,9 +6,9 @@ import { useApplication, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
-import { EProjectStore } from "store_legacy/command-palette.store";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { EProjectStore } from "store/application/command-palette.store";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
