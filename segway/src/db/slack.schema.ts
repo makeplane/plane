@@ -7,6 +7,7 @@ import {
   pgTable,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+
 export const integrations = pgTable("integrations", {
   id: uuid("id").primaryKey(),
   title: text("title"),
@@ -62,6 +63,7 @@ export const workspaces = pgTable("workspaces", {
   createdById: uuid("created_by_id"),
   ownerId: uuid("owner_id"),
 });
+
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey(),
   name: text("name"),
