@@ -135,7 +135,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                   debouncedFormSave();
                 }}
                 required
-                className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+                className={`min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary ${
+                  !isAllowed ? "hover:cursor-not-allowed" : ""
+                }`}
                 hasError={Boolean(errors?.description)}
                 role="textbox"
                 disabled={!isAllowed}
@@ -170,7 +172,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
-              customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
+              customClassName={
+                isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200 pointer-events-none"
+              }
               noBorder={!isAllowed}
               onChange={(description: Object, description_html: string) => {
                 setShowAlert(true);

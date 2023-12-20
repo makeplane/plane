@@ -120,8 +120,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) =>
-            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, EIssueActions.UPDATE)
+          handleIssue={async (issueToUpdate, action: EIssueActions) =>
+            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, action)
           }
         />
       )}

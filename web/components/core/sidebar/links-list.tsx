@@ -50,8 +50,8 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
               </Tooltip>
             </div>
 
-            {!isNotAllowed && (
-              <div className="z-[1] flex flex-shrink-0 items-center gap-2">
+            <div className="z-[1] flex flex-shrink-0 items-center gap-2">
+              {!isNotAllowed && (
                 <button
                   type="button"
                   className="flex items-center justify-center p-1 hover:bg-custom-background-80"
@@ -63,14 +63,16 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                 >
                   <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
                 </button>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
-                >
-                  <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
-                </a>
+              )}
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+              >
+                <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              </a>
+              {!isNotAllowed && (
                 <button
                   type="button"
                   className="flex items-center justify-center p-1 hover:bg-custom-background-80"
@@ -82,8 +84,8 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <div className="px-5">
             <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
