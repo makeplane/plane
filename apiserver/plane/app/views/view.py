@@ -193,7 +193,8 @@ class IssueViewViewSet(BaseViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
+        workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
+        serializer.save(project_id=self.kwargs.get("project_id"),workspace_id=workspace.id)
 
     def get_queryset(self):
         subquery = IssueViewFavorite.objects.filter(

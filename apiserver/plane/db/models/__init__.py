@@ -10,7 +10,7 @@ from .workspace import (
     TeamMember,
     WorkspaceTheme,
     WorkspaceUserProperties,
-    WorkspaceBaseMember,
+    WorkspaceBaseModel,
 )
 
 from .project import (

@@ -147,7 +147,8 @@ class Workspace(BaseModel):
         db_table = "workspaces"
         ordering = ("-created_at",)
 
-class WorkspaceBaseMember(BaseModel):
+
+class WorkspaceBaseModel(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
     )
