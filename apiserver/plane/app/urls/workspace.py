@@ -19,6 +19,7 @@ from plane.app.views import (
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
     WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
 )
 
 
@@ -201,4 +202,9 @@ urlpatterns = [
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
     ),
+    path(
+        "workspaces/<str:slug>/user-properties/",
+        WorkspaceUserPropertiesEndpoint.as_view(),
+        name="workspace-user-filters",
+    )
 ]

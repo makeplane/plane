@@ -86,7 +86,7 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
 
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);

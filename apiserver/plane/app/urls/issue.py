@@ -235,7 +235,7 @@ urlpatterns = [
     ## End Comment Reactions
     ## IssueProperty
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
         IssueUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),

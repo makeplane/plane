@@ -536,17 +536,17 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         ProjectLitePermission,
     ]
 
-    def post(self, request, slug, project_id, module_id):
+    def patch(self, request, slug, project_id, module_id):
         module_properties = ModuleUserProperties.objects.get(
             user=request.user,
             module_id=module_id,
             project_id=project_id,
             workspace__slug=slug,
         )
-        if request.data.get("view_props", None) is None:
-            return Response({"error": "view_props is required"}, status=status.HTTP_400_BAD_REQUEST)
         
-        module_properties.view_props = request.data.get("view_props", {})
+        module_properties.filters = request.data.get("filters", module_properties.filters)
+        module_properties.display_filters = request.data.get("display_filters", module_properties.display_filters)
+        module_properties.display_properties = request.data.get("display_properties", module_properties.display_properties)
         module_properties.save()
 
         serializer = ModuleUserPropertiesSerializer(module_properties)
