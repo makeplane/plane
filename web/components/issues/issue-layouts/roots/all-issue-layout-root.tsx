@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useLabel } from "hooks/store";
+import { useGlobalView, useLabel } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewsAppliedFiltersRoot } from "components/issues";
@@ -30,12 +30,11 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
   // store hooks
   const {
-    workspaceMember: { workspaceMembers },
-    globalViews: { fetchAllGlobalViews },
+    workspaceMember: { workspaceMembers, currentWorkspaceUserProjectsRole },
     workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
     workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
   } = useMobxStore();
+  const { fetchAllGlobalViews } = useGlobalView();
   const {
     workspace: { workspaceLabels },
   } = useLabel();

@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useProjectState } from "hooks/store";
+import { useLabel, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import {
   ICycleIssuesFilterStore,
@@ -50,15 +50,16 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   // store hooks
   const {
     projectMember: { projectMembers },
-    user: userStore,
   } = useMobxStore();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const {
     project: { projectLabels },
   } = useLabel();
   const { projectStates } = useProjectState();
   // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
-  const { currentProjectRole } = userStore;
   // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

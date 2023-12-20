@@ -25,11 +25,11 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
     projectIssues: { updateIssue },
   } = useMobxStore();
   const {
-    project: { projectMembers, getProjectMemberDetails },
+    project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
 
   const options =
-    projectMembers?.map((userId) => {
+    projectMemberIds?.map((userId) => {
       const memberDetails = getProjectMemberDetails(userId);
 
       return {

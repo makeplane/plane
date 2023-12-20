@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useProject, useProjectState } from "hooks/store";
+import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -20,7 +20,6 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
   const {
-    projectMember: { projectMembers },
     projectDraftIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const { currentProjectDetails } = useProject();
@@ -28,6 +27,9 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -117,7 +119,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>

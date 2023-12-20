@@ -19,7 +19,6 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectMember: { projectMembers },
     cycleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const {
@@ -84,7 +83,6 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
-        members={projectMembers?.map((m) => m.member)}
         states={projectStates}
       />
 

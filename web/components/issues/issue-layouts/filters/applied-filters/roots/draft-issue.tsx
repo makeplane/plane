@@ -16,7 +16,6 @@ export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
   // store hooks
   const {
     projectDraftIssuesFilter: { issueFilters, updateFilters },
-    projectMember: { projectMembers },
   } = useMobxStore();
   const {
     project: { projectLabels },
@@ -73,7 +72,6 @@ export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
-        members={projectMembers?.map((m) => m.member)}
         states={projectStates}
       />
 

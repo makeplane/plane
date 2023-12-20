@@ -1,12 +1,11 @@
-import set from "lodash/set";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
-//types
+import set from "lodash/set";
+// types
 import { RootStore } from "../root.store";
 import { IProject } from "types";
-//services
+// services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
-import { orderArrayBy } from "helpers/array.helper";
 
 export interface IProjectStore {
   // observables
@@ -118,33 +117,31 @@ export class ProjectStore implements IProjectStore {
    */
   get currentProjectDetails() {
     if (!this.rootStore.app.router.projectId) return;
-    return this.projectMap[this.rootStore.app.router.projectId];
+    return this.projectMap?.[this.rootStore.app.router.projectId];
   }
 
   /**
    * Returns joined project IDs belong to the current workspace
    */
   get joinedProjectIds() {
-    if (!this.rootStore.app.router.workspaceSlug) return [];
-    const projectIds = Object.keys(this.projectMap);
-    return orderArrayBy(
-      projectIds?.filter((projectId) => this.projectMap[projectId].is_member),
-      "sort_order",
-      "ascending"
-    );
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return [];
+    const projectIds = Object.values(this.projectMap ?? {})
+      .filter((project) => project.workspace === currentWorkspace.id && project.is_member)
+      .map((project) => project.id);
+    return projectIds;
   }
 
   /**
    * Returns favorite project IDs belong to the current workspace
    */
   get favoriteProjectIds() {
-    if (!this.rootStore.app.router.workspaceSlug) return [];
-    const projectIds = Object.keys(this.projectMap);
-    return orderArrayBy(
-      projectIds?.filter((projectId) => this.projectMap[projectId].is_favorite),
-      "sort_order",
-      "ascending"
-    );
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return [];
+    const projectIds = Object.values(this.projectMap ?? {})
+      .filter((project) => project.workspace === currentWorkspace.id && project.is_favorite)
+      .map((project) => project.id);
+    return projectIds;
   }
 
   /**

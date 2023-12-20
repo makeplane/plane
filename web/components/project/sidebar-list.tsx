@@ -30,11 +30,15 @@ export const ProjectSidebarList: FC = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { joinedProjectIds: joinedProjects, favoriteProjectIds: favoriteProjects, orderProjectsWithSortOrder, updateProjectView, projectMap } = useProject();
+  const {
+    joinedProjectIds: joinedProjects,
+    favoriteProjectIds: favoriteProjects,
+    orderProjectsWithSortOrder,
+    updateProjectView,
+  } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
   // toast
   const { setToastAlert } = useToast();
 
@@ -166,7 +170,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
                                     <ProjectSidebarListItem
                                       key={projectId}
-                                      projectMap={projectMap}
                                       projectId={projectId}
                                       provided={provided}
                                       snapshot={snapshot}
@@ -239,7 +242,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                     <ProjectSidebarListItem
                                       key={projectId}
                                       projectId={projectId}
-                                      projectMap={projectMap}
                                       provided={provided}
                                       snapshot={snapshot}
                                       handleCopyText={() => handleCopyText(projectId)}

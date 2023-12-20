@@ -75,7 +75,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     project: { projectLabels },
   } = useLabel();
   const {
-    project: { projectMemberIds, getProjectMemberDetails },
+    project: { projectMemberIds },
   } = useMember();
 
   const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
@@ -203,11 +203,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMemberIds?.map((userId) => {
-                const memberDetails = getProjectMemberDetails(userId);
-
-                return memberDetails?.member;
-              })}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>

@@ -5,7 +5,6 @@ import { observer } from "mobx-react-lite";
 import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
 import { useApplication, useLabel, useProject, useProjectState, useUser, useInbox, useMember } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
@@ -28,9 +27,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
-
   const {
-    project: { projectMembers },
+    project: { projectMemberIds },
   } = useMember();
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -180,7 +178,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              memberIds={projectMembers}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>
