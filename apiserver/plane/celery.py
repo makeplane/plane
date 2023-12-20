@@ -1,12 +1,17 @@
 import os
-from celery import Celery
-from plane.settings.redis import redis_instance
-from celery.schedules import crontab
 
+import dotenv
+from celery import Celery
+from celery.schedules import crontab
+from plane.settings.redis import redis_instance
+
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+dotenv.read_dotenv(env_path)
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 
 ri = redis_instance()
+print(ri)
 
 app = Celery('tasks', broker='pyamqp://guest:guest@localhost:5672//')
 

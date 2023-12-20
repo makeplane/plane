@@ -1,36 +1,20 @@
 # Django imports
 from django.utils import timezone
-
+from plane.db.models import (CommentReaction, Cycle, CycleIssue, Issue,
+                             IssueActivity, IssueAssignee, IssueAttachment,
+                             IssueComment, IssueLabel, IssueLink,
+                             IssueProperty, IssueReaction, IssueRelation,
+                             IssueSubscriber, IssueVote, Label, Module,
+                             ModuleIssue, User)
 # Third Party imports
 from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer
-from .state import StateSerializer, StateLiteSerializer
 from .project import ProjectLiteSerializer
+from .state import StateLiteSerializer, StateSerializer
+from .user import UserLiteSerializer
 from .workspace import WorkspaceLiteSerializer
-from plane.db.models import (
-    User,
-    Issue,
-    IssueActivity,
-    IssueComment,
-    IssueProperty,
-    IssueAssignee,
-    IssueSubscriber,
-    IssueLabel,
-    Label,
-    CycleIssue,
-    Cycle,
-    Module,
-    ModuleIssue,
-    IssueLink,
-    IssueAttachment,
-    IssueReaction,
-    CommentReaction,
-    IssueVote,
-    IssueRelation,
-)
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -231,7 +215,13 @@ class IssueActivitySerializer(BaseSerializer):
         model = IssueActivity
         fields = "__all__"
 
-
+    def to_representation(self, instance):
+       return {
+           'actor_detail': UserLiteSerializer(instance.actor).data,
+           'issue_detail': IssueFlatSerializer(instance.issue).data,
+           'project_detail': ProjectLiteSerializer(instance.project).data,
+           'workspace_detail': WorkspaceLiteSerializer(instance.workspace).data,
+       }
 
 class IssuePropertySerializer(BaseSerializer):
     class Meta:

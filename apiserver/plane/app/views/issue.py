@@ -3,84 +3,49 @@ import json
 import random
 from itertools import chain
 
-# Django imports
-from django.db import models
-from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Count,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-    IntegerField,
-)
 from django.core.serializers.json import DjangoJSONEncoder
+# Django imports
+from django.db import IntegrityError, models
+from django.db.models import (Case, CharField, Count, Exists, F, Func,
+                              IntegerField, Max, OuterRef, Prefetch, Q, Value,
+                              When)
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db import IntegrityError
-
-# Third Party imports
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
-
-# Module imports
-from . import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    IssueCreateSerializer,
-    IssueActivitySerializer,
-    IssueCommentSerializer,
-    IssuePropertySerializer,
-    IssueSerializer,
-    LabelSerializer,
-    IssueFlatSerializer,
-    IssueLinkSerializer,
-    IssueLiteSerializer,
-    IssueAttachmentSerializer,
-    IssueSubscriberSerializer,
-    ProjectMemberLiteSerializer,
-    IssueReactionSerializer,
-    CommentReactionSerializer,
-    IssueVoteSerializer,
-    IssueRelationSerializer,
-    RelatedIssueSerializer,
-    IssuePublicSerializer,
-)
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    WorkSpaceAdminPermission,
-    ProjectMemberPermission,
-    ProjectLitePermission,
-)
-from plane.db.models import (
-    Project,
-    Issue,
-    IssueActivity,
-    IssueComment,
-    IssueProperty,
-    Label,
-    IssueLink,
-    IssueAttachment,
-    State,
-    IssueSubscriber,
-    ProjectMember,
-    IssueReaction,
-    CommentReaction,
-    ProjectDeployBoard,
-    IssueVote,
-    IssueRelation,
-    ProjectPublicMember,
-)
+from plane.app.permissions import (ProjectEntityPermission,
+                                   ProjectLitePermission,
+                                   ProjectMemberPermission,
+                                   WorkSpaceAdminPermission)
+from plane.app.serializers import (CommentReactionSerializer,
+                                   IssueActivitySerializer,
+                                   IssueAttachmentSerializer,
+                                   IssueCommentSerializer,
+                                   IssueCreateSerializer, IssueFlatSerializer,
+                                   IssueLinkSerializer, IssueLiteSerializer,
+                                   IssuePropertySerializer,
+                                   IssuePublicSerializer,
+                                   IssueReactionSerializer,
+                                   IssueRelationSerializer, IssueSerializer,
+                                   IssueSubscriberSerializer,
+                                   IssueVoteSerializer, LabelSerializer,
+                                   ProjectMemberLiteSerializer,
+                                   RelatedIssueSerializer)
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (CommentReaction, Issue, IssueActivity,
+                             IssueAttachment, IssueComment, IssueLink,
+                             IssueProperty, IssueReaction, IssueRelation,
+                             IssueSubscriber, IssueVote, Label, Project,
+                             ProjectDeployBoard, ProjectMember,
+                             ProjectPublicMember, State)
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
+from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
+# Third Party imports
+from rest_framework.response import Response
+
+# Module imports
+from . import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
@@ -266,6 +231,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
         if serializer.is_valid():
+            print("serializervalid")
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",

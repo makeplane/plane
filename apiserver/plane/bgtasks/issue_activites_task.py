@@ -1,32 +1,20 @@
 # Python imports
 import json
-import requests
 
+import requests
+# Third Party imports
+from celery import shared_task
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-
-# Third Party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
-
-# Module imports
-from plane.db.models import (
-    User,
-    Issue,
-    Project,
-    Label,
-    IssueActivity,
-    State,
-    Cycle,
-    Module,
-    IssueReaction,
-    CommentReaction,
-    IssueComment,
-)
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
+# Module imports
+from plane.db.models import (CommentReaction, Cycle, Issue, IssueActivity,
+                             IssueComment, IssueReaction, Label, Module,
+                             Project, State, User)
+from sentry_sdk import capture_exception
 
 
 # Track Changes in name
@@ -1460,7 +1448,7 @@ def delete_draft_issue_activity(
 
 
 # Receive message from room group
-@shared_task(queue='internal_tasks')
+@shared_task
 def issue_activity(
     type,
     requested_data,
@@ -1471,6 +1459,7 @@ def issue_activity(
     epoch,
     subscriber=True,
 ):
+    print("Activities")
     try:
         issue_activities = []
 
@@ -1541,12 +1530,20 @@ def issue_activity(
                             IssueActivitySerializer(issue_activity).data,
                             cls=DjangoJSONEncoder,
                         )
-                        _ = requests.post(
-                            f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
-                            json=issue_activity_json,
+                        # _ = requests.post(
+                        #     f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
+                        #     json=issue_activity_json,
+                        #     headers=headers,
+                        # )
+
+                        response = requests.post(
+                            f"{settings.PROXY_BASE_URL}/api/slack/",
+                            data=issue_activity_json,
                             headers=headers,
                         )
+                        print(response)
             except Exception as e:
+                print(e)
                 capture_exception(e)
 
         notifications.delay(

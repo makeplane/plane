@@ -2,20 +2,19 @@
 # Python imports
 import os
 import ssl
-import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
-from kombu import Exchange, Queue
 
-# Django imports
-from django.core.management.utils import get_random_secret_key
-
+import certifi
 # Third party imports
 import dj_database_url
 import sentry_sdk
+# Django imports
+from django.core.management.utils import get_random_secret_key
+from kombu import Exchange, Queue
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
-from sentry_sdk.integrations.celery import CeleryIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -323,7 +322,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
 
 
 # Application Envs
-PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
+PROXY_BASE_URL = "http://localhost:8080"
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 

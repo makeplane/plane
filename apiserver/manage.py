@@ -2,7 +2,10 @@
 import os
 import sys
 
+import dotenv
+
 if __name__ == '__main__':
+    dotenv.read_dotenv()
     os.environ.setdefault(
         'DJANGO_SETTINGS_MODULE',
         'plane.settings.production')

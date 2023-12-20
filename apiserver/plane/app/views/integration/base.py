@@ -1,5 +1,6 @@
 # Python improts
 import uuid
+
 import requests
 import json
 
@@ -14,21 +15,16 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.app.views import BaseViewSet
-from plane.db.models import (
-    Integration,
-    WorkspaceIntegration,
-    Workspace,
-    User,
-    WorkspaceMember,
-    APIToken,
-)
-from plane.app.serializers import IntegrationSerializer, WorkspaceIntegrationSerializer
-from plane.utils.integrations.github import (
-    get_github_metadata,
-    delete_github_installation,
-)
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.db.models import (APIToken, Integration, User, Workspace,
+                             WorkspaceIntegration, WorkspaceMember)
+from plane.utils.integrations.github import (delete_github_installation,
+                                             get_github_metadata)
 from plane.utils.integrations.slack import slack_oauth
+from rest_framework import status
+# Third party imports
+from rest_framework.response import Response
+from sentry_sdk import capture_exception
+
 
 
 class IntegrationViewSet(BaseViewSet):
@@ -122,9 +118,10 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 )
 
             slack_response = slack_oauth(code=code)
-
+            print(slack_response)
             metadata = slack_response
             access_token = metadata.get("access_token", False)
+            print(access_token)
             team_id = metadata.get("team", {}).get("id", False)
             if not metadata or not access_token or not team_id:
                 return Response(

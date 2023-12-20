@@ -2,52 +2,28 @@
 import json
 from itertools import chain
 
+from django.core.serializers.json import DjangoJSONEncoder
 # Django imports
 from django.db import IntegrityError
-from django.db.models import (
-    OuterRef,
-    Func,
-    Q,
-    F,
-    Case,
-    When,
-    Value,
-    CharField,
-    Max,
-    Exists,
-)
-from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (Case, CharField, Exists, F, Func, Max, OuterRef,
+                              Q, Value, When)
 from django.utils import timezone
-
+from plane.api.serializers import (IssueActivitySerializer,
+                                   IssueCommentSerializer, IssueLinkSerializer,
+                                   IssueSerializer, LabelSerializer)
+from plane.app.permissions import (ProjectEntityPermission,
+                                   ProjectLitePermission,
+                                   ProjectMemberPermission)
+from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (Issue, IssueActivity, IssueAttachment,
+                             IssueComment, IssueLink, Label, Project,
+                             ProjectMember)
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView, WebhookMixin
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectMemberPermission,
-    ProjectLitePermission,
-)
-from plane.db.models import (
-    Issue,
-    IssueAttachment,
-    IssueLink,
-    Project,
-    Label,
-    ProjectMember,
-    IssueComment,
-    IssueActivity,
-)
-from plane.bgtasks.issue_activites_task import issue_activity
-from plane.api.serializers import (
-    IssueSerializer,
-    LabelSerializer,
-    IssueLinkSerializer,
-    IssueCommentSerializer,
-    IssueActivitySerializer,
-)
 
 
 class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
