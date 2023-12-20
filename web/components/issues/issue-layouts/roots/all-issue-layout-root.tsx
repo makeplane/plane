@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useGlobalView, useLabel } from "hooks/store";
+import { useGlobalView, useLabel, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewsAppliedFiltersRoot } from "components/issues";
@@ -30,10 +30,13 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
   // store hooks
   const {
-    workspaceMember: { workspaceMembers, currentWorkspaceUserProjectsRole },
+    workspaceMember: { workspaceMembers },
     workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
     workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
   } = useMobxStore();
+  const {
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const {
     workspace: { workspaceLabels },
@@ -62,7 +65,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const canEditProperties = (projectId: string | undefined) => {
     if (!projectId) return false;
 
-    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
     return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };

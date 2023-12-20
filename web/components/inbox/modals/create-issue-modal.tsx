@@ -6,9 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
-import { useApplication, useWorkspace, useInboxIssues } from "hooks/store";
+import { useApplication, useWorkspace, useInboxIssues, useMention } from "hooks/store";
 import useToast from "hooks/use-toast";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
 import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
@@ -47,7 +46,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const editorRef = useRef<any>(null);
   // toast alert
   const { setToastAlert } = useToast();
-  const editorSuggestion = useEditorSuggestions();
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
@@ -98,7 +97,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -112,7 +111,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -268,8 +267,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 onChange={(description, description_html: string) => {
                                   onChange(description_html);
                                 }}
-                                mentionSuggestions={editorSuggestion.mentionSuggestions}
-                                mentionHighlights={editorSuggestion.mentionHighlights}
+                                mentionSuggestions={mentionSuggestions}
+                                mentionHighlights={mentionHighlights}
                               />
                             )}
                           />

@@ -2,6 +2,7 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
@@ -10,20 +11,19 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store_legacy/project";
 import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as { workspaceSlug: string; userId: string };
-
-  // store
+  // store hooks
+  const { workspaceProfileIssuesFilter: profileIssueFiltersStore, workspaceProfileIssues: profileIssuesStore } =
+    useMobxStore();
   const {
-    workspaceProfileIssuesFilter: profileIssueFiltersStore,
-    workspaceProfileIssues: profileIssuesStore,
-    workspaceMember: { currentWorkspaceUserProjectsRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
@@ -39,13 +39,8 @@ export const ProfileIssuesListLayout: FC = observer(() => {
   };
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
-    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
-    console.log(
-      projectId,
-      currentWorkspaceUserProjectsRole,
-      !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER
-    );
     return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 

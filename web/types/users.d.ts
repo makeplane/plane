@@ -163,7 +163,7 @@ export interface IUserProfileProjectSegregation {
 }
 
 export interface IUserProjectsRole {
-  [project_id: string]: EUserProjectRoles;
+  [projectId: string]: EUserProjectRoles;
 }
 
 // export interface ICurrentUser {

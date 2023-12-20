@@ -15,7 +15,6 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
   const { workspaceSlug } = router.query as { workspaceSlug: string; globalViewId: string };
   // store hooks
   const {
-    workspaceMember: { workspaceMembers },
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const {
@@ -80,7 +79,6 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
     <div className="flex items-start justify-between gap-4 p-4">
       <AppliedFiltersList
         labels={workspaceLabels ?? undefined}
-        members={workspaceMembers?.map((m) => m.member)}
         appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}

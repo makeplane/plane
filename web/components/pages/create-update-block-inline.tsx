@@ -3,15 +3,14 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Sparkle } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
+// hooks
+import { useApplication, useMention } from "hooks/store";
+import useToast from "hooks/use-toast";
 // services
 import { PageService } from "services/page.service";
 import { IssueService } from "services/issue/issue.service";
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
-// hooks
-import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
 import { GptAssistantModal } from "components/core";
 import { Button, TextArea } from "@plane/ui";
@@ -55,8 +54,9 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
-  // hooks
-  const editorSuggestion = useEditorSuggestions();
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
@@ -282,8 +282,8 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
                         onChange(description_html);
                         setValue("description", description);
                       }}
-                      mentionHighlights={editorSuggestion.mentionHighlights}
-                      mentionSuggestions={editorSuggestion.mentionSuggestions}
+                      mentionHighlights={mentionHighlights}
+                      mentionSuggestions={mentionSuggestions}
                     />
                   );
                 else if (!value || !watch("description_html"))

@@ -4,13 +4,11 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { useApplication, useMention } from "hooks/store";
+import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
@@ -108,9 +106,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const {
     config: { envConfig },
   } = useApplication();
-  const {} = useUser();
-  // hooks
-  const editorSuggestion = useEditorSuggestions();
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
@@ -389,8 +386,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
-                        mentionHighlights={editorSuggestion.mentionHighlights}
-                        mentionSuggestions={editorSuggestion.mentionSuggestions}
+                        mentionHighlights={mentionHighlights}
+                        mentionSuggestions={mentionSuggestions}
                       />
                     )}
                   />

@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useLabel } from "hooks/store";
+import { useLabel, useMember } from "hooks/store";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
@@ -29,11 +28,11 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
   // store hooks
   const {
-    workspaceMember: { workspaceMembers },
-  } = useMobxStore();
-  const {
     workspace: { workspaceLabels },
   } = useLabel();
+  const {
+    workspace: { workspaceMemberIds },
+  } = useMember();
 
   const {
     formState: { errors, isSubmitting },
@@ -145,7 +144,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                     labels={workspaceLabels ?? undefined}
-                    members={workspaceMembers?.map((m) => m.member) ?? undefined}
+                    memberIds={workspaceMemberIds ?? undefined}
                   />
                 </FiltersDropdown>
               )}
@@ -158,7 +157,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
                 labels={workspaceLabels ?? undefined}
-                members={workspaceMembers?.map((m) => m.member) ?? undefined}
                 states={undefined}
               />
             </div>
