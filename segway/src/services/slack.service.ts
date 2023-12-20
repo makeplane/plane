@@ -5,36 +5,7 @@ import {
   workspaceIntegrations,
 } from "../db/schema/integrations.schema";
 import { gte, sql } from "drizzle-orm";
-
-export type TSlackConfig = {
-  team_id: string;
-  access_token: string;
-};
-
-export type TSlackMetadata = {
-  ok: boolean;
-  team: {
-    id: string;
-    name: string;
-  };
-  scope: string;
-  app_id: string;
-  enterprise?: any;
-  token_type: string;
-  authed_user: {
-    id: string;
-  };
-  bot_user_id: string;
-  access_token: string;
-  incoming_webhook: Incomingwebhook;
-  is_enterprise_install: boolean;
-};
-export type Incomingwebhook = {
-  url: string;
-  channel: string;
-  channel_id: string;
-  configuration_url: string;
-};
+import { TSlackConfig, TSlackMetadata } from "types/slack";
 
 export class SlackService {
   async getWorkspaceId(teamId: string): Promise<string | undefined> {
