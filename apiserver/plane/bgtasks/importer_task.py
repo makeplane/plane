@@ -13,6 +13,7 @@ from django.contrib.auth.hashers import make_password
 # Third Party imports
 from celery import shared_task
 from sentry_sdk import capture_exception
+from celery.exceptions import MaxRetriesExceededError
 
 # Module imports
 from plane.app.serializers import ImporterSerializer
@@ -140,6 +141,8 @@ def members_sync(data):
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
         )
+
+        service = data.get("external_source")
 
         WorkspaceMember.objects.create(
             member_id=new_user.id,
@@ -442,18 +445,10 @@ def import_sync(data):
     importer.save(update_fields=["status"])
 
 
-@shared_task(
-    bind=True,
-    autoretry_for=(Exception,),
-    retry_backoff=100,
-    max_retries=5,
-    retry_jitter=True,
-    queue="segway_task",
-)
+@shared_task(bind=True, queue="segway_task", max_retries=5)
 @handle_exceptions
-def import_task(data):
+def import_task(self, data):
     type = data.get("type")
-    print(data)
 
     if type is None:
         return
@@ -479,4 +474,10 @@ def import_task(data):
         func(data)
         return
     except Exception as e:
-        print(e, type, data)
+        try:
+            # Retry with exponential backoff
+            self.retry(exc=e, countdown=50, backoff=2)
+        except MaxRetriesExceededError:
+            print(
+                f"Maximum retries reached for task. Exception: {e}, Type: {type}, Data: {data}"
+            )
