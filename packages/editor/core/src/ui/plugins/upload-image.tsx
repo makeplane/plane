@@ -1,6 +1,6 @@
-import { UploadImage } from "@plane/editor-core";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
+import { UploadImage } from "src/types/upload-image";
 
 const uploadKey = new PluginKey("upload-image");
 

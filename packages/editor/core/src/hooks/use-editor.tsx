@@ -4,7 +4,10 @@ import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "src/lib/utils";
-import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-core";
+import { DeleteImage } from "src/types/delete-image";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { RestoreImage } from "src/types/restore-image";
+import { UploadImage } from "src/types/upload-image";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;

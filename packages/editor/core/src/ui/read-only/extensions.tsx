@@ -17,7 +17,7 @@ import { HorizontalRule } from "src/ui/extensions/horizontal-rule";
 import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
-import { IMentionSuggestion } from "@plane/editor-core";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionSuggestions: IMentionSuggestion[];

@@ -31,7 +31,8 @@ import {
   toggleTaskList,
   toggleUnderline,
 } from "src/lib/editor-commands";
-import { LucideIconType, UploadImage } from "@plane/editor-core";
+import { LucideIconType } from "src/types/lucide-icon";
+import { UploadImage } from "src/types/upload-image";
 
 export interface EditorMenuItem {
   name: string;
