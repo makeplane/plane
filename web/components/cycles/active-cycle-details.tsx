@@ -73,7 +73,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const {
     commandPalette: { toggleCreateCycleModal },
   } = useApplication();
-  const { fetchActiveCycle, projectActiveCycle, getActiveCycleById, addCycleToFavorites, removeCycleFromFavorites } =
+  const { fetchActiveCycle, projectActiveCycleId, getActiveCycleById, addCycleToFavorites, removeCycleFromFavorites } =
     useCycle();
   // toast alert
   const { setToastAlert } = useToast();
@@ -83,7 +83,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     workspaceSlug && projectId ? () => fetchActiveCycle(workspaceSlug, projectId) : null
   );
 
-  const activeCycle = projectActiveCycle ? getActiveCycleById(projectActiveCycle) : null;
+  const activeCycle = projectActiveCycleId ? getActiveCycleById(projectActiveCycleId) : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
   // const { data: issues } = useSWR(

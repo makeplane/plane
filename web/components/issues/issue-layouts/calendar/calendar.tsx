@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
-
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useUser } from "hooks/store";
 // components
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
@@ -42,12 +42,11 @@ type Props = {
 export const CalendarChart: React.FC<Props> = observer((props) => {
   const { issuesFilterStore, issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } =
     props;
-
+  // store hooks
+  const { calendar: calendarStore, projectIssues: issueStore } = useMobxStore();
   const {
-    calendar: calendarStore,
-    projectIssues: issueStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
   const { enableIssueCreation } = issueStore?.viewFlags || {};
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

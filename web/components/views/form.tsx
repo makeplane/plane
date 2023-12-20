@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useLabel, useProjectState } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useLabel, useMember, useProjectState } from "hooks/store";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
@@ -28,14 +27,14 @@ const defaultValues: Partial<IProjectView> = {
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
   // store hooks
-  const {
-    projectMember: { projectMembers },
-  } = useMobxStore();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },
   } = useLabel();
-
+  const {
+    project: { projectMemberIds },
+  } = useMember();
+  // form info
   const {
     control,
     formState: { errors, isSubmitting },
@@ -179,7 +178,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
                     labels={projectLabels ?? undefined}
-                    members={projectMembers?.map((m) => m.member) ?? undefined}
+                    memberIds={projectMemberIds ?? undefined}
                     states={projectStates}
                   />
                 </FiltersDropdown>
@@ -193,7 +192,6 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={handleRemoveFilter}
                 labels={projectLabels ?? []}
-                members={projectMembers?.map((m) => m.member) ?? []}
                 states={projectStates}
               />
             </div>

@@ -5,7 +5,9 @@ from plane.app.views import (
     IssueViewViewSet,
     GlobalViewViewSet,
     GlobalViewIssuesViewSet,
-    IssueViewFavoriteViewSet,   
+    IssueViewFavoriteViewSet, 
+    IssueViewUserPropertiesEndpoint,
+    GlobalIssueViewUserPropertiesEndpoint,
 )
 
 
@@ -82,4 +84,14 @@ urlpatterns = [
         ),
         name="user-favorite-view",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/view/<uuid:view_id>/user-properties/",
+        IssueViewUserPropertiesEndpoint.as_view(),
+        name="workspace-user-filters",
+    ),
+    path(
+        "workspaces/<str:slug>/view/<uuid:view_id>/user-properties/",
+        GlobalIssueViewUserPropertiesEndpoint.as_view(),
+        name="workspace-user-filters",
+    )
 ]

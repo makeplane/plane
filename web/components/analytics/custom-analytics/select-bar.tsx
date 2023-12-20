@@ -18,7 +18,7 @@ type Props = {
 export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
   const { control, setValue, params, fullScreen, isProjectLevel } = props;
 
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjectIds } = useProject();
 
   return (
     <div
@@ -36,7 +36,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
               <SelectProject
                 value={value ?? undefined}
                 onChange={onChange}
-                projectIds={workspaceProjects ?? undefined}
+                projectIds={workspaceProjectIds ?? undefined}
               />
             )}
           />

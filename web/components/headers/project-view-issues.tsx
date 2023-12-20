@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useProject, useProjectState, useProjectView, useUser } from "hooks/store";
+import { useApplication, useLabel, useMember, useProject, useProjectState, useProjectView, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -30,7 +30,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectMember: { projectMembers },
     viewIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const {
@@ -46,6 +45,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -177,7 +179,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
             labels={projectLabels}
-            members={projectMembers?.map((m) => m.member)}
+            memberIds={projectMemberIds ?? undefined}
             states={projectStates}
           />
         </FiltersDropdown>

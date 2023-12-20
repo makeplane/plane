@@ -1,9 +1,11 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, CircleUser, Search } from "lucide-react";
+// hooks
+import { useApplication, useMember } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
@@ -39,12 +41,16 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     placement,
     multiple = false,
   } = props;
-  // store
+  // store hooks
   const {
-    workspace: workspaceStore,
-    projectMember: { projectMembers: _projectMembers, fetchProjectMembers },
+    projectMember: { projectMembers: _projectMembers },
   } = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const {
+    project: { fetchProjectMembers },
+  } = useMember();
   // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);

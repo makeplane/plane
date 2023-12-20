@@ -13,10 +13,8 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import { usePage, useUser } from "hooks/store";
+import { useMember, usePage, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
@@ -39,10 +37,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [deletePageModal, setDeletePageModal] = useState(false);
-  // mobx store
-  const {
-    projectMember: { projectMembers },
-  } = useMobxStore();
+  // store hooks
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -57,6 +52,9 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
     makePublic,
     restorePage,
   } = usePage();
+  const {
+    project: { getProjectMemberDetails },
+  } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
   // derived values
@@ -161,9 +159,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
 
   if (!pageDetails) return null;
 
-  const ownerDetails = projectMembers?.find(
-    (projectMember) => projectMember.member.id === pageDetails.owned_by
-  )?.member;
+  const ownerDetails = getProjectMemberDetails(pageDetails.owned_by);
   const isCurrentUserOwner = pageDetails.owned_by === currentUser?.id;
 
   const userCanEdit =
@@ -261,7 +257,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 )}
                 <Tooltip
                   position="top-right"
-                  tooltipContent={`Created by ${ownerDetails?.display_name} on ${renderFormattedDate(
+                  tooltipContent={`Created by ${ownerDetails?.member.display_name} on ${renderFormattedDate(
                     pageDetails.created_at
                   )}`}
                 >

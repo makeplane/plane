@@ -7,6 +7,7 @@ export * from "./use-inbox-filters";
 export * from "./use-inbox-issues";
 export * from "./use-label";
 export * from "./use-member";
+export * from "./use-mention";
 export * from "./use-module";
 export * from "./use-page";
 export * from "./use-project-publish";

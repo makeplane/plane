@@ -4,12 +4,11 @@ import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 // hooks
-import { useProject } from "hooks/store";
+import { useEstimate, useProject } from "hooks/store";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IIssuePropertyEstimates {
   view?: "profile" | "workspace" | "project";
@@ -36,12 +35,12 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
     optionsClassName = "",
     placement,
   } = props;
-
+  // states
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
+  // popper-js
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
     modifiers: [
@@ -53,12 +52,9 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       },
     ],
   });
-
-  const {
-    projectEstimates: { projectEstimates },
-  } = useMobxStore();
-  // store
+  // store hooks
   const { getProjectById } = useProject();
+  const { projectEstimates } = useEstimate();
 
   const projectDetails = projectId ? getProjectById(projectId) : null;
   const isEstimateEnabled = projectDetails?.estimate !== null;

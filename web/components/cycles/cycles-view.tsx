@@ -20,16 +20,16 @@ export interface ICyclesView {
 export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { filter, layout, workspaceSlug, projectId, peekCycle } = props;
   // store hooks
-  const { projectCompletedCycles, projectDraftCycles, projectUpcomingCycles, projectAllCycles } = useCycle();
+  const { projectCompletedCycleIds, projectDraftCycleIds, projectUpcomingCycleIds, projectCycleIds } = useCycle();
 
   const cyclesList =
     filter === "completed"
-      ? projectCompletedCycles
+      ? projectCompletedCycleIds
       : filter === "draft"
-      ? projectDraftCycles
+      ? projectDraftCycleIds
       : filter === "upcoming"
-      ? projectUpcomingCycles
-      : projectAllCycles;
+      ? projectUpcomingCycleIds
+      : projectCycleIds;
 
   return (
     <>

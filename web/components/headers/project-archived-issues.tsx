@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft } from "lucide-react";
 // hooks
-import { useLabel, useProject, useProjectState } from "hooks/store";
+import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
@@ -21,15 +21,15 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    projectMember: { projectMembers },
-    archivedIssueFilters: archivedIssueFiltersStore,
-  } = useMobxStore();
+  const { archivedIssueFilters: archivedIssueFiltersStore } = useMobxStore();
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   // for archived issues list layout is the only option
   const activeLayout = "list";
@@ -122,7 +122,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.archived_issues[activeLayout] : undefined
             }
             labels={projectLabels}
-            members={projectMembers?.map((m) => m.member)}
+            memberIds={projectMemberIds ?? undefined}
             states={projectStates}
           />
         </FiltersDropdown>

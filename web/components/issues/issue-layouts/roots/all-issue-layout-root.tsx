@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
+// hooks
+import { useGlobalView, useLabel, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewsAppliedFiltersRoot } from "components/issues";
@@ -24,20 +25,24 @@ type Props = {
 
 export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const { type = null } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
-
-  const currentIssueView = type ?? globalViewId;
-
+  // store hooks
   const {
     workspaceMember: { workspaceMembers },
-    workspace: { workspaceLabels },
-    globalViews: { fetchAllGlobalViews },
     workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
     workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
   } = useMobxStore();
+  const {
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
+  const { fetchAllGlobalViews } = useGlobalView();
+  const {
+    workspace: { workspaceLabels },
+  } = useLabel();
+  // derived values
+  const currentIssueView = type ?? globalViewId;
 
   useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
     if (workspaceSlug) {
@@ -60,7 +65,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const canEditProperties = (projectId: string | undefined) => {
     if (!projectId) return false;
 
-    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
     return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };

@@ -73,6 +73,25 @@ export interface IProjectMemberLite {
 
 export interface IProjectMember {
   id: string;
+  member: IUserMemberLite;
+  project: IProjectLite;
+  workspace: IWorkspaceLite;
+  comment: string;
+  role: TUserProjectRole;
+
+  preferences: ProjectPreferences;
+
+  view_props: IProjectViewProps;
+  default_props: IProjectViewProps;
+
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+}
+
+export interface IProjectMembership {
+  id: string;
   member: string;
   role: EUserProjectRoles;
 }

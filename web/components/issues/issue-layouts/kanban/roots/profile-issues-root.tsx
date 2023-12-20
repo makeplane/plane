@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
+import { useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
@@ -19,9 +20,11 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const {
     workspaceProfileIssues: profileIssuesStore,
     workspaceProfileIssuesFilter: profileIssueFiltersStore,
-    workspaceMember: { currentWorkspaceUserProjectsRole },
     issueKanBanView: issueKanBanViewStore,
   } = useMobxStore();
+  const {
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -37,7 +40,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   };
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
-    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
     return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };

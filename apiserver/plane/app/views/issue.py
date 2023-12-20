@@ -590,16 +590,15 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         ProjectLitePermission,
     ]
 
-    def post(self, request, slug, project_id):
-        issue_property, created = IssueProperty.objects.get_or_create(
+    def patch(self, request, slug, project_id):
+        issue_property = IssueProperty.objects.get(
             user=request.user,
             project_id=project_id,
         )
 
-        if not created:
-            issue_property.properties = request.data.get("properties", {})
-            issue_property.save()
-        issue_property.properties = request.data.get("properties", {})
+        issue_property.filters = request.data.get("filters", issue_property.filters)
+        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
+        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
         issue_property.save()
         serializer = IssuePropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

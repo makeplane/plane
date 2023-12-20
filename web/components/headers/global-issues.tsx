@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useUser } from "hooks/store";
+import { useLabel, useMember, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
@@ -36,7 +36,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    workspaceMember: { workspaceMembers },
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const {
@@ -45,6 +44,9 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceLabels },
   } = useLabel();
+  const {
+    workspace: { workspaceMemberIds },
+  } = useMember();
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -133,7 +135,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                   filters={issueFilters?.filters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}
                   labels={workspaceLabels ?? undefined}
-                  members={workspaceMembers?.map((m) => m.member)}
+                  memberIds={workspaceMemberIds ?? undefined}
                 />
               </FiltersDropdown>
               <FiltersDropdown title="Display" placement="bottom-end">

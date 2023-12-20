@@ -8,6 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Avatar } from "@plane/ui";
 // types
 import { IIssue } from "types";
+import { useMember } from "hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -22,27 +23,37 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   // store
   const {
     projectIssues: { updateIssue },
-    projectMember: { projectMembers },
   } = useMobxStore();
+  const {
+    project: { projectMemberIds, getProjectMemberDetails },
+  } = useMember();
 
   const options =
-    projectMembers?.map(({ member }) => ({
-      value: member.id,
-      query: member.display_name,
-      content: (
-        <>
-          <div className="flex items-center gap-2">
-            <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
-            {member.display_name}
-          </div>
-          {issue.assignees.includes(member.id) && (
-            <div>
-              <Check className="h-3 w-3" />
+    projectMemberIds?.map((userId) => {
+      const memberDetails = getProjectMemberDetails(userId);
+
+      return {
+        value: `${memberDetails?.member?.id}`,
+        query: `${memberDetails?.member?.display_name}`,
+        content: (
+          <>
+            <div className="flex items-center gap-2">
+              <Avatar
+                name={memberDetails?.member?.display_name}
+                src={memberDetails?.member?.avatar}
+                showTooltip={false}
+              />
+              {memberDetails?.member?.display_name}
             </div>
-          )}
-        </>
-      ),
-    })) ?? [];
+            {issue.assignees.includes(memberDetails?.member?.id ?? "") && (
+              <div>
+                <Check className="h-3 w-3" />
+              </div>
+            )}
+          </>
+        ),
+      };
+    }) ?? [];
 
   const handleUpdateIssue = async (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;
@@ -65,7 +76,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {options.map((option: any) => (
+      {options.map((option) => (
         <Command.Item
           key={option.value}
           onSelect={() => handleIssueAssignees(option.value)}

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useLabel, useModule, useProject, useProjectState, useUser } from "hooks/store";
+import { useApplication, useLabel, useMember, useModule, useProject, useProjectState, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -60,10 +60,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectMember: { projectMembers },
     moduleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
-  const { projectModules, getModuleById } = useModule();
+  const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -76,6 +75,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     project: { projectLabels },
   } = useLabel();
   const { projectStates } = useProjectState();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
 
@@ -180,7 +182,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {projectModules?.map((moduleId) => (
+                  {projectModuleIds?.map((moduleId) => (
                     <ModuleDropdownOption moduleId={moduleId} />
                   ))}
                 </CustomMenu>
@@ -202,7 +204,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>
