@@ -1,11 +1,12 @@
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import * as schema from "./slack.schema";
 // logger
-import { logger } from "../utils/logger"
+import { logger } from "../utils/logger";
 
 export class DatabaseSingleton {
   private static instance: DatabaseSingleton;
-  public db: PostgresJsDatabase | null = null;
+  public db: PostgresJsDatabase<typeof schema> | null = null;
 
   private constructor() {
     try {
@@ -15,11 +16,11 @@ export class DatabaseSingleton {
       }
 
       const queryClient = postgres(process.env.DATABASE_URL);
-      this.db = drizzle(queryClient);
-      logger.info("🛢️ Connected to Database")
+      this.db = drizzle(queryClient, { schema });
+      logger.info("🛢️ Connected to Database");
     } catch (error) {
       logger.error("Failed to initialize database connection:", error);
-      throw new Error("Could not connect to Database")
+      throw new Error("Could not connect to Database");
     }
   }
 
