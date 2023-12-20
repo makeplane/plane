@@ -143,7 +143,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
     if (!moduleId || !this.issues || !this.issues[moduleId]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[moduleId]);

@@ -20,7 +20,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const { issueMap } = useIssues();
 
-  const issue = issueMap.allIssues[dataId];
+  const issue = issueMap[dataId];
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
