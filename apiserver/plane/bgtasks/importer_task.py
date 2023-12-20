@@ -46,179 +46,7 @@ from rest_framework.response import Response
 
 @shared_task(queue="internal_tasks")
 def service_importer(service, importer_id):
-    try:
-        importer = Importer.objects.get(pk=importer_id)
-        importer.status = "processing"
-        importer.save(update_fields=["status"])
-
-        users = importer.data.get("users", [])
-
-        # Check if we need to import users as well
-        if len(users):
-            # For all invited users create the users
-            new_users = User.objects.bulk_create(
-                [
-                    User(
-                        email=user.get("email").strip().lower(),
-                        username=uuid.uuid4().hex,
-                        password=make_password(uuid.uuid4().hex),
-                        is_password_autoset=True,
-                    )
-                    for user in users
-                    if user.get("import", False) == "invite"
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
-
-            _ = [
-                send_welcome_slack.delay(
-                    str(user.id),
-                    True,
-                    f"{user.email} was imported to Plane from {service}",
-                )
-                for user in new_users
-            ]
-
-            workspace_users = User.objects.filter(
-                email__in=[
-                    user.get("email").strip().lower()
-                    for user in users
-                    if user.get("import", False) == "invite"
-                    or user.get("import", False) == "map"
-                ]
-            )
-
-            # Check if any of the users are already member of workspace
-            _ = WorkspaceMember.objects.filter(
-                member__in=[user for user in workspace_users],
-                workspace_id=importer.workspace_id,
-            ).update(is_active=True)
-
-            # Add new users to Workspace and project automatically
-            WorkspaceMember.objects.bulk_create(
-                [
-                    WorkspaceMember(
-                        member=user,
-                        workspace_id=importer.workspace_id,
-                        created_by=importer.created_by,
-                    )
-                    for user in workspace_users
-                ],
-                batch_size=100,
-                ignore_conflicts=True,
-            )
-
-            ProjectMember.objects.bulk_create(
-                [
-                    ProjectMember(
-                        project_id=importer.project_id,
-                        workspace_id=importer.workspace_id,
-                        member=user,
-                        created_by=importer.created_by,
-                    )
-                    for user in workspace_users
-                ],
-                batch_size=100,
-                ignore_conflicts=True,
-            )
-
-            IssueProperty.objects.bulk_create(
-                [
-                    IssueProperty(
-                        project_id=importer.project_id,
-                        workspace_id=importer.workspace_id,
-                        user=user,
-                        created_by=importer.created_by,
-                    )
-                    for user in workspace_users
-                ],
-                batch_size=100,
-                ignore_conflicts=True,
-            )
-
-        # Check if sync config is on for github importers
-        if service == "github" and importer.config.get("sync", False):
-            name = importer.metadata.get("name", False)
-            url = importer.metadata.get("url", False)
-            config = importer.metadata.get("config", {})
-            owner = importer.metadata.get("owner", False)
-            repository_id = importer.metadata.get("repository_id", False)
-
-            workspace_integration = WorkspaceIntegration.objects.get(
-                workspace_id=importer.workspace_id, integration__provider="github"
-            )
-
-            # Delete the old repository object
-            GithubRepositorySync.objects.filter(project_id=importer.project_id).delete()
-            GithubRepository.objects.filter(project_id=importer.project_id).delete()
-
-            # Create a Label for github
-            label = Label.objects.filter(
-                name="GitHub", project_id=importer.project_id
-            ).first()
-
-            if label is None:
-                label = Label.objects.create(
-                    name="GitHub",
-                    project_id=importer.project_id,
-                    description="Label to sync Plane issues with GitHub issues",
-                    color="#003773",
-                )
-            # Create repository
-            repo = GithubRepository.objects.create(
-                name=name,
-                url=url,
-                config=config,
-                repository_id=repository_id,
-                owner=owner,
-                project_id=importer.project_id,
-            )
-
-            # Create repo sync
-            _ = GithubRepositorySync.objects.create(
-                repository=repo,
-                workspace_integration=workspace_integration,
-                actor=workspace_integration.actor,
-                credentials=importer.data.get("credentials", {}),
-                project_id=importer.project_id,
-                label=label,
-            )
-
-            # Add bot as a member in the project
-            _ = ProjectMember.objects.get_or_create(
-                member=workspace_integration.actor,
-                role=20,
-                project_id=importer.project_id,
-            )
-
-        import_data = ImporterSerializer(importer).data
-
-        # import_data_json = json.dumps(import_data, cls=DjangoJSONEncoder)
-
-        # if settings.SEGWAY_BASE_URL:
-        #     headers = {
-        #         "Content-Type": "application/json",
-        #         "x-api-key": settings.SEGWAY_KEY,
-        #     }
-        #     res = requests.post(
-        #         f"{settings.SEGWAY_BASE_URL}/api/jira",
-        #         data=import_data_json,
-        #         headers=headers,
-        #     )
-        #     print(res.json())
-        #     return Response(res.json(), status=res.status_code)
-        return
-    except Exception as e:
-        print(e)
-        importer = Importer.objects.get(pk=importer_id)
-        importer.status = "failed"
-        importer.save(update_fields=["status"])
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
-        return
+    pass
 
 
 def handle_exceptions(task_func):
@@ -240,8 +68,52 @@ def handle_exceptions(task_func):
     return wrapper
 
 
-@shared_task(queue="segway_tasks")
 @handle_exceptions
+def get_label_id(name, data):
+    try:
+        existing_label = (
+            Label.objects.filter(
+                project_id=data.get("project_id"),
+                workspace_id=data.get("workspace_id"),
+                name__iexact=name,
+            )
+            .values("id")
+            .first()
+        )
+        return existing_label
+    except Label.DoesNotExist:
+        return None
+
+
+@handle_exceptions
+def get_state_id(name, data):
+    try:
+        existing_state = (
+            State.objects.filter(
+                name__iexact=name,
+                project_id=data.get("project_id"),
+                workspace_id=data.get("workspace_id"),
+            )
+            .values("id")
+            .first()
+        )
+        return existing_state
+    except State.DoesNotExist:
+        return None
+
+
+@handle_exceptions
+def get_user_id(name):
+    try:
+        existing_user = User.objects.filter(email=name).values("id").first()
+        return existing_user
+    except User.DoesNotExist:
+        return None
+
+
+## Sync functions
+
+
 def members_sync(data):
     try:
         user = User.objects.get(email=data.get("email"))
@@ -296,8 +168,6 @@ def members_sync(data):
             )
 
 
-@shared_task(queue="segway_tasks")
-@handle_exceptions
 def label_sync(data):
     existing_label = Label.objects.filter(
         project_id=data.get("project_id"),
@@ -319,8 +189,6 @@ def label_sync(data):
         )
 
 
-@shared_task(queue="segway_tasks")
-@handle_exceptions
 def state_sync(data):
     try:
         state = State.objects.get(
@@ -354,120 +222,6 @@ def state_sync(data):
             )
 
 
-@shared_task(queue="segway_tasks")
-@handle_exceptions
-def module_sync(data):
-    try:
-        _ = Module.objects.get(
-            external_id=data.get("external_id"),
-            external_source=data.get("external_source"),
-            project_id=data.get("project_id"),
-            workspace_id=data.get("workspace_id"),
-        )
-    except Module.DoesNotExist:
-        _ = Module.objects.create(
-            name=data.get("name"),
-            description_html=data.get("description_html", "<p></p>"),
-            project_id=data.get("project_id"),
-            workspace_id=data.get("workspace_id"),
-            created_by_id=data.get("created_by"),
-            external_id=data.get("external_id"),
-            external_source=data.get("external_source"),
-        )
-
-
-@shared_task(queue="segway_tasks")
-@handle_exceptions
-def cycles_sync(data):
-    try:
-        _ = Cycle.objects.get(
-            external_id=data.get("external_id"),
-            external_source=data.get("external_source"),
-            project_id=data.get("project_id"),
-            workspace_id=data.get("workspace_id"),
-        )
-    except Cycle.DoesNotExist:
-        _ = Cycle.objects.create(
-            name=data.get("name"),
-            description_html=data.get("description_html", "<p></p>"),
-            project_id=data.get("project_id"),
-            workspace_id=data.get("workspace_id"),
-            created_by_id=data.get("created_by"),
-            external_id=data.get("external_id"),
-            external_source=data.get("external_source"),
-        )
-
-
-@handle_exceptions
-def get_label_id(name, data):
-    try:
-        existing_label = (
-            Label.objects.filter(
-                project_id=data.get("project_id"),
-                workspace_id=data.get("workspace_id"),
-                name__iexact=name,
-            )
-            .values("id")
-            .first()
-        )
-        return existing_label
-    except Label.DoesNotExist:
-        return None
-
-
-@handle_exceptions
-def get_state_id(name, data):
-    try:
-        existing_state = (
-            State.objects.filter(
-                name__iexact=name,
-                project_id=data.get("project_id"),
-                workspace_id=data.get("workspace_id"),
-            )
-            .values("id")
-            .first()
-        )
-        return existing_state
-    except State.DoesNotExist:
-        return None
-
-
-@handle_exceptions
-def get_user_id(name):
-    try:
-        existing_user = User.objects.filter(email=name).values("id").first()
-        return existing_user
-    except User.DoesNotExist:
-        return None
-
-
-@shared_task(queue="segway_tasks")
-@handle_exceptions
-def modules_issue_sync(data):
-    module = Module.objects.get(
-        external_id=data.get("module_id"),
-        project_id=data.get("project_id"),
-        workspace_id=data.get("workspace_id"),
-        external_source=data.get("external_source"),
-    )
-    issue = Issue.objects.get(
-        external_id=data.get("issue_id"),
-        external_source=data.get("external_source"),
-        project_id=data.get("project_id"),
-        workspace_id=data.get("workspace_id"),
-    )
-
-    _ = ModuleIssue.objects.create(
-        module=module,
-        issue=issue,
-        project_id=data.get("project_id"),
-        workspace_id=data.get("workspace_id"),
-        created_by_id=data.get("created_by"),
-    )
-
-
-@shared_task(queue="segway_tasks")
-@handle_exceptions
 def issue_sync(data):
     try:
         issue = Issue.objects.get(
@@ -532,6 +286,14 @@ def issue_sync(data):
             parent_id=parent_id,
         )
 
+        # Sequences
+        _ = IssueSequence.objects.create(
+            issue=issue,
+            sequence=issue.sequence_id,
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+        )
+
         # Attach Links
         _ = IssueLink.objects.create(
             issue=issue,
@@ -541,44 +303,6 @@ def issue_sync(data):
             workspace_id=data.get("workspace_id"),
             created_by_id=data.get("created_by_id"),
         )
-
-        # Sequences
-        _ = IssueSequence.objects.create(
-            issue=issue,
-            sequence=issue.sequence_id,
-            project_id=data.get("project_id"),
-            workspace_id=data.get("workspace_id"),
-        )
-
-        # Attach Labels
-        bulk_issue_labels = []
-        labels_list = data.get("labels_list", [])
-        bulk_issue_labels = bulk_issue_labels + [
-            IssueLabel(
-                issue=issue,
-                label_id=get_label_id(label.get("name"), data).get("id"),
-                project_id=data.get("project_id"),
-                workspace_id=data.get("workspace_id"),
-                created_by_id=data.get("created_by_id"),
-            )
-            for label in labels_list
-            if get_label_id(label.get("name"), data).get("id")
-        ]
-
-        _ = IssueLabel.objects.bulk_create(
-            bulk_issue_labels, batch_size=100, ignore_conflicts=True
-        )
-
-        if data.get("assignee"):
-            user = User.objects.filter(email=data.get("assignee")).values("id")
-            # Attach Assignees
-            _ = IssueAssignee.objects.create(
-                issue=issue,
-                assignee_id=user,
-                project_id=data.get("project_id"),
-                workspace_id=data.get("workspace_id"),
-                created_by_id=data.get("created_by_id"),
-            )
 
         # Track the issue activities
         _ = IssueActivity.objects.create(
@@ -591,33 +315,168 @@ def issue_sync(data):
             created_by_id=data.get("created_by_id"),
         )
 
-        # Create Comments
-        bulk_issue_comments = []
-        comments_list = data.get("comments_list", [])
-        bulk_issue_comments = bulk_issue_comments + [
-            IssueComment(
-                issue=issue,
-                comment_html=comment.get("comment_html", "<p></p>"),
-                actor_id=data.get("created_by_id"),
-                project_id=data.get("project_id"),
-                workspace_id=data.get("workspace_id"),
-                created_by_id=get_user_id(comment.get("created_by")).get("id")
-                if comment.get("created_by_id")
-                else data.get("created_by_id"),
-                external_id=comment.get("external_id"),
-                external_source=comment.get("external_source"),
-            )
-            for comment in comments_list
-        ]
-        _ = IssueComment.objects.bulk_create(
-            bulk_issue_comments, batch_size=100
+
+def issue_label_sync(data):
+    issue = Issue.objects.get(
+        external_source=data.get("external_issue_source"),
+        external_id=data.get("external_issue_id"),
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+    )
+    if get_label_id(data.get("name"), data):
+        IssueLabel.objects.create(
+            issue=issue,
+            label_id=get_label_id(data.get("name"), data).get("id"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+            created_by_id=data.get("created_by_id"),
         )
 
 
+def issue_assignee_sync(data):
+    issue = Issue.objects.get(
+        external_source=data.get("external_issue_source"),
+        external_id=data.get("external_issue_id"),
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+    )
+    user = User.objects.filter(email=data.get("email")).values("id")
 
-@shared_task(queue="segway_tasks")
-@handle_exceptions
+    IssueAssignee.objects.create(
+        issue=issue,
+        assignee_id=user,
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+        created_by_id=data.get("created_by_id"),
+    )
+
+
+def issue_comment_sync(data):
+    # Create Comments
+    issue = Issue.objects.get(
+        external_source=data.get("external_issue_source"),
+        external_id=data.get("external_issue_id"),
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+    )
+    IssueComment.objects.create(
+        issue=issue,
+        comment_html=data.get("comment_html", "<p></p>"),
+        actor_id=data.get("created_by_id"),
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+        created_by_id=get_user_id(data.get("created_by_id")).get("id")
+        if get_user_id(data.get("created_by_id"))
+        else data.get("created_by_id"),
+        external_id=data.get("external_id"),
+        external_source=data.get("external_source"),
+    )
+
+
+def cycles_sync(data):
+    try:
+        _ = Cycle.objects.get(
+            external_id=data.get("external_id"),
+            external_source=data.get("external_source"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+        )
+    except Cycle.DoesNotExist:
+        _ = Cycle.objects.create(
+            name=data.get("name"),
+            description_html=data.get("description_html", "<p></p>"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+            created_by_id=data.get("created_by"),
+            external_id=data.get("external_id"),
+            external_source=data.get("external_source"),
+        )
+
+
+def module_sync(data):
+    try:
+        _ = Module.objects.get(
+            external_id=data.get("external_id"),
+            external_source=data.get("external_source"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+        )
+    except Module.DoesNotExist:
+        _ = Module.objects.create(
+            name=data.get("name"),
+            description_html=data.get("description_html", "<p></p>"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+            created_by_id=data.get("created_by"),
+            external_id=data.get("external_id"),
+            external_source=data.get("external_source"),
+        )
+
+
+def modules_issue_sync(data):
+    module = Module.objects.get(
+        external_id=data.get("module_id"),
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+        external_source=data.get("external_source"),
+    )
+    issue = Issue.objects.get(
+        external_id=data.get("issue_id"),
+        external_source=data.get("external_source"),
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+    )
+
+    _ = ModuleIssue.objects.create(
+        module=module,
+        issue=issue,
+        project_id=data.get("project_id"),
+        workspace_id=data.get("workspace_id"),
+        created_by_id=data.get("created_by"),
+    )
+
+
 def import_sync(data):
     importer = Importer.objects.get(pk=data.get("importer_id"))
     importer.status = data.get("status")
     importer.save(update_fields=["status"])
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=100,
+    max_retries=5,
+    retry_jitter=True,
+    queue="segway_task",
+)
+@handle_exceptions
+def import_task(data):
+    type = data.get("type")
+    print(data)
+
+    if type is None:
+        return
+
+    TYPE_MAPPER = {
+        "member.sync": members_sync,
+        "label.sync": label_sync,
+        "state.sync": state_sync,
+        "issue.sync": issue_sync,
+        "issue.label.sync": issue_label_sync,
+        "issue.assignee.sync": issue_assignee_sync,
+        "issue.comment.sync": issue_comment_sync,
+        "cycle.sync": cycles_sync,
+        "module.sync": module_sync,
+        "module.issue.sync": modules_issue_sync,
+        "import.sync": import_sync,
+    }
+    try:
+        func = TYPE_MAPPER.get(type)
+        if func is None:
+            return
+        # Call the function
+        func(data)
+        return
+    except Exception as e:
+        print(e, type, data)
