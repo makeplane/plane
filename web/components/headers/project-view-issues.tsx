@@ -41,7 +41,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
-  const { projectViewIds: projectViews, getViewById } = useProjectView();
+  const { projectViewIds, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },
@@ -140,7 +140,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 className="ml-1.5"
                 placement="bottom-start"
               >
-                {projectViews?.map((viewId) => {
+                {projectViewIds?.map((viewId) => {
                   const view = getViewById(viewId);
 
                   if (!view) return;

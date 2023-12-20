@@ -23,11 +23,11 @@ export const ProjectViewsList = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { projectViewIds: projectViews, getViewById } = useProjectView();
+  const { projectViewIds, getViewById } = useProjectView();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!projectViews)
+  if (!projectViewIds)
     return (
       <Loader className="space-y-4 p-4">
         <Loader.Item height="72px" />
@@ -37,7 +37,7 @@ export const ProjectViewsList = observer(() => {
       </Loader>
     );
 
-  const viewsList = projectViews.map((viewId) => getViewById(viewId));
+  const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
   const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
 
