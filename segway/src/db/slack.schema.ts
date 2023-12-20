@@ -62,6 +62,68 @@ export const workspaces = pgTable("workspaces", {
   createdById: uuid("created_by_id"),
   ownerId: uuid("owner_id"),
 });
+export const projects = pgTable("projects", {
+  id: uuid("id").primaryKey(),
+  name: text("name"),
+  description: text("description"),
+  descriptionText: jsonb("description_text"),
+  identifier: text("identifier"),
+  createdById: uuid("created_by_id"),
+  defaultAssigneeId: uuid("default_assignee_id"),
+  projectLeadId: uuid("project_lead_id"),
+  updatedById: uuid("updated_by_id"),
+  workspaceId: uuid("workspace_id"),
+  coverImage: text("cover_image"),
+  defaultStateId: uuid("default_state_id"),
+});
+
+export const states = pgTable("states", {
+  id: uuid("id").primaryKey(),
+  name: text("name"),
+  description: text("description"),
+  color: text("color"),
+  slug: text("slug"),
+  projectId: uuid("project_id"),
+  workspaceId: uuid("workspace_id"),
+  sequence: integer("sequence"),
+  group: text("group"),
+  default: boolean("default"),
+});
+
+export const statesRelations = relations(states, ({ one }) => ({
+  project: one(projects, {
+    fields: [states.projectId],
+    references: [projects.id],
+  }),
+  workspace: one(workspaces, {
+    fields: [states.workspaceId],
+    references: [workspaces.id],
+  }),
+}));
+
+export const projectsRelations = relations(projects, ({ one }) => ({
+  createdBy: one(users, {
+    fields: [projects.createdById],
+    references: [users.id],
+  }),
+  defaultAssignee: one(users, {
+    fields: [projects.defaultAssigneeId],
+    references: [users.id],
+  }),
+  projectLead: one(users, {
+    fields: [projects.projectLeadId],
+    references: [users.id],
+  }),
+  updatedBy: one(users, {
+    fields: [projects.updatedById],
+    references: [users.id],
+  }),
+  workspace: one(workspaces, {
+    fields: [projects.workspaceId],
+    references: [workspaces.id],
+  }),
+}));
+
 export const workspaceIntegrationsRelations = relations(
   workspaceIntegrations,
   ({ one }) => ({
