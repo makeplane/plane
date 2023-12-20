@@ -4,6 +4,7 @@ import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";
+import { Draggable } from "@hello-pangea/dnd";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
@@ -37,20 +38,27 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
           {issueIds.map((issueId, index) => {
             if (!issueId) return null;
 
+            let draggableId = issueId;
+            if (columnId) draggableId = `${draggableId}__${columnId}`;
+            if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
+
             return (
-              <KanbanIssueBlock
-                key={`kanban-issue-block-${issueId}`}
-                index={index}
-                issueId={issueId}
-                issuesMap={issuesMap}
-                displayProperties={displayProperties}
-                handleIssues={handleIssues}
-                quickActions={quickActions}
-                columnId={columnId}
-                sub_group_id={sub_group_id}
-                isDragDisabled={isDragDisabled}
-                canEditProperties={canEditProperties}
-              />
+              <Draggable key={draggableId} draggableId={draggableId} index={index}>
+                {(provided, snapshot) => (
+                  <KanbanIssueBlock
+                    key={`kanban-issue-block-${issueId}`}
+                    issueId={issueId}
+                    issuesMap={issuesMap}
+                    displayProperties={displayProperties}
+                    handleIssues={handleIssues}
+                    quickActions={quickActions}
+                    provided={provided}
+                    snapshot={snapshot}
+                    isDragDisabled={isDragDisabled}
+                    canEditProperties={canEditProperties}
+                  />
+                )}
+              </Draggable>
             );
           })}
         </>
