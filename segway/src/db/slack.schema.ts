@@ -92,6 +92,34 @@ export const states = pgTable("states", {
   default: boolean("default"),
 });
 
+export const projectMembers = pgTable("project_members", {
+  id: uuid("id").primaryKey(),
+  comment: text("comment"),
+  role: integer("role"),
+  memberId: uuid("member_id"),
+  projectId: uuid("project_id"),
+  workspaceId: uuid("workspace_id"),
+  viewProps: jsonb("view_props"),
+  defaultProps: jsonb("default_props"),
+  sortOrder: integer("sort_order"),
+  isActive: boolean("is_active"),
+});
+
+export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectMembers.projectId],
+    references: [projects.id],
+  }),
+  member: one(users, {
+    fields: [projectMembers.memberId],
+    references: [users.id],
+  }),
+  workspace: one(workspaces, {
+    fields: [projectMembers.workspaceId],
+    references: [workspaces.id],
+  }),
+}));
+
 export const statesRelations = relations(states, ({ one }) => ({
   project: one(projects, {
     fields: [states.projectId],
