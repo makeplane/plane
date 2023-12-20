@@ -222,6 +222,7 @@ export class GithubController {
                 workspace_id: workspace_id,
                 project_id: project_id,
                 created_by_id: created_by,
+                importer_id: importer_id,
               },
             }, // kwargs
             other_data: {}, // other data
@@ -259,6 +260,7 @@ export class GithubController {
               workspace_id: workspace_id,
               project_id: project_id,
               created_by_id: created_by,
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
@@ -323,6 +325,7 @@ export class GithubController {
                   url: issue.html_url,
                 },
                 parent_id: null,
+                importer_id: importer_id,
               },
             },
           };
@@ -349,6 +352,7 @@ export class GithubController {
                   workspace_id: workspace_id,
                   project_id: project_id,
                   created_by_id: created_by,
+                  importer_id: importer_id,
                 },
               },
             };
@@ -376,6 +380,7 @@ export class GithubController {
                   workspace_id: workspace_id,
                   project_id: project_id,
                   created_by_id: created_by,
+                  importer_id: importer_id,
                 },
               },
             };

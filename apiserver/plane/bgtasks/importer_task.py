@@ -1,30 +1,29 @@
 # Python imports
-import json
-import requests
 import uuid
 
 # Django imports
-from django.conf import settings
-from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q, Max
 from django.contrib.auth.hashers import make_password
 
 # Third Party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
 from celery.exceptions import MaxRetriesExceededError
 
 # Module imports
-from plane.app.serializers import ImporterSerializer
 from plane.db.models import (
     Importer,
     WorkspaceMember,
-    GithubRepositorySync,
-    GithubRepository,
     ProjectMember,
-    WorkspaceIntegration,
     Label,
     User,
     IssueProperty,
+    IssueAssignee,
+    IssueLabel,
+    IssueSequence,
+    IssueActivity,
+    IssueComment,
+    IssueLink,
+    ModuleIssue,
 )
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
@@ -34,26 +33,7 @@ def service_importer(service, importer_id):
     pass
 
 
-def handle_exceptions(task_func):
-    @wraps(task_func)
-    def wrapper(*args, **kwargs):
-        try:
-            return task_func(*args, **kwargs)
-        except Exception as e:
-            data = kwargs.get("data")
-            if data:
-                importer_id = data.get("importer_id")
-                status = data.get("status")
-                if importer_id and status:
-                    importer = Importer.objects.get(pk=importer_id)
-                    importer.status = status
-                    importer.reason = str(e)
-                    importer.save(update_fields=["status", "reason"])
-
-    return wrapper
-
-
-@handle_exceptions
+## Utility functions
 def get_label_id(name, data):
     try:
         existing_label = (
@@ -70,7 +50,6 @@ def get_label_id(name, data):
         return None
 
 
-@handle_exceptions
 def get_state_id(name, data):
     try:
         existing_state = (
@@ -87,7 +66,6 @@ def get_state_id(name, data):
         return None
 
 
-@handle_exceptions
 def get_user_id(name):
     try:
         existing_user = User.objects.filter(email=name).values("id").first()
@@ -96,9 +74,18 @@ def get_user_id(name):
         return None
 
 
+def update_imported_items(importer_id, entity, entity_id):
+    importer = Importer.objects.get(pk=importer_id)
+    if importer.imported_data:
+        importer.imported_data.setdefault(str(entity), []).append(str(entity_id))
+    else:
+        importer.imported_data = {
+            str(entity): [str(entity_id)]
+        }
+    importer.save()
+
+
 ## Sync functions
-
-
 def members_sync(data):
     try:
         user = User.objects.get(email=data.get("email"))
@@ -165,7 +152,7 @@ def label_sync(data):
     )
 
     if not existing_label.exists() and data.get("name"):
-        Label.objects.create(
+        label = Label.objects.create(
             project_id=data.get("project_id"),
             workspace_id=data.get("workspace_id"),
             name=data.get("name"),
@@ -174,6 +161,7 @@ def label_sync(data):
             external_id=data.get("external_id", None),
             external_source=data.get("external_source"),
         )
+        update_imported_items(data.get("importer_id"), "labels", label.id)
 
 
 def state_sync(data):
@@ -198,7 +186,7 @@ def state_sync(data):
             existing_state.external_source = data.get("external_source")
             existing_state.save()
         else:
-            State.objects.create(
+            state = State.objects.create(
                 project_id=data.get("project_id"),
                 workspace_id=data.get("workspace_id"),
                 name=data.get("state_name"),
@@ -207,6 +195,7 @@ def state_sync(data):
                 external_id=data.get("external_id"),
                 external_source=data.get("external_source"),
             )
+            update_imported_items(data.get("importer_id"), "states", state.id)
 
 
 def issue_sync(data):
@@ -260,7 +249,7 @@ def issue_sync(data):
             state_id=get_state_id(data.get("state"), data).get("id")
             if get_state_id(data.get("state"), data)
             else default_state.id,
-            name=data.get("name", "Issue Created through Importer"),
+            name=data.get("name", "Issue Created through Importer")[:255],
             description_html=data.get("description_html", "<p></p>"),
             sequence_id=last_id,
             sort_order=largest_sort_order,
@@ -301,6 +290,8 @@ def issue_sync(data):
             verb="created",
             created_by_id=data.get("created_by_id"),
         )
+
+        update_imported_items(data.get("importer_id"), "issues", issue.id)
 
 
 def issue_label_sync(data):
@@ -369,7 +360,7 @@ def cycles_sync(data):
             workspace_id=data.get("workspace_id"),
         )
     except Cycle.DoesNotExist:
-        _ = Cycle.objects.create(
+        cycle = Cycle.objects.create(
             name=data.get("name"),
             description_html=data.get("description_html", "<p></p>"),
             project_id=data.get("project_id"),
@@ -378,6 +369,7 @@ def cycles_sync(data):
             external_id=data.get("external_id"),
             external_source=data.get("external_source"),
         )
+        update_imported_items(data.get("importer_id"), "cycles", cycle.id)
 
 
 def module_sync(data):
@@ -389,7 +381,7 @@ def module_sync(data):
             workspace_id=data.get("workspace_id"),
         )
     except Module.DoesNotExist:
-        _ = Module.objects.create(
+        module = Module.objects.create(
             name=data.get("name"),
             description_html=data.get("description_html", "<p></p>"),
             project_id=data.get("project_id"),
@@ -398,6 +390,7 @@ def module_sync(data):
             external_id=data.get("external_id"),
             external_source=data.get("external_source"),
         )
+        update_imported_items(data.get("importer_id"), "modules", module.id)
 
 
 def modules_issue_sync(data):
@@ -430,7 +423,6 @@ def import_sync(data):
 
 
 @shared_task(bind=True, queue="segway_task", max_retries=5)
-@handle_exceptions
 def import_task(self, data):
     type = data.get("type")
 
@@ -462,6 +454,10 @@ def import_task(self, data):
             # Retry with exponential backoff
             self.retry(exc=e, countdown=50, backoff=2)
         except MaxRetriesExceededError:
-            print(
-                f"Maximum retries reached for task. Exception: {e}, Type: {type}, Data: {data}"
-            )
+            # For max retries reached items fail the import
+            importer = Importer.objects.get(pk=data.get("importer_id"))
+            importer.status = "failed"
+            importer.reason = e
+            importer.save()
+
+        return
