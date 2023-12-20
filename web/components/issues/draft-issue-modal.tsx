@@ -66,7 +66,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
   // store
   const { user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds: workspaceProjects } = useProject();
   // derived values
   const projects = workspaceProjects;
   const user = userStore.currentUser;

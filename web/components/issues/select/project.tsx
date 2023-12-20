@@ -26,7 +26,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
     placement: "bottom-start",
   });
   // store hooks
-  const { joinedProjects, getProjectById } = useProject();
+  const { joinedProjectIds: joinedProjects, getProjectById } = useProject();
 
   const selectedProject = getProjectById(value);
 

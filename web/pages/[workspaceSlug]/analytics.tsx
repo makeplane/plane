@@ -28,13 +28,13 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
-      {workspaceProjects && workspaceProjects.length > 0 ? (
+      {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
         <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
