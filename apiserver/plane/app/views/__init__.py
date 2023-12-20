@@ -54,9 +54,6 @@ from .view import (
     GlobalViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
-    IssueViewUserPropertiesEndpoint,
-    IssueViewUserPropertiesEndpoint,
-    GlobalIssueViewUserPropertiesEndpoint,
 )
 from .cycle import (
     CycleViewSet,

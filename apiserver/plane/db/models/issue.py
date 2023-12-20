@@ -35,49 +35,43 @@ def get_default_properties():
 
 def get_default_filters():
     return {
-        "filters": {
-            "priority": None,
-            "state": None,
-            "state_group": None,
-            "assignees": None,
-            "created_by": None,
-            "labels": None,
-            "start_date": None,
-            "target_date": None,
-            "subscriber": None,
-        },
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
     }
 
 def get_default_display_filters():
     return {
-        "display_filters": {
-            "group_by": None,
-            "order_by": "-created_at",
-            "type": None,
-            "sub_issue": True,
-            "show_empty_groups": True,
-            "layout": "list",
-            "calendar_date_range": "",
-        },
+        "group_by": None,
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
     }
 
 def get_default_display_properties():
     return {
-        "display_properties": {
-            "assignee": True,
-            "attachment_count": True,
-            "created_on": True,
-            "due_date": True,
-            "estimate": True,
-            "key": True,
-            "labels": True,
-            "link": True,
-            "priority": True,
-            "start_date": True,
-            "state": True,
-            "sub_issue_count": True,
-            "updated_on": True,
-        },
+        "assignee": True,
+        "attachment_count": True,
+        "created_on": True,
+        "due_date": True,
+        "estimate": True,
+        "key": True,
+        "labels": True,
+        "link": True,
+        "priority": True,
+        "start_date": True,
+        "state": True,
+        "sub_issue_count": True,
+        "updated_on": True,
     }
 
 
@@ -438,7 +432,6 @@ class IssueProperty(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="issue_property_user",
     )
-    properties = models.JSONField(default=get_default_properties)
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)

@@ -10,7 +10,6 @@ def workspace_user_properties(apps, schema_editor):
         updated_workspace_user_properties.append(
             WorkspaceUserProperties(
                 user_id=workspace_members.member_id,
-                filters=workspace_members.view_props.get("filters"),
                 display_filters=workspace_members.view_props.get("display_filters"),
                 display_properties=workspace_members.view_props.get("display_properties"),
                 workspace_id=workspace_members.workspace_id,
@@ -27,15 +26,15 @@ def project_user_properties(apps, schema_editor):
         if project_member:
             issue_property.filters = project_member.view_props.get("filters")
             issue_property.display_filters = project_member.view_props.get("display_filters")
-            issue_property.display_properties = issue_property.properties
             updated_issue_user_properties.append(issue_property)
 
-    IssueProperty.objects.bulk_update(updated_issue_user_properties, ["filters", "display_filters", "display_properties"], batch_size=2000)
+    IssueProperty.objects.bulk_update(updated_issue_user_properties, ["filters", "display_filters"], batch_size=2000)
 
 
 def issue_view(apps, schema_editor):
     GlobalView = apps.get_model("db", "GlobalView")
     updated_issue_views = []
+    
     for global_view in GlobalView.objects.all():
         updated_issue_views.append(
             IssueView(
@@ -44,8 +43,10 @@ def issue_view(apps, schema_editor):
                 description=global_view.description,
                 query=global_view.query,
                 access=global_view.access,
-                query_data=global_view.query_data,
+                filters=global_view.query_data.get("filters", {}),
                 sort_order=global_view.sort_order,
+                created_by=global_view.created_by,
+                updated_by=global_view.updated_by,
             )
         )
     IssueView.objects.bulk_create(updated_issue_views, batch_size=100)
@@ -54,7 +55,7 @@ def issue_view(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0051_issueproperty_display_filters_and_more'),
+        ('db', '0051_remove_issueproperty_properties_and_more'),
     ]
 
     operations = [

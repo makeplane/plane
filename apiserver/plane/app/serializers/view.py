@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .base import BaseSerializer, DynamicBaseSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import GlobalView, IssueView, IssueViewFavorite, IssueViewUserProperties
+from plane.db.models import GlobalView, IssueView, IssueViewFavorite
 from plane.utils.issue_filters import issue_filters
 
 
@@ -75,16 +75,6 @@ class IssueViewFavoriteSerializer(BaseSerializer):
 
     class Meta:
         model = IssueViewFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "user",
-        ]
-
-class IssueViewUserPropertiesSerializer(BaseSerializer):
-    class Meta:
-        model = IssueViewUserProperties
         fields = "__all__"
         read_only_fields = [
             "workspace",

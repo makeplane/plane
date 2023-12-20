@@ -52,7 +52,7 @@ from .state import State
 
 from .cycle import Cycle, CycleIssue, CycleFavorite, CycleUserProperties
 
-from .view import GlobalView, IssueView, IssueViewFavorite, IssueViewUserProperties
+from .view import GlobalView, IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite, ModuleUserProperties
 
