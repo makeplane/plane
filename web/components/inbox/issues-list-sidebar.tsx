@@ -12,7 +12,7 @@ export const InboxIssuesListSidebar = observer(() => {
   const router = useRouter();
   const { inboxId, inboxIssueId } = router.query;
 
-  const { currentInboxIssues } = useInboxIssues();
+  const { currentInboxIssueIds: currentInboxIssues } = useInboxIssues();
 
   const issuesList = currentInboxIssues;
 

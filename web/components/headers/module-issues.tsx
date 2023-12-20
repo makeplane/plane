@@ -63,7 +63,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     projectMember: { projectMembers },
     moduleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
-  const { projectModules, getModuleById } = useModule();
+  const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -180,7 +180,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {projectModules?.map((moduleId) => (
+                  {projectModuleIds?.map((moduleId) => (
                     <ModuleDropdownOption moduleId={moduleId} />
                   ))}
                 </CustomMenu>

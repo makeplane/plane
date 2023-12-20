@@ -23,13 +23,13 @@ export const ModulesListView: React.FC = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { projectModules } = useModule();
+  const { projectModuleIds } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!projectModules)
+  if (!projectModuleIds)
     return (
       <Loader className="grid grid-cols-3 gap-4 p-8">
         <Loader.Item height="176px" />
@@ -43,13 +43,13 @@ export const ModulesListView: React.FC = observer(() => {
 
   return (
     <>
-      {projectModules.length > 0 ? (
+      {projectModuleIds.length > 0 ? (
         <>
           {modulesView === "list" && (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
                 <div className="flex h-full w-full flex-col overflow-y-auto">
-                  {projectModules.map((moduleId) => (
+                  {projectModuleIds.map((moduleId) => (
                     <ModuleListItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
@@ -70,7 +70,7 @@ export const ModulesListView: React.FC = observer(() => {
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
                   } auto-rows-max transition-all `}
                 >
-                  {projectModules.map((moduleId) => (
+                  {projectModuleIds.map((moduleId) => (
                     <ModuleCardItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>

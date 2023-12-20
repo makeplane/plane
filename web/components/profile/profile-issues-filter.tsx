@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
 // hooks
+import { useLabel } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store_legacy/root";
 // constants
@@ -12,20 +13,21 @@ import { EIssueFilterType } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 
 export const ProfileIssuesFilter = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query as {
     workspaceSlug: string;
   };
-
+  // store hook
   const {
-    workspace: workspaceStore,
     workspaceProfileIssuesFilter: { issueFilters, updateFilters },
   }: RootStore = useMobxStore();
-
+  const {
+    workspace: { workspaceLabels },
+  } = useLabel();
+  // derived values
   const states = undefined;
-  const labels = workspaceStore.workspaceLabels || undefined;
   const members = undefined;
-
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
@@ -87,7 +89,7 @@ export const ProfileIssuesFilter = observer(() => {
           filters={issueFilters?.filters ?? {}}
           handleFiltersUpdate={handleFiltersUpdate}
           states={states}
-          labels={labels}
+          labels={workspaceLabels}
           members={members}
         />
       </FiltersDropdown>

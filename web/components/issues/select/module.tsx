@@ -22,7 +22,7 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // store hooks
-  const { projectModules, getModuleById, fetchModules } = useModule();
+  const { projectModuleIds, getModuleById, fetchModules } = useModule();
   // popper-js
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
@@ -34,7 +34,7 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
 
   const selectedModule = value ? getModuleById(value) : null;
 
-  const options = projectModules?.map((moduleId) => {
+  const options = projectModuleIds?.map((moduleId) => {
     const moduleDetails = getModuleById(moduleId);
 
     return {

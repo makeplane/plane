@@ -28,7 +28,7 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
     placement: "bottom-start",
   });
 
-  const { projectAllCycles, fetchAllCycles, getCycleById } = useCycle();
+  const { projectCycleIds, fetchAllCycles, getCycleById } = useCycle();
 
   const fetchCycles = () => {
     if (workspaceSlug && projectId) fetchAllCycles(workspaceSlug, projectId);
@@ -36,7 +36,7 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
 
   const selectedCycle = value ? getCycleById(value) : null;
 
-  const options = projectAllCycles?.map((cycleId) => {
+  const options = projectCycleIds?.map((cycleId) => {
     const cycleDetail = getCycleById(cycleId);
     return {
       value: cycleId,

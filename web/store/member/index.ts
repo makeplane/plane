@@ -16,8 +16,6 @@ export interface IMemberRootStore {
 export class MemberRootStore implements IMemberRootStore {
   // observables
   memberMap: Record<string, IUserLite> = {};
-  // root store
-  rootStore: RootStore;
   // sub-stores
   workspace: IWorkspaceMemberStore;
   project: IProjectMemberStore;
@@ -27,11 +25,8 @@ export class MemberRootStore implements IMemberRootStore {
       // observables
       memberMap: observable,
     });
-
-    // root store
-    this.rootStore = _rootStore;
     // sub-stores
-    this.workspace = new WorkspaceMemberStore(_rootStore);
-    this.project = new ProjectMemberStore(_rootStore);
+    this.workspace = new WorkspaceMemberStore(this, _rootStore);
+    this.project = new ProjectMemberStore(this, _rootStore);
   }
 }

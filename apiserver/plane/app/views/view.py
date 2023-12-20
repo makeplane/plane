@@ -26,8 +26,9 @@ from plane.app.serializers import (
     IssueViewSerializer,
     IssueLiteSerializer,
     IssueViewFavoriteSerializer,
+    IssueViewUserPropertiesSerializer
 )
-from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission
+from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission, WorkspaceViewerPermission, ProjectLitePermission
 from plane.db.models import (
     Workspace,
     GlobalView,
@@ -37,14 +38,15 @@ from plane.db.models import (
     IssueReaction,
     IssueLink,
     IssueAttachment,
+    IssueViewUserProperties,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.grouper import group_results
 
 
 class GlobalViewViewSet(BaseViewSet):
-    serializer_class = GlobalViewSerializer
-    model = GlobalView
+    serializer_class = IssueViewSerializer
+    model = IssueView
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -58,6 +60,7 @@ class GlobalViewViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__isnull=True)
             .select_related("workspace")
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
@@ -250,3 +253,60 @@ class IssueViewFavoriteViewSet(BaseViewSet):
         )
         view_favourite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GlobalIssueViewUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def patch(self, request, slug, view_id):
+        issue_view_properties = IssueViewUserProperties.objects.get(
+            user=request.user,
+            workspace__slug=slug,
+            view_id=view_id,
+        )
+
+        issue_view_properties.filters = request.data.get("filters", issue_view_properties.filters)
+        issue_view_properties.display_filters = request.data.get("display_filters", issue_view_properties.display_filters)
+        issue_view_properties.display_properties = request.data.get("display_properties", issue_view_properties.display_properties)
+        issue_view_properties.save()
+
+        serializer = IssueViewUserPropertiesSerializer(issue_view_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug, view_id):
+        issue_view_properties, _ = IssueViewUserProperties.objects.get_or_create(
+            user=request.user, workspace__slug=slug, view_id=view_id
+        )
+        serializer = IssueViewUserPropertiesSerializer(issue_view_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IssueViewUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def patch(self, request, slug, project_id, view_id):
+        issue_view_properties = IssueViewUserProperties.objects.get(
+            user=request.user,
+            workspace__slug=slug,
+            project_id=project_id,
+            view_id=view_id,
+        )
+
+        issue_view_properties.filters = request.data.get("filters", issue_view_properties.filters)
+        issue_view_properties.display_filters = request.data.get("display_filters", issue_view_properties.display_filters)
+        issue_view_properties.display_properties = request.data.get("display_properties", issue_view_properties.display_properties)
+        issue_view_properties.save()
+
+        serializer = IssueViewUserPropertiesSerializer(issue_view_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug, project_id, view_id):
+        issue_view_properties, _ = IssueViewUserProperties.objects.get_or_create(
+            user=request.user, workspace__slug=slug, project_id=project_id, view_id=view_id
+        )
+        serializer = IssueViewUserPropertiesSerializer(issue_view_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)

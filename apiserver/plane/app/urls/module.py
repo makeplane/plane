@@ -103,7 +103,7 @@ urlpatterns = [
         name="bulk-modules-create",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/properties/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
         ModuleUserPropertiesEndpoint.as_view(),
         name="cycle-user-filters",
     )

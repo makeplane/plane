@@ -6,7 +6,7 @@ from django.conf import settings
 from . import ProjectBaseModel
 
 
-def get_default_props():
+def get_default_filters():
     return {
         "filters": {
             "priority": None,
@@ -19,6 +19,10 @@ def get_default_props():
             "target_date": None,
             "subscriber": None,
         },
+    }
+
+def get_default_display_filters():
+    return {
         "display_filters": {
             "group_by": None,
             "order_by": "-created_at",
@@ -28,6 +32,10 @@ def get_default_props():
             "layout": "list",
             "calendar_date_range": "",
         },
+    }
+
+def get_default_display_properties():
+    return {
         "display_properties": {
             "assignee": True,
             "attachment_count": True,
@@ -137,7 +145,9 @@ class CycleUserProperties(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="cycle_user_properties",
     )
-    view_props = models.JSONField(default=get_default_props)
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(default=get_default_display_properties)
 
 
     class Meta:

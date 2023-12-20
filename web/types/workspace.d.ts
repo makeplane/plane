@@ -28,14 +28,13 @@ export interface IWorkspaceLite {
 
 export interface IWorkspaceMemberInvitation {
   accepted: boolean;
-  readonly id: string;
   email: string;
-  token: string;
+  id: string;
   message: string;
   responded_at: Date;
-  role: TUserWorkspaceRole;
-  created_by_detail: IUser;
-  workspace: IWorkspace;
+  role: EUserWorkspaceRoles;
+  token: string;
+  workspace: string;
 }
 
 export interface IWorkspaceBulkInviteFormData {

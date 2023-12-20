@@ -30,7 +30,7 @@ export const ProjectSidebarList: FC = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView, projectMap } = useProject();
+  const { joinedProjectIds: joinedProjects, favoriteProjectIds: favoriteProjects, orderProjectsWithSortOrder, updateProjectView, projectMap } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

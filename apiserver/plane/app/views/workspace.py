@@ -45,6 +45,7 @@ from plane.app.serializers import (
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     ProjectMemberRoleSerializer,
+    WorkspaceUserPropertiesSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
@@ -65,6 +66,7 @@ from plane.db.models import (
     WorkspaceMember,
     CycleIssue,
     IssueReaction,
+    WorkspaceUserProperties
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -72,6 +74,7 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
     WorkspaceViewerPermission,
     WorkspaceUserPermission,
+    ProjectLitePermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
@@ -1398,3 +1401,30 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
             project__project_projectmember__member=request.user,
         ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
         return Response(labels, status=status.HTTP_200_OK)
+
+
+class WorkspaceUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def patch(self, request, slug):
+        workspace_properties = WorkspaceUserProperties.objects.get(
+            user=request.user,
+            workspace__slug=slug,
+        )
+        
+        workspace_properties.filters = request.data.get("filters", workspace_properties.filters)
+        workspace_properties.display_filters = request.data.get("display_filters", workspace_properties.display_filters)
+        workspace_properties.display_properties = request.data.get("display_properties", workspace_properties.display_properties)
+        workspace_properties.save()
+
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug):
+        workspace_properties, _ = WorkspaceUserProperties.objects.get_or_create(
+            user=request.user, workspace__slug=slug
+        )
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)
