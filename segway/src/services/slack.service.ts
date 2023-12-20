@@ -104,7 +104,7 @@ export class SlackService {
     const slackAccessToken = slackConfig.slackConfig.access_token;
 
     try {
-      await fetch("https://slack.com/api/views.open", {
+      return await fetch("https://slack.com/api/views.open", {
         method: "POST",
         body: JSON.stringify({
           trigger_id: triggerId,
@@ -127,7 +127,7 @@ export class SlackService {
     }
     const slackAccessToken = slackConfig.slackConfig.access_token;
     try {
-      await fetch("https://slack.com/api/views.update", {
+      return await fetch("https://slack.com/api/views.update", {
         method: "POST",
         body: JSON.stringify({
           view_id: viewId,

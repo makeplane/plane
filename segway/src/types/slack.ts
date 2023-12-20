@@ -126,8 +126,10 @@ export interface ISlackMessage {
 export interface ISlackAction {
   action_id: string;
   block_id: string;
-  text: Text;
-  value: string;
+  selected_option?: {
+    text: ISlackText;
+    value: string;
+  };
   type: string;
   action_ts: string;
 }
