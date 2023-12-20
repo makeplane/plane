@@ -51,6 +51,12 @@ export type TBlockActionPayload = {
 
 export type TViewSubmissionPayload = {
   type: "view_submission";
+  team: ISlackTeam;
+  user: ISlackUser;
+  api_app_id: string;
+  token: string;
+  trigger_id: string;
+  view: ISlackView;
 };
 
 export type TViewClosedPayload = {
@@ -74,7 +80,7 @@ export interface ISlackView {
   private_metadata: string;
   callback_id: string;
   state: {
-    values: any[];
+    values: Record<string, any>;
   };
   hash: string;
   title: ISlackText;
