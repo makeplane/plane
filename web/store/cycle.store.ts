@@ -164,15 +164,15 @@ export class CycleStore implements ICycleStore {
    * @param projectId
    * @returns
    */
-  fetchAllCycles = async (workspaceSlug: string, projectId: string) => {
-    const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId);
-    runInAction(() => {
-      cyclesResponse.forEach((cycle) => {
-        set(this.cycleMap, [cycle.id], cycle);
+  fetchAllCycles = async (workspaceSlug: string, projectId: string) =>
+    await this.cycleService.getCyclesWithParams(workspaceSlug, projectId).then((response) => {
+      runInAction(() => {
+        response.forEach((cycle) => {
+          set(this.cycleMap, [cycle.id], cycle);
+        });
       });
+      return response;
     });
-    return cyclesResponse;
-  };
 
   /**
    * @description fetches active cycle for a project
@@ -180,15 +180,15 @@ export class CycleStore implements ICycleStore {
    * @param projectId
    * @returns
    */
-  fetchActiveCycle = async (workspaceSlug: string, projectId: string) => {
-    const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current");
-    runInAction(() => {
-      cyclesResponse.forEach((cycle) => {
-        set(this.activeCycleMap, [cycle.id], cycle);
+  fetchActiveCycle = async (workspaceSlug: string, projectId: string) =>
+    await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current").then((response) => {
+      runInAction(() => {
+        response.forEach((cycle) => {
+          set(this.activeCycleMap, [cycle.id], cycle);
+        });
       });
+      return response;
     });
-    return cyclesResponse;
-  };
 
   /**
    * @description fetches cycle details
@@ -197,14 +197,14 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    * @returns
    */
-  fetchCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    const response = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);
-    runInAction(() => {
-      set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
-      set(this.activeCycleMap, [response.id], { ...this.activeCycleMap?.[response.id], ...response });
+  fetchCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
+      runInAction(() => {
+        set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
+        set(this.activeCycleMap, [response.id], { ...this.activeCycleMap?.[response.id], ...response });
+      });
+      return response;
     });
-    return response;
-  };
 
   /**
    * @description creates a new cycle
@@ -213,14 +213,14 @@ export class CycleStore implements ICycleStore {
    * @param data
    * @returns
    */
-  createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => {
-    const response = await this.cycleService.createCycle(workspaceSlug, projectId, data);
-    runInAction(() => {
-      set(this.cycleMap, [response.id], response);
-      set(this.activeCycleMap, [response.id], response);
+  createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
+    await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
+      runInAction(() => {
+        set(this.cycleMap, [response.id], response);
+        set(this.activeCycleMap, [response.id], response);
+      });
+      return response;
     });
-    return response;
-  };
 
   /**
    * @description updates cycle details
@@ -230,14 +230,14 @@ export class CycleStore implements ICycleStore {
    * @param data
    * @returns
    */
-  updateCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>) => {
-    const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
-    runInAction(() => {
-      set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
-      set(this.activeCycleMap, [cycleId], { ...this.activeCycleMap?.[cycleId], ...data });
+  updateCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>) =>
+    await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data).then((response) => {
+      runInAction(() => {
+        set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
+        set(this.activeCycleMap, [cycleId], { ...this.activeCycleMap?.[cycleId], ...data });
+      });
+      return response;
     });
-    return response;
-  };
 
   /**
    * @description deletes a cycle
@@ -245,14 +245,13 @@ export class CycleStore implements ICycleStore {
    * @param projectId
    * @param cycleId
    */
-  deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+  deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
         omit(this.cycleMap, [cycleId]);
         omit(this.activeCycleMap, [cycleId]);
       });
     });
-  };
 
   /**
    * @description adds a cycle to favorites
@@ -261,20 +260,16 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    * @returns
    */
-  addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
-    // updating through api.
-    const response = await this.cycleService
-      .addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId })
-      .then(() => {
-        runInAction(() => {
-          if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
-          if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
-        });
+  addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId }).then((response) => {
+      const currentCycle = this.getCycleById(cycleId);
+      const currentActiveCycle = this.getActiveCycleById(cycleId);
+      runInAction(() => {
+        if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
+        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
-    return response;
-  };
+      return response;
+    });
 
   /**
    * @description removes a cycle from favorites
@@ -283,16 +278,14 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    * @returns
    */
-  removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
-    // updating through api.
-    const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId).then(() => {
+  removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId).then((response) => {
+      const currentCycle = this.getCycleById(cycleId);
+      const currentActiveCycle = this.getActiveCycleById(cycleId);
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
         if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
+      return response;
     });
-    return response;
-  };
 }
