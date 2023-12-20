@@ -10,7 +10,7 @@ import showdown from "showdown";
 import { Octokit } from "octokit";
 import { getOctokit } from "../utils/github.authentication";
 // logger
-import { logger } from "../utils/logger"
+import { logger } from "../utils/logger";
 // mq
 import { MQSingleton } from "../mq/singleton";
 // middleware
@@ -41,7 +41,7 @@ export class GithubController {
 
     do {
       results = await octokit.request(requestPath, { ...requestParams, page });
-      returnData.push(...results.data)
+      returnData.push(...results.data);
       page++;
     } while (results.data.length !== 0);
 
@@ -52,7 +52,7 @@ export class GithubController {
     issue_number: number,
     comments: { [key: string]: any }[]
   ) => {
-    const bulk_comments: { [key: string]: string }[] = [];
+    const bulk_comments: { [key: string]: string | number }[] = [];
     const converter = new showdown.Converter({ optionKey: "value" });
 
     comments.forEach((comment) => {
@@ -73,6 +73,21 @@ export class GithubController {
     });
 
     return bulk_comments;
+  };
+
+  private githubLabelCreator = (
+    issue_number: number,
+    labels: (string | { [key: string]: any })[]
+  ) => {
+    const issueLabels: { [key: string]: string | number }[] = [];
+
+    labels.forEach((label) =>
+      issueLabels.push({
+        name: typeof label === "object" && label !== null ? label.name : label,
+      })
+    );
+
+    return issueLabels;
   };
 
   @Post("")
@@ -106,7 +121,6 @@ export class GithubController {
         { owner, repo }
       );
 
-
       // Fetch total collaborators count
       const collaborators = await this.getAllEntities(
         octokit,
@@ -114,7 +128,7 @@ export class GithubController {
         { owner, repo }
       );
 
-      const labelCount = labels.length
+      const labelCount = labels.length;
 
       return res.status(200).json({
         issue_count: totalIssues,
@@ -157,12 +171,12 @@ export class GithubController {
       // Get the octokit instance
       const octokit = await getOctokit(installationId);
 
-      const { data } = await octokit.request('GET /installation/repositories', {
+      const { data } = await octokit.request("GET /installation/repositories", {
         q: `page=${page}`,
         headers: {
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      })
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
 
       return res.status(200).json(data);
     } catch (error) {
@@ -192,6 +206,9 @@ export class GithubController {
       // Get the octokit instance
       const octokit = await getOctokit(installation_id);
 
+      // Markdown converter
+      const converter = new showdown.Converter({ optionKey: "value" });
+
       // users
       const members = [];
       for (const user of users) {
@@ -200,7 +217,7 @@ export class GithubController {
             args: [], // args
             kwargs: {
               data: {
-                type: "user.create",
+                type: "member.sync",
                 email: user.email,
                 workspace_id: workspace_id,
                 project_id: project_id,
@@ -212,11 +229,10 @@ export class GithubController {
           members.push(user);
           this.mq?.publish(
             githubMembers,
-            "plane.bgtasks.importer_task.members_sync"
+            "plane.bgtasks.importer_task.import_task"
           );
         }
       }
-
 
       // Labels
       const githubLabels = await octokit.paginate(
@@ -235,10 +251,10 @@ export class GithubController {
           args: [], // args
           kwargs: {
             data: {
+              type: "label.sync",
               external_source: "github",
               external_id: label.id,
               color: `#${label.color}`,
-              type: "label.create",
               name: label.name,
               workspace_id: workspace_id,
               project_id: project_id,
@@ -247,10 +263,8 @@ export class GithubController {
           }, // kwargs
           other_data: {}, // other data
         };
-        this.mq?.publish(labelSync, "plane.bgtasks.importer_task.label_sync");
+        this.mq?.publish(labelSync, "plane.bgtasks.importer_task.import_task");
       }
-
-      const converter = new showdown.Converter({ optionKey: "value" });
 
       // Issues
       const githubIssues = await octokit.paginate(
@@ -270,7 +284,6 @@ export class GithubController {
 
       // Issue comments
       const comments = [];
-      // Issue Comments
       const githubComments = await octokit.paginate(
         octokit.rest.issues.listCommentsForRepo,
         {
@@ -291,11 +304,12 @@ export class GithubController {
           const description_html = await converter.makeHtml(
             issue?.body_html || "<p><p>"
           );
-          const issuessync = {
+
+          const issueSync = {
             args: [], // args
             kwargs: {
               data: {
-                type: "issue.create",
+                type: "issue.sync",
                 name: issue.title,
                 description_html: description_html,
                 state: issue.state,
@@ -304,24 +318,73 @@ export class GithubController {
                 created_by_id: created_by,
                 external_id: issue.id,
                 external_source: "github",
-                comments_list: this.githubCommentCreator(
-                  issue.number,
-                  comments
-                ),
                 link: {
                   title: `Original Issue in Github ${issue.number}`,
                   url: issue.html_url,
                 },
-                labels_list: issue.labels,
                 parent_id: null,
               },
             },
           };
+          // Push the issue
+          this.mq?.publish(issueSync, "plane.bgtasks.importer_task.import_task");
 
-          this.mq?.publish(
-            issuessync,
-            "plane.bgtasks.importer_task.issue_sync"
+          // Push the comments
+          const githubIssueComments = this.githubCommentCreator(
+            issue.number,
+            comments
           );
+
+          githubIssueComments.forEach((githubIssueComment) => {
+            const commentSync = {
+              args: [],
+              kwargs: {
+                data: {
+                  type: "issue.comment.sync",
+                  comment_html: githubIssueComment.comment_html,
+                  external_source: githubIssueComment.external_source,
+                  external_id: githubIssueComment.external_id,
+                  external_issue_id: issue.id,
+                  external_issue_source: "github",
+                  workspace_id: workspace_id,
+                  project_id: project_id,
+                  created_by_id: created_by,
+                },
+              },
+            };
+            // push to queue
+            this.mq?.publish(
+              commentSync,
+              "plane.bgtasks.importer_task.import_task"
+            );
+          });
+
+          // Push the labels
+          const githubLabels = this.githubLabelCreator(
+            issue.number,
+            issue.labels
+          );
+          githubLabels.forEach((githubLabel) => {
+            const labelSync = {
+              args: [],
+              kwargs: {
+                data: {
+                  type: "issue.label.sync",
+                  name: githubLabel.name,
+                  external_issue_id: issue.id,
+                  external_issue_source: "github",
+                  workspace_id: workspace_id,
+                  project_id: project_id,
+                  created_by_id: created_by,
+                },
+              },
+            };
+            //Push to queue
+            this.mq?.publish(
+              labelSync,
+              "plane.bgtasks.importer_task.import_task"
+            );
+          });
         }
       }
 
@@ -329,7 +392,7 @@ export class GithubController {
         args: [], // args
         kwargs: {
           data: {
-            type: "import.create",
+            type: "import.sync",
             workspace_id: workspace_id,
             project_id: project_id,
             created_by_id: created_by,
@@ -340,7 +403,7 @@ export class GithubController {
         other_data: {}, // other data
       };
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_sync");
+      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_task");
 
       return;
     } catch (error) {
@@ -349,7 +412,7 @@ export class GithubController {
         args: [], // args
         kwargs: {
           data: {
-            type: "import.create",
+            type: "import.sync",
             workspace_id: workspace_id,
             project_id: project_id,
             created_by_id: created_by,
@@ -360,7 +423,7 @@ export class GithubController {
         other_data: {}, // other data
       };
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_sync");
+      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_task");
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
