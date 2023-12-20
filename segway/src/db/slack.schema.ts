@@ -105,6 +105,32 @@ export const projectMembers = pgTable("project_members", {
   isActive: boolean("is_active"),
 });
 
+export const projectLabels = pgTable("labels", {
+  id: uuid("id").primaryKey(),
+  name: text("name"),
+  description: text("description"),
+  projectId: uuid("project_id"),
+  workspaceId: uuid("workspace_id"),
+  parentId: uuid("parent_id"),
+  color: text("color"),
+  sortOrder: integer("sort_order"),
+});
+
+export const projectlabelsRelations = relations(projectLabels, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectLabels.projectId],
+    references: [projects.id],
+  }),
+  workspace: one(workspaces, {
+    fields: [projectLabels.workspaceId],
+    references: [workspaces.id],
+  }),
+  parent: one(projectLabels, {
+    fields: [projectLabels.parentId],
+    references: [projectLabels.id],
+  }),
+}));
+
 export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
   project: one(projects, {
     fields: [projectMembers.projectId],

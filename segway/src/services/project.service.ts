@@ -1,6 +1,11 @@
 import { eq, sql } from "drizzle-orm";
 import { DatabaseSingleton } from "../db/singleton";
-import { projectMembers, projects, states } from "../db/slack.schema";
+import {
+  projectLabels,
+  projectMembers,
+  projects,
+  states,
+} from "../db/slack.schema";
 
 export class ProjectService {
   async getProjectsForWorkspace(workspaceId: string) {
@@ -45,6 +50,24 @@ export class ProjectService {
       });
 
       return members;
+    } catch (error) {
+      throw new Error("Database not found");
+    }
+  }
+
+  async getProjectLabels(projectId: string) {
+    const db = DatabaseSingleton.getInstance().db;
+
+    if (!db) {
+      throw new Error("Database not found");
+    }
+
+    try {
+      const labels = await db.query.projectLabels.findMany({
+        where: eq(projectLabels.projectId, projectId),
+      });
+
+      return labels;
     } catch (error) {
       throw new Error("Database not found");
     }
