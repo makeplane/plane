@@ -246,6 +246,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // ================ Page Menu Actions ==================
   const duplicate_page = async () => {
     const currentPageValues = getValues();
+
+    if (!currentPageValues?.description_html) {
+      currentPageValues.description_html = pageDetails?.description_html as string;
+    }
+
     const formData: Partial<IPage> = {
       name: "Copy of " + pageDetails?.name,
       description_html: currentPageValues.description_html,
@@ -336,7 +341,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
     }, 1500),
-    [handleSubmit]
+    [handleSubmit, pageDetails]
   );
 
   if (error)
