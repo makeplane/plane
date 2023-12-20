@@ -9,7 +9,7 @@ import {
   CreateIssueModalViewProjects,
 } from "../utils/slack/create-issue-modal";
 import { ProjectService } from "../services/project.service";
-import { convertProjectToOptions } from "../utils/slack/convert-project-to-options";
+import { convertToSlackOptions } from "../utils/slack/convert-to-slack-options";
 import { processSlackPayload } from "../handlers/slack/core";
 import { TSlackPayload } from "types/slack";
 
@@ -55,7 +55,7 @@ export class SlackController {
 
     const projectList =
       await projectService.getProjectsForWorkspace(workspaceId);
-    const projectPlainTextOption = convertProjectToOptions(projectList);
+    const projectPlainTextOption = convertToSlackOptions(projectList);
 
     await slackService.openModal(
       req.body.trigger_id,
@@ -67,17 +67,12 @@ export class SlackController {
   @Post("events")
   async handleSlackEvents(req: Request, res: Response) {
     const payload = JSON.parse(req.body.payload) as TSlackPayload;
-    const success = processSlackPayload(payload);
+    const success = await processSlackPayload(payload);
 
     if (!success) {
+      console.log("error");
       res.sendStatus(500);
     }
-
-    // const selectedProjectId = payload.actions[0].selected_option.value;
-    // const states = await projectService.getProjectStates(selectedProjectId);
-    // const members = await projectService.getProjectMembers(selectedProjectId);
-    // const labels = await projectService.getProjectLabels(selectedProjectId);
-
     res.sendStatus(200);
   }
 }

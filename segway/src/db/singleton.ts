@@ -1,6 +1,6 @@
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as schema from "./slack.schema";
+import * as schema from "./schema";
 // logger
 import { logger } from "../utils/logger";
 
