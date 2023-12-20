@@ -322,14 +322,11 @@ const renderItems = () => {
       // @ts-ignore
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.body,
+        appendTo: () => document.querySelector("#tiptap-container"),
         content: component.element,
-        inlinePositioning: true,
         showOnCreate: true,
         interactive: true,
         trigger: "manual",
-        // inlinePositioning: true,
-        flip: true,
         placement: "bottom-start",
       });
     },
