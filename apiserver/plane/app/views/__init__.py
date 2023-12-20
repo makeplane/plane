@@ -45,7 +45,8 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    WorkspaceProjectMemberEndpoint
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
 )
 from .state import StateViewSet
 from .view import (
@@ -53,6 +54,9 @@ from .view import (
     GlobalViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
+    IssueViewUserPropertiesEndpoint,
+    IssueViewUserPropertiesEndpoint,
+    GlobalIssueViewUserPropertiesEndpoint,
 )
 from .cycle import (
     CycleViewSet,

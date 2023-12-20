@@ -17,6 +17,7 @@ from .workspace import (
     WorkspaceThemeSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
+    WorkspaceUserPropertiesSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -34,7 +35,7 @@ from .project import (
     ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
+from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer, IssueViewUserPropertiesSerializer
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,

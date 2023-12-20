@@ -785,10 +785,10 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         )
-        if request.data.get("view_props", None) is None:
-            return Response({"error": "view_props is required"}, status=status.HTTP_400_BAD_REQUEST)
         
-        cycle_properties.view_props = request.data.get("view_props", {})
+        cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
+        cycle_properties.display_filters = request.data.get("display_filters", cycle_properties.display_filters)
+        cycle_properties.display_properties = request.data.get("display_properties", cycle_properties.display_properties)
         cycle_properties.save()
 
         serializer = CycleUserPropertiesSerializer(cycle_properties)
