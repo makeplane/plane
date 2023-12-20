@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { logger } from "../utils/logger";
 
-const AuthKeyMiddlware: RequestHandler = (req, res, next) => {
+const AuthKeyMiddleware: RequestHandler = (req, res, next) => {
   // Retrieve the API key from the request header
   const apiKey = req.headers["x-api-key"];
 
@@ -19,4 +19,4 @@ const AuthKeyMiddlware: RequestHandler = (req, res, next) => {
   }
 };
 
-export default AuthKeyMiddlware;
+export default AuthKeyMiddleware;
