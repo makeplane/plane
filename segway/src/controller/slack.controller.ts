@@ -4,10 +4,7 @@ import { getSlackMessageTemplate } from "../utils/slack/message-templates";
 import { SlackService } from "../services/slack.service";
 import { issueActivitySummary } from "../utils/slack/generateActivityMessage";
 import { logger } from "../utils/logger";
-import {
-  CreateIssueModalViewFull,
-  CreateIssueModalViewProjects,
-} from "../utils/slack/create-issue-modal";
+import { CreateIssueModalViewProjects } from "../utils/slack/create-issue-modal";
 import { ProjectService } from "../services/project.service";
 import { convertToSlackOptions } from "../utils/slack/convert-to-slack-options";
 import { processSlackPayload } from "../handlers/slack/core";
@@ -67,6 +64,7 @@ export class SlackController {
   @Post("events")
   async handleSlackEvents(req: Request, res: Response) {
     const payload = JSON.parse(req.body.payload) as TSlackPayload;
+    console.log(payload);
     const success = await processSlackPayload(payload);
 
     if (!success) {
