@@ -5,8 +5,6 @@ import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IIn
 import { InstanceService } from "services/instance.service";
 
 export interface IInstanceStore {
-  loader: boolean;
-  error: any | null;
   // issues
   instance: IInstance | null;
   instanceAdmins: IInstanceAdmin[] | null;
@@ -22,8 +20,6 @@ export interface IInstanceStore {
 }
 
 export class InstanceStore implements IInstanceStore {
-  loader: boolean = false;
-  error: any | null = null;
   instance: IInstance | null = null;
   instanceAdmins: IInstanceAdmin[] | null = null;
   configurations: IInstanceConfiguration[] | null = null;
@@ -33,8 +29,6 @@ export class InstanceStore implements IInstanceStore {
   constructor() {
     makeObservable(this, {
       // observable
-      loader: observable.ref, // TODO: Remove loader and error and handle it in the component.
-      error: observable.ref,
       instance: observable,
       instanceAdmins: observable,
       configurations: observable,
@@ -57,7 +51,6 @@ export class InstanceStore implements IInstanceStore {
    */
   get formattedConfig() {
     if (!this.configurations) return null;
-
     return this.configurations?.reduce((formData: IFormattedInstanceConfiguration, config) => {
       formData[config.key] = config.value;
       return formData;
@@ -96,11 +89,12 @@ export class InstanceStore implements IInstanceStore {
    * @param data
    */
   updateInstanceInfo = async (data: Partial<IInstance>) => {
-    runInAction(() => {
-      this.instance = response;
+    return await this.instanceService.updateInstanceInfo(data).then((response) => {
+      runInAction(() => {
+        this.instance = response;
+      });
+      return response;
     });
-    const response = await this.instanceService.updateInstanceInfo(data);
-    return response;
   };
 
   /**
@@ -124,28 +118,11 @@ export class InstanceStore implements IInstanceStore {
    * @param data
    */
   updateInstanceConfigurations = async (data: Partial<IFormattedInstanceConfiguration>) => {
-    try {
+    return await this.instanceService.updateInstanceConfigurations(data).then((response) => {
       runInAction(() => {
-        this.loader = true;
-        this.error = null;
-      });
-
-      const response = await this.instanceService.updateInstanceConfigurations(data);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = null;
         this.configurations = this.configurations ? [...this.configurations, ...response] : response;
       });
-
       return response;
-    } catch (error) {
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
+    });
   };
 }

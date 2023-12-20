@@ -41,7 +41,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
-  const { projectViews, getViewById } = useProjectView();
+  const { projectViewIds: projectViews, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },

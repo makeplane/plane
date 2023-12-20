@@ -26,15 +26,15 @@ export class AppConfigStore implements IAppConfigStore {
     this.appConfigService = new AppConfigService();
   }
 
+  /**
+   * Fetches the app config from the API
+   */
   fetchAppConfig = async () => {
-    try {
-      const config = await this.appConfigService.envConfig();
+    return await this.appConfigService.envConfig().then((config) => {
       runInAction(() => {
         this.envConfig = config;
       });
       return config;
-    } catch (error) {
-      throw error;
-    }
+    });
   };
 }

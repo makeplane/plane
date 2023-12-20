@@ -23,7 +23,7 @@ export const ProjectViewsList = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { projectViews, getViewById } = useProjectView();
+  const { projectViewIds: projectViews, getViewById } = useProjectView();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
