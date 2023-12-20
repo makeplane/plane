@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useCycle, useLabel, useProject, useProjectState, useUser } from "hooks/store";
+import { useApplication, useCycle, useLabel, useMember, useProject, useProjectState, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -59,7 +59,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     projectIssuesFilter: projectIssueFiltersStore,
-    projectMember: { projectMembers },
     cycleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
   const { projectAllCycles, getCycleById } = useCycle();
@@ -75,6 +74,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds, getProjectMemberDetails },
+  } = useMember();
 
   const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
 
@@ -201,7 +203,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              members={projectMemberIds?.map((userId) => {
+                const memberDetails = getProjectMemberDetails(userId);
+
+                return memberDetails?.member;
+              })}
               states={projectStates}
             />
           </FiltersDropdown>

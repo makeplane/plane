@@ -16,7 +16,6 @@ import {
   useUser,
   useInbox,
 } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Spinner } from "@plane/ui";
 import { JoinProject } from "components/auth-screens";
