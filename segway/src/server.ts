@@ -99,7 +99,6 @@ class ApiServer extends Server {
     for (const name in controllers) {
       if (Object.prototype.hasOwnProperty.call(controllers, name)) {
         const Controller = (controllers as any)[name];
-        console.log(Controller)
         controllerInstances.push(new Controller(this.db, this.mq));
       }
     }
