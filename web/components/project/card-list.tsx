@@ -23,12 +23,11 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
     project: projectStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
-    user: { currentProjectRole },
+    user: { currentWorkspaceRole },
   } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!projects) {
     return (
