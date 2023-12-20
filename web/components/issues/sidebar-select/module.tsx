@@ -28,7 +28,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
   const {
     moduleIssues: { removeIssueFromModule, addIssueToModule },
   } = useMobxStore();
-  const { projectModules, getModuleById } = useModule();
+  const { projectModuleIds, getModuleById } = useModule();
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -64,7 +64,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
       });
   };
 
-  const options = projectModules?.map((moduleId) => {
+  const options = projectModuleIds?.map((moduleId) => {
     const moduleDetail = getModuleById(moduleId);
     return {
       value: moduleId,
