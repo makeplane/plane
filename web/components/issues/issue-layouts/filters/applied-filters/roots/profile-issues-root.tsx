@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 
 export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -37,14 +37,14 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!workspaceSlug) return;
     if (!value) {
-      updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: null });
+      updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: null });
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug, EFilterType.FILTERS, {
+    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, {
       [key]: newValues,
     });
   };
@@ -55,7 +55,7 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, EFilterType.FILTERS, { ...newFilters });
+    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { ...newFilters });
   };
 
   // return if no filters are applied

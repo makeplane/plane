@@ -14,7 +14,7 @@ import { Button } from "@plane/ui";
 import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { ISearchIssueResponse } from "types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

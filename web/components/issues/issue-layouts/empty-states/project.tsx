@@ -8,7 +8,7 @@ import { NewEmptyState } from "components/common/new-empty-state";
 import { EUserProjectRoles } from "constants/project";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // store hooks

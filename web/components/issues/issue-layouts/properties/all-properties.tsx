@@ -113,7 +113,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* assignee */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
+      {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
@@ -123,10 +123,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           disabled={isReadOnly}
           multiple
         />
-      </WithDisplayPropertiesHOC>
+      </WithDisplayPropertiesHOC> */}
 
       {/* estimates */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
+      {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
         <IssuePropertyEstimates
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
@@ -134,7 +134,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           disabled={isReadOnly}
           hideDropdownArrow
         />
-      </WithDisplayPropertiesHOC>
+      </WithDisplayPropertiesHOC> */}
 
       {/* extra render properties */}
       {/* sub-issues */}

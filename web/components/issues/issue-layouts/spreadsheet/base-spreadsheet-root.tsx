@@ -19,7 +19,7 @@ import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
 import { IIssue, IIssueDisplayFilterOptions } from "types";
-import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
+import { EIssueFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
@@ -90,7 +90,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       issueFiltersStore.updateFilters(
         workspaceSlug,
         projectId,
-        EFilterType.DISPLAY_FILTERS,
+        EIssueFilterType.DISPLAY_FILTERS,
         {
           ...updatedDisplayFilter,
         },

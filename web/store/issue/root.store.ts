@@ -27,7 +27,6 @@ export interface IIssueRootStore {
   cycleId: string | undefined;
   moduleId: string | undefined;
   viewId: string | undefined;
-
   profileView: string | undefined;
   states: any | undefined;
   labels: any | undefined;
@@ -72,7 +71,6 @@ export class IssueRootStore {
   cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
   viewId: string | undefined = undefined;
-
   profileView: string | undefined = undefined;
   states: any | undefined = undefined;
   labels: any | undefined = undefined;
@@ -125,29 +123,28 @@ export class IssueRootStore {
     });
 
     autorun(() => {
-      // if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
-      // if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
-      // if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
-      // if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
-      // if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
-      // if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
+      if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
+      if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
+      if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
+      if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
+      if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
+      if (rootStore.user.currentUser?.id) this.userId = rootStore.user.currentUser?.id;
       // if (rootStore?.workspace?.profileView) this.profileView = rootStore?.workspace?.profileView;
-      // if (rootStore?.user?.currentUser?.id) this.userId = rootStore?.user?.currentUser?.id;
       // if (rootStore?.states) this.states = rootStore?.states;
       // if (rootStore?.labels) this.labels = rootStore?.labels;
       // if (rootStore?.members) this.members = rootStore?.members;
       // if (rootStore?.projects) this.projects = rootStore?.projects;
     });
 
-    this.issues = new IssueStore(this);
+    this.issues = new IssueStore();
 
     this.issuesFilter = new IssuesFilter(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
-    this.workspaceIssues = new WorkspaceIssues();
+    this.workspaceIssues = new WorkspaceIssues(this);
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
-    this.profileIssues = new ProfileIssues();
+    this.profileIssues = new ProfileIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this);
@@ -156,16 +153,16 @@ export class IssueRootStore {
     this.cycleIssues = new CycleIssues(this);
 
     this.moduleIssuesFilter = new ModuleIssuesFilter(this);
-    this.moduleIssues = new ModuleIssues();
+    this.moduleIssues = new ModuleIssues(this);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
-    this.projectViewIssues = new ProjectViewIssues();
+    this.projectViewIssues = new ProjectViewIssues(this);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
-    this.archivedIssues = new ArchivedIssues();
+    this.archivedIssues = new ArchivedIssues(this);
 
     this.draftIssuesFilter = new DraftIssuesFilter(this);
-    this.draftIssues = new DraftIssues();
+    this.draftIssues = new DraftIssues(this);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
   }

@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 
 export const GlobalViewsAppliedFiltersRoot = observer(() => {
   // router
@@ -34,13 +34,13 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!value) {
-      updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: null });
+      updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: null });
       return;
     }
 
     let newValues = userFilters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
-    updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: newValues });
+    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: newValues });
   };
 
   const handleClearAllFilters = () => {
@@ -49,7 +49,7 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, EFilterType.FILTERS, { ...newFilters });
+    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { ...newFilters });
   };
 
   // const handleUpdateView = () => {

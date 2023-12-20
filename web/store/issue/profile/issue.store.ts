@@ -21,7 +21,7 @@ export interface IProfileIssues {
   currentUserIssueTab: "assigned" | "created" | "subscribed" | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -68,7 +68,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       currentUserIssueTab: observable.ref,
       // computed
       getIssues: computed,
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       viewFlags: computed,
       // action
       fetchIssues: action,
@@ -99,7 +99,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     return this.issues[this.currentUserId][this.currentUserIssueTab];
   }
 
-  get getIssuesIds() {
+  get groupedIssueIds() {
     const currentUserId = this.currentUserId;
     const displayFilters = this.rootStore?.profileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
@@ -111,7 +111,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
     if (!currentUserId || !this.currentUserIssueTab || !this.issues || !this.issues[currentUserId]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);

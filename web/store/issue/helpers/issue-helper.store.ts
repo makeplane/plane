@@ -13,6 +13,7 @@ import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { renderDateFormat } from "helpers/date-time.helper";
 
 export interface IIssueHelperStore {
+  // helper methods
   groupedIssues(
     groupBy: TIssueGroupByOptions,
     orderBy: TIssueOrderByOptions,

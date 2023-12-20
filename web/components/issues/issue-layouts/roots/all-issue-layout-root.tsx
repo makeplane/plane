@@ -16,7 +16,7 @@ import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
 import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { EIssueActions } from "../types";
 
-import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
+import { EIssueFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EUserProjectRoles } from "constants/project";
 
 type Props = {
@@ -100,7 +100,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
 
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
+      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
     },
     [updateFilters, workspaceSlug]
   );

@@ -64,15 +64,13 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
           {issue.name}
         </div>
       </Tooltip>
-      <div>
-        <IssueProperties
-          className="flex flex-wrap items-center gap-2 whitespace-nowrap"
-          issue={issue}
-          displayProperties={displayProperties}
-          handleIssues={updateIssue}
-          isReadOnly={isReadOnly}
-        />
-      </div>
+      <IssueProperties
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap"
+        issue={issue}
+        displayProperties={displayProperties}
+        handleIssues={updateIssue}
+        isReadOnly={isReadOnly}
+      />
     </>
   );
 };

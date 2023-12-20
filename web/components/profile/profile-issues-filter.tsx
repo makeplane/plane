@@ -9,7 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store_legacy/root";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 
 export const ProfileIssuesFilter = observer(() => {
@@ -33,7 +33,7 @@ export const ProfileIssuesFilter = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, updateFilters]
   );
@@ -52,7 +52,7 @@ export const ProfileIssuesFilter = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: newValues });
     },
     [workspaceSlug, issueFilters, updateFilters]
   );
@@ -60,7 +60,7 @@ export const ProfileIssuesFilter = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, updateFilters]
   );
@@ -68,7 +68,7 @@ export const ProfileIssuesFilter = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, updateFilters]
   );

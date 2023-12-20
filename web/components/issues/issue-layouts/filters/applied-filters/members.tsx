@@ -3,22 +3,25 @@ import { X } from "lucide-react";
 // ui
 import { Avatar } from "@plane/ui";
 // types
-import { IUserLite } from "types";
+import { useMember } from "hooks/store";
 
 type Props = {
   handleRemove: (val: string) => void;
-  members: IUserLite[] | undefined;
   values: string[];
   editable: boolean | undefined;
 };
 
 export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, members, values, editable } = props;
+  const { handleRemove, values, editable } = props;
+
+  const {
+    project: { getProjectMemberDetails },
+  } = useMember();
 
   return (
     <>
       {values.map((memberId) => {
-        const memberDetails = members?.find((m) => m.id === memberId);
+        const memberDetails = getProjectMemberDetails(memberId)?.member;
 
         if (!memberDetails) return null;
 

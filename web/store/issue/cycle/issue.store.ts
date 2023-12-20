@@ -29,7 +29,7 @@ export interface ICycleIssues {
   loader: TLoader;
   issues: { [cycle_id: string]: string[] };
   // computed
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -105,7 +105,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       loader: observable.ref,
       issues: observable.ref,
       // computed
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -132,7 +132,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     });
   }
 
-  get getIssuesIds() {
+  get groupedIssueIds() {
     const cycleId = this.rootStore?.cycleId;
     if (!cycleId) return undefined;
 
@@ -144,12 +144,12 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!cycleId || !this.issues || !this.issues[cycleId]) return undefined;
+    const cycleIssueIds = this.issues[cycleId] ?? [];
 
-    const _issues = this.rootStore.issues.getIssuesByKey("project", cycleId);
+    const _issues = this.rootStore.issues.getIssuesByIds(cycleIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);

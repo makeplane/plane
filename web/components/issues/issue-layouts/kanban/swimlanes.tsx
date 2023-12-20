@@ -8,7 +8,7 @@ import { GroupByColumnTypes, IGroupByColumn, IIssue, IIssueDisplayProperties, II
 import { IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 // constants
 import { EIssueActions } from "../types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { useLabel, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
 

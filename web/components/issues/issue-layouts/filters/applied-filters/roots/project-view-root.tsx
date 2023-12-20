@@ -11,7 +11,7 @@ import { Button } from "@plane/ui";
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -48,7 +48,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
       updateFilters(
         workspaceSlug,
         projectId,
-        EFilterType.FILTERS,
+        EIssueFilterType.FILTERS,
         {
           [key]: null,
         },
@@ -63,7 +63,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     updateFilters(
       workspaceSlug,
       projectId,
-      EFilterType.FILTERS,
+      EIssueFilterType.FILTERS,
       {
         [key]: newValues,
       },
@@ -77,7 +77,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { ...newFilters }, viewId);
+    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { ...newFilters }, viewId);
   };
 
   // return if no filters are applied

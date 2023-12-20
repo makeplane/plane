@@ -1,7 +1,7 @@
 import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "store_legacy/issues/types";
+import { IIssueResponse } from "types";
 
 export class IssueDraftService extends APIService {
   constructor() {

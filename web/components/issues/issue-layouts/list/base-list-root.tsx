@@ -11,7 +11,7 @@ import {
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
 import { observer } from "mobx-react-lite";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EProjectStore } from "store/application/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
 import { useRouter } from "next/router";
 import { EUserProjectRoles } from "constants/project";
@@ -64,13 +64,11 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const {
-    issuesMap: { allIssues: issuesMap },
-  } = useIssues();
+  const { issueMap } = useIssues();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const issueIds = issues?.getIssuesIds || [];
+  const issueIds = issues?.groupedIssueIds || [];
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
   const canEditProperties = useCallback(
@@ -123,7 +121,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
       ) : (
         <div className={`relative h-full w-full bg-custom-background-90`}>
           <List
-            issuesMap={issuesMap}
+            issuesMap={issueMap}
             displayProperties={displayProperties}
             group_by={group_by}
             handleIssues={handleIssues}

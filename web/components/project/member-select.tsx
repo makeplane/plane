@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Ban } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// store hooks
+import { useMember } from "hooks/store";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 
@@ -19,37 +19,44 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
+  // store hooks
   const {
-    projectMember: { fetchProjectMembers, projectMembers },
-  } = useMobxStore();
+    project: { fetchProjectMembers, projectMemberIds, getProjectMemberDetails, projectMemberMap },
+  } = useMember();
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
     workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
   );
 
-  const options = projectMembers?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  console.log("projectMemberIds", projectMemberIds);
 
-  const selectedOption = projectMembers?.find((m) => m.member.id === value)?.member;
+  const options = projectMemberIds?.map((userId) => {
+    console.log("userId", userId);
+    console.log("projectMemberMap", projectMemberMap);
+    const memberDetails = getProjectMemberDetails(userId);
+
+    return {
+      value: `${memberDetails?.member.id}`,
+      query: `${memberDetails?.member.display_name}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+          {memberDetails?.member.display_name}
+        </div>
+      ),
+    };
+  });
+  const selectedOption = getProjectMemberDetails(value);
 
   return (
     <CustomSearchSelect
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption && <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />}
+          {selectedOption && <Avatar name={selectedOption.member.display_name} src={selectedOption.member.avatar} />}
           {selectedOption ? (
-            selectedOption?.display_name
+            selectedOption.member.display_name
           ) : (
             <div className="flex items-center gap-2">
               <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />

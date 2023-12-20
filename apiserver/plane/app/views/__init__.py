@@ -45,7 +45,8 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    WorkspaceProjectMemberEndpoint
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
 )
 from .state import StateViewSet
 from .view import (
@@ -53,6 +54,9 @@ from .view import (
     GlobalViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
+    IssueViewUserPropertiesEndpoint,
+    IssueViewUserPropertiesEndpoint,
+    GlobalIssueViewUserPropertiesEndpoint,
 )
 from .cycle import (
     CycleViewSet,
@@ -60,6 +64,7 @@ from .cycle import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleUserPropertiesEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .issue import (
@@ -104,6 +109,7 @@ from .module import (
     ModuleIssueViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
+    ModuleUserPropertiesEndpoint,
 )
 
 from .api import ApiTokenEndpoint

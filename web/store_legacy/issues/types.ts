@@ -1,7 +1,7 @@
 import { IIssue } from "types";
 
 // issue filters
-export enum EFilterType {
+export enum EIssueFilterType {
   FILTERS = "filters",
   DISPLAY_FILTERS = "display_filters",
   DISPLAY_PROPERTIES = "display_properties",

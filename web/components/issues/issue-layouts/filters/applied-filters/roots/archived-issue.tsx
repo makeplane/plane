@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType } from "constants/issue";
 
 export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -39,7 +39,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
         [key]: null,
       });
       return;
@@ -49,7 +49,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
       [key]: newValues,
     });
   };
@@ -62,7 +62,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
       ...newFilters,
     });
   };
