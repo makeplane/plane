@@ -36,6 +36,7 @@
     "@types/express": "^4.17.18",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.8.3",
+    "@types/node-fetch": "^2.6.9",
     "@types/pg": "^8.10.9",
     "@types/showdown": "^2.0.6",
     "concurrently": "^8.2.1",

@@ -136,7 +136,7 @@ export class GithubController {
         collaborators,
       });
     } catch (error) {
-      logger.error(error);
+      logger.error("Failed to fetch importer summary", error);
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
@@ -157,7 +157,7 @@ export class GithubController {
       });
       return res.status(200).json(data);
     } catch (error) {
-      logger.error(error);
+      logger.error("Failed to fetch metadata", error);
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
@@ -172,7 +172,7 @@ export class GithubController {
       const octokit = await getOctokit(installationId);
 
       const { data } = await octokit.request("GET /installation/repositories", {
-        q: `page=${page}`,
+        page: page,
         headers: {
           "X-GitHub-Api-Version": "2022-11-28",
         },
@@ -180,7 +180,7 @@ export class GithubController {
 
       return res.status(200).json(data);
     } catch (error) {
-      logger.error(error);
+      logger.error("Failed to fetch repos", error);
       return res.json({ message: "Server error", status: 500, error: error });
     }
   }
@@ -412,7 +412,7 @@ export class GithubController {
 
       return;
     } catch (error) {
-      logger.error(error);
+      logger.error("Import failed", error);
       const import_sync = {
         args: [], // args
         kwargs: {
