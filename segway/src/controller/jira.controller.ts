@@ -119,11 +119,12 @@ export class JiraController {
             args: [], // args
             kwargs: {
               data: {
-                type: "user.create",
+                type: "member.sync",
                 email: user.email,
                 workspace_id: workspace_id,
                 project_id: project_id,
                 created_by: created_by,
+                importer_id: importer_id,
               },
             }, // kwargs
             other_data: {}, // other data
@@ -131,7 +132,7 @@ export class JiraController {
           members.push(user);
           this.mq?.publish(
             jira_members,
-            "plane.bgtasks.importer_task.members_sync"
+            "plane.bgtasks.importer_task.import_task"
           );
         }
       }
@@ -146,16 +147,17 @@ export class JiraController {
           kwargs: {
             data: {
               external_source: "jira",
-              type: "label.create",
+              type: "label.sync",
               name: label,
               workspace_id: workspace_id,
               project_id: project_id,
               created_by: created_by,
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
         };
-        this.mq?.publish(labelssync, "plane.bgtasks.importer_task.label_sync");
+        this.mq?.publish(labelssync, "plane.bgtasks.importer_task.import_task");
       }
 
       // states
@@ -179,7 +181,7 @@ export class JiraController {
               args: [], // args
               kwargs: {
                 data: {
-                  type: "state.create",
+                  type: "state.sync",
                   state_name: state_name,
                   state_group: state_group,
                   workspace_id: workspace_id,
@@ -193,7 +195,7 @@ export class JiraController {
             };
             this.mq?.publish(
               statessync,
-              "plane.bgtasks.importer_task.state_sync"
+              "plane.bgtasks.importer_task.import_task"
             );
           }
         }
@@ -250,7 +252,7 @@ export class JiraController {
           args: [], // args
           kwargs: {
             data: {
-              type: "issue.create",
+              type: "issue.sync",
               name: issue.fields.summary.substring(0, 250),
               description_html: issue.renderedFields.description ?? null,
               assignee: user?.email,
@@ -274,6 +276,7 @@ export class JiraController {
               },
               labels_list: issue.fields.labels,
               parent_id: null,
+              importer_id: importer_id,
             },
           },
         };
@@ -343,7 +346,7 @@ export class JiraController {
           args: [], // args
           kwargs: {
             data: {
-              type: "module.create",
+              type: "module.sync",
               name: module.fields.summary.substring(0, 250),
               description_html: module.renderedFields?.description,
               workspace_id: workspace_id,
@@ -351,13 +354,14 @@ export class JiraController {
               created_by: created_by,
               external_id: module.id,
               external_source: "jira",
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
         };
         this.mq?.publish(
           modulessync,
-          "plane.bgtasks.importer_task.module_sync"
+          "plane.bgtasks.importer_task.import_task"
         );
       }
 
@@ -366,20 +370,21 @@ export class JiraController {
           args: [], // args
           kwargs: {
             data: {
-              type: "module.create",
+              type: "module.issue.sync",
               module_id: module_issue.module_id,
               issue_id: module_issue.issue_id,
               workspace_id: workspace_id,
               project_id: project_id,
               created_by: created_by,
               external_source: "jira",
+              importer_id: importer_id,
             },
           }, // kwargs
           other_data: {}, // other data
         };
         this.mq?.publish(
           modules_issue_sync,
-          "plane.bgtasks.importer_task.modules_issue_sync"
+          "plane.bgtasks.importer_task.importer_task"
         );
       }
 
@@ -387,7 +392,7 @@ export class JiraController {
         args: [], // args
         kwargs: {
           data: {
-            type: "import.create",
+            type: "import.sync",
             workspace_id: workspace_id,
             project_id: project_id,
             created_by: created_by,
@@ -398,7 +403,7 @@ export class JiraController {
         other_data: {}, // other data
       };
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_sync");
+      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_task");
 
       return;
     } catch (error) {
@@ -410,7 +415,7 @@ export class JiraController {
         args: [], // args
         kwargs: {
           data: {
-            type: "import.create",
+            type: "import.sync",
             workspace_id: workspace_id,
             project_id: project_id,
             created_by: created_by,
@@ -421,7 +426,7 @@ export class JiraController {
         other_data: {}, // other data
       };
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_sync");
+      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_task");
 
       return res.json({ message: "Server error", error: error });
     }
