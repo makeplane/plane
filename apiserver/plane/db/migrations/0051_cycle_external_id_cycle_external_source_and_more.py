@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='importer',
             name='reason',
-            field=models.TextField(blank=True, null=True),
+            field=models.TextField(blank=True),
         ),
         migrations.AddField(
             model_name='issue',
