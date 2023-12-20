@@ -1,6 +1,18 @@
-import { type } from "os";
-
-export const CreateIssueModalViewFull = {
+export const CreateIssueModalViewFull = ({
+  selectedProject,
+  projectOptions,
+  stateOptions,
+  priorityOptions,
+  labelOptions,
+  assigneeOptions,
+}: {
+  selectedProject: PlainTextOption;
+  projectOptions: Array<PlainTextOption>;
+  stateOptions: Array<PlainTextOption>;
+  priorityOptions: Array<PlainTextOption>;
+  labelOptions: Array<PlainTextOption>;
+  assigneeOptions: Array<PlainTextOption>;
+}) => ({
   type: "modal",
   title: {
     type: "plain_text",
@@ -28,32 +40,8 @@ export const CreateIssueModalViewFull = {
           text: "Select a Project",
           emoji: true,
         },
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "*this is plain_text text*",
-              emoji: true,
-            },
-            value: "value-0",
-          },
-          {
-            text: {
-              type: "plain_text",
-              text: "*this is plain_text text*",
-              emoji: true,
-            },
-            value: "value-1",
-          },
-          {
-            text: {
-              type: "plain_text",
-              text: "*this is plain_text text*",
-              emoji: true,
-            },
-            value: "value-2",
-          },
-        ],
+        initial_option: selectedProject,
+        options: projectOptions,
         action_id: "project-select-action",
       },
       label: {
@@ -103,16 +91,7 @@ export const CreateIssueModalViewFull = {
           text: "Select a State",
           emoji: true,
         },
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "`Select Project`",
-              emoji: true,
-            },
-            value: "select-project",
-          },
-        ],
+        options: stateOptions,
         action_id: "state-select-action",
       },
       label: {
@@ -130,16 +109,7 @@ export const CreateIssueModalViewFull = {
           text: "Select a Priority",
           emoji: true,
         },
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "`Select Project`",
-              emoji: true,
-            },
-            value: "select-project",
-          },
-        ],
+        options: priorityOptions,
         action_id: "priority-select-action",
       },
       label: {
@@ -148,33 +118,24 @@ export const CreateIssueModalViewFull = {
         emoji: true,
       },
     },
-    {
-      type: "input",
-      element: {
-        type: "multi_static_select",
-        placeholder: {
-          type: "plain_text",
-          text: "Labels (Optional)",
-          emoji: true,
-        },
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "`Select Project`",
-              emoji: true,
-            },
-            value: "select-project",
-          },
-        ],
-        action_id: "multi_static_select-action",
-      },
-      label: {
-        type: "plain_text",
-        text: "Labels",
-        emoji: true,
-      },
-    },
+    // {
+    //   type: "input",
+    //   element: {
+    //     type: "multi_static_select",
+    //     placeholder: {
+    //       type: "plain_text",
+    //       text: "Labels (Optional)",
+    //       emoji: true,
+    //     },
+    //     options: labelOptions,
+    //     action_id: "multi_static_select-action",
+    //   },
+    //   label: {
+    //     type: "plain_text",
+    //     text: "Labels",
+    //     emoji: true,
+    //   },
+    // },
     {
       type: "input",
       element: {
@@ -184,16 +145,7 @@ export const CreateIssueModalViewFull = {
           text: "Assignees (Optional)",
           emoji: true,
         },
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "`Select Project`",
-              emoji: true,
-            },
-            value: "select-project",
-          },
-        ],
+        options: assigneeOptions,
         action_id: "multi_static_select-action",
       },
       label: {
@@ -203,7 +155,7 @@ export const CreateIssueModalViewFull = {
       },
     },
   ],
-};
+});
 
 export type PlainTextOption = {
   text: {
