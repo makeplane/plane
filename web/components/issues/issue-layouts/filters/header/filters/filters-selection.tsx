@@ -15,7 +15,7 @@ import {
   FilterTargetDate,
 } from "components/issues";
 // types
-import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 import { useMember } from "hooks/store";

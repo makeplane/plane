@@ -10,7 +10,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { useMention } from "hooks/store";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -39,9 +39,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
-
-  const editorSuggestion = useEditorSuggestions();
-
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // form info
   const {
     handleSubmit,
     watch,
@@ -178,8 +178,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange(description_html);
                 debouncedFormSave();
               }}
-              mentionSuggestions={editorSuggestion.mentionSuggestions}
-              mentionHighlights={editorSuggestion.mentionHighlights}
+              mentionSuggestions={mentionSuggestions}
+              mentionHighlights={mentionHighlights}
             />
           )}
         />

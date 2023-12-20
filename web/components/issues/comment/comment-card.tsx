@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useUser } from "hooks/store";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { useMention, useUser } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // icons
@@ -35,10 +34,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   // refs
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
-
-  const editorSuggestions = useEditorSuggestions();
   // store hooks
   const { currentUser } = useUser();
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     formState: { isSubmitting },
@@ -110,8 +108,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 debouncedUpdatesEnabled={false}
                 customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
-                mentionSuggestions={editorSuggestions.mentionSuggestions}
-                mentionHighlights={editorSuggestions.mentionHighlights}
+                mentionSuggestions={mentionSuggestions}
+                mentionHighlights={mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -142,7 +140,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               ref={showEditorRef}
               value={comment.comment_html ?? ""}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={editorSuggestions.mentionHighlights}
+              mentionHighlights={mentionHighlights}
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>

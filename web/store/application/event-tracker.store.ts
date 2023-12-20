@@ -35,8 +35,8 @@ export class EventTrackerStore implements IEventTrackerStore {
     group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
   ) => {
     try {
-      const currentWorkspaceDetails = this.rootStore.workspace.currentWorkspace; // TODO: fix these issues
-      const currentProjectDetails = this.rootStore.project.projects.currentProjectDetails;
+      const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
+      const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
 
       let extras: any = {
         workspace_name: currentWorkspaceDetails?.name ?? "",

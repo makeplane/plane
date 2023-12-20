@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProjectState } from "hooks/store";
+import { useLabel, useProjectState } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
@@ -16,9 +16,10 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
   // store hooks
   const {
     projectArchivedIssuesFilter: { issueFilters, updateFilters },
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
   } = useMobxStore();
+  const {
+    project: { projectLabels },
+  } = useLabel();
   const { projectStates } = useProjectState();
   // derived values
   const userFilters = issueFilters?.filters;
@@ -75,7 +76,6 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
-        members={projectMembers?.map((m) => m.member)}
         states={projectStates}
       />
 

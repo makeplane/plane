@@ -31,6 +31,7 @@ export interface IUserMembershipStore {
   currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
   currentProjectRole: EUserProjectRoles | undefined;
   currentWorkspaceRole: EUserWorkspaceRoles | undefined;
+  currentWorkspaceAllProjectsRole: IUserProjectsRole | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;
@@ -78,6 +79,7 @@ export class UserMembershipStore implements IUserMembershipStore {
       currentWorkspaceRole: computed,
       currentProjectMemberInfo: computed,
       currentProjectRole: computed,
+      currentWorkspaceAllProjectsRole: computed,
       hasPermissionToCurrentWorkspace: computed,
       hasPermissionToCurrentProject: computed,
       // actions
@@ -113,6 +115,11 @@ export class UserMembershipStore implements IUserMembershipStore {
   get currentProjectRole() {
     if (!this.router.projectId) return;
     return this.projectMemberInfo[this.router.projectId]?.role;
+  }
+
+  get currentWorkspaceAllProjectsRole() {
+    if (!this.router.workspaceSlug) return;
+    return this.workspaceProjectsRole?.[this.router.workspaceSlug];
   }
 
   get hasPermissionToCurrentWorkspace() {

@@ -35,7 +35,7 @@ export const getGroupByColumns = (
 };
 
 const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined => {
-  const { workspaceProjects: projectIds, projectMap } = project;
+  const { workspaceProjectIds: projectIds, projectMap } = project;
 
   if (!projectIds) return;
 

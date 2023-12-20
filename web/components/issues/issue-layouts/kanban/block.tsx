@@ -1,6 +1,8 @@
 import { memo } from "react";
-import { Draggable } from "@hello-pangea/dnd";
+import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
 // components
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -8,12 +10,8 @@ import { Tooltip } from "@plane/ui";
 import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { EIssueActions } from "../types";
 import { useRouter } from "next/router";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 interface IssueBlockProps {
-  sub_group_id: string;
-  columnId: string;
-  index: number;
   issueId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties;
@@ -21,6 +19,8 @@ interface IssueBlockProps {
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
 }
 
 interface IssueDetailsBlockProps {
@@ -31,7 +31,7 @@ interface IssueDetailsBlockProps {
   isReadOnly: boolean;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
+const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
   const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
 
   const router = useRouter();
@@ -73,15 +73,10 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
       />
     </>
   );
-};
+});
 
-const KanbanIssueMemoBlock = memo(KanbanIssueDetailsBlock);
-
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
+export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const {
-    sub_group_id,
-    columnId,
-    index,
     issueId,
     issuesMap,
     displayProperties,
@@ -89,11 +84,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
     handleIssues,
     quickActions,
     canEditProperties,
+    provided,
+    snapshot,
   } = props;
-
-  let draggableId = issueId;
-  if (columnId) draggableId = `${draggableId}__${columnId}`;
-  if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
   const issue = issuesMap[issueId];
 
@@ -102,34 +95,28 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   const canEditIssueProperties = canEditProperties(issue.project);
 
   return (
-    <>
-      <Draggable draggableId={draggableId} index={index}>
-        {(provided, snapshot) => (
-          <div
-            className="group/kanban-block relative p-1.5 hover:cursor-default"
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-          >
-            {issue.tempId !== undefined && (
-              <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-            )}
-            <div
-              className={`space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all ${
-                isDragDisabled ? "" : "hover:cursor-grab"
-              } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
-            >
-              <KanbanIssueMemoBlock
-                issue={issue}
-                displayProperties={displayProperties}
-                handleIssues={handleIssues}
-                quickActions={quickActions}
-                isReadOnly={!canEditIssueProperties}
-              />
-            </div>
-          </div>
-        )}
-      </Draggable>
-    </>
+    <div
+      className="group/kanban-block relative p-1.5 hover:cursor-default"
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      ref={provided.innerRef}
+    >
+      {issue.tempId !== undefined && (
+        <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+      )}
+      <div
+        className={`space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all ${
+          isDragDisabled ? "" : "hover:cursor-grab"
+        } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
+      >
+        <KanbanIssueDetailsBlock
+          issue={issue}
+          displayProperties={displayProperties}
+          handleIssues={handleIssues}
+          quickActions={quickActions}
+          isReadOnly={!canEditIssueProperties}
+        />
+      </div>
+    </div>
   );
-};
+});

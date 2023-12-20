@@ -23,15 +23,13 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// types
-import { IProjectMap } from "types";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   projectId: string;
-  projectMap: IProjectMap;
   provided?: DraggableProvided;
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
@@ -73,33 +71,35 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { projectId, projectMap, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store hooks
   const {
     theme: themeStore,
     eventTracker: { setTrackElement },
   } = useApplication();
-  const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
+  const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
+  // states
+  const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
+  const [publishModalOpen, setPublishModal] = useState(false);
+  const [isMenuActive, setIsMenuActive] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = router.query;
   // toast alert
   const { setToastAlert } = useToast();
-  // states
-  const project = projectMap[projectId];
-  const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
-  const [publishModalOpen, setPublishModal] = useState(false);
-  const [isMenuActive, setIsMenuActive] = useState(false);
+  // derived values
+  const project = getProjectById(projectId);
 
-  const isAdmin = project.member_role === 20;
-  const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
+  const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
+  const isViewerOrGuest =
+    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
 
   const isCollapsed = themeStore.sidebarCollapsed;
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleAddToFavorites = () => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !project) return;
 
     addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
@@ -111,7 +111,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !project) return;
 
     removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
@@ -132,6 +132,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
+
+  if (!project) return null;
 
   return (
     <>
@@ -214,7 +216,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     </div>
                   }
                   className={`hidden flex-shrink-0 group-hover:block ${isMenuActive ? "!block" : ""}`}
-                  buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
+                  buttonClassName="!text-custom-sidebar-text-400"
                   ellipsis
                   placement="bottom-start"
                 >

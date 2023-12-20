@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useUser } from "hooks/store";
 // components
 import {
   DeleteArchivedIssueModal,
@@ -95,18 +96,18 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     disableUserActions = false,
     showCommentAccessSpecifier = false,
   } = props;
-
-  const router = useRouter();
-  const { peekIssueId } = router.query;
-
-  const {
-    user: { currentUser },
-    issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
-  } = useMobxStore();
-
+  // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  // router
+  const router = useRouter();
+  const { peekIssueId } = router.query;
+  // store hooks
+  const {
+    issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
+  } = useMobxStore();
+  const { currentUser } = useUser();
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {

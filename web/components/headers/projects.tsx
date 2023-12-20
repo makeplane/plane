@@ -16,7 +16,7 @@ export const ProjectsHeader = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { workspaceProjects, searchQuery, setSearchQuery } = useProject();
+  const { workspaceProjectIds, searchQuery, setSearchQuery } = useProject();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -34,7 +34,7 @@ export const ProjectsHeader = observer(() => {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        {workspaceProjects && workspaceProjects?.length > 0 && (
+        {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
           <div className="flex w-full items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
             <Search className="h-3.5 w-3.5" />
             <input

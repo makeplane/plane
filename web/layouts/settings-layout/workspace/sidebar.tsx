@@ -25,7 +25,7 @@ export const WorkspaceSettingsSidebar = () => {
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
               workspaceMemberInfo >= link.access && (
-                <Link key={link.href} href={`/${workspaceSlug}/${link.href}`}>
+                <Link key={link.href} href={`/${workspaceSlug}${link.href}`}>
                   <span>
                     <div
                       className={`rounded-md px-4 py-2 text-sm font-medium ${

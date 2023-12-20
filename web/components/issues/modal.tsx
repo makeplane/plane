@@ -84,7 +84,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   } = useApplication();
   const { currentUser } = useUser();
   const { currentWorkspace } = useWorkspace();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
 
   const issueStores = {
     [EProjectStore.PROJECT]: {
@@ -211,9 +211,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (workspaceProjects && workspaceProjects.length > 0 && !activeProject)
-      setActiveProject(projectId ?? workspaceProjects?.[0] ?? null);
-  }, [data, projectId, workspaceProjects, isOpen, activeProject]);
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+  }, [data, projectId, workspaceProjectIds, isOpen, activeProject]);
 
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
@@ -380,7 +380,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (onSubmit) await onSubmit(payload);
   };
 
-  if (!workspaceProjects || workspaceProjects.length === 0) return null;
+  if (!workspaceProjectIds || workspaceProjectIds.length === 0) return null;
 
   return (
     <>
