@@ -1,6 +1,9 @@
 import { logger } from "@sentry/utils";
 import { DatabaseSingleton } from "../db/singleton";
-import { integrations, workspaceIntegrations } from "../db/slack.schema";
+import {
+  integrations,
+  workspaceIntegrations,
+} from "../db/schema/integrations.schema";
 import { gte, sql } from "drizzle-orm";
 
 export type TSlackConfig = {

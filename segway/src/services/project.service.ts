@@ -5,7 +5,7 @@ import {
   projectMembers,
   projects,
   states,
-} from "../db/slack.schema";
+} from "../db/schema/project.schema";
 
 export class ProjectService {
   async getProjectsForWorkspace(workspaceId: string) {

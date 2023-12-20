@@ -70,6 +70,10 @@ export class SlackController {
     const payload = JSON.parse(req.body.payload);
     const selectedProjectId = payload.actions[0].selected_option.value;
     // const states = await projectService.getProjectStates(selectedProjectId);
+    // const members = await projectService.getProjectMembers(selectedProjectId);
+    const labels = await projectService.getProjectLabels(selectedProjectId);
+
+    console.log(labels);
 
     const viewId = payload.container.view_id;
 
