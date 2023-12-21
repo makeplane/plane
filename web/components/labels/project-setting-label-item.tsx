@@ -46,6 +46,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       onClick: removeFromGroup,
       isVisible: !!label.parent,
       text: "Remove from group",
+      key: "remove_from_group",
     },
     {
       CustomIcon: Pencil,
@@ -55,6 +56,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       },
       isVisible: true,
       text: "Edit label",
+      key: "edit_label",
     },
   ];
 

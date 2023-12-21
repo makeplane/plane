@@ -5,7 +5,7 @@ import { IProjectRootStore, ProjectRootStore } from "./project";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IModuleStore, ModulesStore } from "./module.store";
-import { IUserStore, UserStore } from "./user";
+import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IStateStore, StateStore } from "./state.store";
@@ -13,7 +13,7 @@ import { IPageStore, PageStore } from "./page.store";
 import { ILabelRootStore, LabelRootStore } from "./label";
 import { IMemberRootStore, MemberRootStore } from "./member";
 import { IInboxRootStore, InboxRootStore } from "./inbox";
-import { IProjectEstimateStore, ProjectEstimatesStore } from "./estimate.store";
+import { IEstimateStore, EstimateStore } from "./estimate.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IMentionStore, MentionStore } from "./mention.store";
 
@@ -21,7 +21,7 @@ enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
   app: IAppRootStore;
-  user: IUserStore;
+  user: IUserRootStore;
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
   labelRoot: ILabelRootStore;
@@ -34,12 +34,12 @@ export class RootStore {
   page: IPageStore;
   issue: IIssueRootStore;
   state: IStateStore;
-  estimate: IProjectEstimateStore;
+  estimate: IEstimateStore;
   mention: IMentionStore;
 
   constructor() {
-    this.app = new AppRootStore(this); // TODO: rename to appRoot Store
-    this.user = new UserStore(this); // TODO: rename to userRoot Store
+    this.app = new AppRootStore(this);
+    this.user = new UserRootStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.labelRoot = new LabelRootStore(this);
@@ -53,7 +53,7 @@ export class RootStore {
     this.page = new PageStore(this);
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
-    this.estimate = new ProjectEstimatesStore(this);
+    this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
   }
 }

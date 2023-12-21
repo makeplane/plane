@@ -27,7 +27,7 @@ import {
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, IUserLite, TIssueOrderByOptions } from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, TIssueOrderByOptions } from "types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
@@ -39,7 +39,6 @@ type Props = {
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   issues: IIssue[] | undefined;
   property: string;
-  members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
@@ -53,7 +52,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
     handleUpdateIssue,
     issues,
     property,
-    members,
     labels,
     states,
   } = props;
@@ -191,7 +189,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  members={members}
                   onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "labels" ? (

@@ -25,13 +25,15 @@ export interface IProjectMemberStore {
   projectMemberIds: string[] | null;
   // computed actions
   getProjectMemberDetails: (projectMemberId: string) => IProjectMemberDetails | null;
-  // actions
+  // fetch actions
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<IProjectMembership[]>;
+  // bulk operation actions
   bulkAddMembersToProject: (
     workspaceSlug: string,
     projectId: string,
     data: IProjectBulkAddFormData
   ) => Promise<IProjectMembership[]>;
+  // crud actions
   updateMember: (
     workspaceSlug: string,
     projectId: string,
@@ -106,27 +108,32 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param workspaceSlug
    * @param projectId
    */
-  fetchProjectMembers = async (workspaceSlug: string, projectId: string) => {
-    const response = await this.projectMemberService.fetchProjectMembers(workspaceSlug, projectId);
-    runInAction(() => {
-      response.forEach((member) => {
-        set(this.projectMemberMap, [projectId, member.member], member);
+  fetchProjectMembers = async (workspaceSlug: string, projectId: string) =>
+    await this.projectMemberService.fetchProjectMembers(workspaceSlug, projectId).then((response) => {
+      runInAction(() => {
+        response.forEach((member) => {
+          set(this.projectMemberMap, [projectId, member.member], member);
+        });
       });
-    });
-    return response;
-  };
-
-  bulkAddMembersToProject = async (workspaceSlug: string, projectId: string, data: IProjectBulkAddFormData) => {
-    const response = await this.projectMemberService.bulkAddMembersToProject(workspaceSlug, projectId, data);
-
-    runInAction(() => {
-      response.forEach((member) => {
-        set(this.projectMemberMap, [projectId, member.member], member);
-      });
+      return response;
     });
 
-    return response;
-  };
+  /**
+   * @description bulk add members to a project
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns Promise<IProjectMembership[]>
+   */
+  bulkAddMembersToProject = async (workspaceSlug: string, projectId: string, data: IProjectBulkAddFormData) =>
+    await this.projectMemberService.bulkAddMembersToProject(workspaceSlug, projectId, data).then((response) => {
+      runInAction(() => {
+        response.forEach((member) => {
+          set(this.projectMemberMap, [projectId, member.member], member);
+        });
+      });
+      return response;
+    });
 
   /**
    * @description update the role of a member in a project
@@ -143,26 +150,14 @@ export class ProjectMemberStore implements IProjectMemberStore {
   ) => {
     const memberDetails = this.getProjectMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    // original data to revert back in case of error
-    const originalProjectMemberData = this.projectMemberMap?.[projectId]?.[userId];
-    try {
-      runInAction(() => {
-        set(this.projectMemberMap, [projectId, userId, "role"], data.role);
+    return await this.projectMemberService
+      .updateProjectMember(workspaceSlug, projectId, memberDetails?.id, data)
+      .then((response) => {
+        runInAction(() => {
+          set(this.projectMemberMap, [projectId, userId, "role"], data.role);
+        });
+        return response;
       });
-      const response = await this.projectMemberService.updateProjectMember(
-        workspaceSlug,
-        projectId,
-        memberDetails?.id,
-        data
-      );
-      return response;
-    } catch (error) {
-      // revert back to original members in case of error
-      runInAction(() => {
-        set(this.projectMemberMap, [projectId, userId], originalProjectMemberData);
-      });
-      throw error;
-    }
   };
 
   /**
@@ -174,9 +169,10 @@ export class ProjectMemberStore implements IProjectMemberStore {
   removeMemberFromProject = async (workspaceSlug: string, projectId: string, userId: string) => {
     const memberDetails = this.getProjectMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id);
-    runInAction(() => {
-      delete this.projectMemberMap?.[projectId]?.[userId];
+    await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id).then(() => {
+      runInAction(() => {
+        delete this.projectMemberMap?.[projectId]?.[userId];
+      });
     });
   };
 }

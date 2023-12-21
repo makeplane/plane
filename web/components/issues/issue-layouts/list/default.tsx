@@ -52,8 +52,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     currentStore,
     addIssuesToView,
   } = props;
-
-  //const { projectMember } = useMobxStore();
+  // store hooks
   const project = useProject();
   const projectLabel = useLabel();
   const projectState = useProjectState();

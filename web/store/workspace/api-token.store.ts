@@ -6,31 +6,21 @@ import { RootStore } from "../root.store";
 import { IApiToken } from "types/api_token";
 
 export interface IApiTokenStore {
-  // states
-  loader: boolean;
-  error: any | null;
-
   // observables
   apiTokens: Record<string, IApiToken> | null;
-
   // computed actions
   getApiTokenById: (apiTokenId: string) => IApiToken | null;
-
-  // actions
+  // fetch actions
   fetchApiTokens: (workspaceSlug: string) => Promise<IApiToken[]>;
   fetchApiTokenDetails: (workspaceSlug: string, tokenId: string) => Promise<IApiToken>;
+  // crud actions
   createApiToken: (workspaceSlug: string, data: Partial<IApiToken>) => Promise<IApiToken>;
   deleteApiToken: (workspaceSlug: string, tokenId: string) => Promise<void>;
 }
 
 export class ApiTokenStore implements IApiTokenStore {
-  // states
-  loader: boolean = false;
-  error: any | null = null;
-
   // observables
   apiTokens: Record<string, IApiToken> | null = null;
-
   // services
   apiTokenService;
   // root store
@@ -38,16 +28,10 @@ export class ApiTokenStore implements IApiTokenStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // states
-      loader: observable.ref,
-      error: observable.ref,
-
       // observables
       apiTokens: observable,
-
       // computed actions
       getApiTokenById: action,
-
       // actions
       fetchApiTokens: action,
       fetchApiTokenDetails: action,
@@ -67,7 +51,6 @@ export class ApiTokenStore implements IApiTokenStore {
    */
   getApiTokenById = (apiTokenId: string) => {
     if (!this.apiTokens) return null;
-
     return this.apiTokens[apiTokenId] || null;
   };
 
@@ -75,110 +58,58 @@ export class ApiTokenStore implements IApiTokenStore {
    * fetch all the API tokens for a workspace
    * @param workspaceSlug
    */
-  fetchApiTokens = async (workspaceSlug: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const response = await this.apiTokenService.getApiTokens(workspaceSlug);
-
+  fetchApiTokens = async (workspaceSlug: string) =>
+    await this.apiTokenService.getApiTokens(workspaceSlug).then((response) => {
       const apiTokensObject: { [apiTokenId: string]: IApiToken } = response.reduce((accumulator, currentWebhook) => {
         if (currentWebhook && currentWebhook.id) {
           return { ...accumulator, [currentWebhook.id]: currentWebhook };
         }
         return accumulator;
       }, {});
-
       runInAction(() => {
         this.apiTokens = apiTokensObject;
       });
-
       return response;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
+    });
 
   /**
    * fetch API token details using token id
    * @param workspaceSlug
    * @param tokenId
    */
-  fetchApiTokenDetails = async (workspaceSlug: string, tokenId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const response = await this.apiTokenService.retrieveApiToken(workspaceSlug, tokenId);
-
+  fetchApiTokenDetails = async (workspaceSlug: string, tokenId: string) =>
+    await this.apiTokenService.retrieveApiToken(workspaceSlug, tokenId).then((response) => {
       runInAction(() => {
         this.apiTokens = { ...this.apiTokens, [response.id]: response };
       });
-
       return response;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
+    });
 
   /**
    * create API token using data
    * @param workspaceSlug
    * @param data
    */
-  createApiToken = async (workspaceSlug: string, data: Partial<IApiToken>) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const response = await this.apiTokenService.createApiToken(workspaceSlug, data);
-
+  createApiToken = async (workspaceSlug: string, data: Partial<IApiToken>) =>
+    await this.apiTokenService.createApiToken(workspaceSlug, data).then((response) => {
       runInAction(() => {
         this.apiTokens = { ...this.apiTokens, [response.id]: response };
       });
-
       return response;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
+    });
 
   /**
    * delete API token using token id
    * @param workspaceSlug
    * @param tokenId
    */
-  deleteApiToken = async (workspaceSlug: string, tokenId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      await this.apiTokenService.deleteApiToken(workspaceSlug, tokenId);
-
+  deleteApiToken = async (workspaceSlug: string, tokenId: string) =>
+    await this.apiTokenService.deleteApiToken(workspaceSlug, tokenId).then(() => {
       const updatedApiTokens = { ...this.apiTokens };
       delete updatedApiTokens[tokenId];
 
       runInAction(() => {
         this.apiTokens = updatedApiTokens;
       });
-    } catch (error) {
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
+    });
 }

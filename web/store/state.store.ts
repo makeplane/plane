@@ -1,6 +1,5 @@
 import { makeObservable, observable, computed, action, runInAction } from "mobx";
 import groupBy from "lodash/groupBy";
-import keyBy from "lodash/keyBy";
 import set from "lodash/set";
 // store
 import { RootStore } from "./root.store";
@@ -17,8 +16,9 @@ export interface IStateStore {
   groupedProjectStates: Record<string, IState[]> | undefined;
   // computed actions
   getProjectStates: (projectId: string) => IState[];
-  // actions
+  // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
+  // crud actions
   createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
   updateState: (
     workspaceSlug: string,
@@ -95,15 +95,13 @@ export class StateStore implements IStateStore {
    * @returns
    */
   fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
-    const stateMap = await this.stateService.getStates(workspaceSlug, projectId);
+    const statesResponse = await this.stateService.getStates(workspaceSlug, projectId);
     runInAction(() => {
-      //todo add iteratively without modifying original reference
-      this.stateMap = {
-        ...this.stateMap,
-        ...keyBy(stateMap, "id"),
-      };
+      statesResponse.forEach((state) => {
+        set(this.stateMap, [state.id], state);
+      });
     });
-    return stateMap;
+    return statesResponse;
   };
 
   /**
@@ -113,14 +111,13 @@ export class StateStore implements IStateStore {
    * @param data
    * @returns
    */
-  createState = async (workspaceSlug: string, projectId: string, data: Partial<IState>) => {
-    const response = await this.stateService.createState(workspaceSlug, projectId, data);
-
-    runInAction(() => {
-      set(this.stateMap, [response?.id], response);
+  createState = async (workspaceSlug: string, projectId: string, data: Partial<IState>) =>
+    await this.stateService.createState(workspaceSlug, projectId, data).then((response) => {
+      runInAction(() => {
+        set(this.stateMap, [response?.id], response);
+      });
+      return response;
     });
-    return response;
-  };
 
   /**
    * Updates the state details in the store, in case of failure reverts back to original state
@@ -130,24 +127,13 @@ export class StateStore implements IStateStore {
    * @param data
    * @returns
    */
-  updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => {
-    const originalState = this.stateMap[stateId];
-    try {
+  updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) =>
+    await this.stateService.patchState(workspaceSlug, projectId, stateId, data).then((response) => {
       runInAction(() => {
         set(this.stateMap, [stateId], { ...this.stateMap?.[stateId], ...data });
       });
-      const response = await this.stateService.patchState(workspaceSlug, projectId, stateId, data);
       return response;
-    } catch (error) {
-      runInAction(() => {
-        this.stateMap = {
-          ...this.stateMap,
-          [stateId]: originalState,
-        };
-      });
-      throw error;
-    }
-  };
+    });
 
   /**
    * deletes the state from the store, incase of failure reverts back to original state
@@ -156,21 +142,12 @@ export class StateStore implements IStateStore {
    * @param stateId
    */
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
-    const originalStates = this.stateMap;
-    try {
-      if (!this.stateMap?.[stateId]) return;
-
+    if (!this.stateMap?.[stateId]) return;
+    await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
       runInAction(() => {
         delete this.stateMap[stateId];
       });
-
-      await this.stateService.deleteState(workspaceSlug, projectId, stateId);
-    } catch (error) {
-      runInAction(() => {
-        this.stateMap = originalStates;
-      });
-      throw error;
-    }
+    });
   };
 
   /**
@@ -181,13 +158,17 @@ export class StateStore implements IStateStore {
    */
   markStateAsDefault = async (workspaceSlug: string, projectId: string, stateId: string) => {
     const originalStates = this.stateMap;
+    const currentDefaultState = Object.values(this.stateMap).find(
+      (state) => state.project === projectId && state.default
+    );
     try {
       runInAction(() => {
+        if (currentDefaultState) set(this.stateMap, [currentDefaultState.id, "default"], false);
         set(this.stateMap, [stateId, "default"], true);
       });
-
       await this.stateService.markDefault(workspaceSlug, projectId, stateId);
     } catch (error) {
+      // reverting back to old state group if api fails
       runInAction(() => {
         this.stateMap = originalStates;
       });
@@ -211,32 +192,23 @@ export class StateStore implements IStateStore {
     groupIndex: number
   ) => {
     const SEQUENCE_GAP = 15000;
-    const originalStates = this.stateMap;
-    try {
-      let newSequence = SEQUENCE_GAP;
-      const stateMap = this.projectStates || [];
-      const selectedState = stateMap?.find((state) => state.id === stateId);
-      const groupStates = stateMap?.filter((state) => state.group === selectedState?.group);
-      const groupLength = groupStates.length;
-      if (direction === "up") {
-        if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
-        else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
-      } else {
-        if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
-        else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
-      }
-
+    let newSequence = SEQUENCE_GAP;
+    const stateMap = this.projectStates || [];
+    const selectedState = stateMap?.find((state) => state.id === stateId);
+    const groupStates = stateMap?.filter((state) => state.group === selectedState?.group);
+    const groupLength = groupStates.length;
+    if (direction === "up") {
+      if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
+      else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
+    } else {
+      if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
+      else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
+    }
+    // updating using api
+    await this.stateService.patchState(workspaceSlug, projectId, stateId, { sequence: newSequence }).then(() => {
       runInAction(() => {
         set(this.stateMap, [stateId, "sequence"], newSequence);
       });
-
-      // updating using api
-      await this.stateService.patchState(workspaceSlug, projectId, stateId, { sequence: newSequence });
-    } catch (err) {
-      // reverting back to old state group if api fails
-      runInAction(() => {
-        this.stateMap = originalStates;
-      });
-    }
+    });
   };
 }
