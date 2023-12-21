@@ -8,7 +8,7 @@ import { IUser, IUserSettings } from "types/users";
 import { RootStore } from "../root.store";
 import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";
 
-export interface IUserStore {
+export interface IUserRootStore {
   // states
   currentUserError: any | null;
   // observables
@@ -34,7 +34,7 @@ export interface IUserStore {
   membership: IUserMembershipStore;
 }
 
-export class UserStore implements IUserStore {
+export class UserRootStore implements IUserRootStore {
   // states
   currentUserError: any | null = null;
   // observables

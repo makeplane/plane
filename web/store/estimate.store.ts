@@ -6,8 +6,7 @@ import { ProjectEstimateService } from "services/project";
 import { RootStore } from "store/root.store";
 import { IEstimate, IEstimateFormData } from "types";
 
-// TODO: rename to IEstimateStore
-export interface IProjectEstimateStore {
+export interface IEstimateStore {
   // observables
   estimates: Record<string, IEstimate[] | null>;
   // computed
@@ -30,7 +29,7 @@ export interface IProjectEstimateStore {
   deleteEstimate: (workspaceSlug: string, projectId: string, estimateId: string) => Promise<void>;
 }
 
-export class ProjectEstimatesStore implements IProjectEstimateStore {
+export class EstimateStore implements IEstimateStore {
   // observables
   estimates: Record<string, IEstimate[] | null> = {};
   // root store

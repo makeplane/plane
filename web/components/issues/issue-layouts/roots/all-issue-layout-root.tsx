@@ -30,7 +30,6 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
   // store hooks
   const {
-    workspaceMember: { workspaceMembers },
     workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
     workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
   } = useMobxStore();
@@ -133,7 +132,6 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                     handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
                   />
                 )}
-                members={workspaceMembers?.map((m) => m.member)}
                 labels={workspaceLabels || undefined}
                 handleIssues={handleIssues}
                 canEditProperties={canEditProperties}

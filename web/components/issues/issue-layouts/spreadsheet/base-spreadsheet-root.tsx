@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useLabel, useProjectState, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
 import {
   ICycleIssuesFilterStore,
   ICycleIssuesStore,
@@ -48,9 +47,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
-  const {
-    projectMember: { projectMembers },
-  } = useMobxStore();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -120,7 +116,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
           }
         />
       )}
-      members={projectMembers?.map((m) => m.member)}
       labels={projectLabels ?? []}
       states={projectStates}
       handleIssues={handleIssues}

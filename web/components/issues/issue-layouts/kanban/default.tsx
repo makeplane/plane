@@ -69,7 +69,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     canEditProperties,
   } = props;
 
-  //const { projectMember } = useMobxStore();
   const project = useProject();
   const projectLabel = useLabel();
   const projectState = useProjectState();
