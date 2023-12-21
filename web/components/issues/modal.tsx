@@ -185,7 +185,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
    */
 
   const onDiscardClose = () => {
-    if (formDirtyState !== null) {
+    if (formDirtyState !== null && formDirtyState.name.trim() !== "") {
       setShowConfirmDiscard(true);
     } else {
       handleClose();
