@@ -1774,3 +1774,24 @@
 {"level":"info","message":"✅ Rabbit MQ Connection is ready"}
 {"level":"info","message":"🛸 Created RabbitMQ Channel successfully"}
 {"level":"info","message":"POST: /api/github/repos"}
+{"level":"info","message":"🛢️ Connected to Database"}
+{"level":"info","message":"🚀 Api server started on port: 9000"}
+{"level":"info","message":"✅ Rabbit MQ Connection is ready"}
+{"level":"info","message":"🛸 Created RabbitMQ Channel successfully"}
+{"level":"info","message":"🛢️ Connected to Database"}
+{"level":"info","message":"🚀 Api server started on port: 9000"}
+{"level":"info","message":"✅ Rabbit MQ Connection is ready"}
+{"level":"info","message":"🛸 Created RabbitMQ Channel successfully"}
+{"level":"info","message":"POST: /api/jira/import"}
+{"level":"info","message":"🛢️ Connected to Database"}
+{"level":"info","message":"🚀 Api server started on port: 9000"}
+{"level":"info","message":"✅ Rabbit MQ Connection is ready"}
+{"level":"info","message":"🛸 Created RabbitMQ Channel successfully"}
+{"level":"info","message":"🛢️ Connected to Database"}
+{"level":"info","message":"🚀 Api server started on port: 9000"}
+{"level":"info","message":"✅ Rabbit MQ Connection is ready"}
+{"level":"info","message":"🛸 Created RabbitMQ Channel successfully"}
+{"level":"info","message":"🛢️ Connected to Database"}
+{"level":"info","message":"🚀 Api server started on port: 9000"}
+{"level":"info","message":"✅ Rabbit MQ Connection is ready"}
+{"level":"info","message":"🛸 Created RabbitMQ Channel successfully"}
