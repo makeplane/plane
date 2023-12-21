@@ -46,9 +46,9 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store
   const { fetchProjectPages, fetchArchivedProjectPages } = usePage();
-  const { currentUser, loader } = useUser();
+  const { currentUser, currentUserLoader } = useUser();
   // hooks
-  const {} = useUserAuth({ user: currentUser, isLoading: loader });
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API

@@ -35,9 +35,9 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { currentUser, loader, currentUserError } = useUser();
+  const { currentUser, currentUserLoader, currentUserError } = useUser();
   // custom hooks
-  const {} = useUserAuth({ user: currentUser, isLoading: loader });
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -158,7 +158,7 @@ const IntegrationGuide = observer(() => {
             isOpen
             handleClose={() => handleCsvClose()}
             data={null}
-            user={!currentUserError ? currentUser : null}
+            user={currentUser}
             provider={provider}
             mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
           />

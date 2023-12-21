@@ -55,9 +55,9 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const { currentUser: myProfile, updateCurrentUser, loader } = useUser();
+  const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
-  const {} = useUserAuth({ user: myProfile, isLoading: loader });
+  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });

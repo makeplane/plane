@@ -36,9 +36,9 @@ const SignUpPage: NextPageWithLayout = observer(() => {
   // next-themes
   const { setTheme } = useTheme();
   // store hooks
-  const { currentUser, fetchCurrentUser, loader } = useUser();
+  const { currentUser, fetchCurrentUser, currentUserLoader } = useUser();
   // custom hooks
-  const {} = useUserAuth({ routeAuth: "sign-in", user: currentUser, isLoading: loader });
+  const {} = useUserAuth({ routeAuth: "sign-in", user: currentUser, isLoading: currentUserLoader });
 
   const handleSignUp = async (formData: EmailPasswordFormValues) => {
     const payload = {

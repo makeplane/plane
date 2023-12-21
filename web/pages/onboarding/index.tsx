@@ -39,10 +39,10 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { currentUser, loader, updateCurrentUser, updateUserOnBoard } = useUser();
+  const { currentUser, currentUserLoader, updateCurrentUser, updateUserOnBoard } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
-  const {} = useUserAuth({ routeAuth: "onboarding", user: currentUser, isLoading: loader });
+  const {} = useUserAuth({ routeAuth: "onboarding", user: currentUser, isLoading: currentUserLoader });
 
   const user = currentUser ?? undefined;
   const workspacesList = Object.values(workspaces ?? {});
