@@ -6,6 +6,6 @@ import { IProjectEstimateStore } from "store/estimate.store";
 
 export const useEstimate = (): IProjectEstimateStore => {
   const context = useContext(StoreContext);
-  if (context === undefined) throw new Error("useCycle must be used within StoreProvider");
+  if (context === undefined) throw new Error("useEstimate must be used within StoreProvider");
   return context.estimate;
 };

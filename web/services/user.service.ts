@@ -55,7 +55,7 @@ export class UserService extends APIService {
 
   async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
     return this.get("/api/users/me/instance-admin/")
-      .then((respone) => respone?.data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
