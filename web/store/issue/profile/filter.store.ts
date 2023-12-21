@@ -30,9 +30,10 @@ export interface IProfileIssuesFilter {
   fetchFilters: (workspaceSlug: string, userId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    userId: string,
+    projectId: undefined,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    userId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -112,11 +113,14 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
   updateFilters = async (
     workspaceSlug: string,
-    userId: string,
+    projectId: undefined,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    userId: string | undefined = undefined
   ) => {
     try {
+      if (!userId) throw new Error("user id is required");
+
       if (isEmpty(this.filters) || isEmpty(this.filters[userId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -194,7 +198,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, userId);
+      if (userId) this.fetchFilters(workspaceSlug, userId);
       throw error;
     }
   };

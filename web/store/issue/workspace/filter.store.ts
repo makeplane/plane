@@ -31,9 +31,10 @@ export interface IWorkspaceIssuesFilter {
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    viewId: string,
+    projectId: undefined,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -113,11 +114,14 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   updateFilters = async (
     workspaceSlug: string,
-    viewId: string,
+    projectId: undefined,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId: string | undefined = undefined
   ) => {
     try {
+      if (!viewId) throw new Error("View id is required");
+
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -209,7 +213,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, viewId);
+      if (viewId) this.fetchFilters(workspaceSlug, viewId);
       throw error;
     }
   };

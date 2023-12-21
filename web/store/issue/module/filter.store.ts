@@ -30,9 +30,9 @@ export interface IModuleIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    moduleId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -110,11 +110,12 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    moduleId: string | undefined = undefined
   ) => {
     try {
+      if (!moduleId) throw new Error("Module id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -192,7 +193,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, moduleId);
+      if (moduleId) this.fetchFilters(workspaceSlug, projectId, moduleId);
       throw error;
     }
   };

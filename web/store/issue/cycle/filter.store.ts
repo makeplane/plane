@@ -30,9 +30,9 @@ export interface ICycleIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    cycleId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -110,11 +110,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    cycleId: string | undefined = undefined
   ) => {
     try {
+      if (!cycleId) throw new Error("Cycle id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -192,7 +193,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
+      if (cycleId) this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };

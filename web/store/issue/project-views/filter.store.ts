@@ -30,9 +30,9 @@ export interface IProjectViewIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    viewId: string,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -110,11 +110,13 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    viewId: string,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId: string | undefined = undefined
   ) => {
     try {
+      if (!viewId) throw new Error("View id is required");
+
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -192,7 +194,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, viewId);
+      if (viewId) this.fetchFilters(workspaceSlug, projectId, viewId);
       throw error;
     }
   };
