@@ -77,7 +77,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
         </div>
       ) : (
         <div className="mx-auto">
-          <WebhooksEmptyState />
+          <WebhooksEmptyState onClick={() => setShowCreateWebhookModal(true)} />
         </div>
       )}
     </div>
