@@ -148,9 +148,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     await this.workspaceService.deleteWorkspace(workspaceSlug).then(() => {
       const updatedWorkspacesList = this.workspaces;
       const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
-
       delete updatedWorkspacesList[`${workspaceId}`];
-
       runInAction(() => {
         this.workspaces = updatedWorkspacesList;
       });
