@@ -18,6 +18,8 @@ import {
   ViewFlags,
 } from "types";
 
+const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
+
 export interface ICycleIssues {
   // observable
   loader: TLoader;
@@ -67,6 +69,11 @@ export interface ICycleIssues {
       new_cycle_id: string;
     }
   ) => Promise<IIssue>;
+  fetchActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ) => Promise<IIssueResponse | undefined>;
 }
 
 export class CycleIssues extends IssueHelperStore implements ICycleIssues {
@@ -100,6 +107,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       addIssueToCycle: action,
       removeIssueFromCycle: action,
       transferIssuesFromCycle: action,
+      fetchActiveCycleIssues: action,
     });
 
     this.rootIssueStore = _rootStore;
@@ -309,6 +317,26 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
+      throw error;
+    }
+  };
+
+  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      const params = { priority: `urgent,high` };
+      const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
+
+      runInAction(() => {
+        set(this.issues, [ACTIVE_CYCLE_ISSUES], Object.keys(response));
+        this.loader = undefined;
+      });
+
+      this.rootIssueStore.issues.addIssue(Object.values(response));
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      this.loader = undefined;
       throw error;
     }
   };
