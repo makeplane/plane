@@ -8,9 +8,9 @@ import { usePage } from "hooks/store";
 import { Loader } from "@plane/ui";
 
 export const SharedPagesList: FC = observer(() => {
-  const { publicProjectPages } = usePage();
+  const { publicProjectPageIds } = usePage();
 
-  if (!publicProjectPages)
+  if (!publicProjectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -19,5 +19,5 @@ export const SharedPagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={publicProjectPages} />;
+  return <PagesListView pageIds={publicProjectPageIds} />;
 });

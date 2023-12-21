@@ -9,22 +9,18 @@ import { RootStore } from "../root.store";
 import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";
 
 export interface IUserStore {
-  loader: boolean;
-  currentUserError: any;
-
   isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
   isUserInstanceAdmin: boolean | null;
   currentUserSettings: IUserSettings | null;
 
   dashboardInfo: any;
-
+  // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserInstanceAdminStatus: () => Promise<boolean>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
-
   fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
-
+  // crud actions
   updateUserOnBoard: () => Promise<void>;
   updateTourCompleted: () => Promise<void>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
@@ -37,9 +33,6 @@ export interface IUserStore {
 }
 
 export class UserStore implements IUserStore {
-  loader: boolean = false;
-  currentUserError: any = null;
-
   isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
   isUserInstanceAdmin: boolean | null = null;
@@ -57,8 +50,6 @@ export class UserStore implements IUserStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
-      loader: observable.ref,
-      isUserLoggedIn: observable.ref,
       currentUser: observable,
       isUserInstanceAdmin: observable.ref,
       currentUserSettings: observable,
@@ -81,57 +72,46 @@ export class UserStore implements IUserStore {
     this.membership = new UserMembershipStore(_rootStore);
   }
 
-  fetchCurrentUser = async () => {
-    try {
-      const response = await this.userService.currentUser();
-      if (response) {
-        runInAction(() => {
-          this.currentUserError = null;
-          this.currentUser = response;
-          this.isUserLoggedIn = true;
-        });
-      }
-      return response;
-    } catch (error) {
+  /**
+   * Fetches the current user
+   * @returns Promise<IUser>
+   */
+  fetchCurrentUser = async () =>
+    await this.userService.currentUser().then((user) => {
       runInAction(() => {
-        this.currentUserError = error;
-        this.isUserLoggedIn = false;
+        this.isUserLoggedIn = true;
       });
-      throw error;
-    }
-  };
+      return user;
+    });
 
-  fetchCurrentUserInstanceAdminStatus = async () => {
-    try {
-      const response = await this.userService.currentUserInstanceAdminStatus();
-      if (response) {
-        runInAction(() => {
-          this.isUserInstanceAdmin = response.is_instance_admin;
-        });
-      }
+  /**
+   * Fetches the current user instance admin status
+   * @returns Promise<boolean>
+   */
+  fetchCurrentUserInstanceAdminStatus = async () =>
+    await this.userService.currentUserInstanceAdminStatus().then((response) => {
+      runInAction(() => {
+        this.isUserInstanceAdmin = response.is_instance_admin;
+      });
       return response.is_instance_admin;
-    } catch (error) {
+    });
+
+  /**
+   * Fetches the current user settings
+   * @returns Promise<IUserSettings>
+   */
+  fetchCurrentUserSettings = async () =>
+    await this.userService.currentUserSettings().then((response) => {
       runInAction(() => {
-        this.isUserInstanceAdmin = false;
+        this.currentUserSettings = response;
       });
-      throw error;
-    }
-  };
-
-  fetchCurrentUserSettings = async () => {
-    try {
-      const response = await this.userService.currentUserSettings();
-      if (response) {
-        runInAction(() => {
-          this.currentUserSettings = response;
-        });
-      }
       return response;
-    } catch (error) {
-      throw error;
-    }
-  };
+    });
 
+  /**
+   * Fetches the current user dashboard info
+   * @returns Promise<IUserWorkspaceDashboard>
+   */
   fetchUserDashboardInfo = async (workspaceSlug: string, month: number) => {
     try {
       const response = await this.userService.userWorkspaceDashboard(workspaceSlug, month);
@@ -144,109 +124,102 @@ export class UserStore implements IUserStore {
     }
   };
 
+  /**
+   * Updates the user onboarding status
+   * @returns Promise<void>
+   */
   updateUserOnBoard = async () => {
-    try {
+    const user = this.currentUser ?? undefined;
+    if (!user) return;
+    await this.userService.updateUserOnBoard().then(() => {
       runInAction(() => {
         this.currentUser = {
           ...this.currentUser,
           is_onboarded: true,
         } as IUser;
       });
-
-      const user = this.currentUser ?? undefined;
-
-      if (!user) return;
-
-      await this.userService.updateUserOnBoard();
-    } catch (error) {
-      this.fetchCurrentUser();
-
-      throw error;
-    }
+    });
   };
 
+  /**
+   * Updates the user tour completed status
+   * @returns Promise<void>
+   */
   updateTourCompleted = async () => {
-    try {
-      if (this.currentUser) {
+    if (this.currentUser) {
+      return await this.userService.updateUserTourCompleted().then(() => {
         runInAction(() => {
           this.currentUser = {
             ...this.currentUser,
             is_tour_completed: true,
           } as IUser;
         });
-
-        const response = await this.userService.updateUserTourCompleted();
-
-        return response;
-      }
-    } catch (error) {
-      throw error;
+      });
     }
   };
 
-  updateCurrentUser = async (data: Partial<IUser>) => {
-    try {
-      runInAction(() => {
-        this.currentUser = {
-          ...this.currentUser,
-          ...data,
-        } as IUser;
-      });
-
-      const response = await this.userService.updateUser(data);
-
+  /**
+   * Updates the current user
+   * @param data
+   * @returns Promise<IUser>
+   */
+  updateCurrentUser = async (data: Partial<IUser>) =>
+    await this.userService.updateUser(data).then((response) => {
       runInAction(() => {
         this.currentUser = response;
       });
       return response;
-    } catch (error) {
-      this.fetchCurrentUser();
+    });
 
-      throw error;
-    }
-  };
-
-  updateCurrentUserTheme = async (theme: string) => {
-    try {
-      runInAction(() => {
-        this.currentUser = {
-          ...this.currentUser,
-          theme: {
-            ...this.currentUser?.theme,
-            theme,
-          },
-        } as IUser;
-      });
-      const response = await this.userService.updateUser({
+  /**
+   * Updates the current user theme
+   * @param theme
+   * @returns Promise<IUser>
+   */
+  updateCurrentUserTheme = async (theme: string) =>
+    await this.userService
+      .updateUser({
         theme: { ...this.currentUser?.theme, theme },
-      } as IUser);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
+      } as IUser)
+      .then((response) => {
+        runInAction(() => {
+          this.currentUser = {
+            ...this.currentUser,
+            theme: {
+              ...this.currentUser?.theme,
+              theme,
+            },
+          } as IUser;
+        });
+        return response;
+      });
 
+  /**
+   * Deactivates the current user
+   * @returns Promise<void>
+   */
   deactivateAccount = async () => {
     try {
-      await this.userService.deactivateAccount();
-      this.currentUserError = null;
-      this.currentUser = null;
-      this.isUserLoggedIn = false;
+      await this.userService.deactivateAccount().then(() => {
+        runInAction(() => {
+          this.currentUser = null;
+          this.isUserLoggedIn = false;
+        });
+      });
     } catch (error) {
       throw error;
     }
   };
 
-  signOut = async () => {
-    try {
-      await this.authService.signOut();
+  /**
+   * Signs out the current user
+   * @returns Promise<void>
+   */
+  signOut = async () =>
+    await this.authService.signOut().then(() => {
       runInAction(() => {
-        this.currentUserError = null;
         this.currentUser = null;
         this.isUserLoggedIn = false;
       });
-    } catch (error) {
-      throw error;
-    }
-  };
+    });
 }

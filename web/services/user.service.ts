@@ -10,10 +10,10 @@ import type {
   IUserProfileProjectSegregation,
   IUserSettings,
   IUserWorkspaceDashboard,
+  IIssueResponse,
 } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "types";
 
 export class UserService extends APIService {
   constructor() {
