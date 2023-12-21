@@ -11,6 +11,7 @@ import { IUserMembershipStore, UserMembershipStore } from "./user-membership.sto
 export interface IUserRootStore {
   // states
   currentUserError: any | null;
+  currentUserLoader: boolean;
   // observables
   isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
@@ -37,6 +38,7 @@ export interface IUserRootStore {
 export class UserRootStore implements IUserRootStore {
   // states
   currentUserError: any | null = null;
+  currentUserLoader: boolean = false;
   // observables
   isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
@@ -56,6 +58,7 @@ export class UserRootStore implements IUserRootStore {
     makeObservable(this, {
       // states
       currentUserError: observable.ref,
+      currentUserLoader: observable.ref,
       // observable
       currentUser: observable,
       isUserInstanceAdmin: observable.ref,
@@ -85,15 +88,18 @@ export class UserRootStore implements IUserRootStore {
    */
   fetchCurrentUser = async () => {
     try {
+      this.currentUserLoader = true;
       const response = await this.userService.currentUser();
       runInAction(() => {
         this.isUserLoggedIn = true;
         this.currentUser = response;
         this.currentUserError = null;
+        this.currentUserLoader = false;
       });
       return response;
     } catch (error) {
       runInAction(() => {
+        this.currentUserLoader = false;
         this.currentUserError = error;
       });
       throw error;

@@ -5,7 +5,7 @@ import { Tab } from "@headlessui/react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { usePage } from "hooks/store";
+import { usePage, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -39,14 +39,16 @@ const SharedPagesList = dynamic<any>(() => import("components/pages").then((a) =
 });
 
 const ProjectPagesPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store
   const { fetchProjectPages, fetchArchivedProjectPages } = usePage();
+  const { currentUser, currentUserLoader } = useUser();
   // hooks
-  const {} = useUserAuth();
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API
