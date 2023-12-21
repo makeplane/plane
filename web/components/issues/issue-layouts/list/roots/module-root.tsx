@@ -10,7 +10,6 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EIssuesStoreType } from "constants/issue";
 
 export interface IModuleListLayout {}
@@ -49,7 +48,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
       viewId={moduleId?.toString()}
-      currentStore={EProjectStore.MODULE}
+      currentStore={EIssuesStoreType.MODULE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);

@@ -15,8 +15,7 @@ import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 import type { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
-import { EProjectStore } from "store/application/command-palette.store";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
@@ -41,7 +40,7 @@ export interface IssuesModalProps {
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
   handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
 }
 
 const issueDraftService = new IssueDraftService();
@@ -55,7 +54,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     fieldsToShow = ["all"],
     onSubmit,
     handleSubmit,
-    currentStore = EProjectStore.PROJECT,
+    currentStore = EIssuesStoreType.PROJECT,
   } = props;
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -87,27 +86,27 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { workspaceProjectIds } = useProject();
 
   const issueStores = {
-    [EProjectStore.PROJECT]: {
+    [EIssuesStoreType.PROJECT]: {
       store: projectIssues,
       dataIdToUpdate: activeProject,
       viewId: undefined,
     },
-    [EProjectStore.PROJECT_VIEW]: {
+    [EIssuesStoreType.PROJECT_VIEW]: {
       store: viewIssues,
       dataIdToUpdate: activeProject,
       viewId: undefined,
     },
-    [EProjectStore.PROFILE]: {
+    [EIssuesStoreType.PROFILE]: {
       store: profileIssues,
       dataIdToUpdate: currentUser?.id || undefined,
       viewId: undefined,
     },
-    [EProjectStore.CYCLE]: {
+    [EIssuesStoreType.CYCLE]: {
       store: cycleIssues,
       dataIdToUpdate: activeProject,
       viewId: cycleId,
     },
-    [EProjectStore.MODULE]: {
+    [EIssuesStoreType.MODULE]: {
       store: moduleIssues,
       dataIdToUpdate: activeProject,
       viewId: moduleId,
@@ -224,7 +223,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToModule = async (issue: IIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    moduleIssues.addIssueToModule(workspaceSlug, moduleId, [issue.id]);
+    moduleIssues.addIssueToModule(workspaceSlug, activeProject, moduleId, [issue.id]);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {

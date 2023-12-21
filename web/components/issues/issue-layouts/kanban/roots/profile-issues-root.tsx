@@ -9,7 +9,6 @@ import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 import { useMemo } from "react";
@@ -53,7 +52,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
       issues={issues}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
-      currentStore={EProjectStore.PROFILE}
+      currentStore={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );

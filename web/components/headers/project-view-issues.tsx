@@ -24,7 +24,6 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
@@ -205,7 +204,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-              toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"
             prependIcon={<Plus />}

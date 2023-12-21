@@ -10,7 +10,6 @@ import { IIssue } from "types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { EIssueActions } from "../../types";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EIssuesStoreType } from "constants/issue";
 
 export interface ICycleListLayout {}
@@ -49,7 +48,7 @@ export const CycleListLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
       viewId={cycleId?.toString()}
-      currentStore={EProjectStore.CYCLE}
+      currentStore={EIssuesStoreType.CYCLE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !cycleId) throw new Error();
         return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);

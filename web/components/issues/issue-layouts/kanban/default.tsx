@@ -17,8 +17,8 @@ import {
 } from "types";
 // constants
 import { EIssueActions } from "../types";
-import { EProjectStore } from "store/application/command-palette.store";
 import { getGroupByColumns } from "../utils";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -41,7 +41,7 @@ export interface IGroupByKanBan {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
@@ -151,7 +151,7 @@ export interface IKanBan {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
 }

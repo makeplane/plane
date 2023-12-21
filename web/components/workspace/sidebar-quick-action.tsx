@@ -8,7 +8,7 @@ import useLocalStorage from "hooks/use-local-storage";
 import { CreateUpdateDraftIssueModal } from "components/issues";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { EProjectStore } from "store/application/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
@@ -61,7 +61,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               }`}
               onClick={() => {
                 setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
             >
               <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />

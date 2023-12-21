@@ -10,7 +10,6 @@ import { IIssue } from "types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { EIssueActions } from "../../types";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
@@ -35,7 +34,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
       issues={issues}
       QuickActions={ArchivedIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EProjectStore.PROJECT}
+      currentStore={EIssuesStoreType.PROJECT}
     />
   );
 });

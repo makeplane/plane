@@ -2,17 +2,10 @@ import { observable, action, makeObservable, computed } from "mobx";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
-
-export enum EProjectStore {
-  PROJECT = "ProjectStore",
-  PROJECT_VIEW = "ProjectViewStore",
-  PROFILE = "ProfileStore",
-  MODULE = "ModuleStore",
-  CYCLE = "CycleStore",
-}
+import { EIssuesStoreType } from "constants/issue";
 
 export interface ModalData {
-  store: EProjectStore;
+  store: EIssuesStoreType;
   viewId: string;
 }
 
@@ -37,12 +30,12 @@ export interface ICommandPaletteStore {
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
   toggleCreatePageModal: (value?: boolean) => void;
-  toggleCreateIssueModal: (value?: boolean, storeType?: EProjectStore) => void;
+  toggleCreateIssueModal: (value?: boolean, storeType?: EIssuesStoreType) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
 
-  createIssueStoreType: EProjectStore;
+  createIssueStoreType: EIssuesStoreType;
 }
 
 export class CommandPaletteStore implements ICommandPaletteStore {
@@ -61,7 +54,7 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   projectService;
   pageService;
 
-  createIssueStoreType: EProjectStore = EProjectStore.PROJECT;
+  createIssueStoreType: EIssuesStoreType = EIssuesStoreType.PROJECT;
 
   constructor() {
     makeObservable(this, {
@@ -198,13 +191,13 @@ export class CommandPaletteStore implements ICommandPaletteStore {
    * @param storeType
    * @returns
    */
-  toggleCreateIssueModal = (value?: boolean, storeType?: EProjectStore) => {
+  toggleCreateIssueModal = (value?: boolean, storeType?: EIssuesStoreType) => {
     if (value !== undefined) {
       this.isCreateIssueModalOpen = value;
-      this.createIssueStoreType = storeType || EProjectStore.PROJECT;
+      this.createIssueStoreType = storeType || EIssuesStoreType.PROJECT;
     } else {
       this.isCreateIssueModalOpen = !this.isCreateIssueModalOpen;
-      this.createIssueStoreType = EProjectStore.PROJECT;
+      this.createIssueStoreType = EIssuesStoreType.PROJECT;
     }
   };
 

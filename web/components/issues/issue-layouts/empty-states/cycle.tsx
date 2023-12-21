@@ -13,7 +13,6 @@ import { Button } from "@plane/ui";
 import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { ISearchIssueResponse } from "types";
-import { EProjectStore } from "store/application/command-palette.store";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
@@ -74,7 +73,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("CYCLE_EMPTY_STATE");
-              toggleCreateIssueModal(true, EProjectStore.CYCLE);
+              toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
             },
           }}
           secondaryButton={

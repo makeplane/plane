@@ -5,7 +5,6 @@ import { IIssue } from "types";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
 import { observer } from "mobx-react-lite";
-import { EProjectStore } from "store/application/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
@@ -16,6 +15,7 @@ import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { IDraftIssuesFilter, IDraftIssues } from "store/issue/draft";
 import { IArchivedIssuesFilter, IArchivedIssues } from "store/issue/archived";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 enum EIssueActions {
   UPDATE = "update",
@@ -47,7 +47,7 @@ interface IBaseListRoot {
     [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
   };
   viewId?: string;
-  currentStore: EProjectStore;
+  currentStore: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }

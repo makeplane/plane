@@ -10,7 +10,6 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
@@ -53,7 +52,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EProjectStore.PROFILE}
+      currentStore={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );

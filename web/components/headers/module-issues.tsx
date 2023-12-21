@@ -27,7 +27,6 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
@@ -234,7 +233,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("MODULE_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.MODULE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

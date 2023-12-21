@@ -13,9 +13,9 @@ import {
 } from "types";
 import { EIssueActions } from "../types";
 // constants
-import { EProjectStore } from "store/application/command-palette.store";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { getGroupByColumns } from "../utils";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IGroupByList {
   issueIds: IGroupedIssues | TUnGroupedIssues | any;
@@ -35,7 +35,7 @@ export interface IGroupByList {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
+  currentStore: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   viewId?: string;
 }
@@ -147,7 +147,7 @@ export interface IList {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
+  currentStore: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 

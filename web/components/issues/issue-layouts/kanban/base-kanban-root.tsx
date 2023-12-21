@@ -15,7 +15,6 @@ import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { EProjectStore } from "store/application/command-palette.store";
 import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
@@ -26,6 +25,7 @@ import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
@@ -44,7 +44,7 @@ export interface IBaseKanBanLayout {
   };
   showLoader?: boolean;
   viewId?: string;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }

@@ -10,7 +10,6 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EIssuesStoreType } from "constants/issue";
 
 export interface ICycleKanBanLayout {}
@@ -51,7 +50,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       showLoader={true}
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString() ?? ""}
-      currentStore={EProjectStore.CYCLE}
+      currentStore={EIssuesStoreType.CYCLE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !cycleId) throw new Error();
         return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);

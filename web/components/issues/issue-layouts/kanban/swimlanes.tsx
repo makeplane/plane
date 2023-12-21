@@ -16,9 +16,9 @@ import {
 } from "types";
 // constants
 import { EIssueActions } from "../types";
-import { EProjectStore } from "store/application/command-palette.store";
 import { useLabel, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 interface ISubGroupSwimlaneHeader {
   issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
@@ -68,7 +68,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   handleKanBanToggle: any;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   enableQuickIssueCreate: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
@@ -170,7 +170,7 @@ export interface IKanBanSwimLanes {
   showEmptyGroup: boolean;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   enableQuickIssueCreate: boolean;
   quickAddCallback?: (

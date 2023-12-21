@@ -27,7 +27,6 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
@@ -234,7 +233,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("CYCLE_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}
