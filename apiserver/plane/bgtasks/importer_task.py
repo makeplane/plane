@@ -535,4 +535,5 @@ def import_sync(data):
 
     # Updated segway
     if settings.SEGWAY_BASE_URL:
+        pass
         
