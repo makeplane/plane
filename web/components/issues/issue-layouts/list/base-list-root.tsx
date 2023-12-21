@@ -3,21 +3,20 @@ import { FC, useCallback } from "react";
 import { IIssue } from "types";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
 import { observer } from "mobx-react-lite";
 import { EProjectStore } from "store/application/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
 import { useRouter } from "next/router";
 import { EUserProjectRoles } from "constants/project";
-import { IProjectIssues } from "store/issue/project";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 import { useIssues } from "hooks/store/use-issues";
 import { useUser } from "hooks/store";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { IDraftIssuesFilter, IDraftIssues } from "store/issue/draft";
+import { IArchivedIssuesFilter, IArchivedIssues } from "store/issue/archived";
 
 enum EIssueActions {
   UPDATE = "update",
@@ -27,12 +26,22 @@ enum EIssueActions {
 
 interface IBaseListRoot {
   issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
-  issues: IProjectIssues;
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter
+    | IDraftIssuesFilter
+    | IArchivedIssuesFilter;
+
+  issues:
+    | IProjectIssues
+    | ICycleIssues
+    | IModuleIssues
+    | IProjectViewIssues
+    | IProfileIssues
+    | IDraftIssues
+    | IArchivedIssues;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;

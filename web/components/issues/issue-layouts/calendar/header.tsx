@@ -1,7 +1,5 @@
 import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
 // icons
@@ -12,6 +10,7 @@ import {
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
+import { useCalendarView } from "hooks/store/use-calendar-view";
 
 interface ICalendarHeader {
   issuesFilterStore:
@@ -24,11 +23,11 @@ interface ICalendarHeader {
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore } = props;
 
-  const { calendar: calendarStore } = useMobxStore();
+  const issueCalendarView = useCalendarView();
 
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
-  const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
+  const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
 
   const handlePrevious = () => {
     if (calendarLayout === "month") {
@@ -38,7 +37,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
 
       const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeMonthDate: previousMonthFirstDate,
       });
     } else {
@@ -48,7 +47,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         activeWeekDate.getDate() - 7
       );
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeWeekDate: previousWeekDate,
       });
     }
@@ -62,7 +61,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
 
       const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeMonthDate: nextMonthFirstDate,
       });
     } else {
@@ -72,7 +71,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         activeWeekDate.getDate() + 7
       );
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeWeekDate: nextWeekDate,
       });
     }
@@ -82,7 +81,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
     const today = new Date();
     const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    calendarStore.updateCalendarFilters({
+    issueCalendarView.updateCalendarFilters({
       activeMonthDate: firstDayOfCurrentMonth,
       activeWeekDate: today,
     });

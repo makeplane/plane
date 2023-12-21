@@ -3,12 +3,13 @@ import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
 import { Check } from "lucide-react";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // ui
 import { Avatar } from "@plane/ui";
 // types
 import { IIssue } from "types";
 import { useMember } from "hooks/store";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
@@ -22,8 +23,8 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
-    projectIssues: { updateIssue },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();

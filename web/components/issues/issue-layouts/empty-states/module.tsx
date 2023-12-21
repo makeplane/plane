@@ -2,8 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -16,6 +15,7 @@ import emptyIssue from "public/empty-state/issue.svg";
 import { ISearchIssueResponse } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -28,7 +28,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // store hooks
-  const { moduleIssues: moduleIssueStore } = useMobxStore();
+  const { issues } = useIssues(EIssuesStoreType.MODULE);
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -44,13 +44,15 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await moduleIssueStore.addIssueToModule(workspaceSlug.toString(), moduleId.toString(), issueIds).catch(() =>
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Selected issues could not be added to the module. Please try again.",
-      })
-    );
+    await issues
+      .addIssueToModule(workspaceSlug.toString(), moduleId.toString(), issueIds, false, projectId?.toString())
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the module. Please try again.",
+        })
+      );
   };
 
   const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;

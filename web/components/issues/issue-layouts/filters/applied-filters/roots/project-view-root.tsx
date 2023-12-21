@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useProjectState, useProjectView } from "hooks/store";
+import { useIssues, useLabel, useMember, useProjectState, useProjectView } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList } from "components/issues";
@@ -11,7 +11,7 @@ import { Button } from "@plane/ui";
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
 import { IIssueFilterOptions } from "types";
-import { EIssueFilterType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -23,8 +23,8 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   };
   // store hooks
   const {
-    viewIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const {
     project: { projectLabels },
   } = useLabel();

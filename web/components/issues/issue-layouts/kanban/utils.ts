@@ -3,10 +3,10 @@ import { IProjectIssues } from "store/issue/project";
 import { IGroupedIssues, IIssueMap, ISubGroupedIssues, TUnGroupedIssues } from "types";
 
 export const handleDragDrop = async (
-  source: DraggableLocation | null,
-  destination: DraggableLocation | null,
-  workspaceSlug: string,
-  projectId: string, // projectId for all views or user id in profile issues
+  source: DraggableLocation | null | undefined,
+  destination: DraggableLocation | null | undefined,
+  workspaceSlug: string | undefined,
+  projectId: string | undefined, // projectId for all views or user id in profile issues
   store: IProjectIssues,
   subGroupBy: string | null,
   groupBy: string | null,
@@ -14,7 +14,7 @@ export const handleDragDrop = async (
   issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined,
   viewId: string | null = null // it can be moduleId, cycleId
 ) => {
-  if (!issueMap || !issueWithIds || !source || !destination) return;
+  if (!issueMap || !issueWithIds || !source || !destination || !workspaceSlug || !projectId) return;
 
   let updateIssue: any = {};
 
@@ -60,7 +60,7 @@ export const handleDragDrop = async (
       : (issueWithIds as IGroupedIssues)[destinationGroupByColumnId];
 
     const [removed] = sourceIssues.splice(source.index, 1);
-    const removedIssueDetail = issueMap.allIssues[removed];
+    const removedIssueDetail = issueMap[removed];
 
     if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
       updateIssue = {
@@ -126,23 +126,20 @@ const handleSortOrder = (destinationIssues: string[], destinationIndex: number, 
       const destinationIssueId = destinationIssues[destinationIndex];
       currentIssueState = {
         ...currentIssueState,
-        sort_order: issueMap.allIssues[destinationIssueId].sort_order - sortOrderDefaultValue,
+        sort_order: issueMap[destinationIssueId].sort_order - sortOrderDefaultValue,
       };
     } else if (destinationIndex === destinationIssues.length) {
       const destinationIssueId = destinationIssues[destinationIndex - 1];
       currentIssueState = {
         ...currentIssueState,
-        sort_order: issueMap.allIssues[destinationIssueId].sort_order + sortOrderDefaultValue,
+        sort_order: issueMap[destinationIssueId].sort_order + sortOrderDefaultValue,
       };
     } else {
       const destinationTopIssueId = destinationIssues[destinationIndex - 1];
       const destinationBottomIssueId = destinationIssues[destinationIndex];
       currentIssueState = {
         ...currentIssueState,
-        sort_order:
-          (issueMap.allIssues[destinationTopIssueId].sort_order +
-            issueMap.allIssues[destinationBottomIssueId].sort_order) /
-          2,
+        sort_order: (issueMap[destinationTopIssueId].sort_order + issueMap[destinationBottomIssueId].sort_order) / 2,
       };
     }
   } else {

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
+//hooks
+import { useCalendarView } from "hooks/store";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // icons
@@ -10,7 +12,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { MONTHS_LIST } from "constants/calendar";
 
 export const CalendarMonthsDropdown: React.FC = observer(() => {
-  const { calendar: calendarStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore } = useMobxStore();
+  const issueCalendarView = useCalendarView();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
 
@@ -29,10 +32,10 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
     ],
   });
 
-  const { activeMonthDate } = calendarStore.calendarFilters;
+  const { activeMonthDate } = issueCalendarView.calendarFilters;
 
   const getWeekLayoutHeader = (): string => {
-    const allDaysOfActiveWeek = calendarStore.allDaysOfActiveWeek;
+    const allDaysOfActiveWeek = issueCalendarView.allDaysOfActiveWeek;
 
     if (!allDaysOfActiveWeek) return "Week view";
 
@@ -55,7 +58,7 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
   };
 
   const handleDateChange = (date: Date) => {
-    calendarStore.updateCalendarFilters({
+    issueCalendarView.updateCalendarFilters({
       activeMonthDate: date,
     });
   };

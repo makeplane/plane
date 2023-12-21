@@ -2,19 +2,8 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useProjectState, useUser } from "hooks/store";
+import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
-import {
-  ICycleIssuesFilterStore,
-  ICycleIssuesStore,
-  IModuleIssuesFilterStore,
-  IModuleIssuesStore,
-  IProjectIssuesFilterStore,
-  IProjectIssuesStore,
-  IViewIssuesFilterStore,
-  IViewIssuesStore,
-} from "store_legacy/issues";
-import { IIssueUnGroupedStructure } from "store_legacy/issue";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
@@ -24,14 +13,14 @@ import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { ICycleIssuesFilter, ICycleIssues } from "store/issue/cycle";
+import { IModuleIssuesFilter, IModuleIssues } from "store/issue/module";
+import { IProjectIssuesFilter, IProjectIssues } from "store/issue/project";
+import { IProjectViewIssuesFilter, IProjectViewIssues } from "store/issue/project-views";
 
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore:
-    | IViewIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | IProjectIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issueStore: IProjectIssues | ICycleIssues | IModuleIssues | IProjectViewIssues;
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -51,6 +40,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const {
     projectMember: { projectMembers },
   } = useMobxStore();
+  const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -70,10 +60,9 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     return enableInlineEditing && isEditingAllowedBasedOnProject;
   };
 
-  const issuesResponse = issueStore.getIssues;
-  const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
+  const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
 
-  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
+  const issues = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
 
   const handleIssues = useCallback(
     async (issue: IIssue, action: EIssueActions) => {
@@ -106,7 +95,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
       displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-      issues={issues as IIssueUnGroupedStructure}
+      issues={issues}
       quickActions={(issue, customActionButton) => (
         <QuickActions
           customActionButton={customActionButton}

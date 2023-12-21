@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues } from "hooks/store";
 // services
 import { CycleService } from "services/cycle.service";
 // ui
@@ -11,6 +11,7 @@ import { ContrastIcon, CustomSearchSelect, Spinner, Tooltip } from "@plane/ui";
 import { IIssue } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -29,8 +30,8 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId } = router.query;
   // mobx store
   const {
-    cycleIssues: { removeIssueFromCycle, addIssueToCycle },
-  } = useMobxStore();
+    issues: { removeIssueFromCycle, addIssueToCycle },
+  } = useIssues(EIssuesStoreType.CYCLE);
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -42,10 +43,10 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   );
 
   const handleCycleStoreChange = async (cycleId: string) => {
-    if (!workspaceSlug || !issueDetail || !cycleId) return;
+    if (!workspaceSlug || !issueDetail || !cycleId || !projectId) return;
 
     setIsUpdating(true);
-    await addIssueToCycle(workspaceSlug.toString(), cycleId, [issueDetail.id], false, projectId?.toString())
+    await addIssueToCycle(workspaceSlug.toString(), projectId?.toString(), cycleId, [issueDetail.id])
       .then(async () => {
         handleIssueUpdate && (await handleIssueUpdate());
       })
@@ -98,8 +99,8 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
           value === issueCycle?.cycle_detail.id
             ? handleRemoveIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
             : handleCycleChange
-              ? handleCycleChange(value)
-              : handleCycleStoreChange(value);
+            ? handleCycleChange(value)
+            : handleCycleStoreChange(value);
         }}
         options={options}
         customButton={

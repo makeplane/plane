@@ -18,7 +18,7 @@ import {
   IViewIssuesFilterStore,
 } from "store_legacy/issues";
 import { IQuickActionProps } from "../list/list-view-types";
-import { IProjectIssues } from "store/issue/project";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -27,17 +27,32 @@ import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { IIssueKanBanViewStore } from "store/issue/issue_kanban_view.store";
+import { IssueKanBanViewStore } from "store/issue/issue_kanban_view.store";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
+import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "store/issue/workspace";
 
 export interface IBaseKanBanLayout {
-  issues: IProjectIssues;
+  issues:
+    | IProjectIssues
+    | ICycleIssues
+    | IDraftIssues
+    | IModuleIssues
+    | IDraftIssues
+    | IProjectViewIssues
+    | IProfileIssues
+    | IWorkspaceIssues;
   issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
-  kanbanViewStore: IIssueKanBanViewStore;
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IDraftIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter
+    | IWorkspaceIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
@@ -61,7 +76,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     issues,
     issuesFilter,
-    kanbanViewStore,
     QuickActions,
     issueActions,
     showLoader,
@@ -80,6 +94,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const { issueMap } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();
+
+  //TODO get from filters
+  const kanbanViewStore: IssueKanBanViewStore = {} as IssueKanBanViewStore;
 
   const issueIds = issues?.groupedIssueIds || [];
 
@@ -146,8 +163,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         await handleDragDrop(
           result.source,
           result.destination,
-          workspaceSlug.toString(),
-          projectId.toString(),
+          workspaceSlug?.toString(),
+          projectId?.toString(),
           issues,
           sub_group_by,
           group_by,
@@ -195,8 +212,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     await handleDragDrop(
       dragState.source,
       dragState.destination,
-      workspaceSlug.toString(),
-      projectId.toString(),
+      workspaceSlug?.toString(),
+      projectId?.toString(),
       issues,
       sub_group_by,
       group_by,

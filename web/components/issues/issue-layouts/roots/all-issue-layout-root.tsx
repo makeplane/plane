@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useGlobalView, useLabel, useUser } from "hooks/store";
+import { useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewsAppliedFiltersRoot } from "components/issues";
@@ -13,11 +13,11 @@ import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-acti
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
-import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { EIssueActions } from "../types";
 
 import { EIssueFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   type?: TStaticViewTypes | null;
@@ -31,9 +31,15 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     workspaceMember: { workspaceMembers },
-    workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
-    workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
   } = useMobxStore();
+
+  // store
+  const {
+    issuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
+    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
+    issueMap,
+  } = useIssues(EIssuesStoreType.GLOBAL);
+
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -57,7 +63,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
         setCurrentView(currentIssueView);
         await fetchAllGlobalViews(workspaceSlug);
         await fetchFilters(workspaceSlug, currentIssueView);
-        await fetchIssues(workspaceSlug, currentIssueView, getIssues ? "mutation" : "init-loader");
+        await fetchIssues(workspaceSlug, currentIssueView, groupedIssueIds ? "mutation" : "init-loader");
       }
     }
   );
@@ -70,9 +76,8 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
-  const issuesResponse = getIssues;
-  const issueIds = (getIssuesIds ?? []) as TUnGroupedIssues;
-  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
+  const issueIds = (groupedIssueIds ?? []) as TUnGroupedIssues;
+  const issuesArray = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -109,7 +114,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {currentView != currentIssueView && (loader === "init-loader" || !getIssues) ? (
+      {currentView != currentIssueView && (loader === "init-loader" || !groupedIssueIds) ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
@@ -117,7 +122,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
         <>
           <GlobalViewsAppliedFiltersRoot />
 
-          {Object.keys(getIssues ?? {}).length == 0 ? (
+          {(groupedIssueIds ?? {}).length == 0 ? (
             <>{/* <GlobalViewEmptyState /> */}</>
           ) : (
             <div className="relative h-full w-full overflow-auto">
@@ -125,7 +130,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-                issues={issues as IIssueUnGroupedStructure}
+                issues={issuesArray}
                 quickActions={(issue) => (
                   <AllIssueQuickActions
                     issue={issue}

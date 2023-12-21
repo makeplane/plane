@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useUser } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 // components
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
@@ -18,6 +17,8 @@ import {
 } from "store_legacy/issues";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useCalendarView } from "hooks/store/use-calendar-view";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   issuesFilterStore:
@@ -43,17 +44,20 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const { issuesFilterStore, issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } =
     props;
   // store hooks
-  const { calendar: calendarStore, projectIssues: issueStore } = useMobxStore();
+  const {
+    issues: { viewFlags },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const issueCalendarView = useCalendarView();
   const {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { enableIssueCreation } = issueStore?.viewFlags || {};
+  const { enableIssueCreation } = viewFlags || {};
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const calendarPayload = calendarStore.calendarPayload;
+  const calendarPayload = issueCalendarView.calendarPayload;
 
-  const allWeeksOfActiveMonth = calendarStore.allWeeksOfActiveMonth;
+  const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
   if (!calendarPayload)
     return (
@@ -90,7 +94,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           {layout === "week" && (
             <CalendarWeekDays
               issuesFilterStore={issuesFilterStore}
-              week={calendarStore.allDaysOfActiveWeek}
+              week={issueCalendarView.allDaysOfActiveWeek}
               issues={issues}
               groupedIssueIds={groupedIssueIds}
               enableQuickIssueCreate

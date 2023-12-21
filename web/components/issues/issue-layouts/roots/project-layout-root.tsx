@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import {
   ListLayout,
@@ -14,7 +14,6 @@ import {
   ProjectEmptyState,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
-import { useIssues } from "hooks/store/use-issues";
 import { EIssuesStoreType } from "constants/issue";
 // hooks
 
@@ -24,7 +23,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    issues: { loader, groupedIssueIds, fetchIssues, issues },
+    issues: { loader, groupedIssueIds, fetchIssues },
     issuesFilter: { issueFilters, fetchFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
 

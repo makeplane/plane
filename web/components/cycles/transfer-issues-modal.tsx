@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
@@ -17,6 +17,7 @@ import { INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 import { ICycle } from "types";
 //helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   isOpen: boolean;
@@ -28,7 +29,9 @@ const cycleService = new CycleService();
 export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleClose }) => {
   const [query, setQuery] = useState("");
 
-  const { cycleIssues: cycleIssueStore } = useMobxStore();
+  const {
+    issues: { transferIssuesFromCycle },
+  } = useIssues(EIssuesStoreType.CYCLE);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -36,8 +39,7 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
-    await cycleIssueStore
-      .transferIssuesFromCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
+    await transferIssuesFromCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then(() => {
         setToastAlert({
           type: "success",

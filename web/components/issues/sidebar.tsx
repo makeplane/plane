@@ -5,7 +5,7 @@ import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssues, useProjectState, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
@@ -40,6 +40,7 @@ import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   control: any;
@@ -80,9 +81,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
   const {
-    projectIssues: { removeIssue },
     issueDetail: { createIssueLink, updateIssueLink, deleteIssueLink },
   } = useMobxStore();
+
+  const {
+    issues: { removeIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     currentUser,
     membership: { currentProjectRole },

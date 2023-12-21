@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useCycle } from "hooks/store";
+import { useCycle, useIssues } from "hooks/store";
 // components
 import {
   CycleAppliedFiltersRoot,
@@ -20,6 +19,7 @@ import { TransferIssues, TransferIssuesModal } from "components/cycles";
 import { Spinner } from "@plane/ui";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
+import { EIssuesStoreType } from "constants/issue";
 
 export const CycleLayoutRoot: React.FC = observer(() => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
@@ -32,9 +32,9 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   };
   // store hooks
   const {
-    cycleIssues: { loader, getIssues, fetchIssues },
-    cycleIssuesFilter: { issueFilters, fetchFilters },
-  } = useMobxStore();
+    issues: { loader, groupedIssueIds, fetchIssues },
+    issuesFilter: { issueFilters, fetchFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
 
   useSWR(
@@ -42,7 +42,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await fetchFilters(workspaceSlug, projectId, cycleId);
-        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader", cycleId);
+        await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader", cycleId);
       }
     }
   );
@@ -63,13 +63,13 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
-        {loader === "init-loader" || !getIssues ? (
+        {loader === "init-loader" || !groupedIssueIds ? (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         ) : (
           <>
-            {Object.keys(getIssues ?? {}).length == 0 ? (
+            {Object.keys(groupedIssueIds ?? {}).length == 0 ? (
               <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
             ) : (
               <div className="h-full w-full overflow-auto">
