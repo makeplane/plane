@@ -59,7 +59,8 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
-  }, [router.events]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (posthogAPIKey) {
     return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
