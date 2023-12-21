@@ -5,6 +5,7 @@ import random
 # Django imports
 from django.db.models import Q, Max
 from django.contrib.auth.hashers import make_password
+from django.conf import settings
 
 # Third Party imports
 from celery import shared_task
@@ -41,29 +42,11 @@ def service_importer(service, importer_id):
 def update_imported_items(importer_id, entity, external_id, entity_id):
     importer = Importer.objects.get(pk=importer_id)
     if importer.imported_data:
-        importer.imported_data.setdefault(str(entity), {})
-        importer.imported_data[entity] = {str(external_id): str(entity_id)}
+        importer.imported_data.setdefault(str(entity), {})[str(external_id)] = str(
+            entity_id
+        )
     else:
         importer.imported_data = {str(entity): {str(external_id): str(entity_id)}}
-    importer.save()
-
-
-def update_imported_items_bulk(importer_id, entity, imports):
-    importer = Importer.objects.get(pk=importer_id)
-
-    if importer.imported_data:
-        importer.imported_data.setdefault(str(entity), {})
-        importer.imported_data[entity] = {
-            str(single_import.get("external_id")): str(single_import.get("entity_id"))
-            for single_import in imports
-        }
-    else:
-        importer.imported_data = {
-            str(entity): {
-                str(single_import.get("external_id")): str(single_import.get("id"))
-                for single_import in imports
-            }
-        }
     importer.save()
 
 
@@ -83,8 +66,6 @@ def resolve_state(data):
     importer_id = data.get("importer_id")
     state_data = data.get("state")
 
-    print(state_data)
-
     # If state is not present
     if not state_data:
         # Get the default state
@@ -100,40 +81,36 @@ def resolve_state(data):
         return default_state
     # Create state
     else:
-        try:
-            print(project_id, workspace_id, data.get("state").get("name"))
-            state = State.objects.get(
-                workspace_id=workspace_id,
-                project_id=project_id,
-                name__iexact=data.get("state").get("name"),
-                # group=state_data.get("group"),
+        existing = State.objects.filter(
+            project_id=project_id,
+            workspace_id=workspace_id,
+            name=state_data.get("name"),
+        ).first()
+
+        if existing:
+            existing.external_id = state_data.get("external_id")
+            existing.external_source = state_data.get("external_source")
+            existing.save()
+            update_imported_items(
+                importer_id=importer_id,
+                entity="states",
+                entity_id=existing.id,
+                external_id=state_data.get("external_id"),
             )
-            print(state)
-            if state:
-                state.external_id = state_data.get("external_id")
-                state.external_source = state_data.get("external_source")
-                state.save()
-                update_imported_items(
-                    importer_id=importer_id,
-                    entity="state",
-                    entity_id=state.id,
-                    external_id=state_data.get("external_id"),
-                )
-                return state
-            
-        except State.DoesNotExist:
+            return existing
+        else:
             state = State.objects.create(
                 workspace_id=workspace_id,
                 project_id=project_id,
                 name=state_data.get("name"),
-                group=state_data.get("group"),
+                color=generate_random_hex_color(),
                 external_id=state_data.get("external_id"),
                 external_source=state_data.get("external_source"),
                 created_by_id=created_by_id,
             )
             update_imported_items(
                 importer_id=importer_id,
-                entity="state",
+                entity="states",
                 entity_id=state.id,
                 external_id=state_data.get("external_id"),
             )
@@ -196,72 +173,83 @@ def resolve_assignees(data):
 
     bulk_users = []
     for assignee in assignees_data:
-        user = User.objects.filter(email=assignee.get("email")).first()
-        if user:
-            try:
-                WorkspaceMember.objects.create(
-                    member=user,
-                    workspace_id=workspace_id,
+        if assignee.get("email"):
+            user = User.objects.filter(email=assignee.get("email")).first()
+            if user:
+                try:
+                    WorkspaceMember.objects.create(
+                        member=user,
+                        workspace_id=workspace_id,
+                    )
+                except Exception as e:
+                    pass
+                try:
+                    ProjectMember.objects.create(
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        member=user,
+                    )
+                except Exception as e:
+                    pass
+                try:
+                    IssueProperty.objects.create(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        user=user,
+                    )
+                except Exception as e:
+                    pass
+                update_imported_items(
+                    importer_id=importer_id,
+                    entity="users",
+                    entity_id=user.id,
+                    external_id=None,
                 )
-            except Exception as e:
-                pass
-            try:
-                ProjectMember.objects.create(
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    member=user,
+                bulk_users.append(user)
+            else:
+                user = User.objects.create(
+                    email=user.get("email").strip().lower(),
+                    username=uuid.uuid4().hex,
+                    password=make_password(uuid.uuid4().hex),
+                    is_password_autoset=True,
                 )
-            except Exception as e:
-                pass
-            try:
-                IssueProperty.objects.create(
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    created_by_id=created_by_id,
-                    user=user,
+                send_welcome_slack.delay(
+                    str(user.id),
+                    True,
+                    f"{user.email} was imported to Plane from {external_source}",
                 )
-            except Exception as e:
-                pass
-            update_imported_items(importer_id=importer_id, entity="users", entity_id=user.id, external_id=None)
-            bulk_users.append(user)
-        else:
-            user = User.objects.create(
-                email=user.get("email").strip().lower(),
-                username=uuid.uuid4().hex,
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-            )
-            send_welcome_slack.delay(
-                str(user.id),
-                True,
-                f"{user.email} was imported to Plane from {external_source}",
-            )
-            try:
-                WorkspaceMember.objects.create(
-                    member=user,
-                    workspace_id=workspace_id,
+                try:
+                    WorkspaceMember.objects.create(
+                        member=user,
+                        workspace_id=workspace_id,
+                    )
+                except Exception as e:
+                    pass
+                try:
+                    ProjectMember.objects.create(
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        member=user,
+                    )
+                except Exception as e:
+                    pass
+                try:
+                    IssueProperty.objects.create(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        user=user,
+                    )
+                except Exception as e:
+                    pass
+                update_imported_items(
+                    importer_id=importer_id,
+                    entity="users",
+                    entity_id=user.id,
+                    external_id=None,
                 )
-            except Exception as e:
-                pass
-            try:
-                ProjectMember.objects.create(
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    member=user,
-                )
-            except Exception as e:
-                pass
-            try:
-                IssueProperty.objects.create(
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    created_by_id=created_by_id,
-                    user=user,
-                )
-            except Exception as e:
-                pass
-            update_imported_items(importer_id=importer_id, entity="users", entity_id=user.id, external_id=None)
-            bulk_users.append(user)
+                bulk_users.append(user)
 
     return bulk_users
 
@@ -284,7 +272,12 @@ def resolve_cycle(data):
         cycle.external_id = cycle_data.get("external_id")
         cycle.external_source = cycle_data.get("external_source")
         cycle.save()
-        update_imported_items(importer_id=importer_id, entity="cycles", entity_id=cycle.id, external_id=cycle_data.get("external_id"))
+        update_imported_items(
+            importer_id=importer_id,
+            entity="cycles",
+            entity_id=cycle.id,
+            external_id=cycle_data.get("external_id"),
+        )
         return cycle
     else:
         cycle = Cycle.objects.create(
@@ -295,7 +288,12 @@ def resolve_cycle(data):
             external_source=cycle_data.get("external_source"),
             created_by_id=created_by_id,
         )
-        update_imported_items(importer_id=importer_id, entity="cycles", entity_id=cycle.id, external_id=cycle_data.get("external_id"))
+        update_imported_items(
+            importer_id=importer_id,
+            entity="cycles",
+            entity_id=cycle.id,
+            external_id=cycle_data.get("external_id"),
+        )
         return cycle
 
 
@@ -314,7 +312,12 @@ def resolve_module(data):
     if module:
         module.external_id = module_data.get("external_id")
         module.external_source = module_data.get("external_source")
-        update_imported_items(importer_id=importer_id, entity="modules", entity_id=module.id, external_id=module_data.get("external_id"))
+        update_imported_items(
+            importer_id=importer_id,
+            entity="modules",
+            entity_id=module.id,
+            external_id=module_data.get("external_id"),
+        )
         return module
     else:
         module = Module.objects.create(
@@ -325,12 +328,17 @@ def resolve_module(data):
             name=module_data.get("name"),
             created_by_id=created_by_id,
         )
-        update_imported_items(importer_id=importer_id, entity="modules", entity_id=module.id, external_id=module_data.get("external_id"))
+        update_imported_items(
+            importer_id=importer_id,
+            entity="modules",
+            entity_id=module.id,
+            external_id=module_data.get("external_id"),
+        )
         return module
 
 
 def resolve_actor(comment_data):
-    return User.objects.filter(email=comment_data.get("email")).values("id").first()
+    return User.objects.filter(email=comment_data.get("email")).values("id")
 
 
 @shared_task(queue="segway_tasks")
@@ -338,7 +346,18 @@ def import_sync(data):
     project_id = data.get("project_id")
     workspace_id = data.get("workspace_id")
     created_by_id = data.get("created_by_id")
+    importer_id = data.get("importer_id")
     external_source = data.get("external_source")
+    external_id = data.get("external_id")
+
+    # Check if the issue already synced to Plane
+    if Issue.objects.filter(
+        workspace_id=workspace_id,
+        project_id=project_id,
+        external_source=external_source,
+        external_id=external_id,
+    ):
+        return
 
     # State
     state = resolve_state(data=data)
@@ -390,6 +409,12 @@ def import_sync(data):
         external_source=data.get("external_source"),
         parent=parent_issue,
     )
+    update_imported_items(
+        importer_id=importer_id,
+        entity="issue",
+        external_id=data.get("external_id"),
+        entity_id=issue.id,
+    )
 
     # Sequences
     _ = IssueSequence.objects.create(
@@ -402,12 +427,12 @@ def import_sync(data):
     # Track the issue activities
     _ = IssueActivity.objects.create(
         issue=issue,
-        actor_id=data.get("created_by"),
+        actor_id=data.get("created_by_id"),
         project_id=data.get("project_id"),
         workspace_id=data.get("workspace_id"),
         comment=f"imported the issue from {data.get('external_source')}",
         verb="created",
-        created_by_id=data.get("created_by"),
+        created_by_id=data.get("created_by_id"),
     )
 
     # sub issues
@@ -463,25 +488,26 @@ def import_sync(data):
         ignore_conflicts=True,
     )
 
-    # # Issue comments
-    # if data.get("comments", []):
-    #     print(data.get("comments"))
-    #     IssueComment.objects.bulk_create(
-    #         [
-    #             IssueComment(
-    #                 issue=issue,
-    #                 comment_html=comment.get("comment_html", "<p></p>"),
-    #                 project_id=data.get("project_id"),
-    #                 workspace_id=data.get("workspace_id"),
-    #                 actor_id=resolve_actor(comment_data=comment)
-    #                 if resolve_actor(comment_data=comment)
-    #                 else created_by_id,
-    #             )
-    #             for comment in data.get("comments", [])
-    #         ],
-    #         batch_size=10,
-    #         ignore_conflicts=True,
-    #     )
+    # Issue comments
+    if data.get("comments", []):
+        IssueComment.objects.bulk_create(
+            [
+                IssueComment(
+                    issue=issue,
+                    comment_html=comment.get("comment_html", "<p></p>"),
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    actor_id=resolve_actor(comment_data=comment)
+                    if resolve_actor(comment_data=comment)
+                    else created_by_id,
+                    external_id=comment.get("external_id"),
+                    external_source=comment.get("external_source"),
+                )
+                for comment in data.get("comments", [])
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
 
     # Cycles
     if data.get("cycle"):
@@ -504,3 +530,9 @@ def import_sync(data):
             issue=issue,
             created_by_id=created_by_id,
         )
+
+    importer = Importer.objects.get(pk=importer_id, workspace_id=workspace_id, project_id=project_id)
+
+    # Updated segway
+    if settings.SEGWAY_BASE_URL:
+        

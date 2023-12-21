@@ -214,7 +214,7 @@ export class JiraController {
               type: "issue.create",
               name: issue.fields.summary.substring(0, 250),
               description_html: issue.renderedFields?.description,
-              assignee: issue.fields?.assignee?.emailAddress,
+              assignees: [{ email: issue.fields?.assignee?.emailAddress }],
               state,
               priority:
                 EJiraPriority[
@@ -222,7 +222,7 @@ export class JiraController {
                 ],
               workspace_id,
               project_id,
-              created_by,
+              created_by_id: created_by,
               external_id: issue.id,
               external_source: "jira",
               comments: commentsList,
@@ -237,7 +237,7 @@ export class JiraController {
                 external_source: "jira",
               },
               importer_id,
-              sub_issue: subIssuePayload,
+              sub_issues: subIssuePayload,
               module: modulePayload,
             },
           }, // kwargs
