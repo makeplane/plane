@@ -17,7 +17,7 @@ export interface IModuleListLayout {}
 
 export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, moduleId } = router.query as { workspaceSlug: string; moduleId: string };
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
@@ -25,17 +25,17 @@ export const ModuleListLayout: React.FC = observer(() => {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await issues.removeIssue(workspaceSlug, issue.project, issue.id);
+      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
+      if (!workspaceSlug || !moduleId) return;
 
-      await issues.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
+      await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
     },
   };
 
@@ -45,9 +45,12 @@ export const ModuleListLayout: React.FC = observer(() => {
       issues={issues}
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
-      viewId={moduleId}
+      viewId={moduleId?.toString()}
       currentStore={EProjectStore.MODULE}
-      addIssuesToView={(issueIds: string[]) => issues.addIssueToModule(workspaceSlug, moduleId, issueIds)}
+      addIssuesToView={(issueIds: string[]) => {
+        if (!workspaceSlug || !projectId || !moduleId) throw new Error();
+        return issues.addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
+      }}
     />
   );
 });

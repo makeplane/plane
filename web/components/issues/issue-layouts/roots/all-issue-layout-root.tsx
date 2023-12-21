@@ -25,14 +25,10 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
-  // store hooks
-  const {
-    workspaceMember: { workspaceMembers },
-  } = useMobxStore();
 
   // store
   const {
-    issuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
+    issuesFilter: { issueFilters, fetchFilters, updateFilters },
     issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
     issueMap,
   } = useIssues(EIssuesStoreType.GLOBAL);
@@ -57,7 +53,6 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     workspaceSlug && currentIssueView ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${currentIssueView}` : null,
     async () => {
       if (workspaceSlug && currentIssueView) {
-        setCurrentView(currentIssueView);
         await fetchAllGlobalViews(workspaceSlug);
         await fetchFilters(workspaceSlug, currentIssueView);
         await fetchIssues(workspaceSlug, currentIssueView, groupedIssueIds ? "mutation" : "init-loader");
@@ -104,14 +99,14 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
 
-      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
     },
     [updateFilters, workspaceSlug]
   );
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {currentView != currentIssueView && (loader === "init-loader" || !groupedIssueIds) ? (
+      {globalViewId != currentIssueView && (loader === "init-loader" || !groupedIssueIds) ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>

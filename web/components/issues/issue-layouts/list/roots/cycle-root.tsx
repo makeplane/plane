@@ -33,15 +33,9 @@ export const CycleListLayout: React.FC = observer(() => {
       await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+      if (!workspaceSlug || !cycleId) return;
 
-      await issues.removeIssueFromCycle(
-        workspaceSlug.toString(),
-        issue.project,
-        cycleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
+      await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project, cycleId.toString(), issue.id);
     },
   };
 
@@ -53,9 +47,10 @@ export const CycleListLayout: React.FC = observer(() => {
       issueActions={issueActions}
       viewId={cycleId?.toString()}
       currentStore={EProjectStore.CYCLE}
-      addIssuesToView={(issueIds: string[]) =>
-        issues.addIssueToCycle(workspaceSlug?.toString(), projectId?.toString(), cycleId?.toString(), issueIds)
-      }
+      addIssuesToView={(issueIds: string[]) => {
+        if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+        return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+      }}
     />
   );
 });

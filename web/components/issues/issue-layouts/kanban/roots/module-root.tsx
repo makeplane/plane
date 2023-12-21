@@ -34,15 +34,9 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
+      if (!workspaceSlug || !moduleId) return;
 
-      await issues.removeIssueFromModule(
-        workspaceSlug.toString(),
-        issue.project,
-        moduleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
+      await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
     },
   };
 
@@ -53,11 +47,12 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       issuesFilter={issuesFilter}
       showLoader={true}
       QuickActions={ModuleIssueQuickActions}
-      viewId={moduleId?.toString() ?? ""}
+      viewId={moduleId?.toString()}
       currentStore={EProjectStore.MODULE}
-      addIssuesToView={(issueIds: string[]) =>
-        issues.addIssueToModule(workspaceSlug?.toString() ?? "", moduleId?.toString() ?? "", issueIds)
-      }
+      addIssuesToView={(issueIds: string[]) => {
+        if (!workspaceSlug || !projectId || !moduleId) throw new Error();
+        return issues.addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
+      }}
     />
   );
 });

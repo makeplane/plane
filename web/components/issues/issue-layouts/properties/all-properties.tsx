@@ -16,7 +16,7 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 export interface IIssueProperties {
   issue: IIssue;
   handleIssues: (issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties | null;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
 }

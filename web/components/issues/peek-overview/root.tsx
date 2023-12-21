@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useProject, useUser } from "hooks/store";
+import { useIssues, useProject, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // helpers
@@ -14,6 +14,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { IIssue, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
@@ -31,7 +32,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { peekIssueId } = router.query;
   // store hooks
   const {
-    issue: { removeIssueFromStructure },
     issueDetail: {
       createIssueComment,
       updateIssueComment,
@@ -56,8 +56,10 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       loader: archivedIssueLoader,
       fetchPeekIssueDetails: fetchArchivedPeekIssueDetails,
     },
-    archivedIssues: { deleteArchivedIssue },
   } = useMobxStore();
+  const {
+    issues: { removeIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -135,8 +137,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const issueLinkDelete = (linkId: string) => deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
 
   const handleDeleteIssue = async () => {
-    if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else removeIssueFromStructure(workspaceSlug, projectId, issue!);
+    if (isArchived) await removeIssue(workspaceSlug, projectId, issue);
+    //TODO else delete...
     const { query } = router;
     if (query.peekIssueId) {
       setPeekId(null);

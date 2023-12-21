@@ -12,10 +12,11 @@ import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  viewId?: string;
 }
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore } = props;
+  const { issuesFilterStore, viewId } = props;
 
   const issueCalendarView = useCalendarView();
 
@@ -90,7 +91,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         <button type="button" className="grid place-items-center" onClick={handleNext}>
           <ChevronRight size={16} strokeWidth={2} />
         </button>
-        <CalendarMonthsDropdown />
+        <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
       </div>
       <div className="flex items-center gap-1.5">
         <button
@@ -100,7 +101,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         >
           Today
         </button>
-        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} viewId={viewId} />
       </div>
     </div>
   );

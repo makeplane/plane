@@ -89,7 +89,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useIssues(EIssuesStoreType.PROJECT);
   const {
     currentUser,
-    loader,
     membership: { currentProjectRole },
   } = useUser();
   const { projectStates } = useProjectState();
@@ -100,7 +99,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
     currentUser,
-    loader,
     workspaceSlug,
     projectId,
     issueId

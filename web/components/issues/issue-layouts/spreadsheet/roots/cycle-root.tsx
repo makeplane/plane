@@ -27,8 +27,8 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
       issues.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
-      issues.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+      if (!workspaceSlug || !cycleId) return;
+      issues.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id);
     },
   };
 

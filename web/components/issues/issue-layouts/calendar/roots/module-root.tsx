@@ -29,8 +29,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
       await issues.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
-      await issues.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
+      if (!workspaceSlug || !moduleId) return;
+      await issues.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id);
     },
   };
 

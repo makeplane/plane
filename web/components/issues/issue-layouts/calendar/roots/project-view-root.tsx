@@ -13,18 +13,18 @@ import { EIssuesStoreType } from "constants/issue";
 export const ProjectViewCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !projectId) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      await issues.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !projectId) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+      await issues.removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
     },
   };
 
@@ -34,6 +34,7 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
       issuesFilterStore={issuesFilter}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
+      viewId={viewId?.toString()}
     />
   );
 });

@@ -11,9 +11,7 @@ import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as {
-    workspaceSlug: string;
-  };
+  const { workspaceSlug, userId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -34,27 +32,33 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !userId) return;
     if (!value) {
-      updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: null });
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.FILTERS, { [key]: null }, userId.toString());
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug.toString(),
+      undefined,
+      EIssueFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      userId.toString()
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !userId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { ...newFilters });
+    updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.FILTERS, { ...newFilters }, userId.toString());
   };
 
   // return if no filters are applied

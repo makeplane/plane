@@ -64,14 +64,15 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
     const issues = data.map((i) => i.id);
 
-    addIssuesToView &&
-      addIssuesToView(issues)?.catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
+    try {
+      addIssuesToView && addIssuesToView(issues);
+    } catch (error) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the cycle. Please try again.",
       });
+    }
   };
 
   return (

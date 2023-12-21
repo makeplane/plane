@@ -11,12 +11,11 @@ const userNotificationServices = new NotificationService();
 
 const useUserIssueNotificationSubscription = (
   user: IUser | null,
-  userLoader: boolean,
   workspaceSlug?: string | string[] | null,
   projectId?: string | string[] | null,
   issueId?: string | string[] | null
 ) => {
-  const {} = useUserAuth({ user: user, isLoading: userLoader });
+  const {} = useUserAuth({ user: user, isLoading: false });
 
   const { data, error, mutate } = useSWR(
     workspaceSlug && projectId && issueId ? `SUBSCRIPTION_STATUE_${workspaceSlug}_${projectId}_${issueId}` : null,

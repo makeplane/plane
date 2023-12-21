@@ -7,20 +7,24 @@ import { Button } from "@plane/ui";
 import useToast from "hooks/use-toast";
 // types
 import { useIssues } from "hooks/store/use-issues";
+import { IIssue } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  dataId: string;
+  dataId?: string | null | undefined;
+  data?: IIssue;
   onSubmit?: () => Promise<void>;
 };
 
 export const DeleteIssueModal: React.FC<Props> = (props) => {
-  const { dataId, isOpen, handleClose, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, onSubmit } = props;
 
   const { issueMap } = useIssues();
 
-  const issue = issueMap[dataId];
+  if (!dataId && !data) return null;
+
+  const issue = data ? data : issueMap[dataId!];
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 

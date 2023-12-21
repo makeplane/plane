@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 interface IssueBlockProps {
   issueId: string;
   issuesMap: IIssueMap;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
@@ -25,7 +25,7 @@ interface IssueBlockProps {
 
 interface IssueDetailsBlockProps {
   issue: IIssue;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   isReadOnly: boolean;
@@ -51,7 +51,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
   return (
     <>
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {issue.project_detail.identifier}-{issue.sequence_id}

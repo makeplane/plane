@@ -26,7 +26,6 @@ import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "store/issue/workspace";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;

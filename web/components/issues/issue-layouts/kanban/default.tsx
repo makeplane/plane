@@ -22,8 +22,8 @@ import { getGroupByColumns } from "../utils";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues;
-  displayProperties: IIssueDisplayProperties;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
@@ -132,8 +132,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
 export interface IKanBan {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues;
-  displayProperties: IIssueDisplayProperties;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;

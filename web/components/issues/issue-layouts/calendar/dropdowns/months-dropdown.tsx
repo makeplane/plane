@@ -4,18 +4,24 @@ import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
 //hooks
 import { useCalendarView } from "hooks/store";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
-export const CalendarMonthsDropdown: React.FC = observer(() => {
-  const { issueFilter: issueFilterStore } = useMobxStore();
+interface Props {
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+}
+export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
+  const { issuesFilterStore } = props;
+
   const issueCalendarView = useCalendarView();
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);

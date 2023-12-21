@@ -27,14 +27,8 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !projectId || !issue.bridge_id) return;
-      await issues.removeIssueFromCycle(
-        workspaceSlug.toString(),
-        issue.project,
-        cycleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
+      if (!workspaceSlug || !cycleId || !projectId) return;
+      await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project, cycleId.toString(), issue.id);
     },
   };
 

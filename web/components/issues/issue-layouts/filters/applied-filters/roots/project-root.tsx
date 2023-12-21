@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useProjectState } from "hooks/store";
+import { useLabel, useProjectState } from "hooks/store";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types

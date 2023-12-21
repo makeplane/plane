@@ -21,10 +21,11 @@ import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  viewId?: string;
 }
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore } = props;
+  const { issuesFilterStore, viewId } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -71,12 +72,18 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
 
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
-      calendar: {
-        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-        show_weekends: !showWeekends,
+    issuesFilterStore.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.DISPLAY_FILTERS,
+      {
+        calendar: {
+          ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+          show_weekends: !showWeekends,
+        },
       },
-    });
+      viewId
+    );
   };
 
   return (
