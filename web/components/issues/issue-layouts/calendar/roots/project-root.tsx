@@ -8,6 +8,7 @@ import { BaseCalendarRoot } from "../base-calendar-root";
 import { EIssueActions } from "../../types";
 import { IIssue } from "types";
 import { EIssuesStoreType } from "constants/issue";
+import { useMemo } from "react";
 
 export const CalendarLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -15,18 +16,21 @@ export const CalendarLayout: React.FC = observer(() => {
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+      },
+    }),
+    [issues, workspaceSlug]
+  );
 
   return (
     <BaseCalendarRoot

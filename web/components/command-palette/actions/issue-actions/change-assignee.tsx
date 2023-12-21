@@ -3,12 +3,11 @@ import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
 import { Check } from "lucide-react";
 // mobx store
-import { useIssues } from "hooks/store";
+import { useIssues, useMember } from "hooks/store";
 // ui
 import { Avatar } from "@plane/ui";
 // types
 import { IIssue } from "types";
-import { useMember } from "hooks/store";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {

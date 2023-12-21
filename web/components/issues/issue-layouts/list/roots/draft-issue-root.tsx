@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -22,18 +22,21 @@ export const DraftIssueListLayout: FC = observer(() => {
   // store
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-      await issues.updateIssue(workspaceSlug, projectId, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+        await issues.updateIssue(workspaceSlug, projectId, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-      await issues.removeIssue(workspaceSlug, projectId, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug, projectId, issue.id);
+      },
+    }),
+    [issues, workspaceSlug, projectId]
+  );
 
   return (
     <BaseListRoot

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -25,18 +25,21 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !userId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !userId) return;
 
-      await issues.updateIssue(workspaceSlug, userId, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !userId) return;
+        await issues.updateIssue(workspaceSlug, userId, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !userId) return;
 
-      await issues.removeIssue(workspaceSlug, issue.project, issue.id, userId);
-    },
-  };
+        await issues.removeIssue(workspaceSlug, issue.project, issue.id, userId);
+      },
+    }),
+    [issues, workspaceSlug, userId]
+  );
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];

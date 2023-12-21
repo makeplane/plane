@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
@@ -19,18 +19,21 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+        await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issues.removeIssue(workspaceSlug, issue.project, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug, issue.project, issue.id);
+      },
+    }),
+    [issues, workspaceSlug]
+  );
 
   return (
     <BaseKanBanRoot

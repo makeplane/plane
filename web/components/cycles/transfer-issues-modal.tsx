@@ -4,8 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useCycle } from "hooks/store";
-import { useIssues } from "hooks/store";
+import { useCycle, useIssues } from "hooks/store";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";

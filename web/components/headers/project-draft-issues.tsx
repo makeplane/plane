@@ -9,9 +9,8 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router

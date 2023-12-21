@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
@@ -16,21 +16,24 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      issues.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-      issues.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-      issues.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id);
-    },
-  };
+        issues.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+      },
+      [EIssueActions.REMOVE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id);
+      },
+    }),
+    [issues, workspaceSlug, cycleId]
+  );
 
   return (
     <BaseSpreadsheetRoot

@@ -120,3 +120,5 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     </div>
   );
 });
+
+KanbanIssueBlock.displayName = "KanbanIssueBlock";

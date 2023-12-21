@@ -10,6 +10,7 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EIssuesStoreType } from "constants/issue";
+import { useMemo } from "react";
 
 export interface IKanBanLayout {}
 
@@ -20,18 +21,21 @@ export const DraftKanBanLayout: React.FC = observer(() => {
   // store
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+      },
+    }),
+    [issues, workspaceSlug]
+  );
 
   return (
     <BaseKanBanRoot

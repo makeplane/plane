@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -22,23 +22,26 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   // store
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+        await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
+      },
+      [EIssueActions.REMOVE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project, cycleId.toString(), issue.id);
-    },
-  };
+        await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project, cycleId.toString(), issue.id);
+      },
+    }),
+    [issues, workspaceSlug, cycleId]
+  );
 
   return (
     <BaseKanBanRoot

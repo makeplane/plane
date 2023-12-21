@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -21,23 +21,26 @@ export const ModuleListLayout: React.FC = observer(() => {
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !moduleId) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !moduleId) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
+        await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+      },
+      [EIssueActions.REMOVE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !moduleId) return;
 
-      await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
-    },
-  };
+        await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+      },
+    }),
+    [issues, workspaceSlug, moduleId]
+  );
 
   return (
     <BaseListRoot

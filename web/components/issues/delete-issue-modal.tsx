@@ -22,10 +22,6 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const { issueMap } = useIssues();
 
-  if (!dataId && !data) return null;
-
-  const issue = data ? data : issueMap[dataId!];
-
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const { setToastAlert } = useToast();
@@ -33,6 +29,10 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   useEffect(() => {
     setIsDeleteLoading(false);
   }, [isOpen]);
+
+  if (!dataId && !data) return null;
+
+  const issue = data ? data : issueMap[dataId!];
 
   const onClose = () => {
     setIsDeleteLoading(false);

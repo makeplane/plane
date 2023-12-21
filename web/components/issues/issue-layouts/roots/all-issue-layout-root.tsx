@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -71,20 +71,23 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const issueIds = (groupedIssueIds ?? []) as TUnGroupedIssues;
   const issuesArray = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      const projectId = issue.project;
-      if (!workspaceSlug || !projectId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        const projectId = issue.project;
+        if (!workspaceSlug || !projectId) return;
 
-      await updateIssue(workspaceSlug, projectId, issue.id, issue, currentIssueView);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      const projectId = issue.project;
-      if (!workspaceSlug || !projectId) return;
+        await updateIssue(workspaceSlug, projectId, issue.id, issue, currentIssueView);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        const projectId = issue.project;
+        if (!workspaceSlug || !projectId) return;
 
-      await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
-    },
-  };
+        await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
+      },
+    }),
+    [updateIssue, removeIssue, workspaceSlug]
+  );
 
   const handleIssues = useCallback(
     async (issue: IIssue, action: EIssueActions) => {

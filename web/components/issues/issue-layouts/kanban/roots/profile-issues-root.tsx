@@ -12,6 +12,7 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { useMemo } from "react";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -23,18 +24,21 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !userId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !userId) return;
 
-      await issues.updateIssue(workspaceSlug, userId, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !userId) return;
+        await issues.updateIssue(workspaceSlug, userId, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !userId) return;
 
-      await issues.removeIssue(workspaceSlug, issue.project, issue.id, userId);
-    },
-  };
+        await issues.removeIssue(workspaceSlug, issue.project, issue.id, userId);
+      },
+    }),
+    [issues, workspaceSlug, userId]
+  );
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
