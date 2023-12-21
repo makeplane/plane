@@ -24,7 +24,6 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, onChange, ex
       <IssuePropertyAssignee
         projectId={issue.project_detail?.id ?? null}
         value={issue.assignees}
-        defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
         onChange={(data) => {
           onChange(issue, { assignees: data });
           if (issue.parent) {

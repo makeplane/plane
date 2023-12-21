@@ -6,8 +6,8 @@ import { ISSUE_REACTION_LIST } from "constants/fetch-keys";
 import { groupReactions } from "helpers/emoji.helper";
 // services
 import { IssueReactionService } from "services/issue";
+import { useUser } from "./store";
 // hooks
-import useUser from "./use-user";
 
 const issueReactionService = new IssueReactionService();
 
@@ -63,7 +63,8 @@ const useIssueReaction = (
     if (!workspaceSlug || !projectId || !issueId) return;
 
     mutateReaction(
-      (prevData: any) => prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      (prevData: any) =>
+        prevData?.filter((r: any) => r.actor !== user?.currentUser?.id || r.reaction !== reaction) || [],
       false
     );
 

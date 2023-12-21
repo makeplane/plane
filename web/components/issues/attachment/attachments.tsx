@@ -19,17 +19,21 @@ import { renderLongDateFormat } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
 import { IIssueAttachment } from "types";
+import { useMember } from "hooks/store";
+import { observer } from "mobx-react-lite";
 
 // services
 const issueAttachmentService = new IssueAttachmentService();
 const projectMemberService = new ProjectMemberService();
 
-export const IssueAttachments = () => {
+export const IssueAttachments = observer(() => {
   const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
   const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { memberMap } = useMember();
 
   const { data: attachments } = useSWR<IIssueAttachment[]>(
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
@@ -69,7 +73,8 @@ export const IssueAttachments = () => {
                     </Tooltip>
                     <Tooltip
                       tooltipContent={`${
-                        people?.find((person) => person.member.id === file.updated_by)?.member.display_name ?? ""
+                        memberMap[people?.find((person) => person.member === file.updated_by)?.id || ""]
+                          ?.display_name ?? ""
                       } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                     >
                       <span>
@@ -98,4 +103,4 @@ export const IssueAttachments = () => {
         ))}
     </>
   );
-};
+});

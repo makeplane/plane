@@ -32,7 +32,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -49,7 +49,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !globalViewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -61,23 +61,41 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug.toString(), EIssueFilterType.FILTERS, { [key]: newValues });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        globalViewId.toString()
+      );
     },
     [workspaceSlug, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      if (!workspaceSlug || !globalViewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        globalViewId.toString()
+      );
     },
     [workspaceSlug, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
+      if (!workspaceSlug || !globalViewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        globalViewId.toString()
+      );
     },
     [workspaceSlug, updateFilters]
   );

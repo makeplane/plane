@@ -2,7 +2,7 @@ import { observable, action, makeObservable, computed } from "mobx";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -30,12 +30,12 @@ export interface ICommandPaletteStore {
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
   toggleCreatePageModal: (value?: boolean) => void;
-  toggleCreateIssueModal: (value?: boolean, storeType?: EIssuesStoreType) => void;
+  toggleCreateIssueModal: (value?: boolean, storeType?: TCreateModalStoreTypes) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
 
-  createIssueStoreType: EIssuesStoreType;
+  createIssueStoreType: TCreateModalStoreTypes;
 }
 
 export class CommandPaletteStore implements ICommandPaletteStore {
@@ -54,7 +54,7 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   projectService;
   pageService;
 
-  createIssueStoreType: EIssuesStoreType = EIssuesStoreType.PROJECT;
+  createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
 
   constructor() {
     makeObservable(this, {
@@ -191,7 +191,7 @@ export class CommandPaletteStore implements ICommandPaletteStore {
    * @param storeType
    * @returns
    */
-  toggleCreateIssueModal = (value?: boolean, storeType?: EIssuesStoreType) => {
+  toggleCreateIssueModal = (value?: boolean, storeType?: TCreateModalStoreTypes) => {
     if (value !== undefined) {
       this.isCreateIssueModalOpen = value;
       this.createIssueStoreType = storeType || EIssuesStoreType.PROJECT;

@@ -15,7 +15,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IProject } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -34,8 +34,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
 
-  const isOwner = project.member_role === EUserWorkspaceRoles.ADMIN;
-  const isMember = project.member_role === EUserWorkspaceRoles.MEMBER;
+  project.member_role;
+  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
+  const isMember = project.member_role === EUserProjectRoles.MEMBER;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;

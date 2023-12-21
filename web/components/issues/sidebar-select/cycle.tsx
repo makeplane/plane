@@ -38,7 +38,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string) //TODO, "incomplete")
       : null
   );
 
@@ -55,11 +55,11 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
       });
   };
 
-  const handleRemoveIssueFromCycle = (bridgeId: string, cycleId: string) => {
+  const handleRemoveIssueFromCycle = (cycleId: string) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
     setIsUpdating(true);
-    removeIssueFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId, issueDetail.id, bridgeId)
+    removeIssueFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId, issueDetail.id)
       .then(async () => {
         handleIssueUpdate && (await handleIssueUpdate());
         mutate(ISSUE_DETAILS(issueDetail.id));
@@ -97,7 +97,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
         value={issueCycle?.cycle_detail.id}
         onChange={(value: any) => {
           value === issueCycle?.cycle_detail.id
-            ? handleRemoveIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
+            ? handleRemoveIssueFromCycle(issueCycle?.cycle ?? "")
             : handleCycleChange
             ? handleCycleChange(value)
             : handleCycleStoreChange(value);

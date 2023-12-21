@@ -18,7 +18,7 @@ import {
   ViewFlags,
 } from "types";
 
-const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
+export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
 export interface ICycleIssues {
   // observable

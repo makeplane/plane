@@ -292,7 +292,7 @@ export type GroupByColumnTypes =
 export interface IGroupByColumn {
   id: string;
   name: string;
-  Icon: ReactElement;
+  Icon: ReactElement | undefined;
   payload: Partial<IIssue>;
 }
 

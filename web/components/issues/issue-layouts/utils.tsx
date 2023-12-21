@@ -39,17 +39,18 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
 
   if (!projectIds) return;
 
-  return projectIds.map((projectId) => {
-    const project = projectMap[projectId];
+  return projectIds
+    .filter((projectId) => !!projectMap[projectId])
+    .map((projectId) => {
+      const project = projectMap[projectId];
 
-    if (project)
       return {
         id: project.id,
         name: project.name,
         Icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
         payload: { project: project.id },
       };
-  });
+    });
 };
 
 const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefined => {

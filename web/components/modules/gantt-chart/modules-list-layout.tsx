@@ -13,13 +13,13 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { projectModuleIds, moduleMap, updateModuleGanttStructure } = useModule();
+  const { projectModuleIds, moduleMap } = useModule();
   const { currentProjectDetails } = useProject();
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
-
-    updateModuleGanttStructure(workspaceSlug.toString(), module.project, module, payload);
+    // TODO
+    //updateModuleGanttStructure(workspaceSlug.toString(), module.project, module, payload);
   };
 
   const blockFormat = (blocks: string[]) =>

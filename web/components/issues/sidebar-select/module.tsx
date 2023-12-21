@@ -33,10 +33,10 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleModuleStoreChange = async (moduleId: string) => {
-    if (!workspaceSlug || !issueDetail || !moduleId) return;
+    if (!workspaceSlug || !issueDetail || !moduleId || !projectId) return;
 
     setIsUpdating(true);
-    await addIssueToModule(workspaceSlug.toString(), moduleId, [issueDetail.id], false, projectId?.toString())
+    await addIssueToModule(workspaceSlug.toString(), projectId?.toString(), moduleId, [issueDetail.id])
       .then(async () => {
         handleIssueUpdate && (await handleIssueUpdate());
       })
@@ -49,7 +49,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
     setIsUpdating(true);
-    removeIssueFromModule(workspaceSlug.toString(), projectId.toString(), moduleId, issueDetail.id, bridgeId)
+    removeIssueFromModule(workspaceSlug.toString(), projectId.toString(), moduleId, issueDetail.id)
       .then(async () => {
         handleIssueUpdate && (await handleIssueUpdate());
         mutate(ISSUE_DETAILS(issueDetail.id));

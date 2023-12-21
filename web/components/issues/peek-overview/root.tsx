@@ -28,6 +28,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // router
   const router = useRouter();
   const { peekIssueId } = router.query;
+  //TODO
   // store hooks
   // const {
   //   archivedIssueDetail: {

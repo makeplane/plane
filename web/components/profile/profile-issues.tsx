@@ -25,7 +25,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   };
 
   const {
-    issues: { loader, getIssues, fetchIssues },
+    issues: { loader, groupedIssueIds, fetchIssues },
     issuesFilter: { issueFilters, fetchFilters },
   } = useIssues(EIssuesStoreType.PROFILE);
 
@@ -33,8 +33,8 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,
     async () => {
       if (workspaceSlug && userId) {
-        await fetchFilters(workspaceSlug);
-        await fetchIssues(workspaceSlug, userId, getIssues ? "mutation" : "init-loader", undefined, type);
+        await fetchFilters(workspaceSlug, userId);
+        await fetchIssues(workspaceSlug, userId, groupedIssueIds ? "mutation" : "init-loader", undefined, type);
       }
     }
   );
