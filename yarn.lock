@@ -2356,7 +2356,7 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tiptap/core@^2.1.11", "@tiptap/core@^2.1.13", "@tiptap/core@^2.1.7":
+"@tiptap/core@^2.1.13":
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.1.13.tgz#e21f566e81688c826c6f26d2940886734189e193"
   integrity sha512-cMC8bgTN63dj1Mv82iDeeLl6sa9kY0Pug8LSalxVEptRmyFVsVxGgu2/6Y3T+9aCYScxfS06EkA8SdzFMAwYTQ==
@@ -2482,7 +2482,7 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-paragraph/-/extension-paragraph-2.1.13.tgz#30f8ae3f8833c606b339f3554b9ffdbe1e604463"
   integrity sha512-cEoZBJrsQn69FPpUMePXG/ltGXtqKISgypj70PEHXt5meKDjpmMVSY4/8cXvFYEYsI9GvIwyAK0OrfAHiSoROA==
 
-"@tiptap/extension-placeholder@^2.1.11":
+"@tiptap/extension-placeholder@^2.1.13":
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-placeholder/-/extension-placeholder-2.1.13.tgz#b735591f719b9fe89c90dcc6327d2ef2851be510"
   integrity sha512-vIY7y7UbqsrAW/y8bDE9eRenbQEU16kNHB5Wri8RU1YiUZpkPgdXP/pLqyjIIq95SwP/vdTIHjHoQ77VLRl1hA==
@@ -2517,7 +2517,7 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-underline/-/extension-underline-2.1.13.tgz#170b4e8e3f03b9defbb7de7cafe4b0a066cea679"
   integrity sha512-z0CNKPjcvU8TrUSTui1voM7owssyXE9WvEGhIZMHzWwlx2ZXY2/L5+Hh33X/LzSKB9OGf/g1HAuHxrPcYxFuAQ==
 
-"@tiptap/pm@^2.1.12", "@tiptap/pm@^2.1.13", "@tiptap/pm@^2.1.7":
+"@tiptap/pm@^2.1.13":
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/@tiptap/pm/-/pm-2.1.13.tgz#857753691580be760da13629fab2712c52750741"
   integrity sha512-zNbA7muWsHuVg12GrTgN/j119rLePPq5M8dZgkKxUwdw8VmU3eUyBp1SihPEXJ2U0MGdZhNhFX7Y74g11u66sg==
@@ -2541,7 +2541,7 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.28.2"
 
-"@tiptap/react@^2.1.13", "@tiptap/react@^2.1.7":
+"@tiptap/react@^2.1.13":
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/@tiptap/react/-/react-2.1.13.tgz#ec5ebaf9babc145f3329030358b3c5e36016b908"
   integrity sha512-Dq3f8EtJnpImP3iDtJo+7bulnN9SJZRZcVVzxHXccLcC2MxtmDdlPGZjP+wxO800nd8toSIOd5734fPNf/YcfA==
@@ -2574,7 +2574,7 @@
     "@tiptap/extension-strike" "^2.1.13"
     "@tiptap/extension-text" "^2.1.13"
 
-"@tiptap/suggestion@^2.0.13", "@tiptap/suggestion@^2.0.4", "@tiptap/suggestion@^2.1.12":
+"@tiptap/suggestion@^2.0.13", "@tiptap/suggestion@^2.1.13":
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/@tiptap/suggestion/-/suggestion-2.1.13.tgz#0a8317260baed764a523a09099c0889a0e5b507e"
   integrity sha512-Y05TsiXTFAJ5SrfoV+21MAxig5UNbY0AVa03lQlh/yicTRPpIc6hgZzblB0uxDSYoj6+kaHE4MIZvPvhUD8BJQ==
