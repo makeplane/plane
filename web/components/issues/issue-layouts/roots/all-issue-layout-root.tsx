@@ -11,12 +11,10 @@ import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-acti
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
+import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
-
-import { EIssueFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 type Props = {
   type?: TStaticViewTypes | null;

@@ -8,8 +8,7 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
-import { IIssue } from "types";
-import { IIssueResponse } from "store_legacy/issues/types";
+import { IIssue, IIssueResponse } from "types";
 
 type Props = {
   issues: IIssueResponse | undefined;

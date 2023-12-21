@@ -7,25 +7,18 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IIssue } from "types";
-import { IGroupedIssues, IIssueResponse } from "store_legacy/issues/types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
+import { IGroupedIssues, IIssue, IIssueResponse } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useCalendarView } from "hooks/store/use-calendar-view";
 import { EIssuesStoreType } from "constants/issue";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   issues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues;
   layout: "month" | "week" | undefined;

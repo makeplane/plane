@@ -10,13 +10,6 @@ import { Spinner } from "@plane/ui";
 // types
 import { IIssue } from "types";
 import { EIssueActions } from "../types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
@@ -36,23 +29,14 @@ import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/projec
 import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "store/issue/workspace";
 
 export interface IBaseKanBanLayout {
-  issues:
-    | IProjectIssues
-    | ICycleIssues
-    | IDraftIssues
-    | IModuleIssues
-    | IDraftIssues
-    | IProjectViewIssues
-    | IProfileIssues
-    | IWorkspaceIssues;
+  issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
   issuesFilter:
     | IProjectIssuesFilter
     | IModuleIssuesFilter
     | ICycleIssuesFilter
     | IDraftIssuesFilter
     | IProjectViewIssuesFilter
-    | IProfileIssuesFilter
-    | IWorkspaceIssuesFilter;
+    | IProfileIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
@@ -169,7 +153,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           sub_group_by,
           group_by,
           issueMap,
-          issueIds
+          issueIds,
+          viewId
         ).catch((err) => {
           setToastAlert({
             title: "Error",
@@ -218,7 +203,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       sub_group_by,
       group_by,
       issueMap,
-      issueIds
+      issueIds,
+      viewId
     ).finally(() => {
       setDeleteIssueModal(false);
       setDragState({});

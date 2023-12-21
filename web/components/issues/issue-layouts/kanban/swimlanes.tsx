@@ -4,8 +4,16 @@ import { KanBan } from "./default";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 // types
-import { GroupByColumnTypes, IGroupByColumn, IIssue, IIssueDisplayProperties, IIssueMap } from "types";
-import { IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import {
+  GroupByColumnTypes,
+  IGroupByColumn,
+  IGroupedIssues,
+  IIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  ISubGroupedIssues,
+  TUnGroupedIssues,
+} from "types";
 // constants
 import { EIssueActions } from "../types";
 import { EProjectStore } from "store/application/command-palette.store";

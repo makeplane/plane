@@ -1,5 +1,11 @@
 import { DraggableLocation } from "@hello-pangea/dnd";
+import { ICycleIssues } from "store/issue/cycle";
+import { IDraftIssues } from "store/issue/draft";
+import { IModuleIssues } from "store/issue/module";
+import { IProfileIssues } from "store/issue/profile";
 import { IProjectIssues } from "store/issue/project";
+import { IProjectViewIssues } from "store/issue/project-views";
+import { IWorkspaceIssues } from "store/issue/workspace";
 import { IGroupedIssues, IIssueMap, ISubGroupedIssues, TUnGroupedIssues } from "types";
 
 export const handleDragDrop = async (
@@ -7,7 +13,15 @@ export const handleDragDrop = async (
   destination: DraggableLocation | null | undefined,
   workspaceSlug: string | undefined,
   projectId: string | undefined, // projectId for all views or user id in profile issues
-  store: IProjectIssues,
+  store:
+    | IProjectIssues
+    | ICycleIssues
+    | IDraftIssues
+    | IModuleIssues
+    | IDraftIssues
+    | IProjectViewIssues
+    | IProfileIssues
+    | IWorkspaceIssues,
   subGroupBy: string | null,
   groupBy: string | null,
   issueMap: IIssueMap,

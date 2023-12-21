@@ -3,10 +3,6 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // components
 import { IssuePeekOverviewReactions } from "components/issues";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-// types
-import { RootStore } from "store_legacy/root";
 
 interface IIssueCommentReaction {
   workspaceSlug: string;
@@ -23,7 +19,7 @@ export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) 
   const { workspaceSlug, projectId, issueId, user, comment, issueCommentReactionCreate, issueCommentReactionRemove } =
     props;
 
-  const { issueDetail: issueDetailStore }: RootStore = useMobxStore();
+  const { issueDetail: issueDetailStore } = useMobxStore();
 
   const handleCommentReactionCreate = (reaction: string) => {
     if (issueCommentReactionCreate && comment?.id) issueCommentReactionCreate(comment?.id, reaction);

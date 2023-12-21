@@ -6,8 +6,7 @@ import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
-import { IIssue, IIssueDisplayFilterOptions } from "types";
-import { EIssueFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
+import { IIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
@@ -16,6 +15,7 @@ import { ICycleIssuesFilter, ICycleIssues } from "store/issue/cycle";
 import { IModuleIssuesFilter, IModuleIssues } from "store/issue/module";
 import { IProjectIssuesFilter, IProjectIssues } from "store/issue/project";
 import { IProjectViewIssuesFilter, IProjectViewIssues } from "store/issue/project-views";
+import { EIssueFilterType } from "constants/issue";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

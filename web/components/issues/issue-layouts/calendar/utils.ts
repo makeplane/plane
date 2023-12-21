@@ -1,4 +1,8 @@
 import { DraggableLocation } from "@hello-pangea/dnd";
+import { ICycleIssues } from "store/issue/cycle";
+import { IModuleIssues } from "store/issue/module";
+import { IProjectIssues } from "store/issue/project";
+import { IProjectViewIssues } from "store/issue/project-views";
 import { IGroupedIssues, IIssueMap } from "types";
 
 export const handleDragDrop = async (
@@ -6,7 +10,7 @@ export const handleDragDrop = async (
   destination: DraggableLocation,
   workspaceSlug: string | undefined,
   projectId: string | undefined,
-  store: any,
+  store: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues,
   issueMap: IIssueMap,
   issueWithIds: IGroupedIssues,
   viewId: string | null = null // it can be moduleId, cycleId

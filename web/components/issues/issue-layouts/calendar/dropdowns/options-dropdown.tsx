@@ -14,19 +14,13 @@ import { TCalendarLayouts } from "types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
 import { EIssueFilterType } from "constants/issue";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
 }
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {

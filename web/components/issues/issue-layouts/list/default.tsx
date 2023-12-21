@@ -3,8 +3,14 @@ import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
 import { useLabel, useProject, useProjectState } from "hooks/store";
 // types
-import { GroupByColumnTypes, IIssue, IIssueDisplayProperties, IIssueMap } from "types";
-import { IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import {
+  GroupByColumnTypes,
+  IGroupedIssues,
+  IIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  TUnGroupedIssues,
+} from "types";
 import { EIssueActions } from "../types";
 // constants
 import { EProjectStore } from "store/application/command-palette.store";
