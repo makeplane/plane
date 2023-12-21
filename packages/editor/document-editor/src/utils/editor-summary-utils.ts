@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/react";
-import { IMarking } from "..";
+import { IMarking } from "src/types/editor-types";
 
 function findNthH1(editor: Editor, n: number, level: number): number {
   let count = 0;

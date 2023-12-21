@@ -30,14 +30,15 @@ import {
   toggleStrike,
   toggleTaskList,
   toggleUnderline,
-} from "../../../lib/editor-commands";
-import { UploadImage } from "@plane/editor-types";
+} from "src/lib/editor-commands";
+import { LucideIconType } from "src/types/lucide-icon";
+import { UploadImage } from "src/types/upload-image";
 
 export interface EditorMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIconType;
 }
 
 export const HeadingOneItem = (editor: Editor): EditorMenuItem => ({
