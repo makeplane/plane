@@ -10,7 +10,7 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 import { IRouterStore } from "store/application/router.store";
 import { IMemberRootStore } from ".";
 
-interface IWorkspaceMembership {
+export interface IWorkspaceMembership {
   id: string;
   member: string;
   role: EUserWorkspaceRoles;

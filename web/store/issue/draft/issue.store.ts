@@ -2,11 +2,10 @@ import { action, observable, makeObservable, computed, runInAction } from "mobx"
 import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
-// store
-import { IIssueRootStore } from "../root.store";
 // services
 import { IssueDraftService } from "services/issue/issue_draft.service";
 // types
+import { IIssueRootStore } from "../root.store";
 import { IIssue, IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IDraftIssues {
@@ -33,7 +32,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     enableInlineEditing: false,
   };
   // root store
-  rootIssueStore;
+  rootIssueStore: IIssueRootStore;
   // service
   issueDraftService;
 

@@ -4,8 +4,8 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 import { UserService } from "services/user.service";
 // types
-import { IIssue, IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 import { IIssueRootStore } from "../root.store";
+import { IIssue, IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 interface IProfileIssueTabTypes {
   assigned: IIssueResponse;
@@ -53,13 +53,12 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
   currentUserId: string | null = null;
   currentUserIssueTab: "assigned" | "created" | "subscribed" | undefined = undefined;
   // root store
-  rootStore;
+  rootIssueStore: IIssueRootStore;
   // service
   userService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
-
     makeObservable(this, {
       // observable
       loader: observable.ref,
@@ -77,15 +76,16 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       removeIssue: action,
       quickAddIssue: action,
     });
-
-    this.rootStore = _rootStore;
+    // root store
+    this.rootIssueStore = _rootStore;
+    // services
     this.userService = new UserService();
 
     autorun(() => {
-      const workspaceSlug = this.rootStore.workspaceSlug;
+      const workspaceSlug = this.rootIssueStore.workspaceSlug;
       if (!workspaceSlug || !this.currentUserId || !this.currentUserIssueTab) return;
 
-      const userFilters = this.rootStore?.profileIssuesFilter?.issueFilters?.filters;
+      const userFilters = this.rootIssueStore?.profileIssuesFilter?.issueFilters?.filters;
       if (userFilters) {
         this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
       }
@@ -101,7 +101,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
   get groupedIssueIds() {
     const currentUserId = this.currentUserId;
-    const displayFilters = this.rootStore?.profileIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootIssueStore?.profileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
@@ -158,7 +158,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       this.currentUserId = userId;
       if (type) this.currentUserIssueTab = type;
 
-      let params: any = this.rootStore?.profileIssuesFilter?.appliedFilters;
+      let params: any = this.rootIssueStore?.profileIssuesFilter?.appliedFilters;
       params = {
         ...params,
         assignees: undefined,
@@ -203,7 +203,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       if (!projectId) return;
 
       let response = {} as IIssue;
-      response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+      response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -242,7 +242,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       });
 
       let response = data as IIssue | undefined;
-      response = await this.rootStore.projectIssues.updateIssue(
+      response = await this.rootIssueStore.projectIssues.updateIssue(
         workspaceSlug,
         projectId,
         data.id as keyof IIssue,
@@ -250,7 +250,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       );
 
       if (moduleId)
-        response = await this.rootStore.moduleIssues.updateIssue(
+        response = await this.rootIssueStore.moduleIssues.updateIssue(
           workspaceSlug,
           projectId,
           response.id as keyof IIssue,
@@ -259,7 +259,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
         );
 
       if (cycleId)
-        response = await this.rootStore.cycleIssues.updateIssue(
+        response = await this.rootIssueStore.cycleIssues.updateIssue(
           workspaceSlug,
           projectId,
           data.id as keyof IIssue,
@@ -287,7 +287,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
         this.issues = _issues;
       });
 
-      const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       return response;
     } catch (error) {
@@ -309,7 +309,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
         this.issues = _issues;
       });
 
-      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
       if (this.issues && this.currentUserIssueTab) {
         delete this.issues[userId][this.currentUserIssueTab][data.id as keyof IIssue];

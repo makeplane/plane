@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -39,11 +39,11 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
   // observables
   filters: { [projectId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore;
   // services
   issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
+  constructor(_rootStore: IIssueRootStore) {
     super();
     makeObservable(this, {
       // observables
@@ -53,13 +53,13 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
       appliedFilters: computed,
     });
     // root store
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
-    const projectId = this.rootStore.projectId;
+    const projectId = this.rootIssueStore.projectId;
     if (!projectId) return undefined;
 
     const displayFilters = this.filters[projectId] || undefined;
@@ -148,7 +148,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
             });
           });
 
-          this.rootStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
             filters: _filters.filters,
           });

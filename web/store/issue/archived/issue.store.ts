@@ -2,11 +2,10 @@ import { action, observable, makeObservable, computed, runInAction } from "mobx"
 import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
-// store
-import { IIssueRootStore } from "../root.store";
 // services
 import { IssueArchiveService } from "services/issue";
 // types
+import { IIssueRootStore } from "../root.store";
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags, IIssue } from "types";
 
 export interface IArchivedIssues {

@@ -2,12 +2,11 @@ import { action, observable, makeObservable, computed, runInAction } from "mobx"
 import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
-// store
-import { IIssueRootStore } from "../root.store";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
 // types
+import { IIssueRootStore } from "../root.store";
 import { IIssue, IIssueResponse, TLoader, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IWorkspaceIssues {
@@ -77,7 +76,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   }
 
   get groupedIssueIds() {
-    const viewId = this.rootIssueStore.workspaceIssuesFilter?.viewId;
+    const viewId = this.rootIssueStore.globalViewId;
     if (!viewId) return undefined;
 
     const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.issueFilters?.displayFilters;
