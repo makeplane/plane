@@ -4,11 +4,9 @@ import { useRouter } from "next/router";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
 // hooks
-import { useLabel } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store_legacy/root";
+import { useIssues, useLabel } from "hooks/store";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EIssueFilterType } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 
@@ -20,8 +18,9 @@ export const ProfileIssuesFilter = observer(() => {
   };
   // store hook
   const {
-    workspaceProfileIssuesFilter: { issueFilters, updateFilters },
-  }: RootStore = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.GLOBAL);
+
   const {
     workspace: { workspaceLabels },
   } = useLabel();

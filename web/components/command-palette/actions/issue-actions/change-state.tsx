@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useProjectState } from "hooks/store";
+import { useProjectState, useIssues } from "hooks/store";
 // ui
 import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
 import { Check } from "lucide-react";
 // types
 import { IIssue } from "types";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
@@ -23,8 +23,8 @@ export const ChangeIssueState: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
-    projectIssues: { updateIssue },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const { projectStates } = useProjectState();
 
   const submitChanges = async (formData: Partial<IIssue>) => {

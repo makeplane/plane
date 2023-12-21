@@ -87,7 +87,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     setLinkModal(true);
   };
 
-  const projectDetails = workspaceSlug ? getProjectById(workspaceSlug.toString(), issue.project) : null;
+  const projectDetails = workspaceSlug ? getProjectById(issue.project) : null;
   const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;

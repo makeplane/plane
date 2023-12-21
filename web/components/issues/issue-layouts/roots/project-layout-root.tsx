@@ -12,7 +12,7 @@ import {
   ProjectEmptyState,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
-import { IStoreProjectIssues, useIssues } from "hooks/store/use-issues";
+import { useIssues } from "hooks/store/use-issues";
 import { EIssuesStoreType } from "constants/issue";
 // hooks
 
@@ -21,7 +21,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT) as IStoreProjectIssues;
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useKanbanView, useLabel, useProject, useProjectState } from "hooks/store";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -18,12 +18,11 @@ import {
 // constants
 import { EIssueActions } from "../types";
 import { EProjectStore } from "store/application/command-palette.store";
-import { useLabel, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: IGroupedIssues;
   displayProperties: IIssueDisplayProperties;
   sub_group_by: string | null;
   group_by: string | null;
@@ -96,7 +95,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     column_id={_list.id}
                     icon={_list.Icon}
                     title={_list.name}
-                    count={issueIds?.[_list.id]?.length || 0}
+                    count={(issueIds as IGroupedIssues)?.[_list.id]?.length || 0}
                     kanBanToggle={kanBanToggle}
                     handleKanBanToggle={handleKanBanToggle}
                     issuePayload={_list.payload}
@@ -133,7 +132,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
 export interface IKanBan {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: IGroupedIssues;
   displayProperties: IIssueDisplayProperties;
   sub_group_by: string | null;
   group_by: string | null;
@@ -178,9 +177,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     canEditProperties,
   } = props;
 
-  const {
-    issue: { issueKanBanView: issueKanBanViewStore },
-  } = useMobxStore();
+  const issueKanBanView = useKanbanView();
 
   return (
     <div className="relative h-full w-full">
@@ -191,7 +188,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
         group_by={group_by}
         sub_group_by={sub_group_by}
         sub_group_id={sub_group_id}
-        isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+        isDragDisabled={!issueKanBanView?.canUserDragDrop}
         handleIssues={handleIssues}
         quickActions={quickActions}
         kanBanToggle={kanBanToggle}

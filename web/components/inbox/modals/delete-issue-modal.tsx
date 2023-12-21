@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useInbox, useWorkspace } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
@@ -60,7 +59,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
         // remove inboxIssueId from the url
@@ -84,7 +83,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })

@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel } from "hooks/store";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EIssueFilterType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const GlobalViewsAppliedFiltersRoot = observer(() => {
   // router
@@ -15,8 +14,8 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
   const { workspaceSlug } = router.query as { workspaceSlug: string; globalViewId: string };
   // store hooks
   const {
-    workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.GLOBAL);
   const {
     workspace: { workspaceLabels },
   } = useLabel();

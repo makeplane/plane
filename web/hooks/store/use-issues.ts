@@ -13,6 +13,7 @@ import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IIssueResponse } from "types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+
 export interface IStoreIssues {
   [EIssuesStoreType.GLOBAL]: {
     issueMap: IIssueResponse;
@@ -60,9 +61,11 @@ export interface IStoreIssues {
     issuesFilter: undefined;
   };
 }
+
 export const useIssues = <T extends EIssuesStoreType>(storeType?: T): IStoreIssues[T] => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useIssues must be used within StoreProvider");
+
   switch (storeType) {
     case EIssuesStoreType.GLOBAL:
       return {

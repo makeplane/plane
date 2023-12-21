@@ -2,7 +2,7 @@ import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
@@ -11,7 +11,6 @@ import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { EProjectStore } from "store/application/command-palette.store";
-import { useIssues } from "hooks/store/use-issues";
 import { EIssuesStoreType } from "constants/issue";
 
 export const ListLayout: FC = observer(() => {

@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-import { AlertCircle, Search, X } from "lucide-react";
 // hooks
-import { useCycle } from "hooks/store";
 import useToast from "hooks/use-toast";
-// icons
+import { useCycle } from "hooks/store";
+import { useIssues } from "hooks/store";
+//icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
+import { AlertCircle, Search, X } from "lucide-react";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   isOpen: boolean;
@@ -20,8 +22,12 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose } = props;
   // states
   const [query, setQuery] = useState("");
+
   // store hooks
   const { projectIncompleteCycleIds, getCycleById } = useCycle();
+  const {
+    issues: { transferIssuesFromCycle },
+  } = useIssues(EIssuesStoreType.CYCLE);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;

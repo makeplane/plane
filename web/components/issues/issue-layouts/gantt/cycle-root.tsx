@@ -1,21 +1,15 @@
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
-import { useRouter } from "next/router";
+import { EIssuesStoreType } from "constants/issue";
 
 export const CycleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
   const { cycleId } = router.query;
 
-  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
-
-  return (
-    <BaseGanttRoot
-      issueFiltersStore={cycleIssueFilterStore}
-      issueStore={cycleIssueStore}
-      viewId={cycleId?.toString()}
-    />
-  );
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  return <BaseGanttRoot issueFiltersStore={issuesFilter} issueStore={issues} viewId={cycleId?.toString()} />;
 });

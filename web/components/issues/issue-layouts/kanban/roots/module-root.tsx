@@ -1,8 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hook
+import { useIssues } from "hooks/store";
 // components
 import { ModuleIssueQuickActions } from "components/issues";
 // types
@@ -11,7 +11,7 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/application/command-palette.store";
-import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IModuleKanBanLayout {}
 
@@ -20,28 +20,23 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = router.query;
 
   // store
-  const {
-    moduleIssues: moduleIssueStore,
-    moduleIssuesFilter: moduleIssueFilterStore,
-    moduleIssueKanBanView: moduleIssueKanBanViewStore,
-    kanBanHelpers: kanBanHelperStore,
-  } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await moduleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId.toString());
+      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId.toString());
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await moduleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
+      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
 
-      await moduleIssueStore.removeIssueFromModule(
+      await issues.removeIssueFromModule(
         workspaceSlug.toString(),
         issue.project,
         moduleId.toString(),
@@ -51,41 +46,17 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     },
   };
 
-  const handleDragDrop = async (
-    source: any,
-    destination: any,
-    subGroupBy: string | null,
-    groupBy: string | null,
-    issues: IIssueResponse | undefined,
-    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
-  ) => {
-    if (workspaceSlug && projectId && moduleId)
-      return await kanBanHelperStore.handleDragDrop(
-        source,
-        destination,
-        workspaceSlug.toString(),
-        projectId.toString(),
-        moduleIssueStore,
-        subGroupBy,
-        groupBy,
-        issues,
-        issueWithIds,
-        moduleId.toString()
-      );
-  };
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
-      issueStore={moduleIssueStore}
-      issuesFilterStore={moduleIssueFilterStore}
-      kanbanViewStore={moduleIssueKanBanViewStore}
+      issues={issues}
+      issuesFilter={issuesFilter}
       showLoader={true}
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId?.toString() ?? ""}
       currentStore={EProjectStore.MODULE}
-      handleDragDrop={handleDragDrop}
-      addIssuesToView={(issues: string[]) =>
-        moduleIssueStore.addIssueToModule(workspaceSlug?.toString() ?? "", moduleId?.toString() ?? "", issues)
+      addIssuesToView={(issueIds: string[]) =>
+        issues.addIssueToModule(workspaceSlug?.toString() ?? "", moduleId?.toString() ?? "", issueIds)
       }
     />
   );

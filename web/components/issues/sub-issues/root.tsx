@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
 // hooks
-import { useUser } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
@@ -24,6 +24,7 @@ import { IssueService } from "services/issue";
 import { SUB_ISSUES } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
@@ -47,8 +48,11 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   // store hooks
   const {
     issue: { updateIssueStructure },
-    projectIssues: { updateIssue, removeIssue },
   } = useMobxStore();
+
+  const {
+    issues: { updateIssue, removeIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     membership: { currentProjectRole },
   } = useUser();

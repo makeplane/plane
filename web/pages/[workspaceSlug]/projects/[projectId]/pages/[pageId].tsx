@@ -6,8 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import debounce from "lodash/debounce";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
@@ -35,6 +34,7 @@ import { IPage, IIssue } from "types";
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
@@ -52,8 +52,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
   // store hooks
   const {
-    projectIssues: { updateIssue },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     config: { envConfig },
   } = useApplication();

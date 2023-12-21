@@ -21,6 +21,8 @@ import {
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { IGroupedIssues } from "store_legacy/issues/types";
+import { handleDragDrop } from "./utils";
+import { useIssues } from "hooks/store";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
@@ -36,18 +38,18 @@ interface IBaseCalendarRoot {
     [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
   };
   viewId?: string;
-  handleDragDrop: (source: any, destination: any, issues: any, issueWithIds: any) => Promise<void>;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, handleDragDrop } = props;
+  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
 
   // hooks
   const { setToastAlert } = useToast();
+  const { issueMap } = useIssues();
 
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
@@ -64,7 +66,15 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     if (result.destination.droppableId === result.source.droppableId) return;
 
     if (handleDragDrop) {
-      await handleDragDrop(result.source, result.destination, issues, groupedIssueIds).catch((err) => {
+      await handleDragDrop(
+        result.source,
+        result.destination,
+        workspaceSlug?.toString(),
+        projectId?.toString(),
+        issues,
+        issueMap,
+        groupedIssueIds
+      ).catch((err) => {
         setToastAlert({
           title: "Error",
           type: "error",

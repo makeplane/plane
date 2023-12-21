@@ -8,8 +8,8 @@ import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanba
 import { ProfileIssuesAppliedFiltersRoot } from "components/issues";
 import { Spinner } from "@plane/ui";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store_legacy/root";
+import { useIssues } from "hooks/store";
+import { EIssuesStoreType } from "constants/issue";
 
 interface IProfileIssuesPage {
   type: "assigned" | "subscribed" | "created";
@@ -25,9 +25,9 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   };
 
   const {
-    workspaceProfileIssues: { loader, getIssues, fetchIssues },
-    workspaceProfileIssuesFilter: { issueFilters, fetchFilters },
-  }: RootStore = useMobxStore();
+    issues: { loader, getIssues, fetchIssues },
+    issuesFilter: { issueFilters, fetchFilters },
+  } = useIssues(EIssuesStoreType.PROFILE);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,

@@ -3,8 +3,16 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useMember, useProject, useProjectState, useProjectView, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import {
+  useApplication,
+  useIssues,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useProjectView,
+  useUser,
+} from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
@@ -15,7 +23,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EIssueFilterType } from "constants/issue";
 import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
@@ -30,8 +38,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    viewIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },

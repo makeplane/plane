@@ -2,8 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -17,6 +16,7 @@ import { ISearchIssueResponse } from "types";
 import { EProjectStore } from "store/application/command-palette.store";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -29,7 +29,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   // store hooks
-  const { cycleIssues: cycleIssueStore } = useMobxStore();
+  const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -45,7 +45,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), cycleId.toString(), issueIds).catch(() => {
+    await issues.addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
