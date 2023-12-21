@@ -5,11 +5,12 @@ import { IssueLabelService } from "services/issue";
 // types
 import { RootStore } from "store/root.store";
 import { IIssueLabel } from "types";
+import { ILabelRootStore } from "store/label";
 
 export interface IWorkspaceLabelStore {
   // computed
   workspaceLabels: IIssueLabel[] | undefined;
-  // actions
+  // fetch actions
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<IIssueLabel[]>;
 }
 
@@ -21,7 +22,7 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
   // services
   issueLabelService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_labelRoot: ILabelRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // computed
       workspaceLabels: computed,
@@ -31,7 +32,7 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.labelMap = this.rootStore.labelRoot?.labelMap;
+    this.labelMap = _labelRoot?.labelMap;
     // services
     this.issueLabelService = new IssueLabelService();
   }
@@ -51,13 +52,13 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
    * @param projectId
    * @returns Promise<IIssueLabel[]>
    */
-  fetchWorkspaceLabels = async (workspaceSlug: string) => {
-    const response = await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug);
-    runInAction(() => {
-      response.forEach((label) => {
-        set(this.labelMap, [label.id], label);
+  fetchWorkspaceLabels = async (workspaceSlug: string) =>
+    await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((label) => {
+          set(this.labelMap, [label.id], label);
+        });
       });
+      return response;
     });
-    return response;
-  };
 }

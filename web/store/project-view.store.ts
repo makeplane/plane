@@ -7,18 +7,16 @@ import { RootStore } from "store/root.store";
 import { IProjectView } from "types";
 
 export interface IProjectViewStore {
-  // states
-  loader: boolean;
-  error: any | null;
   // observables
   viewMap: Record<string, IProjectView>;
   // computed
-  projectViews: string[] | null; // TODO: rename to projectViewIds
+  projectViewIds: string[] | null;
   // computed actions
   getViewById: (viewId: string) => IProjectView;
-  // actions
+  // fetch actions
   fetchViews: (workspaceSlug: string, projectId: string) => Promise<IProjectView[]>;
   fetchViewDetails: (workspaceSlug: string, projectId: string, viewId: string) => Promise<IProjectView>;
+  // CRUD actions
   createView: (workspaceSlug: string, projectId: string, data: Partial<IProjectView>) => Promise<IProjectView>;
   updateView: (
     workspaceSlug: string,
@@ -27,14 +25,12 @@ export interface IProjectViewStore {
     data: Partial<IProjectView>
   ) => Promise<IProjectView>;
   deleteView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
+  // favorites actions
   addViewToFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
   removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
 }
 
 export class ProjectViewStore implements IProjectViewStore {
-  // states
-  loader: boolean = false;
-  error: any | null = null;
   // observables
   viewMap: Record<string, IProjectView> = {};
   // root store
@@ -44,192 +40,170 @@ export class ProjectViewStore implements IProjectViewStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // states
-      loader: observable.ref,
-      error: observable.ref,
       // observables
       viewMap: observable,
       // computed
-      projectViews: computed,
+      projectViewIds: computed,
       // computed actions
       getViewById: action,
-      // actions
+      // fetch actions
       fetchViews: action,
       fetchViewDetails: action,
+      // CRUD actions
       createView: action,
       updateView: action,
       deleteView: action,
+      // favorites actions
       addViewToFavorites: action,
       removeViewFromFavorites: action,
     });
-
+    // root store
     this.rootStore = _rootStore;
-
+    // services
     this.viewService = new ViewService();
   }
 
-  get projectViews() {
+  /**
+   * Returns array of view ids for current project
+   */
+  get projectViewIds() {
     const projectId = this.rootStore.app.router.projectId;
-
     if (!projectId) return null;
-
     const viewIds = Object.keys(this.viewMap ?? {})?.filter((viewId) => this.viewMap?.[viewId]?.project === projectId);
-
     return viewIds;
   }
 
+  /**
+   * Returns view details by id
+   */
   getViewById = (viewId: string) => this.viewMap?.[viewId] ?? null;
 
-  fetchViews = async (workspaceSlug: string, projectId: string) => {
-    try {
+  /**
+   * Fetches views for current project
+   * @param workspaceSlug
+   * @param projectId
+   * @returns Promise<IProjectView[]>
+   */
+  fetchViews = async (workspaceSlug: string, projectId: string) =>
+    await this.viewService.getViews(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
-        this.loader = true;
-      });
-
-      const response = await this.viewService.getViews(workspaceSlug, projectId);
-
-      runInAction(() => {
-        this.loader = false;
         response.forEach((view) => {
           set(this.viewMap, [view.id], view);
         });
       });
-
       return response;
-    } catch (error) {
+    });
+
+  /**
+   * Fetches view details for a specific view
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns Promise<IProjectView>
+   */
+  fetchViewDetails = async (workspaceSlug: string, projectId: string, viewId: string): Promise<IProjectView> =>
+    await this.viewService.getViewDetails(workspaceSlug, projectId, viewId).then((response) => {
       runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
-
-  fetchViewDetails = async (workspaceSlug: string, projectId: string, viewId: string): Promise<IProjectView> => {
-    try {
-      runInAction(() => {
-        this.loader = true;
-      });
-
-      const response = await this.viewService.getViewDetails(workspaceSlug, projectId, viewId);
-
-      runInAction(() => {
-        this.loader = false;
         set(this.viewMap, [viewId], response);
       });
-
       return response;
-    } catch (error) {
+    });
+
+  /**
+   * Creates a new view for a specific project and adds it to the store
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns Promise<IProjectView>
+   */
+  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> =>
+    await this.viewService.createView(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
-
-  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> => {
-    try {
-      const response = await this.viewService.createView(workspaceSlug, projectId, data);
-
-      runInAction(() => {
-        this.loader = false;
         set(this.viewMap, [response.id], response);
       });
-
       return response;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error;
-      });
+    });
 
-      throw error;
-    }
-  };
-
+  /**
+   * Updates a view details of specific view and updates it in the store
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @param data
+   * @returns Promise<IProjectView>
+   */
   updateView = async (
     workspaceSlug: string,
     projectId: string,
     viewId: string,
     data: Partial<IProjectView>
   ): Promise<IProjectView> => {
-    try {
-      const currentView = this.getViewById(viewId);
-
+    const currentView = this.getViewById(viewId);
+    return await this.viewService.patchView(workspaceSlug, projectId, viewId, data).then((response) => {
       runInAction(() => {
         set(this.viewMap, [viewId], { ...currentView, ...data });
       });
-
-      const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
-
       return response;
-    } catch (error) {
-      this.fetchViewDetails(workspaceSlug, projectId, viewId);
-
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
+    });
   };
 
+  /**
+   * Deletes a view and removes it from the viewMap object
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
   deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<any> => {
-    try {
+    await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
       runInAction(() => {
         omit(this.viewMap, [viewId]);
       });
-
-      await this.viewService.deleteView(workspaceSlug, projectId, viewId);
-    } catch (error) {
-      this.fetchViews(workspaceSlug, projectId);
-
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
+    });
   };
 
+  /**
+   * Adds a view to favorites
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
   addViewToFavorites = async (workspaceSlug: string, projectId: string, viewId: string) => {
     try {
       const currentView = this.getViewById(viewId);
-
       if (currentView?.is_favorite) return;
-
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });
-
       await this.viewService.addViewToFavorites(workspaceSlug, projectId, {
         view: viewId,
       });
     } catch (error) {
       console.error("Failed to add view to favorites in view store", error);
-
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], false);
       });
     }
   };
 
+  /**
+   * Removes a view from favorites
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
   removeViewFromFavorites = async (workspaceSlug: string, projectId: string, viewId: string) => {
     try {
       const currentView = this.getViewById(viewId);
-
       if (!currentView?.is_favorite) return;
-
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], false);
       });
-
       await this.viewService.removeViewFromFavorites(workspaceSlug, projectId, viewId);
     } catch (error) {
       console.error("Failed to remove view from favorites in view store", error);
-
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });

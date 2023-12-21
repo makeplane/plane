@@ -3,7 +3,7 @@ from django.db import models
 from django.conf import settings
 
 # Module import
-from . import ProjectBaseModel, BaseModel, WorkspaceBaseMember
+from . import ProjectBaseModel, BaseModel, WorkspaceBaseModel
 
 
 def get_default_filters():
@@ -81,7 +81,7 @@ class GlobalView(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
-class IssueView(WorkspaceBaseMember):
+class IssueView(WorkspaceBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")

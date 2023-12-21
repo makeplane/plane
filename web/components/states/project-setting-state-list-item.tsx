@@ -20,7 +20,7 @@ type Props = {
   handleDeleteState: () => void;
 };
 
-export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
+export const StatesListItem: React.FC<Props> = observer((props) => {
   const { index, state, statesList, handleEditState, handleDeleteState } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);

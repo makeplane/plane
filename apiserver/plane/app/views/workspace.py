@@ -219,8 +219,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             fields=fields if fields else None,
             many=True,
         ).data
-        workspace_dict = {str(workspace["id"]): workspace for workspace in workspaces}
-        return Response(workspace_dict, status=status.HTTP_200_OK)
+        return Response(workspaces, status=status.HTTP_200_OK)
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):

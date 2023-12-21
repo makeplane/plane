@@ -1,10 +1,12 @@
 import React, { useEffect, useState, ReactElement } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
 import { UserService } from "services/user.service";
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
@@ -37,11 +39,11 @@ const defaultValues: Partial<IUser> = {
 const fileService = new FileService();
 const userService = new UserService();
 
-const ProfileSettingsPage: NextPageWithLayout = () => {
+const ProfileSettingsPage: NextPageWithLayout = observer(() => {
+  // states
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
-
   // form info
   const {
     handleSubmit,
@@ -50,9 +52,12 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
     control,
     formState: { errors, isSubmitting },
   } = useForm<IUser>({ defaultValues });
-
+  // toast alert
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUserAuth();
+  // store hooks
+  const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -79,14 +84,8 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
       user_timezone: formData.user_timezone,
     };
 
-    await userService
-      .updateUser(payload)
+    await updateCurrentUser(payload)
       .then((res) => {
-        mutateUser((prevData: any) => {
-          if (!prevData) return prevData;
-
-          return { ...prevData, ...res };
-        }, false);
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -109,18 +108,13 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 
     fileService.deleteUserFile(url).then(() => {
       if (updateUser)
-        userService
-          .updateUser({ avatar: "" })
+        updateCurrentUser({ avatar: "" })
           .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
               message: "Profile picture removed successfully.",
             });
-            mutateUser((prevData: any) => {
-              if (!prevData) return prevData;
-              return { ...prevData, avatar: "" };
-            }, false);
             setIsRemoving(false);
           })
           .catch(() => {
@@ -431,7 +425,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
       </div>
     </>
   );
-};
+});
 
 ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;

@@ -18,6 +18,7 @@ export interface ICycleStore {
   projectCycleIds: string[] | null;
   projectCompletedCycleIds: string[] | null;
   projectUpcomingCycleIds: string[] | null;
+  projectIncompleteCycleIds: string[] | null;
   projectDraftCycleIds: string[] | null;
   projectActiveCycleId: string | null;
   // computed actions
@@ -63,6 +64,7 @@ export class CycleStore implements ICycleStore {
       projectCycleIds: computed,
       projectCompletedCycleIds: computed,
       projectUpcomingCycleIds: computed,
+      projectIncompleteCycleIds: computed,
       projectDraftCycleIds: computed,
       projectActiveCycleId: computed,
       // computed actions
@@ -113,6 +115,16 @@ export class CycleStore implements ICycleStore {
       return isStartDateUpcoming;
     });
     return upcomingCycles || null;
+  }
+
+  get projectIncompleteCycleIds() {
+    const allCycles = this.projectCycleIds;
+    if (!allCycles) return null;
+    const incompleteCycles = allCycles.filter((cycleId) => {
+      const hasEndDatePassed = isPast(new Date(this.cycleMap?.[cycleId]?.end_date ?? ""));
+      return !hasEndDatePassed;
+    });
+    return incompleteCycles || null;
   }
 
   get projectDraftCycleIds() {

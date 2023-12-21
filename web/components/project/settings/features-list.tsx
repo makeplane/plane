@@ -91,9 +91,8 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.[feature.property as keyof IProject]}
+            value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
-              console.log(currentProjectDetails?.[feature.property as keyof IProject]);
               setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
               postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
                 workspace_id: currentWorkspace?.id,

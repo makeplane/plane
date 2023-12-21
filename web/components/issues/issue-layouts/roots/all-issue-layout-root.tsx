@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
 import { useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewsAppliedFiltersRoot } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
@@ -138,7 +137,6 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                     handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
                   />
                 )}
-                members={workspaceMembers?.map((m) => m.member)}
                 labels={workspaceLabels || undefined}
                 handleIssues={handleIssues}
                 canEditProperties={canEditProperties}

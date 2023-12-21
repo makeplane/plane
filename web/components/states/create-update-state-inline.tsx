@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
@@ -12,8 +11,6 @@ import useToast from "hooks/use-toast";
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 // types
 import type { IState } from "types";
-// fetch-keys
-import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 
@@ -120,7 +117,6 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
 
     await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
-        mutate(STATES_LIST(projectId.toString()));
         handleClose();
         postHogEventTracker("STATE_UPDATE", {
           ...res,
@@ -152,18 +148,14 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   };
 
   const onSubmit = async (formData: IState) => {
-    const payload: IState = {
-      ...formData,
-    };
-
-    if (data) await handleUpdate(payload);
-    else await handleCreate(payload);
+    if (data) await handleUpdate(formData);
+    else await handleCreate(formData);
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">
@@ -273,7 +265,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           />
         )}
       />
-      <Button variant="neutral-primary" onClick={handleClose}>
+      <Button variant="neutral-primary" onClick={handleClose} size="sm">
         Cancel
       </Button>
       <Button
@@ -283,8 +275,9 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
         onClick={() => {
           setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
         }}
+        size="sm"
       >
-        {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
+        {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
       </Button>
     </form>
   );

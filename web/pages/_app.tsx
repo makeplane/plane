@@ -12,7 +12,6 @@ import "styles/react-datepicker.css";
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
 import { StoreProvider } from "contexts/store-context";
-import { MobxIssueStoreProvider } from "lib/mobx/store-issues-provider";
 
 import { AppProvider } from "lib/app-provider";
 // types
@@ -32,9 +31,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <title>{SITE_TITLE}</title>
       </Head>
       <StoreProvider {...pageProps}>
-        <MobxIssueStoreProvider {...pageProps}>
-          <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
-        </MobxIssueStoreProvider>
+        <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
       </StoreProvider>
     </>
   );

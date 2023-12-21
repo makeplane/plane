@@ -1,21 +1,15 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// services
-import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useCycle } from "hooks/store";
 import { useIssues } from "hooks/store";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
-// fetch-key
-import { INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
-// types
-import { ICycle } from "types";
-//helper
+// helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 import { EIssuesStoreType } from "constants/issue";
 
@@ -24,11 +18,13 @@ type Props = {
   handleClose: () => void;
 };
 
-const cycleService = new CycleService();
-
-export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleClose }) => {
+export const TransferIssuesModal: React.FC<Props> = observer((props) => {
+  const { isOpen, handleClose } = props;
+  // states
   const [query, setQuery] = useState("");
 
+  // store hooks
+  const { projectIncompleteCycleIds, getCycleById } = useCycle();
   const {
     issues: { transferIssuesFromCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -39,11 +35,14 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
-    await transferIssuesFromCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
+    if (!workspaceSlug || !projectId || !cycleId) return;
+
+    // TODO: import transferIssuesFromCycle from store
+    await transferIssuesFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), payload)
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Issues transfered successfully",
+          title: "Issues transferred successfully",
           message: "Issues have been transferred successfully",
         });
       })
@@ -56,17 +55,11 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
       });
   };
 
-  const { data: incompleteCycles } = useSWR(
-    workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
-      : null
-  );
+  const filteredOptions = projectIncompleteCycleIds?.filter((optionId) => {
+    const cycleDetails = getCycleById(optionId);
 
-  const filteredOptions =
-    query === ""
-      ? incompleteCycles
-      : incompleteCycles?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
+    return cycleDetails?.name.toLowerCase().includes(query.toLowerCase());
+  });
 
   // useEffect(() => {
   //   const handleKeyDown = (e: KeyboardEvent) => {
@@ -125,26 +118,32 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
                   <div className="flex w-full flex-col items-start gap-2 px-5">
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
-                        filteredOptions.map((option: ICycle) => (
-                          <button
-                            key={option.id}
-                            className="flex w-full items-center gap-4 rounded px-4 py-3 text-sm text-custom-text-200 hover:bg-custom-background-90"
-                            onClick={() => {
-                              transferIssue({
-                                new_cycle_id: option?.id,
-                              });
-                              handleClose();
-                            }}
-                          >
-                            <ContrastIcon className="h-5 w-5" />
-                            <div className="flex w-full justify-between">
-                              <span>{option?.name}</span>
-                              <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
-                                {getDateRangeStatus(option?.start_date, option?.end_date)}
-                              </span>
-                            </div>
-                          </button>
-                        ))
+                        filteredOptions.map((optionId) => {
+                          const cycleDetails = getCycleById(optionId);
+
+                          if (!cycleDetails) return;
+
+                          return (
+                            <button
+                              key={optionId}
+                              className="flex w-full items-center gap-4 rounded px-4 py-3 text-sm text-custom-text-200 hover:bg-custom-background-90"
+                              onClick={() => {
+                                transferIssue({
+                                  new_cycle_id: optionId,
+                                });
+                                handleClose();
+                              }}
+                            >
+                              <ContrastIcon className="h-5 w-5" />
+                              <div className="flex w-full justify-between">
+                                <span>{cycleDetails?.name}</span>
+                                <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
+                                  {getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)}
+                                </span>
+                              </div>
+                            </button>
+                          );
+                        })
                       ) : (
                         <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
                           <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />

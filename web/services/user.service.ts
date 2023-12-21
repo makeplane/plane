@@ -10,10 +10,10 @@ import type {
   IUserProfileProjectSegregation,
   IUserSettings,
   IUserWorkspaceDashboard,
+  IIssueResponse,
 } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "types";
 
 export class UserService extends APIService {
   constructor() {
@@ -55,7 +55,7 @@ export class UserService extends APIService {
 
   async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
     return this.get("/api/users/me/instance-admin/")
-      .then((respone) => respone?.data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });

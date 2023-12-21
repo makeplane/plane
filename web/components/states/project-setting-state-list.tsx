@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication, useProjectState } from "hooks/store";
 // components
-import { CreateUpdateStateInline, DeleteStateModal, ProjectSettingListItem, StateGroup } from "components/states";
+import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "components/states";
 // ui
 import { Loader } from "@plane/ui";
 // icons
@@ -81,7 +81,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                   )}
                   {sortByField(orderedStateGroups[group], "sequence").map((state, index) =>
                     state.id !== selectedState ? (
-                      <ProjectSettingListItem
+                      <StatesListItem
                         key={state.id}
                         index={index}
                         state={state}
@@ -147,7 +147,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                     )}
                     {orderedStateGroups[key].map((state, index) =>
                       state.id !== selectedState ? (
-                        <ProjectSettingListItem
+                        <StatesListItem
                           key={state.id}
                           index={index}
                           state={state}

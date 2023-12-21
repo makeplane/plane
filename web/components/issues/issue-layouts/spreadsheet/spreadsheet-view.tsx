@@ -10,7 +10,7 @@ import {
 } from "components/issues";
 import { Spinner, LayersIcon } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
 import { EIssueActions } from "../types";
 
 type Props = {
@@ -18,10 +18,9 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issues: IIssue[] | undefined;
-  members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  quickActions: (issue: IIssue, customActionButton: any) => React.ReactNode; // TODO: replace any with type
+  quickActions: (issue: IIssue, customActionButton: any) => React.ReactNode;
   handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
@@ -42,7 +41,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     displayFilters,
     handleDisplayFilterUpdate,
     issues,
-    members,
     labels,
     states,
     quickActions,
@@ -138,7 +136,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
                 handleUpdateIssue={(issue, data) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}
                 issues={issues}
-                members={members}
                 labels={labels}
                 states={states}
               />

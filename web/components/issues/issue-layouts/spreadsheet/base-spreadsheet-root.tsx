@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
@@ -37,9 +36,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
-  const {
-    projectMember: { projectMembers },
-  } = useMobxStore();
   const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
@@ -109,7 +105,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
           }
         />
       )}
-      members={projectMembers?.map((m) => m.member)}
       labels={projectLabels ?? []}
       states={projectStates}
       handleIssues={handleIssues}

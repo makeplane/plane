@@ -28,11 +28,13 @@ export interface IWorkspaceMemberStore {
   getSearchedWorkspaceInvitationIds: (searchQuery: string) => string[] | null;
   getWorkspaceMemberDetails: (workspaceMemberId: string) => IWorkspaceMember | null;
   getWorkspaceInvitationDetails: (invitationId: string) => IWorkspaceMemberInvitation | null;
-  // actions
+  // fetch actions
   fetchWorkspaceMembers: (workspaceSlug: string) => Promise<IWorkspaceMember[]>;
+  fetchWorkspaceMemberInvitations: (workspaceSlug: string) => Promise<IWorkspaceMemberInvitation[]>;
+  // crud actions
   updateMember: (workspaceSlug: string, userId: string, data: { role: EUserWorkspaceRoles }) => Promise<void>;
   removeMemberFromWorkspace: (workspaceSlug: string, userId: string) => Promise<void>;
-  fetchWorkspaceMemberInvitations: (workspaceSlug: string) => Promise<IWorkspaceMemberInvitation[]>;
+  // invite actions
   inviteMembersToWorkspace: (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => Promise<void>;
   updateMemberInvitation: (
     workspaceSlug: string,
@@ -173,20 +175,20 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @description fetch all the members of a workspace
    * @param workspaceSlug
    */
-  fetchWorkspaceMembers = async (workspaceSlug: string) => {
-    const response = await this.workspaceService.fetchWorkspaceMembers(workspaceSlug);
-    runInAction(() => {
-      response.forEach((member) => {
-        set(this.memberRoot?.memberMap, member.member.id, member.member);
-        set(this.workspaceMemberMap, [workspaceSlug, member.member.id], {
-          id: member.id,
-          member: member.member.id,
-          role: member.role,
+  fetchWorkspaceMembers = async (workspaceSlug: string) =>
+    await this.workspaceService.fetchWorkspaceMembers(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((member) => {
+          set(this.memberRoot?.memberMap, member.member.id, member.member);
+          set(this.workspaceMemberMap, [workspaceSlug, member.member.id], {
+            id: member.id,
+            member: member.member.id,
+            role: member.role,
+          });
         });
       });
+      return response;
     });
-    return response;
-  };
 
   /**
    * @description update the role of a workspace member
@@ -197,20 +199,11 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserWorkspaceRoles }) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    // original data to revert back in case of error
-    const originalProjectMemberData = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
-    try {
+    await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data).then(() => {
       runInAction(() => {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);
       });
-      await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data);
-    } catch (error) {
-      // revert back to original members in case of error
-      runInAction(() => {
-        set(this.workspaceMemberMap, [workspaceSlug, userId], originalProjectMemberData);
-      });
-      throw error;
-    }
+    });
   };
 
   /**
@@ -221,10 +214,11 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   removeMemberFromWorkspace = async (workspaceSlug: string, userId: string) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id);
-    runInAction(() => {
-      delete this.memberRoot?.memberMap?.[userId];
-      delete this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+    await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id).then(() => {
+      runInAction(() => {
+        delete this.memberRoot?.memberMap?.[userId];
+        delete this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+      });
     });
   };
 
@@ -232,13 +226,13 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @description fetch all the member invitations of a workspace
    * @param workspaceSlug
    */
-  fetchWorkspaceMemberInvitations = async (workspaceSlug: string) => {
-    const memberInvitations = await this.workspaceService.workspaceInvitations(workspaceSlug);
-    runInAction(() => {
-      set(this.workspaceMemberInvitations, workspaceSlug, memberInvitations);
+  fetchWorkspaceMemberInvitations = async (workspaceSlug: string) =>
+    await this.workspaceService.workspaceInvitations(workspaceSlug).then((response) => {
+      runInAction(() => {
+        set(this.workspaceMemberInvitations, workspaceSlug, response);
+      });
+      return response;
     });
-    return memberInvitations;
-  };
 
   /**
    * @description bulk invite members to a workspace
@@ -248,7 +242,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
     const response = await this.workspaceService.inviteWorkspace(workspaceSlug, data);
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
-
     return response;
   };
 
@@ -264,24 +257,15 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     data: Partial<IWorkspaceMemberInvitation>
   ) => {
     const originalMemberInvitations = [...this.workspaceMemberInvitations?.[workspaceSlug]]; // in case of error, we will revert back to original members
-
-    try {
+    await this.workspaceService.updateWorkspaceInvitation(workspaceSlug, invitationId, data).then(() => {
       const memberInvitations = originalMemberInvitations?.map((invitation) => ({
         ...invitation,
         ...(invitation.id === invitationId && data),
       }));
-      // optimistic update
       runInAction(() => {
         set(this.workspaceMemberInvitations, workspaceSlug, memberInvitations);
       });
-      await this.workspaceService.updateWorkspaceInvitation(workspaceSlug, invitationId, data);
-    } catch (error) {
-      // revert back to original members in case of error
-      runInAction(() => {
-        set(this.workspaceMemberInvitations, workspaceSlug, originalMemberInvitations);
-      });
-      throw error;
-    }
+    });
   };
 
   /**
@@ -289,12 +273,12 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param workspaceSlug
    * @param memberId
    */
-  deleteMemberInvitation = async (workspaceSlug: string, invitationId: string) => {
-    await this.workspaceService.deleteWorkspaceInvitations(workspaceSlug.toString(), invitationId);
-    runInAction(() => {
-      this.workspaceMemberInvitations[workspaceSlug] = this.workspaceMemberInvitations[workspaceSlug].filter(
-        (inv) => inv.id !== invitationId
-      );
+  deleteMemberInvitation = async (workspaceSlug: string, invitationId: string) =>
+    await this.workspaceService.deleteWorkspaceInvitations(workspaceSlug.toString(), invitationId).then(() => {
+      runInAction(() => {
+        this.workspaceMemberInvitations[workspaceSlug] = this.workspaceMemberInvitations[workspaceSlug].filter(
+          (inv) => inv.id !== invitationId
+        );
+      });
     });
-  };
 }
