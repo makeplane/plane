@@ -114,6 +114,12 @@ export interface IIssueFilters {
   displayProperties: IIssueDisplayProperties | undefined;
 }
 
+export interface IIssueFiltersResponse {
+  filters: IIssueFilterOptions;
+  display_filters: IIssueDisplayFilterOptions;
+  display_properties: IIssueDisplayProperties;
+}
+
 export interface IWorkspaceIssueFilterOptions {
   assignees?: string[] | null;
   created_by?: string[] | null;

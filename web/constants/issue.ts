@@ -15,14 +15,15 @@ import {
 } from "types";
 
 export enum EIssuesStoreType {
-  // GLOBAL = "GLOBAL",
-  // PROFILE = "PROFILE",
+  GLOBAL = "GLOBAL",
+  PROFILE = "PROFILE",
   PROJECT = "PROJECT",
   CYCLE = "CYCLE",
-  // MODULE = "MODULE",
-  // PROJECT_VIEW = "PROJECT_VIEW",
-  // ARCHIVED = "ARCHIVED",
-  // DRAFT = "DRAFT",
+  MODULE = "MODULE",
+  PROJECT_VIEW = "PROJECT_VIEW",
+  ARCHIVED = "ARCHIVED",
+  DRAFT = "DRAFT",
+  DEFAULT = "DEFAULT",
 }
 
 export enum EIssueFilterType {

@@ -1,4 +1,4 @@
-import { IIssueFilterOptions } from "./view-props";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "./view-props";
 
 export interface IProjectView {
   id: string;
@@ -10,6 +10,9 @@ export interface IProjectView {
   updated_by: string;
   name: string;
   description: string;
+  filters: IIssueFilterOptions;
+  display_filters: IIssueDisplayFilterOptions;
+  display_properties: IIssueDisplayProperties;
   query: IIssueFilterOptions;
   query_data: IIssueFilterOptions;
   project: string;
