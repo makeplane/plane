@@ -23,6 +23,8 @@
 /* Custom image styles */
 .ProseMirror img {
   transition: filter 0.1s ease-in-out;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 
   &:hover {
     cursor: pointer;
@@ -139,6 +141,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .img-placeholder {
   position: relative;
   width: 35%;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 
   &:before {
     content: "";
@@ -165,7 +169,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   table {
     border-collapse: collapse;
     table-layout: fixed;
-    margin: 0;
+    margin: 0.5em 0 0.5em 0;
+
     border: 1px solid rgb(var(--color-border-200));
     width: 100%;
 
