@@ -47,8 +47,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posthogAPIKey]);
+  }, [posthogAPIKey, posthogHost]);
 
   useEffect(() => {
     // Track page views
@@ -60,8 +59,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router.events]);
 
   if (posthogAPIKey) {
     return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
