@@ -20,3 +20,4 @@ export * from "./use-workspace";
 export * from "./use-issues";
 export * from "./use-calendar-view";
 export * from "./use-kanban-view";
+export * from "./use-issue-detail";

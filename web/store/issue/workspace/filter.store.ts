@@ -31,7 +31,7 @@ export interface IWorkspaceIssuesFilter {
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    projectId: undefined,
+    projectId: string | undefined,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     viewId?: string | undefined
@@ -114,7 +114,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   updateFilters = async (
     workspaceSlug: string,
-    projectId: undefined,
+    projectId: string | undefined,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     viewId: string | undefined = undefined

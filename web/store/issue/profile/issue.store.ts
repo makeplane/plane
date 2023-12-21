@@ -25,7 +25,7 @@ export interface IProfileIssues {
   // actions
   fetchIssues: (
     workspaceSlug: string,
-    projectId: undefined,
+    projectId: string | undefined,
     loadType: TLoader,
     userId?: string | undefined,
     view?: "assigned" | "created" | "subscribed"
@@ -131,7 +131,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
   fetchIssues = async (
     workspaceSlug: string,
-    projectId: undefined,
+    projectId: string | undefined,
     loadType: TLoader = "init-loader",
     userId?: string | undefined,
     view?: "assigned" | "created" | "subscribed"

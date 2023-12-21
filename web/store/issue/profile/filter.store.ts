@@ -30,7 +30,7 @@ export interface IProfileIssuesFilter {
   fetchFilters: (workspaceSlug: string, userId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    projectId: undefined,
+    projectId: string | undefined,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     userId?: string | undefined
@@ -113,7 +113,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
   updateFilters = async (
     workspaceSlug: string,
-    projectId: undefined,
+    projectId: string | undefined,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
     userId: string | undefined = undefined

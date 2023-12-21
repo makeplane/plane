@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useProject, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssueDetail, useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
 import {
@@ -40,9 +39,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const {
-    issueDetail: { fetchPeekIssueDetails },
-  } = useMobxStore();
+  const { fetchPeekIssueDetails } = useIssueDetail();
   const {
     membership: { currentProjectRole },
   } = useUser();

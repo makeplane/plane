@@ -5,8 +5,7 @@ import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useIssues, useProjectState, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useEstimate, useIssueDetail, useIssues, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 // services
@@ -80,9 +79,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const {
-    issueDetail: { createIssueLink, updateIssueLink, deleteIssueLink },
-  } = useMobxStore();
+  const { createIssueLink, updateIssueLink, deleteIssueLink } = useIssueDetail();
 
   const {
     issues: { removeIssue },

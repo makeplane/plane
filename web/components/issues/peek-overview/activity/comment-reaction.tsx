@@ -3,6 +3,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // components
 import { IssuePeekOverviewReactions } from "components/issues";
+import { useIssueDetail } from "hooks/store";
 
 interface IIssueCommentReaction {
   workspaceSlug: string;
@@ -19,7 +20,7 @@ export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) 
   const { workspaceSlug, projectId, issueId, user, comment, issueCommentReactionCreate, issueCommentReactionRemove } =
     props;
 
-  const { issueDetail: issueDetailStore } = useMobxStore();
+  const issueDetail = useIssueDetail();
 
   const handleCommentReactionCreate = (reaction: string) => {
     if (issueCommentReactionCreate && comment?.id) issueCommentReactionCreate(comment?.id, reaction);
@@ -35,12 +36,12 @@ export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) 
       : null,
     () => {
       if (workspaceSlug && projectId && issueId && comment && comment.id) {
-        issueDetailStore.fetchIssueCommentReactions(workspaceSlug, projectId, issueId, comment?.id);
+        issueDetail.fetchIssueCommentReactions(workspaceSlug, projectId, issueId, comment?.id);
       }
     }
   );
 
-  let issueReactions = issueDetailStore?.getIssueCommentReactions || null;
+  let issueReactions = issueDetail?.getIssueCommentReactions || null;
   issueReactions = issueReactions && comment.id ? issueReactions?.[comment.id] : [];
 
   return (

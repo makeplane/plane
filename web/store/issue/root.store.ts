@@ -19,6 +19,7 @@ import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedI
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
 import IssueCalendarViewStore, { ICalendarStore } from "./issue_calendar_view.store";
+import { IIssueDetailStore, IssueDetailStore } from "./issue_detail.store";
 
 export interface IIssueRootStore {
   workspaceSlug: string | undefined;
@@ -61,9 +62,11 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  issueDetail: IIssueDetailStore;
 }
 
-export class IssueRootStore {
+export class IssueRootStore implements IIssueRootStore {
   workspaceSlug: string | undefined = undefined;
   projectId: string | undefined = undefined;
   cycleId: string | undefined = undefined;
@@ -104,6 +107,8 @@ export class IssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  issueDetail: IIssueDetailStore;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
@@ -163,5 +168,7 @@ export class IssueRootStore {
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new IssueCalendarViewStore();
+
+    this.issueDetail = new IssueDetailStore(this);
   }
 }
