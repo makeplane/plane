@@ -53,7 +53,7 @@ export class StateStore implements IStateStore {
       getProjectStates: action,
       // fetch action
       fetchProjectStates: action,
-      // crud actions
+      // CRUD actions
       createState: action,
       updateState: action,
       deleteState: action,
