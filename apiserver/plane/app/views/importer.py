@@ -78,7 +78,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                     "installationId": installtion_id,
                 }
                 res = requests.post(
-                    f"{settings.SEGWAY_BASE_URL}/api/github",
+                    f"{settings.SEGWAY_BASE_URL}/api/${service}",
                     data=json.dumps(data),
                     headers=headers,
                 )
@@ -190,7 +190,7 @@ class ImportServiceEndpoint(BaseAPIView):
         if config and service == "github":
             config.update({"installation_id": installation_id})
 
-        # Get the api token -- # derecated
+        # Get the api token -- # deprecated
         api_token = APIToken.objects.filter(
             user=request.user, workspace=workspace
         ).first()
