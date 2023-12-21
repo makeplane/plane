@@ -143,8 +143,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     loadType: TLoader = "init-loader",
     moduleId: string | undefined = undefined
   ) => {
-    if (!moduleId) return undefined;
     try {
+      if (!moduleId) throw new Error("Module Id is required");
+
       this.loader = loadType;
 
       const params = this.rootIssueStore?.moduleIssuesFilter?.appliedFilters;
@@ -171,8 +172,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     data: Partial<IIssue>,
     moduleId: string | undefined = undefined
   ) => {
-    if (!moduleId) return undefined;
     try {
+      if (!moduleId) throw new Error("Module Id is required");
+
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       const issueToModule = await this.addIssueToModule(workspaceSlug, projectId, moduleId, [response.id]);
       return response;
@@ -188,8 +190,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     data: Partial<IIssue>,
     moduleId: string | undefined = undefined
   ) => {
-    if (!moduleId) return undefined;
     try {
+      if (!moduleId) throw new Error("Module Id is required");
+
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
@@ -204,8 +207,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     issueId: string,
     moduleId: string | undefined = undefined
   ) => {
-    if (!moduleId) return undefined;
     try {
+      if (!moduleId) throw new Error("Module Id is required");
+
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
@@ -226,8 +230,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     data: IIssue,
     moduleId: string | undefined = undefined
   ) => {
-    if (!moduleId) return undefined;
     try {
+      if (!moduleId) throw new Error("Module Id is required");
+
       runInAction(() => {
         this.issues[moduleId].push(data.id);
         this.rootIssueStore.issues.addIssue([data]);

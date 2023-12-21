@@ -131,8 +131,9 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     loadType: TLoader = "init-loader",
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return undefined;
     try {
+      if (!viewId) throw new Error("View Id is required");
+
       this.loader = loadType;
 
       const params = this.rootIssueStore?.projectViewIssuesFilter?.appliedFilters;
@@ -159,8 +160,9 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     data: Partial<IIssue>,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return undefined;
     try {
+      if (!viewId) throw new Error("View Id is required");
+
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
@@ -181,8 +183,9 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     data: Partial<IIssue>,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return undefined;
     try {
+      if (!viewId) throw new Error("View Id is required");
+
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
@@ -197,8 +200,9 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     issueId: string,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return undefined;
     try {
+      if (!viewId) throw new Error("View Id is required");
+
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
@@ -220,8 +224,9 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     data: IIssue,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return undefined;
     try {
+      if (!viewId) throw new Error("View Id is required");
+
       runInAction(() => {
         this.issues[viewId].push(data.id);
         this.rootIssueStore.issues.addIssue([data]);

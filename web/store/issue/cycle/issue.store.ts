@@ -146,8 +146,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     loadType: TLoader = "init-loader",
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       this.loader = loadType;
 
       const params = this.rootIssueStore?.cycleIssuesFilter?.appliedFilters;
@@ -174,8 +175,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: Partial<IIssue>,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       const issueToCycle = await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id]);
 
@@ -192,8 +194,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: Partial<IIssue>,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
@@ -208,8 +211,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     issueId: string,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === issueId);
@@ -230,8 +234,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: IIssue,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       runInAction(() => {
         this.issues[cycleId].push(data.id);
         this.rootIssueStore.issues.addIssue([data]);
