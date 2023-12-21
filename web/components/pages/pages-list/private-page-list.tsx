@@ -8,9 +8,9 @@ import { PagesListView } from "components/pages/pages-list";
 import { Loader } from "@plane/ui";
 
 export const PrivatePagesList: FC = observer(() => {
-  const { privateProjectPages } = usePage();
+  const { privateProjectPageIds } = usePage();
 
-  if (!privateProjectPages)
+  if (!privateProjectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -19,5 +19,5 @@ export const PrivatePagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={privateProjectPages} />;
+  return <PagesListView pageIds={privateProjectPageIds} />;
 });

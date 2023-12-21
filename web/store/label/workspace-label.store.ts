@@ -9,7 +9,7 @@ import { IIssueLabel } from "types";
 export interface IWorkspaceLabelStore {
   // computed
   workspaceLabels: IIssueLabel[] | undefined;
-  // actions
+  // fetch actions
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<IIssueLabel[]>;
 }
 
@@ -51,13 +51,13 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
    * @param projectId
    * @returns Promise<IIssueLabel[]>
    */
-  fetchWorkspaceLabels = async (workspaceSlug: string) => {
-    const response = await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug);
-    runInAction(() => {
-      response.forEach((label) => {
-        set(this.labelMap, [label.id], label);
+  fetchWorkspaceLabels = async (workspaceSlug: string) =>
+    await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((label) => {
+          set(this.labelMap, [label.id], label);
+        });
       });
+      return response;
     });
-    return response;
-  };
 }
