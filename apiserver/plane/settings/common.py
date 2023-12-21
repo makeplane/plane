@@ -346,6 +346,8 @@ POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 # Skip environment variable configuration
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
 # Segway
 SEGWAY_BASE_URL = os.environ.get("SEGWAY_BASE_URL", "http://localhost:9000")
 SEGWAY_KEY = os.environ.get("SEGWAY_KEY", False)
