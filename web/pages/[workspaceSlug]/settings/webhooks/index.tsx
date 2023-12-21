@@ -38,7 +38,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   // clear secret key when modal is closed.
   useEffect(() => {
     if (!showCreateWebhookModal && webhookSecretKey) clearSecretKey();
-  }, [showCreateWebhookModal]);
+  }, [showCreateWebhookModal, webhookSecretKey, clearSecretKey]);
 
   if (!isAdmin)
     return (

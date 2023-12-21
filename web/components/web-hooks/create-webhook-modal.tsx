@@ -93,7 +93,13 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => {}}>
+      <Dialog
+        as="div"
+        className="relative z-20"
+        onClose={() => {
+          if (!generatedWebhook) handleClose();
+        }}
+      >
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
