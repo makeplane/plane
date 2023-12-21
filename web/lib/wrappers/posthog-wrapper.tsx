@@ -48,7 +48,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [posthogAPIKey]);
 
   useEffect(() => {
     // Track page views
