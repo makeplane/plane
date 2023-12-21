@@ -5,6 +5,7 @@ import { IssueLabelService } from "services/issue";
 // types
 import { RootStore } from "store/root.store";
 import { IIssueLabel } from "types";
+import { ILabelRootStore } from "store/label";
 
 export interface IWorkspaceLabelStore {
   // computed
@@ -21,7 +22,7 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
   // services
   issueLabelService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_labelRoot: ILabelRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // computed
       workspaceLabels: computed,
@@ -31,7 +32,7 @@ export class WorkspaceLabelStore implements IWorkspaceLabelStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.labelMap = this.rootStore.labelRoot?.labelMap;
+    this.labelMap = _labelRoot?.labelMap;
     // services
     this.issueLabelService = new IssueLabelService();
   }

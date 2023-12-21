@@ -1,6 +1,5 @@
 import { makeObservable, observable, computed, action, runInAction } from "mobx";
 import groupBy from "lodash/groupBy";
-import keyBy from "lodash/keyBy";
 import set from "lodash/set";
 // store
 import { RootStore } from "./root.store";
@@ -95,17 +94,15 @@ export class StateStore implements IStateStore {
    * @param projectId
    * @returns
    */
-  fetchProjectStates = async (workspaceSlug: string, projectId: string) =>
-    await this.stateService.getStates(workspaceSlug, projectId).then((response) => {
-      runInAction(() => {
-        //TODO: add iteratively without modifying original reference
-        this.stateMap = {
-          ...this.stateMap,
-          ...keyBy(response, "id"),
-        };
+  fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
+    const statesResponse = await this.stateService.getStates(workspaceSlug, projectId);
+    runInAction(() => {
+      statesResponse.forEach((state) => {
+        set(this.stateMap, [state.id], state);
       });
-      return response;
     });
+    return statesResponse;
+  };
 
   /**
    * creates a new state in a project and adds it to the store
@@ -159,12 +156,25 @@ export class StateStore implements IStateStore {
    * @param projectId
    * @param stateId
    */
-  markStateAsDefault = async (workspaceSlug: string, projectId: string, stateId: string) =>
-    await this.stateService.markDefault(workspaceSlug, projectId, stateId).then(() => {
+  markStateAsDefault = async (workspaceSlug: string, projectId: string, stateId: string) => {
+    const originalStates = this.stateMap;
+    const currentDefaultState = Object.values(this.stateMap).find(
+      (state) => state.project === projectId && state.default
+    );
+    try {
       runInAction(() => {
+        if (currentDefaultState) set(this.stateMap, [currentDefaultState.id, "default"], false);
         set(this.stateMap, [stateId, "default"], true);
       });
-    });
+      await this.stateService.markDefault(workspaceSlug, projectId, stateId);
+    } catch (error) {
+      // reverting back to old state group if api fails
+      runInAction(() => {
+        this.stateMap = originalStates;
+      });
+      throw error;
+    }
+  };
 
   /**
    * updates the sort order of a state and updates the state information using API, in case of failure reverts back to original state

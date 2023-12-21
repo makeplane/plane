@@ -9,11 +9,13 @@ import { RootStore } from "../root.store";
 import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";
 
 export interface IUserStore {
+  // states
+  currentUserError: any | null;
+  // observables
   isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
   isUserInstanceAdmin: boolean | null;
   currentUserSettings: IUserSettings | null;
-
   dashboardInfo: any;
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
@@ -33,6 +35,9 @@ export interface IUserStore {
 }
 
 export class UserStore implements IUserStore {
+  // states
+  currentUserError: any | null = null;
+  // observables
   isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
   isUserInstanceAdmin: boolean | null = null;
@@ -49,6 +54,8 @@ export class UserStore implements IUserStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      // states
+      currentUserError: observable.ref,
       // observable
       currentUser: observable,
       isUserInstanceAdmin: observable.ref,
@@ -76,13 +83,22 @@ export class UserStore implements IUserStore {
    * Fetches the current user
    * @returns Promise<IUser>
    */
-  fetchCurrentUser = async () =>
-    await this.userService.currentUser().then((user) => {
+  fetchCurrentUser = async () => {
+    try {
+      const response = await this.userService.currentUser();
       runInAction(() => {
         this.isUserLoggedIn = true;
+        this.currentUser = response;
+        this.currentUserError = null;
       });
-      return user;
-    });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.currentUserError = error;
+      });
+      throw error;
+    }
+  };
 
   /**
    * Fetches the current user instance admin status
@@ -198,18 +214,14 @@ export class UserStore implements IUserStore {
    * Deactivates the current user
    * @returns Promise<void>
    */
-  deactivateAccount = async () => {
-    try {
-      await this.userService.deactivateAccount().then(() => {
-        runInAction(() => {
-          this.currentUser = null;
-          this.isUserLoggedIn = false;
-        });
+  deactivateAccount = async () =>
+    await this.userService.deactivateAccount().then(() => {
+      runInAction(() => {
+        this.currentUser = null;
+        this.currentUserError = null;
+        this.isUserLoggedIn = false;
       });
-    } catch (error) {
-      throw error;
-    }
-  };
+    });
 
   /**
    * Signs out the current user

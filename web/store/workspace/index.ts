@@ -1,6 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { RootStore } from "../root.store";
-import keyBy from "lodash/keyBy";
 import set from "lodash/set";
 // types
 import { IWorkspace } from "types";
@@ -106,13 +105,15 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   /**
    * fetch user workspaces from API
    */
-  fetchWorkspaces = async () =>
-    await this.workspaceService.userWorkspaces().then((response) => {
-      runInAction(() => {
-        this.workspaces = keyBy(response, "id");
+  fetchWorkspaces = async () => {
+    const workspaceResponse = await this.workspaceService.userWorkspaces();
+    runInAction(() => {
+      workspaceResponse.forEach((workspace) => {
+        set(this.workspaces, [workspace.id], workspace);
       });
-      return response;
     });
+    return workspaceResponse;
+  };
 
   /**
    * create workspace using the workspace data

@@ -1,17 +1,18 @@
 import { action, computed, makeObservable, runInAction } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
 // services
 import { IssueLabelService } from "services/issue";
 // helpers
 import { buildTree } from "helpers/array.helper";
 // types
 import { RootStore } from "store/root.store";
-import { IIssueLabel } from "types";
+import { IIssueLabel, IIssueLabelTree } from "types";
+import { ILabelRootStore } from "store/label";
 
 export interface IProjectLabelStore {
   // computed
   projectLabels: IIssueLabel[] | undefined;
-  projectLabelsTree: IIssueLabel[] | undefined;
+  projectLabelsTree: IIssueLabelTree[] | undefined;
   // fetch actions
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<IIssueLabel[]>;
   // crud actions
@@ -42,7 +43,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
   // services
   issueLabelService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_labelRoot: ILabelRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // computed
       projectLabels: computed,
@@ -57,18 +58,18 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.labelMap = this.rootStore.labelRoot?.labelMap;
+    this.labelMap = _labelRoot?.labelMap;
     // services
     this.issueLabelService = new IssueLabelService();
   }
 
   /**
-   * Returns the labelMap belongs to a specific project
+   * Returns the labelMap belonging to the current project
    */
   get projectLabels() {
-    const projectId = this.rootStore.app.router.query?.projectId;
+    const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.labelMap) return;
-    return Object.values(this.labelMap).filter((label) => label.project === projectId);
+    return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
   }
 
   /**
@@ -86,7 +87,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
    * @returns Promise<IIssueLabel[]>
    */
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) =>
-    await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId).then((response) => {
+    await this.issueLabelService.getProjectLabels(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
         response.forEach((label) => {
           set(this.labelMap, [label.id], label);
@@ -118,13 +119,13 @@ export class ProjectLabelStore implements IProjectLabelStore {
    * @param data
    * @returns Promise<IIssueLabel>
    */
-  updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) =>
-    await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data).then((response) => {
-      runInAction(() => {
-        set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
-      });
-      return response;
+  updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) => {
+    runInAction(() => {
+      set(this.labelMap, [labelId], { ...this.labelMap?.[labelId], ...data });
     });
+    const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
+    return response;
+  };
 
   /**
    * updates the sort order of a label and updates the label information using API.
@@ -194,7 +195,6 @@ export class ProjectLabelStore implements IProjectLabelStore {
    */
   deleteLabel = async (workspaceSlug: string, projectId: string, labelId: string) => {
     if (!this.labelMap[labelId]) return;
-    // deleting using api
     await this.issueLabelService.deleteIssueLabel(workspaceSlug, projectId, labelId).then(() => {
       runInAction(() => {
         delete this.labelMap[labelId];

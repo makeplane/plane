@@ -332,11 +332,11 @@ export class ProjectStore implements IProjectStore {
    */
   updateProject = async (workspaceSlug: string, projectId: string, data: Partial<IProject>) => {
     try {
-      const currentProject = this.getProjectById(projectId);
-      const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
+      const projectDetails = this.getProjectById(projectId);
       runInAction(() => {
-        set(this.projectMap, [projectId], { ...currentProject, ...data });
+        set(this.projectMap, [projectId], { ...projectDetails, ...data });
       });
+      const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
