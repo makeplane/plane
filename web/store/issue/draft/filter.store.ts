@@ -1,25 +1,30 @@
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, observable, runInAction } from "mobx";
+import isEmpty from "lodash/isEmpty";
+import set from "lodash/set";
 // base class
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// constants
-import { isNil } from "constants/common";
-import { EIssueFilterType } from "constants/issue";
 // types
 import { IssueRootStore } from "../root.store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
-
-interface IProjectIssuesFilters {
-  filters: IIssueFilterOptions | undefined;
-  displayFilters: IIssueDisplayFilterOptions | undefined;
-  displayProperties: IIssueDisplayProperties | undefined;
-}
+import {
+  IIssueFilterOptions,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilters,
+  TIssueParams,
+} from "types";
+// constants
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+// services
+import { IssueFiltersService } from "services/issue_filter.service";
 
 export interface IDraftIssuesFilter {
+  // observables
+  filters: Record<string, IIssueFilters>; // Record defines projectId as key and IIssueFilters as value
   // computed
-  issueFilters: IProjectIssuesFilters | undefined;
-  appliedFilters: TIssueParams[] | undefined;
+  issueFilters: IIssueFilters | undefined;
+  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (
@@ -31,32 +36,36 @@ export interface IDraftIssuesFilter {
 }
 
 export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftIssuesFilter {
+  // observables
+  filters: { [projectId: string]: IIssueFilters } = {};
   // root store
   rootStore;
+  // services
+  issueFilterService;
 
   constructor(_rootStore: IssueRootStore) {
-    super(_rootStore);
-
+    super();
     makeObservable(this, {
+      // observables
+      filters: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
     });
-
     // root store
     this.rootStore = _rootStore;
+    // services
+    this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
     const projectId = this.rootStore.projectId;
     if (!projectId) return undefined;
-    const displayFilters = this.rootStore.issuesFilter.issueDisplayFilters(projectId);
 
-    const _filters: IProjectIssuesFilters = {
-      filters: displayFilters?.filters,
-      displayFilters: displayFilters?.displayFilters,
-      displayProperties: displayFilters?.displayProperties,
-    };
+    const displayFilters = this.filters[projectId] || undefined;
+    if (!projectId || isEmpty(displayFilters)) return undefined;
+
+    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
 
     return _filters;
   }
@@ -65,77 +74,123 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
     const userFilters = this.issueFilters;
     if (!userFilters) return undefined;
 
-    let filteredRouteParams: any = {
-      priority: userFilters?.filters?.priority || undefined,
-      state_group: userFilters?.filters?.state_group || undefined,
-      state: userFilters?.filters?.state || undefined,
-      assignees: userFilters?.filters?.assignees || undefined,
-      mentions: userFilters?.filters?.mentions || undefined,
-      created_by: userFilters?.filters?.created_by || undefined,
-      labels: userFilters?.filters?.labels || undefined,
-      start_date: userFilters?.filters?.start_date || undefined,
-      target_date: userFilters?.filters?.target_date || undefined,
-      type: userFilters?.displayFilters?.type || undefined,
-      sub_issue: isNil(userFilters?.displayFilters?.sub_issue) ? true : userFilters?.displayFilters?.sub_issue,
-      show_empty_groups: isNil(userFilters?.displayFilters?.show_empty_groups)
-        ? true
-        : userFilters?.displayFilters?.show_empty_groups,
-      start_target_date: isNil(userFilters?.displayFilters?.start_target_date)
-        ? true
-        : userFilters?.displayFilters?.start_target_date,
-    };
-
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
-    if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+    if (!filteredParams) return undefined;
+
+    const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
+      userFilters?.filters as IIssueFilterOptions,
+      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      filteredParams
+    );
+
+    if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
     return filteredRouteParams;
   }
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     try {
-      await this.rootStore.issuesFilter.fetchDisplayFilters(workspaceSlug, projectId);
-      await this.rootStore.issuesFilter.fetchDisplayProperties(workspaceSlug, projectId);
-      return;
+      const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.DRAFT, workspaceSlug, projectId, undefined);
+
+      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
+      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+
+      runInAction(() => {
+        set(this.filters, [projectId, "filters"], filters);
+        set(this.filters, [projectId, "displayFilters"], displayFilters);
+        set(this.filters, [projectId, "displayProperties"], displayProperties);
+      });
     } catch (error) {
-      throw Error;
+      throw error;
     }
   };
 
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EIssueFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
   ) => {
     try {
-      switch (filterType) {
+      if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
+
+      const _filters = {
+        filters: this.filters[projectId].filters as IIssueFilterOptions,
+        displayFilters: this.filters[projectId].displayFilters as IIssueDisplayFilterOptions,
+        displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
+      };
+
+      switch (type) {
         case EIssueFilterType.FILTERS:
-          await this.rootStore.issuesFilter.updateDisplayFilters(
-            workspaceSlug,
-            projectId,
-            filterType,
-            filters as IIssueFilterOptions
-          );
+          const updatedFilters = filters as IIssueFilterOptions;
+          _filters.filters = { ..._filters.filters, ...updatedFilters };
+
+          runInAction(() => {
+            Object.keys(updatedFilters).forEach((_key) => {
+              set(this.filters, [projectId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
+            });
+          });
+
+          this.rootStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.handleIssuesLocalFilters.set(EIssuesStoreType.DRAFT, type, workspaceSlug, projectId, undefined, {
+            filters: _filters.filters,
+          });
           break;
         case EIssueFilterType.DISPLAY_FILTERS:
-          await this.rootStore.issuesFilter.updateDisplayFilters(
-            workspaceSlug,
-            projectId,
-            filterType,
-            filters as IIssueDisplayFilterOptions
-          );
+          const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
+          _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };
+
+          // set sub_group_by to null if group_by is set to null
+          if (_filters.displayFilters.group_by === null) _filters.displayFilters.sub_group_by = null;
+          // set sub_group_by to null if layout is switched to kanban group_by and sub_group_by are same
+          if (
+            _filters.displayFilters.layout === "kanban" &&
+            _filters.displayFilters.group_by === _filters.displayFilters.sub_group_by
+          )
+            _filters.displayFilters.sub_group_by = null;
+          // set group_by to state if layout is switched to kanban and group_by is null
+          if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null)
+            _filters.displayFilters.group_by = "state";
+
+          runInAction(() => {
+            Object.keys(updatedDisplayFilters).forEach((_key) => {
+              set(
+                this.filters,
+                [projectId, "displayFilters", _key],
+                updatedDisplayFilters[_key as keyof IIssueDisplayFilterOptions]
+              );
+            });
+          });
+
+          this.handleIssuesLocalFilters.set(EIssuesStoreType.DRAFT, type, workspaceSlug, projectId, undefined, {
+            display_filters: _filters.displayFilters,
+          });
+
           break;
         case EIssueFilterType.DISPLAY_PROPERTIES:
-          await this.rootStore.issuesFilter.updateDisplayProperties(
-            workspaceSlug,
-            projectId,
-            filters as IIssueDisplayProperties
-          );
+          const updatedDisplayProperties = filters as IIssueDisplayProperties;
+          _filters.displayProperties = { ..._filters.displayProperties, ...updatedDisplayProperties };
+
+          runInAction(() => {
+            Object.keys(updatedDisplayProperties).forEach((_key) => {
+              set(
+                this.filters,
+                [projectId, "displayProperties", _key],
+                updatedDisplayProperties[_key as keyof IIssueDisplayProperties]
+              );
+            });
+          });
+
+          this.handleIssuesLocalFilters.set(EIssuesStoreType.DRAFT, type, workspaceSlug, projectId, undefined, {
+            display_properties: _filters.displayProperties,
+          });
+          break;
+        default:
           break;
       }
-
-      return;
     } catch (error) {
+      this.fetchFilters(workspaceSlug, projectId);
       throw error;
     }
   };

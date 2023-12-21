@@ -87,7 +87,7 @@ type Props = {
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC<Props> = () => {
+export const GithubImporterRoot: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });

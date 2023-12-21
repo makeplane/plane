@@ -1,53 +1,49 @@
-import { action, observable, makeObservable, computed, runInAction, autorun } from "mobx";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
+// store
+import { IIssueRootStore } from "../root.store";
 // services
 import { IssueDraftService } from "services/issue/issue_draft.service";
 // types
 import { IIssue, IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
-import { IIssueRootStore } from "../root.store";
 
 export interface IDraftIssues {
   // observable
   loader: TLoader;
-  issues: { [project_id: string]: IIssueResponse } | undefined;
+  issues: { [project_id: string]: string[] };
+  viewFlags: ViewFlags;
   // computed
-  getIssues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
-
   quickAddIssue: undefined;
-  viewFlags: ViewFlags;
 }
 
 export class DraftIssues extends IssueHelperStore implements IDraftIssues {
   loader: TLoader = "init-loader";
-  issues: { [project_id: string]: IIssueResponse } | undefined = undefined;
-  // root store
-  rootStore;
-  // service
-  issueDraftService;
-
-  //viewData
+  issues: { [project_id: string]: string[] } = {};
   viewFlags = {
     enableQuickAdd: false,
     enableIssueCreation: true,
     enableInlineEditing: false,
   };
+  // root store
+  rootIssueStore;
+  // service
+  issueDraftService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
-
     makeObservable(this, {
       // observable
       loader: observable.ref,
-      issues: observable.ref,
+      issues: observable,
       // computed
-      getIssues: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -55,30 +51,23 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
       updateIssue: action,
       removeIssue: action,
     });
-
-    this.rootStore = _rootStore;
+    // root store
+    this.rootIssueStore = _rootStore;
     this.issueDraftService = new IssueDraftService();
-
-    autorun(() => {
-      const workspaceSlug = this.rootStore.workspaceSlug;
-      const projectId = this.rootStore.projectId;
-      if (!workspaceSlug || !projectId) return;
-
-      const userFilters = this.rootStore?.draftIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
-    });
   }
 
   get getIssues() {
-    const projectId = this.rootStore.projectId;
+    const projectId = this.rootIssueStore.projectId;
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
     return this.issues[projectId];
   }
 
   get groupedIssueIds() {
-    const projectId = this.rootStore.projectId;
-    const displayFilters = this.rootStore?.draftIssuesFilter?.issueFilters?.displayFilters;
+    const projectId = this.rootIssueStore.projectId;
+    if (!projectId) return undefined;
+
+    const displayFilters = this.rootIssueStore?.draftIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
@@ -86,16 +75,19 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+    const draftIssueIds = this.issues[projectId] ?? [];
+
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds);
+    if (!_issues) return undefined;
 
     let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[projectId]);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
+      else issues = this.unGroupedIssues(orderBy, _issues);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
-      else issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
+      else issues = this.groupedIssues(groupBy, orderBy, _issues);
     }
 
     return issues;
@@ -105,15 +97,15 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     try {
       this.loader = loadType;
 
-      const params = this.rootStore?.draftIssuesFilter?.appliedFilters;
+      const params = this.rootIssueStore?.draftIssuesFilter?.appliedFilters;
       const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
 
-      const _issues = { ...this.issues, [projectId]: { ...response } };
-
       runInAction(() => {
-        this.issues = _issues;
+        set(this.issues, [projectId], Object.keys(response));
         this.loader = undefined;
       });
+
+      this.rootIssueStore.issues.addIssue(Object.values(response));
 
       return response;
     } catch (error) {
@@ -127,35 +119,22 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     try {
       const response = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, data);
 
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[projectId]) _issues[projectId] = {};
-      _issues[projectId] = { ..._issues[projectId], ...{ [response.id]: response } };
-
       runInAction(() => {
-        this.issues = _issues;
+        this.issues[projectId].push(response.id);
       });
+
+      this.rootStore.issues.addIssue([response]);
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[projectId]) _issues[projectId] = {};
-      _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...data };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
+      this.rootStore.issues.updateIssue(issueId, data);
       const response = await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
-
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
@@ -165,20 +144,18 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[projectId]) _issues[projectId] = {};
-      delete _issues?.[projectId]?.[issueId];
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
       const response = await this.issueDraftService.deleteDraftIssue(workspaceSlug, projectId, issueId);
+
+      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[projectId].splice(issueIndex, 1);
+        });
+
+      this.rootStore.issues.removeIssue(issueId);
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };

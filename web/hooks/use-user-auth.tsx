@@ -1,30 +1,23 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// hooks
-import { useUser } from "hooks/store";
+// types
+import { IUser } from "types";
 
 const workspaceService = new WorkspaceService();
-
-const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
+type Props = {
+  routeAuth?: "sign-in" | "onboarding" | "admin" | null;
+  user: IUser | null;
+  isLoading: boolean;
+};
+const useUserAuth = (props: Props) => {
+  const { routeAuth, user, isLoading } = props;
   // states
   const [isRouteAccess, setIsRouteAccess] = useState(true);
   // router
   const router = useRouter();
   const { next_url } = router.query;
-  const { fetchCurrentUser } = useUser();
-  // form info
-  const {
-    data: user,
-    isLoading,
-    error,
-    mutate,
-  } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
-    refreshInterval: 0,
-    shouldRetryOnError: false,
-  });
 
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
@@ -32,7 +25,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
         if (!user) return;
 
         const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
-        const lastActiveWorkspace = userWorkspaces[user?.last_workspace_id];
+        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
 
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);
@@ -102,8 +95,6 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
 
   return {
     isLoading: isRouteAccess,
-    user: error ? undefined : user,
-    mutateUser: mutate,
     // assignedIssuesLength: user?.assigned_issues ?? 0,
     // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };

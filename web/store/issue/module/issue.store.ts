@@ -1,12 +1,15 @@
-import { action, observable, makeObservable, computed, runInAction, autorun } from "mobx";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
+// store
+import { IIssueRootStore } from "../root.store";
 // services
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // types
-import { IIssue } from "types/issues";
 import {
+  IIssue,
   TIssueGroupByOptions,
   IIssueResponse,
   TLoader,
@@ -15,14 +18,13 @@ import {
   TUnGroupedIssues,
   ViewFlags,
 } from "types";
-import { IIssueRootStore } from "../root.store";
 
 export interface IModuleIssues {
   // observable
   loader: TLoader;
-  issues: { [module_id: string]: IIssueResponse } | undefined;
+  issues: { [module_id: string]: string[] };
+  viewFlags: ViewFlags;
   // computed
-  getIssues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
@@ -56,39 +58,28 @@ export interface IModuleIssues {
     data: IIssue,
     moduleId?: string | undefined
   ) => Promise<IIssue | undefined>;
-  addIssueToModule: (
-    workspaceSlug: string,
-    moduleId: string,
-    issueIds: string[],
-    fetchAfterAddition?: boolean,
-    projectId?: string
-  ) => Promise<any>;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<any>;
   removeIssueFromModule: (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    issueId: string,
-    issueBridgeId: string
+    issueId: string
   ) => Promise<IIssue>;
-
-  viewFlags: ViewFlags;
 }
 
 export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   loader: TLoader = "init-loader";
-  issues: { [module_id: string]: IIssueResponse } | undefined = undefined;
-  // root store
-  rootStore;
-  // service
-  moduleService;
-  issueService;
-
-  //viewData
+  issues: { [module_id: string]: string[] } = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  // root store
+  rootIssueStore: IIssueRootStore;
+  // service
+  moduleService;
+  issueService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
@@ -96,9 +87,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     makeObservable(this, {
       // observable
       loader: observable.ref,
-      issues: observable.ref,
+      issues: observable,
       // computed
-      getIssues: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -110,51 +100,40 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       removeIssueFromModule: action,
     });
 
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
     this.moduleService = new ModuleService();
-
-    autorun(() => {
-      const workspaceSlug = this.rootStore.workspaceSlug;
-      const projectId = this.rootStore.projectId;
-      const moduleId = this.rootStore.moduleId;
-      if (!workspaceSlug || !projectId || !moduleId) return;
-
-      const userFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
-    });
-  }
-
-  get getIssues() {
-    const moduleId = this.rootStore?.moduleId;
-    if (!moduleId || !this.issues || !this.issues[moduleId]) return undefined;
-
-    return this.issues[moduleId];
   }
 
   get groupedIssueIds() {
-    const moduleId = this.rootStore?.moduleId;
-    const displayFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
+    const moduleId = this.rootIssueStore?.moduleId;
+    if (!moduleId) return undefined;
+
+    const displayFilters = this.rootIssueStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!moduleId || !this.issues || !this.issues[moduleId]) return undefined;
+    const moduleIssueIds = this.issues[moduleId] ?? [];
+
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds);
+    if (!_issues) return undefined;
 
     let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[moduleId]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[moduleId]);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
+      else issues = this.unGroupedIssues(orderBy, _issues);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[moduleId]);
-      else issues = this.groupedIssues(groupBy, orderBy, this.issues[moduleId]);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
+      else issues = this.groupedIssues(groupBy, orderBy, _issues);
     } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[moduleId], true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[moduleId]);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[moduleId]);
+      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", _issues, true);
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
     return issues;
   }
@@ -166,19 +145,18 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     moduleId: string | undefined = undefined
   ) => {
     if (!moduleId) return undefined;
-
     try {
       this.loader = loadType;
 
-      const params = this.rootStore?.moduleIssuesFilter?.appliedFilters;
+      const params = this.rootIssueStore?.moduleIssuesFilter?.appliedFilters;
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
-      const _issues = { ...this.issues, [moduleId]: { ...response } };
-
       runInAction(() => {
-        this.issues = _issues;
+        set(this.issues, [moduleId], Object.keys(response));
         this.loader = undefined;
       });
+
+      this.rootIssueStore.issues.addIssue(Object.values(response));
 
       return response;
     } catch (error) {
@@ -195,23 +173,11 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     moduleId: string | undefined = undefined
   ) => {
     if (!moduleId) return undefined;
-
     try {
-      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      await this.addIssueToModule(workspaceSlug, moduleId, [response.id], false);
-
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[moduleId]) _issues[moduleId] = {};
-      _issues[moduleId] = { ..._issues[moduleId], ...{ [response.id]: response } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
+      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+      const issueToModule = await this.addIssueToModule(workspaceSlug, projectId, moduleId, [response.id]);
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
     }
   };
@@ -224,19 +190,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     moduleId: string | undefined = undefined
   ) => {
     if (!moduleId) return undefined;
-
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[moduleId]) _issues[moduleId] = {};
-      _issues[moduleId][issueId] = { ..._issues[moduleId][issueId], ...data };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-
+      const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
@@ -251,23 +206,17 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     moduleId: string | undefined = undefined
   ) => {
     if (!moduleId) return undefined;
-
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[moduleId]) _issues[moduleId] = {};
-      delete _issues?.[moduleId]?.[issueId];
-      _issues[moduleId] = { ..._issues[moduleId] };
+      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[moduleId].splice(issueIndex, 1);
+        });
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
     }
   };
@@ -279,92 +228,55 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     moduleId: string | undefined = undefined
   ) => {
     if (!moduleId) return undefined;
-
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[moduleId]) _issues[moduleId] = {};
-      _issues[moduleId] = { ..._issues[moduleId], ...{ [data.id as keyof IIssue]: data } };
-
       runInAction(() => {
-        this.issues = _issues;
+        this.issues[moduleId].push(data.id);
+        this.rootIssueStore.issues.addIssue([data]);
       });
 
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
 
-      if (this.issues && response) {
-        delete this.issues[moduleId][data.id as keyof IIssue];
-
-        let _issues = { ...this.issues };
-        if (!_issues) _issues = {};
-        if (!_issues[moduleId]) _issues[moduleId] = {};
-        _issues[moduleId] = { ..._issues[moduleId], ...{ [response.id as keyof IIssue]: response } };
-
+      const quickAddIssueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === data.id);
+      if (quickAddIssueIndex >= 0)
         runInAction(() => {
-          this.issues = _issues;
+          this.issues[moduleId].splice(quickAddIssueIndex, 1);
+          this.rootIssueStore.issues.removeIssue(data.id);
         });
-      }
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
     }
   };
 
-  addIssueToModule = async (
-    workspaceSlug: string,
-    moduleId: string,
-    issueIds: string[],
-    fetchAfterAddition = true,
-    projectId?: string
-  ) => {
-    const activeProjectId = this.rootStore.projectId;
-    if (!activeProjectId && !projectId) return;
-
-    const projectIdToUpdate: string = projectId || activeProjectId || "";
-
+  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
-      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectIdToUpdate, moduleId, {
+      runInAction(() => {
+        this.issues[moduleId].push(...issueIds);
+      });
+
+      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
         issues: issueIds,
       });
 
-      if (fetchAfterAddition) this.fetchIssues(workspaceSlug, projectIdToUpdate, "mutation", moduleId);
-
       return issueToModule;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectIdToUpdate, "mutation", moduleId);
       throw error;
     }
   };
 
-  removeIssueFromModule = async (
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    issueId: string,
-    issueBridgeId: string
-  ) => {
+  removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[moduleId]) _issues[moduleId] = {};
-      delete _issues?.[moduleId]?.[issueId];
+      const response = await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.moduleService.removeIssueFromModule(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        issueBridgeId
-      );
+      const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[moduleId].splice(issueIndex, 1);
+        });
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
     }
   };

@@ -60,7 +60,7 @@ type Props = {
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC<Props> = () => {
+export const JiraImporterRoot: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });

@@ -3,8 +3,6 @@ import { autorun, makeObservable, observable } from "mobx";
 import { RootStore } from "../root.store";
 // issues data store
 import { IIssueStore, IssueStore } from "./issue.store";
-// issues filter base store
-import { IIssuesFilter, IssuesFilter } from "./base-issue-filter.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
 import { IProfileIssuesFilter, ProfileIssuesFilter, IProfileIssues, ProfileIssues } from "./profile";
 import { IProjectIssuesFilter, ProjectIssuesFilter, IProjectIssues, ProjectIssues } from "./project";
@@ -34,8 +32,6 @@ export interface IIssueRootStore {
   projects: any | undefined;
 
   issues: IIssueStore;
-
-  issuesFilter: IIssuesFilter;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -78,8 +74,6 @@ export class IssueRootStore {
   projects: any | undefined = undefined;
 
   issues: IIssueStore;
-
-  issuesFilter: IIssuesFilter;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -137,8 +131,6 @@ export class IssueRootStore {
     });
 
     this.issues = new IssueStore();
-
-    this.issuesFilter = new IssuesFilter(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this);

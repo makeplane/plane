@@ -13,106 +13,110 @@ import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IIssueResponse } from "types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
-
-interface IStoreIssues {
-  GLOBAL: {
+export interface IStoreIssues {
+  [EIssuesStoreType.GLOBAL]: {
     issueMap: IIssueResponse;
     issues: IWorkspaceIssues;
     issuesFilter: IWorkspaceIssuesFilter;
   };
-  PROFILE: {
+  [EIssuesStoreType.PROFILE]: {
     issueMap: IIssueResponse;
     issues: IProfileIssues;
     issuesFilter: IProfileIssuesFilter;
   };
-  PROJECT: {
+  [EIssuesStoreType.PROJECT]: {
     issueMap: IIssueResponse;
     issues: IProjectIssues;
     issuesFilter: IProjectIssuesFilter;
   };
-  CYCLE: {
+  [EIssuesStoreType.CYCLE]: {
     issueMap: IIssueResponse;
     issues: ICycleIssues;
     issuesFilter: ICycleIssuesFilter;
   };
-  MODULE: {
+  [EIssuesStoreType.MODULE]: {
     issueMap: IIssueResponse;
     issues: IModuleIssues;
     issuesFilter: IModuleIssuesFilter;
   };
-  PROJECT_VIEW: {
+  [EIssuesStoreType.PROJECT_VIEW]: {
     issueMap: IIssueResponse;
     issues: IProjectViewIssues;
     issuesFilter: IProjectViewIssuesFilter;
   };
-  ARCHIVED: {
+  [EIssuesStoreType.ARCHIVED]: {
     issueMap: IIssueResponse;
     issues: IArchivedIssues;
     issuesFilter: IArchivedIssuesFilter;
   };
-  DRAFT: {
+  [EIssuesStoreType.DRAFT]: {
     issueMap: IIssueResponse;
     issues: IDraftIssues;
     issuesFilter: IDraftIssuesFilter;
   };
-  DEFAULT: {
+  [EIssuesStoreType.DEFAULT]: {
     issueMap: IIssueResponse;
     issues: undefined;
     issuesFilter: undefined;
   };
 }
-
-export const useIssues = (storeType: EIssuesStoreType | undefined = undefined) => {
+export const useIssues = <T extends EIssuesStoreType>(storeType?: T): IStoreIssues[T] => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useIssues must be used within StoreProvider");
-
-  const storeIssues: IStoreIssues = {
-    GLOBAL: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.workspaceIssues,
-      issuesFilter: context.issue.workspaceIssuesFilter,
-    },
-    PROFILE: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.profileIssues,
-      issuesFilter: context.issue.profileIssuesFilter,
-    },
-    PROJECT: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.projectIssues,
-      issuesFilter: context.issue.projectIssuesFilter,
-    },
-    CYCLE: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.cycleIssues,
-      issuesFilter: context.issue.cycleIssuesFilter,
-    },
-    MODULE: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.moduleIssues,
-      issuesFilter: context.issue.moduleIssuesFilter,
-    },
-    PROJECT_VIEW: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.projectViewIssues,
-      issuesFilter: context.issue.projectViewIssuesFilter,
-    },
-    ARCHIVED: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.archivedIssues,
-      issuesFilter: context.issue.archivedIssuesFilter,
-    },
-    DRAFT: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: context.issue.draftIssues,
-      issuesFilter: context.issue.draftIssuesFilter,
-    },
-    DEFAULT: {
-      issueMap: context.issue.issues.issuesMap,
-      issues: undefined,
-      issuesFilter: undefined,
-    },
-  };
-
-  return storeIssues[storeType ? storeType : "DEFAULT"];
+  switch (storeType) {
+    case EIssuesStoreType.GLOBAL:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.workspaceIssues,
+        issuesFilter: context.issue.workspaceIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.PROFILE:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.profileIssues,
+        issuesFilter: context.issue.profileIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.PROJECT:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.projectIssues,
+        issuesFilter: context.issue.projectIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.CYCLE:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.cycleIssues,
+        issuesFilter: context.issue.cycleIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.MODULE:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.moduleIssues,
+        issuesFilter: context.issue.moduleIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.PROJECT_VIEW:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.projectViewIssues,
+        issuesFilter: context.issue.projectViewIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.ARCHIVED:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.archivedIssues,
+        issuesFilter: context.issue.archivedIssuesFilter,
+      } as IStoreIssues[T];
+    case EIssuesStoreType.DRAFT:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: context.issue.draftIssues,
+        issuesFilter: context.issue.draftIssuesFilter,
+      } as IStoreIssues[T];
+    default:
+      return {
+        issueMap: context.issue.issues.issuesMap,
+        issues: undefined,
+        issuesFilter: undefined,
+      } as IStoreIssues[T];
+  }
 };
