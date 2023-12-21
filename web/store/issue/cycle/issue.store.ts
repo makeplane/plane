@@ -18,6 +18,8 @@ import {
   ViewFlags,
 } from "types";
 
+const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
+
 export interface ICycleIssues {
   // observable
   loader: TLoader;
@@ -67,6 +69,11 @@ export interface ICycleIssues {
       new_cycle_id: string;
     }
   ) => Promise<IIssue>;
+  fetchActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ) => Promise<IIssueResponse | undefined>;
 }
 
 export class CycleIssues extends IssueHelperStore implements ICycleIssues {
@@ -100,6 +107,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       addIssueToCycle: action,
       removeIssueFromCycle: action,
       transferIssuesFromCycle: action,
+      fetchActiveCycleIssues: action,
     });
 
     this.rootIssueStore = _rootStore;
@@ -146,8 +154,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     loadType: TLoader = "init-loader",
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       this.loader = loadType;
 
       const params = this.rootIssueStore?.cycleIssuesFilter?.appliedFilters;
@@ -174,8 +183,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: Partial<IIssue>,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       const issueToCycle = await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id]);
 
@@ -192,8 +202,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: Partial<IIssue>,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
@@ -208,8 +219,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     issueId: string,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === issueId);
@@ -230,8 +242,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: IIssue,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       runInAction(() => {
         this.issues[cycleId].push(data.id);
         this.rootIssueStore.issues.addIssue([data]);
@@ -304,6 +317,26 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
+      throw error;
+    }
+  };
+
+  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      const params = { priority: `urgent,high` };
+      const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
+
+      runInAction(() => {
+        set(this.issues, [ACTIVE_CYCLE_ISSUES], Object.keys(response));
+        this.loader = undefined;
+      });
+
+      this.rootIssueStore.issues.addIssue(Object.values(response));
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      this.loader = undefined;
       throw error;
     }
   };

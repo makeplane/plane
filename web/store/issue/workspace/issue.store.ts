@@ -124,9 +124,9 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     data: Partial<IIssue>,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return;
-
     try {
+      if (!viewId) throw new Error("View id is required");
+
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
@@ -148,14 +148,14 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     data: Partial<IIssue>,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return;
-
     try {
+      if (!viewId) throw new Error("View id is required");
+
       this.rootStore.issues.updateIssue(issueId, data);
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, viewId, "mutation");
+      if (viewId) this.fetchIssues(workspaceSlug, viewId, "mutation");
       throw error;
     }
   };
@@ -166,9 +166,9 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     issueId: string,
     viewId: string | undefined = undefined
   ) => {
-    if (!viewId) return;
-
     try {
+      if (!viewId) throw new Error("View id is required");
+
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
