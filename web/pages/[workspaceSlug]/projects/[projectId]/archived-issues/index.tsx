@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // contexts
-import { IssueViewContextProvider } from "contexts/issue-view.context";
 import { ArchivedIssueLayoutRoot } from "components/issues";
 // ui
 import { ArchiveIcon } from "@plane/ui";
@@ -37,11 +36,9 @@ const ProjectArchivedIssuesPage: NextPageWithLayout = () => {
 
 ProjectArchivedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <IssueViewContextProvider>
-      <AppLayout header={<ProjectArchivedIssuesHeader />} withProjectWrapper>
-        {page}
-      </AppLayout>
-    </IssueViewContextProvider>
+    <AppLayout header={<ProjectArchivedIssuesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 

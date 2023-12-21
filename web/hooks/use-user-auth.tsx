@@ -25,7 +25,7 @@ const useUserAuth = (props: Props) => {
         if (!user) return;
 
         const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
-        const lastActiveWorkspace = userWorkspaces.find((workspsace) => workspsace.id === user?.last_workspace_id);
+        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
 
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);

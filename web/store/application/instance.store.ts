@@ -88,14 +88,13 @@ export class InstanceStore implements IInstanceStore {
    * update instance info
    * @param data
    */
-  updateInstanceInfo = async (data: Partial<IInstance>) => {
-    return await this.instanceService.updateInstanceInfo(data).then((response) => {
+  updateInstanceInfo = async (data: Partial<IInstance>) =>
+    await this.instanceService.updateInstanceInfo(data).then((response) => {
       runInAction(() => {
         this.instance = response;
       });
       return response;
     });
-  };
 
   /**
    * fetch instace configurations from API
@@ -117,12 +116,11 @@ export class InstanceStore implements IInstanceStore {
    * update instance configurations
    * @param data
    */
-  updateInstanceConfigurations = async (data: Partial<IFormattedInstanceConfiguration>) => {
-    return await this.instanceService.updateInstanceConfigurations(data).then((response) => {
+  updateInstanceConfigurations = async (data: Partial<IFormattedInstanceConfiguration>) =>
+    await this.instanceService.updateInstanceConfigurations(data).then((response) => {
       runInAction(() => {
         this.configurations = this.configurations ? [...this.configurations, ...response] : response;
       });
       return response;
     });
-  };
 }

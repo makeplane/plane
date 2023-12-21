@@ -84,8 +84,8 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param projectId
    * @returns Promise<IProjectView[]>
    */
-  fetchViews = async (workspaceSlug: string, projectId: string) => {
-    return await this.viewService.getViews(workspaceSlug, projectId).then((response) => {
+  fetchViews = async (workspaceSlug: string, projectId: string) =>
+    await this.viewService.getViews(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
         response.forEach((view) => {
           set(this.viewMap, [view.id], view);
@@ -93,7 +93,6 @@ export class ProjectViewStore implements IProjectViewStore {
       });
       return response;
     });
-  };
 
   /**
    * Fetches view details for a specific view
@@ -102,14 +101,13 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param viewId
    * @returns Promise<IProjectView>
    */
-  fetchViewDetails = async (workspaceSlug: string, projectId: string, viewId: string): Promise<IProjectView> => {
-    return await this.viewService.getViewDetails(workspaceSlug, projectId, viewId).then((response) => {
+  fetchViewDetails = async (workspaceSlug: string, projectId: string, viewId: string): Promise<IProjectView> =>
+    await this.viewService.getViewDetails(workspaceSlug, projectId, viewId).then((response) => {
       runInAction(() => {
         set(this.viewMap, [viewId], response);
       });
       return response;
     });
-  };
 
   /**
    * Creates a new view for a specific project and adds it to the store
@@ -118,14 +116,13 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param data
    * @returns Promise<IProjectView>
    */
-  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> => {
-    return await this.viewService.createView(workspaceSlug, projectId, data).then((response) => {
+  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> =>
+    await this.viewService.createView(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
         set(this.viewMap, [response.id], response);
       });
       return response;
     });
-  };
 
   /**
    * Updates a view details of specific view and updates it in the store

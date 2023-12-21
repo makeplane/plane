@@ -29,12 +29,11 @@ export class AppConfigStore implements IAppConfigStore {
   /**
    * Fetches the app config from the API
    */
-  fetchAppConfig = async () => {
-    return await this.appConfigService.envConfig().then((config) => {
+  fetchAppConfig = async () =>
+    await this.appConfigService.envConfig().then((config) => {
       runInAction(() => {
         this.envConfig = config;
       });
       return config;
     });
-  };
 }
