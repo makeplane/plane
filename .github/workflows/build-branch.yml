@@ -67,7 +67,7 @@ jobs:
     steps:
       - name: Set Frontend Docker Tag 
         run: |
-          if [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
+          if [[ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == release-* ]]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}-rel:${{ needs.branch_build_setup.outputs.gh_branch_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
@@ -111,11 +111,9 @@ jobs:
     steps:
       - name: Set Space Docker Tag 
         run: |
-          if [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
+          if [[ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == release-* ]]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}-rel:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          elif [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}-re:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
@@ -157,11 +155,9 @@ jobs:
     steps:
       - name: Set Backend Docker Tag 
         run: |
-          if [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
+          if [[ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == release-* ]]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}-rel:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          elif [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}-re:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
@@ -203,11 +199,9 @@ jobs:
     steps:
       - name: Set Proxy Docker Tag 
         run: |
-          if [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
+          if [[ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == release-* ]]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}-rel:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          elif [[ ${{ needs.branch_build_setup.outputs.gh_branch_name }} == release-* ]]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}-re:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
