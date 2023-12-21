@@ -22,8 +22,6 @@ class BaseModel(AuditModel):
         user = get_current_user()
 
         if user is None or user.is_anonymous:
-            self.created_by = None
-            self.updated_by = None
             super(BaseModel, self).save(*args, **kwargs)
         else:
             # Check if the model is being created or updated

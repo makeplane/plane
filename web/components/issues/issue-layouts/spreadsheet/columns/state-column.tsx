@@ -6,8 +6,6 @@ import { IssuePropertyState } from "../../properties";
 import useSubIssue from "hooks/use-sub-issue";
 // types
 import { IIssue, IState } from "types";
-import { mutate } from "swr";
-import { SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;

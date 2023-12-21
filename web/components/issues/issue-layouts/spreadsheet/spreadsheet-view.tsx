@@ -194,7 +194,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate: any) => await handleIssues(issueToUpdate, EIssueActions.UPDATE)}
+          handleIssue={async (issueToUpdate: any, action: EIssueActions) => await handleIssues(issueToUpdate, action)}
         />
       )}
     </div>

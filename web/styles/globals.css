@@ -420,6 +420,7 @@ body {
 .vertical-lr {
   -webkit-writing-mode: vertical-lr;
   -ms-writing-mode: vertical-lr;
+  writing-mode: vertical-lr;
 }
 
 div.web-view-spinner {

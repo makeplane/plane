@@ -23,12 +23,11 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
     project: projectStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
-    user: { currentProjectRole },
+    user: { currentWorkspaceRole },
   } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!projects) {
     return (
@@ -67,13 +66,17 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
             direction: "right",
             description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
           }}
-          primaryButton={{
-            text: "Start your first project",
-            onClick: () => {
-              setTrackElement("PROJECTS_EMPTY_STATE");
-              commandPaletteStore.toggleCreateProjectModal(true);
-            },
-          }}
+          primaryButton={
+            isEditingAllowed
+              ? {
+                  text: "Start your first project",
+                  onClick: () => {
+                    setTrackElement("PROJECTS_EMPTY_STATE");
+                    commandPaletteStore.toggleCreateProjectModal(true);
+                  },
+                }
+              : null
+          }
           disabled={!isEditingAllowed}
         />
       )}
