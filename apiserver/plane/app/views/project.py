@@ -1010,11 +1010,18 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
 
     def get(self, request):
         files = []
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
+        s3_client_params = {
+            "service_name": "s3",
+            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
+        }
+
+        # Use AWS_S3_ENDPOINT_URL if it is present in the settings
+        if hasattr(settings, "AWS_S3_ENDPOINT_URL") and settings.AWS_S3_ENDPOINT_URL:
+            s3_client_params["endpoint_url"] = settings.AWS_S3_ENDPOINT_URL
+
+        s3 = boto3.client(**s3_client_params)
+
         params = {
             "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",
@@ -1027,9 +1034,19 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
                 if not content["Key"].endswith(
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
-                    files.append(
-                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                    )
+                    if (
+                        hasattr(settings, "AWS_S3_CUSTOM_DOMAIN")
+                        and settings.AWS_S3_CUSTOM_DOMAIN
+                        and hasattr(settings, "AWS_S3_URL_PROTOCOL")
+                        and settings.AWS_S3_URL_PROTOCOL
+                    ):
+                        files.append(
+                            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/{content['Key']}"
+                        )
+                    else:
+                        files.append(
+                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                        )
 
         return Response(files, status=status.HTTP_200_OK)
 

@@ -9,7 +9,7 @@ import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot } from "compon
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
 
   const {
     projectArchivedIssues: { getIssues, fetchIssues },
@@ -18,8 +18,8 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
 
   useSWR(workspaceSlug && projectId ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug, projectId);
-      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+      await fetchFilters(workspaceSlug.toString(), projectId.toString());
+      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
     }
   });
 

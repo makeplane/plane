@@ -11,7 +11,7 @@ import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
 
 export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
 
   const {
     projectDraftIssuesFilter: { issueFilters, fetchFilters },
@@ -20,8 +20,8 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
 
   useSWR(workspaceSlug && projectId ? `DRAFT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug, projectId);
-      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+      await fetchFilters(workspaceSlug.toString(), projectId.toString());
+      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
     }
   });
 

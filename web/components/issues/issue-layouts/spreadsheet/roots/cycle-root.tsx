@@ -13,21 +13,28 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
 
-  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    cycleIssuesFilter: cycleIssueFilterStore,
+    cycle: { fetchCycleWithId },
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
+      await cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
+      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
-      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+      await cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
-      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+      await cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
     },
   };
 

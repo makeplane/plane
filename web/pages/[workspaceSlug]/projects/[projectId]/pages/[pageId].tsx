@@ -82,7 +82,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         description_html: newDescription,
       })
       .then(() => {
-        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription }) as IPage, false);
+        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
       });
   };
 
@@ -162,15 +162,12 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   }, [pageDetails?.description_html]); // TODO: Verify the exhaustive-deps warning
 
   function createObjectFromArray(keys: string[], options: any): any {
-    return keys.reduce(
-      (obj, key) => {
-        if (options[key] !== undefined) {
-          obj[key] = options[key];
-        }
-        return obj;
-      },
-      {} as { [key: string]: any }
-    );
+    return keys.reduce((obj, key) => {
+      if (options[key] !== undefined) {
+        obj[key] = options[key];
+      }
+      return obj;
+    }, {} as { [key: string]: any });
   }
 
   const mutatePageDetailsHelper = (
@@ -249,6 +246,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // ================ Page Menu Actions ==================
   const duplicate_page = async () => {
     const currentPageValues = getValues();
+
+    if (!currentPageValues?.description_html) {
+      currentPageValues.description_html = pageDetails?.description_html as string;
+    }
+
     const formData: Partial<IPage> = {
       name: "Copy of " + pageDetails?.name,
       description_html: currentPageValues.description_html,
@@ -339,7 +341,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
     }, 1500),
-    [handleSubmit]
+    [handleSubmit, pageDetails]
   );
 
   if (error)
@@ -499,7 +501,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               projectId={projectId as string}
               issueId={peekIssueId ? (peekIssueId as string) : ""}
               isArchived={false}
-              handleIssue={(issueToUpdate) => {
+              handleIssue={async (issueToUpdate, action) => {
                 if (peekIssueId && typeof peekIssueId === "string") {
                   handleUpdateIssue(peekIssueId, issueToUpdate);
                 }

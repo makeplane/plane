@@ -12,11 +12,11 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderFormattedDate } from "helpers/date-time.helper";
 
 export interface IIssuePropertyDate {
-  value: any;
-  onChange: (date: any) => void;
+  value: string | null;
+  onChange: (date: string | null) => void;
   disabled?: boolean;
   type: "start_date" | "target_date";
 }
@@ -56,32 +56,41 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
         return (
           <>
             <Popover.Button
+              as="button"
+              type="button"
               ref={dropdownBtn}
-              className={`flex h-5 w-full items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 outline-none duration-300 ${
-                disabled
-                  ? "pointer-events-none cursor-not-allowed text-custom-text-200"
-                  : "cursor-pointer hover:bg-custom-background-80"
-              }`}
+              className="border-none outline-none"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-center gap-2 overflow-hidden">
-                <dateOptionDetails.icon className="h-3 w-3" strokeWidth={2} />
-                {value && (
-                  <>
-                    <Tooltip tooltipHeading={dateOptionDetails.placeholder} tooltipContent={value ?? "None"}>
-                      <div className="text-xs">{value}</div>
-                    </Tooltip>
-
-                    <div
-                      className="flex flex-shrink-0 items-center justify-center"
-                      onClick={() => {
-                        if (onChange) onChange(null);
-                      }}
-                    >
-                      <X className="h-2.5 w-2.5" strokeWidth={2} />
-                    </div>
-                  </>
-                )}
-              </div>
+              <Tooltip
+                tooltipHeading={dateOptionDetails.placeholder}
+                tooltipContent={value ? renderFormattedDate(value) : "None"}
+              >
+                <div
+                  className={`flex h-5 w-full items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 outline-none duration-300 ${
+                    disabled
+                      ? "pointer-events-none cursor-not-allowed text-custom-text-200"
+                      : "cursor-pointer hover:bg-custom-background-80"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2 overflow-hidden">
+                    <dateOptionDetails.icon className="h-3 w-3" strokeWidth={2} />
+                    {value && (
+                      <>
+                        <div className="text-xs">{value}</div>
+                        <div
+                          className="flex flex-shrink-0 items-center justify-center"
+                          onClick={() => {
+                            if (onChange) onChange(null);
+                          }}
+                        >
+                          <X className="h-2.5 w-2.5" strokeWidth={2} />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Tooltip>
             </Popover.Button>
 
             <div className={`${open ? "fixed left-0 top-0 z-20 h-full w-full cursor-auto" : ""}`}>
@@ -92,7 +101,8 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
                 {({ close }) => (
                   <DatePicker
                     selected={value ? new Date(value) : new Date()}
-                    onChange={(val: any) => {
+                    onChange={(val, e) => {
+                      e?.stopPropagation();
                       if (onChange && val) {
                         onChange(renderDateFormat(val));
                         close();
