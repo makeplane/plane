@@ -182,7 +182,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@firstflight.com"
+                  placeholder="orville.wright@frstflt.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                 />
                 {value.length > 0 && (
