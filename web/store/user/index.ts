@@ -83,9 +83,11 @@ export class UserStore implements IUserStore {
 
   fetchCurrentUser = async () => {
     try {
+      this.loader = true;
       const response = await this.userService.currentUser();
       if (response) {
         runInAction(() => {
+          this.loader = false;
           this.currentUserError = null;
           this.currentUser = response;
           this.isUserLoggedIn = true;
@@ -94,6 +96,7 @@ export class UserStore implements IUserStore {
       return response;
     } catch (error) {
       runInAction(() => {
+        this.loader = false;
         this.currentUserError = error;
         this.isUserLoggedIn = false;
       });

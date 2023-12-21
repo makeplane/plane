@@ -85,6 +85,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useMobxStore();
   const {
     currentUser,
+    loader,
     membership: { currentProjectRole },
   } = useUser();
   const { projectStates } = useProjectState();
@@ -94,6 +95,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
   const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
+    currentUser,
+    loader,
     workspaceSlug,
     projectId,
     issueId
