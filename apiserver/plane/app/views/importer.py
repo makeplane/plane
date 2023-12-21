@@ -156,7 +156,7 @@ class ImportServiceEndpoint(BaseAPIView):
     def post(self, request, slug, service):
         if service not in ["github", "jira"]:
             return Response(
-                {"error": "Servivce not supported yet"},
+                {"error": "Service not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -231,7 +231,7 @@ class ImportServiceEndpoint(BaseAPIView):
                 "importer_id": str(importer.id),
             }
             res = requests.post(
-                f"{settings.SEGWAY_BASE_URL}/api/github/import",
+                f"{settings.SEGWAY_BASE_URL}/api/{service}/import",
                 data=json.dumps(data),
                 headers=headers,
             )
