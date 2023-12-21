@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
+import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
 // components
 import { ParentIssuesListModal } from "components/issues";
 // icons
@@ -16,9 +18,12 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, projectId, disabled = false }) => {
-  const [isParentModalOpen, setIsParentModalOpen] = useState(false);
+export const SidebarParentSelect: React.FC<Props> = observer((props) => {
+  const { onChange, issueDetails, projectId, disabled = false } = props;
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+
+  const { commandPalette } = useMobxStore();
+  const { isPeekOverviewParentIssueModalOpen, togglePeekOverviewParentIssueModal } = commandPalette;
 
   const router = useRouter();
   const { issueId } = router.query;
@@ -26,8 +31,8 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
   return (
     <>
       <ParentIssuesListModal
-        isOpen={isParentModalOpen}
-        handleClose={() => setIsParentModalOpen(false)}
+        isOpen={isPeekOverviewParentIssueModalOpen}
+        handleClose={() => togglePeekOverviewParentIssueModal(false)}
         onChange={(issue) => {
           onChange(issue.id);
           setSelectedParentIssue(issue);
@@ -46,7 +51,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
             onChange("");
             setSelectedParentIssue(null);
           } else {
-            setIsParentModalOpen(true);
+            togglePeekOverviewParentIssueModal(true);
           }
         }}
         disabled={disabled}
@@ -62,4 +67,4 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
       </button>
     </>
   );
-};
+});

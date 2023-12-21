@@ -29,6 +29,9 @@ export interface ICommandPaletteStore {
   isCreateIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
+  isPeekOverviewIssueLinkModalOpen: boolean;
+  isPeekOverviewParentIssueModalOpen: boolean;
+  isPeekOverviewIssueDeleteModalOpen: boolean;
 
   // computed
   isAnyModalOpen: boolean;
@@ -43,6 +46,9 @@ export interface ICommandPaletteStore {
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
+  togglePeekOverviewIssueLinkModal: (value?: boolean) => void;
+  togglePeekOverviewParentIssueModal: (value?: boolean) => void;
+  togglePeekOverviewIssueDeleteModal: (value?: boolean) => void;
 
   createIssueStoreType: EProjectStore;
 }
@@ -58,6 +64,9 @@ class CommandPaletteStore implements ICommandPaletteStore {
   isCreateIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
   isBulkDeleteIssueModalOpen: boolean = false;
+  isPeekOverviewIssueLinkModalOpen: boolean = false;
+  isPeekOverviewParentIssueModalOpen: boolean = false;
+  isPeekOverviewIssueDeleteModalOpen: boolean = false;
   // root store
   rootStore;
   // service
@@ -79,6 +88,9 @@ class CommandPaletteStore implements ICommandPaletteStore {
       isCreateIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
       isBulkDeleteIssueModalOpen: observable.ref,
+      isPeekOverviewIssueLinkModalOpen: observable.ref,
+      isPeekOverviewParentIssueModalOpen: observable.ref,
+      isPeekOverviewIssueDeleteModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // projectPages: computed,
@@ -93,6 +105,9 @@ class CommandPaletteStore implements ICommandPaletteStore {
       toggleCreateModuleModal: action,
       toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
+      togglePeekOverviewIssueLinkModal: action,
+      togglePeekOverviewParentIssueModal: action,
+      togglePeekOverviewIssueDeleteModal: action,
     });
 
     this.rootStore = _rootStore;
@@ -110,7 +125,10 @@ class CommandPaletteStore implements ICommandPaletteStore {
         this.isCreateViewModalOpen ||
         this.isShortcutModalOpen ||
         this.isBulkDeleteIssueModalOpen ||
-        this.isDeleteIssueModalOpen
+        this.isDeleteIssueModalOpen ||
+        this.isPeekOverviewIssueLinkModalOpen ||
+        this.isPeekOverviewParentIssueModalOpen ||
+        this.isPeekOverviewIssueDeleteModalOpen
     );
   }
 
@@ -193,6 +211,28 @@ class CommandPaletteStore implements ICommandPaletteStore {
       this.isBulkDeleteIssueModalOpen = value;
     } else {
       this.isBulkDeleteIssueModalOpen = !this.isBulkDeleteIssueModalOpen;
+    }
+  };
+
+  togglePeekOverviewIssueLinkModal = (value?: boolean) => {
+    if (value !== undefined) {
+      this.isPeekOverviewIssueLinkModalOpen = value;
+    } else {
+      this.isPeekOverviewIssueLinkModalOpen = !this.isPeekOverviewIssueLinkModalOpen;
+    }
+  };
+  togglePeekOverviewParentIssueModal = (value?: boolean) => {
+    if (value !== undefined) {
+      this.isPeekOverviewParentIssueModalOpen = value;
+    } else {
+      this.isPeekOverviewParentIssueModalOpen = !this.isPeekOverviewParentIssueModalOpen;
+    }
+  };
+  togglePeekOverviewIssueDeleteModal = (value?: boolean) => {
+    if (value !== undefined) {
+      this.isPeekOverviewIssueDeleteModalOpen = value;
+    } else {
+      this.isPeekOverviewIssueDeleteModalOpen = !this.isPeekOverviewIssueDeleteModalOpen;
     }
   };
 }

@@ -104,10 +104,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const {
     user: { currentUser },
     issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
+    commandPalette: { isAnyModalOpen, isPeekOverviewIssueDeleteModalOpen, togglePeekOverviewIssueDeleteModal },
   } = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
@@ -155,14 +155,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
-  useOutsideClickDetector(issuePeekOverviewRef, () => removeRoutePeekId());
+  useOutsideClickDetector(issuePeekOverviewRef, () => !isAnyModalOpen && removeRoutePeekId());
 
   return (
     <>
       {issue && !isArchived && (
         <DeleteIssueModal
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isPeekOverviewIssueDeleteModalOpen}
+          handleClose={() => togglePeekOverviewIssueDeleteModal(false)}
           data={issue}
           onSubmit={handleDeleteIssue}
         />
@@ -170,8 +170,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       {issue && isArchived && (
         <DeleteArchivedIssueModal
           data={issue}
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isPeekOverviewIssueDeleteModalOpen}
+          handleClose={() => togglePeekOverviewIssueDeleteModal(false)}
           onSubmit={handleDeleteIssue}
         />
       )}
@@ -262,7 +262,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
                   {!disableUserActions && (
-                    <button onClick={() => setDeleteIssueModal(true)}>
+                    <button onClick={() => togglePeekOverviewIssueDeleteModal(true)}>
                       <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                     </button>
                   )}

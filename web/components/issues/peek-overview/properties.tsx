@@ -37,13 +37,13 @@ interface IPeekOverviewProperties {
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { issue, issueUpdate, issueLinkCreate, issueLinkUpdate, issueLinkDelete, disableUserActions } = props;
   // states
-  const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const {
     user: { currentProjectRole },
     issueDetail: { fetchPeekIssueDetails },
     project: { getProjectById },
+    commandPalette: { isPeekOverviewIssueLinkModalOpen, togglePeekOverviewIssueLinkModal },
   } = useMobxStore();
 
   const router = useRouter();
@@ -82,7 +82,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
-    setLinkModal(true);
+    togglePeekOverviewIssueLinkModal(true);
   };
 
   const projectDetails = workspaceSlug ? getProjectById(workspaceSlug.toString(), issue.project) : null;
@@ -97,9 +97,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   return (
     <>
       <LinkModal
-        isOpen={linkModal}
+        isOpen={isPeekOverviewIssueLinkModalOpen}
         handleClose={() => {
-          setLinkModal(false);
+          togglePeekOverviewIssueLinkModal(false);
           setSelectedLinkToUpdate(null);
         }}
         data={selectedLinkToUpdate}
@@ -292,7 +292,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     className={`flex ${
                       disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
                     } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
-                    onClick={() => setLinkModal(true)}
+                    onClick={() => togglePeekOverviewIssueLinkModal(true)}
                     disabled={false}
                   >
                     <Plus className="h-3 w-3" /> New
