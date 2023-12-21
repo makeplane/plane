@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -30,9 +30,9 @@ export interface IModuleIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    moduleId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -40,11 +40,11 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   // observables
   filters: { [moduleId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore: IIssueRootStore;
   // services
   issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
+  constructor(_rootStore: IIssueRootStore) {
     super();
     makeObservable(this, {
       // observables
@@ -54,13 +54,13 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
       appliedFilters: computed,
     });
     // root store
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
-    const moduleId = this.rootStore.moduleId;
+    const moduleId = this.rootIssueStore.moduleId;
     if (!moduleId) return undefined;
 
     const displayFilters = this.filters[moduleId] || undefined;
@@ -110,11 +110,12 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    moduleId: string | undefined = undefined
   ) => {
     try {
+      if (!moduleId) throw new Error("Module id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -134,7 +135,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             });
           });
 
-          this.rootStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             filters: _filters.filters,
           });
@@ -192,7 +193,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, moduleId);
+      if (moduleId) this.fetchFilters(workspaceSlug, projectId, moduleId);
       throw error;
     }
   };

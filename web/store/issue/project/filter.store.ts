@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -39,11 +39,11 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   // observables
   filters: { [projectId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore: IIssueRootStore;
   // services
   issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
+  constructor(_rootStore: IIssueRootStore) {
     super();
     makeObservable(this, {
       // observables
@@ -53,13 +53,13 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       appliedFilters: computed,
     });
     // root store
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
-    const projectId = this.rootStore.projectId;
+    const projectId = this.rootIssueStore.projectId;
     if (!projectId) return undefined;
 
     const displayFilters = this.filters[projectId] || undefined;
@@ -132,7 +132,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          this.rootStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             filters: _filters.filters,
           });

@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -30,9 +30,10 @@ export interface IProfileIssuesFilter {
   fetchFilters: (workspaceSlug: string, userId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    userId: string,
+    projectId: undefined,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    userId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -41,11 +42,11 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
   userId: string = "";
   filters: { [userId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore: IIssueRootStore;
   // services
   issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
+  constructor(_rootStore: IIssueRootStore) {
     super();
     makeObservable(this, {
       // observables
@@ -56,13 +57,13 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
       appliedFilters: computed,
     });
     // root store
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
-    const userId = this.userId;
+    const userId = this.rootIssueStore.userId;
     if (!userId) return undefined;
 
     const displayFilters = this.filters[userId] || undefined;
@@ -112,11 +113,14 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
   updateFilters = async (
     workspaceSlug: string,
-    userId: string,
+    projectId: undefined,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    userId: string | undefined = undefined
   ) => {
     try {
+      if (!userId) throw new Error("user id is required");
+
       if (isEmpty(this.filters) || isEmpty(this.filters[userId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -136,7 +140,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             });
           });
 
-          this.rootStore.projectIssues.fetchIssues(workspaceSlug, userId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, userId, "mutation");
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
             filters: _filters.filters,
           });
@@ -194,7 +198,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, userId);
+      if (userId) this.fetchFilters(workspaceSlug, userId);
       throw error;
     }
   };

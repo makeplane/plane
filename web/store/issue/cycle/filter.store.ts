@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -30,9 +30,9 @@ export interface ICycleIssuesFilter {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    cycleId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -40,11 +40,11 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   // observables
   filters: { [cycleId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore: IIssueRootStore;
   // services
   issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
+  constructor(_rootStore: IIssueRootStore) {
     super();
     makeObservable(this, {
       // observables
@@ -54,13 +54,13 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       appliedFilters: computed,
     });
     // root store
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
-    const cycleId = this.rootStore.cycleId;
+    const cycleId = this.rootIssueStore.cycleId;
     if (!cycleId) return undefined;
 
     const displayFilters = this.filters[cycleId] || undefined;
@@ -110,11 +110,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    cycleId: string | undefined = undefined
   ) => {
     try {
+      if (!cycleId) throw new Error("Cycle id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -134,7 +135,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          this.rootStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             filters: _filters.filters,
           });
@@ -192,7 +193,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
+      if (cycleId) this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };

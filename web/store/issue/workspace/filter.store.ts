@@ -6,7 +6,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -23,7 +23,6 @@ import { WorkspaceService } from "services/workspace.service";
 type TWorkspaceFilters = "all-issues" | "assigned" | "created" | "subscribed" | string;
 export interface IWorkspaceIssuesFilter {
   // observables
-  viewId: TWorkspaceFilters;
   filters: Record<TWorkspaceFilters, IIssueFilters>; // Record defines viewId as key and IIssueFilters as value
   // computed
   issueFilters: IIssueFilters | undefined;
@@ -32,39 +31,38 @@ export interface IWorkspaceIssuesFilter {
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    viewId: string,
+    projectId: undefined,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId?: string | undefined
   ) => Promise<void>;
 }
 
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
   // observables
-  viewId: TWorkspaceFilters = "";
   filters: { [viewId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore;
   // services
   issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
+  constructor(_rootStore: IIssueRootStore) {
     super();
     makeObservable(this, {
       // observables
-      viewId: observable.ref,
       filters: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
     });
     // root store
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new WorkspaceService();
   }
 
   get issueFilters() {
-    const viewId = this.viewId;
+    const viewId = this.rootIssueStore.globalViewId;
     if (!viewId) return undefined;
 
     const displayFilters = this.filters[viewId] || undefined;
@@ -95,7 +93,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
     try {
-      this.viewId = viewId;
       let _filters: IIssueFiltersResponse;
       if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
         _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
@@ -117,11 +114,14 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   updateFilters = async (
     workspaceSlug: string,
-    viewId: string,
+    projectId: undefined,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId: string | undefined = undefined
   ) => {
     try {
+      if (!viewId) throw new Error("View id is required");
+
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -141,7 +141,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          this.rootStore.projectIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, viewId, "mutation");
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
@@ -213,7 +213,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, viewId);
+      if (viewId) this.fetchFilters(workspaceSlug, viewId);
       throw error;
     }
   };
