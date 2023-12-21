@@ -199,11 +199,20 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserWorkspaceRoles }) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data).then(() => {
+    // original data to revert back in case of error
+    const originalProjectMemberData = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+    try {
       runInAction(() => {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);
       });
-    });
+      await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data);
+    } catch (error) {
+      // revert back to original members in case of error
+      runInAction(() => {
+        set(this.workspaceMemberMap, [workspaceSlug, userId], originalProjectMemberData);
+      });
+      throw error;
+    }
   };
 
   /**
@@ -257,15 +266,23 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     data: Partial<IWorkspaceMemberInvitation>
   ) => {
     const originalMemberInvitations = [...this.workspaceMemberInvitations?.[workspaceSlug]]; // in case of error, we will revert back to original members
-    await this.workspaceService.updateWorkspaceInvitation(workspaceSlug, invitationId, data).then(() => {
+    try {
       const memberInvitations = originalMemberInvitations?.map((invitation) => ({
         ...invitation,
         ...(invitation.id === invitationId && data),
       }));
+      // optimistic update
       runInAction(() => {
         set(this.workspaceMemberInvitations, workspaceSlug, memberInvitations);
       });
-    });
+      await this.workspaceService.updateWorkspaceInvitation(workspaceSlug, invitationId, data);
+    } catch (error) {
+      // revert back to original members in case of error
+      runInAction(() => {
+        set(this.workspaceMemberInvitations, workspaceSlug, originalMemberInvitations);
+      });
+      throw error;
+    }
   };
 
   /**

@@ -127,13 +127,24 @@ export class StateStore implements IStateStore {
    * @param data
    * @returns
    */
-  updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) =>
-    await this.stateService.patchState(workspaceSlug, projectId, stateId, data).then((response) => {
+  updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => {
+    const originalState = this.stateMap[stateId];
+    try {
       runInAction(() => {
         set(this.stateMap, [stateId], { ...this.stateMap?.[stateId], ...data });
       });
+      const response = await this.stateService.patchState(workspaceSlug, projectId, stateId, data);
       return response;
-    });
+    } catch (error) {
+      runInAction(() => {
+        this.stateMap = {
+          ...this.stateMap,
+          [stateId]: originalState,
+        };
+      });
+      throw error;
+    }
+  };
 
   /**
    * deletes the state from the store, incase of failure reverts back to original state
@@ -192,23 +203,30 @@ export class StateStore implements IStateStore {
     groupIndex: number
   ) => {
     const SEQUENCE_GAP = 15000;
-    let newSequence = SEQUENCE_GAP;
-    const stateMap = this.projectStates || [];
-    const selectedState = stateMap?.find((state) => state.id === stateId);
-    const groupStates = stateMap?.filter((state) => state.group === selectedState?.group);
-    const groupLength = groupStates.length;
-    if (direction === "up") {
-      if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
-      else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
-    } else {
-      if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
-      else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
-    }
-    // updating using api
-    await this.stateService.patchState(workspaceSlug, projectId, stateId, { sequence: newSequence }).then(() => {
+    const originalStates = this.stateMap;
+    try {
+      let newSequence = SEQUENCE_GAP;
+      const stateMap = this.projectStates || [];
+      const selectedState = stateMap?.find((state) => state.id === stateId);
+      const groupStates = stateMap?.filter((state) => state.group === selectedState?.group);
+      const groupLength = groupStates.length;
+      if (direction === "up") {
+        if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
+        else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
+      } else {
+        if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
+        else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
+      }
       runInAction(() => {
         set(this.stateMap, [stateId, "sequence"], newSequence);
       });
-    });
+      // updating using api
+      await this.stateService.patchState(workspaceSlug, projectId, stateId, { sequence: newSequence });
+    } catch (err) {
+      // reverting back to old state group if api fails
+      runInAction(() => {
+        this.stateMap = originalStates;
+      });
+    }
   };
 }

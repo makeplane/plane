@@ -120,11 +120,20 @@ export class ProjectLabelStore implements IProjectLabelStore {
    * @returns Promise<IIssueLabel>
    */
   updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) => {
-    runInAction(() => {
-      set(this.labelMap, [labelId], { ...this.labelMap?.[labelId], ...data });
-    });
-    const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
-    return response;
+    const originalLabel = this.labelMap[labelId];
+    try {
+      runInAction(() => {
+        set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
+      });
+      const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
+      return response;
+    } catch (error) {
+      console.log("Failed to update label from project store");
+      runInAction(() => {
+        set(this.labelMap, [labelId], originalLabel);
+      });
+      throw error;
+    }
   };
 
   /**

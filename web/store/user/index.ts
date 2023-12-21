@@ -151,16 +151,20 @@ export class UserRootStore implements IUserRootStore {
    * @returns Promise<void>
    */
   updateUserOnBoard = async () => {
-    const user = this.currentUser ?? undefined;
-    if (!user) return;
-    await this.userService.updateUserOnBoard().then(() => {
+    try {
       runInAction(() => {
         this.currentUser = {
           ...this.currentUser,
           is_onboarded: true,
         } as IUser;
       });
-    });
+      const user = this.currentUser ?? undefined;
+      if (!user) return;
+      await this.userService.updateUserOnBoard();
+    } catch (error) {
+      this.fetchCurrentUser();
+      throw error;
+    }
   };
 
   /**
@@ -168,15 +172,20 @@ export class UserRootStore implements IUserRootStore {
    * @returns Promise<void>
    */
   updateTourCompleted = async () => {
-    if (this.currentUser) {
-      return await this.userService.updateUserTourCompleted().then(() => {
+    try {
+      if (this.currentUser) {
         runInAction(() => {
           this.currentUser = {
             ...this.currentUser,
             is_tour_completed: true,
           } as IUser;
         });
-      });
+        const response = await this.userService.updateUserTourCompleted();
+        return response;
+      }
+    } catch (error) {
+      this.fetchCurrentUser();
+      throw error;
     }
   };
 
@@ -185,36 +194,49 @@ export class UserRootStore implements IUserRootStore {
    * @param data
    * @returns Promise<IUser>
    */
-  updateCurrentUser = async (data: Partial<IUser>) =>
-    await this.userService.updateUser(data).then((response) => {
+  updateCurrentUser = async (data: Partial<IUser>) => {
+    try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          ...data,
+        } as IUser;
+      });
+      const response = await this.userService.updateUser(data);
       runInAction(() => {
         this.currentUser = response;
       });
       return response;
-    });
+    } catch (error) {
+      this.fetchCurrentUser();
+      throw error;
+    }
+  };
 
   /**
    * Updates the current user theme
    * @param theme
    * @returns Promise<IUser>
    */
-  updateCurrentUserTheme = async (theme: string) =>
-    await this.userService
-      .updateUser({
-        theme: { ...this.currentUser?.theme, theme },
-      } as IUser)
-      .then((response) => {
-        runInAction(() => {
-          this.currentUser = {
-            ...this.currentUser,
-            theme: {
-              ...this.currentUser?.theme,
-              theme,
-            },
-          } as IUser;
-        });
-        return response;
+  updateCurrentUserTheme = async (theme: string) => {
+    try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          theme: {
+            ...this.currentUser?.theme,
+            theme,
+          },
+        } as IUser;
       });
+      const response = await this.userService.updateUser({
+        theme: { ...this.currentUser?.theme, theme },
+      } as IUser);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * Deactivates the current user

@@ -150,14 +150,26 @@ export class ProjectMemberStore implements IProjectMemberStore {
   ) => {
     const memberDetails = this.getProjectMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    return await this.projectMemberService
-      .updateProjectMember(workspaceSlug, projectId, memberDetails?.id, data)
-      .then((response) => {
-        runInAction(() => {
-          set(this.projectMemberMap, [projectId, userId, "role"], data.role);
-        });
-        return response;
+    // original data to revert back in case of error
+    const originalProjectMemberData = this.projectMemberMap?.[projectId]?.[userId];
+    try {
+      runInAction(() => {
+        set(this.projectMemberMap, [projectId, userId, "role"], data.role);
       });
+      const response = await this.projectMemberService.updateProjectMember(
+        workspaceSlug,
+        projectId,
+        memberDetails?.id,
+        data
+      );
+      return response;
+    } catch (error) {
+      // revert back to original members in case of error
+      runInAction(() => {
+        set(this.projectMemberMap, [projectId, userId], originalProjectMemberData);
+      });
+      throw error;
+    }
   };
 
   /**
