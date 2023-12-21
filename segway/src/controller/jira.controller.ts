@@ -44,7 +44,7 @@ export class JiraController {
       // Constructing URLs
       const issueUrl = `https://${cloud_hostname}/rest/api/3/search?jql=project=${project_key}`;
       const moduleUrl = `https://${cloud_hostname}/rest/api/3/search?jql=project=${project_key}`;
-      const statusUrl = `https://${cloud_hostname}/rest/api/3/project/${project_key}/statuses`
+      const statusUrl = `https://${cloud_hostname}/rest/api/3/project/${project_key}/statuses`;
       const labelsUrl = `https://${cloud_hostname}/rest/api/3/label/?jql=project=${project_key}`;
       const usersUrl = `https://${cloud_hostname}/rest/api/3/users/search?jql=project=${project_key}`;
 
@@ -138,7 +138,7 @@ export class JiraController {
             modulePayload = {
               external_id: issue.fields.parent?.id,
               external_source: "jira",
-              module_name: issue.fields.parent?.fields?.summary,
+              name: issue.fields.parent?.fields?.summary,
             };
           }
           // if (issue.fields.issuetype?.name === "Subtask") {
@@ -148,7 +148,7 @@ export class JiraController {
           //   });
           // }
         }
-        
+
         // issue status
         const state = issue.fields?.status && {
           external_id: issue.fields.status.id,
@@ -225,14 +225,17 @@ export class JiraController {
               created_by,
               external_id: issue.id,
               external_source: "jira",
-              comments_list: commentsList,
+              comments: commentsList,
               target_date: issue.fields.duedate,
               link: {
                 title: `Original Issue in Jira ${issue.key}`,
                 url: `https://${cloud_hostname}/browse/${issue.key}`,
               },
-              labels_list: labelList,
-              parent_id: issue.fields.parent?.id,
+              labels: labelList,
+              parent: {
+                external_id: issue.fields.parent?.id,
+                external_source: "jira",
+              },
               importer_id,
               sub_issue: subIssuePayload,
               module: modulePayload,
@@ -241,7 +244,7 @@ export class JiraController {
           other_data: {}, // other data
         };
 
-        // this.mq?.publish(issuesSync, `${IMPORTER_TASK_ROUTE}`);
+        this.mq?.publish(issuesSync, `${IMPORTER_TASK_ROUTE}`);
       }
 
       // import sync
