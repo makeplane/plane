@@ -1,6 +1,6 @@
-import { IMentionSuggestion } from "@plane/editor-types";
 import { Editor } from "@tiptap/react";
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
 
 interface MentionListProps {
   items: IMentionSuggestion[];
@@ -9,7 +9,7 @@ interface MentionListProps {
 }
 
 // eslint-disable-next-line react/display-name
-const MentionList = forwardRef((props: MentionListProps, ref) => {
+export const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = (index: number) => {
@@ -98,5 +98,3 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
 });
 
 MentionList.displayName = "MentionList";
-
-export default MentionList;

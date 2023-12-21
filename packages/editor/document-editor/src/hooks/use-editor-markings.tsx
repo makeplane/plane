@@ -1,6 +1,5 @@
-import { Editor } from "@tiptap/react";
 import { useState } from "react";
-import { IMarking } from "..";
+import { IMarking } from "src/types/editor-types";
 
 export const useEditorMarkings = () => {
   const [markings, setMarkings] = useState<IMarking[]>([]);

@@ -1,10 +1,10 @@
-import { UploadImage } from "@plane/editor-types";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
+import { UploadImage } from "src/types/upload-image";
 
 const uploadKey = new PluginKey("upload-image");
 
-const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
+export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
   new Plugin({
     key: uploadKey,
     state: {
@@ -59,8 +59,6 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
       },
     },
   });
-
-export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);

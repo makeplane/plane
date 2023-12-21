@@ -4,7 +4,7 @@ import { NodeViewWrapper } from "@tiptap/react";
 import { Avatar, AvatarGroup, Loader, PriorityIcon } from "@plane/ui";
 import { Calendar, AlertTriangle } from "lucide-react";
 
-const IssueWidgetCard = (props) => {
+export const IssueWidgetCard = (props) => {
   const [loading, setLoading] = useState<number>(1);
   const [issueDetails, setIssueDetails] = useState();
 
@@ -42,11 +42,9 @@ const IssueWidgetCard = (props) => {
             </div>
             <div>
               <AvatarGroup size="sm">
-                {issueDetails.assignee_details.map((assignee) => {
-                  return (
-                    <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} className={"m-0"} />
-                  );
-                })}
+                {issueDetails.assignee_details.map((assignee) => (
+                  <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} className={"m-0"} />
+                ))}
               </AvatarGroup>
             </div>
             {issueDetails.target_date && (
@@ -76,5 +74,3 @@ const IssueWidgetCard = (props) => {
     </NodeViewWrapper>
   );
 };
-
-export default IssueWidgetCard;

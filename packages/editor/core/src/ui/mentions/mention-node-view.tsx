@@ -1,12 +1,12 @@
 /* eslint-disable react/display-name */
 // @ts-nocheck
 import { NodeViewWrapper } from "@tiptap/react";
-import { cn } from "../../lib/utils";
+import { cn } from "src/lib/utils";
 import { useRouter } from "next/router";
-import { IMentionHighlight } from "@plane/editor-types";
+import { IMentionHighlight } from "src/types/mention-suggestion";
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
+export const MentionNodeView = (props) => {
   const router = useRouter();
   const highlights = props.extension.options.mentionHighlights as IMentionHighlight[];
 
