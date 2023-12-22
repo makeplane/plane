@@ -2,8 +2,16 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useLabel, useModule, useProject, useProjectState, useUser } from "hooks/store";
+import {
+  useApplication,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -18,10 +26,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-// store
-import { EFilterType } from "store_legacy/issues/types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
@@ -60,10 +65,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectMember: { projectMembers },
-    moduleIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
-  const { projectModules, getModuleById } = useModule();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.MODULE);
+  const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -76,6 +80,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     project: { projectLabels },
   } = useLabel();
   const { projectStates } = useProjectState();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
 
@@ -89,7 +96,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -108,7 +115,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -116,7 +123,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -124,7 +131,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -180,7 +187,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {projectModules?.map((moduleId) => (
+                  {projectModuleIds?.map((moduleId) => (
                     <ModuleDropdownOption moduleId={moduleId} />
                   ))}
                 </CustomMenu>
@@ -202,7 +209,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>
@@ -226,7 +233,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("MODULE_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.MODULE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

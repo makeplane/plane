@@ -1,11 +1,31 @@
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues } from "hooks/store";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
+import { EIssuesStoreType } from "constants/issue";
+import { EIssueActions } from "../types";
+import { IIssue } from "types";
 
 export const ProjectViewGanttLayout: React.FC = observer(() => {
-  const { viewIssues: projectIssueViewStore, viewIssuesFilter: projectIssueViewFiltersStore } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
-  return <BaseGanttRoot issueFiltersStore={projectIssueViewFiltersStore} issueStore={projectIssueViewStore} />;
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
+
+      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+    },
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
+
+      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+    },
+  };
+
+  return <BaseGanttRoot issueFiltersStore={issuesFilter} issueStore={issues} issueActions={issueActions} />;
 });

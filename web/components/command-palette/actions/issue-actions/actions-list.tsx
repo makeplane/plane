@@ -2,10 +2,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useUser, useIssues } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -14,6 +12,7 @@ import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
@@ -31,8 +30,8 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    projectIssues: { updateIssue },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
   } = useApplication();

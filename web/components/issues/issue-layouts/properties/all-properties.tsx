@@ -6,17 +6,17 @@ import { Layers, Link, Paperclip } from "lucide-react";
 import { IssuePropertyState } from "../properties/state";
 import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
-import { IssuePropertyAssignee } from "../properties/assignee";
-import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
 import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssuePropertyEstimates } from "./estimates";
+import { IssuePropertyAssignee } from "./assignee";
 
 export interface IIssueProperties {
   issue: IIssue;
   handleIssues: (issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties | null;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
 }
@@ -117,7 +117,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
-          defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={isReadOnly}

@@ -8,7 +8,7 @@ import { NewEmptyState } from "components/common/new-empty-state";
 import { EUserProjectRoles } from "constants/project";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // store hooks
@@ -39,7 +39,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
             setTrackElement("PROJECT_EMPTY_STATE");
-            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+            commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
           },
         }}
         disabled={!isEditingAllowed}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
@@ -6,10 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useWorkspace, useInboxIssues, useMention } from "hooks/store";
 import useToast from "hooks/use-toast";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
 import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
@@ -48,7 +46,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const editorRef = useRef<any>(null);
   // toast alert
   const { setToastAlert } = useToast();
-  const editorSuggestion = useEditorSuggestions();
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
@@ -57,7 +55,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     inboxId: string;
   };
   // store hooks
-  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
+  const { createIssue } = useInboxIssues();
   const {
     config: { envConfig },
     eventTracker: { postHogEventTracker },
@@ -84,8 +82,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
-    await inboxIssueDetailsStore
-      .createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
+    await createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
       .then((res) => {
         if (!createMore) {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`);
@@ -100,7 +97,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -114,7 +111,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -168,10 +165,10 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -185,7 +182,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -270,8 +267,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 onChange={(description, description_html: string) => {
                                   onChange(description_html);
                                 }}
-                                mentionSuggestions={editorSuggestion.mentionSuggestions}
-                                mentionHighlights={editorSuggestion.mentionHighlights}
+                                mentionSuggestions={mentionSuggestions}
+                                mentionHighlights={mentionHighlights}
                               />
                             )}
                           />

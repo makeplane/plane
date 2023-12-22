@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: IUser | undefined;
+  user: IUser | null;
 };
 
 // services

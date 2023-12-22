@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
@@ -9,6 +9,8 @@ import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
+import { EIssuesStoreType } from "constants/issue";
+import { useMemo } from "react";
 
 export interface IKanBanLayout {}
 
@@ -16,31 +18,30 @@ export const DraftKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const {
-    projectDraftIssues: issueStore,
-    projectDraftIssuesFilter: projectIssuesFilterStore,
-    issueKanBanView: issueKanBanViewStore,
-  } = useMobxStore();
+  // store
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+      },
+    }),
+    [issues, workspaceSlug]
+  );
 
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
-      issuesFilterStore={projectIssuesFilterStore}
-      issueStore={issueStore}
-      kanbanViewStore={issueKanBanViewStore}
+      issuesFilter={issuesFilter}
+      issues={issues}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
     />

@@ -9,17 +9,13 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
 
 export interface IInboxFiltersStore {
-  // states
-  loader: boolean;
-  error: any | null;
   // observables
-  inboxFilters: {
-    [inboxId: string]: { filters: IInboxFilterOptions };
-  };
+  inboxFilters: Record<string, { filters: IInboxFilterOptions }>;
   // computed
   appliedFilters: IInboxQueryParams | null;
-  // actions
+  // fetch action
   fetchInboxFilters: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInbox>;
+  // update action
   updateInboxFilters: (
     workspaceSlug: string,
     projectId: string,
@@ -29,9 +25,6 @@ export interface IInboxFiltersStore {
 }
 
 export class InboxFiltersStore implements IInboxFiltersStore {
-  // states
-  loader: boolean = false;
-  error: any | null = null;
   // observables
   inboxFilters: {
     [inboxId: string]: { filters: IInboxFilterOptions };
@@ -43,63 +36,62 @@ export class InboxFiltersStore implements IInboxFiltersStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // states
-      loader: observable.ref,
-      error: observable.ref,
       // observables
       inboxFilters: observable,
       // computed
       appliedFilters: computed,
-      // actions
+      // fetch action
       fetchInboxFilters: action,
+      // update action
       updateInboxFilters: action,
     });
-
+    // root store
     this.rootStore = _rootStore;
+    // services
     this.inboxService = new InboxService();
   }
 
+  /**
+   * Returns applied filters to specific inbox
+   */
   get appliedFilters(): IInboxQueryParams | null {
     const inboxId = this.rootStore.app.router.inboxId;
-
     if (!inboxId) return null;
-
     const filtersList = this.inboxFilters[inboxId]?.filters;
-
     if (!filtersList) return null;
-
     const filteredRouteParams: IInboxQueryParams = {
       priority: filtersList.priority ? filtersList.priority.join(",") : null,
       inbox_status: filtersList.inbox_status ? filtersList.inbox_status.join(",") : null,
     };
-
     return filteredRouteParams;
   }
 
+  /**
+   * Fetches filters of a specific inbox and adds it to the store
+   * @param workspaceSlug
+   * @param projectId
+   * @param inboxId
+   * @returns Promise<IInbox[]>
+   *
+   */
   fetchInboxFilters = async (workspaceSlug: string, projectId: string, inboxId: string) => {
-    try {
+    return await this.inboxService.getInboxById(workspaceSlug, projectId, inboxId).then((issuesResponse) => {
       runInAction(() => {
-        this.loader = true;
-      });
-
-      const issuesResponse = await this.inboxService.getInboxById(workspaceSlug, projectId, inboxId);
-
-      runInAction(() => {
-        this.loader = false;
         set(this.inboxFilters, [inboxId], issuesResponse.view_props);
       });
-
       return issuesResponse;
-    } catch (error) {
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
+    });
   };
 
+  /**
+   * Updates filters of a specific inbox and updates it in the store
+   * @param workspaceSlug
+   * @param projectId
+   * @param inboxId
+   * @param filters
+   * @returns Promise<void>
+   *
+   */
   updateInboxFilters = async (
     workspaceSlug: string,
     projectId: string,
@@ -113,23 +105,15 @@ export class InboxFiltersStore implements IInboxFiltersStore {
         ...filters,
       },
     };
-
-    try {
-      runInAction(() => {
-        set(this.inboxFilters, [inboxId], newViewProps);
-      });
-
-      const userRole = this.rootStore.user.membership?.currentProjectRole || EUserProjectRoles.GUEST;
-      if (userRole > EUserWorkspaceRoles.VIEWER)
-        await this.inboxService.patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps });
-    } catch (error) {
-      runInAction(() => {
-        this.error = error;
-      });
-
-      this.fetchInboxFilters(workspaceSlug, projectId, inboxId);
-
-      throw error;
-    }
+    const userRole = this.rootStore.user.membership?.currentProjectRole || EUserProjectRoles.GUEST;
+    if (userRole > EUserWorkspaceRoles.VIEWER)
+      await this.inboxService
+        .patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps })
+        .then((response) => {
+          runInAction(() => {
+            set(this.inboxFilters, [inboxId], newViewProps);
+          });
+          return response;
+        });
   };
 }

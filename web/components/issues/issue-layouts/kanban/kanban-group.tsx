@@ -9,7 +9,7 @@ interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
   issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
@@ -65,7 +65,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
                 sub_group_id={sub_group_id}
                 columnId={groupId}
                 issuesMap={issuesMap}
-                issueIds={issueIds?.[groupId] || []}
+                issueIds={(issueIds as IGroupedIssues)?.[groupId] || []}
                 displayProperties={displayProperties}
                 isDragDisabled={isDragDisabled}
                 handleIssues={handleIssues}

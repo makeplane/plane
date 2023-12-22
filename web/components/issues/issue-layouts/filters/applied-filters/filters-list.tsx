@@ -15,7 +15,7 @@ import {
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -24,8 +24,6 @@ type Props = {
   handleClearAllFilters: () => void;
   handleRemoveFilter: (key: keyof IIssueFilterOptions, value: string | null) => void;
   labels?: IIssueLabel[] | undefined;
-  members?: IUserLite[] | undefined;
-  projects?: IProject[] | undefined;
   states?: IState[] | undefined;
 };
 
@@ -33,7 +31,7 @@ const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, projects, states } = props;
+  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states } = props;
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -63,7 +61,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  members={members}
                   values={value}
                 />
               )}
@@ -103,7 +100,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedProjectFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("project", val)}
-                  projects={projects}
                   values={value}
                 />
               )}

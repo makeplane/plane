@@ -4,7 +4,7 @@ import { useProject } from "hooks/store";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -14,7 +14,6 @@ type Props = {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   issues: IIssue[] | undefined;
-  members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
@@ -28,7 +27,6 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
     handleDisplayFilterUpdate,
     handleUpdateIssue,
     issues,
-    members,
     labels,
     states,
   } = props;
@@ -70,7 +68,6 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
           issues={issues}
-          members={members}
           property="assignee"
         />
       )}

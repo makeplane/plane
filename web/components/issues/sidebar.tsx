@@ -5,8 +5,7 @@ import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useProjectState, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useEstimate, useIssueDetail, useIssues, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 // services
@@ -40,6 +39,7 @@ import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   control: any;
@@ -79,10 +79,11 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
+  const { createIssueLink, updateIssueLink, deleteIssueLink } = useIssueDetail();
+
   const {
-    projectIssues: { removeIssue },
-    issueDetail: { createIssueLink, updateIssueLink, deleteIssueLink },
-  } = useMobxStore();
+    issues: { removeIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -94,6 +95,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
   const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
+    currentUser,
     workspaceSlug,
     projectId,
     issueId

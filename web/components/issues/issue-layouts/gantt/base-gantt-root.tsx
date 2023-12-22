@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useUser } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 // components
 import { IssueGanttBlock, IssuePeekOverview } from "components/issues";
 import {
@@ -12,33 +12,27 @@ import {
   IssueGanttSidebar,
 } from "components/gantt-chart";
 // types
-import { IIssueUnGroupedStructure } from "store_legacy/issue";
-import { IIssue } from "types";
-import {
-  ICycleIssuesFilterStore,
-  ICycleIssuesStore,
-  IModuleIssuesFilterStore,
-  IModuleIssuesStore,
-  IProjectIssuesFilterStore,
-  IProjectIssuesStore,
-  IViewIssuesFilterStore,
-  IViewIssuesStore,
-} from "store_legacy/issues";
-import { TUnGroupedIssues } from "store_legacy/issues/types";
+import { IIssue, TUnGroupedIssues } from "types";
 import { EUserProjectRoles } from "constants/project";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { EIssueActions } from "../types";
 
 interface IBaseGanttRoot {
-  issueFiltersStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
   viewId?: string;
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+  };
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueStore, viewId } = props;
+  const { issueFiltersStore, issueStore, viewId, issueActions } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
@@ -46,14 +40,13 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const {
     membership: { currentProjectRole },
   } = useUser();
-
+  const { issueMap } = useIssues();
   const appliedDisplayFilters = issueFiltersStore.issueFilters?.displayFilters;
 
-  const issuesResponse = issueStore.getIssues;
-  const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
+  const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
   const { enableIssueCreation } = issueStore?.viewFlags || {};
 
-  const issues = issueIds.map((id) => issuesResponse?.[id]);
+  const issues = issueIds.map((id) => issueMap?.[id]);
 
   const updateIssueBlockStructure = async (issue: IIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
@@ -64,12 +57,14 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, payload, viewId);
   };
 
-  const updateIssue = async (projectId: string, issueId: string, payload: Partial<IIssue>) => {
-    if (!workspaceSlug) return;
-
-    await issueStore.updateIssue(workspaceSlug.toString(), projectId, issueId, payload, viewId);
-  };
-
+  const handleIssues = useCallback(
+    async (issue: IIssue, action: EIssueActions) => {
+      if (issueActions[action]) {
+        await issueActions[action]!(issue);
+      }
+    },
+    [issueActions]
+  );
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
@@ -79,7 +74,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
+          blocks={issues ? renderIssueBlocksStructure(issues as IIssue[]) : null}
           blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} />}
           sidebarToRender={(props) => (
@@ -102,8 +97,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => {
-            await updateIssue(peekProjectId.toString(), peekIssueId.toString(), issueToUpdate);
+          handleIssue={async (issueToUpdate, action) => {
+            await handleIssues(issueToUpdate as IIssue, action);
           }}
         />
       )}

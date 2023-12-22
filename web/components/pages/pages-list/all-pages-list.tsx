@@ -9,9 +9,9 @@ import { Loader } from "@plane/ui";
 
 export const AllPagesList: FC = observer(() => {
   // store
-  const { projectPages } = usePage();
+  const { projectPageIds } = usePage();
 
-  if (!projectPages)
+  if (!projectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -20,5 +20,5 @@ export const AllPagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={projectPages} />;
+  return <PagesListView pageIds={projectPageIds} />;
 });

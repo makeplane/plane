@@ -1,19 +1,18 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, CircleUser, Search } from "lucide-react";
+// hooks
+import { useApplication, useMember } from "hooks/store";
 // ui
 import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
-import { IProjectMember } from "types";
 
 export interface IIssuePropertyAssignee {
   projectId: string | null;
   value: string[] | string;
-  defaultOptions?: any;
   onChange: (data: string[]) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -29,7 +28,6 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const {
     projectId,
     value,
-    defaultOptions = [],
     onChange,
     disabled = false,
     hideDropdownArrow = false,
@@ -39,12 +37,13 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     placement,
     multiple = false,
   } = props;
-  // store
+  // store hooks
   const {
-    workspace: workspaceStore,
-    projectMember: { projectMembers: _projectMembers, fetchProjectMembers },
-  } = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
+    router: { workspaceSlug },
+  } = useApplication();
+  const {
+    project: { fetchProjectMembers, projectMemberIds, getProjectMemberDetails },
+  } = useMember();
   // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -56,20 +55,20 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     if (workspaceSlug && projectId) fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
-  const updatedDefaultOptions: IProjectMember[] =
-    defaultOptions.map((member: any) => ({ member: { ...member } })) ?? [];
-  const projectMembers = _projectMembers ?? updatedDefaultOptions;
+  const options = (projectMemberIds ?? [])?.map((memberId) => {
+    const memberDetails = getProjectMemberDetails(memberId);
 
-  const options = projectMembers?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member.member.display_name} src={member.member.avatar} showTooltip={false} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+    return {
+      value: `${memberDetails?.member.id}`,
+      query: `${memberDetails?.member.display_name}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} showTooltip={false} />
+          {memberDetails?.member.display_name}
+        </div>
+      ),
+    };
+  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
@@ -79,7 +78,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
 
     // if multiple assignees
     if (Array.isArray(value)) {
-      const assignees = projectMembers?.filter((m) => value.includes(m.member.id));
+      const assignees = projectMemberIds?.filter((m) => value.includes(m));
 
       if (!assignees || assignees.length === 0) return "No Assignee";
 
@@ -90,7 +89,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     }
 
     // if single assignee
-    const assignee = projectMembers?.find((m) => m.member.id === value)?.member;
+    const assignee = getProjectMemberDetails(value);
 
     if (!assignee) return "No Assignee";
 
@@ -104,9 +103,9 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
-              const member = projectMembers?.find((m) => m.member.id === assigneeId)?.member;
+              const member = getProjectMemberDetails(assigneeId);
               if (!member) return null;
-              return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+              return <Avatar key={member.id} name={member.member.display_name} src={member.member.avatar} />;
             })}
           </AvatarGroup>
         ) : (
@@ -142,7 +141,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex w-full items-center justify-between gap-1 text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
           } ${buttonClassName}`}
-          onClick={() => !projectMembers && getWorkspaceMembers()}
+          onClick={() => !projectMemberIds && getWorkspaceMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

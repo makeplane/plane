@@ -1,14 +1,21 @@
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+// hooks
+import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
-import { GroupByColumnTypes, IIssue, IIssueDisplayProperties, IIssueMap } from "types";
-import { IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import {
+  GroupByColumnTypes,
+  IGroupedIssues,
+  IIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  TUnGroupedIssues,
+} from "types";
 import { EIssueActions } from "../types";
 // constants
-import { EProjectStore } from "store_legacy/command-palette.store";
-import { useLabel, useProject, useProjectState } from "hooks/store";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { getGroupByColumns } from "../utils";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IGroupByList {
   issueIds: IGroupedIssues | TUnGroupedIssues | any;
@@ -28,7 +35,7 @@ export interface IGroupByList {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
+  currentStore: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   viewId?: string;
 }
@@ -51,13 +58,13 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     currentStore,
     addIssuesToView,
   } = props;
-
-  //const { projectMember } = useMobxStore();
+  // store hooks
+  const member = useMember();
   const project = useProject();
   const projectLabel = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member, true);
 
   if (!list) return null;
 
@@ -133,7 +140,6 @@ export interface IList {
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -142,7 +148,7 @@ export interface IList {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
+  currentStore: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 

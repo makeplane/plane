@@ -35,9 +35,8 @@ export class EventTrackerStore implements IEventTrackerStore {
     group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
   ) => {
     try {
-      const currentWorkspaceDetails = this.rootStore.workspace.currentWorkspace;
-      const currentProjectDetails = this.rootStore.project.projects.currentProjectDetails;
-
+      const currentWorkspaceDetails = this.rootStore.workspaceRoot.workspaces.currentWorkspace;
+      const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
       let extras: any = {
         workspace_name: currentWorkspaceDetails?.name ?? "",
         workspace_id: currentWorkspaceDetails?.id ?? "",
@@ -55,7 +54,6 @@ export class EventTrackerStore implements IEventTrackerStore {
           project_identifier: project_details?.identifier ?? "",
         };
       }
-
       if (group && group!.isGrouping === true) {
         posthog?.group(group!.groupType!, group!.groupId!, {
           date: new Date(),

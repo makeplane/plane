@@ -1,10 +1,9 @@
 import { autorun, makeObservable, observable } from "mobx";
+import isEmpty from "lodash/isEmpty";
 // root store
 import { RootStore } from "../root.store";
 // issues data store
 import { IIssueStore, IssueStore } from "./issue.store";
-// issues filter base store
-import { IIssuesFilter, IssuesFilter } from "./base-issue-filter.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
 import { IProfileIssuesFilter, ProfileIssuesFilter, IProfileIssues, ProfileIssues } from "./profile";
 import { IProjectIssuesFilter, ProjectIssuesFilter, IProjectIssues, ProjectIssues } from "./project";
@@ -19,23 +18,23 @@ import {
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
+import IssueCalendarViewStore, { ICalendarStore } from "./issue_calendar_view.store";
+import { IIssueDetailStore, IssueDetailStore } from "./issue_detail.store";
 
 export interface IIssueRootStore {
-  currentUserId: string | undefined;
   workspaceSlug: string | undefined;
-  profileView: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
   moduleId: string | undefined;
-  projectViewId: string | undefined;
-  states: any | undefined;
-  labels: any | undefined;
-  members: any | undefined;
-  projects: any | undefined;
+  viewId: string | undefined;
+  globalViewId: string | undefined; // all issues view id
+  userId: string | undefined; // user profile detail Id
+  states: string[] | undefined;
+  labels: string[] | undefined;
+  members: string[] | undefined;
+  projects: string[] | undefined;
 
   issues: IIssueStore;
-
-  issuesFilter: IIssuesFilter;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -62,24 +61,25 @@ export interface IIssueRootStore {
   draftIssues: IDraftIssues;
 
   issueKanBanView: IIssueKanBanViewStore;
+  issueCalendarView: ICalendarStore;
+
+  issueDetail: IIssueDetailStore;
 }
 
-export class IssueRootStore {
-  currentUserId: string | undefined = undefined;
+export class IssueRootStore implements IIssueRootStore {
   workspaceSlug: string | undefined = undefined;
   projectId: string | undefined = undefined;
   cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
-  projectViewId: string | undefined = undefined;
-  profileView: string | undefined = undefined;
-  states: any | undefined = undefined;
-  labels: any | undefined = undefined;
-  members: any | undefined = undefined;
-  projects: any | undefined = undefined;
+  viewId: string | undefined = undefined;
+  globalViewId: string | undefined = undefined;
+  userId: string | undefined = undefined;
+  states: string[] | undefined = undefined;
+  labels: string[] | undefined = undefined;
+  members: string[] | undefined = undefined;
+  projects: string[] | undefined = undefined;
 
   issues: IIssueStore;
-
-  issuesFilter: IIssuesFilter;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -106,16 +106,18 @@ export class IssueRootStore {
   draftIssues: IDraftIssues;
 
   issueKanBanView: IIssueKanBanViewStore;
+  issueCalendarView: ICalendarStore;
+
+  issueDetail: IIssueDetailStore;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
-      currentUserId: observable.ref,
       workspaceSlug: observable.ref,
       projectId: observable.ref,
       cycleId: observable.ref,
       moduleId: observable.ref,
-      projectViewId: observable.ref,
-      profileView: observable.ref,
+      viewId: observable.ref,
+      userId: observable.ref,
       states: observable,
       labels: observable,
       members: observable,
@@ -123,30 +125,28 @@ export class IssueRootStore {
     });
 
     autorun(() => {
-      if (rootStore?.user?.currentUser?.id) this.currentUserId = rootStore?.user?.currentUser?.id;
-      if (rootStore?.workspace?.currentWorkspace?.slug)
-        this.workspaceSlug = rootStore?.workspace?.currentWorkspace?.slug;
-      if (rootStore?.project?.projects?.projectId) this.projectId = rootStore?.project?.projects?.projectId;
-      if (rootStore?.cycle?.cycleId) this.cycleId = rootStore?.cycle?.cycleId;
-      if (rootStore?.module?.moduleId) this.moduleId = rootStore?.module?.moduleId;
-      if (rootStore?.projectView?.viewId) this.projectViewId = rootStore?.projectView?.viewId;
-
-      // if (rootStore?.workspace?.profileView) this.profileView = rootStore?.workspace?.profileView;
-      // if (rootStore?.states) this.states = rootStore?.states;
-      // if (rootStore?.labels) this.labels = rootStore?.labels;
-      // if (rootStore?.members) this.members = rootStore?.members;
-      // if (rootStore?.projects) this.projects = rootStore?.projects;
+      if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
+      if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
+      if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
+      if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
+      if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
+      if (rootStore.app.router.globalViewId) this.globalViewId = rootStore.app.router.globalViewId;
+      if (rootStore.app.router.userId) this.userId = rootStore.app.router.userId;
+      if (!isEmpty(rootStore?.state?.projectStates)) this.states = Object.keys(rootStore?.state?.stateMap);
+      if (!isEmpty(rootStore?.labelRoot?.labelMap)) this.labels = Object.keys(rootStore?.labelRoot?.labelMap);
+      if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
+        this.members = Object.keys(rootStore?.memberRoot?.workspace?.workspaceMemberMap);
+      if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
+        this.projects = Object.keys(rootStore?.projectRoot?.project?.projectMap);
     });
 
-    this.issues = new IssueStore(this);
-
-    this.issuesFilter = new IssuesFilter(this);
+    this.issues = new IssueStore();
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
-    this.workspaceIssues = new WorkspaceIssues();
+    this.workspaceIssues = new WorkspaceIssues(this);
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
-    this.profileIssues = new ProfileIssues();
+    this.profileIssues = new ProfileIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this);
@@ -155,17 +155,20 @@ export class IssueRootStore {
     this.cycleIssues = new CycleIssues(this);
 
     this.moduleIssuesFilter = new ModuleIssuesFilter(this);
-    this.moduleIssues = new ModuleIssues();
+    this.moduleIssues = new ModuleIssues(this);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
-    this.projectViewIssues = new ProjectViewIssues();
+    this.projectViewIssues = new ProjectViewIssues(this);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
-    this.archivedIssues = new ArchivedIssues();
+    this.archivedIssues = new ArchivedIssues(this);
 
     this.draftIssuesFilter = new DraftIssuesFilter(this);
-    this.draftIssues = new DraftIssues();
+    this.draftIssues = new DraftIssues(this);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
+    this.issueCalendarView = new IssueCalendarViewStore();
+
+    this.issueDetail = new IssueDetailStore(this, rootStore);
   }
 }

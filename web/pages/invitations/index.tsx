@@ -51,9 +51,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // toast alert
   const { setToastAlert } = useToast();
 
-  const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>("USER_WORKSPACE_INVITATIONS", () =>
-    workspaceService.userWorkspaceInvitations()
-  );
+  const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
 
   const redirectWorkspaceSlug =
     currentUserSettings?.workspace?.last_workspace_slug ||
@@ -85,7 +83,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
       .then((res) => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
-        const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
+        const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace_detail;
         postHogEventTracker("MEMBER_ACCEPTED", {
           ...res,
           state: "SUCCESS",
@@ -155,23 +153,23 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                     >
                       <div className="flex-shrink-0">
                         <div className="grid h-9 w-9 place-items-center rounded">
-                          {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                          {invitation.workspace_detail.logo && invitation.workspace_detail.logo.trim() !== "" ? (
                             <img
-                              src={invitation.workspace.logo}
+                              src={invitation.workspace_detail.logo}
                               height="100%"
                               width="100%"
                               className="rounded"
-                              alt={invitation.workspace.name}
+                              alt={invitation.workspace_detail.name}
                             />
                           ) : (
                             <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                              {invitation.workspace.name[0]}
+                              {invitation.workspace_detail.name[0]}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
+                        <div className="text-sm font-medium">{truncateText(invitation.workspace_detail.name, 30)}</div>
                         <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                       </div>
                       <span

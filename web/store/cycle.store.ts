@@ -11,26 +11,26 @@ import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 
 export interface ICycleStore {
-  // states
-  loader: boolean;
-  error: any | null;
   // observables
   cycleMap: Record<string, ICycle>;
-  activeCycleMap: Record<string, ICycle>;
+  activeCycleMap: Record<string, ICycle>; // TODO: Merge these two into single map
   // computed
-  projectAllCycles: string[] | null;
-  projectCompletedCycles: string[] | null;
-  projectUpcomingCycles: string[] | null;
-  projectDraftCycles: string[] | null;
-  projectActiveCycle: string | null;
+  projectCycleIds: string[] | null;
+  projectCompletedCycleIds: string[] | null;
+  projectUpcomingCycleIds: string[] | null;
+  projectIncompleteCycleIds: string[] | null;
+  projectDraftCycleIds: string[] | null;
+  projectActiveCycleId: string | null;
   // computed actions
   getCycleById: (cycleId: string) => ICycle | null;
   getActiveCycleById: (cycleId: string) => ICycle | null;
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
+  // fetch
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<ICycle[]>;
   fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
+  // crud
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
   updateCycleDetails: (
     workspaceSlug: string,
@@ -39,14 +39,12 @@ export interface ICycleStore {
     data: Partial<ICycle>
   ) => Promise<ICycle>;
   deleteCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  // favorites
   addCycleToFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
   removeCycleFromFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
 }
 
 export class CycleStore implements ICycleStore {
-  // states
-  loader: boolean = false;
-  error: any | null = null;
   // observables
   cycleMap: Record<string, ICycle> = {};
   activeCycleMap: Record<string, ICycle> = {};
@@ -59,18 +57,16 @@ export class CycleStore implements ICycleStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // states
-      loader: observable.ref,
-      error: observable.ref,
       // observables
       cycleMap: observable,
       activeCycleMap: observable,
       // computed
-      projectAllCycles: computed,
-      projectCompletedCycles: computed,
-      projectUpcomingCycles: computed,
-      projectDraftCycles: computed,
-      projectActiveCycle: computed,
+      projectCycleIds: computed,
+      projectCompletedCycleIds: computed,
+      projectUpcomingCycleIds: computed,
+      projectIncompleteCycleIds: computed,
+      projectDraftCycleIds: computed,
+      projectActiveCycleId: computed,
       // computed actions
       getCycleById: action,
       getActiveCycleById: action,
@@ -92,69 +88,79 @@ export class CycleStore implements ICycleStore {
   }
 
   // computed
-  get projectAllCycles() {
+  /**
+   * returns all cycle ids for a project
+   */
+  get projectCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
-
     if (!projectId) return null;
-
     const allCycles = Object.keys(this.cycleMap ?? {}).filter(
       (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
     );
-
     return allCycles || null;
   }
 
-  get projectCompletedCycles() {
-    const allCycles = this.projectAllCycles;
-
+  /**
+   * returns all completed cycle ids for a project
+   */
+  get projectCompletedCycleIds() {
+    const allCycles = this.projectCycleIds;
     if (!allCycles) return null;
-
     const completedCycles = allCycles.filter((cycleId) => {
       const hasEndDatePassed = isPast(new Date(this.cycleMap?.[cycleId]?.end_date ?? ""));
-
       return hasEndDatePassed;
     });
-
     return completedCycles || null;
   }
 
-  get projectUpcomingCycles() {
-    const allCycles = this.projectAllCycles;
-
+  /**
+   * returns all upcoming cycle ids for a project
+   */
+  get projectUpcomingCycleIds() {
+    const allCycles = this.projectCycleIds;
     if (!allCycles) return null;
-
     const upcomingCycles = allCycles.filter((cycleId) => {
       const isStartDateUpcoming = isFuture(new Date(this.cycleMap?.[cycleId]?.start_date ?? ""));
-
       return isStartDateUpcoming;
     });
-
     return upcomingCycles || null;
   }
 
-  get projectDraftCycles() {
-    const allCycles = this.projectAllCycles;
-
+  /**
+   * returns all incomplete cycle ids for a project
+   */
+  get projectIncompleteCycleIds() {
+    const allCycles = this.projectCycleIds;
     if (!allCycles) return null;
+    const incompleteCycles = allCycles.filter((cycleId) => {
+      const hasEndDatePassed = isPast(new Date(this.cycleMap?.[cycleId]?.end_date ?? ""));
+      return !hasEndDatePassed;
+    });
+    return incompleteCycles || null;
+  }
 
+  /**
+   * returns all draft cycle ids for a project
+   */
+  get projectDraftCycleIds() {
+    const allCycles = this.projectCycleIds;
+    if (!allCycles) return null;
     const draftCycles = allCycles.filter((cycleId) => {
       const cycleDetails = this.cycleMap?.[cycleId];
-
       return !cycleDetails?.start_date && !cycleDetails?.end_date;
     });
-
     return draftCycles || null;
   }
 
-  get projectActiveCycle() {
+  /**
+   * returns active cycle id for a project
+   */
+  get projectActiveCycleId() {
     const projectId = this.rootStore.app.router.projectId;
-
     if (!projectId) return null;
-
     const activeCycle = Object.keys(this.activeCycleMap ?? {}).find(
       (cycleId) => this.activeCycleMap?.[cycleId]?.project === projectId
     );
-
     return activeCycle || null;
   }
 
@@ -172,185 +178,167 @@ export class CycleStore implements ICycleStore {
    */
   getActiveCycleById = (cycleId: string): ICycle | null => this.activeCycleMap?.[cycleId] ?? null;
 
-  validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => {
-    try {
-      const response = await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
-      return response;
-    } catch (error) {
-      console.log("Failed to validate cycle dates", error);
-      throw error;
-    }
-  };
+  /**
+   * @description validates cycle dates
+   * @param workspaceSlug
+   * @param projectId
+   * @param payload
+   * @returns
+   */
+  validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) =>
+    await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
 
-  fetchAllCycles = async (workspaceSlug: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId);
-
+  /**
+   * @description fetches all cycles for a project
+   * @param workspaceSlug
+   * @param projectId
+   * @returns
+   */
+  fetchAllCycles = async (workspaceSlug: string, projectId: string) =>
+    await this.cycleService.getCyclesWithParams(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
-        cyclesResponse.forEach((cycle) => {
+        response.forEach((cycle) => {
           set(this.cycleMap, [cycle.id], cycle);
         });
-        this.loader = false;
-        this.error = null;
       });
+      return response;
+    });
 
-      return cyclesResponse;
-    } catch (error) {
-      console.error("Failed to fetch project cycles in project store", error);
-      this.loader = false;
-      this.error = error;
-
-      throw error;
-    }
-  };
-
-  fetchActiveCycle = async (workspaceSlug: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current");
-
+  /**
+   * @description fetches active cycle for a project
+   * @param workspaceSlug
+   * @param projectId
+   * @returns
+   */
+  fetchActiveCycle = async (workspaceSlug: string, projectId: string) =>
+    await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current").then((response) => {
       runInAction(() => {
-        cyclesResponse.forEach((cycle) => {
+        response.forEach((cycle) => {
           set(this.activeCycleMap, [cycle.id], cycle);
         });
-        this.loader = false;
-        this.error = null;
       });
+      return response;
+    });
 
-      return cyclesResponse;
-    } catch (error) {
-      this.loader = false;
-      this.error = error;
-
-      throw error;
-    }
-  };
-
-  fetchCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    try {
-      const response = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);
-
+  /**
+   * @description fetches cycle details
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  fetchCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
         set(this.activeCycleMap, [response.id], { ...this.activeCycleMap?.[response.id], ...response });
       });
-
       return response;
-    } catch (error) {
-      console.log("Failed to fetch cycle detail from cycle store");
-      throw error;
-    }
-  };
+    });
 
-  createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => {
-    try {
-      const response = await this.cycleService.createCycle(workspaceSlug, projectId, data);
-
+  /**
+   * @description creates a new cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns
+   */
+  createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
+    await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], response);
         set(this.activeCycleMap, [response.id], response);
       });
-
       return response;
-    } catch (error) {
-      console.log("Failed to create cycle from cycle store");
-      throw error;
-    }
-  };
+    });
 
+  /**
+   * @description updates cycle details
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @param data
+   * @returns
+   */
   updateCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>) => {
     try {
-      const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
-
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
         set(this.activeCycleMap, [cycleId], { ...this.activeCycleMap?.[cycleId], ...data });
       });
-
+      const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
       return response;
     } catch (error) {
       console.log("Failed to patch cycle from cycle store");
+      this.fetchAllCycles(workspaceSlug, projectId);
+      this.fetchActiveCycle(workspaceSlug, projectId);
       throw error;
     }
   };
 
-  deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    const originalCycle = this.cycleMap[cycleId];
-    const originalActiveCycle = this.activeCycleMap[cycleId];
-
-    try {
+  /**
+   * @description deletes a cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   */
+  deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
         omit(this.cycleMap, [cycleId]);
         omit(this.activeCycleMap, [cycleId]);
       });
+    });
 
-      await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId);
-    } catch (error) {
-      console.log("Failed to delete cycle from cycle store");
-
-      runInAction(() => {
-        set(this.cycleMap, [cycleId], originalCycle);
-        set(this.activeCycleMap, [cycleId], originalActiveCycle);
-      });
-
-      throw error;
-    }
-  };
-
+  /**
+   * @description adds a cycle to favorites
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    const currentCycle = this.getCycleById(cycleId);
+    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
-      const currentCycle = this.getCycleById(cycleId);
-      const currentActiveCycle = this.getActiveCycleById(cycleId);
-
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
         if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
-
       // updating through api.
       const response = await this.cycleService.addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId });
-
       return response;
     } catch (error) {
-      const currentCycle = this.getCycleById(cycleId);
-      const currentActiveCycle = this.getActiveCycleById(cycleId);
-
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
         if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
-
       throw error;
     }
   };
 
+  /**
+   * @description removes a cycle from favorites
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
   removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    const currentCycle = this.getCycleById(cycleId);
+    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
-      const currentCycle = this.getCycleById(cycleId);
-      const currentActiveCycle = this.getActiveCycleById(cycleId);
-
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
         if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
-
       const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
-
       return response;
     } catch (error) {
-      const currentCycle = this.getCycleById(cycleId);
-      const currentActiveCycle = this.getActiveCycleById(cycleId);
-
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
         if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
-
       throw error;
     }
   };

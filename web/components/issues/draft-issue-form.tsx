@@ -4,10 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Sparkle, X } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useMention } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
@@ -112,7 +111,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
   const { setToastAlert } = useToast();
-  const editorSuggestions = useEditorSuggestions();
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // refs
   const editorRef = useRef<any>(null);
   // router
@@ -435,8 +434,8 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
-                        mentionHighlights={editorSuggestions.mentionHighlights}
-                        mentionSuggestions={editorSuggestions.mentionSuggestions}
+                        mentionHighlights={mentionHighlights}
+                        mentionSuggestions={mentionSuggestions}
                       />
                     )}
                   />

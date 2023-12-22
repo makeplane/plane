@@ -1,10 +1,9 @@
 import { FC, Fragment, ReactNode, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
+import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // helpers
@@ -13,61 +12,69 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { IIssue, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
+import { EIssueActions } from "../issue-layouts/types";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>) => void;
+  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => void;
   isArchived?: boolean;
   children?: ReactNode;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { workspaceSlug, projectId, issueId, handleIssue, children, isArchived = false } = props;
-
+  // router
   const router = useRouter();
   const { peekIssueId } = router.query;
+  // FIXME
+  // store hooks
+  // const {
+  //   archivedIssueDetail: {
+  //     getIssue: getArchivedIssue,
+  //     loader: archivedIssueLoader,
+  //     fetchPeekIssueDetails: fetchArchivedPeekIssueDetails,
+  //   },
+  // } = useMobxStore();
 
   const {
-    user: { currentProjectRole },
-    issue: { removeIssueFromStructure },
-    issueDetail: {
-      createIssueComment,
-      updateIssueComment,
-      removeIssueComment,
-      creationIssueCommentReaction,
-      removeIssueCommentReaction,
-      createIssueReaction,
-      removeIssueReaction,
-      createIssueSubscription,
-      removeIssueSubscription,
-      createIssueLink,
-      updateIssueLink,
-      deleteIssueLink,
-      getIssue,
-      loader,
-      fetchPeekIssueDetails,
-      setPeekId,
-      fetchIssueActivity,
-    },
-    archivedIssueDetail: {
-      getIssue: getArchivedIssue,
-      loader: archivedIssueLoader,
-      fetchPeekIssueDetails: fetchArchivedPeekIssueDetails,
-    },
-    archivedIssues: { deleteArchivedIssue },
-    project: { currentProjectDetails },
-  } = useMobxStore();
+    createIssueComment,
+    updateIssueComment,
+    removeIssueComment,
+    creationIssueCommentReaction,
+    removeIssueCommentReaction,
+    createIssueReaction,
+    removeIssueReaction,
+    createIssueSubscription,
+    removeIssueSubscription,
+    createIssueLink,
+    updateIssueLink,
+    deleteIssueLink,
+    getIssue,
+    loader,
+    fetchPeekIssueDetails,
+    setPeekId,
+    fetchIssueActivity,
+  } = useIssueDetail();
+  const {
+    issues: { removeIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const { setToastAlert } = useToast();
 
   const fetchIssueDetail = useCallback(async () => {
     if (workspaceSlug && projectId && peekIssueId) {
-      if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
-      else await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      //if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      //else
+      await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId.toString());
     }
-  }, [fetchArchivedPeekIssueDetails, fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId, isArchived]);
+  }, [fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId]);
 
   useEffect(() => {
     fetchIssueDetail();
@@ -93,12 +100,15 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     });
   };
 
-  const issue = isArchived ? getArchivedIssue : getIssue;
-  const isLoading = isArchived ? archivedIssueLoader : loader;
+  // const issue = isArchived ? getArchivedIssue : getIssue;
+  // const isLoading = isArchived ? archivedIssueLoader : loader;
+
+  const issue = getIssue;
+  const isLoading = loader;
 
   const issueUpdate = async (_data: Partial<IIssue>) => {
     if (handleIssue) {
-      await handleIssue(_data);
+      await handleIssue(_data, EIssueActions.UPDATE);
       fetchIssueActivity(workspaceSlug, projectId, issueId);
     }
   };
@@ -132,8 +142,10 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const issueLinkDelete = (linkId: string) => deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
 
   const handleDeleteIssue = async () => {
-    if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else removeIssueFromStructure(workspaceSlug, projectId, issue!);
+    if (!issue) return;
+
+    if (isArchived) await removeIssue(workspaceSlug, projectId, issue?.id);
+    // FIXME else delete...
     const { query } = router;
     if (query.peekIssueId) {
       setPeekId(null);

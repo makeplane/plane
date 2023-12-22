@@ -2,17 +2,15 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useProject, useProjectState } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EFilterType } from "store_legacy/issues/types";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router
@@ -20,14 +18,16 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
   const {
-    projectMember: { projectMembers },
-    projectDraftIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.DRAFT);
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -45,7 +45,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
     },
     [workspaceSlug, projectId, issueFilters, updateFilters]
   );
@@ -53,7 +53,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -61,7 +61,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -69,7 +69,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -117,7 +117,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>

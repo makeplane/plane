@@ -13,6 +13,7 @@ from plane.db.models import (
     TeamMember,
     WorkspaceMemberInvite,
     WorkspaceTheme,
+    WorkspaceUserProperties,
 )
 
 
@@ -160,4 +161,14 @@ class WorkspaceThemeSerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "actor",
+        ]
+
+
+class WorkspaceUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceUserProperties
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "user",
         ]

@@ -1,5 +1,5 @@
 import { EUserProjectRoles } from "constants/project";
-import type { IUserLite, IWorkspace, IWorkspaceLite, TStateGroups } from ".";
+import type { IUser, IUserLite, IWorkspace, IWorkspaceLite, TStateGroups } from ".";
 
 export interface IProject {
   archive_in: number;
@@ -35,11 +35,8 @@ export interface IProject {
   is_member: boolean;
   member_role: EUserProjectRoles | null;
   members: IProjectMemberLite[];
-  issue_views_view: boolean;
-  module_view: boolean;
   name: string;
   network: number;
-  page_view: boolean;
   project_lead: IUserLite | string | null;
   sort_order: number | null;
   total_cycles: number;
@@ -63,6 +60,10 @@ type ProjectPreferences = {
   };
 };
 
+export interface IProjectMap {
+  [id: string]: IProject;
+}
+
 export interface IProjectMemberLite {
   id: string;
   member__avatar: string;
@@ -71,6 +72,25 @@ export interface IProjectMemberLite {
 }
 
 export interface IProjectMember {
+  id: string;
+  member: IUserMemberLite;
+  project: IProjectLite;
+  workspace: IWorkspaceLite;
+  comment: string;
+  role: TUserProjectRole;
+
+  preferences: ProjectPreferences;
+
+  view_props: IProjectViewProps;
+  default_props: IProjectViewProps;
+
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+}
+
+export interface IProjectMembership {
   id: string;
   member: string;
   role: EUserProjectRoles;

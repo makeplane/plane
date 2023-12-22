@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
+import { useIssues } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
 import type { IIssue } from "types";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +27,9 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { archivedIssueDetail: archivedIssueDetailStore } = useMobxStore();
+  const {
+    issues: { removeIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -45,8 +47,7 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await archivedIssueDetailStore
-      .deleteArchivedIssue(workspaceSlug.toString(), data.project, data.id)
+    await removeIssue(workspaceSlug.toString(), data.project, data.id)
       .then(() => {
         if (onSubmit) onSubmit();
       })

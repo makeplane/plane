@@ -14,6 +14,7 @@ from plane.db.models import (
     ModuleIssue,
     ModuleLink,
     ModuleFavorite,
+    ModuleUserProperties,
 )
 
 
@@ -195,4 +196,15 @@ class ModuleFavoriteSerializer(BaseSerializer):
             "workspace",
             "project",
             "user",
+        ]
+
+class ModuleUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = ModuleUserProperties
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "module",
+            "user"
         ]

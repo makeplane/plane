@@ -6,7 +6,7 @@ import { useApplication } from "hooks/store";
 import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
@@ -26,7 +26,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
             setTrackElement("VIEW_EMPTY_STATE");
-            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+            commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },
         }}
       />

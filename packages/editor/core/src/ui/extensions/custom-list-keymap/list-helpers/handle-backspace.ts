@@ -1,8 +1,8 @@
 import { Editor, isAtStartOfNode, isNodeActive } from "@tiptap/core";
 import { Node } from "@tiptap/pm/model";
 
-import { findListItemPos } from "./find-list-item-pos";
-import { hasListBefore } from "./has-list-before";
+import { findListItemPos } from "src/ui/extensions/custom-list-keymap/list-helpers/find-list-item-pos";
+import { hasListBefore } from "src/ui/extensions/custom-list-keymap/list-helpers/has-list-before";
 
 export const handleBackspace = (editor: Editor, name: string, parentListTypes: string[]) => {
   // this is required to still handle the undo handling

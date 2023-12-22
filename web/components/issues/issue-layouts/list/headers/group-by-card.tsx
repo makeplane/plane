@@ -10,9 +10,9 @@ import { CustomMenu } from "@plane/ui";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
-import { EProjectStore } from "store_legacy/command-palette.store";
 import useToast from "hooks/use-toast";
 import { useState } from "react";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -20,7 +20,7 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<IIssue>;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
+  currentStore: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
@@ -45,14 +45,15 @@ export const HeaderGroupByCard = observer(
 
       const issues = data.map((i) => i.id);
 
-      addIssuesToView &&
-        addIssuesToView(issues)?.catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Selected issues could not be added to the cycle. Please try again.",
-          });
+      try {
+        addIssuesToView && addIssuesToView(issues);
+      } catch (error) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
         });
+      }
     };
 
     return (

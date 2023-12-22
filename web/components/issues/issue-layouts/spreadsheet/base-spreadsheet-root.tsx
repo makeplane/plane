@@ -1,32 +1,25 @@
-import { IIssueUnGroupedStructure } from "store_legacy/issue";
-import { SpreadsheetView } from "./spreadsheet-view";
 import { FC, useCallback } from "react";
-import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { useRouter } from "next/router";
-import { useMobxStore } from "lib/mobx/store-provider";
-import {
-  ICycleIssuesFilterStore,
-  ICycleIssuesStore,
-  IModuleIssuesFilterStore,
-  IModuleIssuesStore,
-  IProjectIssuesFilterStore,
-  IProjectIssuesStore,
-  IViewIssuesFilterStore,
-  IViewIssuesStore,
-} from "store_legacy/issues";
 import { observer } from "mobx-react-lite";
-import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
+// hooks
+import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
+// views
+import { SpreadsheetView } from "./spreadsheet-view";
+// types
+import { IIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
+// constants
 import { EUserProjectRoles } from "constants/project";
+import { ICycleIssuesFilter, ICycleIssues } from "store/issue/cycle";
+import { IModuleIssuesFilter, IModuleIssues } from "store/issue/module";
+import { IProjectIssuesFilter, IProjectIssues } from "store/issue/project";
+import { IProjectViewIssuesFilter, IProjectViewIssues } from "store/issue/project-views";
+import { EIssueFilterType } from "constants/issue";
 
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore:
-    | IViewIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | IProjectIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issueStore: IProjectIssues | ICycleIssues | IModuleIssues | IProjectViewIssues;
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -39,20 +32,21 @@ interface IBaseSpreadsheetRoot {
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions, canEditPropertiesBasedOnProject } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  // store hooks
+  const { issueMap } = useIssues();
   const {
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    projectLabel: { projectLabels },
-    user: userStore,
-  } = useMobxStore();
-
+    membership: { currentProjectRole },
+  } = useUser();
+  const {
+    project: { projectLabels },
+  } = useLabel();
+  const { projectStates } = useProjectState();
+  // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
-
-  const { currentProjectRole } = userStore;
+  // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const canEditProperties = (projectId: string | undefined) => {
@@ -62,10 +56,9 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     return enableInlineEditing && isEditingAllowedBasedOnProject;
   };
 
-  const issuesResponse = issueStore.getIssues;
-  const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
+  const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
 
-  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
+  const issues = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
 
   const handleIssues = useCallback(
     async (issue: IIssue, action: EIssueActions) => {
@@ -83,7 +76,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       issueFiltersStore.updateFilters(
         workspaceSlug,
         projectId,
-        EFilterType.DISPLAY_FILTERS,
+        EIssueFilterType.DISPLAY_FILTERS,
         {
           ...updatedDisplayFilter,
         },
@@ -98,7 +91,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
       displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-      issues={issues as IIssueUnGroupedStructure}
+      issues={issues}
       quickActions={(issue, customActionButton) => (
         <QuickActions
           customActionButton={customActionButton}
@@ -112,9 +105,8 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
           }
         />
       )}
-      members={projectMembers?.map((m) => m.member)}
-      labels={projectLabels || undefined}
-      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
+      labels={projectLabels ?? []}
+      states={projectStates}
       handleIssues={handleIssues}
       canEditProperties={canEditProperties}
       quickAddCallback={issueStore.quickAddIssue}

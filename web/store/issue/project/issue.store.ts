@@ -1,11 +1,11 @@
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
+import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
-// store
-import { IIssueRootStore } from "../root.store";
 // services
 import { IssueService } from "services/issue/issue.service";
 // types
+import { IIssueRootStore } from "../root.store";
 import {
   IGroupedIssues,
   IIssue,
@@ -18,45 +18,42 @@ import {
 } from "types";
 
 export interface IProjectIssues {
+  // observable
   loader: TLoader;
-  issues: { [project_id: string]: string[] };
+  issues: Record<string, string[]>; // Record of project_id as key and issue_ids as value
+  viewFlags: ViewFlags;
   // computed
-  getIssues: { [issue_id: string]: IIssue } | undefined;
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
-  viewFlags: ViewFlags;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
   // observable
   loader: TLoader = "init-loader";
-  issues: { [project_id: string]: string[] } = {};
-  // services
-  issueService;
-  // root store
-  rootIssueStore: IIssueRootStore;
-  //viewData
+  issues: Record<string, string[]> = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  // root store
+  rootIssueStore: IIssueRootStore;
+  // services
+  issueService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
-
     makeObservable(this, {
       // observable
       loader: observable.ref,
       issues: observable,
       // computed
-      getIssues: computed,
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -64,24 +61,16 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       removeIssue: action,
       quickAddIssue: action,
     });
-
-    // services
-    this.issueService = new IssueService();
     // root store
     this.rootIssueStore = _rootStore;
+    // services
+    this.issueService = new IssueService();
   }
 
-  get getIssues() {
+  get groupedIssueIds() {
     const projectId = this.rootStore?.projectId;
     if (!projectId) return undefined;
 
-    const _issues = this.rootStore.issues.getIssuesByKey("project", projectId);
-    if (!_issues) return undefined;
-
-    return _issues;
-  }
-
-  get getIssuesIds() {
     const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
@@ -90,10 +79,12 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const _issues = this.getIssues;
+    const projectIssueIds = this.issues[projectId] ?? [];
+
+    const _issues = this.rootStore.issues.getIssuesByIds(projectIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -116,17 +107,15 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       const params = this.rootStore?.projectIssuesFilter?.appliedFilters;
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
-      const _issues = { ...this.issues, [projectId]: Object.keys(response) };
-
       runInAction(() => {
-        this.issues = _issues;
+        set(this.issues, [projectId], Object.keys(response));
         this.loader = undefined;
       });
 
       this.rootStore.issues.addIssue(Object.values(response));
+
       return response;
     } catch (error) {
-      console.error(error);
       this.loader = undefined;
       throw error;
     }
@@ -136,15 +125,11 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     try {
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[projectId]) _issues[projectId] = [];
-      _issues[projectId] = [..._issues[projectId], response.id];
-      this.rootStore.issues.addIssue([response]);
-
       runInAction(() => {
-        this.issues = _issues;
+        this.issues[projectId].push(response.id);
       });
+
+      this.rootStore.issues.addIssue([response]);
 
       return response;
     } catch (error) {
@@ -155,7 +140,10 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
     try {
+      if (!issueId || !this.issues[projectId]) return;
+
       this.rootStore.issues.updateIssue(issueId, data);
+
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
@@ -166,18 +154,17 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[projectId]) _issues[projectId] = [];
-      _issues[projectId] = _issues?.[projectId].filter((id) => id !== issueId);
+      if (!issueId || !this.issues[projectId]) return;
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      this.rootStore.issues.removeIssue(issueId);
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
+      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[projectId].splice(issueIndex, 1);
+        });
+
+      this.rootStore.issues.removeIssue(issueId);
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
@@ -187,33 +174,19 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue) => {
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[projectId]) _issues[projectId] = [];
-
-      _issues[projectId] = [..._issues[projectId], data.id];
-      this.rootStore.issues.updateIssue(data.id, data);
-
       runInAction(() => {
-        this.issues = _issues;
+        this.issues[projectId].push(data.id);
+        this.rootStore.issues.addIssue([data]);
       });
 
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
+      const response = await this.createIssue(workspaceSlug, projectId, data);
 
-      if (this.issues) {
-        let _issues = { ...this.issues };
-        if (!_issues) _issues = {};
-        if (!_issues[projectId]) _issues[projectId] = [];
-
-        _issues[projectId] = [..._issues[projectId].filter((issueId) => issueId != data.id), response.id];
-        this.rootStore.issues.removeIssue(data.id);
-        this.rootStore.issues.addIssue([response]);
-
+      const quickAddIssueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === data.id);
+      if (quickAddIssueIndex >= 0)
         runInAction(() => {
-          this.issues = _issues;
+          this.issues[projectId].splice(quickAddIssueIndex, 1);
+          this.rootStore.issues.removeIssue(data.id);
         });
-      }
-
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");

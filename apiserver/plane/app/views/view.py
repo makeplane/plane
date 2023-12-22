@@ -27,7 +27,7 @@ from plane.app.serializers import (
     IssueLiteSerializer,
     IssueViewFavoriteSerializer,
 )
-from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission
+from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission, WorkspaceViewerPermission, ProjectLitePermission
 from plane.db.models import (
     Workspace,
     GlobalView,
@@ -43,8 +43,8 @@ from plane.utils.grouper import group_results
 
 
 class GlobalViewViewSet(BaseViewSet):
-    serializer_class = GlobalViewSerializer
-    model = GlobalView
+    serializer_class = IssueViewSerializer
+    model = IssueView
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -58,6 +58,7 @@ class GlobalViewViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__isnull=True)
             .select_related("workspace")
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
@@ -192,7 +193,8 @@ class IssueViewViewSet(BaseViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
+        workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
+        serializer.save(project_id=self.kwargs.get("project_id"),workspace_id=workspace.id)
 
     def get_queryset(self):
         subquery = IssueViewFavorite.objects.filter(

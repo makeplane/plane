@@ -4,8 +4,7 @@ import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // services
@@ -16,7 +15,7 @@ import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 import type { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
@@ -41,7 +40,7 @@ export interface IssuesModalProps {
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
   handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
 }
 
 const issueDraftService = new IssueDraftService();
@@ -55,7 +54,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     fieldsToShow = ["all"],
     onSubmit,
     handleSubmit,
-    currentStore = EProjectStore.PROJECT,
+    currentStore = EIssuesStoreType.PROJECT,
   } = props;
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -72,43 +71,45 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     moduleId: string | undefined;
   };
   // store hooks
-  const {
-    projectIssues: projectIssueStore,
-    viewIssues: projectViewIssueStore,
-    workspaceProfileIssues: profileIssueStore,
-    cycleIssues: cycleIssueStore,
-    moduleIssues: moduleIssueStore,
-  } = useMobxStore();
+
+  const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
+  const { issues: moduleIssues } = useIssues(EIssuesStoreType.MODULE);
+  const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
+
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
   const { currentUser } = useUser();
   const { currentWorkspace } = useWorkspace();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
+  const { fetchCycleDetails } = useCycle();
+  const { fetchModuleDetails } = useModule();
 
   const issueStores = {
-    [EProjectStore.PROJECT]: {
-      store: projectIssueStore,
+    [EIssuesStoreType.PROJECT]: {
+      store: projectIssues,
       dataIdToUpdate: activeProject,
       viewId: undefined,
     },
-    [EProjectStore.PROJECT_VIEW]: {
-      store: projectViewIssueStore,
+    [EIssuesStoreType.PROJECT_VIEW]: {
+      store: viewIssues,
       dataIdToUpdate: activeProject,
       viewId: undefined,
     },
-    [EProjectStore.PROFILE]: {
-      store: profileIssueStore,
+    [EIssuesStoreType.PROFILE]: {
+      store: profileIssues,
       dataIdToUpdate: currentUser?.id || undefined,
       viewId: undefined,
     },
-    [EProjectStore.CYCLE]: {
-      store: cycleIssueStore,
+    [EIssuesStoreType.CYCLE]: {
+      store: cycleIssues,
       dataIdToUpdate: activeProject,
       viewId: cycleId,
     },
-    [EProjectStore.MODULE]: {
-      store: moduleIssueStore,
+    [EIssuesStoreType.MODULE]: {
+      store: moduleIssues,
       dataIdToUpdate: activeProject,
       viewId: moduleId,
     },
@@ -182,7 +183,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
    */
 
   const onDiscardClose = () => {
-    if (formDirtyState !== null) {
+    if (formDirtyState !== null && formDirtyState.name.trim() !== "") {
       setShowConfirmDiscard(true);
     } else {
       handleClose();
@@ -211,20 +212,22 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (workspaceProjects && workspaceProjects.length > 0 && !activeProject)
-      setActiveProject(projectId ?? workspaceProjects?.[0] ?? null);
-  }, [data, projectId, workspaceProjects, isOpen, activeProject]);
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+  }, [data, projectId, workspaceProjectIds, isOpen, activeProject]);
 
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, [issue.id]);
+    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project, cycleId, [issue.id]);
+    fetchCycleDetails(workspaceSlug, activeProject, cycleId);
   };
 
   const addIssueToModule = async (issue: IIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, [issue.id]);
+    await moduleIssues.addIssueToModule(workspaceSlug, activeProject, moduleId, [issue.id]);
+    fetchModuleDetails(workspaceSlug, activeProject, moduleId);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
@@ -380,7 +383,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (onSubmit) await onSubmit(payload);
   };
 
-  if (!workspaceProjects || workspaceProjects.length === 0) return null;
+  if (!workspaceProjectIds || workspaceProjectIds.length === 0) return null;
 
   return (
     <>

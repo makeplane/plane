@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useMember, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
@@ -14,8 +14,6 @@ import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
-// types
-import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
@@ -70,6 +68,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const {
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+  } = useMember();
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -390,16 +391,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                         <Controller
                           name="project_lead_member"
                           control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <WorkspaceMemberSelect
-                              value={
-                                workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]
-                              }
-                              onChange={onChange}
-                              options={workspaceMembers || []}
-                              placeholder="Select Lead"
-                            />
-                          )}
+                          render={({ field: { value, onChange } }) => {
+                            const memberId = workspaceMemberIds?.find((memberId) => memberId === value);
+                            const memberDetails = getWorkspaceMemberDetails(memberId ?? "");
+
+                            return (
+                              <WorkspaceMemberSelect
+                                value={memberDetails ?? undefined}
+                                onChange={onChange}
+                                options={workspaceMemberIds || []}
+                                placeholder="Select Lead"
+                              />
+                            );
+                          }}
                         />
                       </div>
                     </div>

@@ -18,8 +18,6 @@ export interface ILabelRootStore {
 export class LabelRootStore implements ILabelRootStore {
   // observables
   labelMap: Record<string, IIssueLabel> = {};
-  // root store
-  rootStore;
   // sub-stores
   project: IProjectLabelStore;
   workspace: IWorkspaceLabelStore;
@@ -31,12 +29,9 @@ export class LabelRootStore implements ILabelRootStore {
       // computed actions
       getLabelById: action,
     });
-
-    // root store
-    this.rootStore = _rootStore;
     // sub-stores
-    this.project = new ProjectLabelStore(_rootStore);
-    this.workspace = new WorkspaceLabelStore(_rootStore);
+    this.project = new ProjectLabelStore(this, _rootStore);
+    this.workspace = new WorkspaceLabelStore(this, _rootStore);
   }
 
   /**

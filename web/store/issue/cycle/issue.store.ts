@@ -1,12 +1,12 @@
-import { action, observable, makeObservable, computed, runInAction, autorun } from "mobx";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
-// store
-import { IIssueRootStore } from "../root.store";
 // services
 import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // types
+import { IIssueRootStore } from "../root.store";
 import {
   IGroupedIssues,
   IIssue,
@@ -15,16 +15,18 @@ import {
   TIssueGroupByOptions,
   TLoader,
   TUnGroupedIssues,
+  ViewFlags,
 } from "types";
-import { ViewFlags } from "store_legacy/issues/types";
+
+export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
 export interface ICycleIssues {
   // observable
   loader: TLoader;
-  issues: { [cycle_id: string]: IIssueResponse } | undefined;
+  issues: { [cycle_id: string]: string[] };
+  viewFlags: ViewFlags;
   // computed
-  getIssues: IIssueResponse | undefined;
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -56,21 +58,9 @@ export interface ICycleIssues {
     projectId: string,
     data: IIssue,
     cycleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
-  addIssueToCycle: (
-    workspaceSlug: string,
-    cycleId: string,
-    issueIds: string[],
-    fetchAfterAddition?: boolean,
-    projectId?: string
   ) => Promise<IIssue>;
-  removeIssueFromCycle: (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    issueId: string,
-    issueBridgeId: string
-  ) => Promise<IIssue>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<IIssue>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<IIssue>;
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -79,35 +69,35 @@ export interface ICycleIssues {
       new_cycle_id: string;
     }
   ) => Promise<IIssue>;
-  viewFlags: ViewFlags;
+  fetchActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ) => Promise<IIssueResponse | undefined>;
 }
 
 export class CycleIssues extends IssueHelperStore implements ICycleIssues {
   loader: TLoader = "init-loader";
-  issues: { [cycle_id: string]: IIssueResponse } | undefined = undefined;
-  // root store
-  rootStore;
-  // service
-  cycleService;
-  issueService;
-
-  //viewData
+  issues: { [cycle_id: string]: string[] } = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  // root store
+  rootIssueStore: IIssueRootStore;
+  // service
+  cycleService;
+  issueService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
-
     makeObservable(this, {
       // observable
       loader: observable.ref,
-      issues: observable.ref,
+      issues: observable,
       // computed
-      getIssues: computed,
-      getIssuesIds: computed,
+      groupedIssueIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -117,53 +107,43 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       addIssueToCycle: action,
       removeIssueFromCycle: action,
       transferIssuesFromCycle: action,
+      fetchActiveCycleIssues: action,
     });
 
-    this.rootStore = _rootStore;
+    this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
     this.cycleService = new CycleService();
-
-    autorun(() => {
-      const workspaceSlug = this.rootStore.workspaceSlug;
-      const projectId = this.rootStore.projectId;
-      const cycleId = this.rootStore.cycleId;
-      if (!workspaceSlug || !projectId || !cycleId) return;
-
-      const userFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
-    });
   }
 
-  get getIssues() {
-    const cycleId = this.rootStore?.cycleId;
-    if (!cycleId || !this.issues || !this.issues[cycleId]) return undefined;
+  get groupedIssueIds() {
+    const cycleId = this.rootIssueStore?.cycleId;
+    if (!cycleId) return undefined;
 
-    return this.issues[cycleId];
-  }
-
-  get getIssuesIds() {
-    const cycleId = this.rootStore?.cycleId;
-    const displayFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootIssueStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!cycleId || !this.issues || !this.issues[cycleId]) return undefined;
+    const cycleIssueIds = this.issues[cycleId] ?? [];
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(cycleIssueIds);
+    if (!_issues) return undefined;
+
+    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[cycleId]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[cycleId]);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
+      else issues = this.unGroupedIssues(orderBy, _issues);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[cycleId]);
-      else issues = this.groupedIssues(groupBy, orderBy, this.issues[cycleId]);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
+      else issues = this.groupedIssues(groupBy, orderBy, _issues);
     } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[cycleId], true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[cycleId]);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[cycleId]);
+      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", _issues, true);
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
     return issues;
   }
@@ -174,24 +154,24 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     loadType: TLoader = "init-loader",
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
-
     try {
+      if (!cycleId) throw new Error("Cycle Id is required");
+
       this.loader = loadType;
 
-      const params = this.rootStore?.cycleIssuesFilter?.appliedFilters;
+      const params = this.rootIssueStore?.cycleIssuesFilter?.appliedFilters;
       const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
 
-      const _issues = { ...this.issues, [cycleId]: { ...response } };
-
       runInAction(() => {
-        this.issues = _issues;
+        set(this.issues, [cycleId], Object.keys(response));
         this.loader = undefined;
       });
 
+      this.rootIssueStore.issues.addIssue(Object.values(response));
+
       return response;
     } catch (error) {
-      console.error(error);
+      console.log(error);
       this.loader = undefined;
       throw error;
     }
@@ -203,24 +183,14 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: Partial<IIssue>,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
-
     try {
-      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToCycle = await this.addIssueToCycle(workspaceSlug, cycleId, [response.id], false);
+      if (!cycleId) throw new Error("Cycle Id is required");
 
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      _issues[cycleId] = { ..._issues[cycleId], ...{ [response.id]: response } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+      const issueToCycle = await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id]);
 
       return issueToCycle;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
@@ -232,20 +202,10 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: Partial<IIssue>,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
-
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      _issues[cycleId][issueId] = { ..._issues[cycleId][issueId], ...data };
+      if (!cycleId) throw new Error("Cycle Id is required");
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-
+      const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
@@ -259,23 +219,19 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     issueId: string,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return undefined;
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      delete _issues?.[cycleId]?.[issueId];
-      _issues[cycleId] = { ..._issues[cycleId] };
+      if (!cycleId) throw new Error("Cycle Id is required");
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      const issueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[cycleId].splice(issueIndex, 1);
+        });
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
@@ -286,31 +242,22 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     data: IIssue,
     cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return;
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      _issues[cycleId] = { ..._issues[cycleId], ...{ [data.id as keyof IIssue]: data } };
+      if (!cycleId) throw new Error("Cycle Id is required");
 
       runInAction(() => {
-        this.issues = _issues;
+        this.issues[cycleId].push(data.id);
+        this.rootIssueStore.issues.addIssue([data]);
       });
 
       const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
 
-      if (this.issues) {
-        delete this.issues[cycleId][data.id as keyof IIssue];
-
-        let _issues = { ...this.issues };
-        if (!_issues) _issues = {};
-        if (!_issues[cycleId]) _issues[cycleId] = {};
-        _issues[cycleId] = { ..._issues[cycleId], ...{ [response.id as keyof IIssue]: response } };
-
+      const quickAddIssueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === data.id);
+      if (quickAddIssueIndex >= 0)
         runInAction(() => {
-          this.issues = _issues;
+          this.issues[cycleId].splice(quickAddIssueIndex, 1);
+          this.rootIssueStore.issues.removeIssue(data.id);
         });
-      }
 
       return response;
     } catch (error) {
@@ -319,54 +266,34 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     }
   };
 
-  addIssueToCycle = async (
-    workspaceSlug: string,
-    cycleId: string,
-    issueIds: string[],
-    fetchAfterAddition = true,
-    projectId?: string
-  ) => {
-    const activeProjectId = this.rootStore.projectId;
-    if (!activeProjectId && !projectId) return;
-
-    const projectIdToUpdate: string = projectId || activeProjectId || "";
-
+  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     try {
-      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectIdToUpdate, cycleId, {
+      runInAction(() => {
+        this.issues[cycleId].push(...issueIds);
+      });
+
+      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
         issues: issueIds,
       });
 
-      if (fetchAfterAddition) this.fetchIssues(workspaceSlug, projectIdToUpdate, "mutation", cycleId);
-
       return issueToCycle;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectIdToUpdate, "mutation", cycleId);
       throw error;
     }
   };
 
-  removeIssueFromCycle = async (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    issueId: string,
-    issueBridgeId: string
-  ) => {
+  removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      delete _issues?.[cycleId]?.[issueId];
+      const response = await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueBridgeId);
+      const issueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[cycleId].splice(issueIndex, 1);
+        });
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
@@ -390,7 +317,26 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      throw error;
+    }
+  };
+
+  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      const params = { priority: `urgent,high` };
+      const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
+
+      runInAction(() => {
+        set(this.issues, [ACTIVE_CYCLE_ISSUES], Object.keys(response));
+        this.loader = undefined;
+      });
+
+      this.rootIssueStore.issues.addIssue(Object.values(response));
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      this.loader = undefined;
       throw error;
     }
   };

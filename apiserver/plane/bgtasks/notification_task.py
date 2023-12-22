@@ -183,7 +183,7 @@ def createMentionNotification(project, notification_comment, issue, actor_id, me
     )
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activities_created, requested_data, current_instance):
     issue_activities_created = (
         json.loads(

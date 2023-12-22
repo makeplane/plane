@@ -5,7 +5,7 @@ import { IIssueDisplayProperties } from "types";
 interface IWithDisplayPropertiesHOC {
   displayProperties: IIssueDisplayProperties;
   shouldRenderProperty?: boolean;
-  displayPropertyKey: string;
+  displayPropertyKey: keyof IIssueDisplayProperties;
   children: ReactNode;
 }
 

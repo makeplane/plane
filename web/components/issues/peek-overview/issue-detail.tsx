@@ -4,9 +4,8 @@ import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
 // hooks
-import { useUser } from "hooks/store";
+import { useMention, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
 import { IssuePeekOverviewReactions } from "components/issues";
 // ui
@@ -44,17 +43,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     isSubmitting,
     setIsSubmitting,
   } = props;
-  // store
+  // states
+  const [characterLimit, setCharacterLimit] = useState(false);
+  // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // derived values
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  // states
-  const [characterLimit, setCharacterLimit] = useState(false);
-  // hooks
+  // toast alert
   const { setShowAlert } = useReloadConfirmations();
-  const editorSuggestions = useEditorSuggestions();
-
+  // form info
   const {
     handleSubmit,
     watch,
@@ -196,8 +196,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
                 onChange(description_html);
                 debouncedFormSave();
               }}
-              mentionSuggestions={editorSuggestions.mentionSuggestions}
-              mentionHighlights={editorSuggestions.mentionHighlights}
+              mentionSuggestions={mentionSuggestions}
+              mentionHighlights={mentionHighlights}
             />
           )}
         />

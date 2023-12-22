@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
@@ -6,9 +6,9 @@ import { useApplication, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
-import { EProjectStore } from "store_legacy/command-palette.store";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssuesStoreType } from "constants/issue";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
@@ -61,7 +61,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               }`}
               onClick={() => {
                 setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
             >
               <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />

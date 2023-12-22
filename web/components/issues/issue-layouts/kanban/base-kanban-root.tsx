@@ -10,34 +10,32 @@ import { Spinner } from "@plane/ui";
 // types
 import { IIssue } from "types";
 import { EIssueActions } from "../types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProfileIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
 import { IQuickActionProps } from "../list/list-view-types";
-import { IProjectIssues } from "store/issue/project";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { EProjectStore } from "store_legacy/command-palette.store";
 import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { IIssueKanBanViewStore } from "store/issue/issue_kanban_view.store";
+import { IssueKanBanViewStore } from "store/issue/issue_kanban_view.store";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
+import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IBaseKanBanLayout {
-  issues: IProjectIssues;
+  issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
   issuesFilter:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore
-    | IProfileIssuesFilterStore;
-  kanbanViewStore: IIssueKanBanViewStore;
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IDraftIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
@@ -46,7 +44,7 @@ export interface IBaseKanBanLayout {
   };
   showLoader?: boolean;
   viewId?: string;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
@@ -61,7 +59,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     issues,
     issuesFilter,
-    kanbanViewStore,
     QuickActions,
     issueActions,
     showLoader,
@@ -77,13 +74,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    issuesMap: { allIssues: issuesMap },
-  } = useIssues();
+  const { issueMap } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();
 
-  const issueIds = issues?.getIssuesIds || [];
+  // FIXME get from filters
+  const kanbanViewStore: IssueKanBanViewStore = {} as IssueKanBanViewStore;
+
+  const issueIds = issues?.groupedIssueIds || [];
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
@@ -148,13 +146,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         await handleDragDrop(
           result.source,
           result.destination,
-          workspaceSlug.toString(),
-          projectId.toString(),
+          workspaceSlug?.toString(),
+          projectId?.toString(),
           issues,
           sub_group_by,
           group_by,
-          issuesMap,
-          issueIds
+          issueMap,
+          issueIds,
+          viewId
         ).catch((err) => {
           setToastAlert({
             title: "Error",
@@ -197,13 +196,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     await handleDragDrop(
       dragState.source,
       dragState.destination,
-      workspaceSlug.toString(),
-      projectId.toString(),
+      workspaceSlug?.toString(),
+      projectId?.toString(),
       issues,
       sub_group_by,
       group_by,
-      issuesMap,
-      issueIds
+      issueMap,
+      issueIds,
+      viewId
     ).finally(() => {
       setDeleteIssueModal(false);
       setDragState({});
@@ -254,7 +254,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           </div>
 
           <KanBanView
-            issuesMap={issuesMap}
+            issuesMap={issueMap}
             issueIds={issueIds}
             displayProperties={displayProperties}
             sub_group_by={sub_group_by}

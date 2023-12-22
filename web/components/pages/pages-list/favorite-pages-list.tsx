@@ -8,9 +8,9 @@ import { usePage } from "hooks/store";
 import { Loader } from "@plane/ui";
 
 export const FavoritePagesList: FC = observer(() => {
-  const { favoriteProjectPages } = usePage();
+  const { favoriteProjectPageIds } = usePage();
 
-  if (!favoriteProjectPages)
+  if (!favoriteProjectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -19,5 +19,5 @@ export const FavoritePagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={favoriteProjectPages} />;
+  return <PagesListView pageIds={favoriteProjectPageIds} />;
 });

@@ -4,8 +4,8 @@ import useSWR from "swr";
 import { Combobox, Transition } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useLabel } from "hooks/store";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons
@@ -22,33 +22,29 @@ type Props = {
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const { setIsOpen, value, onChange, projectId, label, disabled = false } = props;
-
-  // states
-  const [query, setQuery] = useState("");
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
-    projectLabel: { labels, fetchProjectLabels },
-  } = useMobxStore();
-
+    project: { projectLabels, fetchProjectLabels },
+  } = useLabel();
+  // states
+  const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
+  // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });
-
-  const issueLabels = labels?.[projectId] || [];
+  // derived values
+  const filteredOptions =
+    query === "" ? projectLabels : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ISSUE_LABELS_${projectId.toUpperCase()}` : null,
     workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId) : null
   );
-
-  const filteredOptions =
-    query === "" ? issueLabels : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <Combobox
@@ -71,7 +67,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               ) : value && value.length > 0 ? (
                 <span className="flex items-center justify-center gap-2 text-xs">
                   <IssueLabelsList
-                    labels={value.map((v) => issueLabels?.find((l) => l.id === v)) ?? []}
+                    labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
                     length={3}
                     showLength
                   />
@@ -113,10 +109,10 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                   />
                 </div>
                 <div className="py-1.5">
-                  {issueLabels && filteredOptions ? (
+                  {projectLabels && filteredOptions ? (
                     filteredOptions.length > 0 ? (
                       filteredOptions.map((label) => {
-                        const children = issueLabels?.filter((l) => l.parent === label.id);
+                        const children = projectLabels?.filter((l) => l.parent === label.id);
 
                         if (children.length === 0) {
                           if (!label.parent)

@@ -2,8 +2,7 @@ import { FC } from "react";
 // components
 import { IssueBlock } from "components/issues";
 // types
-import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
-import { IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueMap, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 
 interface Props {

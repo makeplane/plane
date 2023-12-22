@@ -3,8 +3,16 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useProject, useProjectState, useProjectView, useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import {
+  useApplication,
+  useIssues,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useProjectView,
+  useUser,
+} from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
@@ -15,9 +23,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store_legacy/issues/types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
@@ -30,9 +36,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectMember: { projectMembers },
-    viewIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -41,18 +46,21 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
-  const { projectViews, getViewById } = useProjectView();
+  const { projectViewIds, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
@@ -71,7 +79,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, viewId);
     },
     [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
   );
@@ -79,7 +87,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
@@ -87,7 +95,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
@@ -140,7 +148,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 className="ml-1.5"
                 placement="bottom-start"
               >
-                {projectViews?.map((viewId) => {
+                {projectViewIds?.map((viewId) => {
                   const view = getViewById(viewId);
 
                   if (!view) return;
@@ -177,7 +185,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
             labels={projectLabels}
-            members={projectMembers?.map((m) => m.member)}
+            memberIds={projectMemberIds ?? undefined}
             states={projectStates}
           />
         </FiltersDropdown>
@@ -196,7 +204,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-              toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"
             prependIcon={<Plus />}

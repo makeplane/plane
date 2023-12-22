@@ -1,9 +1,17 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useCycle, useLabel, useProject, useProjectState, useUser } from "hooks/store";
+import {
+  useApplication,
+  useCycle,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -18,9 +26,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store_legacy/issues/types";
-import { EProjectStore } from "store_legacy/command-palette.store";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
@@ -59,11 +65,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectIssuesFilter: projectIssueFiltersStore,
-    projectMember: { projectMembers },
-    cycleIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
-  const { projectAllCycles, getCycleById } = useCycle();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const { projectCycleIds, getCycleById } = useCycle();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -76,8 +80,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectLabels },
   } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
-  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -89,7 +96,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -108,7 +115,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
@@ -116,7 +123,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -124,7 +131,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -180,7 +187,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {projectAllCycles?.map((cycleId) => (
+                  {projectCycleIds?.map((cycleId) => (
                     <CycleDropdownOption key={cycleId} cycleId={cycleId} />
                   ))}
                 </CustomMenu>
@@ -202,7 +209,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               labels={projectLabels}
-              members={projectMembers?.map((m) => m.member)}
+              memberIds={projectMemberIds ?? undefined}
               states={projectStates}
             />
           </FiltersDropdown>
@@ -226,7 +233,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("CYCLE_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

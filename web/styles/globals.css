@@ -540,5 +540,4 @@ div.web-view-spinner div.bar12 {
   animation-delay: -0.0833s;
   -webkit-animation-delay: -0.0833s;
 }
-[data-rfd-draggable-id] { will-change: transform, opacity; }
 

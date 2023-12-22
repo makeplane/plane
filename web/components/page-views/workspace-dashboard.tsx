@@ -9,7 +9,7 @@ import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // images
 import { NewEmptyState } from "components/common/new-empty-state";
 import emptyProject from "public/empty-state/dashboard_empty_project.webp";
@@ -30,16 +30,15 @@ export const WorkspaceDashboardView = observer(() => {
     dashboardInfo: workspaceDashboardInfo,
     fetchUserDashboardInfo,
     updateTourCompleted,
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceRole },
   } = useUser();
-  const { workspaceProjects } = useProject();
+  const { workspaceProjectIds } = useProject();
   // fetch user dashboard info
   useSWR(
     workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
     workspaceSlug ? () => fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
   );
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -68,8 +67,8 @@ export const WorkspaceDashboardView = observer(() => {
       <div className="space-y-8 p-8">
         {currentUser && <UserGreetingsView user={currentUser} />}
 
-        {workspaceProjects ? (
-          workspaceProjects.length > 0 ? (
+        {workspaceProjectIds ? (
+          workspaceProjectIds.length > 0 ? (
             <div className="flex flex-col gap-8">
               <IssuesStats data={workspaceDashboardInfo} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">

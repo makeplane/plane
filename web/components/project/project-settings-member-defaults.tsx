@@ -31,7 +31,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
-
+  // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
@@ -48,7 +48,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
     reset({
       ...currentProjectDetails,
-      default_assignee: currentProjectDetails.default_assignee?.id ?? currentProjectDetails.default_assignee,
+      default_assignee:
+        (currentProjectDetails.default_assignee as IUserLite)?.id ?? currentProjectDetails.default_assignee,
       project_lead: (currentProjectDetails.project_lead as IUserLite)?.id ?? currentProjectDetails.project_lead,
       workspace: (currentProjectDetails.workspace as IWorkspace).id,
     });
@@ -59,7 +60,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
     reset({
       ...currentProjectDetails,
-      default_assignee: currentProjectDetails?.default_assignee?.id ?? currentProjectDetails?.default_assignee,
+      default_assignee:
+        (currentProjectDetails?.default_assignee as IUserLite)?.id ?? currentProjectDetails?.default_assignee,
       project_lead: (currentProjectDetails?.project_lead as IUserLite)?.id ?? currentProjectDetails?.project_lead,
       ...formData,
     });

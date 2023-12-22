@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // store hooks
-import { useEstimate } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useEstimate, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
@@ -25,9 +24,7 @@ export const EstimatesList: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    project: { currentProjectDetails, updateProject },
-  } = useMobxStore();
+  const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
   // toast alert
   const { setToastAlert } = useToast();
