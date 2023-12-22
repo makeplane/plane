@@ -59,6 +59,8 @@ class Cycle(ProjectBaseModel):
     )
     view_props = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
+    external_source = models.CharField(null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Cycle"
@@ -68,9 +70,9 @@ class Cycle(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            smallest_sort_order = Cycle.objects.filter(
-                project=self.project
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+            smallest_sort_order = Cycle.objects.filter(project=self.project).aggregate(
+                smallest=models.Min("sort_order")
+            )["smallest"]
 
             if smallest_sort_order is not None:
                 self.sort_order = smallest_sort_order - 10000

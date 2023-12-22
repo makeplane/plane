@@ -70,16 +70,16 @@ const workspaceService = new WorkspaceService();
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const placeholderEmails = [
-  "charlie.taylor@frstflit.com",
-  "octave.chanute@frstflit.com",
-  "george.spratt@frstflit.com",
-  "frank.coffyn@frstflit.com",
-  "amos.root@frstflit.com",
-  "edward.deeds@frstflit.com",
-  "charles.m.manly@frstflit.com",
-  "glenn.curtiss@frstflit.com",
-  "thomas.selfridge@frstflit.com",
-  "albert.zahm@frstflit.com",
+  "charlie.taylor@frstflt.com",
+  "octave.chanute@frstflt.com",
+  "george.spratt@frstflt.com",
+  "frank.coffyn@frstflt.com",
+  "amos.root@frstflt.com",
+  "edward.deeds@frstflt.com",
+  "charles.m.manly@frstflt.com",
+  "glenn.curtiss@frstflt.com",
+  "thomas.selfridge@frstflt.com",
+  "albert.zahm@frstflt.com",
 ];
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   const {
