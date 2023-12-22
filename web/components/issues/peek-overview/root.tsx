@@ -71,9 +71,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (workspaceSlug && projectId && peekIssueId) {
       //if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
       //else
-      await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId.toString());
     }
-  }, [fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId, isArchived]);
+  }, [fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId]);
 
   useEffect(() => {
     fetchIssueDetail();

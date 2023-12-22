@@ -18,7 +18,6 @@ import {
 import { IIssueFilterOptions, IIssueLabel, IState } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
-import { useMember } from "hooks/store";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -31,8 +30,7 @@ type Props = {
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, memberIds, states } = props;
-
-  const { memberMap } = useMember();
+  // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
@@ -99,7 +97,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
               memberIds={memberIds}
-              memberMap={memberMap}
               searchQuery={filtersSearchQuery}
             />
           </div>
@@ -112,7 +109,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.mentions ?? null}
               handleUpdate={(val) => handleFiltersUpdate("mentions", val)}
               memberIds={memberIds}
-              memberMap={memberMap}
               searchQuery={filtersSearchQuery}
             />
           </div>
@@ -125,7 +121,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.created_by ?? null}
               handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
               memberIds={memberIds}
-              memberMap={memberMap}
               searchQuery={filtersSearchQuery}
             />
           </div>
