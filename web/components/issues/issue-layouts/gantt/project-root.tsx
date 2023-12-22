@@ -1,12 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
+import { EIssuesStoreType } from "constants/issue";
 
 export const GanttLayout: React.FC = observer(() => {
-  const { projectIssues: projectIssuesStore, projectIssuesFilter: projectIssueFiltersStore } = useMobxStore();
-
-  return <BaseGanttRoot issueFiltersStore={projectIssueFiltersStore} issueStore={projectIssuesStore} />;
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+  return <BaseGanttRoot issueFiltersStore={issuesFilter} issueStore={issues} />;
 });

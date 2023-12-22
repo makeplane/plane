@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // hooks
-import { useModule } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useModule } from "hooks/store";
 // ui
 import { CustomSearchSelect, DiceIcon, Spinner, Tooltip } from "@plane/ui";
 // types
 import { IIssue } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -26,17 +26,17 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // mobx store
   const {
-    moduleIssues: { removeIssueFromModule, addIssueToModule },
-  } = useMobxStore();
+    issues: { removeIssueFromModule, addIssueToModule },
+  } = useIssues(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
 
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleModuleStoreChange = async (moduleId: string) => {
-    if (!workspaceSlug || !issueDetail || !moduleId) return;
+    if (!workspaceSlug || !issueDetail || !moduleId || !projectId) return;
 
     setIsUpdating(true);
-    await addIssueToModule(workspaceSlug.toString(), moduleId, [issueDetail.id], false, projectId?.toString())
+    await addIssueToModule(workspaceSlug.toString(), projectId?.toString(), moduleId, [issueDetail.id])
       .then(async () => {
         handleIssueUpdate && (await handleIssueUpdate());
       })
@@ -49,7 +49,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
     setIsUpdating(true);
-    removeIssueFromModule(workspaceSlug.toString(), projectId.toString(), moduleId, issueDetail.id, bridgeId)
+    removeIssueFromModule(workspaceSlug.toString(), projectId.toString(), moduleId, issueDetail.id)
       .then(async () => {
         handleIssueUpdate && (await handleIssueUpdate());
         mutate(ISSUE_DETAILS(issueDetail.id));

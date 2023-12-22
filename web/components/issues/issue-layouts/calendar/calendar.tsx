@@ -1,30 +1,24 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useUser } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 // components
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IIssue } from "types";
-import { IGroupedIssues, IIssueResponse } from "store_legacy/issues/types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store_legacy/issues";
+import { IGroupedIssues, IIssue, IIssueResponse } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useCalendarView } from "hooks/store/use-calendar-view";
+import { EIssuesStoreType } from "constants/issue";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   issues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -43,17 +37,20 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const { issuesFilterStore, issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } =
     props;
   // store hooks
-  const { calendar: calendarStore, projectIssues: issueStore } = useMobxStore();
+  const {
+    issues: { viewFlags },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const issueCalendarView = useCalendarView();
   const {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { enableIssueCreation } = issueStore?.viewFlags || {};
+  const { enableIssueCreation } = viewFlags || {};
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const calendarPayload = calendarStore.calendarPayload;
+  const calendarPayload = issueCalendarView.calendarPayload;
 
-  const allWeeksOfActiveMonth = calendarStore.allWeeksOfActiveMonth;
+  const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
   if (!calendarPayload)
     return (
@@ -65,7 +62,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
-        <CalendarHeader issuesFilterStore={issuesFilterStore} />
+        <CalendarHeader issuesFilterStore={issuesFilterStore} viewId={viewId} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" && (
@@ -90,7 +87,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           {layout === "week" && (
             <CalendarWeekDays
               issuesFilterStore={issuesFilterStore}
-              week={calendarStore.allDaysOfActiveWeek}
+              week={issueCalendarView.allDaysOfActiveWeek}
               issues={issues}
               groupedIssueIds={groupedIssueIds}
               enableQuickIssueCreate

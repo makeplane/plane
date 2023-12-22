@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
-import { EProjectStore } from "store/application/command-palette.store";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -26,7 +26,7 @@ interface IHeaderGroupByCard {
   handleKanBanToggle: any;
   issuePayload: Partial<IIssue>;
   disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
+  currentStore?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
@@ -64,14 +64,15 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
     const issues = data.map((i) => i.id);
 
-    addIssuesToView &&
-      addIssuesToView(issues)?.catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
+    try {
+      addIssuesToView && addIssuesToView(issues);
+    } catch (error) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the cycle. Please try again.",
       });
+    }
   };
 
   return (

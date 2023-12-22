@@ -1,16 +1,12 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
-import set from "lodash/set";
+import { computed, makeObservable, observable, runInAction } from "mobx";
 import isEmpty from "lodash/isEmpty";
+import set from "lodash/set";
 // base class
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// services
-import { ProjectService, ProjectMemberService } from "services/project";
-import { IssueService } from "services/issue";
-import { CycleService } from "services/cycle.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { IssueRootStore } from "../root.store";
+import { IIssueRootStore } from "../root.store";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -20,30 +16,17 @@ import {
 } from "types";
 // constants
 import { EIssueFilterType } from "constants/issue";
-import { isNil } from "constants/common";
-
-interface ICycleIssuesFilterOptions {
-  filters: IIssueFilterOptions;
-}
+// services
+import { IssueFiltersService } from "services/issue_filter.service";
 
 export interface ICycleIssuesFilter {
-  // observable
-  loader: boolean;
-  filters: { [cycleId: string]: ICycleIssuesFilterOptions };
+  // observables
+  filters: Record<string, IIssueFilters>; // Record defines cycleId as key and IIssueFilters as value
   // computed
   issueFilters: IIssueFilters | undefined;
-  appliedFilters: TIssueParams[] | undefined;
-  // actions
-  fetchCycleFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
-  updateCycleFilters: (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions
-  ) => Promise<void>;
-
-  fetchFilters: (workspaceSlug: string, projectId: string, cycleId?: string | undefined) => Promise<void>;
+  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+  // action
+  fetchFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
@@ -55,55 +38,35 @@ export interface ICycleIssuesFilter {
 
 export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleIssuesFilter {
   // observables
-  loader: boolean = false;
-  filters: { [projectId: string]: ICycleIssuesFilterOptions } = {};
+  filters: { [cycleId: string]: IIssueFilters } = {};
   // root store
-  rootStore;
+  rootIssueStore: IIssueRootStore;
   // services
-  projectService;
-  projectMemberService;
-  issueService;
-  cycleService;
+  issueFilterService;
 
-  constructor(_rootStore: IssueRootStore) {
-    super(_rootStore);
-
+  constructor(_rootStore: IIssueRootStore) {
+    super();
     makeObservable(this, {
       // observables
-      loader: observable.ref,
       filters: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
-      // actions
-      fetchCycleFilters: action,
-      updateCycleFilters: action,
-      fetchFilters: action,
-      updateFilters: action,
     });
-
-    this.rootStore = _rootStore;
-
-    this.projectService = new ProjectService();
-    this.projectMemberService = new ProjectMemberService();
-    this.issueService = new IssueService();
-    this.cycleService = new CycleService();
+    // root store
+    this.rootIssueStore = _rootStore;
+    // services
+    this.issueFilterService = new IssueFiltersService();
   }
 
   get issueFilters() {
-    const projectId = this.rootStore.projectId;
-    const cycleId = this.rootStore.cycleId;
-    if (!projectId || !cycleId) return undefined;
+    const cycleId = this.rootIssueStore.cycleId;
+    if (!cycleId) return undefined;
 
-    const displayFilters = this.rootStore.issuesFilter.issueDisplayFilters(projectId);
-    const cycleFilters = this.filters?.[cycleId];
-    if (isEmpty(displayFilters) || isEmpty(cycleFilters)) return undefined;
+    const displayFilters = this.filters[cycleId] || undefined;
+    if (isEmpty(displayFilters)) return undefined;
 
-    const _filters: IIssueFilters = {
-      filters: isEmpty(cycleFilters?.filters) ? undefined : cycleFilters?.filters,
-      displayFilters: isEmpty(displayFilters?.displayFilters) ? undefined : displayFilters?.displayFilters,
-      displayProperties: isEmpty(displayFilters?.displayProperties) ? undefined : displayFilters?.displayProperties,
-    };
+    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
 
     return _filters;
   }
@@ -112,101 +75,34 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     const userFilters = this.issueFilters;
     if (!userFilters) return undefined;
 
-    let filteredRouteParams: any = {
-      priority: userFilters?.filters?.priority || undefined,
-      state_group: userFilters?.filters?.state_group || undefined,
-      state: userFilters?.filters?.state || undefined,
-      assignees: userFilters?.filters?.assignees || undefined,
-      mentions: userFilters?.filters?.mentions || undefined,
-      created_by: userFilters?.filters?.created_by || undefined,
-      labels: userFilters?.filters?.labels || undefined,
-      start_date: userFilters?.filters?.start_date || undefined,
-      target_date: userFilters?.filters?.target_date || undefined,
-      type: userFilters?.displayFilters?.type || undefined,
-      sub_issue: isNil(userFilters?.displayFilters?.sub_issue) ? true : userFilters?.displayFilters?.sub_issue,
-      show_empty_groups: isNil(userFilters?.displayFilters?.show_empty_groups)
-        ? true
-        : userFilters?.displayFilters?.show_empty_groups,
-      start_target_date: isNil(userFilters?.displayFilters?.start_target_date)
-        ? true
-        : userFilters?.displayFilters?.start_target_date,
-    };
-
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
-    if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+    if (!filteredParams) return undefined;
 
-    if (userFilters?.displayFilters?.layout === "calendar") filteredRouteParams.group_by = "target_date";
+    const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
+      userFilters?.filters as IIssueFilterOptions,
+      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      filteredParams
+    );
+
     if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
     return filteredRouteParams;
   }
 
-  fetchCycleFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+  fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
-      const cycleFilters = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);
+      const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
 
-      const filters: IIssueFilterOptions = {
-        assignees: cycleFilters?.view_props?.filters?.assignees || null,
-        mentions: cycleFilters?.view_props?.filters?.mentions || null,
-        created_by: cycleFilters?.view_props?.filters?.created_by || null,
-        labels: cycleFilters?.view_props?.filters?.labels || null,
-        priority: cycleFilters?.view_props?.filters?.priority || null,
-        project: cycleFilters?.view_props?.filters?.project || null,
-        start_date: cycleFilters?.view_props?.filters?.start_date || null,
-        state: cycleFilters?.view_props?.filters?.state || null,
-        state_group: cycleFilters?.view_props?.filters?.state_group || null,
-        subscriber: cycleFilters?.view_props?.filters?.subscriber || null,
-        target_date: cycleFilters?.view_props?.filters?.target_date || null,
-      };
+      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
+      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
 
       runInAction(() => {
         set(this.filters, [cycleId, "filters"], filters);
+        set(this.filters, [cycleId, "displayFilters"], displayFilters);
+        set(this.filters, [cycleId, "displayProperties"], displayProperties);
       });
     } catch (error) {
-      throw error;
-    }
-  };
-
-  updateCycleFilters = async (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions
-  ) => {
-    try {
-      const _filters = {
-        filters: this.filters[cycleId].filters as IIssueFilterOptions,
-      };
-
-      if (type === EIssueFilterType.FILTERS) {
-        _filters.filters = { ..._filters.filters, ...filters };
-
-        const updated_filters = filters as IIssueFilterOptions;
-        runInAction(() => {
-          Object.keys(updated_filters).forEach((_key) => {
-            set(this.filters, [cycleId, "filters", _key], updated_filters[_key as keyof IIssueFilterOptions]);
-          });
-        });
-      }
-
-      await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, {
-        view_props: { filters: _filters.filters },
-      });
-    } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
-      throw error;
-    }
-  };
-
-  fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string | undefined = undefined) => {
-    try {
-      await this.rootStore.issuesFilter.fetchDisplayFilters(workspaceSlug, projectId);
-      await this.rootStore.issuesFilter.fetchDisplayProperties(workspaceSlug, projectId);
-      if (!cycleId) return;
-      await this.fetchCycleFilters(workspaceSlug, projectId, cycleId);
-    } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };
@@ -214,40 +110,90 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    filterType: EIssueFilterType,
+    type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
-    cycleId?: string | undefined
+    cycleId: string | undefined = undefined
   ) => {
-    if (!cycleId) return;
-
     try {
-      switch (filterType) {
+      if (!cycleId) throw new Error("Cycle id is required");
+      if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
+
+      const _filters = {
+        filters: this.filters[projectId].filters as IIssueFilterOptions,
+        displayFilters: this.filters[projectId].displayFilters as IIssueDisplayFilterOptions,
+        displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
+      };
+
+      switch (type) {
         case EIssueFilterType.FILTERS:
-          await this.updateCycleFilters(workspaceSlug, projectId, cycleId, filterType, filters as IIssueFilterOptions);
-          this.rootStore.cycleIssues.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+          const updatedFilters = filters as IIssueFilterOptions;
+          _filters.filters = { ..._filters.filters, ...updatedFilters };
+
+          runInAction(() => {
+            Object.keys(updatedFilters).forEach((_key) => {
+              set(this.filters, [cycleId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
+            });
+          });
+
+          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+            filters: _filters.filters,
+          });
           break;
         case EIssueFilterType.DISPLAY_FILTERS:
-          await this.rootStore.issuesFilter.updateDisplayFilters(
-            workspaceSlug,
-            projectId,
-            filterType,
-            filters as IIssueDisplayFilterOptions
-          );
+          const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
+          _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };
+
+          // set sub_group_by to null if group_by is set to null
+          if (_filters.displayFilters.group_by === null) _filters.displayFilters.sub_group_by = null;
+          // set sub_group_by to null if layout is switched to kanban group_by and sub_group_by are same
+          if (
+            _filters.displayFilters.layout === "kanban" &&
+            _filters.displayFilters.group_by === _filters.displayFilters.sub_group_by
+          )
+            _filters.displayFilters.sub_group_by = null;
+          // set group_by to state if layout is switched to kanban and group_by is null
+          if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null)
+            _filters.displayFilters.group_by = "state";
+
+          runInAction(() => {
+            Object.keys(updatedDisplayFilters).forEach((_key) => {
+              set(
+                this.filters,
+                [cycleId, "displayFilters", _key],
+                updatedDisplayFilters[_key as keyof IIssueDisplayFilterOptions]
+              );
+            });
+          });
+
+          await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+            display_filters: _filters.displayFilters,
+          });
+
           break;
         case EIssueFilterType.DISPLAY_PROPERTIES:
-          await this.rootStore.issuesFilter.updateDisplayProperties(
-            workspaceSlug,
-            projectId,
-            filters as IIssueDisplayProperties
-          );
+          const updatedDisplayProperties = filters as IIssueDisplayProperties;
+          _filters.displayProperties = { ..._filters.displayProperties, ...updatedDisplayProperties };
+
+          runInAction(() => {
+            Object.keys(updatedDisplayProperties).forEach((_key) => {
+              set(
+                this.filters,
+                [cycleId, "displayProperties", _key],
+                updatedDisplayProperties[_key as keyof IIssueDisplayProperties]
+              );
+            });
+          });
+
+          await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+            display_properties: _filters.displayProperties,
+          });
           break;
         default:
           break;
       }
-
-      return;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
+      if (cycleId) this.fetchFilters(workspaceSlug, projectId, cycleId);
       throw error;
     }
   };

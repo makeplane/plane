@@ -2,17 +2,15 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EIssueFilterType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router
@@ -20,8 +18,8 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
   const {
-    projectDraftIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.DRAFT);
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const {

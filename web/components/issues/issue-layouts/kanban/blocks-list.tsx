@@ -11,7 +11,7 @@ interface IssueBlocksListProps {
   columnId: string;
   issuesMap: IIssueMap;
   issueIds: string[];
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;

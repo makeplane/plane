@@ -55,12 +55,14 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
       },
       isVisible: true,
       text: "Edit label",
+      key: "edit_label",
     },
     {
       CustomIcon: Trash2,
       onClick: handleLabelDelete,
       isVisible: true,
       text: "Delete label",
+      key: "delete_label",
     },
   ];
 

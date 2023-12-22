@@ -1,4 +1,4 @@
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 // types
 import { RootStore } from "store/root.store";
 import { IUserLite } from "types";
@@ -8,6 +8,8 @@ import { IProjectMemberStore, ProjectMemberStore } from "./project-member.store"
 export interface IMemberRootStore {
   // observables
   memberMap: Record<string, IUserLite>;
+  // computed actions
+  getUserDetails: (userId: string) => IUserLite | undefined;
   // sub-stores
   workspace: IWorkspaceMemberStore;
   project: IProjectMemberStore;
@@ -24,9 +26,17 @@ export class MemberRootStore implements IMemberRootStore {
     makeObservable(this, {
       // observables
       memberMap: observable,
+      // computed actions
+      getUserDetails: action,
     });
     // sub-stores
     this.workspace = new WorkspaceMemberStore(this, _rootStore);
     this.project = new ProjectMemberStore(this, _rootStore);
   }
+
+  /**
+   * @description get user details rom userId
+   * @param userId
+   */
+  getUserDetails = (userId: string): IUserLite | undefined => this.memberMap?.[userId] ?? undefined;
 }

@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useMember, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
@@ -70,6 +70,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const {
+    workspace: { workspaceMemberIds, workspaceMemberMap },
+  } = useMember();
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);

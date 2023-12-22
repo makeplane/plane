@@ -9,6 +9,8 @@ import { Avatar, CustomSearchSelect } from "@plane/ui";
 import { ChevronDown, UserCircle2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { useMember } from "hooks/store";
+import { observer } from "mobx-react-lite";
 
 type Props = {
   value: string | null | undefined;
@@ -18,11 +20,14 @@ type Props = {
 
 const projectMemberService = new ProjectMemberService();
 
-export const SidebarLeadSelect: FC<Props> = (props) => {
+export const SidebarLeadSelect: FC<Props> = observer((props) => {
   const { value, onChange, disabled = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { memberMap } = useMember();
+
   // fetch project members
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -31,18 +36,21 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
       : null
   );
 
-  const options = members?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  const options = members?.map((membership) => {
+    const member = memberMap[membership.id];
+    return {
+      value: member.id,
+      query: member.display_name ?? "",
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar name={member.display_name} src={member.avatar} />
+          {member.display_name}
+        </div>
+      ),
+    };
+  });
 
-  const selectedOption = members?.find((m) => m.member.id === value)?.member;
+  const selectedOption = memberMap[members?.find((m) => m.member === value)?.id || ""];
 
   return (
     <div className="flex items-center justify-start gap-1">
@@ -76,4 +84,4 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+});

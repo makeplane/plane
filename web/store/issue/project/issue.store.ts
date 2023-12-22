@@ -2,11 +2,10 @@ import { action, makeObservable, observable, runInAction, computed } from "mobx"
 import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
-// store
-import { IIssueRootStore } from "../root.store";
 // services
 import { IssueService } from "services/issue/issue.service";
 // types
+import { IIssueRootStore } from "../root.store";
 import {
   IGroupedIssues,
   IIssue,
@@ -19,8 +18,10 @@ import {
 } from "types";
 
 export interface IProjectIssues {
+  // observable
   loader: TLoader;
-  issues: { [project_id: string]: string[] };
+  issues: Record<string, string[]>; // Record of project_id as key and issue_ids as value
+  viewFlags: ViewFlags;
   // computed
   groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // action
@@ -29,27 +30,24 @@ export interface IProjectIssues {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
-  viewFlags: ViewFlags;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
   // observable
   loader: TLoader = "init-loader";
-  issues: { [project_id: string]: string[] } = {};
-  // services
-  issueService;
-  // root store
-  rootIssueStore: IIssueRootStore;
-  //viewData
+  issues: Record<string, string[]> = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  // root store
+  rootIssueStore: IIssueRootStore;
+  // services
+  issueService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
-
     makeObservable(this, {
       // observable
       loader: observable.ref,
@@ -63,11 +61,10 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       removeIssue: action,
       quickAddIssue: action,
     });
-
-    // services
-    this.issueService = new IssueService();
     // root store
     this.rootIssueStore = _rootStore;
+    // services
+    this.issueService = new IssueService();
   }
 
   get groupedIssueIds() {
@@ -182,7 +179,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         this.rootStore.issues.addIssue([data]);
       });
 
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
+      const response = await this.createIssue(workspaceSlug, projectId, data);
 
       const quickAddIssueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === data.id);
       if (quickAddIssueIndex >= 0)
@@ -190,7 +187,6 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
           this.issues[projectId].splice(quickAddIssueIndex, 1);
           this.rootStore.issues.removeIssue(data.id);
         });
-
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");

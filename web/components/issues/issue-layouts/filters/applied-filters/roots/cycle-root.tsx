@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useProjectState } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel, useProjectState } from "hooks/store";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EIssueFilterType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -19,8 +18,9 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   };
   // store hooks
   const {
-    cycleIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
+
   const {
     project: { projectLabels },
   } = useLabel();
@@ -36,32 +36,20 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !cycleId) return;
     if (!value) {
-      updateFilters(
-        workspaceSlug,
-        projectId,
-        EIssueFilterType.FILTERS,
-        {
-          [key]: null,
-        },
-        cycleId
-      );
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
+        [key]: null,
+      });
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(
-      workspaceSlug,
-      projectId,
-      EIssueFilterType.FILTERS,
-      {
-        [key]: newValues,
-      },
-      cycleId
-    );
+    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
+      [key]: newValues,
+    });
   };
 
   const handleClearAllFilters = () => {

@@ -1,61 +1,57 @@
-import { action, observable, makeObservable, computed, runInAction, autorun } from "mobx";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import set from "lodash/set";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
 // types
-import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, TUnGroupedIssues, ViewFlags } from "types";
 import { IIssueRootStore } from "../root.store";
-import isEmpty from "lodash/isEmpty";
+import { IIssue, IIssueResponse, TLoader, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IWorkspaceIssues {
   // observable
   loader: TLoader;
-  issues: { [workspace_view: string]: IIssueResponse } | undefined;
+  issues: { [viewId: string]: string[] };
+  viewFlags: ViewFlags;
   // computed
-  getIssues: IIssueResponse | undefined;
   groupedIssueIds: TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, workspaceViewId: string, loadType: TLoader) => Promise<IIssueResponse>;
+  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<IIssueResponse>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     data: Partial<IIssue>,
-    workspaceViewId?: string | undefined
+    viewId?: string | undefined
   ) => Promise<IIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
-    workspaceViewId?: string | undefined
+    viewId?: string | undefined
   ) => Promise<IIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    workspaceViewId?: string | undefined
+    viewId?: string | undefined
   ) => Promise<IIssue | undefined>;
-
-  viewFlags: ViewFlags;
 }
 
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
   loader: TLoader = "init-loader";
-  issues: { [workspace_view: string]: IIssueResponse } | undefined = undefined;
-  // root store
-  rootStore;
-  // service
-  workspaceService;
-  issueService;
-  //viewData
+  issues: { [viewId: string]: string[] } = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  // root store
+  rootIssueStore: IIssueRootStore;
+  // service
+  workspaceService;
+  issueService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
@@ -65,7 +61,6 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       loader: observable.ref,
       issues: observable.ref,
       // computed
-      getIssues: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -73,58 +68,47 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       updateIssue: action,
       removeIssue: action,
     });
-
-    this.rootStore = _rootStore;
+    // root store
+    this.rootIssueStore = _rootStore;
+    // services
     this.workspaceService = new WorkspaceService();
     this.issueService = new IssueService();
-
-    autorun(() => {
-      const workspaceSlug = this.rootStore.workspaceSlug;
-      const currentView = this.rootStore.workspaceIssuesFilter?.currentView;
-      if (!workspaceSlug || currentView === "") return;
-
-      const userFilters = this.rootStore?.workspaceIssuesFilter?.issueFilters?.filters;
-
-      if (!isEmpty(userFilters)) this.fetchIssues(workspaceSlug, currentView, "mutation");
-    });
-  }
-
-  get getIssues() {
-    const currentView = this.rootStore.workspaceIssuesFilter?.currentView;
-    if (currentView === "" || !this.issues || !this.issues[currentView]) return undefined;
-
-    return this.issues[currentView];
   }
 
   get groupedIssueIds() {
-    const currentView = this.rootStore.workspaceIssuesFilter?.currentView;
-    const displayFilters = this.rootStore?.workspaceIssuesFilter?.issueFilters?.displayFilters;
+    const viewId = this.rootIssueStore.globalViewId;
+    if (!viewId) return undefined;
+
+    const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
     const orderBy = displayFilters?.order_by;
 
-    if (currentView === "" || !this.issues || !this.issues[currentView]) return undefined;
+    const viewIssueIds = this.issues[viewId] ?? [];
+
+    const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
+    if (!_issues) return undefined;
 
     let issues: IIssueResponse | TUnGroupedIssues | undefined = undefined;
 
-    issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[currentView]);
+    issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
 
     return issues;
   }
 
-  fetchIssues = async (workspaceSlug: string, workspaceViewId: string, loadType: TLoader = "init-loader") => {
+  fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader = "init-loader") => {
     try {
       this.loader = loadType;
 
-      const params = this.rootStore?.workspaceIssuesFilter?.appliedFilters;
+      const params = this.rootIssueStore?.workspaceIssuesFilter?.appliedFilters;
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
-      const _issues = { ...this.issues, [workspaceViewId]: { ...response } };
-
       runInAction(() => {
-        this.issues = _issues;
+        set(this.issues, [viewId], Object.keys(response));
         this.loader = undefined;
       });
+
+      this.rootIssueStore.issues.addIssue(Object.values(response));
 
       return response;
     } catch (error) {
@@ -138,25 +122,21 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     workspaceSlug: string,
     projectId: string,
     data: Partial<IIssue>,
-    workspaceViewId: string | undefined = undefined
+    viewId: string | undefined = undefined
   ) => {
-    if (!workspaceViewId) return;
-
     try {
+      if (!viewId) throw new Error("View id is required");
+
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[workspaceViewId]) _issues[workspaceViewId] = {};
-      _issues[workspaceViewId] = { ..._issues[workspaceViewId], ...{ [response.id]: response } };
-
       runInAction(() => {
-        this.issues = _issues;
+        this.issues[viewId].push(response.id);
       });
+
+      this.rootStore.issues.addIssue([response]);
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");
       throw error;
     }
   };
@@ -166,25 +146,16 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
-    workspaceViewId: string | undefined = undefined
+    viewId: string | undefined = undefined
   ) => {
-    if (!workspaceViewId) return;
-
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[workspaceViewId]) _issues[workspaceViewId] = {};
-      _issues[workspaceViewId][issueId] = { ..._issues[workspaceViewId][issueId], ...data };
+      if (!viewId) throw new Error("View id is required");
 
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
+      this.rootStore.issues.updateIssue(issueId, data);
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");
+      if (viewId) this.fetchIssues(workspaceSlug, viewId, "mutation");
       throw error;
     }
   };
@@ -193,25 +164,23 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    workspaceViewId: string | undefined = undefined
+    viewId: string | undefined = undefined
   ) => {
-    if (!workspaceViewId) return;
-
     try {
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[workspaceViewId]) _issues[workspaceViewId] = {};
-      delete _issues?.[workspaceViewId]?.[issueId];
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      if (!viewId) throw new Error("View id is required");
 
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
+      const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[viewId].splice(issueIndex, 1);
+        });
+
+      this.rootStore.issues.removeIssue(issueId);
+
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");
       throw error;
     }
   };

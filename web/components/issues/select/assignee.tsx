@@ -6,6 +6,8 @@ import { ProjectMemberService } from "services/project";
 import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { useMember } from "hooks/store";
+import { observer } from "mobx-react-lite";
 
 export type Props = {
   projectId: string;
@@ -15,9 +17,11 @@ export type Props = {
 
 const projectMemberService = new ProjectMemberService();
 
-export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], onChange }) => {
+export const IssueAssigneeSelect: React.FC<Props> = observer(({ projectId, value = [], onChange }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { memberMap } = useMember();
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -26,16 +30,19 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
       : null
   );
 
-  const options = members?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name ?? "",
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} showTooltip={false} />
-        {member.member.is_bot ? member.member.first_name : member.member.display_name}
-      </div>
-    ),
-  }));
+  const options = members?.map((membership) => {
+    const member = memberMap[membership.id];
+    return {
+      value: member.id,
+      query: member.display_name ?? "",
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
+          {member.is_bot ? member.first_name : member.display_name}
+        </div>
+      ),
+    };
+  });
 
   return (
     <CustomSearchSelect
@@ -48,7 +55,9 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
             <div className="-my-0.5 flex items-center justify-center gap-2">
               <AvatarGroup showTooltip={false}>
                 {value.map((assigneeId) => {
-                  const member = members?.find((m) => m.member.id === assigneeId)?.member;
+                  const membership = members?.find((m) => m.member === assigneeId)?.id;
+
+                  const member = memberMap[membership || ""];
 
                   if (!member) return null;
 
@@ -68,4 +77,4 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
       noChevron
     />
   );
-};
+});

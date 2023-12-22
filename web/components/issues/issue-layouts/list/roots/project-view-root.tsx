@@ -1,50 +1,50 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
-
 // store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store_legacy/root";
+import { useIssues } from "hooks/store";
 // constants
 import { useRouter } from "next/router";
 import { EIssueActions } from "../../types";
-import { IProjectStore } from "store_legacy/project";
 import { IIssue } from "types";
 // components
 import { BaseListRoot } from "../base-list-root";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EProjectStore } from "store/application/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IViewListLayout {}
 
 export const ProjectViewListLayout: React.FC = observer(() => {
-  const { viewIssues: projectViewIssueStore, viewIssuesFilter: projectViewIssueFilterStore }: RootStore =
-    useMobxStore();
+  // store
+  const { issuesFilter, issues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   if (!workspaceSlug || !projectId) return null;
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-      await projectViewIssueStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+        await issues.updateIssue(workspaceSlug, projectId, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-      await projectViewIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
-    },
-  };
+        await issues.removeIssue(workspaceSlug, projectId, issue.id);
+      },
+    }),
+    [issues, workspaceSlug, projectId]
+  );
 
   return (
     <BaseListRoot
-      issueFilterStore={projectViewIssueFilterStore}
-      issueStore={projectViewIssueStore}
+      issuesFilter={issuesFilter}
+      issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EProjectStore.PROJECT_VIEW}
+      currentStore={EIssuesStoreType.PROJECT_VIEW}
     />
   );
 });

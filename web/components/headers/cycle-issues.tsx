@@ -2,8 +2,16 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useCycle, useLabel, useMember, useProject, useProjectState, useUser } from "hooks/store";
+import {
+  useApplication,
+  useCycle,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -18,8 +26,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EProjectStore } from "store/application/command-palette.store";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
@@ -58,9 +65,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    projectIssuesFilter: projectIssueFiltersStore,
-    cycleIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
   const { projectCycleIds, getCycleById } = useCycle();
   const {
     commandPalette: { toggleCreateIssueModal },
@@ -78,7 +84,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     project: { projectMemberIds },
   } = useMember();
 
-  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -227,7 +233,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("CYCLE_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

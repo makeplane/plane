@@ -1,22 +1,22 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useProjectState } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel, useProjectState } from "hooks/store";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EIssueFilterType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
+
   const {
-    projectArchivedIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     project: { projectLabels },
   } = useLabel();

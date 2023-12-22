@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useApplication, useCycle } from "hooks/store";
+import { useApplication, useCycle, useIssues } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
@@ -31,6 +31,9 @@ import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft 
 import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
+import { EIssuesStoreType } from "constants/issue";
+import { ACTIVE_CYCLE_ISSUES } from "store/issue/cycle";
+import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 const stateGroups = [
   {
@@ -69,6 +72,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = props;
+
+  const {
+    issues: { issues, fetchActiveCycleIssues },
+    issueMap,
+  } = useIssues(EIssuesStoreType.CYCLE);
   // store hooks
   const {
     commandPalette: { toggleCreateCycleModal },
@@ -84,17 +92,15 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const activeCycle = projectActiveCycleId ? getActiveCycleById(projectActiveCycleId) : null;
-  const issues = (cycleStore?.active_cycle_issues as any) || null;
+  const issueIds = issues?.[ACTIVE_CYCLE_ISSUES];
 
-  // const { data: issues } = useSWR(
-  //   workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
-  //   workspaceSlug && projectId && cycle?.id
+  // useSWR(
+  //   workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
+  //   workspaceSlug && projectId && cycleId
   //     ? () =>
-  //         cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
-  //           priority: "urgent,high",
-  //         })
+  //     fetchActiveCycleIssues(workspaceSlug, projectId, )
   //     : null
-  // ) as { data: IIssue[] | undefined };
+  // );
 
   if (!activeCycle && isLoading)
     return (
@@ -368,9 +374,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
           <div>
             <div className="text-custom-primary">High Priority Issues</div>
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
-              {issues ? (
-                issues.length > 0 ? (
-                  issues.map((issue: any) => (
+              {issueIds ? (
+                issueIds.length > 0 ? (
+                  issueIds.map((issue: any) => (
                     <div
                       key={issue.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
@@ -433,24 +439,25 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             </div>
           </div>
 
-          {issues && issues.length > 0 && (
+          {issueIds && issueIds.length > 0 && (
             <div className="flex items-center justify-between gap-2">
               <div className="h-1 w-full rounded-full bg-custom-background-80">
                 <div
                   className="h-1 rounded-full bg-green-600"
                   style={{
                     width:
-                      issues &&
+                      issueIds &&
                       `${
-                        (issues.filter((issue: any) => issue?.state_detail?.group === "completed")?.length /
-                          issues.length) *
+                        (issueIds.filter((issue: any) => issue?.state_detail?.group === "completed")?.length /
+                          issueIds.length) *
                           100 ?? 0
                       }%`,
                   }}
                 />
               </div>
               <div className="w-16 text-end text-xs text-custom-text-200">
-                {issues?.filter((issue: any) => issue?.state_detail?.group === "completed")?.length} of {issues?.length}
+                {issueIds?.filter((issueId) => issueMap[issueId]?.state_detail?.group === "completed")?.length} of{" "}
+                {issueIds?.length}
               </div>
             </div>
           )}

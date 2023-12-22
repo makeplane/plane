@@ -3,7 +3,6 @@ import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
 // types
 import {
   IIssueFilterOptions,
-  IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueExtraOptions,
   TIssueGroupByOptions,
@@ -15,15 +14,23 @@ import {
 } from "types";
 
 export enum EIssuesStoreType {
-  // GLOBAL = "GLOBAL",
-  // PROFILE = "PROFILE",
+  GLOBAL = "GLOBAL",
+  PROFILE = "PROFILE",
   PROJECT = "PROJECT",
   CYCLE = "CYCLE",
-  // MODULE = "MODULE",
-  // PROJECT_VIEW = "PROJECT_VIEW",
-  // ARCHIVED = "ARCHIVED",
-  // DRAFT = "DRAFT",
+  MODULE = "MODULE",
+  PROJECT_VIEW = "PROJECT_VIEW",
+  ARCHIVED = "ARCHIVED",
+  DRAFT = "DRAFT",
+  DEFAULT = "DEFAULT",
 }
+
+export type TCreateModalStoreTypes =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.MODULE;
 
 export enum EIssueFilterType {
   FILTERS = "filters",

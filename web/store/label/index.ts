@@ -30,8 +30,8 @@ export class LabelRootStore implements ILabelRootStore {
       getLabelById: action,
     });
     // sub-stores
-    this.project = new ProjectLabelStore(_rootStore);
-    this.workspace = new WorkspaceLabelStore(_rootStore);
+    this.project = new ProjectLabelStore(this, _rootStore);
+    this.workspace = new WorkspaceLabelStore(this, _rootStore);
   }
 
   /**

@@ -15,11 +15,11 @@ import emptyPage from "public/empty-state/empty_page.png";
 import { EUserProjectRoles } from "constants/project";
 
 type IPagesListView = {
-  pages: string[];
+  pageIds: string[];
 };
 
 export const PagesListView: FC<IPagesListView> = observer((props) => {
-  const { pages } = props;
+  const { pageIds } = props;
   // store hooks
   const {
     commandPalette: { toggleCreatePageModal },
@@ -35,11 +35,11 @@ export const PagesListView: FC<IPagesListView> = observer((props) => {
 
   return (
     <>
-      {pages && workspaceSlug && projectId ? (
+      {pageIds && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
-          {pages.length > 0 ? (
+          {pageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pages.map((pageId) => (
+              {pageIds.map((pageId) => (
                 <PagesListItem
                   key={pageId}
                   workspaceSlug={workspaceSlug.toString()}

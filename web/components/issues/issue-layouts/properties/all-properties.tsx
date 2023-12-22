@@ -6,8 +6,6 @@ import { Layers, Link, Paperclip } from "lucide-react";
 import { IssuePropertyState } from "../properties/state";
 import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
-import { IssuePropertyAssignee } from "../properties/assignee";
-import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
 import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
@@ -16,7 +14,7 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 export interface IIssueProperties {
   issue: IIssue;
   handleIssues: (issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties | null;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
 }

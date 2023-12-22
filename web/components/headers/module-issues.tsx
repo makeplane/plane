@@ -2,8 +2,16 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useApplication, useLabel, useMember, useModule, useProject, useProjectState, useUser } from "hooks/store";
+import {
+  useApplication,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -18,10 +26,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-// store
-import { EIssueFilterType } from "constants/issue";
-import { EProjectStore } from "store/application/command-palette.store";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
@@ -60,8 +65,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   };
   // store hooks
   const {
-    moduleIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
@@ -228,7 +233,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("MODULE_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.MODULE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

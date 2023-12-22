@@ -4,8 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { useUser } from "hooks/store";
+import { useIssueDetail, useUser } from "hooks/store";
 // components
 import {
   DeleteArchivedIssueModal,
@@ -104,9 +103,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const router = useRouter();
   const { peekIssueId } = router.query;
   // store hooks
-  const {
-    issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
-  } = useMobxStore();
+  const { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId } =
+    useIssueDetail();
   const { currentUser } = useUser();
 
   const updateRoutePeekId = () => {

@@ -1,22 +1,21 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel } from "hooks/store";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EIssueFilterType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const GlobalViewsAppliedFiltersRoot = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string; globalViewId: string };
+  const { workspaceSlug, globalViewId } = router.query;
   // store hooks
   const {
-    workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.GLOBAL);
   const {
     workspace: { workspaceLabels },
   } = useLabel();
@@ -32,23 +31,43 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
+    if (!workspaceSlug || !globalViewId) return;
+
     if (!value) {
-      updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: null });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.FILTERS,
+        { [key]: null },
+        globalViewId.toString()
+      );
       return;
     }
 
     let newValues = userFilters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
-    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: newValues });
+    updateFilters(
+      workspaceSlug.toString(),
+      undefined,
+      EIssueFilterType.FILTERS,
+      { [key]: newValues },
+      globalViewId.toString()
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !globalViewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { ...newFilters });
+    updateFilters(
+      workspaceSlug.toString(),
+      undefined,
+      EIssueFilterType.FILTERS,
+      { ...newFilters },
+      globalViewId.toString()
+    );
   };
 
   // const handleUpdateView = () => {

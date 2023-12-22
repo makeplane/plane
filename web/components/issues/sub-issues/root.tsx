@@ -4,8 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
 // hooks
-import { useUser } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
@@ -24,6 +23,7 @@ import { IssueService } from "services/issue";
 import { SUB_ISSUES } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
@@ -46,9 +46,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
   // store hooks
   const {
-    issue: { updateIssueStructure },
-    projectIssues: { updateIssue, removeIssue },
-  } = useMobxStore();
+    issues: { updateIssue, removeIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -173,10 +172,9 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
         ...data,
       };
 
-      updateIssueStructure(null, null, payload);
       updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
+    [projectId, updateIssue, user, workspaceSlug]
   );
 
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

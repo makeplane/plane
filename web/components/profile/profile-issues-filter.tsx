@@ -4,24 +4,20 @@ import { useRouter } from "next/router";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
 // hooks
-import { useLabel } from "hooks/store";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store_legacy/root";
+import { useIssues, useLabel } from "hooks/store";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EIssueFilterType } from "constants/issue";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 
 export const ProfileIssuesFilter = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as {
-    workspaceSlug: string;
-  };
+  const { workspaceSlug, userId } = router.query;
   // store hook
   const {
-    workspaceProfileIssuesFilter: { issueFilters, updateFilters },
-  }: RootStore = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROFILE);
+
   const {
     workspace: { workspaceLabels },
   } = useLabel();
@@ -32,15 +28,21 @@ export const ProfileIssuesFilter = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
+      if (!workspaceSlug || !userId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        userId.toString()
+      );
     },
     [workspaceSlug, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !userId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -52,23 +54,41 @@ export const ProfileIssuesFilter = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: newValues });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        userId.toString()
+      );
     },
     [workspaceSlug, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      if (!workspaceSlug || !userId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        userId.toString()
+      );
     },
     [workspaceSlug, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EIssueFilterType.DISPLAY_PROPERTIES, property);
+      if (!workspaceSlug || !userId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        userId.toString()
+      );
     },
     [workspaceSlug, updateFilters]
   );
@@ -90,7 +110,7 @@ export const ProfileIssuesFilter = observer(() => {
           handleFiltersUpdate={handleFiltersUpdate}
           states={states}
           labels={workspaceLabels}
-          members={members}
+          memberIds={members}
         />
       </FiltersDropdown>
 

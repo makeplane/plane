@@ -16,7 +16,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EProjectStore } from "store/application/command-palette.store";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 
@@ -216,7 +215,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("PROJECT_PAGE_HEADER");
-                  toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

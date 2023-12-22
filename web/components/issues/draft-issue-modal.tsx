@@ -3,21 +3,20 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
+import { useIssues, useProject, useUser } from "hooks/store";
 // components
 import { DraftIssueForm } from "components/issues";
 // types
 import type { IIssue } from "types";
+import { EIssuesStoreType } from "constants/issue";
 // fetch-keys
 import { PROJECT_ISSUES_DETAILS, USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
-import { useProject, useUser } from "hooks/store";
 
 interface IssuesModalProps {
   data?: IIssue | null;
@@ -65,7 +64,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
   // store
-  const { projectDraftIssues: draftIssueStore } = useMobxStore();
+  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { currentUser } = useUser();
   const { workspaceProjectIds: workspaceProjects } = useProject();
   // derived values
@@ -168,10 +167,10 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const createDraftIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !currentUser) return;
 
-    await draftIssueStore
+    await draftIssues
       .createIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(async () => {
-        await draftIssueStore.fetchIssues(workspaceSlug as string, activeProject ?? "", "mutation");
+        await draftIssues.fetchIssues(workspaceSlug as string, activeProject ?? "", "mutation");
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -193,7 +192,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   };
 
   const updateDraftIssue = async (payload: Partial<IIssue>) => {
-    await draftIssueStore
+    await draftIssues
       .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
       .then((res) => {
         if (isUpdatingSingleIssue) {
