@@ -169,6 +169,6 @@ export class IssueRootStore implements IIssueRootStore {
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new IssueCalendarViewStore();
 
-    this.issueDetail = new IssueDetailStore(this);
+    this.issueDetail = new IssueDetailStore(this, rootStore);
   }
 }

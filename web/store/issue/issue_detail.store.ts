@@ -7,6 +7,7 @@ import { IIssueRootStore } from "./root.store";
 import type { IIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
+import { RootStore } from "store/root.store";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -125,6 +126,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   } = {};
 
   // root store
+  issueRootStore;
   rootStore;
   // service
   issueService;
@@ -132,7 +134,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   issueCommentService;
   notificationService;
 
-  constructor(_rootStore: IIssueRootStore) {
+  constructor(_issueRootStore: IIssueRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // observable
       loader: observable.ref,
@@ -180,31 +182,33 @@ export class IssueDetailStore implements IIssueDetailStore {
       removeIssueSubscription: action,
     });
 
-    autorun(() => {
-      const projectId = this.rootStore?.project.projectId;
-      const peekId = this.peekId;
-
-      if (!projectId || !peekId) return;
-
-      const issue = this.rootStore.projectIssues.issues?.[projectId]?.[peekId];
-
-      if (issue && issue.id)
-        runInAction(() => {
-          this.issues = {
-            ...this.issues,
-            [issue.id]: {
-              ...this.issues[issue.id],
-              ...issue,
-            },
-          };
-        });
-    });
-
+    this.issueRootStore = _issueRootStore;
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
     this.issueReactionService = new IssueReactionService();
     this.issueCommentService = new IssueCommentService();
     this.notificationService = new NotificationService();
+
+    autorun(() => {
+      const projectId = this.rootStore?.app.router.projectId;
+      const peekId = this.peekId;
+
+      if (!projectId || !peekId) return;
+
+      // FIXME: uncomment and fix
+      // const issue = this.issueRootStore.projectIssues.issues?.[projectId]?.[peekId];
+
+      // if (issue && issue.id)
+      //   runInAction(() => {
+      //     this.issues = {
+      //       ...this.issues,
+      //       [issue.id]: {
+      //         ...this.issues[issue.id],
+      //         ...issue,
+      //       },
+      //     };
+      //   });
+    });
   }
 
   get getIssue() {

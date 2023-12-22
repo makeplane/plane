@@ -38,7 +38,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
   const handleAccept = () => {
     if (!invitationDetail) return;
     workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+      .joinWorkspace(invitationDetail.workspace_detail.slug, invitationDetail.id, {
         accepted: true,
         email: invitationDetail.email,
       })
@@ -65,7 +65,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
               {invitationDetail.accepted ? (
                 <>
                   <EmptySpace
-                    title={`You are already a member of ${invitationDetail.workspace.name}`}
+                    title={`You are already a member of ${invitationDetail.workspace_detail.name}`}
                     description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                   >
                     <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" action={() => router.push("/")} />
@@ -73,7 +73,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
                 </>
               ) : (
                 <EmptySpace
-                  title={`You have been invited to ${invitationDetail.workspace.name}`}
+                  title={`You have been invited to ${invitationDetail.workspace_detail.name}`}
                   description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                 >
                   <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />

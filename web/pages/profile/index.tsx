@@ -4,7 +4,6 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
-import { UserService } from "services/user.service";
 // hooks
 import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
@@ -37,7 +36,6 @@ const defaultValues: Partial<IUser> = {
 };
 
 const fileService = new FileService();
-const userService = new UserService();
 
 const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   // states
@@ -85,7 +83,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     };
 
     await updateCurrentUser(payload)
-      .then((res) => {
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",

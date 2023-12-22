@@ -18,7 +18,7 @@ import {
 // constants
 import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";
-import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;

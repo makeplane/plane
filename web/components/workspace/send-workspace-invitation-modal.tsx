@@ -8,9 +8,9 @@ import { useUser } from "hooks/store";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { IWorkspaceBulkInviteFormData, TUserWorkspaceRole } from "types";
+import { IWorkspaceBulkInviteFormData } from "types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +20,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: TUserWorkspaceRole;
+  role: EUserWorkspaceRoles;
 };
 
 type FormValues = {

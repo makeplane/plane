@@ -25,7 +25,7 @@ import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;

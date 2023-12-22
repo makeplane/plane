@@ -10,7 +10,7 @@ import { Loader } from "@plane/ui";
 
 export const InboxIssuesListSidebar = observer(() => {
   const router = useRouter();
-  const { inboxId, inboxIssueId } = router.query;
+  const { inboxIssueId } = router.query;
 
   const { currentInboxIssueIds: currentInboxIssues } = useInboxIssues();
 

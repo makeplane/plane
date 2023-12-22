@@ -1,4 +1,4 @@
-import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { renderEmoji } from "helpers/emoji.helper";
 import { ILabelRootStore } from "store/label";

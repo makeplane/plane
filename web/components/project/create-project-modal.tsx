@@ -14,8 +14,6 @@ import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
-// types
-import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
@@ -71,7 +69,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   } = useUser();
   const { currentWorkspace } = useWorkspace();
   const {
-    workspace: { workspaceMemberIds, workspaceMemberMap },
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
   const { addProjectToFavorites, createProject } = useProject();
   // states
@@ -393,16 +391,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                         <Controller
                           name="project_lead_member"
                           control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <WorkspaceMemberSelect
-                              value={
-                                workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]
-                              }
-                              onChange={onChange}
-                              options={workspaceMembers || []}
-                              placeholder="Select Lead"
-                            />
-                          )}
+                          render={({ field: { value, onChange } }) => {
+                            const memberId = workspaceMemberIds?.find((memberId) => memberId === value);
+                            const memberDetails = getWorkspaceMemberDetails(memberId ?? "");
+
+                            return (
+                              <WorkspaceMemberSelect
+                                value={memberDetails ?? undefined}
+                                onChange={onChange}
+                                options={workspaceMemberIds || []}
+                                placeholder="Select Lead"
+                              />
+                            );
+                          }}
                         />
                       </div>
                     </div>

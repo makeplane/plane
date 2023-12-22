@@ -5,7 +5,7 @@ import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useUser } from "hooks/store";
 // constants
 import { THEMES } from "constants/themes";
 // layouts
@@ -17,7 +17,7 @@ import { SWRConfig } from "swr";
 import { SWR_CONFIG } from "constants/swr-config";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
-const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
+// const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
 const CrispWrapper = dynamic(() => import("lib/wrappers/crisp-wrapper"), { ssr: false });
 
 // nprogress
@@ -32,14 +32,8 @@ export interface IAppProvider {
 
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
-
-  const {
-    config: { envConfig },
-  } = useApplication();
-  const {
-    currentUser,
-    membership: { currentProjectRole, currentWorkspaceRole },
-  } = useUser();
+  // store hooks
+  const { currentUser } = useUser();
 
   return (
     <ThemeProvider themes={THEMES} defaultTheme="system">

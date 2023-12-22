@@ -37,7 +37,7 @@ export const ProfileIssuesFilter = observer(() => {
         userId.toString()
       );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, userId]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -62,7 +62,7 @@ export const ProfileIssuesFilter = observer(() => {
         userId.toString()
       );
     },
-    [workspaceSlug, issueFilters, updateFilters]
+    [workspaceSlug, issueFilters, updateFilters, userId]
   );
 
   const handleDisplayFilters = useCallback(
@@ -76,7 +76,7 @@ export const ProfileIssuesFilter = observer(() => {
         userId.toString()
       );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, userId]
   );
 
   const handleDisplayProperties = useCallback(
@@ -90,7 +90,7 @@ export const ProfileIssuesFilter = observer(() => {
         userId.toString()
       );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, userId]
   );
 
   return (

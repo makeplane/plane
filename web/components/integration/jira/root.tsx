@@ -24,7 +24,7 @@ import {
 // assets
 import JiraLogo from "public/services/jira.svg";
 // types
-import { IUser, IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "types";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -52,10 +52,6 @@ const integrationWorkflowData: Array<{
     icon: Check,
   },
 ];
-
-type Props = {
-  user: IUser | undefined;
-};
 
 // services
 const jiraImporterService = new JiraImporterService();

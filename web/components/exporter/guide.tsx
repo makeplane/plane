@@ -35,7 +35,7 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { currentUser, currentUserLoader, currentUserError } = useUser();
+  const { currentUser, currentUserLoader } = useUser();
   // custom hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
 

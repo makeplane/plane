@@ -167,11 +167,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     (issue: IIssue, data: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !user) return;
 
-      const payload = {
-        ...issue,
-        ...data,
-      };
-
       updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
     [projectId, updateIssue, user, workspaceSlug]

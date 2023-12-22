@@ -69,7 +69,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         globalViewId.toString()
       );
     },
-    [workspaceSlug, issueFilters, updateFilters]
+    [workspaceSlug, issueFilters, updateFilters, globalViewId]
   );
 
   const handleDisplayFilters = useCallback(
@@ -83,7 +83,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         globalViewId.toString()
       );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, globalViewId]
   );
 
   const handleDisplayProperties = useCallback(
@@ -97,7 +97,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         globalViewId.toString()
       );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, globalViewId]
   );
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;

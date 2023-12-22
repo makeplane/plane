@@ -41,20 +41,21 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
   get canUserDragDrop() {
     return true;
     if (this.rootStore.issueDetail.peekId) return false;
-    if (
-      this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&
-      this.rootStore?.issueFilter?.userDisplayFilters?.order_by === "sort_order" &&
-      this.rootStore?.issueFilter?.userDisplayFilters?.group_by &&
-      ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.group_by)
-    ) {
-      if (!this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by) return true;
-      if (
-        this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by &&
-        ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by)
-      )
-        return true;
-    }
-    return false;
+    // FIXME: uncomment and fix
+    // if (
+    //   this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&
+    //   this.rootStore?.issueFilter?.userDisplayFilters?.order_by === "sort_order" &&
+    //   this.rootStore?.issueFilter?.userDisplayFilters?.group_by &&
+    //   ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.group_by)
+    // ) {
+    //   if (!this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by) return true;
+    //   if (
+    //     this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by &&
+    //     ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by)
+    //   )
+    //     return true;
+    // }
+    // return false;
   }
 
   get canUserDragDropVertically() {
