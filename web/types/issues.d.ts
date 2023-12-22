@@ -11,6 +11,7 @@ import type {
   IStateLite,
   Properties,
   IIssueDisplayFilterOptions,
+  IIssueReaction,
 } from "types";
 
 export interface IIssueCycle {
@@ -84,6 +85,7 @@ export interface IIssue {
   attachment_count: number;
   attachments: any[];
   issue_relations: IssueRelation[];
+  issue_reactions: IIssueReaction[];
   related_issues: IssueRelation[];
   bridge_id?: string | null;
   completed_at: Date;

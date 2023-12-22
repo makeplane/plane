@@ -27,7 +27,7 @@ export interface ICalendarStore {
   allDaysOfActiveWeek: ICalendarWeek | undefined;
 }
 
-class CalendarStore implements ICalendarStore {
+export class CalendarStore implements ICalendarStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -111,5 +111,3 @@ class CalendarStore implements ICalendarStore {
     });
   };
 }
-
-export default CalendarStore;
