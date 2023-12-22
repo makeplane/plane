@@ -84,6 +84,9 @@ export class ModulesStore implements IModuleStore {
   }
 
   // computed
+  /**
+   * get all module ids for the current project
+   */
   get projectModuleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
@@ -155,14 +158,22 @@ export class ModulesStore implements IModuleStore {
    * @param data
    * @returns IModule
    */
-  updateModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) =>
-    await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data).then((response) => {
-      const moduleDetails = this.getModuleById(moduleId);
+  updateModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) => {
+    const originalModuleDetails = this.getModuleById(moduleId);
+    try {
       runInAction(() => {
-        set(this.moduleMap, [moduleId], { ...moduleDetails, ...data });
+        set(this.moduleMap, [moduleId], { ...originalModuleDetails, ...data });
       });
+      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
       return response;
-    });
+    } catch (error) {
+      console.error("Failed to update module in module store", error);
+      runInAction(() => {
+        set(this.moduleMap, [moduleId], { ...originalModuleDetails });
+      });
+      throw error;
+    }
+  };
 
   /**
    * @description deletes a module
@@ -211,15 +222,25 @@ export class ModulesStore implements IModuleStore {
     moduleId: string,
     linkId: string,
     data: Partial<ILinkDetails>
-  ) =>
-    await this.moduleService.updateModuleLink(workspaceSlug, projectId, moduleId, linkId, data).then((response) => {
-      const moduleDetails = this.getModuleById(moduleId);
-      const linkModules = moduleDetails?.link_module.map((link) => (link.id === linkId ? response : link));
+  ) => {
+    const originalModuleDetails = this.getModuleById(moduleId);
+    try {
+      const linkModules = originalModuleDetails?.link_module.map((link) =>
+        link.id === linkId ? { ...link, ...data } : link
+      );
       runInAction(() => {
         set(this.moduleMap, [moduleId, "link_module"], linkModules);
       });
+      const response = await this.moduleService.updateModuleLink(workspaceSlug, projectId, moduleId, linkId, data);
       return response;
-    });
+    } catch (error) {
+      console.error("Failed to update module link in module store", error);
+      runInAction(() => {
+        set(this.moduleMap, [moduleId, "link_module"], originalModuleDetails?.link_module);
+      });
+      throw error;
+    }
+  };
 
   /**
    * @description deletes a module link
@@ -244,18 +265,23 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @returns
    */
-  addModuleToFavorites = async (workspaceSlug: string, projectId: string, moduleId: string) =>
-    await this.moduleService
-      .addModuleToFavorites(workspaceSlug, projectId, {
-        module: moduleId,
-      })
-      .then(() => {
-        const moduleDetails = this.getModuleById(moduleId);
-        if (moduleDetails?.is_favorite) return;
-        runInAction(() => {
-          set(this.moduleMap, [moduleId, "is_favorite"], true);
-        });
+  addModuleToFavorites = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+    try {
+      const moduleDetails = this.getModuleById(moduleId);
+      if (moduleDetails?.is_favorite) return;
+      runInAction(() => {
+        set(this.moduleMap, [moduleId, "is_favorite"], true);
       });
+      await this.moduleService.addModuleToFavorites(workspaceSlug, projectId, {
+        module: moduleId,
+      });
+    } catch (error) {
+      console.error("Failed to add module to favorites in module store", error);
+      runInAction(() => {
+        set(this.moduleMap, [moduleId, "is_favorite"], false);
+      });
+    }
+  };
 
   /**
    * @description removes a module from favorites
@@ -264,12 +290,19 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @returns
    */
-  removeModuleFromFavorites = async (workspaceSlug: string, projectId: string, moduleId: string) =>
-    await this.moduleService.removeModuleFromFavorites(workspaceSlug, projectId, moduleId).then(() => {
+  removeModuleFromFavorites = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+    try {
       const moduleDetails = this.getModuleById(moduleId);
       if (!moduleDetails?.is_favorite) return;
       runInAction(() => {
         set(this.moduleMap, [moduleId, "is_favorite"], false);
       });
-    });
+      await this.moduleService.removeModuleFromFavorites(workspaceSlug, projectId, moduleId);
+    } catch (error) {
+      console.error("Failed to remove module from favorites in module store", error);
+      runInAction(() => {
+        set(this.moduleMap, [moduleId, "is_favorite"], true);
+      });
+    }
+  };
 }
