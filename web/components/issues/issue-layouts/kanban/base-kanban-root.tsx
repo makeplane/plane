@@ -78,7 +78,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   // toast alert
   const { setToastAlert } = useToast();
 
-  //TODO get from filters
+  // FIXME get from filters
   const kanbanViewStore: IssueKanBanViewStore = {} as IssueKanBanViewStore;
 
   const issueIds = issues?.groupedIssueIds || [];
