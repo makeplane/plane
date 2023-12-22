@@ -13,12 +13,13 @@ import { IIssue, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { EIssueActions } from "../issue-layouts/types";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>) => void;
+  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => void;
   isArchived?: boolean;
   children?: ReactNode;
 }
@@ -28,7 +29,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // router
   const router = useRouter();
   const { peekIssueId } = router.query;
-  //TODO
+  // FIXME
   // store hooks
   // const {
   //   archivedIssueDetail: {
@@ -71,9 +72,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (workspaceSlug && projectId && peekIssueId) {
       //if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
       //else
-      await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId.toString());
     }
-  }, [fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId, isArchived]);
+  }, [fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId]);
 
   useEffect(() => {
     fetchIssueDetail();
@@ -107,7 +108,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueUpdate = async (_data: Partial<IIssue>) => {
     if (handleIssue) {
-      await handleIssue(_data);
+      await handleIssue(_data, EIssueActions.UPDATE);
       fetchIssueActivity(workspaceSlug, projectId, issueId);
     }
   };
@@ -144,7 +145,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (!issue) return;
 
     if (isArchived) await removeIssue(workspaceSlug, projectId, issue?.id);
-    //TODO else delete...
+    // FIXME else delete...
     const { query } = router;
     if (query.peekIssueId) {
       setPeekId(null);

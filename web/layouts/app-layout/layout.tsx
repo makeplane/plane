@@ -6,7 +6,7 @@ import { CommandPalette } from "components/command-palette";
 import { AppSidebar } from "./sidebar";
 import { observer } from "mobx-react-lite";
 
-// TODO: remove this later
+//  FIXME: remove this later
 import { useIssues } from "hooks/store/use-issues";
 import { EIssuesStoreType } from "constants/issue";
 import useSWR from "swr";

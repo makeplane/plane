@@ -1,53 +1,40 @@
 import React from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
-// services
-import { ProjectMemberService } from "services/project";
-// ui
-import { Avatar, CustomSearchSelect } from "@plane/ui";
-// icons
+import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { UserCircle } from "lucide-react";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// hooks
 import { useMember } from "hooks/store";
-import { observer } from "mobx-react-lite";
+// ui
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 
 type Props = {
   value: string | null;
   onChange: () => void;
 };
 
-const projectMemberService = new ProjectMemberService();
+export const ModuleLeadSelect: React.FC<Props> = observer((props) => {
+  const { value, onChange } = props;
+  // store hooks
+  const {
+    getUserDetails,
+    project: { projectMemberIds },
+  } = useMember();
 
-export const ModuleLeadSelect: React.FC<Props> = observer(({ value, onChange }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { memberMap } = useMember();
-
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const options = members?.map((membership) => {
-    const member = memberMap[membership.id];
+  const options = projectMemberIds?.map((memberId) => {
+    const member = getUserDetails(memberId);
     return {
-      value: member.id,
-      query: member.display_name ?? "",
+      value: `${member?.id}`,
+      query: member?.display_name ?? "",
       content: (
         <div className="flex items-center gap-2">
-          <Avatar name={member.display_name} src={member.avatar} />
-          {member.display_name}
+          <Avatar name={member?.display_name} src={member?.avatar} />
+          {member?.display_name}
         </div>
       ),
     };
   });
 
-  const selectedOption = memberMap[members?.find((m) => m.member === value)?.id || ""];
+  const selectedOption = getUserDetails(projectMemberIds?.find((m) => m === value) || "");
 
   return (
     <CustomSearchSelect

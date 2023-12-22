@@ -24,7 +24,8 @@ export interface IProjectMemberStore {
   // computed
   projectMemberIds: string[] | null;
   // computed actions
-  getProjectMemberDetails: (projectMemberId: string) => IProjectMemberDetails | null;
+  getProjectMemberDetails: (userId: string) => IProjectMemberDetails | null;
+  getProjectMemberIds: (projectId: string) => string[] | null;
   // fetch actions
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<IProjectMembership[]>;
   // bulk operation actions
@@ -62,6 +63,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
       projectMemberIds: computed,
       // computed actions
       getProjectMemberDetails: action,
+      getProjectMemberIds: action,
       // actions
       fetchProjectMembers: action,
       bulkAddMembersToProject: action,
@@ -102,6 +104,8 @@ export class ProjectMemberStore implements IProjectMemberStore {
     };
     return memberDetails;
   };
+
+  getProjectMemberIds = (projectId: string): string[] | null => Object.keys(this.projectMemberMap?.[projectId] ?? {});
 
   /**
    * @description fetch the list of all the members of a project

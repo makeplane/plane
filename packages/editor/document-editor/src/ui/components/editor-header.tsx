@@ -1,13 +1,12 @@
 import { Editor } from "@tiptap/react";
 import { Archive, RefreshCw, Lock } from "lucide-react";
-import { IMarking } from "..";
-import { FixedMenu } from "../menu";
-import { UploadImage } from "@plane/editor-types";
-import { DocumentDetails } from "../types/editor-types";
-import { AlertLabel } from "./alert-label";
-import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "./vertical-dropdown-menu";
-import { SummaryPopover } from "./summary-popover";
-import { InfoPopover } from "./info-popover";
+import { IMarking, DocumentDetails } from "src/types/editor-types";
+import { FixedMenu } from "src/ui/menu";
+import { UploadImage } from "@plane/editor-core";
+import { AlertLabel } from "src/ui/components/alert-label";
+import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "src/ui/components/vertical-dropdown-menu";
+import { SummaryPopover } from "src/ui/components/summary-popover";
+import { InfoPopover } from "src/ui/components/info-popover";
 
 interface IEditorHeader {
   editor: Editor;

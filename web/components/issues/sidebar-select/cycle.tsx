@@ -38,7 +38,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string) //TODO, "incomplete")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string) // FIXME, "incomplete")
       : null
   );
 

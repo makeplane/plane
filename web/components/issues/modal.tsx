@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useIssues, useProject, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // services
@@ -84,6 +84,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { currentUser } = useUser();
   const { currentWorkspace } = useWorkspace();
   const { workspaceProjectIds } = useProject();
+  const { fetchCycleDetails } = useCycle();
+  const { fetchModuleDetails } = useModule();
 
   const issueStores = {
     [EIssuesStoreType.PROJECT]: {
@@ -181,7 +183,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
    */
 
   const onDiscardClose = () => {
-    if (formDirtyState !== null) {
+    if (formDirtyState !== null && formDirtyState.name.trim() !== "") {
       setShowConfirmDiscard(true);
     } else {
       handleClose();
@@ -217,13 +219,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    cycleIssues.addIssueToCycle(workspaceSlug, issue.project, cycleId, [issue.id]);
+    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project, cycleId, [issue.id]);
+    fetchCycleDetails(workspaceSlug, activeProject, cycleId);
   };
 
   const addIssueToModule = async (issue: IIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    moduleIssues.addIssueToModule(workspaceSlug, activeProject, moduleId, [issue.id]);
+    await moduleIssues.addIssueToModule(workspaceSlug, activeProject, moduleId, [issue.id]);
+    fetchModuleDetails(workspaceSlug, activeProject, moduleId);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {

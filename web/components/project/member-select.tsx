@@ -1,9 +1,7 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { Ban } from "lucide-react";
-// store hooks
+// hooks
 import { useMember } from "hooks/store";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
@@ -16,24 +14,12 @@ type Props = {
 
 export const MemberSelect: React.FC<Props> = observer((props) => {
   const { value, onChange, isDisabled = false } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
-    project: { fetchProjectMembers, projectMemberIds, getProjectMemberDetails, projectMemberMap },
+    project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
 
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
-  );
-
-  console.log("projectMemberIds", projectMemberIds);
-
   const options = projectMemberIds?.map((userId) => {
-    console.log("userId", userId);
-    console.log("projectMemberMap", projectMemberMap);
     const memberDetails = getProjectMemberDetails(userId);
 
     return {

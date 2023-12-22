@@ -1,7 +1,7 @@
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
-import { useLabel, useProject, useProjectState } from "hooks/store";
+import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
 import {
   GroupByColumnTypes,
@@ -59,11 +59,12 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     addIssuesToView,
   } = props;
   // store hooks
+  const member = useMember();
   const project = useProject();
   const projectLabel = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member, true);
 
   if (!list) return null;
 

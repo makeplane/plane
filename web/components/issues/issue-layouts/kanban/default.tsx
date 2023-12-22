@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useKanbanView, useLabel, useProject, useProjectState } from "hooks/store";
+import { useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -68,11 +68,12 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     canEditProperties,
   } = props;
 
+  const member = useMember();
   const project = useProject();
   const projectLabel = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member);
 
   if (!list) return null;
 

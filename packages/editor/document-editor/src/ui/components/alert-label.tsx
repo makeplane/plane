@@ -1,12 +1,11 @@
-import { Icon } from "lucide-react";
+import { LucideIconType } from "@plane/editor-core";
 
 interface IAlertLabelProps {
-  Icon?: Icon;
+  Icon?: LucideIconType;
   backgroundColor: string;
   textColor?: string;
   label: string;
 }
-
 export const AlertLabel = (props: IAlertLabelProps) => {
   const { Icon, backgroundColor, textColor, label } = props;
 

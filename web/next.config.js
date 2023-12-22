@@ -2,6 +2,14 @@ require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/(.*)?",
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+      },
+    ];
+  },
   reactStrictMode: false,
   swcMinify: true,
   images: {

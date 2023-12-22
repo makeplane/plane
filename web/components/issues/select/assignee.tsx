@@ -1,13 +1,13 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// services
-import { ProjectMemberService } from "services/project";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useMember } from "hooks/store";
 // ui
 import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
-import { useMember } from "hooks/store";
-import { observer } from "mobx-react-lite";
 
 export type Props = {
   projectId: string;
@@ -15,34 +15,43 @@ export type Props = {
   onChange: (value: string[]) => void;
 };
 
-const projectMemberService = new ProjectMemberService();
-
-export const IssueAssigneeSelect: React.FC<Props> = observer(({ projectId, value = [], onChange }) => {
+export const IssueAssigneeSelect: React.FC<Props> = observer((props) => {
+  const { projectId, value = [], onChange } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    getUserDetails,
+    project: { fetchProjectMembers, getProjectMemberIds },
+  } = useMember();
+  // derived values
+  const memberIds = getProjectMemberIds(projectId);
 
-  const { memberMap } = useMember();
-
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
-      : null
+  useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
+    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
   );
 
-  const options = members?.map((membership) => {
-    const member = memberMap[membership.id];
+  const options = memberIds?.map((memberId) => {
+    const member = getUserDetails(memberId);
     return {
-      value: member.id,
-      query: member.display_name ?? "",
+      value: `${member?.id}`,
+      query: member?.display_name ?? "",
       content: (
         <div className="flex items-center gap-2">
-          <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
-          {member.is_bot ? member.first_name : member.display_name}
+          <Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} />
+          {member?.is_bot ? member?.first_name : member?.display_name}
         </div>
       ),
     };
   });
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+
+    if (!memberIds) fetchProjectMembers(workspaceSlug.toString(), projectId);
+  }, [fetchProjectMembers, memberIds, projectId, workspaceSlug]);
 
   return (
     <CustomSearchSelect
@@ -55,9 +64,9 @@ export const IssueAssigneeSelect: React.FC<Props> = observer(({ projectId, value
             <div className="-my-0.5 flex items-center justify-center gap-2">
               <AvatarGroup showTooltip={false}>
                 {value.map((assigneeId) => {
-                  const membership = members?.find((m) => m.member === assigneeId)?.id;
+                  const memberId = memberIds?.find((m) => m === assigneeId);
 
-                  const member = memberMap[membership || ""];
+                  const member = getUserDetails(memberId ?? "");
 
                   if (!member) return null;
 

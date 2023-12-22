@@ -18,7 +18,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
-    // TODO
+    //  FIXME
     //updateModuleGanttStructure(workspaceSlug.toString(), module.project, module, payload);
   };
 

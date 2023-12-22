@@ -1,31 +1,31 @@
 import { useState } from "react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useMember } from "hooks/store";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Avatar, Loader } from "@plane/ui";
-// types
-import { IUserLite } from "types";
-import { observer } from "mobx-react-lite";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   memberIds: string[] | undefined;
-  memberMap: Record<string, IUserLite>;
   searchQuery: string;
 };
 
 export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
-  const { appliedFilters, handleUpdate, memberMap, memberIds, searchQuery } = props;
-
+  const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
+  // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  // store hooks
+  const { getUserDetails } = useMember();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = memberIds?.filter(
-    (memberId) =>
-      memberMap[memberId] && memberMap[memberId].display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = memberIds?.filter((memberId) =>
+    getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleViewToggle = () => {
@@ -48,7 +48,7 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
             filteredOptions.length > 0 ? (
               <>
                 {filteredOptions.slice(0, itemsToRender).map((memberId) => {
-                  const member = memberMap[memberId];
+                  const member = getUserDetails(memberId);
 
                   if (!member) return null;
                   return (

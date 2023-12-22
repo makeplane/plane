@@ -10,10 +10,10 @@ class DynamicBaseSerializer(BaseSerializer):
         # If 'fields' is provided in the arguments, remove it and store it separately.
         # This is done so as not to pass this custom argument up to the superclass.
         fields = kwargs.pop("fields", None)
+        self.expand = kwargs.pop("expand", []) or []
 
         # Call the initialization of the superclass.
         super().__init__(*args, **kwargs)
-
         # If 'fields' was provided, filter the fields of the serializer accordingly.
         if fields is not None:
             self.fields = self._filter_fields(fields)
@@ -56,3 +56,56 @@ class DynamicBaseSerializer(BaseSerializer):
             self.fields.pop(field_name)
 
         return self.fields
+
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+
+        # Ensure 'expand' is iterable before processing
+        if self.expand:
+            for expand in self.expand:
+                if expand in self.fields:
+                    # Import all the expandable serializers
+                    from . import (
+                        WorkspaceLiteSerializer,
+                        ProjectLiteSerializer,
+                        UserLiteSerializer,
+                        StateLiteSerializer,
+                        IssueSerializer,
+                        LabelSerializer,
+                        CycleIssueSerializer,
+                    )
+
+                    # Expansion mapper
+                    expansion = {
+                        "user": UserLiteSerializer,
+                        "workspace": WorkspaceLiteSerializer,
+                        "project": ProjectLiteSerializer,
+                        "default_assignee": UserLiteSerializer,
+                        "project_lead": UserLiteSerializer,
+                        "state": StateLiteSerializer,
+                        "created_by": UserLiteSerializer,
+                        "issue": IssueSerializer,
+                        "actor": UserLiteSerializer,
+                        "owned_by": UserLiteSerializer,
+                        "members": UserLiteSerializer,
+                        "assignees": UserLiteSerializer,
+                        "labels": LabelSerializer,
+                        "issue_cycle": CycleIssueSerializer,
+                    }
+                    # Check if field in expansion then expand the field
+                    if expand in expansion:
+                        if isinstance(response.get(expand), list):
+                            exp_serializer = expansion[expand](
+                                getattr(instance, expand), many=True
+                            )
+                        else:
+                            exp_serializer = expansion[expand](
+                                getattr(instance, expand)
+                            )
+                        response[expand] = exp_serializer.data
+                    else:
+                        # You might need to handle this case differently
+                        response[expand] = getattr(instance, f"{expand}_id", None)
+
+        return response

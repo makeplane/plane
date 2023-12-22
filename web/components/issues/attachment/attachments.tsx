@@ -2,50 +2,44 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react-lite";
+import { AlertCircle, X } from "lucide-react";
+// hooks
+import { useMember } from "hooks/store";
 // ui
 import { Tooltip } from "@plane/ui";
 import { DeleteAttachmentModal } from "./delete-attachment-modal";
 // icons
 import { getFileIcon } from "components/icons";
-import { AlertCircle, X } from "lucide-react";
 // services
 import { IssueAttachmentService } from "services/issue";
-import { ProjectMemberService } from "services/project";
 // fetch-key
-import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 import { renderLongDateFormat } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
 import { IIssueAttachment } from "types";
-import { useMember } from "hooks/store";
-import { observer } from "mobx-react-lite";
 
 // services
 const issueAttachmentService = new IssueAttachmentService();
-const projectMemberService = new ProjectMemberService();
 
 export const IssueAttachments = observer(() => {
+  // states
   const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
   const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { memberMap } = useMember();
+  // store hooks
+  const { getUserDetails } = useMember();
 
   const { data: attachments } = useSWR<IIssueAttachment[]>(
-    workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
+    workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () => issueAttachmentService.getIssueAttachment(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
-  const { data: people } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () =>
+          issueAttachmentService.getIssueAttachment(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
@@ -73,8 +67,7 @@ export const IssueAttachments = observer(() => {
                     </Tooltip>
                     <Tooltip
                       tooltipContent={`${
-                        memberMap[people?.find((person) => person.member === file.updated_by)?.id || ""]
-                          ?.display_name ?? ""
+                        getUserDetails(file.updated_by)?.display_name ?? ""
                       } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                     >
                       <span>

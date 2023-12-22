@@ -10,6 +10,8 @@ import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
 import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssuePropertyEstimates } from "./estimates";
+import { IssuePropertyAssignee } from "./assignee";
 
 export interface IIssueProperties {
   issue: IIssue;
@@ -111,20 +113,19 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* assignee */}
-      {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
-          defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={isReadOnly}
           multiple
         />
-      </WithDisplayPropertiesHOC> */}
+      </WithDisplayPropertiesHOC>
 
       {/* estimates */}
-      {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
         <IssuePropertyEstimates
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
@@ -132,7 +133,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           disabled={isReadOnly}
           hideDropdownArrow
         />
-      </WithDisplayPropertiesHOC> */}
+      </WithDisplayPropertiesHOC>
 
       {/* extra render properties */}
       {/* sub-issues */}

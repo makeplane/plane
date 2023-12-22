@@ -16,7 +16,7 @@ import {
 } from "types";
 // constants
 import { EIssueActions } from "../types";
-import { useLabel, useProject, useProjectState } from "hooks/store";
+import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
 
@@ -204,12 +204,19 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     viewId,
   } = props;
 
+  const member = useMember();
   const project = useProject();
   const projectLabel = useLabel();
   const projectState = useProjectState();
 
-  const groupByList = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState);
-  const subGroupByList = getGroupByColumns(sub_group_by as GroupByColumnTypes, project, projectLabel, projectState);
+  const groupByList = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member);
+  const subGroupByList = getGroupByColumns(
+    sub_group_by as GroupByColumnTypes,
+    project,
+    projectLabel,
+    projectState,
+    member
+  );
 
   if (!groupByList || !subGroupByList) return null;
 
