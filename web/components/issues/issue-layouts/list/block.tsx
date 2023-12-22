@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 // components
 import { IssueProperties } from "../properties/all-properties";
 // ui
@@ -16,7 +17,7 @@ interface IssueBlockProps {
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
-export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
+export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
   const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // router
   const router = useRouter();
@@ -81,4 +82,4 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
       </div>
     </>
   );
-};
+});
