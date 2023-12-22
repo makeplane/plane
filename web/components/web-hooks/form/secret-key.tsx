@@ -26,7 +26,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   const [shouldShowKey, setShouldShowKey] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, webhookId } = router.query;
   // store
   const {
     webhook: { currentWebhook, regenerateSecretKey, webhookSecretKey },
@@ -92,7 +92,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
     <>
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
-          <div className="text-sm font-medium">Secret key</div>
+          {webhookId && <div className="text-sm font-medium">Secret key</div>}
           <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
           <div className="flex items-center gap-4">
             <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
