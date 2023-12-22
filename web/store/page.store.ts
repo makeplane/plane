@@ -214,12 +214,19 @@ export class PageStore implements IPageStore {
    * @param projectId
    * @param pageId
    */
-  addToFavorites = async (workspaceSlug: string, projectId: string, pageId: string) =>
-    await this.pageService.addPageToFavorites(workspaceSlug, projectId, pageId).then(() => {
+  addToFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
       runInAction(() => {
         set(this.pages, [pageId, "is_favorite"], true);
       });
-    });
+      await this.pageService.addPageToFavorites(workspaceSlug, projectId, pageId);
+    } catch (error) {
+      runInAction(() => {
+        set(this.pages, [pageId, "is_favorite"], false);
+      });
+      throw error;
+    }
+  };
 
   /**
    * Remove page from the users favorites list
@@ -227,13 +234,19 @@ export class PageStore implements IPageStore {
    * @param projectId
    * @param pageId
    */
-  removeFromFavorites = async (workspaceSlug: string, projectId: string, pageId: string) =>
-    await this.pageService.removePageFromFavorites(workspaceSlug, projectId, pageId).then(() => {
+  removeFromFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
       runInAction(() => {
         set(this.pages, [pageId, "is_favorite"], false);
       });
-    });
-
+      await this.pageService.removePageFromFavorites(workspaceSlug, projectId, pageId);
+    } catch (error) {
+      runInAction(() => {
+        set(this.pages, [pageId, "is_favorite"], true);
+      });
+      throw error;
+    }
+  };
   /**
    * Creates a new page using the api and updated the local state in store
    * @param workspaceSlug
@@ -287,12 +300,19 @@ export class PageStore implements IPageStore {
    * @param pageId
    * @returns
    */
-  makePublic = async (workspaceSlug: string, projectId: string, pageId: string) =>
-    await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 }).then(() => {
+  makePublic = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
       runInAction(() => {
         set(this.pages, [pageId, "access"], 0);
       });
-    });
+      await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
+    } catch (error) {
+      runInAction(() => {
+        set(this.pages, [pageId, "access"], 1);
+      });
+      throw error;
+    }
+  };
 
   /**
    * Make a page private
@@ -301,12 +321,19 @@ export class PageStore implements IPageStore {
    * @param pageId
    * @returns
    */
-  makePrivate = async (workspaceSlug: string, projectId: string, pageId: string) =>
-    await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 }).then(() => {
+  makePrivate = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
       runInAction(() => {
         set(this.pages, [pageId, "access"], 1);
       });
-    });
+      await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
+    } catch (error) {
+      runInAction(() => {
+        set(this.pages, [pageId, "access"], 0);
+      });
+      throw error;
+    }
+  };
 
   /**
    * Mark a page archived

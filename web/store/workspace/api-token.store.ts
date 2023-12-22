@@ -32,17 +32,17 @@ export class ApiTokenStore implements IApiTokenStore {
       apiTokens: observable,
       // computed actions
       getApiTokenById: action,
-      // actions
+      // fetch actions
       fetchApiTokens: action,
       fetchApiTokenDetails: action,
+      // CRUD actions
       createApiToken: action,
       deleteApiToken: action,
     });
-
-    // services
-    this.apiTokenService = new APITokenService();
     // root store
     this.rootStore = _rootStore;
+    // services
+    this.apiTokenService = new APITokenService();
   }
 
   /**
@@ -107,7 +107,6 @@ export class ApiTokenStore implements IApiTokenStore {
     await this.apiTokenService.deleteApiToken(workspaceSlug, tokenId).then(() => {
       const updatedApiTokens = { ...this.apiTokens };
       delete updatedApiTokens[tokenId];
-
       runInAction(() => {
         this.apiTokens = updatedApiTokens;
       });

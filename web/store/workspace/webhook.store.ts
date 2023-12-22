@@ -22,6 +22,7 @@ export interface IWebhookStore {
   ) => Promise<{ webHook: IWebhook; secretKey: string | null }>;
   updateWebhook: (workspaceSlug: string, webhookId: string, data: Partial<IWebhook>) => Promise<IWebhook>;
   removeWebhook: (workspaceSlug: string, webhookId: string) => Promise<void>;
+  // secret key actions
   regenerateSecretKey: (
     workspaceSlug: string,
     webhookId: string
@@ -47,12 +48,14 @@ export class WebhookStore implements IWebhookStore {
       currentWebhook: computed,
       // computed actions
       getWebhookById: action,
-      // actions
+      // fetch actions
       fetchWebhooks: action,
       fetchWebhookById: action,
+      // CRUD actions
       createWebhook: action,
       updateWebhook: action,
       removeWebhook: action,
+      // secret key actions
       regenerateSecretKey: action,
       clearSecretKey: action,
     });

@@ -51,11 +51,13 @@ export class StateStore implements IStateStore {
       groupedProjectStates: computed,
       // computed actions
       getProjectStates: action,
-      // actions
+      // fetch action
       fetchProjectStates: action,
+      // CRUD actions
       createState: action,
       updateState: action,
       deleteState: action,
+      // state actions
       markStateAsDefault: action,
       moveStatePosition: action,
     });
