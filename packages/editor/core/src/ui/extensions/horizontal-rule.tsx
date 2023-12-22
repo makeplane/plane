@@ -22,7 +22,7 @@ declare module "@tiptap/core" {
   }
 }
 
-export default Node.create<HorizontalRuleOptions>({
+export const HorizontalRule = Node.create<HorizontalRuleOptions>({
   name: "horizontalRule",
 
   addOptions() {

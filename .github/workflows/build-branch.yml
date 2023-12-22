@@ -9,6 +9,7 @@ on:
       - preview
       - qa
       - develop
+      - release-*
   release:
     types: [released, prereleased]
 
@@ -62,14 +63,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Frontend Docker Tag 
         run: |
           if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
             TAG=${{ env.FRONTEND_TAG }}
           fi
@@ -104,14 +105,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Space Docker Tag 
         run: |
           if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
             TAG=${{ env.SPACE_TAG }}
           fi
@@ -146,14 +147,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Backend Docker Tag 
         run: |
           if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
             TAG=${{ env.BACKEND_TAG }}
           fi
@@ -188,14 +189,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Proxy Docker Tag 
         run: |
           if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
             TAG=${{ env.PROXY_TAG }}
           fi

@@ -68,6 +68,12 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     append({ email: "", role: 15 });
   };
 
+  const onSubmitForm = async (data: FormValues) => {
+    await onSubmit(data)?.then(() => {
+      reset(defaultValues);
+    });
+  };
+
   useEffect(() => {
     if (fields.length === 0) append([{ email: "", role: 15 }]);
   }, [fields, append]);
@@ -100,7 +106,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
             >
               <Dialog.Panel className="relative translate-y-0 transform rounded-lg bg-custom-background-100 p-5 text-left opacity-100 shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl sm:scale-100">
                 <form
-                  onSubmit={handleSubmit(onSubmit)}
+                  onSubmit={handleSubmit(onSubmitForm)}
                   onKeyDown={(e) => {
                     if (e.code === "Enter") e.preventDefault();
                   }}

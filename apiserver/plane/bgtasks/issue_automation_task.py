@@ -16,7 +16,7 @@ from plane.db.models import Issue, Project, State
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def archive_and_close_old_issues():
     archive_old_issues()
     close_old_issues()

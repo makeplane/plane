@@ -3,7 +3,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 export interface TableHeaderOptions {
   HTMLAttributes: Record<string, any>;
 }
-export default Node.create<TableHeaderOptions>({
+
+export const TableHeader = Node.create<TableHeaderOptions>({
   name: "tableHeader",
 
   addOptions() {

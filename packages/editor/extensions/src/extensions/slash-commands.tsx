@@ -3,7 +3,6 @@ import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import type { UploadImage, ISlashCommandItem, CommandProps } from "@plane/editor-types";
 import {
   CaseSensitive,
   Code2,
@@ -19,6 +18,9 @@ import {
   Table,
 } from "lucide-react";
 import {
+  UploadImage,
+  ISlashCommandItem,
+  CommandProps,
   cn,
   insertTableCommand,
   toggleBlockquote,

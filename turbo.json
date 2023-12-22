@@ -71,24 +71,21 @@
       "cache": true,
       "dependsOn": [
         "@plane/editor-core#build",
-        "@plane/editor-extensions#build",
-        "@plane/editor-types#build"
+        "@plane/editor-extensions#build"
       ]
     },
     "@plane/rich-text-editor#build": {
       "cache": true,
       "dependsOn": [
         "@plane/editor-core#build",
-        "@plane/editor-extensions#build",
-        "@plane/editor-types#build"
+        "@plane/editor-extensions#build"
       ]
     },
     "@plane/document-editor#build": {
       "cache": true,
       "dependsOn": [
         "@plane/editor-core#build",
-        "@plane/editor-extensions#build",
-        "@plane/editor-types#build"
+        "@plane/editor-extensions#build"
       ]
     },
     "test": {
