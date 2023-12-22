@@ -42,10 +42,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
           disabled ? "cursor-not-allowed" : "cursor-pointer "
         }`}
         onClick={() => {
-          if (issueDetails?.parent) {
-            onChange("");
-            setSelectedParentIssue(null);
-          } else {
+          if (!issueDetails?.parent) {
             setIsParentModalOpen(true);
           }
         }}
@@ -58,7 +55,10 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
         ) : (
           <span className="text-custom-text-200">Select issue</span>
         )}
-        {issueDetails?.parent && <X className="h-2.5 w-2.5" />}
+        {issueDetails?.parent && <X className="h-2.5 w-2.5" onClick={() => {
+            onChange("");
+            setSelectedParentIssue(null);
+        }} />}
       </button>
     </>
   );
