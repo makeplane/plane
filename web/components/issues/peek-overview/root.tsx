@@ -29,7 +29,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // router
   const router = useRouter();
   const { peekIssueId } = router.query;
-  //TODO
+  // FIXME
   // store hooks
   // const {
   //   archivedIssueDetail: {
@@ -145,7 +145,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (!issue) return;
 
     if (isArchived) await removeIssue(workspaceSlug, projectId, issue?.id);
-    //TODO else delete...
+    // FIXME else delete...
     const { query } = router;
     if (query.peekIssueId) {
       setPeekId(null);
