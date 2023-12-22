@@ -4,6 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import { RootStore } from "../root.store";
 // issues data store
 import { IIssueStore, IssueStore } from "./issue.store";
+import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
 import { IProfileIssuesFilter, ProfileIssuesFilter, IProfileIssues, ProfileIssues } from "./profile";
 import { IProjectIssuesFilter, ProjectIssuesFilter, IProjectIssues, ProjectIssues } from "./project";
@@ -18,10 +19,10 @@ import {
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
-import IssueCalendarViewStore, { ICalendarStore } from "./issue_calendar_view.store";
-import { IIssueDetailStore, IssueDetailStore } from "./issue_detail.store";
+import { ICalendarStore, CalendarStore } from "./issue_calendar_view.store";
 
 export interface IIssueRootStore {
+  currentUserId: string | undefined;
   workspaceSlug: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
@@ -35,6 +36,8 @@ export interface IIssueRootStore {
   projects: string[] | undefined;
 
   issues: IIssueStore;
+
+  issueDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -62,11 +65,10 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
-
-  issueDetail: IIssueDetailStore;
 }
 
 export class IssueRootStore implements IIssueRootStore {
+  currentUserId: string | undefined = undefined;
   workspaceSlug: string | undefined = undefined;
   projectId: string | undefined = undefined;
   cycleId: string | undefined = undefined;
@@ -108,7 +110,7 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  issueDetail: IIssueDetailStore;
+  issueDetail: IIssueDetail;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
@@ -125,6 +127,7 @@ export class IssueRootStore implements IIssueRootStore {
     });
 
     autorun(() => {
+      if (rootStore.user.currentUser?.id) this.currentUserId = rootStore.user.currentUser?.id;
       if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
       if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
       if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
@@ -141,6 +144,8 @@ export class IssueRootStore implements IIssueRootStore {
     });
 
     this.issues = new IssueStore();
+
+    this.issueDetail = new IssueDetail(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this);
@@ -167,8 +172,6 @@ export class IssueRootStore implements IIssueRootStore {
     this.draftIssues = new DraftIssues(this);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
-    this.issueCalendarView = new IssueCalendarViewStore();
-
-    this.issueDetail = new IssueDetailStore(this, rootStore);
+    this.issueCalendarView = new CalendarStore();
   }
 }
