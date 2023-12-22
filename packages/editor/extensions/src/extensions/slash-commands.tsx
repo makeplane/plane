@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
-import Suggestion from "@tiptap/suggestion";
+import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
 import {
@@ -40,7 +40,11 @@ interface CommandItemProps {
   icon: ReactNode;
 }
 
-const Command = Extension.create({
+export type SlashCommandOptions = {
+  suggestion: Omit<SuggestionOptions, "editor">;
+};
+
+const Command = Extension.create<SlashCommandOptions>({
   name: "slash-command",
   addOptions() {
     return {
@@ -49,6 +53,10 @@ const Command = Extension.create({
         command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
         },
+        allow({ editor }: { editor: Editor }) {
+          return !editor.isActive("table");
+        },
+        allowSpaces: true,
       },
     };
   },
@@ -56,9 +64,6 @@ const Command = Extension.create({
     return [
       Suggestion({
         editor: this.editor,
-        allow({ editor }) {
-          return !editor.isActive("table");
-        },
         ...this.options.suggestion,
       }),
     ];
@@ -175,7 +180,7 @@ const getSuggestionItems =
         key: "image",
         title: "Image",
         description: "Upload an image from your computer.",
-        searchTerms: ["photo", "picture", "media"],
+        searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           insertImageCommand(editor, uploadFile, setIsSubmitting, range);
