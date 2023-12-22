@@ -33,7 +33,7 @@ export const KanBanLayout: React.FC = observer(() => {
         await issues.removeIssue(workspaceSlug, issue.project, issue.id);
       },
     }),
-    [issues]
+    [issues, workspaceSlug]
   );
 
   return (
