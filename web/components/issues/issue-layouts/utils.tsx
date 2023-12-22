@@ -1,7 +1,8 @@
-import { PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { renderEmoji } from "helpers/emoji.helper";
 import { ILabelRootStore } from "store/label";
+import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
 import { GroupByColumnTypes, IGroupByColumn } from "types";
@@ -11,8 +12,8 @@ export const getGroupByColumns = (
   project: IProjectStore,
   projectLabel: ILabelRootStore,
   projectState: IStateStore,
+  member: IMemberRootStore,
   includeNone?: boolean
-  //projectMember?: IProjectMemberStore,
 ): IGroupByColumn[] | undefined => {
   switch (groupBy) {
     case "project":
@@ -25,10 +26,10 @@ export const getGroupByColumns = (
       return getPriorityColumns();
     case "labels":
       return getLabelsColumns(projectLabel);
-    // case "assignees":
-    //   return getAssigneeColumns(projectMember);
-    // case "created_by":
-    //   return getCreatedByColumns(projectMember);
+    case "assignees":
+      return getAssigneeColumns(member);
+    case "created_by":
+      return getCreatedByColumns(member);
     default:
       if (includeNone) return [{ id: `null`, name: `All Issues`, payload: {}, Icon: undefined }];
   }
@@ -114,34 +115,44 @@ const getLabelsColumns = (projectLabel: ILabelRootStore) => {
   }));
 };
 
-// const getAssigneeColumns = (projectMember: IProjectMemberStore) => {
-//   const { projectMembers: users } = projectMember;
-//   if (!users) return;
+const getAssigneeColumns = (member: IMemberRootStore) => {
+  const {
+    project: { projectMemberIds },
+    getUserDetails,
+  } = member;
 
-//   return users
-//     .map((user) => {
-//       const member = user.member;
-//       return {
-//         id: member?.id,
-//         name: member?.display_name || "",
-//         Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-//         payload: { assignees: [member?.id] },
-//       };
-//     })
-//     .push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: {} });
-// };
+  if (!projectMemberIds) return;
 
-// const getCreatedByColumns = (projectMember: IProjectMemberStore) => {
-//   const { projectMembers: users } = projectMember;
-//   if (!users) return;
+  const assigneeColumns = projectMemberIds.map((memberId) => {
+    const member = getUserDetails(memberId);
+    return {
+      id: memberId,
+      name: member?.display_name || "",
+      Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      payload: { assignees: [memberId] },
+    };
+  });
 
-//   return users.map((user) => {
-//     const member = user.member;
-//     return {
-//       id: member?.id,
-//       name: member?.display_name || "",
-//       Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-//       payload: { created_by: member?.id },
-//     };
-//   });
-// };
+  assigneeColumns.push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: { assignees: [""] } });
+
+  return assigneeColumns;
+};
+
+const getCreatedByColumns = (member: IMemberRootStore) => {
+  const {
+    project: { projectMemberIds },
+    getUserDetails,
+  } = member;
+
+  if (!projectMemberIds) return;
+
+  return projectMemberIds.map((memberId) => {
+    const member = getUserDetails(memberId);
+    return {
+      id: memberId,
+      name: member?.display_name || "",
+      Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      payload: { assignees: [memberId] },
+    };
+  });
+};
