@@ -217,9 +217,8 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        issues = IssueSerializer(issue_queryset, many=True, fields=self.fields, expand=self.expand).data
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -256,7 +255,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         ).get(workspace__slug=slug, project_id=project_id, pk=pk)
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(IssueSerializer(issue, fields=self.fields, expand=self.expand).data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
