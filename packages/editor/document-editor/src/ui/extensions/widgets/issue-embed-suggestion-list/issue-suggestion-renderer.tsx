@@ -171,7 +171,7 @@ const IssueSuggestionList = ({
                           section === currentSection && index === selectedIndex,
                       }
                     )}
-                    key={index}
+                    key={item.identifier}
                     onClick={() => selectItem(index)}
                   >
                     <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item.identifier}</h5>

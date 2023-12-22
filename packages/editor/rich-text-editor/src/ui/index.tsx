@@ -1,9 +1,17 @@
 "use client";
 import * as React from "react";
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from "@plane/editor-core";
-import { EditorBubbleMenu } from "./menus/bubble-menu";
-import { RichTextEditorExtensions } from "./extensions";
-import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-types";
+import {
+  DeleteImage,
+  EditorContainer,
+  EditorContentWrapper,
+  getEditorClassNames,
+  IMentionSuggestion,
+  RestoreImage,
+  UploadImage,
+  useEditor,
+} from "@plane/editor-core";
+import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
+import { RichTextEditorExtensions } from "src/ui/extensions";
 
 export type IRichTextEditor = {
   value: string;

@@ -1,0 +1,53 @@
+.drag-handle {
+  position: fixed;
+  opacity: 1;
+  transition: opacity ease-in 0.2s;
+  height: 18px;
+  width: 15px;
+  display: grid;
+  place-items: center;
+  z-index: 10;
+  cursor: grab;
+  border-radius: 2px;
+  background-color: rgb(var(--color-background-90));
+}
+
+.drag-handle:hover {
+  background-color: rgb(var(--color-background-80));
+  transition: background-color 0.2s;
+}
+
+.drag-handle.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media screen and (max-width: 600px) {
+  .drag-handle {
+    display: none;
+    pointer-events: none;
+  }
+}
+
+.drag-handle-container {
+  height: 15px;
+  width: 15px;
+  cursor: grab;
+  display: grid;
+  place-items: center;
+}
+
+.drag-handle-dots {
+  height: 100%;
+  width: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  place-items: center;
+}
+
+.drag-handle-dot {
+  height: 2.75px;
+  width: 3px;
+  background-color: rgba(var(--color-text-200));
+  border-radius: 50%;
+}

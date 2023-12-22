@@ -1,7 +1,7 @@
 import { Editor, Range } from "@tiptap/react";
-import { IssueEmbedSuggestions } from "./issue-suggestion-extension";
-import { getIssueSuggestionItems } from "./issue-suggestion-items";
-import { IssueListRenderer } from "./issue-suggestion-renderer";
+import { IssueEmbedSuggestions } from "src/ui/extensions/widgets/issue-embed-suggestion-list/issue-suggestion-extension";
+import { getIssueSuggestionItems } from "src/ui/extensions/widgets/issue-embed-suggestion-list/issue-suggestion-items";
+import { IssueListRenderer } from "src/ui/extensions/widgets/issue-embed-suggestion-list/issue-suggestion-renderer";
 import { v4 as uuidv4 } from "uuid";
 
 export type CommandProps = {
@@ -19,7 +19,7 @@ export interface IIssueListSuggestion {
 
 export const IssueSuggestions = (suggestions: any[]) => {
   const mappedSuggestions: IIssueListSuggestion[] = suggestions.map((suggestion): IIssueListSuggestion => {
-    let transactionId = uuidv4();
+    const transactionId = uuidv4();
     return {
       title: suggestion.name,
       priority: suggestion.priority.toString(),

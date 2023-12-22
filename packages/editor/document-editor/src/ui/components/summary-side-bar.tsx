@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/react";
-import { IMarking } from "..";
-import { ContentBrowser } from "./content-browser";
+import { IMarking } from "src/types/editor-types";
+import { ContentBrowser } from "src/ui/components/content-browser";
 
 interface ISummarySideBarProps {
   editor: Editor;
@@ -8,14 +8,12 @@ interface ISummarySideBarProps {
   sidePeekVisible: boolean;
 }
 
-export const SummarySideBar = ({ editor, markings, sidePeekVisible }: ISummarySideBarProps) => {
-  return (
-    <div
-      className={`h-full transform overflow-hidden p-5 transition-all duration-200 ${
-        sidePeekVisible ? "translate-x-0" : "-translate-x-full"
-      }`}
-    >
-      <ContentBrowser editor={editor} markings={markings} />
-    </div>
-  );
-};
+export const SummarySideBar = ({ editor, markings, sidePeekVisible }: ISummarySideBarProps) => (
+  <div
+    className={`h-full transform overflow-hidden p-5 transition-all duration-200 ${
+      sidePeekVisible ? "translate-x-0" : "-translate-x-full"
+    }`}
+  >
+    <ContentBrowser editor={editor} markings={markings} />
+  </div>
+);

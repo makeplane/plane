@@ -1,5 +1,5 @@
 import { mergeAttributes, Node } from "@tiptap/core";
-import IssueWidgetCard from "./issue-widget-card";
+import { IssueWidgetCard } from "src/ui/extensions/widgets/issue-embed-widget/issue-widget-card";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 
 export const IssueWidget = Node.create({
