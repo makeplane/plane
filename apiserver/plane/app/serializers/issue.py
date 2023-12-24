@@ -520,20 +520,17 @@ class IssueStateSerializer(DynamicBaseSerializer):
         fields = "__all__"
 
 
-class IssueSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    state_detail = StateSerializer(read_only=True, source="state")
-    parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
-    label_details = LabelSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
-    related_issues = IssueRelationSerializer(read_only=True, source="issue_relation", many=True)
-    issue_relations = RelatedIssueSerializer(read_only=True, source="issue_related", many=True)
-    issue_cycle = IssueCycleDetailSerializer(read_only=True)
-    issue_module = IssueModuleDetailSerializer(read_only=True)
-    issue_link = IssueLinkSerializer(read_only=True, many=True)
-    issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
+class IssueSerializer(DynamicBaseSerializer):
+    project_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    state_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    label_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    assignee_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    module_id = serializers.PrimaryKeyRelatedField(read_only=True)
+
     sub_issues_count = serializers.IntegerField(read_only=True)
-    issue_reactions = IssueReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue

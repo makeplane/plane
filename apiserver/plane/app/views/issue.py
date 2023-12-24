@@ -217,7 +217,9 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        serializer = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None)
+        serializer = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
@@ -255,7 +257,10 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         ).get(workspace__slug=slug, project_id=project_id, pk=pk)
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(
+            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
+        )
 
     def partial_update(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
@@ -596,8 +601,12 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         )
 
         issue_property.filters = request.data.get("filters", issue_property.filters)
-        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
-        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
+        issue_property.display_filters = request.data.get(
+            "display_filters", issue_property.display_filters
+        )
+        issue_property.display_properties = request.data.get(
+            "display_properties", issue_property.display_properties
+        )
         issue_property.save()
         serializer = IssuePropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -1060,7 +1069,9 @@ class IssueArchiveViewSet(BaseViewSet):
             else issue_queryset.filter(parent__isnull=True)
         )
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(issue_dict, status=status.HTTP_200_OK)
 
@@ -1545,7 +1556,9 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(issue_dict, status=status.HTTP_200_OK)
 
