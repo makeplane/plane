@@ -27,7 +27,12 @@ from plane.app.serializers import (
     IssueLiteSerializer,
     IssueViewFavoriteSerializer,
 )
-from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission, WorkspaceViewerPermission, ProjectLitePermission
+from plane.app.permissions import (
+    WorkspaceEntityPermission,
+    ProjectEntityPermission,
+    WorkspaceViewerPermission,
+    ProjectLitePermission,
+)
 from plane.db.models import (
     Workspace,
     GlobalView,
@@ -180,9 +185,10 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        serializer = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):
@@ -194,7 +200,9 @@ class IssueViewViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
-        serializer.save(project_id=self.kwargs.get("project_id"),workspace_id=workspace.id)
+        serializer.save(
+            project_id=self.kwargs.get("project_id"), workspace_id=workspace.id
+        )
 
     def get_queryset(self):
         subquery = IssueViewFavorite.objects.filter(
@@ -215,11 +223,13 @@ class IssueViewViewSet(BaseViewSet):
             .order_by("-is_favorite", "name")
             .distinct()
         )
-    
+
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
+        views = IssueViewSerializer(
+            queryset, many=True, fields=fields if fields else None
+        ).data
         return Response(views, status=status.HTTP_200_OK)
 
 

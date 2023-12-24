@@ -217,9 +217,8 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        serializer = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
