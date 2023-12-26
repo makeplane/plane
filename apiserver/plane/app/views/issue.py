@@ -129,22 +129,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-        ).distinct()
-
-    @method_decorator(gzip_page)
-    def list(self, request, slug, project_id):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        filters = issue_filters(request.query_params, "GET")
-
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
-
-        order_by_param = request.GET.get("order_by", "-created_at")
-
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(module_id=F("issue_module__module_id"))
             .annotate(
@@ -159,7 +143,26 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
+        ).distinct()
+
+    @method_decorator(gzip_page)
+    def list(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -217,10 +220,10 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        serializer = IssueLiteSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        issues = IssueSerializer(
+            issue_queryset, many=True, fields=self.fields, expand=self.expand
+        ).data
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)

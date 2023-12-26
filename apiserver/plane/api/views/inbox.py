@@ -142,18 +142,14 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         )
 
         # Create an Issue Activity
-        issue_activity.apply_async(
-            args=[],  # If no positional arguments are required
-            kwargs={
-                "type": "issue.activity.created",
-                "requested_data": json.dumps(request.data, cls=DjangoJSONEncoder),
-                "actor_id": str(request.user.id),
-                "issue_id": str(issue.id),
-                "project_id": str(project_id),
-                "current_instance": None,
-                "epoch": int(timezone.now().timestamp()),
-            },
-            routing_key="external",
+        issue_activity.delay(
+            type="issue.activity.created",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
         )
 
         # create an inbox issue
@@ -236,21 +232,17 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 # Log all the updates
                 requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
                 if issue is not None:
-                    issue_activity.apply_async(
-                        args=[],
-                        kwargs={
-                            "type": "issue.activity.updated",
-                            "requested_data": requested_data,
-                            "actor_id": str(request.user.id),
-                            "issue_id": str(issue_id),
-                            "project_id": str(project_id),
-                            "current_instance": json.dumps(
-                                IssueSerializer(current_instance).data,
-                                cls=DjangoJSONEncoder,
-                            ),
-                            "epoch": int(timezone.now().timestamp()),
-                        },
-                        routing_key="external",
+                    issue_activity.delay(
+                        type="issue.activity.updated",
+                        requested_data=requested_data,
+                        actor_id=str(request.user.id),
+                        issue_id=str(issue_id),
+                        project_id=str(project_id),
+                        current_instance=json.dumps(
+                            IssueSerializer(current_instance).data,
+                            cls=DjangoJSONEncoder,
+                        ),
+                        epoch=int(timezone.now().timestamp()),
                     )
                 issue_serializer.save()
             else:

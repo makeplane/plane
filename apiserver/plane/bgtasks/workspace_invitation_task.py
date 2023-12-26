@@ -20,7 +20,7 @@ from plane.db.models import Workspace, WorkspaceMemberInvite, User
 from plane.license.utils.instance_value import get_email_configuration
 
 
-@shared_task(queue='internal_tasks')
+@shared_task
 def workspace_invitation(email, workspace_id, token, current_site, invitor):
     try:
         user = User.objects.get(email=invitor)

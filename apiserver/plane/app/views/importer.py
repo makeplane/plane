@@ -1,7 +1,5 @@
 # Python imports
 import uuid
-import json
-import requests
 
 # Third party imports
 from rest_framework import status
@@ -9,7 +7,7 @@ from rest_framework.response import Response
 
 # Django imports
 from django.db.models import Max, Q
-from django.conf import settings
+
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.db.models import (
@@ -36,15 +34,20 @@ from plane.app.serializers import (
     IssueFlatSerializer,
     ModuleSerializer,
 )
+from plane.utils.integrations.github import get_github_repo_details
+from plane.utils.importers.jira import jira_project_issue_summary
+from plane.bgtasks.importer_task import service_importer
 from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
-from plane.bgtasks.importer_task import service_importer
+
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
+
     def get(self, request, slug, service):
         if service == "github":
             owner = request.GET.get("owner", False)
             repo = request.GET.get("repo", False)
+
             if not owner or not repo:
                 return Response(
                     {"error": "Owner and repo are required"},
@@ -55,10 +58,11 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 integration__provider="github", workspace__slug=slug
             )
 
-            installtion_id = workspace_integration.config.get("installation_id", False)
+            access_tokens_url = workspace_integration.metadata.get(
+                "access_tokens_url", False
+            )
 
-            # Check for the installation id
-            if not installtion_id:
+            if not access_tokens_url:
                 return Response(
                     {
                         "error": "There was an error during the installation of the GitHub app. To resolve this issue, we recommend reinstalling the GitHub app."
@@ -66,33 +70,18 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Request segway for the required information
-            if settings.SEGWAY_BASE_URL:
-                headers = {
-                    "Content-Type": "application/json",
-                    "x-api-key": settings.SEGWAY_KEY,
-                }
-                data = {
-                    "owner": owner,
-                    "repo": repo,
-                    "installationId": installtion_id,
-                }
-                res = requests.post(
-                    f"{settings.SEGWAY_BASE_URL}/api/github",
-                    data=json.dumps(data),
-                    headers=headers,
-                )
-                if "error" in res.json():
-                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    return Response(
-                        res.json(),
-                        status=status.HTTP_200_OK,
-                    )
-            return Response(
-                {"error": "Inetgration service is not available please try later"},
-                status=status.HTTP_400_BAD_REQUEST,
+            issue_count, labels, collaborators = get_github_repo_details(
+                access_tokens_url, owner, repo
             )
+            return Response(
+                {
+                    "issue_count": issue_count,
+                    "labels": labels,
+                    "collaborators": collaborators,
+                },
+                status=status.HTTP_200_OK,
+            )
+
         if service == "jira":
             # Check for all the keys
             params = {
@@ -113,35 +102,16 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
             email = request.GET.get("email", "")
             cloud_hostname = request.GET.get("cloud_hostname", "")
 
-            if settings.SEGWAY_BASE_URL:
-                headers = {
-                    "Content-Type": "application/json",
-                    "x-api-key": settings.SEGWAY_KEY,
-                }
-                data = {
-                    "project_key": project_key,
-                    "api_token": api_token,
-                    "email": email,
-                    "cloud_hostname": cloud_hostname,
-                }
-                res = requests.post(
-                    f"{settings.SEGWAY_BASE_URL}/api/jira",
-                    data=json.dumps(data),
-                    headers=headers,
-                )
-
-                if "error" in res.json():
-                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    return Response(
-                        res.json(),
-                        status=status.HTTP_200_OK,
-                    )
-
-            return Response(
-                {"error": "Inetgration service is not available please try later"},
-                status=status.HTTP_400_BAD_REQUEST,
+            response = jira_project_issue_summary(
+                email, api_token, project_key, cloud_hostname
             )
+            if "error" in response:
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(
+                    response,
+                    status=status.HTTP_200_OK,
+                )
         return Response(
             {"error": "Service not supported yet"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -152,21 +122,7 @@ class ImportServiceEndpoint(BaseAPIView):
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
-
     def post(self, request, slug, service):
-        if service not in ["github", "jira"]:
-            return Response(
-                {"error": "Servivce not supported yet"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if service == "github":
-            workspace_integration = WorkspaceIntegration.objects.get(
-                integration__provider="github", workspace__slug=slug
-            )
-
-            installation_id = workspace_integration.config.get("installation_id", False)
-
         project_id = request.data.get("project_id", False)
 
         if not project_id:
@@ -174,83 +130,86 @@ class ImportServiceEndpoint(BaseAPIView):
                 {"error": "Project ID is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         workspace = Workspace.objects.get(slug=slug)
 
-        # Validate the data
-        data = request.data.get("data", False)
-        metadata = request.data.get("metadata", False)
-        config = request.data.get("config", False)
-        if not data or not metadata or not config:
-            return Response(
-                {"error": "Data, config and metadata are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+        if service == "github":
+            data = request.data.get("data", False)
+            metadata = request.data.get("metadata", False)
+            config = request.data.get("config", False)
+            if not data or not metadata or not config:
+                return Response(
+                    {"error": "Data, config and metadata are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            api_token = APIToken.objects.filter(
+                user=request.user, workspace=workspace
+            ).first()
+            if api_token is None:
+                api_token = APIToken.objects.create(
+                    user=request.user,
+                    label="Importer",
+                    workspace=workspace,
+                )
+
+            importer = Importer.objects.create(
+                service=service,
+                project_id=project_id,
+                status="queued",
+                initiated_by=request.user,
+                data=data,
+                metadata=metadata,
+                token=api_token,
+                config=config,
+                created_by=request.user,
+                updated_by=request.user,
             )
 
-        # Update config
-        if config and service == "github":
-            config.update({"installation_id": installation_id})
+            service_importer.delay(service, importer.id)
+            serializer = ImporterSerializer(importer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        # Get the api token -- # derecated
-        api_token = APIToken.objects.filter(
-            user=request.user, workspace=workspace
-        ).first()
-        if api_token is None:
-            api_token = APIToken.objects.create(
-                user=request.user,
-                label="Importer",
-                workspace=workspace,
+        if service == "jira":
+            data = request.data.get("data", False)
+            metadata = request.data.get("metadata", False)
+            config = request.data.get("config", False)
+            if not data or not metadata:
+                return Response(
+                    {"error": "Data, config and metadata are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            api_token = APIToken.objects.filter(
+                user=request.user, workspace=workspace
+            ).first()
+            if api_token is None:
+                api_token = APIToken.objects.create(
+                    user=request.user,
+                    label="Importer",
+                    workspace=workspace,
+                )
+
+            importer = Importer.objects.create(
+                service=service,
+                project_id=project_id,
+                status="queued",
+                initiated_by=request.user,
+                data=data,
+                metadata=metadata,
+                token=api_token,
+                config=config,
+                created_by=request.user,
+                updated_by=request.user,
             )
 
-        # Create an import
-        importer = Importer.objects.create(
-            service=service,
-            project_id=project_id,
-            status="queued",
-            initiated_by=request.user,
-            data=data,
-            metadata=metadata,
-            token=api_token,
-            config=config,
-            created_by=request.user,
-            updated_by=request.user,
+            service_importer.delay(service, importer.id)
+            serializer = ImporterSerializer(importer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(
+            {"error": "Servivce not supported yet"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-
-        # Push it to segway
-        if settings.SEGWAY_BASE_URL:
-            headers = {
-                "Content-Type": "application/json",
-                "x-api-key": settings.SEGWAY_KEY,
-            }
-            data = {
-                "metadata": metadata,
-                "data": data,
-                "config": config,
-                "workspace_id": str(workspace.id),
-                "project_id": str(project_id),
-                "created_by": str(request.user.id),
-                "importer_id": str(importer.id),
-            }
-            res = requests.post(
-                f"{settings.SEGWAY_BASE_URL}/api/github/import",
-                data=json.dumps(data),
-                headers=headers,
-            )
-
-            if "error" in res.json():
-                importer.status = "failed"
-                importer.reason = str(res.json())
-                importer.save()
-            else:
-                importer.status = "processing"
-                importer.save(update_fields=["status"])
-        else:
-            importer.status = "failed"
-            importer.reason = "Segway base url is not present"
-            importer.save(update_fields=["status", "reason"])
-
-        # return the response
-        serializer = ImporterSerializer(importer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):
         imports = (
@@ -262,7 +221,9 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(serializer.data)
 
     def delete(self, request, slug, service, pk):
-        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
+        importer = Importer.objects.get(
+            pk=pk, service=service, workspace__slug=slug
+        )
 
         if importer.imported_data is not None:
             # Delete all imported Issues
@@ -280,7 +241,9 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, service, pk):
-        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
+        importer = Importer.objects.get(
+            pk=pk, service=service, workspace__slug=slug
+        )
         serializer = ImporterSerializer(importer, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -516,7 +479,9 @@ class BulkImportModulesEndpoint(BaseAPIView):
                 [
                     ModuleLink(
                         module=module,
-                        url=module_data.get("link", {}).get("url", "https://plane.so"),
+                        url=module_data.get("link", {}).get(
+                            "url", "https://plane.so"
+                        ),
                         title=module_data.get("link", {}).get(
                             "title", "Original Issue"
                         ),

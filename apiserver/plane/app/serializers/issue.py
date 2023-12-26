@@ -521,28 +521,55 @@ class IssueStateSerializer(DynamicBaseSerializer):
 
 
 class IssueSerializer(DynamicBaseSerializer):
+    # ids
     project_id = serializers.PrimaryKeyRelatedField(read_only=True)
     state_id = serializers.PrimaryKeyRelatedField(read_only=True)
     parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    label_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
-    assignee_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
     module_id = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    # Many to many
+    label_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="labels")
+    assignee_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="assignees")
+
+    # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
+
+    # is
+    is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Issue
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
+        fields = [
+            "id",
+            "name",
+            "state_id",
+            "description_html",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "module_id",
+            "label_ids",
+            "assignee_ids",
+            "sub_issues_count",
             "created_at",
             "updated_at",
+            "created_by",
+            "updated_by",
+            "attachment_count",
+            "link_count",
+            "is_subscribed",
         ]
+        read_only_fields = fields
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):

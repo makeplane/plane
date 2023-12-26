@@ -71,7 +71,6 @@ def get_model_data(event, event_id, many=False):
     retry_backoff=600,
     max_retries=5,
     retry_jitter=True,
-    queue='internal_tasks'
 )
 def webhook_task(self, webhook, slug, event, event_data, action):
     try:
@@ -162,7 +161,7 @@ def webhook_task(self, webhook, slug, event, event_data, action):
         return
 
 
-@shared_task(queue='internal_tasks')
+@shared_task()
 def send_webhook(event, payload, kw, action, slug, bulk):
     try:
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)

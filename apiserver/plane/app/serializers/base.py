@@ -9,8 +9,9 @@ class DynamicBaseSerializer(BaseSerializer):
     def __init__(self, *args, **kwargs):
         # If 'fields' is provided in the arguments, remove it and store it separately.
         # This is done so as not to pass this custom argument up to the superclass.
-        fields = kwargs.pop("fields", None)
+        fields = kwargs.pop("fields", [])
         self.expand = kwargs.pop("expand", []) or []
+        fields = self.expand
 
         # Call the initialization of the superclass.
         super().__init__(*args, **kwargs)
@@ -47,13 +48,39 @@ class DynamicBaseSerializer(BaseSerializer):
             elif isinstance(item, dict):
                 allowed.append(list(item.keys())[0])
 
-        # Convert the current serializer's fields and the allowed fields to sets.
-        existing = set(self.fields)
-        allowed = set(allowed)
+        for field in allowed:
+            if field not in self.fields:
+                from . import (
+                    WorkspaceLiteSerializer,
+                    ProjectLiteSerializer,
+                    UserLiteSerializer,
+                    StateLiteSerializer,
+                    IssueSerializer,
+                    LabelSerializer,
+                    CycleIssueSerializer,
+                    IssueFlatSerializer,
+                )
 
-        # Remove fields from the serializer that aren't in the 'allowed' list.
-        for field_name in (existing - allowed):
-            self.fields.pop(field_name)
+                # Expansion mapper
+                expansion = {
+                    "user": UserLiteSerializer,
+                    "workspace": WorkspaceLiteSerializer,
+                    "project": ProjectLiteSerializer,
+                    "default_assignee": UserLiteSerializer,
+                    "project_lead": UserLiteSerializer,
+                    "state": StateLiteSerializer,
+                    "created_by": UserLiteSerializer,
+                    "issue": IssueSerializer,
+                    "actor": UserLiteSerializer,
+                    "owned_by": UserLiteSerializer,
+                    "members": UserLiteSerializer,
+                    "assignees": UserLiteSerializer,
+                    "labels": LabelSerializer,
+                    "issue_cycle": CycleIssueSerializer,
+                    "parent": IssueFlatSerializer,
+                }
+                
+                self.fields[field] = expansion[field](many=True if field in ["members", "assignees", "labels", "issue_cycle"] else False)            
 
         return self.fields
 
