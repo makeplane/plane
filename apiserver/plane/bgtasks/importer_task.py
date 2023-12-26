@@ -35,14 +35,11 @@ from plane.db.models import (
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
-@shared_task(queue="internal_tasks")
-def service_importer(service, importer_id):
-    pass
-
-
 def update_imported_items(
     importer_id, entity, external_id, entity_id, already_exists=False
 ):
+    """Update the imported data json with key and external_id and pid (plane_id)"""
+
     importer = Importer.objects.get(pk=importer_id)
     if importer.imported_data:
         importer.imported_data.setdefault(str(entity), {})[str(external_id)] = {
@@ -71,6 +68,7 @@ def generate_random_hex_color():
 
 
 def resolve_state(data):
+    """return a state for the creation of the issue"""
     project_id = data.get("project_id")
     workspace_id = data.get("workspace_id")
     created_by_id = data.get("created_by_id")
@@ -220,7 +218,7 @@ def resolve_assignees(data):
                 bulk_users.append(user)
             else:
                 user = User.objects.create(
-                    email=user.get("email").strip().lower(),
+                    email=assignee.get("email").strip().lower(),
                     username=uuid.uuid4().hex,
                     password=make_password(uuid.uuid4().hex),
                     is_password_autoset=True,
@@ -353,7 +351,94 @@ def resolve_actor(comment_data):
 
 
 @shared_task(queue="segway_tasks")
-def import_sync(data):
+def import_member_sync(data):
+    email = data.get("email")
+    project_id = data.get("project_id")
+    workspace_id = data.get("workspace_id")
+    created_by_id = data.get("created_by_id")
+    importer_id = data.get("importer_id")
+    external_source = data.get("external_source")
+
+    user = User.objects.filter(email=email).first()
+
+    if user:
+        try:
+            WorkspaceMember.objects.create(
+                member=user,
+                workspace_id=workspace_id,
+            )
+        except Exception as e:
+            pass
+        try:
+            ProjectMember.objects.create(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                member=user,
+            )
+        except Exception as e:
+            pass
+        try:
+            IssueProperty.objects.create(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                created_by_id=created_by_id,
+                user=user,
+            )
+        except Exception as e:
+            pass
+        update_imported_items(
+            importer_id=importer_id,
+            entity="users",
+            entity_id=user.id,
+            external_id=None,
+            already_exists=True,
+        )
+    else:
+        user = User.objects.create(
+            email=email.strip().lower(),
+            username=uuid.uuid4().hex,
+            password=make_password(uuid.uuid4().hex),
+            is_password_autoset=True,
+        )
+        send_welcome_slack.delay(
+            str(user.id),
+            True,
+            f"{user.email} was imported to Plane from {external_source}",
+        )
+        try:
+            WorkspaceMember.objects.create(
+                member=user,
+                workspace_id=workspace_id,
+            )
+        except Exception as e:
+            pass
+        try:
+            ProjectMember.objects.create(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                member=user,
+            )
+        except Exception as e:
+            pass
+        try:
+            IssueProperty.objects.create(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                created_by_id=created_by_id,
+                user=user,
+            )
+        except Exception as e:
+            pass
+        update_imported_items(
+            importer_id=importer_id,
+            entity="users",
+            entity_id=user.id,
+            external_id=None,
+        )
+
+
+@shared_task(queue="segway_tasks")
+def import_issue_sync(data):
     project_id = data.get("project_id")
     workspace_id = data.get("workspace_id")
     created_by_id = data.get("created_by_id")
@@ -612,7 +697,7 @@ def import_sync(data):
             )
 
         return
-    
+
 
 @shared_task(queue="segway_tasks")
 def import_status_sync(data):

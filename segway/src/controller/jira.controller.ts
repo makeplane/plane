@@ -12,8 +12,9 @@ import axios from "axios";
 import { loadIssues, loadComments } from "../utils/paginator";
 import { EJiraPriority, EJiraStatus } from "../utils/constant";
 
-const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_sync";
-const IMPORTER_STATUS_TASK_ROUTE = "plane.bgtasks.importer_task.importer_status_sync"
+const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_issue_sync";
+const IMPORTER_STATUS_TASK_ROUTE =
+  "plane.bgtasks.importer_task.importer_status_sync";
 
 @Controller("api/jira")
 export class JiraController {
@@ -88,11 +89,12 @@ export class JiraController {
   @Post("import")
   @Middleware([AuthKeyMiddleware])
   private async import(req: Request, res: Response) {
-    try {
-      res.status(200).json({
-        message: "Successful",
-      });
+    res.status(200).json({
+      message: "Successful",
+    });
 
+
+    try {
       const {
         metadata,
         workspace_id,
@@ -246,7 +248,6 @@ export class JiraController {
       };
 
       this.mq?.publish(importSync, IMPORTER_STATUS_TASK_ROUTE);
-
     }
   }
 }

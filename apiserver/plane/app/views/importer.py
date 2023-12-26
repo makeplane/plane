@@ -38,7 +38,7 @@ from plane.app.serializers import (
 )
 from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
-from plane.bgtasks.importer_task import service_importer
+from plane.bgtasks.importer_task import import_issue_sync, import_status_sync
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
     def get(self, request, slug, service):
