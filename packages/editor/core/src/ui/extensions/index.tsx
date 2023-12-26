@@ -52,12 +52,12 @@ export const CoreEditorExtensions = (
         class: "leading-normal -mb-2",
       },
     },
-    // blockquote: {
-    //   HTMLAttributes: {
-    //     class: "border-l-4 border-custom-border-300",
-    //   },
-    // },
-    code: false,
+    code: {
+      HTMLAttributes: {
+        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
+        spellcheck: "false",
+      },
+    },
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
