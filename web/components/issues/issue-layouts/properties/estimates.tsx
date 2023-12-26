@@ -3,6 +3,7 @@ import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+import { sortBy } from "lodash";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
@@ -63,18 +64,18 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
   const estimatePoints =
     projectDetails && isEstimateEnabled ? estimates?.find((e) => e.id === projectDetails.estimate)?.points : null;
 
-  const options: { value: number | null; query: string; content: any }[] | undefined = (estimatePoints ?? []).map(
-    (estimate) => ({
-      value: estimate.key,
-      query: estimate.value,
-      content: (
-        <div className="flex items-center gap-2">
-          <Triangle className="h-3 w-3" strokeWidth={2} />
-          {estimate.value}
-        </div>
-      ),
-    })
-  );
+  const options: { value: number | null; query: string; content: any }[] | undefined = (
+    sortBy(estimatePoints, "key") ?? []
+  ).map((estimate) => ({
+    value: estimate.key,
+    query: estimate.value,
+    content: (
+      <div className="flex items-center gap-2">
+        <Triangle className="h-3 w-3" strokeWidth={2} />
+        {estimate.value}
+      </div>
+    ),
+  }));
   options?.unshift({
     value: null,
     query: "none",
