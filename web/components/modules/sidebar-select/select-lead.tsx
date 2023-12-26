@@ -31,16 +31,29 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
       : null
   );
 
-  const options = members?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name,
+  const noLeadOption = {
+    value: "",
+    query: "No lead",
     content: (
       <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
+        <UserCircle2 className="h-4 w-4" />
+        No lead
       </div>
     ),
-  }));
+  };
+
+  const options = members
+    ?.map((member) => ({
+      value: member.member.id,
+      query: member.member.display_name,
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar name={member?.member.display_name} src={member?.member.avatar} />
+          {member.member.display_name}
+        </div>
+      ),
+    }))
+    .concat(noLeadOption);
 
   const selectedOption = members?.find((m) => m.member.id === value)?.member;
 
