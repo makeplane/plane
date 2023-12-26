@@ -26,6 +26,7 @@
     "octokit": "^3.1.2",
     "postgres": "^3.4.1",
     "showdown": "^2.1.0",
+    "socket.io": "^4.7.2",
     "uuid": "^9.0.1",
     "winston": "^3.10.0",
     "zod": "^3.22.4"

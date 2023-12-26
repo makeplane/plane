@@ -6,6 +6,8 @@ import cors from "cors";
 import * as Sentry from "@sentry/node";
 import * as Tracing from "@sentry/tracing";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { createServer, Server as HTTPServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
 // controllers
 import * as controllers from "./controller";
 // middlewares
@@ -22,6 +24,8 @@ class ApiServer extends Server {
   SERVER_PORT: number;
   db: PostgresJsDatabase | null = null;
   mq: MQSingleton | null = null; // Declare the channel property
+  io: SocketIOServer;
+  httpServer: HTTPServer;
 
   constructor() {
     super(true);
@@ -33,6 +37,14 @@ class ApiServer extends Server {
     this.SERVER_PORT = process.env.SERVER_PORT
       ? parseInt(process.env.SERVER_PORT, 10)
       : 8080;
+
+    // socket server setup
+    // Initialize the HTTP server
+    this.httpServer = createServer(this.app);
+    // Initialize Socket.IO
+    this.io = new SocketIOServer(this.httpServer);
+    this.setupSocketIO();
+
     // logger
     this.app.use(loggerMiddleware);
     // exposing public folder for static files.
@@ -151,8 +163,15 @@ class ApiServer extends Server {
     });
   }
 
+  private setupSocketIO(): void {
+    this.io.on("connection", (socket) => {
+      logger.info("Client connected")
+      socket.on("disconnect", () => logger.info("Client disconnected"));
+    });
+  }
+
   public start(port: number): void {
-    this.app.listen(port, () => {
+    this.httpServer.listen(port, () => {
       logger.info(this.SERVER_STARTED + port);
     });
   }

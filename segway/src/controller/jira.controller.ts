@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 import { Controller, Post, Middleware } from "@overnightjs/core";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { Server as SocketIOServer } from "socket.io";
 // mq
 import { MQSingleton } from "../mq/singleton";
 // middleware
@@ -15,6 +16,7 @@ import { EJiraPriority, EJiraStatus } from "../utils/constant";
 const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_issue_sync";
 const IMPORTER_STATUS_TASK_ROUTE =
   "plane.bgtasks.importer_task.importer_status_sync";
+const MEMBER_TASK_ROUTE = "plane.bgtasks.importer_task.import_member_sync";
 
 @Controller("api/jira")
 export class JiraController {
@@ -25,9 +27,12 @@ export class JiraController {
   // Initialize database and mq
   db: PostgresJsDatabase;
   mq: MQSingleton;
-  constructor(db: PostgresJsDatabase, mq: MQSingleton) {
+  io: SocketIOServer;
+
+  constructor(db: PostgresJsDatabase, mq: MQSingleton, io: SocketIOServer) {
     this.db = db;
     this.mq = mq;
+    this.io = io;
   }
 
   @Post("")
@@ -93,7 +98,6 @@ export class JiraController {
       message: "Successful",
     });
 
-
     try {
       const {
         metadata,
@@ -115,6 +119,19 @@ export class JiraController {
       };
 
       const url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic, subtasks&maxResults=100&expand=renderedFields`;
+
+      for (const user of users) {
+        if (
+          user?.email &&
+          (user?.import || user?.import == "invite" || user?.invite == "map")
+        ) {
+          const memberSync = {
+            email: user?.email,
+          };
+
+          this.mq?.publish(memberSync, MEMBER_TASK_ROUTE);
+        }
+      }
 
       for await (const issue of loadIssues(url, auth)) {
         // remove all the epics
@@ -248,6 +265,31 @@ export class JiraController {
       };
 
       this.mq?.publish(importSync, IMPORTER_STATUS_TASK_ROUTE);
+    }
+  }
+
+  @Post("status")
+  private async status(req: Request, res: Response) {
+    try {
+      const { workspace_id, total_issues, processed_issues, importer_id } =
+        req.body;
+
+      res.status(200).json({ msg: "Successfull" });
+
+      // Send the event
+      this.io
+        .to(workspace_id)
+        .emit("status", {
+          total_issues: total_issues,
+          importer_id: importer_id,
+          processed_issues: processed_issues,
+        });
+
+      return;
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ msg: "Internal server error", error: error });
     }
   }
 }
