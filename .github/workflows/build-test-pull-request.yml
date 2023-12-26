@@ -1,6 +1,6 @@
 name: Build Pull Request Contents
 
-on: 
+on:
   pull_request:
     types: ["opened", "synchronize"]
 
@@ -14,13 +14,15 @@ jobs:
     steps:
       - name: Checkout Repository to Actions
         uses: actions/checkout@v3.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js 18.x
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-          cache: 'yarn'
-      
+          cache: "yarn"
+
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v38
@@ -44,5 +46,3 @@ jobs:
         run: |
           yarn 
           yarn build --filter=space
-
-
