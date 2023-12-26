@@ -1385,8 +1385,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         issues = IssueLiteSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
