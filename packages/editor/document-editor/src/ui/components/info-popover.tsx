@@ -2,7 +2,7 @@ import { useState } from "react";
 import { usePopper } from "react-popper";
 import { Calendar, History, Info } from "lucide-react";
 // types
-import { DocumentDetails } from "../types/editor-types";
+import { DocumentDetails } from "src/types/editor-types";
 
 type Props = {
   documentDetails: DocumentDetails;

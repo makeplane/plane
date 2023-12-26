@@ -4,7 +4,7 @@ export interface TableCellOptions {
   HTMLAttributes: Record<string, any>;
 }
 
-export default Node.create<TableCellOptions>({
+export const TableCell = Node.create<TableCellOptions>({
   name: "tableCell",
 
   addOptions() {
