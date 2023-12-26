@@ -182,7 +182,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       setValue(
         "identifier",
         e.target.value
-          .replace(/[^a-zA-Z0-9]/g, "")
+          .replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "")
           .toUpperCase()
           .substring(0, 5)
       );
@@ -191,7 +191,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
 
   const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    const alphanumericValue = value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
     setIsChangeInIdentifierRequired(false);
     onChange(alphanumericValue.toUpperCase());
   };
@@ -301,8 +301,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           name="identifier"
                           rules={{
                             required: "Identifier is required",
+                            // allow only alphanumeric & non-latin characters
                             validate: (value) =>
-                              /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
+                              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",

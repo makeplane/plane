@@ -1,17 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import { getEditorClassNames, useEditor } from "@plane/editor-core";
-import { DocumentEditorExtensions } from "./extensions";
-import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "./types/menu-actions";
-import { EditorHeader } from "./components/editor-header";
-import { useEditorMarkings } from "./hooks/use-editor-markings";
-import { SummarySideBar } from "./components/summary-side-bar";
-import { DocumentDetails } from "./types/editor-types";
-import { PageRenderer } from "./components/page-renderer";
-import { getMenuOptions } from "./utils/menu-options";
+import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-core";
+import { DocumentEditorExtensions } from "src/ui/extensions";
+import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
+import { EditorHeader } from "src/ui/components/editor-header";
+import { useEditorMarkings } from "src/hooks/use-editor-markings";
+import { SummarySideBar } from "src/ui/components/summary-side-bar";
+import { DocumentDetails } from "src/types/editor-types";
+import { PageRenderer } from "src/ui/components/page-renderer";
+import { getMenuOptions } from "src/utils/menu-options";
 import { useRouter } from "next/router";
-import { IEmbedConfig } from "./extensions/widgets/IssueEmbedWidget/types";
-import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
+import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentEditor {
   // document info
@@ -57,13 +56,6 @@ interface DocumentEditorProps extends IDocumentEditor {
 interface EditorHandle {
   clearEditor: () => void;
   setEditorValue: (content: string) => void;
-}
-
-export interface IMarking {
-  type: "heading";
-  level: number;
-  text: string;
-  sequence: number;
 }
 
 const DocumentEditor = ({

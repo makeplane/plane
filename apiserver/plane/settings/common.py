@@ -352,3 +352,4 @@ SEGWAY_KEY = os.environ.get("SEGWAY_KEY", False)
 
 # Instance Key
 INSTANCE_KEY = os.environ.get("INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3")
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))

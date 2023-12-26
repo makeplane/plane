@@ -22,7 +22,7 @@ const Inputs = (props: any) => {
   }, [setFocus]);
 
   return (
-    <div>
+    <div className="w-full">
       <h4 className="text-xs font-medium leading-5 text-custom-text-300">{projectDetail?.identifier ?? "..."}</h4>
       <input
         autoComplete="off"

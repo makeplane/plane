@@ -43,6 +43,30 @@ services:
       - plane-db
       - plane-redis
 
+  segway:
+    container_name: segway
+    build:
+      context: .
+      dockerfile: ./segway/Dockerfile.segway
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: npm run start
+    depends_on:
+      - api
+      - rmq
+
+  rmq:
+    container_name: rmq
+    image: rabbitmq:3.9.8-management-alpine
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+
   worker:
     container_name: bgworker
     build:

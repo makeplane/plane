@@ -1,7 +1,7 @@
-import { HeadingComp, HeadingThreeComp, SubheadingComp } from "./heading-component";
-import { IMarking } from "..";
+import { HeadingComp, HeadingThreeComp, SubheadingComp } from "src/ui/components/heading-component";
+import { IMarking } from "src/types/editor-types";
 import { Editor } from "@tiptap/react";
-import { scrollSummary } from "../utils/editor-summary-utils";
+import { scrollSummary } from "src/utils/editor-summary-utils";
 
 interface ContentBrowserProps {
   editor: Editor;
