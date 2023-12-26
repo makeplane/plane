@@ -1,5 +1,4 @@
-import React from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -10,18 +9,22 @@ import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
-import { WebhooksList, WebhooksEmptyState } from "components/web-hooks";
+import { WebhooksList, WebhooksEmptyState, CreateWebhookModal } from "components/web-hooks";
 // ui
 import { Button, Spinner } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "types/app";
 
 const WebhooksListPage: NextPageWithLayout = observer(() => {
+  // states
+  const [showCreateWebhookModal, setShowCreateWebhookModal] = useState(false);
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const {
-    webhook: { fetchWebhooks, webhooks },
+    webhook: { fetchWebhooks, createWebhook, clearSecretKey, webhooks, webhookSecretKey },
+    workspace: { currentWorkspace },
     user: { currentWorkspaceRole },
   } = useMobxStore();
 
@@ -31,6 +34,11 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
     workspaceSlug && isAdmin ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
     workspaceSlug && isAdmin ? () => fetchWebhooks(workspaceSlug.toString()) : null
   );
+
+  // clear secret key when modal is closed.
+  useEffect(() => {
+    if (!showCreateWebhookModal && webhookSecretKey) clearSecretKey();
+  }, [showCreateWebhookModal, webhookSecretKey, clearSecretKey]);
 
   if (!isAdmin)
     return (
@@ -48,21 +56,28 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="h-full w-full overflow-hidden py-8 pr-9">
+      <CreateWebhookModal
+        createWebhook={createWebhook}
+        clearSecretKey={clearSecretKey}
+        currentWorkspace={currentWorkspace}
+        isOpen={showCreateWebhookModal}
+        onClose={() => {
+          setShowCreateWebhookModal(false);
+        }}
+      />
       {Object.keys(webhooks).length > 0 ? (
         <div className="flex h-full w-full flex-col">
           <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
             <div className="text-xl font-medium">Webhooks</div>
-            <Link href={`/${workspaceSlug}/settings/webhooks/create`}>
-              <Button variant="primary" size="sm">
-                Add webhook
-              </Button>
-            </Link>
+            <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
+              Add webhook
+            </Button>
           </div>
           <WebhooksList />
         </div>
       ) : (
         <div className="mx-auto">
-          <WebhooksEmptyState />
+          <WebhooksEmptyState onClick={() => setShowCreateWebhookModal(true)} />
         </div>
       )}
     </div>

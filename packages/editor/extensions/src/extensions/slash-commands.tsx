@@ -317,7 +317,7 @@ const renderItems = () => {
   let popup: any | null = null;
 
   return {
-    onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
         props,
         // @ts-ignore
@@ -335,7 +335,7 @@ const renderItems = () => {
         placement: "bottom-start",
       });
     },
-    onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component?.updateProps(props);
 
       popup &&
