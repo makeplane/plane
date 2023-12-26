@@ -3,10 +3,10 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Module imports
-from . import ProjectBaseModel
+from . import WorkspaceBaseModel
 
 
-class Estimate(ProjectBaseModel):
+class Estimate(WorkspaceBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(verbose_name="Estimate Description", blank=True)
 
@@ -22,7 +22,7 @@ class Estimate(ProjectBaseModel):
         ordering = ("name",)
 
 
-class EstimatePoint(ProjectBaseModel):
+class EstimatePoint(WorkspaceBaseModel):
     estimate = models.ForeignKey(
         "db.Estimate",
         on_delete=models.CASCADE,

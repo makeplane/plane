@@ -141,6 +141,7 @@ from .external import GPTIntegrationEndpoint, ReleaseNotesEndpoint, UnsplashEndp
 from .estimate import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
+    WorkspaceEstimateEndpoint,
 )
 
 from .inbox import InboxViewSet, InboxIssueViewSet

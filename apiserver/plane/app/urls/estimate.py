@@ -1,13 +1,34 @@
 from django.urls import path
 
-
 from plane.app.views import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
+    WorkspaceEstimateEndpoint,
 )
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/estimates/",
+        WorkspaceEstimateEndpoint.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-estimate-points",
+    ),
+    path(
+        "workspaces/<str:slug>/estimates/<uuid:estimate_id>/",
+        WorkspaceEstimateEndpoint.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-estimate-points",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
         ProjectEstimatePointEndpoint.as_view(),
