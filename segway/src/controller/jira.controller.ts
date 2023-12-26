@@ -7,12 +7,13 @@ import { MQSingleton } from "../mq/singleton";
 // middleware
 import AuthKeyMiddleware from "../middleware/authkey.middleware";
 // axios
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 import { loadIssues, loadComments } from "../utils/paginator";
 import { EJiraPriority, EJiraStatus } from "../utils/constant";
 
 const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_sync";
+const IMPORTER_STATUS_TASK_ROUTE = "plane.bgtasks.importer_task.importer_status_sync"
 
 @Controller("api/jira")
 export class JiraController {
@@ -42,8 +43,8 @@ export class JiraController {
       };
 
       // Constructing URLs
-      const issueUrl = `https://${cloud_hostname}/rest/api/3/search?jql=project=${project_key}`;
-      const moduleUrl = `https://${cloud_hostname}/rest/api/3/search?jql=project=${project_key}`;
+      const issueUrl = `https://${cloud_hostname}/rest/api/3/search?jql=project=${project_key} AND issuetype != Epic`;
+      const moduleUrl = `https://${cloud_hostname}/rest/api/3/search?jql=project=${project_key} AND issuetype = Epic`;
       const statusUrl = `https://${cloud_hostname}/rest/api/3/project/${project_key}/statuses`;
       const labelsUrl = `https://${cloud_hostname}/rest/api/3/label/?jql=project=${project_key}`;
       const usersUrl = `https://${cloud_hostname}/rest/api/3/users/search?jql=project=${project_key}`;
@@ -72,15 +73,13 @@ export class JiraController {
         (user: any) => user.accountType === "atlassian"
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         issues: issuesTotal,
         modules: modulesTotal,
         labels: labelsTotal,
         states: statusCount,
         users: usersData,
       });
-
-      return;
     } catch (error) {
       return res.json({ message: "Server error", status: 500, error: error });
     }
@@ -113,7 +112,6 @@ export class JiraController {
         Accept: "application/json",
       };
 
-      // const url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}`;
       const url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic, subtasks&maxResults=100&expand=renderedFields`;
 
       for await (const issue of loadIssues(url, auth)) {
@@ -141,12 +139,6 @@ export class JiraController {
               name: issue.fields.parent?.fields?.summary,
             };
           }
-          // if (issue.fields.issuetype?.name === "Subtask") {
-          //   subIssuePayload.push({
-          //     external_id: issue.id,
-          //     external_source: "jira",
-          //   });
-          // }
         }
 
         // issue status
@@ -170,22 +162,6 @@ export class JiraController {
             name: issue.fields.labels[label],
           });
         }
-        // accountId: '712020:1012e7d7-002f-4b08-91e2-1f64816733a8'
-
-        // const accountId = issue.fields.assignee?.accountId;
-        // const colonIndex = accountId.indexOf(':');
-        // if (colonIndex !== -1) {
-        //   const numberAfterColon = accountId.slice(colonIndex + 1);
-        //     const userUrl = `https://${cloud_hostname}/rest/api/3/user?accountId=${numberAfterColon}`;
-        //     const userResponse = await axios.get(userUrl, { auth, headers });
-        //     console.log(userResponse.data, "userresponse");
-
-        //   // console.log(numberAfterColon); // This will output '1012e7d7-002f-4b08-91e2-1f64816733a8'
-        // }
-        // console.log(issue.fields.assignee, "assignee")
-        // const userUrl = `https://${cloud_hostname}/rest/api/3/user?accountId=${issue.fields.assignee?.accountId}`;
-        // const userResponse = await axios.get(userUrl, { auth, headers });
-        // console.log(userResponse.data, "userresponse");
 
         // issue comments
         const commentsList = [];
@@ -247,24 +223,6 @@ export class JiraController {
         this.mq?.publish(issuesSync, `${IMPORTER_TASK_ROUTE}`);
       }
 
-      // import sync
-      const importSync = {
-        args: [], // args
-        kwargs: {
-          data: {
-            type: "import.create",
-            workspace_id: workspace_id,
-            project_id: project_id,
-            created_by: created_by,
-            importer_id: importer_id,
-            status: "completed",
-          },
-        }, // kwargs
-        other_data: {}, // other data
-      };
-
-      // this.mq?.publish(importSync, `${IMPORTER_TASK_ROUTE}`);
-
       return;
     } catch (error) {
       const workspace_id = req.body.workspace_id;
@@ -276,6 +234,7 @@ export class JiraController {
         kwargs: {
           data: {
             type: "import.create",
+            reason: error,
             workspace_id: workspace_id,
             project_id: project_id,
             created_by: created_by,
@@ -286,9 +245,8 @@ export class JiraController {
         other_data: {}, // other data
       };
 
-      // this.mq?.publish(importSync, `${IMPORTER_TASK_ROUTE}`);
+      this.mq?.publish(importSync, IMPORTER_STATUS_TASK_ROUTE);
 
-      return res.json({ message: "Server error", error: error });
     }
   }
 }

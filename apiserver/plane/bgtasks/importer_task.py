@@ -1,6 +1,8 @@
 # Python imports
 import uuid
 import random
+import requests
+import json
 
 # Django imports
 from django.db.models import Q, Max
@@ -9,7 +11,6 @@ from django.conf import settings
 
 # Third Party imports
 from celery import shared_task
-from celery.exceptions import MaxRetriesExceededError
 
 # Module imports
 from plane.db.models import (
@@ -39,14 +40,24 @@ def service_importer(service, importer_id):
     pass
 
 
-def update_imported_items(importer_id, entity, external_id, entity_id):
+def update_imported_items(
+    importer_id, entity, external_id, entity_id, already_exists=False
+):
     importer = Importer.objects.get(pk=importer_id)
     if importer.imported_data:
-        importer.imported_data.setdefault(str(entity), {})[str(external_id)] = str(
-            entity_id
-        )
+        importer.imported_data.setdefault(str(entity), {})[str(external_id)] = {
+            "pid": str(entity_id),
+            "already_exists": already_exists,
+        }
     else:
-        importer.imported_data = {str(entity): {str(external_id): str(entity_id)}}
+        importer.imported_data = {
+            str(entity): {
+                str(external_id): {
+                    "pid": str(entity_id),
+                    "already_exists": already_exists,
+                }
+            }
+        }
     importer.save()
 
 
@@ -350,190 +361,268 @@ def import_sync(data):
     external_source = data.get("external_source")
     external_id = data.get("external_id")
 
-    # Check if the issue already synced to Plane
-    if Issue.objects.filter(
-        workspace_id=workspace_id,
-        project_id=project_id,
-        external_source=external_source,
-        external_id=external_id,
-    ):
-        return
+    # Get the importer
+    importer = Importer.objects.get(
+        pk=importer_id, workspace_id=workspace_id, project_id=project_id
+    )
 
-    # State
-    state = resolve_state(data=data)
-
-    parent_issue = None
-    # Parent Issue check
-    if data.get("parent"):
-        parent_data = data.get("parent")
-        parent_issue = Issue.objects.filter(
-            external_id=parent_data.get("external_id"),
-            external_source=parent_data.get("external_source"),
+    try:
+        existing_issue = Issue.objects.filter(
             workspace_id=workspace_id,
             project_id=project_id,
+            external_source=external_source,
+            external_id=external_id,
         ).first()
 
-    # Create the Issue
-    # Get the maximum sequence_id
-    last_id = IssueSequence.objects.filter(
-        project_id=project_id,
-    ).aggregate(
-        largest=Max("sequence")
-    )["largest"]
+        # Check if the issue already synced to Plane
+        if existing_issue:
+            update_imported_items(
+                importer_id=importer_id,
+                entity_id=existing_issue.id,
+                external_id=external_id,
+                entity="issues",
+                already_exists=True,
+            )
+            return
 
-    last_id = 1 if last_id is None else last_id + 1
+        # State
+        state = resolve_state(data=data)
 
-    # Get the maximum sort order
-    largest_sort_order = Issue.objects.filter(
-        project_id=project_id,
-        state=state,
-    ).aggregate(largest=Max("sort_order"))["largest"]
-    largest_sort_order = (
-        65535 if largest_sort_order is None else largest_sort_order + 10000
-    )
+        parent_issue = None
+        # Parent Issue check
+        if data.get("parent"):
+            parent_data = data.get("parent")
+            parent_issue = Issue.objects.filter(
+                external_id=parent_data.get("external_id"),
+                external_source=parent_data.get("external_source"),
+                workspace_id=workspace_id,
+                project_id=project_id,
+            ).first()
 
-    # Create the issue
-    issue = Issue.objects.create(
-        project_id=project_id,
-        workspace_id=workspace_id,
-        state=state,
-        name=data.get("name", f"Issue Created through importer from {external_source}"),
-        description_html=data.get("description_html", "<p></p>"),
-        sequence_id=last_id,
-        sort_order=largest_sort_order,
-        start_date=data.get("start_date", None),
-        target_date=data.get("target_date", None),
-        priority=data.get("priority", "none"),
-        created_by_id=data.get("created_by_id"),
-        external_id=data.get("external_id"),
-        external_source=data.get("external_source"),
-        parent=parent_issue,
-    )
-    update_imported_items(
-        importer_id=importer_id,
-        entity="issue",
-        external_id=data.get("external_id"),
-        entity_id=issue.id,
-    )
-
-    # Sequences
-    _ = IssueSequence.objects.create(
-        issue=issue,
-        sequence=issue.sequence_id,
-        project_id=data.get("project_id"),
-        workspace_id=data.get("workspace_id"),
-    )
-
-    # Track the issue activities
-    _ = IssueActivity.objects.create(
-        issue=issue,
-        actor_id=data.get("created_by_id"),
-        project_id=data.get("project_id"),
-        workspace_id=data.get("workspace_id"),
-        comment=f"imported the issue from {data.get('external_source')}",
-        verb="created",
-        created_by_id=data.get("created_by_id"),
-    )
-
-    # sub issues
-    if data.get("sub_issues", []):
-        sub_issues = []
-        for sub_issue in Issue.objects.filter(
-            workspace_id=workspace_id,
+        # Create the Issue
+        # Get the maximum sequence_id
+        last_id = IssueSequence.objects.filter(
             project_id=project_id,
-            external_id__in=[
-                sub_issue.get("external_id") for sub_issue in data.get("sub_issues")
-            ],
-            external_source__in=[
-                sub_issue.get("external_source") for sub_issue in data.get("sub_issues")
-            ],
-        ):
-            sub_issue.parent = issue
-            sub_issues.append(sub_issue)
+        ).aggregate(
+            largest=Max("sequence")
+        )["largest"]
 
-        Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+        last_id = 1 if last_id is None else last_id + 1
 
-    # Labels
-    labels = resolve_labels(data=data)
-    # Attach Issue Labels
-    _ = IssueLabel.objects.bulk_create(
-        [
-            IssueLabel(
-                project_id=project_id,
+        # Get the maximum sort order
+        largest_sort_order = Issue.objects.filter(
+            project_id=project_id,
+            state=state,
+        ).aggregate(largest=Max("sort_order"))["largest"]
+        largest_sort_order = (
+            65535 if largest_sort_order is None else largest_sort_order + 10000
+        )
+
+        # Create the issue
+        issue = Issue.objects.create(
+            project_id=project_id,
+            workspace_id=workspace_id,
+            state=state,
+            name=data.get(
+                "name", f"Issue Created through importer from {external_source}"
+            ),
+            description_html=data.get("description_html", "<p></p>"),
+            sequence_id=last_id,
+            sort_order=largest_sort_order,
+            start_date=data.get("start_date", None),
+            target_date=data.get("target_date", None),
+            priority=data.get("priority", "none"),
+            created_by_id=data.get("created_by_id"),
+            external_id=data.get("external_id"),
+            external_source=data.get("external_source"),
+            parent=parent_issue,
+        )
+        update_imported_items(
+            importer_id=importer_id,
+            entity="issues",
+            external_id=data.get("external_id"),
+            entity_id=issue.id,
+        )
+
+        # Sequences
+        _ = IssueSequence.objects.create(
+            issue=issue,
+            sequence=issue.sequence_id,
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+        )
+
+        # Track the issue activities
+        _ = IssueActivity.objects.create(
+            issue=issue,
+            actor_id=data.get("created_by_id"),
+            project_id=data.get("project_id"),
+            workspace_id=data.get("workspace_id"),
+            comment=f"imported the issue from {data.get('external_source')}",
+            verb="created",
+            created_by_id=data.get("created_by_id"),
+        )
+
+        # sub issues
+        if data.get("sub_issues", []):
+            sub_issues = []
+            for sub_issue in Issue.objects.filter(
                 workspace_id=workspace_id,
-                created_by_id=created_by_id,
-                label=label,
-                issue=issue,
-            )
-            for label in labels
-        ],
-        batch_size=10,
-        ignore_conflicts=True,
-    )
-
-    # Assignees
-    assignees = resolve_assignees(data)
-    _ = IssueAssignee.objects.bulk_create(
-        [
-            IssueAssignee(
-                issue=issue,
-                assignee=assignee,
                 project_id=project_id,
-                workspace_id=workspace_id,
-                created_by_id=created_by_id,
-            )
-            for assignee in assignees
-        ],
-        batch_size=10,
-        ignore_conflicts=True,
-    )
+                external_id__in=[
+                    sub_issue.get("external_id") for sub_issue in data.get("sub_issues")
+                ],
+                external_source__in=[
+                    sub_issue.get("external_source")
+                    for sub_issue in data.get("sub_issues")
+                ],
+            ):
+                sub_issue.parent = issue
+                sub_issues.append(sub_issue)
 
-    # Issue comments
-    if data.get("comments", []):
-        IssueComment.objects.bulk_create(
+            Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+
+        # Labels
+        labels = resolve_labels(data=data)
+        # Attach Issue Labels
+        _ = IssueLabel.objects.bulk_create(
             [
-                IssueComment(
-                    issue=issue,
-                    comment_html=comment.get("comment_html", "<p></p>"),
+                IssueLabel(
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    actor_id=resolve_actor(comment_data=comment)
-                    if resolve_actor(comment_data=comment)
-                    else created_by_id,
-                    external_id=comment.get("external_id"),
-                    external_source=comment.get("external_source"),
+                    created_by_id=created_by_id,
+                    label=label,
+                    issue=issue,
                 )
-                for comment in data.get("comments", [])
+                for label in labels
             ],
             batch_size=10,
             ignore_conflicts=True,
         )
 
-    # Cycles
-    if data.get("cycle"):
-        cycle = resolve_cycle(data)
-        CycleIssue.objects.create(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            cycle=cycle,
-            issue=issue,
-            created_by_id=created_by_id,
+        # Assignees
+        assignees = resolve_assignees(data)
+        _ = IssueAssignee.objects.bulk_create(
+            [
+                IssueAssignee(
+                    issue=issue,
+                    assignee=assignee,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    created_by_id=created_by_id,
+                )
+                for assignee in assignees
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
         )
 
-    # Modules
-    if data.get("module"):
-        module = resolve_module(data)
-        ModuleIssue.objects.create(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            module=module,
-            issue=issue,
-            created_by_id=created_by_id,
+        # Issue comments
+        if data.get("comments", []):
+            IssueComment.objects.bulk_create(
+                [
+                    IssueComment(
+                        issue=issue,
+                        comment_html=comment.get("comment_html", "<p></p>"),
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        actor_id=resolve_actor(comment_data=comment)
+                        if resolve_actor(comment_data=comment)
+                        else created_by_id,
+                        external_id=comment.get("external_id"),
+                        external_source=comment.get("external_source"),
+                    )
+                    for comment in data.get("comments", [])
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+
+        # Cycles
+        if data.get("cycle"):
+            cycle = resolve_cycle(data)
+            CycleIssue.objects.create(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                cycle=cycle,
+                issue=issue,
+                created_by_id=created_by_id,
+            )
+
+        # Modules
+        if data.get("module"):
+            module = resolve_module(data)
+            ModuleIssue.objects.create(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                module=module,
+                issue=issue,
+                created_by_id=created_by_id,
+            )
+
+        total_issues = importer.data.get("total_issues")
+        processed_issues = len(importer.imported_data.get("issues", {})) + len(
+            importer.imported_data.get("failed_issues", {})
         )
 
-    importer = Importer.objects.get(pk=importer_id, workspace_id=workspace_id, project_id=project_id)
+        if total_issues == processed_issues:
+            importer.status = "completed"
+            importer.save()
 
-    # Updated segway
-    if settings.SEGWAY_BASE_URL:
-        pass
-        
+        # Updated segway
+        if settings.SEGWAY_BASE_URL:
+            headers = {
+                "Content-Type": "application/json",
+                "x-api-key": settings.SEGWAY_KEY,
+            }
+            data = {
+                "total_issues": total_issues,
+                "processed_issues": processed_issues,
+            }
+            _ = requests.post(
+                f"{settings.SEGWAY_BASE_URL}/api/importer/{external_source}/status",
+                data=json.dumps(data),
+                headers=headers,
+            )
+
+        return
+    except Exception as e:
+        total_issues = importer.data.get("total_issues")
+        processed_issues = len(importer.imported_data.get("issues", {})) + len(
+            importer.imported_data.get("failed_issues", {})
+        )
+        if total_issues == processed_issues:
+            importer.status = "completed"
+            importer.save()
+
+        # Updated segway
+        if settings.SEGWAY_BASE_URL:
+            headers = {
+                "Content-Type": "application/json",
+                "x-api-key": settings.SEGWAY_KEY,
+            }
+            data = {
+                "total_issues": total_issues,
+                "processed_issues": processed_issues,
+            }
+            _ = requests.post(
+                f"{settings.SEGWAY_BASE_URL}/api/importer/{external_source}/status",
+                data=json.dumps(data),
+                headers=headers,
+            )
+
+        return
+    
+
+@shared_task(queue="segway_tasks")
+def import_status_sync(data):
+    importer_id = data.get("importer_id")
+    reason = data.get("reason", "")
+    status = data.get("status", "processing")
+
+    importer = Importer.objects.get(pk=importer_id)
+    importer.reason = reason
+    importer.status = status
+
+    importer.save()
+    return
