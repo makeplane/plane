@@ -42,18 +42,18 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
     ),
   };
 
-  const options = members
-    ?.map((member) => ({
-      value: member.member.id,
-      query: member.member.display_name,
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-          {member.member.display_name}
-        </div>
-      ),
-    }))
-    .concat(noLeadOption);
+  const options = members?.map((member) => ({
+    value: member.member.id,
+    query: member.member.display_name,
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
+        {member.member.display_name}
+      </div>
+    ),
+  }));
+
+  const leadOption = (options || []).concat(noLeadOption);
 
   const selectedOption = members?.find((m) => m.member.id === value)?.member;
 
@@ -82,7 +82,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
               </div>
             )
           }
-          options={options}
+          options={leadOption}
           maxHeight="md"
           onChange={onChange}
         />
