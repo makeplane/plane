@@ -139,7 +139,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
       {user && step !== null ? (
         <div className={`fixed flex h-full w-full flex-col bg-onboarding-gradient-100`}>
-          <div className="flex items-center px-4 py-10 sm:px-7 sm:pb-8 sm:pt-14 md:px-14 lg:pl-28 lg:pr-24">
+          <div className="flex items-center px-4 py-10 sm:px-7 sm:pb-8 sm:pt-14 md:px-14 lg:pl-28 ">
             <div className="flex w-full items-center justify-between font-semibold ">
               <div className="flex items-center gap-x-1 text-3xl">
                 <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
@@ -158,8 +158,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                                ? value
-                                : currentUser?.email
+                              ? value
+                              : currentUser?.email
                           }
                           src={currentUser?.avatar}
                           size={35}
@@ -174,13 +174,13 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             {currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                                ? value
-                                : null}
+                              ? value
+                              : null}
                           </p>
                         )}
 
                         <Menu>
-                          <Menu.Button className={"flex items-center gap-x-2"}>
+                          <Menu.Button className={"flex items-center gap-x-2 min-w-[180px]"}>
                             <span className="text-base font-medium">{user.email}</span>
                             <ChevronDown className="h-4 w-4 text-custom-text-300" />
                           </Menu.Button>

@@ -244,7 +244,15 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
           <button
             type="button"
             className="ml-3 hidden place-items-center self-center rounded group-hover:grid"
-            onClick={() => remove(index)}
+            onClick={() => {
+              if (fields.length > 3) {
+                remove(index);
+              } else {
+                setValue(`emails.${index}.email`, "");
+                setValue(`emails.${index}.role`, 15);
+                setValue(`emails.${index}.role_active`, false);
+              }
+            }}
           >
             <XCircle className="h-3.5 w-3.5 text-custom-text-400" />
           </button>
