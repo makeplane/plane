@@ -17,11 +17,18 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const [error, setError] = useState<any | null>(null);
   // router
   const router = useRouter();
-  const { next_url } = router.query;
+  const { next_path } = router.query;
   // mobx store
   const {
     user: { fetchCurrentUser, fetchCurrentUserSettings },
   } = useMobxStore();
+
+  const isValidURL = (url: string): boolean => {
+    const disallowedSchemes = /^(https?|ftp):\/\//i;
+    return !disallowedSchemes.test(url);
+  };
+
+  console.log("next_path", next_path);
 
   const handleSignInRedirection = useCallback(
     async (user: IUser) => {
@@ -31,10 +38,15 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
           router.push("/onboarding");
           return;
         }
-        // if next_url is provided, redirect the user to that url
-        if (next_url) {
-          router.push(next_url.toString());
-          return;
+        // if next_path is provided, redirect the user to that url
+        if (next_path) {
+          if (isValidURL(next_path.toString())) {
+            router.push(next_path.toString());
+            return;
+          } else {
+            router.push("/");
+            return;
+          }
         }
 
         // Fetch the current user settings
@@ -52,7 +64,7 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
         setError(error);
       }
     },
-    [fetchCurrentUserSettings, router, next_url]
+    [fetchCurrentUserSettings, router, next_path]
   );
 
   const updateUserInfo = useCallback(async () => {
