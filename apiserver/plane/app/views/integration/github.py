@@ -1,14 +1,7 @@
-# Python imports
-import json
-import requests
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 from sentry_sdk import capture_exception
-
-# Django imports
-from django.conf import settings
 
 # Module imports
 from plane.app.views import BaseViewSet, BaseAPIView
@@ -42,32 +35,19 @@ class GithubRepositoriesEndpoint(BaseAPIView):
             workspace__slug=slug, pk=workspace_integration_id
         )
 
-        installation_id = workspace_integration.config.get("installation_id")
-
-        if not installation_id:
+        if workspace_integration.integration.provider != "github":
             return Response(
                 {"error": "Not a github integration"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Push it to segway
-        if settings.SEGWAY_BASE_URL:
-            headers = {
-                "Content-Type": "application/json",
-                "x-api-key": settings.SEGWAY_KEY,
-            }
-            data = {
-                "installationId": installation_id,
-                "page": page,
-            }
-            res = requests.post(
-                f"{settings.SEGWAY_BASE_URL}/api/github/repos",
-                data=json.dumps(data),
-                headers=headers,
-            )
-            if "error" in res.json():
-                return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response(res.json(), status=status.HTTP_200_OK)
+
+        access_tokens_url = workspace_integration.metadata["access_tokens_url"]
+        repositories_url = (
+            workspace_integration.metadata["repositories_url"]
+            + f"?per_page=100&page={page}"
+        )
+        repositories = get_github_repos(access_tokens_url, repositories_url)
+        return Response(repositories, status=status.HTTP_200_OK)
 
 
 class GithubRepositorySyncViewSet(BaseViewSet):

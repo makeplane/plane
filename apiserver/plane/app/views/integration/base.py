@@ -1,11 +1,8 @@
 # Python improts
 import uuid
 import requests
-import json
-
 # Django imports
 from django.contrib.auth.hashers import make_password
-from django.conf import settings
 
 # Third party imports
 from rest_framework.response import Response
@@ -30,7 +27,6 @@ from plane.utils.integrations.github import (
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.utils.integrations.slack import slack_oauth
 
-
 class IntegrationViewSet(BaseViewSet):
     serializer_class = IntegrationSerializer
     model = Integration
@@ -50,7 +46,9 @@ class IntegrationViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IntegrationSerializer(integration, data=request.data, partial=True)
+        serializer = IntegrationSerializer(
+            integration, data=request.data, partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()
@@ -96,30 +94,14 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                     {"error": "Installation ID is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            # Push it to segway
-            if settings.SEGWAY_BASE_URL:
-                headers = {
-                    "Content-Type": "application/json",
-                    "x-api-key": settings.SEGWAY_KEY,
-                }
-                data = {"installationId": installation_id}
-                res = requests.post(
-                    f"{settings.SEGWAY_BASE_URL}/api/github/metadata",
-                    data=json.dumps(data),
-                    headers=headers,
-                )
-                if "error" in res.json():
-                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
-                metadata = res.json()
+            metadata = get_github_metadata(installation_id)
             config = {"installation_id": installation_id}
 
         if provider == "slack":
             code = request.data.get("code", False)
 
             if not code:
-                return Response(
-                    {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             slack_response = slack_oauth(code=code)
 
@@ -141,7 +123,9 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             is_password_autoset=True,
             is_bot=True,
             first_name=integration.title,
-            avatar=integration.avatar_url if integration.avatar_url is not None else "",
+            avatar=integration.avatar_url
+            if integration.avatar_url is not None
+            else "",
         )
 
         # Create an API Token for the bot user
@@ -177,7 +161,9 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
         )
 
         if workspace_integration.integration.provider == "github":
-            installation_id = workspace_integration.config.get("installation_id", False)
+            installation_id = workspace_integration.config.get(
+                "installation_id", False
+            )
             if installation_id:
                 delete_github_installation(installation_id=installation_id)
 
