@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Repository to Actions
         uses: actions/checkout@v3.3.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Setup Node.js 18.x
         uses: actions/setup-node@v2
