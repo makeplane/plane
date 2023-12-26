@@ -11,8 +11,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
@@ -44,8 +42,6 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const workspaces = workspaceStore.workspaces;
 
   const { setTheme } = useTheme();
-
-  const {} = useUserAuth("onboarding");
 
   const { control, setValue } = useForm<{ full_name: string }>({
     defaultValues: {
@@ -158,8 +154,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                                ? value
-                                : currentUser?.email
+                              ? value
+                              : currentUser?.email
                           }
                           src={currentUser?.avatar}
                           size={35}
@@ -174,8 +170,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             {currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                                ? value
-                                : null}
+                              ? value
+                              : null}
                           </p>
                         )}
 
