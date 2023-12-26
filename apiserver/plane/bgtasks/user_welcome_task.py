@@ -11,7 +11,7 @@ from slack_sdk.errors import SlackApiError
 from plane.db.models import User
 
 
-@shared_task(queue='internal_tasks')
+@shared_task
 def send_welcome_slack(user_id, created, message):
     try:
         instance = User.objects.get(pk=user_id)

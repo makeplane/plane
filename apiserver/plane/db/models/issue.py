@@ -144,8 +144,6 @@ class Issue(ProjectBaseModel):
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
     is_draft = models.BooleanField(default=False)
-    external_source = models.CharField(null=True, blank=True)
-    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     objects = models.Manager()
     issue_objects = IssueManager()
@@ -175,6 +173,7 @@ class Issue(ProjectBaseModel):
                     self.state = default_state
             except ImportError:
                 pass
+
 
         if self._state.adding:
             # Get the maximum display_id value from the database
@@ -253,9 +252,8 @@ class IssueRelation(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.issue.name} {self.related_issue.name}"
-
-
+        return f"{self.issue.name} {self.related_issue.name}"    
+    
 class IssueMention(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_mention"
@@ -265,7 +263,6 @@ class IssueMention(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="issue_mention",
     )
-
     class Meta:
         unique_together = ["issue", "mention"]
         verbose_name = "Issue Mention"
@@ -274,7 +271,7 @@ class IssueMention(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.issue.name} {self.mention.email}"
+        return f"{self.issue.name} {self.mention.email}" 
 
 
 class IssueAssignee(ProjectBaseModel):
@@ -411,8 +408,6 @@ class IssueComment(ProjectBaseModel):
         default="INTERNAL",
         max_length=100,
     )
-    external_source = models.CharField(null=True, blank=True)
-    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         self.comment_stripped = (
@@ -465,8 +460,6 @@ class Label(ProjectBaseModel):
     description = models.TextField(blank=True)
     color = models.CharField(max_length=255, blank=True)
     sort_order = models.FloatField(default=65535)
-    external_source = models.CharField(null=True, blank=True)
-    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         unique_together = ["name", "project"]

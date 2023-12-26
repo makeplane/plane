@@ -42,6 +42,7 @@ from plane.app.permissions import WorkSpaceAdminPermission
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
+
     def get(self, request, slug, service):
         if service == "github":
             owner = request.GET.get("owner", False)
@@ -121,7 +122,6 @@ class ImportServiceEndpoint(BaseAPIView):
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
-
     def post(self, request, slug, service):
         project_id = request.data.get("project_id", False)
 
@@ -202,11 +202,7 @@ class ImportServiceEndpoint(BaseAPIView):
                 updated_by=request.user,
             )
 
-            service_importer.apply_async(
-                args=[],
-                kwargs={"service": service, "importer_id": importer.id},
-                routing_key="internal",
-            )
+            service_importer.delay(service, importer.id)
             serializer = ImporterSerializer(importer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -225,7 +221,9 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(serializer.data)
 
     def delete(self, request, slug, service, pk):
-        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
+        importer = Importer.objects.get(
+            pk=pk, service=service, workspace__slug=slug
+        )
 
         if importer.imported_data is not None:
             # Delete all imported Issues
@@ -243,7 +241,9 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, service, pk):
-        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
+        importer = Importer.objects.get(
+            pk=pk, service=service, workspace__slug=slug
+        )
         serializer = ImporterSerializer(importer, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -479,7 +479,9 @@ class BulkImportModulesEndpoint(BaseAPIView):
                 [
                     ModuleLink(
                         module=module,
-                        url=module_data.get("link", {}).get("url", "https://plane.so"),
+                        url=module_data.get("link", {}).get(
+                            "url", "https://plane.so"
+                        ),
                         title=module_data.get("link", {}).get(
                             "title", "Original Issue"
                         ),

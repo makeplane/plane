@@ -80,6 +80,3 @@ tmp/
 ## packages
 dist
 .temp/
-
-# logs
-combined.log

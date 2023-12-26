@@ -28,7 +28,7 @@ from plane.db.models import (
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
-@shared_task(queue="internal_tasks")
+@shared_task
 def service_importer(service, importer_id):
     try:
         importer = Importer.objects.get(pk=importer_id)
@@ -176,24 +176,20 @@ def service_importer(service, importer_id):
                 project_id=importer.project_id,
             )
 
-        import_data = ImporterSerializer(importer).data
-
-        import_data_json = json.dumps(import_data, cls=DjangoJSONEncoder)
-
-        if settings.SEGWAY_BASE_URL:
-            headers = {
-                "Content-Type": "application/json",
-                "x-api-key": settings.SEGWAY_KEY,
-            }
-            res = requests.post(
-                f"{settings.SEGWAY_BASE_URL}/api/jira",
-                data=import_data_json,
+        if settings.PROXY_BASE_URL:
+            headers = {"Content-Type": "application/json"}
+            import_data_json = json.dumps(
+                ImporterSerializer(importer).data,
+                cls=DjangoJSONEncoder,
+            )
+            _ = requests.post(
+                f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
+                json=import_data_json,
                 headers=headers,
             )
-            print(res.json())
+
         return
     except Exception as e:
-        print(e)
         importer = Importer.objects.get(pk=importer_id)
         importer.status = "failed"
         importer.save()
