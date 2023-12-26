@@ -89,8 +89,8 @@ export const ProfileSidebar = () => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100">
-                  {userProjectsData.user_data.display_name?.[0]}
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100 capitalize">
+                  {userProjectsData.user_data.first_name?.[0]}
                 </div>
               )}
             </div>
@@ -149,8 +149,8 @@ export const ProfileSidebar = () => {
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
-                                        ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

@@ -1,4 +1,4 @@
-const icons = {
+export const icons = {
   colorPicker: `<svg xmlns="http://www.w3.org/2000/svg" length="24" viewBox="0 0 24 24" style="transform: ;msFilter:;"><path fill="rgb(var(--color-text-300))" d="M20 14c-.092.064-2 2.083-2 3.5 0 1.494.949 2.448 2 2.5.906.044 2-.891 2-2.5 0-1.5-1.908-3.436-2-3.5zM9.586 20c.378.378.88.586 1.414.586s1.036-.208 1.414-.586l7-7-.707-.707L11 4.586 8.707 2.293 7.293 3.707 9.586 6 4 11.586c-.378.378-.586.88-.586 1.414s.208 1.036.586 1.414L9.586 20zM11 7.414 16.586 13H5.414L11 7.414z"></path></svg>`,
   deleteColumn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" length="24"><path fill="#e53e3e" d="M0 0H24V24H0z"/><path d="M12 3c.552 0 1 .448 1 1v8c.835-.628 1.874-1 3-1 2.761 0 5 2.239 5 5s-2.239 5-5 5c-1.032 0-1.99-.313-2.787-.848L13 20c0 .552-.448 1-1 1H6c-.552 0-1-.448-1-1V4c0-.552.448-1 1-1h6zm-1 2H7v14h4V5zm8 10h-6v2h6v-2z"/></svg>`,
   deleteRow: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" length="24"><path fill="#e53e3e" d="M0 0H24V24H0z"/><path d="M20 5c.552 0 1 .448 1 1v6c0 .552-.448 1-1 1 .628.835 1 1.874 1 3 0 2.761-2.239 5-5 5s-5-2.239-5-5c0-1.126.372-2.165 1-3H4c-.552 0-1-.448-1-1V6c0-.552.448-1 1-1h16zm-7 10v2h6v-2h-6zm6-8H5v4h14V7z"/></svg>`,
@@ -47,5 +47,3 @@ const icons = {
   </svg>
 `,
 };
-
-export default icons;

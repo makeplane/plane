@@ -17,8 +17,8 @@ import {
   HeadingThreeItem,
   findTableAncestor,
   EditorMenuItem,
+  UploadImage,
 } from "@plane/editor-core";
-import { UploadImage } from "@plane/editor-types";
 
 export type BubbleMenuItem = EditorMenuItem;
 
