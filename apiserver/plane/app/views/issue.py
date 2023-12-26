@@ -1072,8 +1072,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issues = IssueLiteSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        return Response(issues, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1559,8 +1558,7 @@ class IssueDraftViewSet(BaseViewSet):
         issues = IssueLiteSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
