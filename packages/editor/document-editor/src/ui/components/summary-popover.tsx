@@ -3,9 +3,9 @@ import { Editor } from "@tiptap/react";
 import { usePopper } from "react-popper";
 import { List } from "lucide-react";
 // components
-import { ContentBrowser } from "./content-browser";
+import { ContentBrowser } from "src/ui/components/content-browser";
 // types
-import { IMarking } from "..";
+import { IMarking } from "src/types/editor-types";
 
 type Props = {
   editor: Editor;

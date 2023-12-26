@@ -1,1 +1,1 @@
-export { default as default } from "./table-row";
+export { TableRow } from "./table-row";
