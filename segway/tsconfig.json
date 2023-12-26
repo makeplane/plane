@@ -1,9 +1,0 @@
-{
-  "extends": "tsconfig/express.json",
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "baseUrl": "src/",
-    "outDir": "./dist"
-  }
-}

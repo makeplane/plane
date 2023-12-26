@@ -343,11 +343,12 @@ USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
+# instance key
+INSTANCE_KEY = os.environ.get(
+    "INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3"
+)
+
 # Skip environment variable configuration
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
-
-# Segway
-SEGWAY_BASE_URL = os.environ.get("SEGWAY_BASE_URL", "http://localhost:9000")
-SEGWAY_KEY = os.environ.get("SEGWAY_KEY", False)

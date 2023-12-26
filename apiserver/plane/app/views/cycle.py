@@ -180,7 +180,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         cycle_view = request.GET.get("cycle_view", "all")
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
-        queryset = queryset.order_by("-is_favorite","-created_at")
+        queryset = queryset.order_by("-is_favorite", "-created_at")
 
         # Current Cycle
         if cycle_view == "current":
@@ -283,7 +283,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
 
             return Response(data, status=status.HTTP_200_OK)
-        
+
         cycles = CycleSerializer(queryset, many=True).data
         return Response(cycles, status=status.HTTP_200_OK)
 
@@ -540,10 +540,10 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
         )
-
-        issues = IssueStateSerializer(issues, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        serializer = IssueStateSerializer(
+            issues, many=True, fields=fields if fields else None
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
@@ -638,7 +638,10 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
 
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+            issue_id=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            cycle_id=cycle_id,
         )
         issue_activity.delay(
             type="cycle.activity.deleted",
@@ -771,7 +774,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
-    
+
 
 class CycleUserPropertiesEndpoint(BaseAPIView):
     permission_classes = [
@@ -785,10 +788,14 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         )
-        
+
         cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
-        cycle_properties.display_filters = request.data.get("display_filters", cycle_properties.display_filters)
-        cycle_properties.display_properties = request.data.get("display_properties", cycle_properties.display_properties)
+        cycle_properties.display_filters = request.data.get(
+            "display_filters", cycle_properties.display_filters
+        )
+        cycle_properties.display_properties = request.data.get(
+            "display_properties", cycle_properties.display_properties
+        )
         cycle_properties.save()
 
         serializer = CycleUserPropertiesSerializer(cycle_properties)
@@ -796,7 +803,10 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, cycle_id):
         cycle_properties, _ = CycleUserProperties.objects.get_or_create(
-            user=request.user, project_id=project_id, cycle_id=cycle_id, workspace__slug=slug
+            user=request.user,
+            project_id=project_id,
+            cycle_id=cycle_id,
+            workspace__slug=slug,
         )
         serializer = CycleUserPropertiesSerializer(cycle_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
