@@ -67,7 +67,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
 
   return (
     <>
-      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-2">
+      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-20 gap-y-10 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Host</h4>
           <Controller
@@ -110,7 +110,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
           />
         </div>
       </div>
-      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-2">
+      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-20 gap-y-10 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Username</h4>
           <Controller
@@ -170,7 +170,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
           </div>
         </div>
       </div>
-      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-2">
+      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-20 gap-y-10 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">From address</h4>
           <Controller
@@ -191,12 +191,13 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
             )}
           />
           <p className="text-xs text-custom-text-400">
-            You will have to verify your email address to being sending emails.
+            This is the email address your users will see when getting emails from this instance. You will need to
+            verify this address.
           </p>
         </div>
       </div>
 
-      <div className="flex w-full max-w-md flex-col gap-y-8 px-1">
+      <div className="flex w-full max-w-md flex-col gap-y-10 px-1">
         <div className="mr-8 flex items-center gap-10 pt-4">
           <div className="grow">
             <div className="text-sm font-medium text-custom-text-100">

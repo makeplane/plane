@@ -1,3 +1,3 @@
-export { LiteTextEditor, LiteTextEditorWithRef } from "./ui";
-export { LiteReadOnlyEditor, LiteReadOnlyEditorWithRef } from "./ui/read-only";
-export type { IMentionSuggestion, IMentionHighlight } from "@plane/editor-types";
+export { LiteTextEditor, LiteTextEditorWithRef } from "src/ui";
+export { LiteReadOnlyEditor, LiteReadOnlyEditorWithRef } from "src/ui/read-only";
+export type { IMentionSuggestion, IMentionHighlight } from "@plane/editor-core";

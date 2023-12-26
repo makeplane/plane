@@ -7,22 +7,25 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 
-import TableHeader from "./table/table-header/table-header";
-import Table from "./table/table";
-import TableCell from "./table/table-cell/table-cell";
-import TableRow from "./table/table-row/table-row";
-import HorizontalRule from "./horizontal-rule";
+import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
+import { Table } from "src/ui/extensions/table/table";
+import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
+import { TableRow } from "src/ui/extensions/table/table-row/table-row";
+import { HorizontalRule } from "src/ui/extensions/horizontal-rule";
 
-import ImageExtension from "./image";
+import { ImageExtension } from "src/ui/extensions/image";
 
-import { isValidHttpUrl } from "../../lib/utils";
-import { Mentions } from "../mentions";
+import { isValidHttpUrl } from "src/lib/utils";
+import { Mentions } from "src/ui/mentions";
 
-import { CustomKeymap } from "./keymap";
-import { CustomCodeBlock } from "./code";
-import { CustomQuoteExtension } from "./quote";
-import { ListKeymap } from "./custom-list-keymap";
-import { IMentionSuggestion, DeleteImage, RestoreImage } from "@plane/editor-types";
+import { CustomKeymap } from "src/ui/extensions/keymap";
+import { CustomCodeBlock } from "src/ui/extensions/code";
+import { CustomQuoteExtension } from "src/ui/extensions/quote";
+import { ListKeymap } from "src/ui/extensions/custom-list-keymap";
+
+import { DeleteImage } from "src/types/delete-image";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { RestoreImage } from "src/types/restore-image";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -49,12 +52,12 @@ export const CoreEditorExtensions = (
         class: "leading-normal -mb-2",
       },
     },
-    // blockquote: {
-    //   HTMLAttributes: {
-    //     class: "border-l-4 border-custom-border-300",
-    //   },
-    // },
-    code: false,
+    code: {
+      HTMLAttributes: {
+        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
+        spellcheck: "false",
+      },
+    },
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
