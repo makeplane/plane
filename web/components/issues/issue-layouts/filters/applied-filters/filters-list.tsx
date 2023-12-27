@@ -1,5 +1,4 @@
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
   AppliedDateFilters,
@@ -16,8 +15,6 @@ import { X } from "lucide-react";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -35,15 +32,9 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, projects, states } = props;
 
-  const {
-    user: { currentProjectRole },
-  } = useMobxStore();
-
   if (!appliedFilters) return null;
 
   if (Object.keys(appliedFilters).length === 0) return null;
-
-  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
@@ -61,7 +52,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
             <div className="flex flex-wrap items-center gap-1">
               {membersFilters.includes(filterKey) && (
                 <AppliedMembersFilters
-                  editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
                   members={members}
                   values={value}
@@ -72,7 +62,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
               )}
               {filterKey === "labels" && (
                 <AppliedLabelsFilters
-                  editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("labels", val)}
                   labels={labels}
                   values={value}
@@ -80,14 +69,12 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
               )}
               {filterKey === "priority" && (
                 <AppliedPriorityFilters
-                  editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("priority", val)}
                   values={value}
                 />
               )}
               {filterKey === "state" && states && (
                 <AppliedStateFilters
-                  editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("state", val)}
                   states={states}
                   values={value}
@@ -101,35 +88,30 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
               )}
               {filterKey === "project" && (
                 <AppliedProjectFilters
-                  editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("project", val)}
                   projects={projects}
                   values={value}
                 />
               )}
-              {isEditingAllowed && (
-                <button
-                  type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-                  onClick={() => handleRemoveFilter(filterKey, null)}
-                >
-                  <X size={12} strokeWidth={2} />
-                </button>
-              )}
+              <button
+                type="button"
+                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                onClick={() => handleRemoveFilter(filterKey, null)}
+              >
+                <X size={12} strokeWidth={2} />
+              </button>
             </div>
           </div>
         );
       })}
-      {isEditingAllowed && (
-        <button
-          type="button"
-          onClick={handleClearAllFilters}
-          className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
-        >
-          Clear all
-          <X size={12} strokeWidth={2} />
-        </button>
-      )}
-    </div>
+      <button
+        type="button"
+        onClick={handleClearAllFilters}
+        className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
+      >
+        Clear all
+        <X size={12} strokeWidth={2} />
+      </button>
+      </div>
   );
 });
