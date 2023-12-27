@@ -7,7 +7,7 @@ import type {
   ISubIssueResponse,
   IIssueDisplayProperties,
   ILinkDetails,
-  IIssueLink,
+  TIssueLink,
 } from "types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
@@ -186,11 +186,19 @@ export class IssueService extends APIService {
       });
   }
 
+  async fetchIssueLinks(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async createIssueLink(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: IIssueLink
+    data: Partial<TIssueLink>
   ): Promise<ILinkDetails> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`, data)
       .then((response) => response?.data)
@@ -204,7 +212,7 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     linkId: string,
-    data: IIssueLink
+    data: Partial<TIssueLink>
   ): Promise<ILinkDetails> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,

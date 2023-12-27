@@ -13,7 +13,7 @@ import {
 import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
 import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
 
-import { TIssue, IIssueActivity, IIssueLink } from "types";
+import { TIssue, IIssueActivity, TIssueLink } from "types";
 
 export interface IIssueDetail
   extends IIssueStoreActions,
@@ -91,6 +91,8 @@ export class IssueDetail implements IIssueDetail {
     this.issue.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
 
   // reactions
+  fetchReactions = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.reaction.fetchReactions(workspaceSlug, projectId, issueId);
   createReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) =>
     this.reaction.createReaction(workspaceSlug, projectId, issueId, reaction);
   removeReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) =>
@@ -122,10 +124,17 @@ export class IssueDetail implements IIssueDetail {
     this.commentReaction.removeCommentReaction(workspaceSlug, projectId, commentId, reaction);
 
   // link
-  createLink = async (workspaceSlug: string, projectId: string, issueId: string, data: IIssueLink) =>
+  fetchLinks = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.link.fetchLinks(workspaceSlug, projectId, issueId);
+  createLink = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueLink>) =>
     this.link.createLink(workspaceSlug, projectId, issueId, data);
-  updateLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string, data: IIssueLink) =>
-    this.link.updateLink(workspaceSlug, projectId, issueId, linkId, data);
+  updateLink = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    linkId: string,
+    data: Partial<TIssueLink>
+  ) => this.link.updateLink(workspaceSlug, projectId, issueId, linkId, data);
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) =>
     this.link.removeLink(workspaceSlug, projectId, issueId, linkId);
 

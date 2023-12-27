@@ -1,5 +1,4 @@
-import { makeObservable, runInAction } from "mobx";
-import set from "lodash/set";
+import { makeObservable } from "mobx";
 // services
 import { IssueService } from "services/issue";
 // types
@@ -54,28 +53,10 @@ export class IssueStore implements IIssueStore {
       this.rootIssueDetail.rootIssueStore.issues.updateIssue(issue.id, issue);
 
       // issue reactions
-      const issueReactions = issue?.issue_reactions;
-      if (issueReactions && issueReactions.length > 0) {
-        const issueReactionIds = issueReactions.map((reaction: any) => reaction.id);
-        runInAction(() => {
-          set(this.rootIssueDetail.reaction.reactions, issue.id, issueReactionIds);
-          issueReactions?.forEach((reaction: any) => {
-            set(this.rootIssueDetail.reaction.reactionMap, reaction.id, reaction);
-          });
-        });
-      }
+      this.rootIssueDetail.reaction.fetchReactions(workspaceSlug, projectId, issueId);
 
       // fetch issue links
-      const issueLinks = issue?.issue_link;
-      if (issueLinks && issueLinks.length > 0) {
-        const issueLinkIds = issueLinks.map((reaction: any) => reaction.id);
-        runInAction(() => {
-          set(this.rootIssueDetail.link.links, issue.id, issueLinkIds);
-          issueLinks?.forEach((link: any) => {
-            set(this.rootIssueDetail.link.linkMap, link.id, link);
-          });
-        });
-      }
+      this.rootIssueDetail.link.fetchLinks(workspaceSlug, projectId, issueId);
 
       // fetch issue activity
       this.rootIssueDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
