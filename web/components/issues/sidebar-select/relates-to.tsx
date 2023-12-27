@@ -86,10 +86,10 @@ export const SidebarRelatesSelect: React.FC<Props> = observer((props) => {
   };
 
   const relatedToIssueRelation = [
-    ...(watch("related_issues")?.filter((i) => i.relation_type === "relates_to") ?? []),
+    ...(watch("related_issues")?.filter((i: any) => i.relation_type === "relates_to") ?? []),
     ...(watch("issue_relations") ?? [])
-      ?.filter((i) => i.relation_type === "relates_to")
-      .map((i) => ({
+      ?.filter((i: any) => i.relation_type === "relates_to")
+      .map((i: any) => ({
         ...i,
         issue_detail: i.issue_detail,
         related_issue: i.issue_detail?.id,

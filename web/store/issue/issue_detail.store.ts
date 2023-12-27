@@ -656,7 +656,7 @@ export class IssueDetailStore implements IIssueDetailStore {
           ...this.issues,
           [issueId]: {
             ...this.issues[issueId],
-            issue_link: this.issues[issueId].issue_link.map((link) => (link.id === linkId ? response : link)),
+            issue_link: this.issues[issueId].issue_link.map((link: any) => (link.id === linkId ? response : link)),
           },
         };
       });
@@ -682,7 +682,7 @@ export class IssueDetailStore implements IIssueDetailStore {
           ...this.issues,
           [issueId]: {
             ...this.issues[issueId],
-            issue_link: this.issues[issueId].issue_link.filter((link) => link.id !== linkId),
+            issue_link: this.issues[issueId].issue_link.filter((link: any) => link.id !== linkId),
           },
         };
       });

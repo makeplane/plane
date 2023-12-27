@@ -56,10 +56,10 @@ export class IssueStore implements IIssueStore {
       // issue reactions
       const issueReactions = issue?.issue_reactions;
       if (issueReactions && issueReactions.length > 0) {
-        const issueReactionIds = issueReactions.map((reaction) => reaction.id);
+        const issueReactionIds = issueReactions.map((reaction: any) => reaction.id);
         runInAction(() => {
           set(this.rootIssueDetail.reaction.reactions, issue.id, issueReactionIds);
-          issueReactions?.forEach((reaction) => {
+          issueReactions?.forEach((reaction: any) => {
             set(this.rootIssueDetail.reaction.reactionMap, reaction.id, reaction);
           });
         });
@@ -68,10 +68,10 @@ export class IssueStore implements IIssueStore {
       // fetch issue links
       const issueLinks = issue?.issue_link;
       if (issueLinks && issueLinks.length > 0) {
-        const issueLinkIds = issueLinks.map((reaction) => reaction.id);
+        const issueLinkIds = issueLinks.map((reaction: any) => reaction.id);
         runInAction(() => {
           set(this.rootIssueDetail.link.links, issue.id, issueLinkIds);
-          issueLinks?.forEach((link) => {
+          issueLinks?.forEach((link: any) => {
             set(this.rootIssueDetail.link.linkMap, link.id, link);
           });
         });

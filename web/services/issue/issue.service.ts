@@ -3,7 +3,6 @@ import { APIService } from "services/api.service";
 // type
 import type {
   TIssue,
-  TIssue,
   IIssueActivity,
   ISubIssueResponse,
   IIssueDisplayProperties,

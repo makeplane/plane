@@ -23,10 +23,10 @@ const useSubIssue = (projectId: string, issueId: string, isExpanded: boolean) =>
   );
 
   const mutateSubIssues = (issue: TIssue, data: Partial<TIssue>) => {
-    if (!issue.parent) return;
+    if (!issue.parent_id) return;
 
     mutate(
-      SUB_ISSUES(issue.parent!),
+      SUB_ISSUES(issue.parent_id!),
       (prev_data: any) => {
         return {
           ...prev_data,

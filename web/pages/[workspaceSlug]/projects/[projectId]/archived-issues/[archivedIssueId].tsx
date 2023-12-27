@@ -20,13 +20,14 @@ import { TIssue } from "types";
 import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
+import { useProject } from "hooks/store";
 
 const defaultValues: Partial<TIssue> = {
   name: "",
-  description: "",
+  // description: "",
   description_html: "",
   estimate_point: null,
-  state: "",
+  state_id: "",
   priority: "low",
   target_date: new Date().toString(),
   issue_cycle: null,
@@ -45,6 +46,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   const [isRestoring, setIsRestoring] = useState(false);
   // hooks
   const { setToastAlert } = useToast();
+  const { getProjectById } = useProject();
 
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<TIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
@@ -116,7 +118,11 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         setToastAlert({
           type: "success",
           title: "Success",
-          message: `${issueDetails?.project_detail?.identifier}-${issueDetails?.sequence_id} is restored successfully under the project ${issueDetails?.project_detail?.name}`,
+          message:
+            issueDetails &&
+            `${getProjectById(issueDetails.project_id)?.identifier}-${
+              issueDetails?.sequence_id
+            } is restored successfully under the project ${getProjectById(issueDetails.project_id)?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })

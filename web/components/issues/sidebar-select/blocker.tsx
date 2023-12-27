@@ -41,7 +41,7 @@ export const SidebarBlockerSelect: React.FC<Props> = observer((props) => {
     setIsBlockerModalOpen(false);
   };
 
-  const blockerIssue = watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockerIssue = watch("issue_relations")?.filter((i: any) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -115,7 +115,7 @@ export const SidebarBlockerSelect: React.FC<Props> = observer((props) => {
         <div className="space-y-1 sm:basis-1/2">
           <div className="flex flex-wrap gap-1">
             {blockerIssue && blockerIssue.length > 0
-              ? blockerIssue.map((relation) => (
+              ? blockerIssue.map((relation: any) => (
                   <div
                     key={relation.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
@@ -133,7 +133,7 @@ export const SidebarBlockerSelect: React.FC<Props> = observer((props) => {
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedBlockers = blockerIssue.filter((i) => i.id !== relation.id);
+                        const updatedBlockers = blockerIssue.filter((i: any) => i.id !== relation.id);
 
                         submitChanges({
                           issue_relations: updatedBlockers,
