@@ -61,9 +61,9 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           className={`bg-transparent ${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}`}
           customInput={
             <div
-              className={`flex cursor-pointer items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
+              className={`flex items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
                 issue.target_date ? "pr-6 text-custom-text-300" : "text-custom-text-400"
-              }`}
+              } ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               {issue.target_date ? (
                 <>
