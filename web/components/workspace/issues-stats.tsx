@@ -7,6 +7,7 @@ import { Info } from "lucide-react";
 // types
 import { IUserWorkspaceDashboard } from "types";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 type Props = {
   data: IUserWorkspaceDashboard | undefined;
@@ -19,61 +20,40 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
     <div className="grid grid-cols-1 rounded-[10px] border border-custom-border-200 bg-custom-background-100 lg:grid-cols-3">
       <div className="grid grid-cols-1 divide-y divide-custom-border-200 border-b border-custom-border-200 lg:border-b-0 lg:border-r">
         <div className="flex">
-          <div className="basis-1/2 p-4">
-            <h4 className="text-sm">Issues assigned to you</h4>
-            <h5 className="mt-2 text-2xl font-semibold">
-              {data ? (
-                <div
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/${workspaceSlug}/workspace-views/assigned`)}
-                >
-                  {data.assigned_issues_count}
-                </div>
-              ) : (
-                <Loader>
-                  <Loader.Item height="25px" width="50%" />
-                </Loader>
-              )}
-            </h5>
-          </div>
-          <div className="basis-1/2 border-l border-custom-border-200 p-4">
-            <h4 className="text-sm">Pending issues</h4>
-            <h5 className="mt-2 text-2xl font-semibold">
-              {data ? (
-                data.pending_issues_count
-              ) : (
-                <Loader>
-                  <Loader.Item height="25px" width="50%" />
-                </Loader>
-              )}
-            </h5>
-          </div>
+          <Link className="basis-1/2 p-4" href={`/${workspaceSlug}/workspace-views/assigned`}>
+            <div>
+              <h4 className="text-sm">Issues assigned to you</h4>
+              <h5 className="mt-2 text-2xl font-semibold">
+                <div className="cursor-pointer">{data?.assigned_issues_count}</div>
+              </h5>
+            </div>
+          </Link>
+          <Link
+            className="basis-1/2 border-l border-custom-border-200 p-4"
+            href={`/${workspaceSlug}/workspace-views/all-issues`}
+          >
+            <div>
+              <h4 className="text-sm">Pending issues</h4>
+              <h5 className="mt-2 text-2xl font-semibold">{data?.pending_issues_count}</h5>
+            </div>
+          </Link>
         </div>
         <div className="flex">
-          <div className="basis-1/2 p-4">
-            <h4 className="text-sm">Completed issues</h4>
-            <h5 className="mt-2 text-2xl font-semibold">
-              {data ? (
-                data.completed_issues_count
-              ) : (
-                <Loader>
-                  <Loader.Item height="25px" width="50%" />
-                </Loader>
-              )}
-            </h5>
-          </div>
-          <div className="basis-1/2 border-l border-custom-border-200 p-4">
-            <h4 className="text-sm">Issues due by this week</h4>
-            <h5 className="mt-2 text-2xl font-semibold">
-              {data ? (
-                data.issues_due_week_count
-              ) : (
-                <Loader>
-                  <Loader.Item height="25px" width="50%" />
-                </Loader>
-              )}
-            </h5>
-          </div>
+          <Link className="basis-1/2 p-4" href={`/${workspaceSlug}/workspace-views/all-issues`}>
+            <div>
+              <h4 className="text-sm">Completed issues</h4>
+              <h5 className="mt-2 text-2xl font-semibold">{data?.completed_issues_count}</h5>
+            </div>
+          </Link>
+          <Link
+            className="basis-1/2 border-l border-custom-border-200 p-4"
+            href={`/${workspaceSlug}/workspace-views/all-issues`}
+          >
+            <div>
+              <h4 className="text-sm">Issues due by this week</h4>
+              <h5 className="mt-2 text-2xl font-semibold">{data?.issues_due_week_count}</h5>
+            </div>
+          </Link>
         </div>
       </div>
       <div className="p-4 lg:col-span-2">
