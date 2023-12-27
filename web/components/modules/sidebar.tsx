@@ -15,7 +15,17 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 import { CustomRangeDatePicker } from "components/ui";
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon } from "@plane/ui";
 // icon
-import { AlertCircle, ChevronDown, ChevronRight, Info, LinkIcon, MoveRight, Plus, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  CalendarCheck2,
+  CalendarClock,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  LinkIcon,
+  Plus,
+  Trash2,
+} from "lucide-react";
 // helpers
 import {
   isDateGreaterThanToday,
@@ -227,7 +237,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, moduleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EFilterType.FILTERS,
+        { [key]: newValues },
+        moduleId
+      );
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -328,8 +344,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 pt-2">
             <Controller
               control={control}
               name="status"
@@ -365,16 +380,40 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 </CustomSelect>
               )}
             />
+          </div>
+          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
+        </div>
 
-            <div className="relative flex h-full w-52 items-center gap-2.5">
-              <Popover className="flex h-full items-center justify-center rounded-lg">
+        {moduleDetails.description && (
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+            {moduleDetails.description}
+          </span>
+        )}
+
+        <div className="flex flex-col gap-5 pb-6 pt-2.5">
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+              <CalendarClock className="h-4 w-4" />
+
+              <span className="text-base">Start Date</span>
+            </div>
+            <div className="relative flex w-1/2 items-center rounded-sm">
+              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 ${
+                  className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
                     isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={!isEditingAllowed}
                 >
-                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
+                  <span
+                    className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
+                      watch("start_date") ? "" : "text-custom-text-400"
+                    }`}
+                  >
+                    {areYearsEqual
+                      ? renderShortDate(startDate, "No date selected")
+                      : renderShortMonthDate(startDate, "No date selected")}
+                  </span>
                 </Popover.Button>
 
                 <Transition
@@ -386,7 +425,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute -right-5 top-10 z-20  transform overflow-hidden">
+                  <Popover.Panel className="absolute right-0 top-10 z-20  transform overflow-hidden">
                     <CustomRangeDatePicker
                       value={watch("start_date") ? watch("start_date") : moduleDetails?.start_date}
                       onChange={(val) => {
@@ -402,16 +441,32 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   </Popover.Panel>
                 </Transition>
               </Popover>
-              <MoveRight className="h-4 w-4 text-custom-text-300" />
-              <Popover className="flex h-full items-center justify-center rounded-lg">
+            </div>
+          </div>
+
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+              <CalendarCheck2 className="h-4 w-4" />
+              <span className="text-base">Target Date</span>
+            </div>
+            <div className="relative flex w-1/2 items-center rounded-sm">
+              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 ${
+                    className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
                       isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={!isEditingAllowed}
                   >
-                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                    <span
+                      className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
+                        watch("target_date") ? "" : "text-custom-text-400"
+                      }`}
+                    >
+                      {areYearsEqual
+                        ? renderShortDate(endDate, "No date selected")
+                        : renderShortMonthDate(endDate, "No date selected")}
+                    </span>
                   </Popover.Button>
 
                   <Transition
@@ -423,7 +478,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute -right-5 top-10 z-20 transform overflow-hidden">
+                    <Popover.Panel className="absolute right-0 top-10 z-20 transform overflow-hidden">
                       <CustomRangeDatePicker
                         value={watch("target_date") ? watch("target_date") : moduleDetails?.target_date}
                         onChange={(val) => {
@@ -442,15 +497,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               </Popover>
             </div>
           </div>
-        </div>
-
-        {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {moduleDetails.description}
-          </span>
-        )}
-
-        <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <Controller
             control={control}
             name="lead"
