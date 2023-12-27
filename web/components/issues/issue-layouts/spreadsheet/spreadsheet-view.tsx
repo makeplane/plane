@@ -10,25 +10,25 @@ import {
 } from "components/issues";
 import { Spinner, LayersIcon } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
 import { EIssueActions } from "../types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  issues: IIssue[] | undefined;
+  issues: TIssue[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  quickActions: (issue: IIssue, customActionButton: any) => React.ReactNode;
-  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
+  quickActions: (issue: TIssue, customActionButton: any) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;

@@ -29,7 +29,7 @@ import emptyPage from "public/empty-state/page.svg";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { NextPageWithLayout } from "types/app";
-import { IPage, IIssue } from "types";
+import { IPage, TIssue } from "types";
 // fetch-keys
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
@@ -108,7 +108,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   );
 
-  const handleUpdateIssue = (issueId: string, data: Partial<IIssue>) => {
+  const handleUpdateIssue = (issueId: string, data: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !currentUser) return;
 
     updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
@@ -116,7 +116,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const fetchIssue = async (issueId: string) => {
     const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string);
-    return issue as IIssue;
+    return issue as TIssue;
   };
 
   const issueWidgetClickAction = (issueId: string) => {

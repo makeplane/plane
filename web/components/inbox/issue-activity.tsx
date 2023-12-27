@@ -10,11 +10,11 @@ import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IIssue, IIssueActivity } from "types";
+import { TIssue, IIssueActivity } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
-type Props = { issueDetails: IIssue };
+type Props = { issueDetails: TIssue };
 
 // services
 const issueService = new IssueService();
@@ -89,7 +89,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
     if (!workspaceSlug || !issueDetails || !currentUser) return;
 
     await issueCommentService
-      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData)
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project_id, issueDetails.id, formData)
       .then((res) => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         postHogEventTracker(

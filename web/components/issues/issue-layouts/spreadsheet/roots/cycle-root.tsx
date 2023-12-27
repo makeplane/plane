@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 import { EIssueActions } from "../../types";
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { EIssuesStoreType } from "constants/issue";
 
@@ -18,18 +18,18 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !cycleId) return;
 
-        issues.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
+        issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue, cycleId);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !cycleId) return;
-        issues.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+        issues.removeIssue(workspaceSlug, issue.project_id, issue.id, cycleId);
       },
-      [EIssueActions.REMOVE]: async (issue: IIssue) => {
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !cycleId) return;
-        issues.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id);
+        issues.removeIssueFromCycle(workspaceSlug, issue.project_id, cycleId, issue.id);
       },
     }),
     [issues, workspaceSlug, cycleId]

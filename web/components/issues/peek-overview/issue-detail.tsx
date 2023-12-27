@@ -4,14 +4,14 @@ import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
 // hooks
-import { useMention, useUser } from "hooks/store";
+import { useMention, useProject, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { IIssue, IUser } from "types";
+import { TIssue, IUser } from "types";
 // services
 import { FileService } from "services/file.service";
 // constants
@@ -21,10 +21,10 @@ const fileService = new FileService();
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
-  issue: IIssue;
+  issue: TIssue;
   issueReactions: any;
   user: IUser | null;
-  issueUpdate: (issue: Partial<IIssue>) => void;
+  issueUpdate: (issue: Partial<TIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   isSubmitting: "submitting" | "submitted" | "saved";
@@ -50,6 +50,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     membership: { currentProjectRole },
   } = useUser();
   const { mentionHighlights, mentionSuggestions } = useMention();
+  const { getProjectById } = useProject();
   // derived values
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   // toast alert
@@ -61,7 +62,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     reset,
     control,
     formState: { errors },
-  } = useForm<IIssue>({
+  } = useForm<TIssue>({
     defaultValues: {
       name: issue.name,
       description_html: issue.description_html,
@@ -69,7 +70,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   });
 
   const handleDescriptionFormSubmit = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
       await issueUpdate({
@@ -127,10 +128,12 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     });
   }, [issue, reset]);
 
+  const projectDetails = getProjectById(issue?.project_id);
+
   return (
     <>
       <span className="text-base font-medium text-custom-text-400">
-        {issue?.project_detail?.identifier}-{issue?.sequence_id}
+        {projectDetails?.identifier}-{issue?.sequence_id}
       </span>
 
       <div className="relative">
@@ -154,7 +157,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
                 }}
                 required={true}
                 className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  !p-0 text-xl outline-none ring-0 focus:!px-3 focus:!py-2 focus:ring-1 focus:ring-custom-primary"
-                hasError={Boolean(errors?.description)}
+                hasError={Boolean(errors?.name)}
                 role="textbox"
                 disabled={!true}
               />

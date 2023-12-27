@@ -9,7 +9,7 @@ import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, IIssueLink } from "types";
+import { TIssue, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
@@ -19,7 +19,7 @@ interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => void;
+  handleIssue: (issue: Partial<TIssue>, action: EIssueActions) => void;
   isArchived?: boolean;
   children?: ReactNode;
 }
@@ -106,7 +106,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const issue = getIssue;
   const isLoading = loader;
 
-  const issueUpdate = async (_data: Partial<IIssue>) => {
+  const issueUpdate = async (_data: Partial<TIssue>) => {
     if (handleIssue) {
       await handleIssue(_data, EIssueActions.UPDATE);
       fetchIssueActivity(workspaceSlug, projectId, issueId);

@@ -7,7 +7,7 @@ import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
@@ -22,9 +22,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, getProjectById } = useProject();
 
-  const { data: issueDetails } = useSWR<IIssue | undefined>(
+  const { data: issueDetails } = useSWR<TIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -67,7 +67,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={`${issueDetails?.project_detail.identifier}-${issueDetails?.sequence_id}` ?? "..."}
+              label={
+                `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ?? "..."
+              }
             />
           </Breadcrumbs>
         </div>

@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // components
 import { ModuleIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
@@ -23,20 +23,20 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId.toString());
+        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
+        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
       },
-      [EIssueActions.REMOVE]: async (issue: IIssue) => {
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+        await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
       },
     }),
     [issues, workspaceSlug, moduleId]

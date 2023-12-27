@@ -13,12 +13,12 @@ import { ExistingIssuesListModal } from "components/core";
 // icons
 import { BlockedIcon } from "@plane/ui";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
-  submitChanges: (formData: Partial<IIssue>) => void;
-  watch: UseFormWatch<IIssue>;
+  submitChanges: (formData: Partial<TIssue>) => void;
+  watch: UseFormWatch<TIssue>;
   disabled?: boolean;
 };
 
@@ -81,9 +81,10 @@ export const SidebarBlockedSelect: React.FC<Props> = observer((props) => {
         ],
       })
       .then((response) => {
-        submitChanges({
-          related_issues: [...watch("related_issues"), ...response],
-        });
+        // TODO: check_with_backend
+        // submitChanges({
+        //   related_issues: [...watch("related_issues"), ...response],
+        // });
       });
 
     handleClose();

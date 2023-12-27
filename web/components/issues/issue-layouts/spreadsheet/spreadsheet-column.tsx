@@ -27,7 +27,7 @@ import {
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, TIssueOrderByOptions } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, TIssueOrderByOptions } from "types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
@@ -36,8 +36,8 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   expandedIssues: string[];
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
-  issues: IIssue[] | undefined;
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
+  issues: TIssue[] | undefined;
   property: string;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
@@ -159,7 +159,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
 
       <div className="h-full w-full min-w-[8rem]">
         {issues?.map((issue) => {
-          const disableUserActions = !canEditProperties(issue.project);
+          const disableUserActions = !canEditProperties(issue.project_id);
           return (
             <div key={`${property}-${issue.id}`} className={`h-fit ${disableUserActions ? "" : "cursor-pointer"}`}>
               {property === "state" ? (
@@ -167,7 +167,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                   states={states}
                 />
               ) : property === "priority" ? (
@@ -175,21 +175,21 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "estimate" ? (
                 <SpreadsheetEstimateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "assignee" ? (
                 <SpreadsheetAssigneeColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "labels" ? (
                 <SpreadsheetLabelColumn
@@ -197,21 +197,21 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                   expandedIssues={expandedIssues}
                   issue={issue}
                   labels={labels}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "start_date" ? (
                 <SpreadsheetStartDateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "due_date" ? (
                 <SpreadsheetDueDateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
                   issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "created_on" ? (
                 <SpreadsheetCreatedOnColumn expandedIssues={expandedIssues} issue={issue} />

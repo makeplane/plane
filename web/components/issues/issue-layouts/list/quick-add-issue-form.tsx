@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // constants
-import { IIssue, IProject } from "types";
+import { TIssue, IProject } from "types";
 // types
 import { createIssuePayload } from "helpers/issue.helper";
 
@@ -43,17 +43,17 @@ const Inputs: FC<IInputProps> = (props) => {
 };
 
 interface IListQuickAddIssueForm {
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 }
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -81,13 +81,13 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
   }, [isOpen, reset]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
+  const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !currentWorkspace || !currentProjectDetails || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });

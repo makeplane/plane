@@ -5,17 +5,17 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssues } from "hooks/store";
+import { useIssues, useProject } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssue } from "types";
+import type { TIssue } from "types";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue;
+  data: TIssue;
   onSubmit?: () => Promise<void>;
 };
 
@@ -26,6 +26,7 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
+  const { getProjectById } = useProject();
 
   const {
     issues: { removeIssue },
@@ -47,7 +48,7 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await removeIssue(workspaceSlug.toString(), data.project, data.id)
+    await removeIssue(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
         if (onSubmit) onSubmit();
       })
@@ -107,7 +108,7 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the archived issue will be permanently removed. This action
                       cannot be undone.

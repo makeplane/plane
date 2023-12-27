@@ -1,4 +1,4 @@
-import type { IUser, IIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "types";
+import type { IUser, TIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "types";
 
 export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
 
@@ -65,7 +65,7 @@ export type TLabelsDistribution = {
 
 export interface CycleIssueResponse {
   id: string;
-  issue_detail: IIssue;
+  issue_detail: TIssue;
   created_at: Date;
   updated_at: Date;
   created_by: string;
@@ -79,7 +79,7 @@ export interface CycleIssueResponse {
 
 export type SelectCycleType = (ICycle & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
-export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | null;
+export type SelectIssue = (TIssue & { actionType: "edit" | "delete" | "create" }) | null;
 
 export type CycleDateCheckData = {
   start_date: string;

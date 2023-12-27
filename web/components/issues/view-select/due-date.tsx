@@ -10,10 +10,10 @@ import {
   renderShortMonthDate,
 } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  issue: IIssue;
+  issue: TIssue;
   onChange: (date: string | null) => void;
   handleOnOpen?: () => void;
   handleOnClose?: () => void;

@@ -16,12 +16,12 @@ import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
   description: "",
   description_html: "",
@@ -46,7 +46,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   // hooks
   const { setToastAlert } = useToast();
 
-  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
+  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<TIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -58,15 +58,15 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-  const { reset, control, watch } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<TIssue>({
     defaultValues,
   });
 
   const submitChanges = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
-      mutate<IIssue>(
+      mutate<TIssue>(
         ISSUE_DETAILS(archivedIssueId as string),
         (prevData) => {
           if (!prevData) return prevData;
@@ -79,7 +79,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         false
       );
 
-      const payload: Partial<IIssue> = {
+      const payload: Partial<TIssue> = {
         ...formData,
       };
 

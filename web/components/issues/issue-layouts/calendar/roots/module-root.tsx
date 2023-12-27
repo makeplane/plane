@@ -5,7 +5,7 @@ import { useIssues } from "hooks/store";
 // components
 import { ModuleIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
 import { EIssuesStoreType } from "constants/issue";
@@ -22,17 +22,17 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
-        await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue, moduleId);
+        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue, moduleId);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
-        await issues.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
+        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
       },
-      [EIssueActions.REMOVE]: async (issue: IIssue) => {
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
-        await issues.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id);
+        await issues.removeIssueFromModule(workspaceSlug, issue.project_id, moduleId, issue.id);
       },
     }),
     [issues, workspaceSlug, moduleId]

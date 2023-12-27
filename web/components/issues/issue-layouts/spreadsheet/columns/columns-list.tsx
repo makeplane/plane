@@ -4,7 +4,7 @@ import { useProject } from "hooks/store";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -12,8 +12,8 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   expandedIssues: string[];
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
-  issues: IIssue[] | undefined;
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
+  issues: TIssue[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };

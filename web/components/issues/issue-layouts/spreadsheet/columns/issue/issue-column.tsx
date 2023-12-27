@@ -6,14 +6,15 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
-import { IIssue, IIssueDisplayProperties } from "types";
+import { TIssue, IIssueDisplayProperties } from "types";
+import { useProject } from "hooks/store";
 
 type Props = {
-  issue: IIssue;
+  issue: TIssue;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   nestingLevel: number;
 };
@@ -29,17 +30,19 @@ export const IssueColumn: React.FC<Props> = ({
 }) => {
   // router
   const router = useRouter();
+  // hooks
+  const { getProjectById } = useProject();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: IIssue) => {
+  const handleIssuePeekOverview = (issue: TIssue) => {
     const { query } = router;
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
     });
   };
 
@@ -65,7 +68,7 @@ export const IssueColumn: React.FC<Props> = ({
         {properties.key && (
           <div
             className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
-            style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
+            style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
               <span
@@ -73,10 +76,10 @@ export const IssueColumn: React.FC<Props> = ({
                   isMenuActive ? "!opacity-0" : ""
                 } `}
               >
-                {issue.project_detail?.identifier}-{issue.sequence_id}
+                {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
               </span>
 
-              {canEditProperties(issue.project) && (
+              {canEditProperties(issue.project_id) && (
                 <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
                   {quickActions(issue, customActionButton)}
                 </div>

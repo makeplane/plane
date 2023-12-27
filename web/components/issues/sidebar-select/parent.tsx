@@ -7,11 +7,12 @@ import { ParentIssuesListModal } from "components/issues";
 // icons
 import { X } from "lucide-react";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "types";
+import { useProject } from "hooks/store";
 
 type Props = {
   onChange: (value: string) => void;
-  issueDetails: IIssue | undefined;
+  issueDetails: TIssue | undefined;
   disabled?: boolean;
 };
 
@@ -21,6 +22,9 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
 
   const router = useRouter();
   const { projectId, issueId } = router.query;
+
+  // hooks
+  const { getProjectById } = useProject();
 
   return (
     <>
@@ -41,7 +45,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
           disabled ? "cursor-not-allowed" : "cursor-pointer "
         }`}
         onClick={() => {
-          if (issueDetails?.parent) {
+          if (issueDetails?.parent_id) {
             onChange("");
             setSelectedParentIssue(null);
           } else {
@@ -50,14 +54,14 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
         }}
         disabled={disabled}
       >
-        {selectedParentIssue && issueDetails?.parent ? (
+        {selectedParentIssue && issueDetails?.parent_id ? (
           `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-        ) : !selectedParentIssue && issueDetails?.parent ? (
-          `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
+        ) : !selectedParentIssue && issueDetails?.parent_id ? (
+          `${getProjectById(issueDetails.parent_id)?.identifier}-${issueDetails.parent_detail?.sequence_id}`
         ) : (
           <span className="text-custom-text-200">Select issue</span>
         )}
-        {issueDetails?.parent && <X className="h-2.5 w-2.5" />}
+        {issueDetails?.parent_id && <X className="h-2.5 w-2.5" />}
       </button>
     </>
   );

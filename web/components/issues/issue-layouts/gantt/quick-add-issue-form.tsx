@@ -11,23 +11,23 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 
 type Props = {
-  prePopulatedData?: Partial<IIssue>;
-  onSuccess?: (data: IIssue) => Promise<void> | void;
+  prePopulatedData?: Partial<TIssue>;
+  onSuccess?: (data: TIssue) => Promise<void> | void;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -66,7 +66,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   // ref
   const ref = useRef<HTMLFormElement>(null);
@@ -92,7 +92,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
       setToastAlert({
         type: "error",
@@ -102,7 +102,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     });
   }, [errors, setToastAlert]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
+  const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
     // resetting the form so that user can add another issue quickly

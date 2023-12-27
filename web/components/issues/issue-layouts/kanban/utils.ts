@@ -6,7 +6,7 @@ import { IProfileIssues } from "store/issue/profile";
 import { IProjectIssues } from "store/issue/project";
 import { IProjectViewIssues } from "store/issue/project-views";
 import { IWorkspaceIssues } from "store/issue/workspace";
-import { IGroupedIssues, IIssueMap, ISubGroupedIssues, TUnGroupedIssues } from "types";
+import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "types";
 
 export const handleDragDrop = async (
   source: DraggableLocation | null | undefined,
@@ -25,7 +25,7 @@ export const handleDragDrop = async (
   subGroupBy: string | null,
   groupBy: string | null,
   issueMap: IIssueMap,
-  issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined,
+  issueWithIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined,
   viewId: string | null = null // it can be moduleId, cycleId
 ) => {
   if (!issueMap || !issueWithIds || !source || !destination || !workspaceSlug || !projectId) return;
@@ -56,8 +56,8 @@ export const handleDragDrop = async (
 
   if (destinationGroupByColumnId === "issue-trash-box") {
     const sourceIssues: string[] = subGroupBy
-      ? (issueWithIds as ISubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
-      : (issueWithIds as IGroupedIssues)[sourceGroupByColumnId];
+      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+      : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId];
 
     const [removed] = sourceIssues.splice(source.index, 1);
 
@@ -67,11 +67,11 @@ export const handleDragDrop = async (
     }
   } else {
     const sourceIssues = subGroupBy
-      ? (issueWithIds as ISubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
-      : (issueWithIds as IGroupedIssues)[sourceGroupByColumnId];
+      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+      : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId];
     const destinationIssues = subGroupBy
-      ? (issueWithIds as ISubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
-      : (issueWithIds as IGroupedIssues)[destinationGroupByColumnId];
+      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
+      : (issueWithIds as TGroupedIssues)[destinationGroupByColumnId];
 
     const [removed] = sourceIssues.splice(source.index, 1);
     const removedIssueDetail = issueMap[removed];

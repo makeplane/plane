@@ -7,11 +7,11 @@ import { HeaderGroupByCard } from "./headers/group-by-card";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
-  IGroupedIssues,
-  IIssue,
+  TGroupedIssues,
+  TIssue,
   IIssueDisplayProperties,
   IIssueMap,
-  ISubGroupedIssues,
+  TSubGroupedIssues,
   TUnGroupedIssues,
 } from "types";
 // constants
@@ -21,7 +21,7 @@ import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
 
 interface ISubGroupSwimlaneHeader {
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   sub_group_by: string | null;
   group_by: string | null;
   list: IGroupByColumn[];
@@ -47,7 +47,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
             column_id={_list.id}
             icon={_list.Icon}
             title={_list.name}
-            count={(issueIds as IGroupedIssues)?.[_list.id]?.length || 0}
+            count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={_list.payload}
@@ -59,11 +59,11 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   showEmptyGroup: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanBanToggle: any;
   handleKanBanToggle: any;
   isDragStarted?: boolean;
@@ -71,13 +71,13 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   currentStore?: TCreateModalStoreTypes;
   enableQuickIssueCreate: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
@@ -102,7 +102,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 
   const calculateIssueCount = (column_id: string) => {
     let issueCount = 0;
-    const subGroupedIds = issueIds as ISubGroupedIssues;
+    const subGroupedIds = issueIds as TSubGroupedIssues;
     subGroupedIds?.[column_id] &&
       Object.keys(subGroupedIds?.[column_id])?.forEach((_list: any) => {
         issueCount += subGroupedIds?.[column_id]?.[_list]?.length || 0;
@@ -133,7 +133,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
               <div className="relative">
                 <KanBan
                   issuesMap={issuesMap}
-                  issueIds={(issueIds as ISubGroupedIssues)?.[_list.id]}
+                  issueIds={(issueIds as TSubGroupedIssues)?.[_list.id]}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
@@ -159,26 +159,26 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 
 export interface IKanBanSwimLanes {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
   currentStore?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   enableQuickIssueCreate: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
 }

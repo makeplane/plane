@@ -8,11 +8,11 @@ import { KanbanGroup } from "./kanban-group";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
-  IGroupedIssues,
-  IIssue,
+  TGroupedIssues,
+  TIssue,
   IIssueDisplayProperties,
   IIssueMap,
-  ISubGroupedIssues,
+  TSubGroupedIssues,
   TUnGroupedIssues,
 } from "types";
 // constants
@@ -22,27 +22,27 @@ import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanBanToggle: any;
   handleKanBanToggle: any;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
   currentStore?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
@@ -96,7 +96,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     column_id={_list.id}
                     icon={_list.Icon}
                     title={_list.name}
-                    count={(issueIds as IGroupedIssues)?.[_list.id]?.length || 0}
+                    count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
                     kanBanToggle={kanBanToggle}
                     handleKanBanToggle={handleKanBanToggle}
                     issuePayload={_list.payload}
@@ -133,13 +133,13 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
 export interface IKanBan {
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
@@ -147,13 +147,13 @@ export interface IKanBan {
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
   currentStore?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 

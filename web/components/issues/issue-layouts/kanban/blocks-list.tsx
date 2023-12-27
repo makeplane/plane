@@ -1,6 +1,6 @@
 import { memo } from "react";
 //types
-import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";
@@ -13,8 +13,8 @@ interface IssueBlocksListProps {
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 

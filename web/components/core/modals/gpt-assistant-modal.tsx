@@ -11,7 +11,7 @@ import { Button, Input } from "@plane/ui";
 // components
 import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
-import { IIssue, IPageBlock } from "types";
+import { TIssue, IPageBlock } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -22,7 +22,7 @@ type Props = {
   onResponse: (response: string) => void;
   projectId: string;
   block?: IPageBlock;
-  issue?: IIssue;
+  issue?: TIssue;
 };
 
 type FormData = {

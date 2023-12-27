@@ -13,7 +13,7 @@ import {
 import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
 import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
 
-import { IIssue, IIssueActivity, IIssueLink } from "types";
+import { TIssue, IIssueActivity, IIssueLink } from "types";
 
 export interface IIssueDetail
   extends IIssueStoreActions,
@@ -39,6 +39,12 @@ export interface IIssueDetail
 export class IssueDetail implements IIssueDetail {
   // observables
   issueId: string | undefined = undefined;
+
+  // peekIssueModalToggle - main
+  // issueLinkModalToggle - sep
+  // parentIssueModalToggle - sep
+  // deleteIssueModalToggle - sep
+
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -71,7 +77,7 @@ export class IssueDetail implements IIssueDetail {
     this.issueId = issueId;
     return this.issue.fetchIssue(workspaceSlug, projectId, issueId);
   };
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) =>
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.removeIssue(workspaceSlug, projectId, issueId);

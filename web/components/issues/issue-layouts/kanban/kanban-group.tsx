@@ -1,6 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 //types
-import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueMap, ISubGroupedIssues, TUnGroupedIssues } from "types";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 //components
 import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";
@@ -8,21 +8,21 @@ import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -65,7 +65,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
                 sub_group_id={sub_group_id}
                 columnId={groupId}
                 issuesMap={issuesMap}
-                issueIds={(issueIds as IGroupedIssues)?.[groupId] || []}
+                issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
                 displayProperties={displayProperties}
                 isDragDisabled={isDragDisabled}
                 handleIssues={handleIssues}

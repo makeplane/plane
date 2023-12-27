@@ -21,7 +21,7 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, getProjectById } = useProject();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -61,7 +61,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={`${issueDetails?.project_detail.identifier}-${issueDetails?.sequence_id}` ?? "..."}
+              label={
+                `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ?? "..."
+              }
             />
           </Breadcrumbs>
         </div>

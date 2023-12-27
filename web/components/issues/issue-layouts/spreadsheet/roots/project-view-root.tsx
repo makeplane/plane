@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 import { EIssueActions } from "../../types";
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { EIssuesStoreType } from "constants/issue";
 
@@ -18,15 +18,15 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug) return;
 
-        await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug) return;
 
-        await issues.removeIssue(workspaceSlug, issue.project, issue.id);
+        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
       },
     }),
     [issues, workspaceSlug]

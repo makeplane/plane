@@ -11,12 +11,12 @@ import { ExistingIssuesListModal } from "components/core";
 // services
 import { IssueService } from "services/issue";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
-  submitChanges: (formData?: Partial<IIssue>) => void;
-  watch: UseFormWatch<IIssue>;
+  submitChanges: (formData?: Partial<TIssue>) => void;
+  watch: UseFormWatch<TIssue>;
   disabled?: boolean;
 };
 

@@ -20,13 +20,13 @@ import {
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { IIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
+import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
 interface IPeekOverviewProperties {
-  issue: IIssue;
-  issueUpdate: (issue: Partial<IIssue>) => void;
+  issue: TIssue;
+  issueUpdate: (issue: Partial<TIssue>) => void;
   issueLinkCreate: (data: IIssueLink) => Promise<ILinkDetails>;
   issueLinkUpdate: (data: IIssueLink, linkId: string) => Promise<ILinkDetails>;
   issueLinkDelete: (linkId: string) => Promise<void>;
@@ -49,27 +49,27 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const { workspaceSlug, projectId } = router.query;
 
   const handleState = (_state: string) => {
-    issueUpdate({ ...issue, state: _state });
+    issueUpdate({ ...issue, state_id: _state });
   };
   const handlePriority = (_priority: TIssuePriorities) => {
     issueUpdate({ ...issue, priority: _priority });
   };
   const handleAssignee = (_assignees: string[]) => {
-    issueUpdate({ ...issue, assignees: _assignees });
+    issueUpdate({ ...issue, assignee_ids: _assignees });
   };
   const handleEstimate = (_estimate: number | null) => {
     issueUpdate({ ...issue, estimate_point: _estimate });
   };
   const handleStartDate = (_startDate: string | null) => {
-    issueUpdate({ ...issue, start_date: _startDate });
+    issueUpdate({ ...issue, start_date: _startDate || undefined });
   };
   const handleTargetDate = (_targetDate: string | null) => {
-    issueUpdate({ ...issue, target_date: _targetDate });
+    issueUpdate({ ...issue, target_date: _targetDate || undefined });
   };
   const handleParent = (_parent: string) => {
-    issueUpdate({ ...issue, parent: _parent });
+    issueUpdate({ ...issue, parent_id: _parent });
   };
-  const handleLabels = (formData: Partial<IIssue>) => {
+  const handleLabels = (formData: Partial<TIssue>) => {
     issueUpdate({ ...issue, ...formData });
   };
 
@@ -84,7 +84,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     setLinkModal(true);
   };
 
-  const projectDetails = workspaceSlug ? getProjectById(issue.project) : null;
+  const projectDetails = workspaceSlug ? getProjectById(issue.project_id) : null;
   const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
@@ -115,7 +115,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>State</p>
             </div>
             <div>
-              <SidebarStateSelect value={issue?.state || ""} onChange={handleState} disabled={disableUserActions} />
+              <SidebarStateSelect value={issue?.state_id || ""} onChange={handleState} disabled={disableUserActions} />
             </div>
           </div>
 
@@ -127,7 +127,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
             <div>
               <SidebarAssigneeSelect
-                value={issue.assignees || []}
+                value={issue.assignee_ids || []}
                 onChange={handleAssignee}
                 disabled={disableUserActions}
               />
@@ -252,7 +252,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div className="flex w-full flex-col gap-3">
               <SidebarLabelSelect
                 issueDetails={issue}
-                labelList={issue.labels}
+                labelList={issue.label_ids}
                 submitChanges={handleLabels}
                 isNotAllowed={disableUserActions}
                 uneditable={disableUserActions}
@@ -286,7 +286,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              {issue?.issue_link && issue.issue_link.length > 0 ? (
+              {/* TODO: Check_with_backend */}
+              {/* {issue?.issue_link && issue.issue_link.length > 0 ? (
                 <LinksList
                   links={issue.issue_link}
                   handleDeleteLink={issueLinkDelete}
@@ -298,7 +299,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                   }}
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
         </div>

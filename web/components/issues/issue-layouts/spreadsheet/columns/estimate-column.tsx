@@ -3,11 +3,11 @@ import { IssuePropertyEstimates } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, formData: Partial<IIssue>) => void;
+  issue: TIssue;
+  onChange: (issue: TIssue, formData: Partial<TIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -17,16 +17,16 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
       <IssuePropertyEstimates
-        projectId={issue.project_detail?.id ?? null}
+        projectId={issue.project_id ?? null}
         value={issue.estimate_point}
         onChange={(data) => {
           onChange(issue, { estimate_point: data });
-          if (issue.parent) {
+          if (issue.parent_id) {
             mutateSubIssues(issue, { estimate_point: data });
           }
         }}
@@ -40,7 +40,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue: TIssue) => (
           <div className={`h-11`}>
             <SpreadsheetEstimateColumn
               key={subIssue.id}

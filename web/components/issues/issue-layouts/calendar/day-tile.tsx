@@ -7,7 +7,7 @@ import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "c
 import { renderDateFormat } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
-import { IGroupedIssues, IIssue, IIssueResponse } from "types";
+import { TGroupedIssues, TIssue, TIssueMap } from "types";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
@@ -16,17 +16,17 @@ import { IProjectViewIssuesFilter } from "store/issue/project-views";
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   date: ICalendarDate;
-  issues: IIssueResponse | undefined;
-  groupedIssueIds: IGroupedIssues;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  issues: TIssueMap | undefined;
+  groupedIssueIds: TGroupedIssues;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 

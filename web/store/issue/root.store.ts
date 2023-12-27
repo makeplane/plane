@@ -3,6 +3,7 @@ import isEmpty from "lodash/isEmpty";
 // root store
 import { RootStore } from "../root.store";
 // issues data store
+import { IState } from "types";
 import { IIssueStore, IssueStore } from "./issue.store";
 import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
@@ -31,6 +32,7 @@ export interface IIssueRootStore {
   globalViewId: string | undefined; // all issues view id
   userId: string | undefined; // user profile detail Id
   states: string[] | undefined;
+  stateDetails: IState[] | undefined;
   labels: string[] | undefined;
   members: string[] | undefined;
   projects: string[] | undefined;
@@ -77,6 +79,7 @@ export class IssueRootStore implements IIssueRootStore {
   globalViewId: string | undefined = undefined;
   userId: string | undefined = undefined;
   states: string[] | undefined = undefined;
+  stateDetails: IState[] | undefined = undefined;
   labels: string[] | undefined = undefined;
   members: string[] | undefined = undefined;
   projects: string[] | undefined = undefined;
@@ -121,6 +124,7 @@ export class IssueRootStore implements IIssueRootStore {
       viewId: observable.ref,
       userId: observable.ref,
       states: observable,
+      stateDetails: observable,
       labels: observable,
       members: observable,
       projects: observable,
@@ -135,7 +139,8 @@ export class IssueRootStore implements IIssueRootStore {
       if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
       if (rootStore.app.router.globalViewId) this.globalViewId = rootStore.app.router.globalViewId;
       if (rootStore.app.router.userId) this.userId = rootStore.app.router.userId;
-      if (!isEmpty(rootStore?.state?.projectStates)) this.states = Object.keys(rootStore?.state?.stateMap);
+      if (!isEmpty(rootStore?.state?.stateMap)) this.states = Object.keys(rootStore?.state?.stateMap);
+      if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
       if (!isEmpty(rootStore?.labelRoot?.labelMap)) this.labels = Object.keys(rootStore?.labelRoot?.labelMap);
       if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
         this.members = Object.keys(rootStore?.memberRoot?.workspace?.workspaceMemberMap);

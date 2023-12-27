@@ -6,16 +6,7 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { IssueService } from "services/issue/issue.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import {
-  IGroupedIssues,
-  IIssue,
-  IIssueResponse,
-  ISubGroupedIssues,
-  TIssueGroupByOptions,
-  TLoader,
-  TUnGroupedIssues,
-  ViewFlags,
-} from "types";
+import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IProjectIssues {
   // observable
@@ -23,13 +14,13 @@ export interface IProjectIssues {
   issues: Record<string, string[]>; // Record of project_id as key and issue_ids as value
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // action
-  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
@@ -84,7 +75,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     const _issues = this.rootStore.issues.getIssuesByIds(projectIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -92,8 +83,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     } else if (layout === "kanban" && groupBy && orderBy) {
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
       else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", _issues, true);
+    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
     else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
     else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
@@ -108,11 +98,15 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       runInAction(() => {
-        set(this.issues, [projectId], Object.keys(response));
+        set(
+          this.issues,
+          [projectId],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootStore.issues.addIssue(Object.values(response));
+      this.rootStore.issues.addIssue(response);
 
       return response;
     } catch (error) {
@@ -121,7 +115,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
     try {
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
@@ -138,7 +132,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     }
   };
 
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
       if (!issueId || !this.issues[projectId]) return;
 
@@ -172,7 +166,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     }
   };
 
-  quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue) => {
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue) => {
     try {
       runInAction(() => {
         this.issues[projectId].push(data.id);

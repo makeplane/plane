@@ -4,27 +4,27 @@ import set from "lodash/set";
 import { IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 export interface IIssueStoreActions {
   // actions
-  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<IIssue>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<IIssue>;
+  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<TIssue>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<TIssue>;
   addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<any>;
   removeIssueFromModule: (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
     issueId: string
-  ) => Promise<IIssue>;
+  ) => Promise<TIssue>;
 }
 
 export interface IIssueStore extends IIssueStoreActions {
   // helper methods
-  getIssueById: (issueId: string) => IIssue | undefined;
+  getIssueById: (issueId: string) => TIssue | undefined;
 }
 
 export class IssueStore implements IIssueStore {
@@ -89,7 +89,7 @@ export class IssueStore implements IIssueStore {
     }
   };
 
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) =>
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.rootIssueDetail.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

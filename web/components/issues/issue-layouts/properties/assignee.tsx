@@ -59,12 +59,12 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     const memberDetails = getProjectMemberDetails(memberId);
 
     return {
-      value: `${memberDetails?.member.id}`,
-      query: `${memberDetails?.member.display_name}`,
+      value: `${memberDetails?.member?.id}`,
+      query: `${memberDetails?.member?.display_name}`,
       content: (
         <div className="flex items-center gap-2">
-          <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} showTooltip={false} />
-          {memberDetails?.member.display_name}
+          <Avatar name={memberDetails?.member?.display_name} src={memberDetails?.member?.avatar} showTooltip={false} />
+          {memberDetails?.member?.display_name}
         </div>
       ),
     };
@@ -105,7 +105,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
             {value.map((assigneeId) => {
               const member = getProjectMemberDetails(assigneeId);
               if (!member) return null;
-              return <Avatar key={member.id} name={member.member.display_name} src={member.member.avatar} />;
+              return <Avatar key={member.id} name={member?.member?.display_name} src={member?.member?.avatar} />;
             })}
           </AvatarGroup>
         ) : (

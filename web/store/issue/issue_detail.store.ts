@@ -4,7 +4,7 @@ import { IssueService, IssueReactionService, IssueCommentService } from "service
 import { NotificationService } from "services/notification.service";
 // types
 import { IIssueRootStore } from "./root.store";
-import type { IIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
+import type { TIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
 import { RootStore } from "store/root.store";
@@ -15,7 +15,7 @@ export interface IIssueDetailStore {
 
   peekId: string | null;
   issues: {
-    [issueId: string]: IIssue;
+    [issueId: string]: TIssue;
   };
   issueReactions: {
     [issueId: string]: any;
@@ -35,18 +35,18 @@ export interface IIssueDetailStore {
   setPeekId: (issueId: string | null) => void;
 
   // computed
-  getIssue: IIssue | null;
+  getIssue: TIssue | null;
   getIssueReactions: any | null;
   getIssueActivity: IIssueActivity[] | null;
   getIssueCommentReactions: any | null;
   getIssueSubscription: any | null;
 
   // fetch issue details
-  fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   // deleting issue
   deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
-  fetchPeekIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  fetchPeekIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
 
   fetchIssueReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   createIssueReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<void>;
@@ -110,7 +110,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
   peekId: string | null = null;
   issues: {
-    [issueId: string]: IIssue;
+    [issueId: string]: TIssue;
   } = {};
   issueReactions: {
     [issueId: string]: any;
