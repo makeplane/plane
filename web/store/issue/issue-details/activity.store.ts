@@ -4,26 +4,26 @@ import set from "lodash/set";
 import { IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { IIssueActivity } from "types";
+import { TIssueActivity } from "types";
 
 export interface IIssueActivityStoreActions {
   // actions
-  fetchActivities: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssueActivity[]>;
+  fetchActivities: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueActivity[]>;
 }
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
   activities: Record<string, string[]>; // Record defines issueId as key and  activityId's as value
-  activityMap: Record<string, IIssueActivity>; // Record defines activityId as key and activities as value
+  activityMap: Record<string, TIssueActivity>; // Record defines activityId as key and activities as value
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
-  getActivityById: (activityId: string) => IIssueActivity | undefined;
+  getActivityById: (activityId: string) => TIssueActivity | undefined;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
   // observables
   activities: Record<string, string[]> = {};
-  activityMap: Record<string, IIssueActivity> = {};
+  activityMap: Record<string, TIssueActivity> = {};
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
