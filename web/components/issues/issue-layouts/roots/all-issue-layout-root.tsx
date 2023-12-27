@@ -110,7 +110,17 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
         </div>
       ) : (
         <>
-          <GlobalViewsAppliedFiltersRoot />
+          <GlobalViewsAppliedFiltersRoot
+            disableClearFilterOptions={
+              type === "assigned"
+                ? ["assignees"]
+                : type === "created"
+                ? ["created_by"]
+                : type === "subscribed"
+                ? ["subscriber"]
+                : undefined
+            }
+          />
 
           {Object.keys(getIssues ?? {}).length == 0 ? (
             <>{/* <GlobalViewEmptyState /> */}</>
