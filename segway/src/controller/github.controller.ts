@@ -6,6 +6,8 @@ import { Controller, Post, Middleware } from "@overnightjs/core";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 // showdown
 import showdown from "showdown";
+// socket.io
+import { Server as SocketIOServer } from "socket.io";
 // octokit
 import { Octokit } from "octokit";
 import { getOctokit } from "../utils/github.authentication";
@@ -16,6 +18,11 @@ import { MQSingleton } from "../mq/singleton";
 // middleware
 import AuthKeyMiddleware from "../middleware/authkey.middleware";
 
+const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_issue_sync";
+const IMPORTER_STATUS_TASK_ROUTE =
+  "plane.bgtasks.importer_task.importer_status_sync";
+const MEMBER_TASK_ROUTE = "plane.bgtasks.importer_task.import_member_sync";
+
 @Controller("api/github")
 export class GithubController {
   /**
@@ -24,9 +31,13 @@ export class GithubController {
   // Initialize database and mq
   db: PostgresJsDatabase;
   mq: MQSingleton;
-  constructor(db: PostgresJsDatabase, mq: MQSingleton) {
+  io: SocketIOServer;
+
+  // constructor
+  constructor(db: PostgresJsDatabase, mq: MQSingleton, io: SocketIOServer) {
     this.db = db;
     this.mq = mq;
+    this.io = io;
   }
 
   private getAllEntities = async (
@@ -84,6 +95,9 @@ export class GithubController {
     labels.forEach((label) =>
       issueLabels.push({
         name: typeof label === "object" && label !== null ? label.name : label,
+        color: typeof label === "object" && label !== null ? label.color : null,
+        external_id: typeof label == "object" && label !== null ? label.id : null,
+        external_source: "github",  
       })
     );
 
@@ -212,8 +226,11 @@ export class GithubController {
       // users
       const members = [];
       for (const user of users) {
-        if (user?.import == "invite" || user?.import == "map") {
-          const githubMembers = {
+        if (
+          user?.email &&
+          (user?.import || user?.import == "invite" || user?.invite == "map")
+        ) {
+          const githubMember = {
             args: [], // args
             kwargs: {
               data: {
@@ -228,44 +245,8 @@ export class GithubController {
             other_data: {}, // other data
           };
           members.push(user);
-          this.mq?.publish(
-            githubMembers,
-            "plane.bgtasks.importer_task.import_task"
-          );
+          this.mq?.publish(githubMember, MEMBER_TASK_ROUTE);
         }
-      }
-
-      // Labels
-      const githubLabels = await octokit.paginate(
-        octokit.rest.issues.listLabelsForRepo,
-        {
-          owner: owner,
-          repo: repo,
-          headers: {
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-          per_page: 100,
-        }
-      );
-      for await (const label of githubLabels) {
-        const labelSync = {
-          args: [], // args
-          kwargs: {
-            data: {
-              type: "label.sync",
-              external_source: "github",
-              external_id: label.id,
-              color: `#${label.color}`,
-              name: label.name,
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by_id: created_by,
-              importer_id: importer_id,
-            },
-          }, // kwargs
-          other_data: {}, // other data
-        };
-        this.mq?.publish(labelSync, "plane.bgtasks.importer_task.import_task");
       }
 
       // Issues
@@ -307,6 +288,47 @@ export class GithubController {
             issue?.body_html || "<p><p>"
           );
 
+          // Push the comments
+          const githubIssueComments = this.githubCommentCreator(
+            issue.number,
+            comments
+          );
+          // comments
+          const commentList: any = [];
+          githubIssueComments.forEach((githubIssueComment) =>
+            commentList.push({
+              comment_html: githubIssueComment.comment_html,
+              external_source: githubIssueComment.external_source,
+              external_id: githubIssueComment.external_id,
+              external_issue_id: issue.id,
+              external_issue_source: "github",
+              workspace_id: workspace_id,
+              project_id: project_id,
+              created_by_id: created_by,
+              importer_id: importer_id,
+            })
+          );
+
+          // Push the labels
+          const githubLabels = this.githubLabelCreator(
+            issue.number,
+            issue.labels
+          );
+          const labelList: any = [];
+          githubLabels.forEach((githubLabel) =>
+            labelList.push({
+              name: githubLabel.name,
+              external_issue_id: issue.id,
+              external_issue_source: "github",
+              color: `#${githubLabel.color}`,
+              workspace_id: workspace_id,
+              project_id: project_id,
+              created_by_id: created_by,
+              importer_id: importer_id,
+            })
+          );
+
+          // Issue sync
           const issueSync = {
             args: [], // args
             kwargs: {
@@ -314,7 +336,7 @@ export class GithubController {
                 type: "issue.sync",
                 name: issue.title,
                 description_html: description_html,
-                state: issue.state,
+                state: { name: issue.state },
                 workspace_id: workspace_id,
                 project_id: project_id,
                 created_by_id: created_by,
@@ -326,90 +348,15 @@ export class GithubController {
                 },
                 parent_id: null,
                 importer_id: importer_id,
+                comments: commentList,
+                labels: labelList,
               },
             },
           };
           // Push the issue
-          this.mq?.publish(issueSync, "plane.bgtasks.importer_task.import_task");
-
-          // Push the comments
-          const githubIssueComments = this.githubCommentCreator(
-            issue.number,
-            comments
-          );
-
-          githubIssueComments.forEach((githubIssueComment) => {
-            const commentSync = {
-              args: [],
-              kwargs: {
-                data: {
-                  type: "issue.comment.sync",
-                  comment_html: githubIssueComment.comment_html,
-                  external_source: githubIssueComment.external_source,
-                  external_id: githubIssueComment.external_id,
-                  external_issue_id: issue.id,
-                  external_issue_source: "github",
-                  workspace_id: workspace_id,
-                  project_id: project_id,
-                  created_by_id: created_by,
-                  importer_id: importer_id,
-                },
-              },
-            };
-            // push to queue
-            this.mq?.publish(
-              commentSync,
-              "plane.bgtasks.importer_task.import_task"
-            );
-          });
-
-          // Push the labels
-          const githubLabels = this.githubLabelCreator(
-            issue.number,
-            issue.labels
-          );
-          githubLabels.forEach((githubLabel) => {
-            const labelSync = {
-              args: [],
-              kwargs: {
-                data: {
-                  type: "issue.label.sync",
-                  name: githubLabel.name,
-                  external_issue_id: issue.id,
-                  external_issue_source: "github",
-                  workspace_id: workspace_id,
-                  project_id: project_id,
-                  created_by_id: created_by,
-                  importer_id: importer_id,
-                },
-              },
-            };
-            //Push to queue
-            this.mq?.publish(
-              labelSync,
-              "plane.bgtasks.importer_task.import_task"
-            );
-          });
+          this.mq?.publish(issueSync, IMPORTER_TASK_ROUTE);
         }
       }
-
-      const import_sync = {
-        args: [], // args
-        kwargs: {
-          data: {
-            type: "import.sync",
-            workspace_id: workspace_id,
-            project_id: project_id,
-            created_by_id: created_by,
-            importer_id: importer_id,
-            status: "completed",
-          },
-        }, // kwargs
-        other_data: {}, // other data
-      };
-
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_task");
-
       return;
     } catch (error) {
       logger.error("Import failed", error);
@@ -428,8 +375,32 @@ export class GithubController {
         other_data: {}, // other data
       };
 
-      this.mq?.publish(import_sync, "plane.bgtasks.importer_task.import_task");
+      this.mq?.publish(import_sync, IMPORTER_STATUS_TASK_ROUTE);
       return res.json({ message: "Server error", status: 500, error: error });
+    }
+  }
+
+  @Post("status")
+  @Middleware([AuthKeyMiddleware])
+  private async status(req: Request, res: Response) {
+    try {
+      const { workspace_id, total_issues, processed_issues, importer_id } =
+        req.body;
+
+      res.status(200).json({ msg: "Successfull" });
+
+      // Send the event
+      this.io.to(workspace_id).emit("status", {
+        total_issues: total_issues,
+        importer_id: importer_id,
+        processed_issues: processed_issues,
+      });
+
+      return;
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ msg: "Internal server error", error: error });
     }
   }
 }

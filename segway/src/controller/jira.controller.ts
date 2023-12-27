@@ -126,7 +126,17 @@ export class JiraController {
           (user?.import || user?.import == "invite" || user?.invite == "map")
         ) {
           const memberSync = {
-            email: user?.email,
+            args: [], // args
+            kwargs: {
+              data: {
+                email: user?.email,
+                workspace_id: workspace_id,
+                project_id: project_id,
+                created_by_id: created_by,
+                importer_id: importer_id,
+              },
+            },
+            other_data: {}, // other data
           };
 
           this.mq?.publish(memberSync, MEMBER_TASK_ROUTE);
@@ -269,6 +279,7 @@ export class JiraController {
   }
 
   @Post("status")
+  @Middleware([AuthKeyMiddleware])
   private async status(req: Request, res: Response) {
     try {
       const { workspace_id, total_issues, processed_issues, importer_id } =
@@ -277,13 +288,11 @@ export class JiraController {
       res.status(200).json({ msg: "Successfull" });
 
       // Send the event
-      this.io
-        .to(workspace_id)
-        .emit("status", {
-          total_issues: total_issues,
-          importer_id: importer_id,
-          processed_issues: processed_issues,
-        });
+      this.io.to(workspace_id).emit("status", {
+        total_issues: total_issues,
+        importer_id: importer_id,
+        processed_issues: processed_issues,
+      });
 
       return;
     } catch (error) {

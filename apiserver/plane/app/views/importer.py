@@ -78,7 +78,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                     "installationId": installtion_id,
                 }
                 res = requests.post(
-                    f"{settings.SEGWAY_BASE_URL}/api/${service}",
+                    f"{settings.SEGWAY_BASE_URL}/api/{service}",
                     data=json.dumps(data),
                     headers=headers,
                 )
