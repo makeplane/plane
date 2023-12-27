@@ -344,7 +344,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 pt-2">
             <Controller
               control={control}
               name="status"
@@ -398,15 +398,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <span className="text-base">Start Date</span>
             </div>
             <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full items-center justify-center rounded-lg">
+              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 ${
+                  className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
                     isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={!isEditingAllowed}
                 >
                   <span
-                    className={`group flex w-full items-center justify-between gap-2 p-1 text-sm ${
+                    className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
                       watch("start_date") ? "" : "text-custom-text-400"
                     }`}
                   >
@@ -450,16 +450,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <span className="text-base">Target Date</span>
             </div>
             <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full items-center justify-center rounded-lg">
+              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 ${
+                    className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
                       isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={!isEditingAllowed}
                   >
                     <span
-                      className={`group flex w-full items-center justify-between gap-2 p-1 text-sm ${
+                      className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
                         watch("target_date") ? "" : "text-custom-text-400"
                       }`}
                     >
