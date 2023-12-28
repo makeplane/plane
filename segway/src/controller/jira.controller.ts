@@ -15,7 +15,7 @@ import { EJiraPriority, EJiraStatus } from "../utils/constant";
 
 const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_issue_sync";
 const IMPORTER_STATUS_TASK_ROUTE =
-  "plane.bgtasks.importer_task.importer_status_sync";
+  "plane.bgtasks.importer_task.import_status_sync";
 const MEMBER_TASK_ROUTE = "plane.bgtasks.importer_task.import_member_sync";
 
 @Controller("api/jira")
@@ -100,14 +100,13 @@ export class JiraController {
 
     try {
       const {
-        metadata,
+        data: { users },
+        metadata: { email, api_token, project_key, cloud_hostname },
         workspace_id,
         project_id,
         created_by,
         importer_id,
-        users,
       } = req.body;
-      const { email, api_token, project_key, cloud_hostname } = metadata;
 
       const auth = {
         username: email,
@@ -254,6 +253,7 @@ export class JiraController {
 
       return;
     } catch (error) {
+      console.log(error);
       const workspace_id = req.body.workspace_id;
       const project_id = req.body.project_id;
       const created_by = req.body.created_by;

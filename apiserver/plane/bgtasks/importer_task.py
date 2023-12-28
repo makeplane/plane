@@ -64,9 +64,39 @@ def update_imported_items(
             # Save the updated importer
             importer.save()
 
+            # Get the total issues
+            total_issues = importer.data.get("total_issues")
+            processed_issues = len(
+                importer.imported_data.get("issues", {}) if importer.imported_data else []
+            ) + len(
+                importer.imported_data.get("failed_issues", {})
+                if importer.imported_data
+                else []
+            )
+
+            if total_issues == processed_issues:
+                importer.status = "completed"
+                importer.save()
+
+            # Updated segway
+            if settings.SEGWAY_BASE_URL:
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-api-key": settings.SEGWAY_KEY,
+                }
+                _ = requests.post(
+                    f"{settings.SEGWAY_BASE_URL}/api/importer/{importer.service}/status",
+                    data=json.dumps(
+                        {
+                            "total_issues": total_issues,
+                            "processed_issues": processed_issues,
+                        }
+                    ),
+                    headers=headers,
+                )
+
     except Exception as e:
         print(f"Error: {e}")  # Exception debugging
-
 
 
 def generate_random_hex_color():
@@ -563,36 +593,6 @@ def import_issue_sync(data):
             external_id=data.get("external_id"),
             entity_id=issue.id,
         )
-        # Update status
-        total_issues = importer.data.get("total_issues")
-        processed_issues = len(
-            importer.imported_data.get("issues", {}) if importer.imported_data else []
-        ) + len(
-            importer.imported_data.get("failed_issues", {})
-            if importer.imported_data
-            else []
-        )
-
-        if total_issues == processed_issues:
-            importer.status = "completed"
-            importer.save()
-
-        # Updated segway
-        if settings.SEGWAY_BASE_URL:
-            headers = {
-                "Content-Type": "application/json",
-                "x-api-key": settings.SEGWAY_KEY,
-            }
-            _ = requests.post(
-                f"{settings.SEGWAY_BASE_URL}/api/importer/{external_source}/status",
-                data=json.dumps(
-                    {
-                        "total_issues": total_issues,
-                        "processed_issues": processed_issues,
-                    }
-                ),
-                headers=headers,
-            )
     except Exception as e:
         update_imported_items(
             entity="failed_issues",
@@ -601,37 +601,6 @@ def import_issue_sync(data):
             importer_id=importer_id,
             reason=str(e),
         )
-
-        total_issues = importer.data.get("total_issues")
-        processed_issues = len(
-            importer.imported_data.get("issues", {}) if importer.imported_data else []
-        ) + len(
-            importer.imported_data.get("failed_issues", {})
-            if importer.imported_data
-            else []
-        )
-
-        if total_issues == processed_issues:
-            importer.status = "completed"
-            importer.save()
-
-        # Updated segway
-        if settings.SEGWAY_BASE_URL:
-            headers = {
-                "Content-Type": "application/json",
-                "x-api-key": settings.SEGWAY_KEY,
-            }
-            _ = requests.post(
-                f"{settings.SEGWAY_BASE_URL}/api/importer/{external_source}/status",
-                data=json.dumps(
-                    {
-                        "total_issues": total_issues,
-                        "processed_issues": processed_issues,
-                    }
-                ),
-                headers=headers,
-            )
-
         return
 
     # Sequences
@@ -748,7 +717,6 @@ def import_issue_sync(data):
             issue=issue,
             created_by_id=created_by_id,
         )
-    return
 
 
 @shared_task(queue="segway_tasks")
