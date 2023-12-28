@@ -11,15 +11,15 @@ import { observer } from "mobx-react-lite";
 import { useIssueDetail } from "hooks/store";
 
 const WorkspacePage: NextPageWithLayout = observer(() => {
-  const issueDetail = useIssueDetail();
+  // const issueDetail = useIssueDetail();
   const issueId = "e45a59ae-72e3-49bb-b6eb-1679959b2e18";
 
-  useEffect(() => {
-    const init = async () => await issueDetail.fetchIssue("plane", "02c3e1d5-d7e2-401d-a773-45ecba45d745", issueId);
-    init();
-  }, [issueDetail]);
+  // useEffect(() => {
+  //   const init = async () => await issueDetail.fetchIssue("plane", "02c3e1d5-d7e2-401d-a773-45ecba45d745", issueId);
+  //   init();
+  // }, [issueDetail]);
 
-  console.log(issueDetail?.issue);
+  // console.log(issueDetail?.issue);
 
   return <WorkspaceDashboardView />;
 });

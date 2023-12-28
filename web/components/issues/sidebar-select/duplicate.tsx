@@ -84,10 +84,10 @@ export const SidebarDuplicateSelect: React.FC<Props> = observer((props) => {
   };
 
   const duplicateIssuesRelation = [
-    ...(watch("related_issues")?.filter((i) => i.relation_type === "duplicate") ?? []),
+    ...(watch("related_issues")?.filter((i: any) => i.relation_type === "duplicate") ?? []),
     ...(watch("issue_relations") ?? [])
-      ?.filter((i) => i.relation_type === "duplicate")
-      .map((i) => ({
+      ?.filter((i: any) => i.relation_type === "duplicate")
+      .map((i: any) => ({
         ...i,
         issue_detail: i.issue_detail,
         related_issue: i.issue_detail?.id,

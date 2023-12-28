@@ -4,7 +4,6 @@ import { orderArrayBy } from "helpers/array.helper";
 // types
 import {
   TIssue,
-  TIssue,
   TIssueGroupByOptions,
   TIssueLayouts,
   TIssueOrderByOptions,
@@ -58,7 +57,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
     let newGroup: TIssue[] = [];
 
     if (selectedGroupBy === "priority") newGroup = prevData[formData.priority ?? ""] ?? [];
-    else if (selectedGroupBy === "state") newGroup = prevData[formData.state ?? ""] ?? [];
+    else if (selectedGroupBy === "state") newGroup = prevData[formData.state_id ?? ""] ?? [];
 
     const updatedIssue = {
       ...oldGroup[issueIndex],
@@ -74,7 +73,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
         ),
       };
 
-    const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state;
+    const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state_id;
 
     return {
       ...prevData,

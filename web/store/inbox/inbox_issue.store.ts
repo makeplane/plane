@@ -153,7 +153,7 @@ export class InboxIssuesStore implements IInboxIssuesStore {
     const payload = {
       issue: {
         name: data.name,
-        description: data.description,
+        // description: data.description,
         description_html: data.description_html,
         priority: data.priority,
       },

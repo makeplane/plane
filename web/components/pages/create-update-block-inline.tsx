@@ -137,7 +137,7 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
             issueService
               .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
                 name: res.name,
-                description: res.description,
+                // description: res.description,
                 description_html: res.description_html,
               })
               .finally(() => {

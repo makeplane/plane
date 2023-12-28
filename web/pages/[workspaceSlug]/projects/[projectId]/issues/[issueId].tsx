@@ -21,16 +21,16 @@ import { NextPageWithLayout } from "types/app";
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues: Partial<TIssue> = {
-  description: "",
+  // description: "",
   description_html: "",
   estimate_point: null,
   issue_cycle: null,
   issue_module: null,
   name: "",
   priority: "low",
-  start_date: null,
-  state: "",
-  target_date: null,
+  start_date: undefined,
+  state_id: "",
+  target_date: undefined,
 };
 
 // services
