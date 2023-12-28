@@ -1,8 +1,8 @@
 import { Controller, useForm } from "react-hook-form";
+// components
+import { DateDropdown, ProjectDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-import { DateSelect } from "components/ui";
-import { IssueProjectSelect } from "components/issues/select";
 // types
 import { ICycle } from "types";
 
@@ -49,12 +49,13 @@ export const CycleForm: React.FC<Props> = (props) => {
             control={control}
             name="project"
             render={({ field: { value, onChange } }) => (
-              <IssueProjectSelect
+              <ProjectDropdown
                 value={value}
-                onChange={(val: string) => {
+                onChange={(val) => {
                   onChange(val);
                   setActiveProject(val);
                 }}
+                buttonVariant="background-with-text"
               />
             )}
           />
@@ -112,25 +113,33 @@ export const CycleForm: React.FC<Props> = (props) => {
                   control={control}
                   name="start_date"
                   render={({ field: { value, onChange } }) => (
-                    <DateSelect
-                      label="Start date"
+                    <div className="h-7">
+                      <DateDropdown
+                        value={value}
+                        onChange={onChange}
+                        buttonVariant="border-with-text"
+                        placeholder="Start date"
+                        maxDate={maxDate ?? undefined}
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+              <Controller
+                control={control}
+                name="end_date"
+                render={({ field: { value, onChange } }) => (
+                  <div className="h-7">
+                    <DateDropdown
                       value={value}
-                      onChange={(val) => onChange(val)}
-                      minDate={new Date()}
-                      maxDate={maxDate ?? undefined}
+                      onChange={onChange}
+                      buttonVariant="border-with-text"
+                      placeholder="End date"
+                      minDate={minDate}
                     />
-                  )}
-                />
-              </div>
-              <div>
-                <Controller
-                  control={control}
-                  name="end_date"
-                  render={({ field: { value, onChange } }) => (
-                    <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} minDate={minDate} />
-                  )}
-                />
-              </div>
+                  </div>
+                )}
+              />
             </div>
           </div>
         </div>

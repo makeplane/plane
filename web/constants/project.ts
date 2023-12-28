@@ -1,5 +1,4 @@
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { TIssuePriorities } from "types";
 
 export enum EUserProjectRoles {
   GUEST = 5,
@@ -30,8 +29,6 @@ export const GROUP_CHOICES = {
 };
 
 export const STATE_GROUP = ["Backlog", "Unstarted", "Started", "Completed", "Cancelled"];
-
-export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", "none"];
 
 export const MONTHS = [
   "January",

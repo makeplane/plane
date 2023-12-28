@@ -1,5 +1,6 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // types
@@ -9,6 +10,7 @@ import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitat
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { IRouterStore } from "store/application/router.store";
 import { IMemberRootStore } from ".";
+import { IUserRootStore } from "store/user";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -52,6 +54,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]> = {}; // { workspaceSlug: [invitations] }
   // stores
   routerStore: IRouterStore;
+  userStore: IUserRootStore;
   memberRoot: IMemberRootStore;
   // services
   workspaceService;
@@ -80,6 +83,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
 
     // root store
     this.routerStore = _rootStore.app.router;
+    this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
     // services
     this.workspaceService = new WorkspaceService();
@@ -91,7 +95,13 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   get workspaceMemberIds() {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
-    return Object.keys(this.workspaceMemberMap?.[workspaceSlug] ?? {});
+    let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
+    members = sortBy(members, [
+      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
+    ]);
+    const memberIds = members.map((m) => m.member);
+    return memberIds;
   }
 
   get workspaceMemberInvitationIds() {

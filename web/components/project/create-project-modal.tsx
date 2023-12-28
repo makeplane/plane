@@ -4,14 +4,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useMember, useProject, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
-import { WorkspaceMemberSelect } from "components/workspace";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
+import { WorkspaceMemberDropdown } from "components/dropdowns";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // constants
@@ -68,9 +68,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
-  const {
-    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
-  } = useMember();
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -350,20 +347,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="flex-shrink-0" tabIndex={4}>
-                        <Controller
-                          name="network"
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
+                      <Controller
+                        name="network"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <div className="flex-shrink-0" tabIndex={4}>
                             <CustomSelect
                               value={value}
                               onChange={onChange}
-                              buttonClassName="border-[0.5px] shadow-md !py-1.5 shadow-none"
                               label={
-                                <div className="flex items-center gap-2 text-custom-text-300">
+                                <div className="flex items-center gap-1">
                                   {currentNetwork ? (
                                     <>
-                                      <currentNetwork.icon className="h-[18px] w-[18px]" />
+                                      <currentNetwork.icon className="h-3 w-3" />
                                       {currentNetwork.label}
                                     </>
                                   ) : (
@@ -371,6 +367,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                                   )}
                                 </div>
                               }
+                              placement="bottom-start"
                               noChevron
                             >
                               {NETWORK_CHOICES.map((network) => (
@@ -384,28 +381,24 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                                 </CustomSelect.Option>
                               ))}
                             </CustomSelect>
-                          )}
-                        />
-                      </div>
-                      <div className="flex-shrink-0" tabIndex={5}>
-                        <Controller
-                          name="project_lead_member"
-                          control={control}
-                          render={({ field: { value, onChange } }) => {
-                            const memberId = workspaceMemberIds?.find((memberId) => memberId === value);
-                            const memberDetails = getWorkspaceMemberDetails(memberId ?? "");
-
-                            return (
-                              <WorkspaceMemberSelect
-                                value={memberDetails ?? undefined}
-                                onChange={onChange}
-                                options={workspaceMemberIds || []}
-                                placeholder="Select Lead"
-                              />
-                            );
-                          }}
-                        />
-                      </div>
+                          </div>
+                        )}
+                      />
+                      <Controller
+                        name="project_lead_member"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <div className="h-7 flex-shrink-0" tabIndex={5}>
+                            <WorkspaceMemberDropdown
+                              value={value}
+                              onChange={onChange}
+                              placeholder="Lead"
+                              multiple={false}
+                              buttonVariant="border-with-text"
+                            />
+                          </div>
+                        )}
+                      />
                     </div>
                   </div>
 

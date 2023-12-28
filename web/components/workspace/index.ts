@@ -9,7 +9,6 @@ export * from "./help-section";
 export * from "./issues-list";
 export * from "./issues-pie-chart";
 export * from "./issues-stats";
-export * from "./member-select";
 export * from "./send-workspace-invitation-modal";
 export * from "./sidebar-dropdown";
 export * from "./sidebar-menu";

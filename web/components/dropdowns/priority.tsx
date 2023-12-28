@@ -1,0 +1,248 @@
+import { Fragment, ReactNode, useState } from "react";
+import { Combobox } from "@headlessui/react";
+import { usePopper } from "react-popper";
+import { Placement } from "@popperjs/core";
+import { Check, ChevronDown, Search } from "lucide-react";
+// icons
+import { PriorityIcon } from "@plane/ui";
+// helpers
+import { cn } from "helpers/common.helper";
+// types
+import { TIssuePriorities } from "types";
+// constants
+import { ISSUE_PRIORITIES } from "constants/issue";
+// types
+import { TButtonVariants } from "./types";
+
+type Props = {
+  button?: ReactNode;
+  buttonClassName?: string;
+  buttonVariant: TButtonVariants;
+  className?: string;
+  disabled?: boolean;
+  dropdownArrow?: boolean;
+  onChange: (val: TIssuePriorities) => void;
+  placement?: Placement;
+  value: TIssuePriorities;
+};
+
+type ButtonProps = {
+  className?: string;
+  hideText?: boolean;
+  priority: TIssuePriorities;
+};
+
+const BorderButton = (props: ButtonProps) => {
+  const { className, hideText = false, priority } = props;
+
+  const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
+
+  const priorityClasses = {
+    urgent: "bg-red-500/20 text-red-900 border-red-500",
+    high: "bg-orange-500/20 text-orange-900 border-orange-500",
+    medium: "bg-yellow-500/20 text-yellow-900 border-yellow-500",
+    low: "bg-custom-primary-100/20 text-custom-primary-900 border-custom-primary-100",
+    none: "bg-custom-background-80 border-custom-border-300",
+  };
+
+  return (
+    <div
+      className={cn(
+        "h-full flex items-center gap-1 border-[0.5px] rounded text-xs px-2 py-0.5",
+        priorityClasses[priority],
+        className
+      )}
+    >
+      <PriorityIcon priority={priority} size={12} className="flex-shrink-0" />
+      {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+    </div>
+  );
+};
+
+const BackgroundButton = (props: ButtonProps) => {
+  const { className, hideText = false, priority } = props;
+
+  const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
+
+  const priorityClasses = {
+    urgent: "bg-red-500/20 text-red-900",
+    high: "bg-orange-500/20 text-orange-900",
+    medium: "bg-yellow-500/20 text-yellow-900",
+    low: "bg-blue-500/20 text-blue-900",
+    none: "bg-custom-background-80",
+  };
+
+  return (
+    <div
+      className={cn("h-full flex items-center gap-1 rounded text-xs px-2 py-0.5", priorityClasses[priority], className)}
+    >
+      <PriorityIcon priority={priority} size={12} className="flex-shrink-0" />
+      {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+    </div>
+  );
+};
+
+const TransparentButton = (props: ButtonProps) => {
+  const { className, hideText = false, priority } = props;
+
+  const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
+
+  const priorityClasses = {
+    urgent: "text-red-900",
+    high: "text-orange-900",
+    medium: "text-yellow-900",
+    low: "text-blue-900",
+    none: "",
+  };
+
+  return (
+    <div
+      className={cn(
+        "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+        priorityClasses[priority],
+        className
+      )}
+    >
+      <PriorityIcon priority={priority} size={12} className="flex-shrink-0" />
+      {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+    </div>
+  );
+};
+
+export const PriorityDropdown: React.FC<Props> = (props) => {
+  const {
+    button,
+    buttonClassName,
+    buttonVariant,
+    className = "",
+    disabled = false,
+    dropdownArrow = false,
+    onChange,
+    placement,
+    value,
+  } = props;
+  // states
+  const [query, setQuery] = useState("");
+  // popper-js refs
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // popper-js init
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
+
+  const options = ISSUE_PRIORITIES.map((priority) => ({
+    value: priority.key,
+    query: priority.key,
+    content: (
+      <div className="flex items-center gap-2">
+        <div
+          className={`grid place-items-center border-[0.5px] rounded-sm p-0.5 flex-shrink-0 ${
+            priority.key === "urgent" ? "bg-red-500 border-red-500" : "border-custom-border-100"
+          }`}
+        >
+          <PriorityIcon priority={priority.key} size={12} className={priority.key === "urgent" ? "text-white" : ""} />
+        </div>
+        <span className="flex-grow truncate">{priority.title}</span>
+      </div>
+    ),
+  }));
+
+  const filteredOptions =
+    query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+
+  return (
+    <Combobox
+      as="div"
+      className={cn("h-full flex-shrink-0", {
+        className,
+      })}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+    >
+      <Combobox.Button as={Fragment}>
+        {button ? (
+          <button ref={setReferenceElement} type="button" className="block h-full w-full outline-none">
+            {button}
+          </button>
+        ) : (
+          <button
+            ref={setReferenceElement}
+            type="button"
+            className={cn("block h-full max-w-full outline-none", {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            })}
+          >
+            {buttonVariant === "border-with-text" ? (
+              <BorderButton priority={value} className={buttonClassName} />
+            ) : buttonVariant === "border-without-text" ? (
+              <BorderButton priority={value} className={buttonClassName} hideText />
+            ) : buttonVariant === "background-with-text" ? (
+              <BackgroundButton priority={value} className={buttonClassName} />
+            ) : buttonVariant === "background-without-text" ? (
+              <BackgroundButton priority={value} className={buttonClassName} hideText />
+            ) : buttonVariant === "transparent-with-text" ? (
+              <TransparentButton priority={value} className={buttonClassName} />
+            ) : buttonVariant === "transparent-without-text" ? (
+              <TransparentButton priority={value} className={buttonClassName} hideText />
+            ) : null}
+            {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
+          </button>
+        )}
+      </Combobox.Button>
+      <Combobox.Options className="fixed z-10">
+        <div
+          className="my-1 w-48 rounded border border-custom-border-300 bg-custom-background-100 px-1.5 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+            <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+            <Combobox.Input
+              className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              displayValue={(assigned: any) => assigned?.name}
+            />
+          </div>
+          <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <Combobox.Option
+                  key={option.value}
+                  value={option.value}
+                  className={({ active, selected }) =>
+                    `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                      active ? "bg-custom-background-80" : ""
+                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                  }
+                >
+                  {({ selected }) => (
+                    <>
+                      <span className="flex-grow truncate">{option.content}</span>
+                      {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                    </>
+                  )}
+                </Combobox.Option>
+              ))
+            ) : (
+              <p className="text-custom-text-400 italic py-3 px-1.5">No matching results</p>
+            )}
+          </div>
+        </div>
+      </Combobox.Options>
+    </Combobox>
+  );
+};

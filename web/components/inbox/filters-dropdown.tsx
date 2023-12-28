@@ -10,8 +10,8 @@ import { PriorityIcon } from "@plane/ui";
 // types
 import { IInboxFilterOptions } from "types";
 // constants
-import { PRIORITIES } from "constants/project";
 import { INBOX_STATUS } from "constants/inbox";
+import { ISSUE_PRIORITIES } from "constants/issue";
 
 export const FiltersDropdown: React.FC = observer(() => {
   const router = useRouter();
@@ -55,20 +55,20 @@ export const FiltersDropdown: React.FC = observer(() => {
           {
             id: "priority",
             label: "Priority",
-            value: PRIORITIES,
+            value: ISSUE_PRIORITIES.map((p) => p.key),
             hasChildren: true,
-            children: PRIORITIES.map((priority) => ({
-              id: priority === null ? "null" : priority,
+            children: ISSUE_PRIORITIES.map((priority) => ({
+              id: priority.key,
               label: (
                 <div className="flex items-center gap-2 capitalize">
-                  <PriorityIcon priority={priority} /> {priority ?? "None"}
+                  <PriorityIcon priority={priority.key} /> {priority.title ?? "None"}
                 </div>
               ),
               value: {
                 key: "priority",
-                value: priority === null ? "null" : priority,
+                value: priority.key,
               },
-              selected: filters?.priority?.includes(priority === null ? "null" : priority),
+              selected: filters?.priority?.includes(priority.key),
             })),
           },
           {

@@ -13,18 +13,18 @@ import { FileService } from "services/file.service";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
-import {
-  IssueAssigneeSelect,
-  IssueDateSelect,
-  IssueEstimateSelect,
-  IssueLabelSelect,
-  IssuePrioritySelect,
-  IssueProjectSelect,
-  IssueStateSelect,
-} from "components/issues/select";
+import { IssueLabelSelect } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  ProjectDropdown,
+  ProjectMemberDropdown,
+  StateDropdown,
+} from "components/dropdowns";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // types
@@ -314,12 +314,13 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                 control={control}
                 name="project"
                 render={({ field: { value, onChange } }) => (
-                  <IssueProjectSelect
+                  <ProjectDropdown
                     value={value}
-                    onChange={(val: string) => {
+                    onChange={(val) => {
                       onChange(val);
                       setActiveProject(val);
                     }}
+                    buttonVariant="background-with-text"
                   />
                 )}
               />
@@ -464,12 +465,14 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="state"
                     render={({ field: { value, onChange } }) => (
-                      <IssueStateSelect
-                        setIsOpen={setStateModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <StateDropdown
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                          buttonVariant="border-with-text"
+                        />
+                      </div>
                     )}
                   />
                 )}
@@ -478,7 +481,9 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="priority"
                     render={({ field: { value, onChange } }) => (
-                      <IssuePrioritySelect value={value} onChange={onChange} />
+                      <div className="h-7">
+                        <PriorityDropdown value={value} onChange={onChange} buttonVariant="background-with-text" />
+                      </div>
                     )}
                   />
                 )}
@@ -487,7 +492,13 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="assignees"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
+                      <ProjectMemberDropdown
+                        projectId={projectId}
+                        value={value}
+                        onChange={onChange}
+                        multiple
+                        buttonVariant="background-with-text"
+                      />
                     )}
                   />
                 )}
@@ -511,12 +522,15 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       control={control}
                       name="start_date"
                       render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect
-                          label="Start date"
-                          maxDate={maxDate ?? undefined}
-                          onChange={onChange}
-                          value={value}
-                        />
+                        <div className="h-7">
+                          <DateDropdown
+                            value={value}
+                            onChange={onChange}
+                            buttonVariant="border-with-text"
+                            placeholder="Start date"
+                            maxDate={maxDate ?? undefined}
+                          />
+                        </div>
                       )}
                     />
                   </div>
@@ -527,12 +541,15 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       control={control}
                       name="target_date"
                       render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect
-                          label="Due date"
-                          minDate={minDate ?? undefined}
-                          onChange={onChange}
-                          value={value}
-                        />
+                        <div className="h-7">
+                          <DateDropdown
+                            value={value}
+                            onChange={onChange}
+                            buttonVariant="border-with-text"
+                            placeholder="Due date"
+                            minDate={minDate ?? undefined}
+                          />
+                        </div>
                       )}
                     />
                   </div>
@@ -543,7 +560,12 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       control={control}
                       name="estimate_point"
                       render={({ field: { value, onChange } }) => (
-                        <IssueEstimateSelect value={value} onChange={onChange} />
+                        <EstimateDropdown
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                          buttonVariant="background-with-text"
+                        />
                       )}
                     />
                   </div>

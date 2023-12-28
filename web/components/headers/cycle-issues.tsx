@@ -67,7 +67,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
-  const { projectCycleIds, getCycleById } = useCycle();
+  const { currentProjectCycleIds, getCycleById } = useCycle();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -187,7 +187,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {projectCycleIds?.map((cycleId) => (
+                  {currentProjectCycleIds?.map((cycleId) => (
                     <CycleDropdownOption key={cycleId} cycleId={cycleId} />
                   ))}
                 </CustomMenu>

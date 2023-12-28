@@ -1,9 +1,8 @@
 import React from "react";
-
-// components
-import { IssuePropertyState } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
+// components
+import { StateDropdown } from "components/dropdowns";
 // types
 import { IIssue, IState } from "types";
 
@@ -24,37 +23,33 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <IssuePropertyState
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.state}
-        defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
-        onChange={(data) => {
-          onChange(issue, { state: data.id, state_detail: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { state: data.id, state_detail: data });
-          }
-        }}
-        className="w-full !h-11 border-b-[0.5px] border-custom-border-200"
-        buttonClassName="!shadow-none !border-0 h-full w-full"
-        hideDropdownArrow
-        disabled={disabled}
-      />
+      <div className="h-11 border-b-[0.5px] border-custom-border-200">
+        <StateDropdown
+          projectId={issue.project}
+          value={issue.state}
+          onChange={(data) => {
+            onChange(issue, { state: data });
+            if (issue.parent) mutateSubIssues(issue, { state: data });
+          }}
+          disabled={disabled}
+          buttonVariant="transparent-with-text"
+          buttonClassName="rounded-none"
+        />
+      </div>
 
       {isExpanded &&
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue) => (
-          <div className="h-11">
-            <SpreadsheetStateColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              states={states}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
+          <SpreadsheetStateColumn
+            key={subIssue.id}
+            issue={subIssue}
+            onChange={onChange}
+            states={states}
+            expandedIssues={expandedIssues}
+            disabled={disabled}
+          />
         ))}
     </>
   );

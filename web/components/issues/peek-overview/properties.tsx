@@ -6,16 +6,8 @@ import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from
 import { useIssueDetail, useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import {
-  SidebarAssigneeSelect,
-  SidebarCycleSelect,
-  SidebarEstimateSelect,
-  SidebarLabelSelect,
-  SidebarModuleSelect,
-  SidebarParentSelect,
-  SidebarPrioritySelect,
-  SidebarStateSelect,
-} from "../sidebar-select";
+import { SidebarCycleSelect, SidebarLabelSelect, SidebarModuleSelect, SidebarParentSelect } from "components/issues";
+import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
@@ -115,7 +107,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>State</p>
             </div>
             <div>
-              <SidebarStateSelect value={issue?.state || ""} onChange={handleState} disabled={disableUserActions} />
+              <StateDropdown
+                value={issue?.state || ""}
+                onChange={handleState}
+                projectId={issue.project}
+                disabled={disableUserActions}
+                buttonVariant="background-with-text"
+              />
             </div>
           </div>
 
@@ -125,12 +123,19 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
-            <div>
-              <SidebarAssigneeSelect
-                value={issue.assignees || []}
-                onChange={handleAssignee}
-                disabled={disableUserActions}
-              />
+            <div className="h-5">
+              <div className="h-5 sm:w-1/2">
+                <ProjectMemberDropdown
+                  value={issue.assignees}
+                  onChange={handleAssignee}
+                  disabled={disableUserActions}
+                  projectId={projectId?.toString() ?? ""}
+                  placeholder="Assignees"
+                  multiple
+                  buttonVariant={issue.assignees?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                  buttonClassName={issue.assignees?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                />
+              </div>
             </div>
           </div>
 
@@ -140,11 +145,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
-            <div>
-              <SidebarPrioritySelect
+            <div className="h-5">
+              <PriorityDropdown
                 value={issue.priority || ""}
                 onChange={handlePriority}
                 disabled={disableUserActions}
+                buttonVariant="background-with-text"
               />
             </div>
           </div>
@@ -157,10 +163,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 <p>Estimate</p>
               </div>
               <div>
-                <SidebarEstimateSelect
+                <EstimateDropdown
                   value={issue.estimate_point}
                   onChange={handleEstimate}
+                  projectId={issue.project}
                   disabled={disableUserActions}
+                  buttonVariant="background-with-text"
                 />
               </div>
             </div>

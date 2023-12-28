@@ -1,5 +1,5 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
 // services
 import { ProjectEstimateService } from "services/project";
 // types
@@ -14,8 +14,10 @@ export interface IEstimateStore {
   projectEstimates: IEstimate[] | null;
   activeEstimateDetails: IEstimate | null;
   // computed actions
+  areEstimatesActiveForProject: (projectId: string) => boolean;
   getEstimatePointValue: (estimateKey: number | null) => string;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
+  getProjectActiveEstimateDetails: (projectId: string) => IEstimate | null;
   // fetch actions
   fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<IEstimate[]>;
   // crud actions
@@ -46,8 +48,10 @@ export class EstimateStore implements IEstimateStore {
       projectEstimates: computed,
       activeEstimateDetails: computed,
       // computed actions
+      areEstimatesActiveForProject: action,
       getProjectEstimateById: action,
       getEstimatePointValue: action,
+      getProjectActiveEstimateDetails: action,
       // actions
       fetchProjectEstimates: action,
       createEstimate: action,
@@ -89,6 +93,16 @@ export class EstimateStore implements IEstimateStore {
   }
 
   /**
+   * @description returns true if estimates are enabled for a project using project id
+   * @param projectId
+   */
+  areEstimatesActiveForProject = (projectId: string) => {
+    const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
+    if (!projectDetails) return false;
+    return Boolean(projectDetails.estimate) ?? false;
+  };
+
+  /**
    * @description returns the point value for the given estimate key to display in the UI
    */
   getEstimatePointValue = (estimateKey: number | null) => {
@@ -99,11 +113,22 @@ export class EstimateStore implements IEstimateStore {
 
   /**
    * @description returns the estimate details for the given estimate id
+   * @param estimateId
    */
   getProjectEstimateById = (estimateId: string) => {
     if (!this.projectEstimates) return null;
     const estimateInfo = this.projectEstimates?.find((estimate) => estimate.id === estimateId) || null;
     return estimateInfo;
+  };
+
+  /**
+   * @description returns the estimate details for the given estimate id
+   * @param projectId
+   */
+  getProjectActiveEstimateDetails = (projectId: string) => {
+    const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
+    if (!projectDetails || !projectDetails?.estimate) return null;
+    return this.projectEstimates?.find((estimate) => estimate.id === projectDetails?.estimate) || null;
   };
 
   /**

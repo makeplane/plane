@@ -1,17 +1,13 @@
-// mobx
 import { observer } from "mobx-react-lite";
-// lucide icons
 import { Layers, Link, Paperclip } from "lucide-react";
 // components
-import { IssuePropertyState } from "../properties/state";
-import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { IssuePropertyEstimates } from "./estimates";
-import { IssuePropertyAssignee } from "./assignee";
+import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
+// types
+import { IIssue, IIssueDisplayProperties, TIssuePriorities } from "types";
 
 export interface IIssueProperties {
   issue: IIssue;
@@ -24,8 +20,8 @@ export interface IIssueProperties {
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
 
-  const handleState = (state: IState) => {
-    handleIssues({ ...issue, state: state.id });
+  const handleState = (stateId: string) => {
+    handleIssues({ ...issue, state: stateId });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
@@ -59,24 +55,28 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <IssuePropertyState
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.state || null}
-          defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
-          onChange={handleState}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5">
+          <StateDropdown
+            value={issue.state}
+            onChange={handleState}
+            projectId={issue.project}
+            disabled={isReadOnly}
+            buttonVariant="border-with-text"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <IssuePropertyPriority
-          value={issue?.priority || null}
-          onChange={handlePriority}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5">
+          <PriorityDropdown
+            value={issue?.priority || null}
+            onChange={handlePriority}
+            disabled={isReadOnly}
+            buttonVariant="border-without-text"
+            buttonClassName="border px-1"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* label */}
@@ -114,25 +114,30 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <IssuePropertyAssignee
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.assignees || null}
-          hideDropdownArrow
-          onChange={handleAssignee}
-          disabled={isReadOnly}
-          multiple
-        />
+        <div className="h-5">
+          <ProjectMemberDropdown
+            projectId={issue?.project}
+            value={issue?.assignees}
+            onChange={handleAssignee}
+            disabled={isReadOnly}
+            multiple
+            buttonVariant={issue.assignees.length > 0 ? "transparent-without-text" : "border-without-text"}
+            buttonClassName={issue.assignees.length > 0 ? "hover:bg-transparent px-0" : ""}
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* estimates */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-        <IssuePropertyEstimates
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.estimate_point || null}
-          onChange={handleEstimate}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5">
+          <EstimateDropdown
+            value={issue.estimate_point}
+            onChange={handleEstimate}
+            projectId={issue.project}
+            disabled={isReadOnly}
+            buttonVariant="border-with-text"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* extra render properties */}

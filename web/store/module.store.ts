@@ -1,5 +1,6 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // services
 import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
@@ -14,6 +15,7 @@ export interface IModuleStore {
   projectModuleIds: string[] | null;
   // computed actions
   getModuleById: (moduleId: string) => IModule | null;
+  getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
   // fetch
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<IModule[]>;
@@ -63,6 +65,7 @@ export class ModulesStore implements IModuleStore {
       projectModuleIds: computed,
       // computed actions
       getModuleById: action,
+      getProjectModuleIds: action,
       // actions
       fetchModules: action,
       fetchModuleDetails: action,
@@ -90,9 +93,9 @@ export class ModulesStore implements IModuleStore {
   get projectModuleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
-    const projectModuleIds = Object.keys(this.moduleMap).filter(
-      (moduleId) => this.moduleMap?.[moduleId]?.project === projectId
-    );
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
+    projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
+    const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds || null;
   }
 
@@ -104,6 +107,17 @@ export class ModulesStore implements IModuleStore {
   getModuleById = (moduleId: string) => this.moduleMap?.[moduleId] || null;
 
   /**
+   * @description returns list of module ids of the project id passed as argument
+   * @param projectId
+   */
+  getProjectModuleIds = (projectId: string) => {
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
+    projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
+    const projectModuleIds = projectModules.map((m) => m.id);
+    return projectModuleIds || null;
+  };
+
+  /**
    * @description fetch all modules
    * @param workspaceSlug
    * @param projectId
@@ -113,7 +127,7 @@ export class ModulesStore implements IModuleStore {
     await this.moduleService.getModules(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
         response.forEach((module) => {
-          set(this.moduleMap, [module.id], module);
+          set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
         });
       });
       return response;

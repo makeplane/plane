@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
 // components
-import { IssuePrioritySelect } from "components/issues/select";
+import { PriorityDropdown } from "components/dropdowns";
 import { GptAssistantModal } from "components/core";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
@@ -296,7 +296,13 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             control={control}
                             name="priority"
                             render={({ field: { value, onChange } }) => (
-                              <IssuePrioritySelect value={value ?? "none"} onChange={onChange} />
+                              <div className="h-5">
+                                <PriorityDropdown
+                                  value={value ?? "none"}
+                                  onChange={onChange}
+                                  buttonVariant="background-with-text"
+                                />
+                              </div>
                             )}
                           />
                         </div>

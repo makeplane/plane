@@ -23,7 +23,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
   const [query, setQuery] = useState("");
 
   // store hooks
-  const { projectIncompleteCycleIds, getCycleById } = useCycle();
+  const { currentProjectIncompleteCycleIds, getCycleById } = useCycle();
   const {
     issues: { transferIssuesFromCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -54,7 +54,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const filteredOptions = projectIncompleteCycleIds?.filter((optionId) => {
+  const filteredOptions = currentProjectIncompleteCycleIds?.filter((optionId) => {
     const cycleDetails = getCycleById(optionId);
 
     return cycleDetails?.name.toLowerCase().includes(query.toLowerCase());
