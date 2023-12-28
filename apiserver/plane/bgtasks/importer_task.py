@@ -35,8 +35,9 @@ from plane.db.models import (
 )
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
-@shared_task(queue="internal_tasks")
-@transaction.atomic
+
+from django.db import transaction
+
 def update_imported_items(
     importer_id,
     entity,
@@ -46,30 +47,26 @@ def update_imported_items(
     reason="",
 ):
     try:
-        """Update the imported data json with key and external_id and pid (plane_id)"""
-        importer = Importer.objects.get(pk=importer_id)
-        if importer.imported_data:
-            importer.imported_data.setdefault(str(entity), {})[str(external_id)] = {
+        with transaction.atomic():
+            # Select the importer for update to lock the row
+            importer = Importer.objects.select_for_update().get(pk=importer_id)
+
+            # Initialize the entity list if it doesn't exist
+            if str(entity) not in importer.imported_data:
+                importer.imported_data[str(entity)] = {}
+
+            # Prepare the new entry
+            importer.imported_data[str(entity)][str(external_id)] = {
                 "pid": str(entity_id),
                 "already_exists": already_exists,
-                "reason": reason,
+                "reason": reason
             }
+            # Save the updated importer
             importer.save()
-        else:
-            importer.imported_data = {
-                str(entity): {
-                    str(external_id): {
-                        "pid": str(entity_id),
-                        "already_exists": already_exists,
-                        "reason": reason,
-                    }
-                }
-            }
-            importer.save()
-        return
+
     except Exception as e:
-        print(e)
-        return
+        print(f"Error: {e}")  # Exception debugging
+
 
 
 def generate_random_hex_color():
@@ -126,7 +123,7 @@ def resolve_state(data):
                 existing.external_id = state_data.get("external_id")
                 existing.external_source = state_data.get("external_source")
                 existing.save()
-                update_imported_items.delay(
+                update_imported_items(
                     importer_id=importer_id,
                     entity="states",
                     entity_id=existing.id,
@@ -143,7 +140,7 @@ def resolve_state(data):
                     external_source=state_data.get("external_source"),
                     created_by_id=created_by_id,
                 )
-                update_imported_items.delay(
+                update_imported_items(
                     importer_id=importer_id,
                     entity="states",
                     entity_id=state.id,
@@ -174,7 +171,7 @@ def resolve_labels(data):
                 existing.external_id = label.get("external_id")
                 existing.external_source = label.get("external_source")
                 existing.save()
-                update_imported_items.delay(
+                update_imported_items(
                     importer_id=importer_id,
                     entity="labels",
                     entity_id=existing.id,
@@ -191,7 +188,7 @@ def resolve_labels(data):
                     external_id=external_id,
                     external_source=external_source,
                 )
-                update_imported_items.delay(
+                update_imported_items(
                     importer_id=importer_id,
                     entity="labels",
                     entity_id=new_label.id,
@@ -199,7 +196,7 @@ def resolve_labels(data):
                 )
                 bulk_labels.append(new_label)
         except Exception as e:
-            update_imported_items.delay(
+            update_imported_items(
                 importer_id=importer_id,
                 entity="failed_labels",
                 entity_id=None,
@@ -247,7 +244,7 @@ def resolve_assignees(data):
                     )
                 except Exception as e:
                     pass
-                update_imported_items.delay(
+                update_imported_items(
                     importer_id=importer_id,
                     entity="users",
                     entity_id=user.id,
@@ -261,7 +258,7 @@ def resolve_assignees(data):
                     password=make_password(uuid.uuid4().hex),
                     is_password_autoset=True,
                 )
-                send_welcome_slack.delay(
+                send_welcome_slack(
                     str(user.id),
                     True,
                     f"{user.email} was imported to Plane from {external_source}",
@@ -290,7 +287,7 @@ def resolve_assignees(data):
                     )
                 except Exception as e:
                     pass
-                update_imported_items.delay(
+                update_imported_items(
                     importer_id=importer_id,
                     entity="users",
                     entity_id=user.id,
@@ -319,7 +316,7 @@ def resolve_cycle(data):
         cycle.external_id = cycle_data.get("external_id")
         cycle.external_source = cycle_data.get("external_source")
         cycle.save()
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="cycles",
             entity_id=cycle.id,
@@ -335,7 +332,7 @@ def resolve_cycle(data):
             external_source=cycle_data.get("external_source"),
             created_by_id=created_by_id,
         )
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="cycles",
             entity_id=cycle.id,
@@ -359,7 +356,7 @@ def resolve_module(data):
     if module:
         module.external_id = module_data.get("external_id")
         module.external_source = module_data.get("external_source")
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="modules",
             entity_id=module.id,
@@ -375,7 +372,7 @@ def resolve_module(data):
             name=module_data.get("name"),
             created_by_id=created_by_id,
         )
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="modules",
             entity_id=module.id,
@@ -424,7 +421,7 @@ def import_member_sync(data):
             )
         except Exception as e:
             pass
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="users",
             entity_id=user.id,
@@ -438,7 +435,7 @@ def import_member_sync(data):
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
         )
-        send_welcome_slack.delay(
+        send_welcome_slack(
             str(user.id),
             True,
             f"{user.email} was imported to Plane from {external_source}",
@@ -467,7 +464,7 @@ def import_member_sync(data):
             )
         except Exception as e:
             pass
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="users",
             entity_id=user.id,
@@ -499,7 +496,7 @@ def import_issue_sync(data):
 
         # Check if the issue already synced to Plane
         if existing_issue:
-            update_imported_items.delay(
+            update_imported_items(
                 importer_id=importer_id,
                 entity_id=existing_issue.id,
                 external_id=external_id,
@@ -560,7 +557,7 @@ def import_issue_sync(data):
             external_source=data.get("external_source"),
             parent=parent_issue,
         )
-        update_imported_items.delay(
+        update_imported_items(
             importer_id=importer_id,
             entity="issues",
             external_id=data.get("external_id"),
@@ -597,7 +594,7 @@ def import_issue_sync(data):
                 headers=headers,
             )
     except Exception as e:
-        update_imported_items.delay(
+        update_imported_items(
             entity="failed_issues",
             entity_id=None,
             external_id=external_id,
