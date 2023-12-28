@@ -33,28 +33,36 @@ export function parseCreateIssueModalSubmission(
   );
 
   return {
-    project: projectAction
-      ? {
-          id: projectAction.selected_option.value,
-          name: projectAction.selected_option.text.text,
-        }
-      : null,
-    issueTitle: issueTitleAction ? issueTitleAction.value : "",
-    issueDescription: issueDescriptionAction
-      ? issueDescriptionAction.value
-      : "",
-    assignees: assigneesAction
-      ? assigneesAction.selected_options.map((option: PlainTextOption) => ({
-          id: option.value,
-          name: option.text.text,
-        }))
-      : [],
-    state: stateAction
-      ? {
-          id: stateAction.selected_option.value,
-          name: stateAction.selected_option.text.text,
-        }
-      : null,
-    priority: priorityAction ? priorityAction.selected_option.value : "",
+    project:
+      projectAction && projectAction.selected_option
+        ? {
+            id: projectAction.selected_option.value,
+            name: projectAction.selected_option.text.text,
+          }
+        : null,
+    issueTitle:
+      issueTitleAction && issueTitleAction.value ? issueTitleAction.value : "",
+    issueDescription:
+      issueDescriptionAction && issueDescriptionAction.value
+        ? issueDescriptionAction.value
+        : "",
+    assignees:
+      assigneesAction && assigneesAction.selected_options
+        ? assigneesAction.selected_options.map((option: PlainTextOption) => ({
+            id: option.value,
+            name: option.text.text,
+          }))
+        : [],
+    state:
+      stateAction && stateAction.selected_option
+        ? {
+            id: stateAction.selected_option.value,
+            name: stateAction.selected_option.text.text,
+          }
+        : null,
+    priority:
+      priorityAction && priorityAction.selected_option
+        ? priorityAction.selected_option.value
+        : "none",
   };
 }

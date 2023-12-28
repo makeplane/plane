@@ -68,6 +68,7 @@ export const CreateIssueModalViewFull = ({
     },
     {
       type: "input",
+      optional: true,
       element: {
         type: "plain_text_input",
         action_id: "ml_input",
@@ -102,11 +103,12 @@ export const CreateIssueModalViewFull = ({
     },
     {
       type: "input",
+      optional: true,
       element: {
         type: "static_select",
         placeholder: {
           type: "plain_text",
-          text: "Select a Priority",
+          text: "Select a Priority (Optional)",
           emoji: true,
         },
         options: priorityOptions,
@@ -138,6 +140,7 @@ export const CreateIssueModalViewFull = ({
     // },
     {
       type: "input",
+      optional: true,
       element: {
         type: "multi_static_select",
         placeholder: {
@@ -175,11 +178,6 @@ export const CreateIssueModalViewProjects = (
     text: "Create Issue",
     emoji: true,
   },
-  submit: {
-    type: "plain_text",
-    text: "Create Issue",
-    emoji: true,
-  },
   close: {
     type: "plain_text",
     text: "Discard Issue",
@@ -206,4 +204,26 @@ export const CreateIssueModalViewProjects = (
       },
     },
   ],
+});
+
+export const notificationModal = (notifcationsText: string[]) => ({
+  type: "Notifications",
+  title: {
+    type: "plain_text",
+    text: "Plane",
+    emoji: true,
+  },
+  close: {
+    type: "plain_text",
+    text: "Cancel",
+    emoji: true,
+  },
+  blocks: notifcationsText.map((notification: string) => ({
+    type: "section",
+    text: {
+      type: "plain_text",
+      text: notification,
+      emoji: true,
+    },
+  })),
 });
