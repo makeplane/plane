@@ -38,6 +38,7 @@ from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 from django.db import transaction
 
+
 def update_imported_items(
     importer_id,
     entity,
@@ -59,7 +60,7 @@ def update_imported_items(
             importer.imported_data[str(entity)][str(external_id)] = {
                 "pid": str(entity_id),
                 "already_exists": already_exists,
-                "reason": reason
+                "reason": reason,
             }
             # Save the updated importer
             importer.save()
@@ -67,7 +68,9 @@ def update_imported_items(
             # Get the total issues
             total_issues = importer.data.get("total_issues")
             processed_issues = len(
-                importer.imported_data.get("issues", {}) if importer.imported_data else []
+                importer.imported_data.get("issues", {})
+                if importer.imported_data
+                else []
             ) + len(
                 importer.imported_data.get("failed_issues", {})
                 if importer.imported_data
@@ -143,40 +146,41 @@ def resolve_state(data):
                     workspace_id=workspace_id, project_id=project_id, group="completed"
                 ).first()
         else:
-            existing = State.objects.filter(
-                project_id=project_id,
-                workspace_id=workspace_id,
-                name=state_data.get("name"),
-            ).first()
-
-            if existing:
-                existing.external_id = state_data.get("external_id")
-                existing.external_source = state_data.get("external_source")
-                existing.save()
-                update_imported_items(
-                    importer_id=importer_id,
-                    entity="states",
-                    entity_id=existing.id,
-                    external_id=state_data.get("external_id"),
-                )
-                return existing
-            else:
-                state = State.objects.create(
-                    workspace_id=workspace_id,
+            with transaction.atomic():
+                existing = State.objects.select_for_update().filter(
                     project_id=project_id,
+                    workspace_id=workspace_id,
                     name=state_data.get("name"),
-                    color=generate_random_hex_color(),
-                    external_id=state_data.get("external_id"),
-                    external_source=state_data.get("external_source"),
-                    created_by_id=created_by_id,
-                )
-                update_imported_items(
-                    importer_id=importer_id,
-                    entity="states",
-                    entity_id=state.id,
-                    external_id=state_data.get("external_id"),
-                )
-                return state
+                ).first()
+
+                if existing:
+                    existing.external_id = state_data.get("external_id")
+                    existing.external_source = state_data.get("external_source")
+                    existing.save()
+                    update_imported_items(
+                        importer_id=importer_id,
+                        entity="states",
+                        entity_id=existing.id,
+                        external_id=state_data.get("external_id"),
+                    )
+                    return existing
+                else:
+                    state = State.objects.create(
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        name=state_data.get("name"),
+                        color=generate_random_hex_color(),
+                        external_id=state_data.get("external_id"),
+                        external_source=state_data.get("external_source"),
+                        created_by_id=created_by_id,
+                    )
+                    update_imported_items(
+                        importer_id=importer_id,
+                        entity="states",
+                        entity_id=state.id,
+                        external_id=state_data.get("external_id"),
+                    )
+                    return state
 
 
 def resolve_labels(data):
@@ -192,39 +196,40 @@ def resolve_labels(data):
         external_id = label.get("external_id")
         external_source = label.get("external_source")
         try:
-            existing = Label.objects.filter(
-                workspace_id=workspace_id,
-                project_id=project_id,
-                name__exact=name,
-            ).first()
-            if existing:
-                existing.external_id = label.get("external_id")
-                existing.external_source = label.get("external_source")
-                existing.save()
-                update_imported_items(
-                    importer_id=importer_id,
-                    entity="labels",
-                    entity_id=existing.id,
-                    external_id=label.get("external_id"),
-                )
-                bulk_labels.append(existing)
-            else:
-                new_label = Label.objects.create(
+            with transaction.atomic():
+                existing = Label.objects.select_for_update().filter(
                     workspace_id=workspace_id,
                     project_id=project_id,
-                    created_by_id=created_by_id,
-                    color=label.get("color", generate_random_hex_color()),
-                    name=name,
-                    external_id=external_id,
-                    external_source=external_source,
-                )
-                update_imported_items(
-                    importer_id=importer_id,
-                    entity="labels",
-                    entity_id=new_label.id,
-                    external_id=label.get("external_id"),
-                )
-                bulk_labels.append(new_label)
+                    name__exact=name,
+                ).first()
+                if existing:
+                    existing.external_id = label.get("external_id")
+                    existing.external_source = label.get("external_source")
+                    existing.save()
+                    update_imported_items(
+                        importer_id=importer_id,
+                        entity="labels",
+                        entity_id=existing.id,
+                        external_id=label.get("external_id"),
+                    )
+                    bulk_labels.append(existing)
+                else:
+                    new_label = Label.objects.create(
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        created_by_id=created_by_id,
+                        color=label.get("color", generate_random_hex_color()),
+                        name=name,
+                        external_id=external_id,
+                        external_source=external_source,
+                    )
+                    update_imported_items(
+                        importer_id=importer_id,
+                        entity="labels",
+                        entity_id=new_label.id,
+                        external_id=label.get("external_id"),
+                    )
+                    bulk_labels.append(new_label)
         except Exception as e:
             update_imported_items(
                 importer_id=importer_id,
@@ -335,40 +340,41 @@ def resolve_cycle(data):
     cycle_data = data.get("cycle")
     importer_id = data.get("importer_id")
 
-    cycle = Cycle.objects.filter(
-        workspace_id=workspace_id,
-        project_id=project_id,
-        external_id=cycle_data.get("external_id"),
-        external_source=cycle_data.get("external_source"),
-    ).first()
-
-    if cycle:
-        cycle.external_id = cycle_data.get("external_id")
-        cycle.external_source = cycle_data.get("external_source")
-        cycle.save()
-        update_imported_items(
-            importer_id=importer_id,
-            entity="cycles",
-            entity_id=cycle.id,
-            external_id=cycle_data.get("external_id"),
-        )
-        return cycle
-    else:
-        cycle = Cycle.objects.create(
-            name=cycle_data.get("name"),
+    with transaction.atomic():
+        cycle = Cycle.objects.select_for_update().filter(
             workspace_id=workspace_id,
             project_id=project_id,
             external_id=cycle_data.get("external_id"),
             external_source=cycle_data.get("external_source"),
-            created_by_id=created_by_id,
-        )
-        update_imported_items(
-            importer_id=importer_id,
-            entity="cycles",
-            entity_id=cycle.id,
-            external_id=cycle_data.get("external_id"),
-        )
-        return cycle
+        ).first()
+
+        if cycle:
+            cycle.external_id = cycle_data.get("external_id")
+            cycle.external_source = cycle_data.get("external_source")
+            cycle.save()
+            update_imported_items(
+                importer_id=importer_id,
+                entity="cycles",
+                entity_id=cycle.id,
+                external_id=cycle_data.get("external_id"),
+            )
+            return cycle
+        else:
+            cycle = Cycle.objects.create(
+                name=cycle_data.get("name"),
+                workspace_id=workspace_id,
+                project_id=project_id,
+                external_id=cycle_data.get("external_id"),
+                external_source=cycle_data.get("external_source"),
+                created_by_id=created_by_id,
+            )
+            update_imported_items(
+                importer_id=importer_id,
+                entity="cycles",
+                entity_id=cycle.id,
+                external_id=cycle_data.get("external_id"),
+            )
+            return cycle
 
 
 def resolve_module(data):
@@ -377,38 +383,40 @@ def resolve_module(data):
     created_by_id = data.get("created_by_id")
     module_data = data.get("module")
     importer_id = data.get("importer_id")
-    module = Module.objects.filter(
-        workspace_id=workspace_id,
-        project_id=project_id,
-        name=module_data.get("name"),
-    ).first()
 
-    if module:
-        module.external_id = module_data.get("external_id")
-        module.external_source = module_data.get("external_source")
-        update_imported_items(
-            importer_id=importer_id,
-            entity="modules",
-            entity_id=module.id,
-            external_id=module_data.get("external_id"),
-        )
-        return module
-    else:
-        module = Module.objects.create(
+    with transaction.atomic():
+        module = Module.objects.select_for_update().filter(
             workspace_id=workspace_id,
             project_id=project_id,
-            external_id=module_data.get("external_id"),
-            external_source=module_data.get("external_source"),
             name=module_data.get("name"),
-            created_by_id=created_by_id,
-        )
-        update_imported_items(
-            importer_id=importer_id,
-            entity="modules",
-            entity_id=module.id,
-            external_id=module_data.get("external_id"),
-        )
-        return module
+        ).first()
+
+        if module:
+            module.external_id = module_data.get("external_id")
+            module.external_source = module_data.get("external_source")
+            update_imported_items(
+                importer_id=importer_id,
+                entity="modules",
+                entity_id=module.id,
+                external_id=module_data.get("external_id"),
+            )
+            return module
+        else:
+            module = Module.objects.create(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                external_id=module_data.get("external_id"),
+                external_source=module_data.get("external_source"),
+                name=module_data.get("name"),
+                created_by_id=created_by_id,
+            )
+            update_imported_items(
+                importer_id=importer_id,
+                entity="modules",
+                entity_id=module.id,
+                external_id=module_data.get("external_id"),
+            )
+            return module
 
 
 def resolve_actor(comment_data):
@@ -503,6 +511,61 @@ def import_member_sync(data):
 
 
 @shared_task(queue="segway_tasks")
+def import_label_sync(data):
+    workspace_id = data.get("workspace_id")
+    project_id = data.get("project_id")
+    name = data.get("name")
+    external_id = data.get("external_id")
+    external_source = data.get("external_source")
+    importer_id = data.get("importer_id")
+    created_by_id = data.get("created_by_id")
+    color = data.get("color", generate_random_hex_color())
+    try:
+        with transaction.atomic():
+            existing = Label.objects.select_for_update().filter(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                name__exact=name,
+            ).first()
+            if existing:
+                existing.external_id = external_id
+                existing.external_source = external_source
+                existing.save()
+                update_imported_items(
+                    importer_id=importer_id,
+                    entity="labels",
+                    entity_id=existing.id,
+                    external_id=external_id,
+                )
+            else:
+                new_label = Label.objects.create(
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    created_by_id=created_by_id,
+                    color=color,
+                    name=name,
+                    external_id=external_id,
+                    external_source=external_source,
+                )
+                update_imported_items(
+                    importer_id=importer_id,
+                    entity="labels",
+                    entity_id=new_label.id,
+                    external_id=external_id,
+                )
+        return
+    except Exception as e:
+        update_imported_items(
+            importer_id=importer_id,
+            entity="failed_labels",
+            entity_id=None,
+            external_id=external_id,
+            reason=str(e),
+        )
+        return
+
+
+@shared_task(queue="segway_tasks")
 def import_issue_sync(data):
     project_id = data.get("project_id")
     workspace_id = data.get("workspace_id")
@@ -510,11 +573,6 @@ def import_issue_sync(data):
     importer_id = data.get("importer_id")
     external_source = data.get("external_source")
     external_id = data.get("external_id")
-
-    # Get the importer
-    importer = Importer.objects.get(
-        pk=importer_id, workspace_id=workspace_id, project_id=project_id
-    )
 
     try:
         existing_issue = Issue.objects.filter(

@@ -22,6 +22,7 @@ const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_issue_sync";
 const IMPORTER_STATUS_TASK_ROUTE =
   "plane.bgtasks.importer_task.importer_status_sync";
 const MEMBER_TASK_ROUTE = "plane.bgtasks.importer_task.import_member_sync";
+const LABEL_TASK_ROUTE = "plane.bgtasks.importer_task.import_label_sync"
 
 @Controller("api/github")
 export class GithubController {
@@ -96,7 +97,8 @@ export class GithubController {
       issueLabels.push({
         name: typeof label === "object" && label !== null ? label.name : label,
         color: typeof label === "object" && label !== null ? label.color : null,
-        external_id: typeof label == "object" && label !== null ? label.id : null,
+        external_id:
+          typeof label == "object" && label !== null ? label.id : null,
         external_source: "github",
       })
     );
@@ -263,6 +265,39 @@ export class GithubController {
           direction: "asc",
         }
       );
+
+      // Labels
+      const githubLabelsData = await octokit.paginate(
+        octokit.rest.issues.listLabelsForRepo,
+        {
+          owner: owner,
+          repo: repo,
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+          per_page: 100,
+        }
+      );
+
+      for await (const label of githubLabelsData) {
+        const labelSync = {
+          args: [],
+          kwargs: {
+            data: {
+              name: label.name,
+              color: label.color,
+              project_id: project_id,
+              workspace_id: workspace_id,
+              external_id: label.id,
+              external_source: "github",
+              importer_id: importer_id,
+              created_by_id: created_by,
+            },
+          },
+        };
+
+        this.mq?.publish(labelSync, LABEL_TASK_ROUTE)
+      }
 
       // Issue comments
       const comments = [];
