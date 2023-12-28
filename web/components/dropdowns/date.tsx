@@ -215,7 +215,12 @@ export const DateDropdown: React.FC<Props> = (props) => {
             </button>
           </Popover.Button>
           <Popover.Panel className="fixed z-10">
-            <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+            <div
+              className="my-1 border-[0.5px] border-custom-border-300 shadow-custom-shadow-rg rounded"
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
               <DatePicker
                 selected={value ? new Date(value) : null}
                 onChange={(val) => {

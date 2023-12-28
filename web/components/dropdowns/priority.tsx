@@ -21,6 +21,7 @@ type Props = {
   className?: string;
   disabled?: boolean;
   dropdownArrow?: boolean;
+  highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
   placement?: Placement;
   value: TIssuePriorities;
@@ -29,11 +30,12 @@ type Props = {
 type ButtonProps = {
   className?: string;
   hideText?: boolean;
+  highlightUrgent: boolean;
   priority: TIssuePriorities;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, hideText = false, priority } = props;
+  const { className, hideText = false, highlightUrgent, priority } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
@@ -50,17 +52,30 @@ const BorderButton = (props: ButtonProps) => {
       className={cn(
         "h-full flex items-center gap-1 border-[0.5px] rounded text-xs px-2 py-0.5",
         priorityClasses[priority],
+        { "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent },
         className
       )}
     >
-      <PriorityIcon priority={priority} size={12} className="flex-shrink-0" />
+      <div
+        className={cn({
+          "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+        })}
+      >
+        <PriorityIcon
+          priority={priority}
+          size={12}
+          className={cn("flex-shrink-0", {
+            "text-white": priority === "urgent" && highlightUrgent,
+          })}
+        />
+      </div>
       {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, hideText = false, priority } = props;
+  const { className, hideText = false, highlightUrgent, priority } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
@@ -74,16 +89,33 @@ const BackgroundButton = (props: ButtonProps) => {
 
   return (
     <div
-      className={cn("h-full flex items-center gap-1 rounded text-xs px-2 py-0.5", priorityClasses[priority], className)}
+      className={cn(
+        "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5",
+        priorityClasses[priority],
+        { "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent },
+        className
+      )}
     >
-      <PriorityIcon priority={priority} size={12} className="flex-shrink-0" />
+      <div
+        className={cn({
+          "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+        })}
+      >
+        <PriorityIcon
+          priority={priority}
+          size={12}
+          className={cn("flex-shrink-0", {
+            "text-white": priority === "urgent" && highlightUrgent,
+          })}
+        />
+      </div>
       {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, hideText = false, priority } = props;
+  const { className, hideText = false, highlightUrgent, priority } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
@@ -100,10 +132,23 @@ const TransparentButton = (props: ButtonProps) => {
       className={cn(
         "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
         priorityClasses[priority],
+        { "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent },
         className
       )}
     >
-      <PriorityIcon priority={priority} size={12} className="flex-shrink-0" />
+      <div
+        className={cn({
+          "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+        })}
+      >
+        <PriorityIcon
+          priority={priority}
+          size={12}
+          className={cn("flex-shrink-0", {
+            "text-white": priority === "urgent" && highlightUrgent,
+          })}
+        />
+      </div>
       {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
     </div>
   );
@@ -117,6 +162,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     className = "",
     disabled = false,
     dropdownArrow = false,
+    highlightUrgent = true,
     onChange,
     placement,
     value,
@@ -145,11 +191,18 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     content: (
       <div className="flex items-center gap-2">
         <div
-          className={`grid place-items-center border-[0.5px] rounded-sm p-0.5 flex-shrink-0 ${
-            priority.key === "urgent" ? "bg-red-500 border-red-500" : "border-custom-border-100"
-          }`}
+          className={cn(
+            "grid place-items-center border-[0.5px] rounded-sm p-0.5 border-custom-border-100 flex-shrink-0",
+            {
+              "bg-red-500 border-red-500": priority.key === "urgent" && highlightUrgent,
+            }
+          )}
         >
-          <PriorityIcon priority={priority.key} size={12} className={priority.key === "urgent" ? "text-white" : ""} />
+          <PriorityIcon
+            priority={priority.key}
+            size={12}
+            className={cn({ "text-white": priority.key === "urgent" && highlightUrgent })}
+          />
         </div>
         <span className="flex-grow truncate">{priority.title}</span>
       </div>
@@ -184,17 +237,27 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton priority={value} className={buttonClassName} />
+              <BorderButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton priority={value} className={buttonClassName} hideText />
+              <BorderButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} hideText />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton priority={value} className={buttonClassName} />
+              <BackgroundButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} />
             ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton priority={value} className={buttonClassName} hideText />
+              <BackgroundButton
+                priority={value}
+                className={buttonClassName}
+                highlightUrgent={highlightUrgent}
+                hideText
+              />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton priority={value} className={buttonClassName} />
+              <TransparentButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} />
             ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton priority={value} className={buttonClassName} hideText />
+              <TransparentButton
+                priority={value}
+                className={buttonClassName}
+                highlightUrgent={highlightUrgent}
+                hideText
+              />
             ) : null}
             {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
           </button>
@@ -202,7 +265,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       </Combobox.Button>
       <Combobox.Options className="fixed z-10">
         <div
-          className="my-1 w-48 rounded border border-custom-border-300 bg-custom-background-100 px-1.5 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+          className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -238,7 +301,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="text-custom-text-400 italic py-3 px-1.5">No matching results</p>
+              <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
             )}
           </div>
         </div>
