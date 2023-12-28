@@ -40,7 +40,7 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
 
   get canUserDragDrop() {
     return true;
-    if (this.rootStore.issueDetail.peekId) return false;
+    if (this.rootStore.issueDetail.issueId) return false;
     // FIXME: uncomment and fix
     // if (
     //   this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&

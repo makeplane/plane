@@ -8,14 +8,20 @@ import { IssuePeekOverview } from "components/issues";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { IUser, TIssue } from "types";
+import { IUser, TIssue, TIssueSubIssues } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 export interface ISubIssues {
   workspaceSlug: string;
   projectId: string;
   parentIssue: TIssue;
-  issue: any;
+  issueId: string;
+  handleIssue: {
+    fetchIssues: (issueId: string) => Promise<TIssueSubIssues>;
+    updateIssue: (issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
+    removeIssue: (issueId: string) => Promise<any>;
+  };
   spacingLeft?: number;
   user: IUser | undefined;
   editable: boolean;
@@ -35,7 +41,8 @@ export const SubIssues: React.FC<ISubIssues> = ({
   workspaceSlug,
   projectId,
   parentIssue,
-  issue,
+  issueId,
+  handleIssue,
   spacingLeft = 0,
   user,
   editable,
@@ -49,6 +56,18 @@ export const SubIssues: React.FC<ISubIssues> = ({
   const router = useRouter();
   const { peekProjectId, peekIssueId } = router.query;
 
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const project = useProject();
+  const { getProjectStates } = useProjectState();
+
+  const issue = getIssueById(issueId);
+  const projectDetail = project.getProjectById(projectId);
+  const currentIssueStateDetail =
+    (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
+    undefined;
+
   const handleIssuePeekOverview = () => {
     const { query } = router;
 
@@ -60,7 +79,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
 
   return (
     <>
-      {workspaceSlug && peekProjectId && peekIssueId && peekIssueId === issue.id && (
+      {workspaceSlug && peekProjectId && peekIssueId && peekIssueId === issue?.id && (
         <IssuePeekOverview
           workspaceSlug={workspaceSlug}
           projectId={peekProjectId.toString()}
@@ -101,11 +120,11 @@ export const SubIssues: React.FC<ISubIssues> = ({
               <div
                 className="h-[6px] w-[6px] flex-shrink-0 rounded-full"
                 style={{
-                  backgroundColor: issue.state_detail.color,
+                  backgroundColor: currentIssueStateDetail?.color,
                 }}
               />
               <div className="flex-shrink-0 text-xs text-custom-text-200">
-                {issue.project_detail.identifier}-{issue?.sequence_id}
+                {projectDetail?.identifier}-{issue?.sequence_id}
               </div>
               <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
                 <div className="line-clamp-1 pr-2 text-xs text-custom-text-100">{issue?.name}</div>
@@ -142,7 +161,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={() => copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)}
+                  onClick={() => copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`)}
                 >
                   <div className="flex items-center gap-2">
                     <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
@@ -174,7 +193,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
           </div>
         )}
 
-        {issuesLoader.visibility.includes(issue?.id) && issue?.sub_issues_count > 0 && (
+        {issuesLoader.visibility.includes(issueId) && issue?.sub_issues_count && issue?.sub_issues_count > 0 && (
           <SubIssuesRootList
             workspaceSlug={workspaceSlug}
             projectId={projectId}

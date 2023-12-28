@@ -3,12 +3,12 @@ import React from "react";
 // components
 import { IssueColumn } from "components/issues";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useIssueDetail } from "hooks/store";
 // types
 import { TIssue, IIssueDisplayProperties } from "types";
 
 type Props = {
-  issue: TIssue;
+  issueId: string;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: IIssueDisplayProperties;
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const SpreadsheetIssuesColumn: React.FC<Props> = ({
-  issue,
+  issueId,
   expandedIssues,
   setExpandedIssues,
   properties,
@@ -38,30 +38,36 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
     });
   };
 
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+  const isExpanded = expandedIssues.indexOf(issueId) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_id, issue.id, isExpanded);
+  // const { subIssues, isLoading } = useSubIssue(issue.project_id, issue.id, isExpanded);
+
+  const { subIssues: subIssuesStore, issue } = useIssueDetail();
+
+  const issueDetail = issue.getIssueById(issueId);
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   return (
     <>
-      <IssueColumn
-        issue={issue}
-        expanded={isExpanded}
-        handleToggleExpand={handleToggleExpand}
-        properties={properties}
-        canEditProperties={canEditProperties}
-        nestingLevel={nestingLevel}
-        quickActions={quickActions}
-      />
+      {issueDetail && (
+        <IssueColumn
+          issue={issueDetail}
+          expanded={isExpanded}
+          handleToggleExpand={handleToggleExpand}
+          properties={properties}
+          canEditProperties={canEditProperties}
+          nestingLevel={nestingLevel}
+          quickActions={quickActions}
+        />
+      )}
 
       {isExpanded &&
-        !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue) => (
+        subIssues.map((subIssueId: string) => (
           <SpreadsheetIssuesColumn
-            key={subIssue.id}
-            issue={subIssue}
+            key={subIssueId}
+            issueId={subIssueId}
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}
             properties={properties}
