@@ -52,6 +52,7 @@ from plane.app.serializers import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
+    IssueRelationLiteSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -1385,7 +1386,7 @@ class IssueRelationViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         issue_relations = (
-            IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id, relation_type="blocked_by")) 
+            IssueRelation.objects.filter(issue_id=issue_id)
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
@@ -1396,7 +1397,18 @@ class IssueRelationViewSet(BaseViewSet):
             .distinct()
         )
 
-        blocking_issues = issue_relations.filter(relation_type="blocked_by", related_issue_id=issue_id)
+        blocking_issues = (
+            IssueRelation.objects.filter(related_issue=issue_id, relation_type="blocked_by")
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("issue")
+            .order_by("-created_at")
+            .distinct()
+        )
+
         blocked_by_issues = issue_relations.filter(relation_type="blocked_by", issue_id=issue_id)
         duplicate_issues = issue_relations.filter(relation_type="duplicates", issue_id=issue_id)
         relates_to_issues = issue_relations.filter(relation_type="relates_to", issue_id=issue_id)
@@ -1417,22 +1429,22 @@ class IssueRelationViewSet(BaseViewSet):
 
 
     def create(self, request, slug, project_id, issue_id):
-        related_list = request.data.get("related_list", [])
-        relation = request.data.get("relation", None)
+        relation_type = request.data.get("relation_type", None)
+        issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=related_issue["issue"],
-                    related_issue_id=related_issue["related_issue"],
-                    relation_type=related_issue["relation_type"],
+                    issue_id=issue if relation_type == "blocking" else issue_id,
+                    related_issue_id=issue_id if relation_type == "blocking" else issue,
+                    relation_type="blocked_by" if relation_type == "blocking" else relation_type,
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
                     updated_by=request.user,
                 )
-                for related_issue in related_list
+                for issue in issues
             ],
             batch_size=10,
             ignore_conflicts=True,
@@ -1448,7 +1460,7 @@ class IssueRelationViewSet(BaseViewSet):
             epoch=int(timezone.now().timestamp()),
         )
 
-        if relation == "blocking":
+        if relation_type == "blocking":
             return Response(
                 RelatedIssueSerializer(issue_relation, many=True).data,
                 status=status.HTTP_201_CREATED,
