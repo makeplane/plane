@@ -5,7 +5,7 @@ import { useLabel, useProjectState } from "hooks/store";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueFilterOptions } from "@plane/types";
 import { useIssues } from "hooks/store/use-issues";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 

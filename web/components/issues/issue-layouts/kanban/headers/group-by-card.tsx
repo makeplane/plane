@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { TIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {

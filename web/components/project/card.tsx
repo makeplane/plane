@@ -13,7 +13,7 @@ import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import type { IProject } from "types";
+import type { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

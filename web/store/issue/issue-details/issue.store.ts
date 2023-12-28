@@ -3,7 +3,7 @@ import { makeObservable } from "mobx";
 import { IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 export interface IIssueStoreActions {
   // actions

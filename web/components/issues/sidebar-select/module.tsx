@@ -7,7 +7,7 @@ import { useIssues, useModule } from "hooks/store";
 // ui
 import { CustomSearchSelect, DiceIcon, Spinner, Tooltip } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // fetch-keys
 import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
@@ -57,7 +57,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
         mutate(MODULE_ISSUES(moduleId));
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       })
       .finally(() => {
         setIsUpdating(false);

@@ -20,7 +20,7 @@ import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
 import { useUser, useWorkspace } from "hooks/store";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // assets
 import projectEmoji from "public/emoji/project-emoji.svg";
 

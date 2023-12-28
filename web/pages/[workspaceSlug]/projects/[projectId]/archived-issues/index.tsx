@@ -10,7 +10,7 @@ import { ProjectArchivedIssuesHeader } from "components/headers";
 // icons
 import { X } from "lucide-react";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectArchivedIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();

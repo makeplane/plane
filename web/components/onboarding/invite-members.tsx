@@ -25,7 +25,7 @@ import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // assets

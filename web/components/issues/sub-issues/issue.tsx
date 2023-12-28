@@ -8,7 +8,7 @@ import { IssuePeekOverview } from "components/issues";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { IUser, TIssue, TIssueSubIssues } from "types";
+import { IUser, TIssue, TIssueSubIssues } from "@plane/types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 

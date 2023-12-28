@@ -12,7 +12,7 @@ import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
 // types
-import type { IState } from "types";
+import type { IState } from "@plane/types";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 

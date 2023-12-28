@@ -4,7 +4,7 @@ import React from "react";
 import { IssuePropertyState } from "../../properties";
 // hooks
 // types
-import { TIssue, IState } from "types";
+import { TIssue, IState } from "@plane/types";
 import { useIssueDetail, useProjectState } from "hooks/store";
 
 type Props = {

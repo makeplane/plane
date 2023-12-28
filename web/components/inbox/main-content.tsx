@@ -14,7 +14,7 @@ import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { IInboxIssue, TIssue } from "types";
+import { IInboxIssue, TIssue } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IInboxIssue> = {

@@ -9,7 +9,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssuesStoreType } from "constants/issue";
 

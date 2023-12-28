@@ -8,7 +8,7 @@ import { useUser } from "hooks/store";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { IWorkspaceBulkInviteFormData } from "types";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 

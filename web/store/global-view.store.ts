@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { WorkspaceService } from "services/workspace.service";
 // types
 import { RootStore } from "store/root.store";
-import { IWorkspaceView } from "types/workspace-views";
+import { IWorkspaceView } from "@plane/types";
 
 export interface IGlobalViewStore {
   // observables

@@ -1,7 +1,7 @@
 // ui
 import { CustomSelect } from "@plane/ui";
 // types
-import { TYAxisValues } from "types";
+import { TYAxisValues } from "@plane/types";
 // constants
 import { ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 

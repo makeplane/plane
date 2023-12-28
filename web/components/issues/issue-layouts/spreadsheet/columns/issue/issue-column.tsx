@@ -6,7 +6,7 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
-import { TIssue, IIssueDisplayProperties } from "types";
+import { TIssue, IIssueDisplayProperties } from "@plane/types";
 import { useProject } from "hooks/store";
 
 type Props = {

@@ -7,7 +7,7 @@ import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IModuleIssues {
   // observable

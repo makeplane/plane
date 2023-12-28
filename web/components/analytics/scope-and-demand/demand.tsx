@@ -1,7 +1,7 @@
 // icons
 import { Triangle } from "lucide-react";
 // types
-import { IDefaultAnalyticsResponse, TStateGroups } from "types";
+import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 

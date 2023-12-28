@@ -9,7 +9,7 @@ import { useIssues, useProject } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { TIssue } from "types";
+import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {

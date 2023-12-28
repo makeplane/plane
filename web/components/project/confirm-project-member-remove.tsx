@@ -7,7 +7,7 @@ import { useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IUserLite } from "types";
+import { IUserLite } from "@plane/types";
 
 type Props = {
   data: IUserLite;

@@ -1,7 +1,7 @@
 // ui
 import { PieGraph } from "components/ui";
 // types
-import { IUserStateDistribution, TStateGroups } from "types";
+import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 

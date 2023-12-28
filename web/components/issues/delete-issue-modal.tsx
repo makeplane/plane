@@ -7,7 +7,7 @@ import { Button } from "@plane/ui";
 import useToast from "hooks/use-toast";
 // types
 import { useIssues } from "hooks/store/use-issues";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";
 
 type Props = {

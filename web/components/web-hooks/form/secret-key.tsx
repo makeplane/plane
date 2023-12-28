@@ -12,7 +12,7 @@ import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 type Props = {
   data: Partial<IWebhook>;

@@ -5,7 +5,7 @@ import { X, Pencil } from "lucide-react";
 // hooks
 import { useLabel } from "hooks/store";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 // components
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { CreateUpdateLabelInline } from "./create-update-label-inline";

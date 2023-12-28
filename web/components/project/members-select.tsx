@@ -6,7 +6,7 @@ import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
-import { IUserLite } from "types";
+import { IUserLite } from "@plane/types";
 
 type Props = {
   members: IUserLite[] | undefined;

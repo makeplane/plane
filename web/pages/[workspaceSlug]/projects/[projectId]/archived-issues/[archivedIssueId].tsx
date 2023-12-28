@@ -16,8 +16,8 @@ import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types
-import { TIssue } from "types";
-import { NextPageWithLayout } from "types/app";
+import { TIssue } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 import { useProject } from "hooks/store";

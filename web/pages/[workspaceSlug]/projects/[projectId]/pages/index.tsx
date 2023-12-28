@@ -14,7 +14,7 @@ import { AppLayout } from "layouts/app-layout";
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { PagesHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 

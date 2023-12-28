@@ -13,7 +13,7 @@ import { ProfileSettingsLayout } from "layouts/settings-layout";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 interface FormValues {
   old_password: string;

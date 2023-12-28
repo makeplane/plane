@@ -2,7 +2,7 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { set, omit } from "lodash";
 import { isFuture, isPast } from "date-fns";
 // types
-import { ICycle, CycleDateCheckData } from "types";
+import { ICycle, CycleDateCheckData } from "@plane/types";
 // mobx
 import { RootStore } from "store/root.store";
 // services

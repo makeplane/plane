@@ -5,7 +5,7 @@ import { useProject } from "hooks/store";
 // components
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "components/analytics";
 // types
-import { IAnalyticsParams } from "types";
+import { IAnalyticsParams } from "@plane/types";
 
 type Props = {
   control: Control<IAnalyticsParams, any>;

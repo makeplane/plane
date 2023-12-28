@@ -13,7 +13,7 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "compo
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 
 export const ProjectArchivedIssuesHeader: FC = observer(() => {
   // router

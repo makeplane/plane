@@ -5,7 +5,7 @@ import { IssueService } from "services/issue";
 // components
 import { PrioritySelect } from "components/project";
 // types
-import { TIssue, IState } from "types";
+import { TIssue, IState } from "@plane/types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 import { IssuePropertyAssignee, IssuePropertyState } from "../issue-layouts/properties";

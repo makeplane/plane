@@ -9,7 +9,7 @@ import { useApplication, useProjectState } from "hooks/store";
 // ui
 import { StateGroupIcon, Tooltip } from "@plane/ui";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 
 export interface IIssuePropertyState {
   projectId: string | null;

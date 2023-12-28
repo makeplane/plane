@@ -7,7 +7,7 @@ import { useIssues, useMember } from "hooks/store";
 // ui
 import { Avatar } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {

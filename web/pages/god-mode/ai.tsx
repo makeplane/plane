@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // layouts
 import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // hooks
 import { useApplication } from "hooks/store";
 // ui

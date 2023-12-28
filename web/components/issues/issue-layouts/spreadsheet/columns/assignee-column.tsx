@@ -3,7 +3,7 @@ import React from "react";
 // components
 import { IssuePropertyAssignee } from "../../properties";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { useIssueDetail } from "hooks/store";
 
 type Props = {

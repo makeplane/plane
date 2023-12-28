@@ -10,7 +10,7 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IEmailCheckData } from "types/auth";
+import { IEmailCheckData } from "@plane/types";
 // constants
 import { ESignInSteps } from "components/account";
 

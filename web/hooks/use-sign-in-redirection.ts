@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // hooks
 import { useUser } from "hooks/store";
 // types
-import { IUser, IUserSettings } from "types";
+import { IUser, IUserSettings } from "@plane/types";
 
 type UseSignInRedirectionProps = {
   error: any | null;

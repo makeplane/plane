@@ -15,7 +15,7 @@ import {
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabel, IState } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

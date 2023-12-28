@@ -12,7 +12,7 @@ import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   formKey: keyof TIssue;

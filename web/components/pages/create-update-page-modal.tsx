@@ -7,7 +7,7 @@ import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IPage } from "types";
+import { IPage } from "@plane/types";
 
 type Props = {
   data?: IPage | null;

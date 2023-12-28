@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { ProjectMemberService } from "services/project";
 // types
 import { RootStore } from "store/root.store";
-import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "types";
+import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { IMemberRootStore } from ".";

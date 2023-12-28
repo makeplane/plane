@@ -17,7 +17,7 @@ import { EmailSignUpForm } from "components/account";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 type EmailPasswordFormValues = {
   email: string;

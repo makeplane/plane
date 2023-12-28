@@ -10,7 +10,7 @@ import useToast from "./use-toast";
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 // type
-import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "types";
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 
 const PER_PAGE = 30;
 

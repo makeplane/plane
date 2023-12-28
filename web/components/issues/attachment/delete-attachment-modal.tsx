@@ -17,7 +17,7 @@ import { AlertTriangle } from "lucide-react";
 // helper
 import { getFileName } from "helpers/attachment.helper";
 // types
-import type { IIssueAttachment } from "types";
+import type { IIssueAttachment } from "@plane/types";
 // fetch-keys
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 

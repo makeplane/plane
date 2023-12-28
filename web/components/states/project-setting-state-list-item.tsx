@@ -10,7 +10,7 @@ import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 
 type Props = {
   index: number;

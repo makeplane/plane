@@ -11,7 +11,7 @@ import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 import { Button } from "@plane/ui";
 import { Globe2, Lock } from "lucide-react";
 // types
-import type { IIssueActivity } from "types";
+import type { IIssueActivity } from "@plane/types";
 
 const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",

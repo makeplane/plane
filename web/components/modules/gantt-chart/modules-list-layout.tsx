@@ -6,7 +6,7 @@ import { useModule, useProject } from "hooks/store";
 import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
 import { ModuleGanttBlock } from "components/modules";
 // types
-import { IModule } from "types";
+import { IModule } from "@plane/types";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router

@@ -1,5 +1,5 @@
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { IGanttBlock } from "components/gantt-chart";
 
 export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>

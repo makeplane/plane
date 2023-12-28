@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // constants
-import { TIssue, IProject } from "types";
+import { TIssue, IProject } from "@plane/types";
 // types
 import { createIssuePayload } from "helpers/issue.helper";
 

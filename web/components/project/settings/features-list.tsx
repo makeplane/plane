@@ -7,7 +7,7 @@ import { DiceIcon, ToggleSwitch } from "@plane/ui";
 import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

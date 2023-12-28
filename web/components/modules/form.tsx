@@ -6,7 +6,7 @@ import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "compo
 import { DateSelect } from "components/ui";
 import { Button, Input, TextArea } from "@plane/ui";
 // types
-import { IModule } from "types";
+import { IModule } from "@plane/types";
 import { IssueProjectSelect } from "components/issues/select";
 
 type Props = {
@@ -192,8 +192,8 @@ export const ModuleForm: React.FC<Props> = ({
               ? "Updating Module..."
               : "Update Module"
             : isSubmitting
-              ? "Creating Module..."
-              : "Create Module"}
+            ? "Creating Module..."
+            : "Create Module"}
         </Button>
       </div>
     </form>

@@ -11,7 +11,7 @@ import { Pencil, Trash2 } from "lucide-react";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IEstimate } from "types";
+import { IEstimate } from "@plane/types";
 
 type Props = {
   estimate: IEstimate;

@@ -10,7 +10,7 @@ import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { TIssue, IIssueActivity } from "types";
+import { TIssue, IIssueActivity } from "@plane/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 

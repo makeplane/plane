@@ -9,7 +9,7 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingHeader } from "components/headers";
 import { EstimatesList } from "components/estimates";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

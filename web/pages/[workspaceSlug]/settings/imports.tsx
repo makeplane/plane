@@ -8,7 +8,7 @@ import { AppLayout } from "layouts/app-layout";
 import IntegrationGuide from "components/integration/guide";
 import { WorkspaceSettingHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 

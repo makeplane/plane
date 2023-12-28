@@ -8,7 +8,7 @@ import { ParentIssuesListModal } from "components/issues";
 // icons
 import { X } from "lucide-react";
 // types
-import { TIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 
 type Props = {
   onChange: (value: string) => void;

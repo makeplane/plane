@@ -7,7 +7,7 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelect
 import { useIssues, useLabel } from "hooks/store";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 
 export const ProfileIssuesFilter = observer(() => {
   // router

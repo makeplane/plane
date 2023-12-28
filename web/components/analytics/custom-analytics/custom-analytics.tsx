@@ -7,7 +7,7 @@ import { AnalyticsService } from "services/analytics.service";
 // components
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "components/analytics";
 // types
-import { IAnalyticsParams } from "types";
+import { IAnalyticsParams } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 

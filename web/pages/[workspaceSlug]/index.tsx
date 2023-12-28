@@ -5,7 +5,7 @@ import { AppLayout } from "layouts/app-layout";
 import { WorkspaceDashboardView } from "components/page-views";
 import { WorkspaceDashboardHeader } from "components/headers/workspace-dashboard";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const WorkspacePage: NextPageWithLayout = () => <WorkspaceDashboardView />;
 

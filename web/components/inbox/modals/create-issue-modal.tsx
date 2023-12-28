@@ -17,7 +17,7 @@ import { GptAssistantModal } from "components/core";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -102,7 +102,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
         );
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         postHogEventTracker(
           "ISSUE_CREATED",
           {

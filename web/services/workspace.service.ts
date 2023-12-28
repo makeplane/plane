@@ -16,8 +16,8 @@ import {
   IUserProjectsRole,
   TIssueMap,
   TIssue,
-} from "types";
-import { IWorkspaceView } from "types/workspace-views";
+} from "@plane/types";
+import { IWorkspaceView } from "@plane/types";
 
 export class WorkspaceService extends APIService {
   constructor() {

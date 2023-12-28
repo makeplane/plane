@@ -12,7 +12,7 @@ import { Button } from "@plane/ui";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 // types
-import { ISearchIssueResponse } from "types";
+import { ISearchIssueResponse } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";

@@ -5,7 +5,7 @@ import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
 import { EIssuesStoreType } from "constants/issue";

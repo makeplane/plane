@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // ui
 import { CycleIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";

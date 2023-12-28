@@ -10,7 +10,7 @@ import { Button } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
-import type { IModule } from "types";
+import type { IModule } from "@plane/types";
 
 type Props = {
   data: IModule;

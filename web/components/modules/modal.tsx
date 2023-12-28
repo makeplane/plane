@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 // components
 import { ModuleForm } from "components/modules";
 // types
-import type { IModule } from "types";
+import type { IModule } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

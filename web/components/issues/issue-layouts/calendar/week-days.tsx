@@ -5,7 +5,7 @@ import { CalendarDayTile } from "components/issues";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
-import { TGroupedIssues, TIssue, TIssueMap } from "types";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";

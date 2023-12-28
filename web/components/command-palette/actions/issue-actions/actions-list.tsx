@@ -11,7 +11,7 @@ import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {

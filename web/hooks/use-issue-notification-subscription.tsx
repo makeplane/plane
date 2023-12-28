@@ -5,7 +5,7 @@ import useUserAuth from "hooks/use-user-auth";
 // services
 import { NotificationService } from "services/notification.service";
 // types
-import { IUser } from "types/users";
+import { IUser } from "@plane/types";
 
 const userNotificationServices = new NotificationService();
 

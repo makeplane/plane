@@ -3,7 +3,7 @@ import isEmpty from "lodash/isEmpty";
 // root store
 import { RootStore } from "../root.store";
 // issues data store
-import { IState } from "types";
+import { IState } from "@plane/types";
 import { IIssueStore, IssueStore } from "./issue.store";
 import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";

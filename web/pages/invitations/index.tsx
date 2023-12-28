@@ -24,8 +24,8 @@ import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { NextPageWithLayout } from "types/app";
-import type { IWorkspaceMemberInvitation } from "types";
+import { NextPageWithLayout } from "lib/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { ROLE } from "constants/workspace";
 // components

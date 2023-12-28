@@ -5,7 +5,7 @@ import { PrioritySelect } from "components/project";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issueId: string;
