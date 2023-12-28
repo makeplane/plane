@@ -130,9 +130,9 @@ export const ProjectSidebarList: FC = observer(() => {
                             >
                               Favorites
                               {open ? (
-                                <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronDown className="h-3.5 w-3.5" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronRight className="h-3.5 w-3.5" />
                               )}
                             </Disclosure.Button>
                             {isAuthorizedUser && (
@@ -208,9 +208,9 @@ export const ProjectSidebarList: FC = observer(() => {
                             >
                               Projects
                               {open ? (
-                                <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronDown className="h-3.5 w-3.5" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronRight className="h-3.5 w-3.5" />
                               )}
                             </Disclosure.Button>
                             {isAuthorizedUser && (

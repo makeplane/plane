@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
-import { UserCircle } from "lucide-react";
+import { UserCircle, UserCircle2 } from "lucide-react";
 // hooks
 import { useMember } from "hooks/store";
 // ui
@@ -59,9 +59,10 @@ export const ModuleLeadSelect: React.FC<Props> = observer((props) => {
           value=""
           className="flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5  text-custom-text-200"
         >
-          <span className="flex items-center justify-start gap-1 text-custom-text-200">
-            <span>No Lead</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <UserCircle2 className="h-4 w-4" />
+            No lead
+          </div>
         </Combobox.Option>
       }
       onChange={onChange}

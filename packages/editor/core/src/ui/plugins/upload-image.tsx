@@ -43,7 +43,7 @@ export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
 
           cancelButton.appendChild(svgElement);
           placeholder.appendChild(cancelButton);
-          const deco = Decoration.widget(pos + 1, placeholder, {
+          const deco = Decoration.widget(pos, placeholder, {
             id,
           });
           set = set.add(tr.doc, [deco]);
@@ -131,7 +131,8 @@ export async function startImageUpload(
     const imageSrc = typeof src === "object" ? reader.result : src;
 
     const node = schema.nodes.image.create({ src: imageSrc });
-    const transaction = view.state.tr.replaceWith(pos, pos, node).setMeta(uploadKey, { remove: { id } });
+    const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
+
     view.dispatch(transaction);
   } catch (error) {
     console.error("Upload error: ", error);

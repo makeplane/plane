@@ -17,7 +17,12 @@ const useUserAuth = (props: Props) => {
   const [isRouteAccess, setIsRouteAccess] = useState(true);
   // router
   const router = useRouter();
-  const { next_url } = router.query;
+  const { next_path } = router.query;
+
+  const isValidURL = (url: string): boolean => {
+    const disallowedSchemes = /^(https?|ftp):\/\//i;
+    return !disallowedSchemes.test(url);
+  };
 
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
@@ -78,8 +83,15 @@ const useUserAuth = (props: Props) => {
       if (!isLoading) {
         setIsRouteAccess(() => true);
         if (user) {
-          if (next_url) router.push(next_url.toString());
-          else handleUserRouteAuthentication();
+          if (next_path) {
+            if (isValidURL(next_path.toString())) {
+              router.push(next_path.toString());
+              return;
+            } else {
+              router.push("/");
+              return;
+            }
+          } else handleUserRouteAuthentication();
         } else {
           if (routeAuth === "sign-in") {
             setIsRouteAccess(() => false);
@@ -91,7 +103,7 @@ const useUserAuth = (props: Props) => {
         }
       }
     }
-  }, [user, isLoading, routeAuth, router, next_url]);
+  }, [user, isLoading, routeAuth, router, next_path]);
 
   return {
     isLoading: isRouteAccess,
