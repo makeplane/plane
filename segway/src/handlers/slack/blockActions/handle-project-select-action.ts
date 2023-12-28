@@ -65,8 +65,6 @@ export const handleProjectSelectAction = async (
       selectedProject: selectedProjectOption,
     });
 
-    console.log(JSON.stringify(updatedModalView, null, 2));
-
     const response = await slackService.updateModal(viewId, updatedModalView);
     if (response?.status !== 200) {
       return false;
