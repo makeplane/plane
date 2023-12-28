@@ -5,6 +5,8 @@ import { ModuleStatusSelect } from "components/modules";
 import { DateDropdown, ProjectDropdown, ProjectMemberDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 
@@ -151,7 +153,7 @@ export const ModuleForm: React.FC<Props> = ({
                 <div className="h-7">
                   <DateDropdown
                     value={value}
-                    onChange={onChange}
+                    onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                     buttonVariant="border-with-text"
                     placeholder="Start date"
                     maxDate={maxDate ?? undefined}
@@ -166,7 +168,7 @@ export const ModuleForm: React.FC<Props> = ({
                 <div className="h-7">
                   <DateDropdown
                     value={value}
-                    onChange={onChange}
+                    onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                     buttonVariant="border-with-text"
                     placeholder="Target date"
                     minDate={minDate ?? undefined}

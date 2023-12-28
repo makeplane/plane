@@ -28,6 +28,8 @@ import {
 } from "components/dropdowns";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "types";
 
@@ -477,7 +479,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                       <div className="h-7">
                         <DateDropdown
                           value={value}
-                          onChange={onChange}
+                          onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                           buttonVariant="border-with-text"
                           placeholder="Start date"
                           maxDate={maxDate ?? undefined}
@@ -495,7 +497,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         <div className="h-7">
                           <DateDropdown
                             value={value}
-                            onChange={onChange}
+                            onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                             buttonVariant="border-with-text"
                             placeholder="Due date"
                             minDate={minDate ?? undefined}

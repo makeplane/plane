@@ -52,12 +52,18 @@ const BorderButton = (props: ButtonProps) => {
       className={cn(
         "h-full flex items-center gap-1 border-[0.5px] rounded text-xs px-2 py-0.5",
         priorityClasses[priority],
-        { "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent },
+        {
+          // compact the icons if text is hidden
+          "px-0.5": hideText,
+          // highlight the whole button if text is hidden and priority is urgent
+          "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+        },
         className
       )}
     >
       <div
         className={cn({
+          // highlight just the icon if text is visible and priority is urgent
           "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
         })}
       >
@@ -65,6 +71,13 @@ const BorderButton = (props: ButtonProps) => {
           priority={priority}
           size={12}
           className={cn("flex-shrink-0", {
+            // increase the icon size if text is hidden
+            "h-3.5 w-3.5": hideText,
+            // centre align the icons if text is hidden
+            "translate-x-[0.0625rem]": hideText && priority === "high",
+            "translate-x-0.5": hideText && priority === "medium",
+            "translate-x-1": hideText && priority === "low",
+            // highlight the icon if priority is urgent
             "text-white": priority === "urgent" && highlightUrgent,
           })}
         />
@@ -92,12 +105,18 @@ const BackgroundButton = (props: ButtonProps) => {
       className={cn(
         "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5",
         priorityClasses[priority],
-        { "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent },
+        {
+          // compact the icons if text is hidden
+          "px-0.5": hideText,
+          // highlight the whole button if text is hidden and priority is urgent
+          "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+        },
         className
       )}
     >
       <div
         className={cn({
+          // highlight just the icon if text is visible and priority is urgent
           "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
         })}
       >
@@ -105,6 +124,13 @@ const BackgroundButton = (props: ButtonProps) => {
           priority={priority}
           size={12}
           className={cn("flex-shrink-0", {
+            // increase the icon size if text is hidden
+            "h-3.5 w-3.5": hideText,
+            // centre align the icons if text is hidden
+            "translate-x-[0.0625rem]": hideText && priority === "high",
+            "translate-x-0.5": hideText && priority === "medium",
+            "translate-x-1": hideText && priority === "low",
+            // highlight the icon if priority is urgent
             "text-white": priority === "urgent" && highlightUrgent,
           })}
         />
@@ -132,12 +158,18 @@ const TransparentButton = (props: ButtonProps) => {
       className={cn(
         "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
         priorityClasses[priority],
-        { "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent },
+        {
+          // compact the icons if text is hidden
+          "px-0.5": hideText,
+          // highlight the whole button if text is hidden and priority is urgent
+          "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+        },
         className
       )}
     >
       <div
         className={cn({
+          // highlight just the icon if text is visible and priority is urgent
           "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
         })}
       >
@@ -145,6 +177,13 @@ const TransparentButton = (props: ButtonProps) => {
           priority={priority}
           size={12}
           className={cn("flex-shrink-0", {
+            // increase the icon size if text is hidden
+            "h-3.5 w-3.5": hideText,
+            // centre align the icons if text is hidden
+            "translate-x-[0.0625rem]": hideText && priority === "high",
+            "translate-x-0.5": hideText && priority === "medium",
+            "translate-x-1": hideText && priority === "low",
+            // highlight the icon if priority is urgent
             "text-white": priority === "urgent" && highlightUrgent,
           })}
         />

@@ -27,6 +27,8 @@ import {
 } from "components/dropdowns";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import type { IUser, TIssue, ISearchIssueResponse } from "types";
 
@@ -36,14 +38,6 @@ const fileService = new FileService();
 const defaultValues: Partial<TIssue> = {
   project_id: "",
   name: "",
-  // description: {
-  //   type: "doc",
-  //   content: [
-  //     {
-  //       type: "paragraph",
-  //     },
-  //   ],
-  // },
   description_html: "<p></p>",
   estimate_point: null,
   state_id: "",
@@ -521,7 +515,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       <div className="h-7">
                         <DateDropdown
                           value={value}
-                          onChange={onChange}
+                          onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                           buttonVariant="border-with-text"
                           placeholder="Start date"
                           maxDate={maxDate ?? undefined}
@@ -538,7 +532,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       <div className="h-7">
                         <DateDropdown
                           value={value}
-                          onChange={onChange}
+                          onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                           buttonVariant="border-with-text"
                           placeholder="Due date"
                           minDate={minDate ?? undefined}

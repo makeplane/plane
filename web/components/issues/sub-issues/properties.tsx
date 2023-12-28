@@ -68,21 +68,22 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
   return (
     <div className="relative flex items-center gap-2">
       <div className="h-5 flex-shrink-0">
-        <PriorityDropdown
-          value={issue.priority}
-          onChange={handlePriorityChange}
-          disabled={!editable}
-          buttonVariant="background-without-text"
-        />
-      </div>
-
-      <div className="h-5 flex-shrink-0">
         <StateDropdown
           value={issue?.state_id}
           projectId={issue?.project_id}
           onChange={handleStateChange}
           disabled={!editable}
-          buttonVariant="background-with-text"
+          buttonVariant="border-with-text"
+        />
+      </div>
+
+      <div className="h-5 flex-shrink-0">
+        <PriorityDropdown
+          value={issue.priority}
+          onChange={handlePriorityChange}
+          disabled={!editable}
+          buttonVariant="border-without-text"
+          buttonClassName="border"
         />
       </div>
 
@@ -90,10 +91,11 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
         <ProjectMemberDropdown
           projectId={issue?.project_id}
           value={issue?.assignee_ids}
-          onChange={(val) => handleAssigneeChange(val)}
+          onChange={handleAssigneeChange}
           disabled={!editable}
           multiple
-          buttonVariant="background-without-text"
+          buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "border-without-text"}
+          buttonClassName={issue.assignee_ids.length > 0 ? "hover:bg-transparent px-0" : ""}
         />
       </div>
     </div>

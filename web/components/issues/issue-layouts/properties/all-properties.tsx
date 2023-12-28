@@ -1,13 +1,20 @@
 import { observer } from "mobx-react-lite";
-import { Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // hooks
 import { useLabel } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
-import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  ProjectMemberDropdown,
+  StateDropdown,
+} from "components/dropdowns";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "types";
 
@@ -39,12 +46,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     handleIssues({ ...issue, assignee_ids: ids });
   };
 
-  const handleStartDate = (date: string) => {
-    handleIssues({ ...issue, start_date: date });
+  const handleStartDate = (date: Date | null) => {
+    handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleTargetDate = (date: string) => {
-    handleIssues({ ...issue, target_date: date });
+  const handleTargetDate = (date: Date | null) => {
+    handleIssues({ ...issue, target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
   const handleEstimate = (value: number | null) => {
@@ -79,7 +86,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handlePriority}
             disabled={isReadOnly}
             buttonVariant="border-without-text"
-            buttonClassName="border px-1"
+            buttonClassName="border"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -99,21 +106,27 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-        <IssuePropertyDate
-          value={issue?.start_date || null}
-          onChange={(date: string) => handleStartDate(date)}
-          disabled={isReadOnly}
-          type="start_date"
-        />
+        <div className="h-5">
+          <DateDropdown
+            value={issue.start_date ?? null}
+            onChange={handleStartDate}
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            placeholder="Start date"
+            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            disabled={isReadOnly}
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <IssuePropertyDate
-          value={issue?.target_date || null}
-          onChange={(date: string) => handleTargetDate(date)}
+        <DateDropdown
+          value={issue?.target_date ?? null}
+          onChange={handleTargetDate}
+          icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+          placeholder="Due date"
+          buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           disabled={isReadOnly}
-          type="target_date"
         />
       </WithDisplayPropertiesHOC>
 

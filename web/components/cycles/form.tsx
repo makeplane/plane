@@ -3,6 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 import { DateDropdown, ProjectDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
@@ -118,7 +120,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     <div className="h-7">
                       <DateDropdown
                         value={value}
-                        onChange={onChange}
+                        onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                         buttonVariant="border-with-text"
                         placeholder="Start date"
                         maxDate={maxDate ?? undefined}
@@ -134,7 +136,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   <div className="h-7">
                     <DateDropdown
                       value={value}
-                      onChange={onChange}
+                      onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                       buttonVariant="border-with-text"
                       placeholder="End date"
                       minDate={minDate}
