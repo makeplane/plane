@@ -9,6 +9,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // layouts
