@@ -79,7 +79,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { createIssueLink, updateIssueLink, deleteIssueLink } = useIssueDetail();
+  const { createLink, updateLink, removeLink } = useIssueDetail();
   const { getProjectById } = useProject();
   const {
     issues: { removeIssue },
@@ -135,17 +135,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const issueLinkCreate = (formData: IIssueLink) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
+    createLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
   };
 
   const issueLinkUpdate = (formData: IIssueLink, linkId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
+    updateLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
   };
 
   const issueLinkDelete = (linkId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    deleteIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
+    removeLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
   };
 
   const handleCopyText = () => {

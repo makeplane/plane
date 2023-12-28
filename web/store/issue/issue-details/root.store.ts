@@ -1,4 +1,4 @@
-import { makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 // types
 import { IIssueRootStore } from "../root.store";
 import { IIssueStore, IssueStore, IIssueStoreActions } from "./issue.store";
@@ -37,16 +37,28 @@ export interface IIssueDetail
   commentReaction: IIssueCommentReactionStore;
   link: IIssueLinkStore;
   subscription: IIssueSubscriptionStore;
+
+  setIssueId: (issueId: string | undefined) => void;
+
+  // computed
+  isAnyModalOpen: boolean;
+
+  isIssueLinkModalOpen: boolean;
+  isParentIssueModalOpen: boolean;
+  isDeleteIssueModalOpen: boolean;
+
+  toggleIssueLinkModal: (value?: boolean) => void;
+  toggleParentIssueModal: (value?: boolean) => void;
+  toggleDeleteIssueModal: (value?: boolean) => void;
 }
 
 export class IssueDetail implements IIssueDetail {
   // observables
   issueId: string | undefined = undefined;
 
-  // peekIssueModalToggle - main
-  // issueLinkModalToggle - sep
-  // parentIssueModalToggle - sep
-  // deleteIssueModalToggle - sep
+  isIssueLinkModalOpen: boolean = false;
+  isParentIssueModalOpen: boolean = false;
+  isDeleteIssueModalOpen: boolean = false;
 
   // store
   rootIssueStore: IIssueRootStore;
@@ -63,6 +75,17 @@ export class IssueDetail implements IIssueDetail {
     makeObservable(this, {
       // observables
       issueId: observable.ref,
+
+      isIssueLinkModalOpen: observable.ref,
+      isParentIssueModalOpen: observable.ref,
+      isDeleteIssueModalOpen: observable.ref,
+      // computed
+      isAnyModalOpen: computed,
+      // action
+      setIssueId: action,
+      toggleIssueLinkModal: action,
+      toggleParentIssueModal: action,
+      toggleDeleteIssueModal: action,
     });
 
     // store
@@ -76,6 +99,14 @@ export class IssueDetail implements IIssueDetail {
     this.link = new IssueLinkStore(this);
     this.subscription = new IssueSubscriptionStore(this);
   }
+
+  get isAnyModalOpen() {
+    return Boolean(this.isIssueLinkModalOpen || this.isParentIssueModalOpen || this.isDeleteIssueModalOpen);
+  }
+
+  setIssueId = (issueId: string | undefined) => {
+    this.issueId = issueId;
+  };
 
   // issue
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
@@ -158,4 +189,26 @@ export class IssueDetail implements IIssueDetail {
     this.subscription.createSubscription(workspaceSlug, projectId, issueId);
   removeSubscription = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.subscription.removeSubscription(workspaceSlug, projectId, issueId);
+
+  toggleIssueLinkModal = (value?: boolean) => {
+    if (value !== undefined) {
+      this.isIssueLinkModalOpen = value;
+    } else {
+      this.isIssueLinkModalOpen = !this.isIssueLinkModalOpen;
+    }
+  };
+  toggleParentIssueModal = (value?: boolean) => {
+    if (value !== undefined) {
+      this.isParentIssueModalOpen = value;
+    } else {
+      this.isParentIssueModalOpen = !this.isParentIssueModalOpen;
+    }
+  };
+  toggleDeleteIssueModal = (value?: boolean) => {
+    if (value !== undefined) {
+      this.isDeleteIssueModalOpen = value;
+    } else {
+      this.isDeleteIssueModalOpen = !this.isDeleteIssueModalOpen;
+    }
+  };
 }

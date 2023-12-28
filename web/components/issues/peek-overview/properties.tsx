@@ -36,10 +36,9 @@ interface IPeekOverviewProperties {
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { issue, issueUpdate, issueLinkCreate, issueLinkUpdate, issueLinkDelete, disableUserActions } = props;
   // states
-  const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { fetchPeekIssueDetails } = useIssueDetail();
+  const { fetchIssue, isIssueLinkModalOpen, toggleIssueLinkModal } = useIssueDetail();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -76,12 +75,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleCycleOrModuleChange = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    await fetchPeekIssueDetails(workspaceSlug.toString(), projectId.toString(), issue.id);
+    await fetchIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
   };
 
   const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
-    setLinkModal(true);
+    toggleIssueLinkModal(true);
   };
 
   const projectDetails = workspaceSlug ? getProjectById(issue.project_id) : null;
@@ -96,9 +95,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   return (
     <>
       <LinkModal
-        isOpen={linkModal}
+        isOpen={isIssueLinkModalOpen}
         handleClose={() => {
-          setLinkModal(false);
+          toggleIssueLinkModal(false);
           setSelectedLinkToUpdate(null);
         }}
         data={selectedLinkToUpdate}
@@ -277,7 +276,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     className={`flex ${
                       disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
                     } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
-                    onClick={() => setLinkModal(true)}
+                    onClick={() => toggleIssueLinkModal(true)}
                     disabled={false}
                   >
                     <Plus className="h-3 w-3" /> New
