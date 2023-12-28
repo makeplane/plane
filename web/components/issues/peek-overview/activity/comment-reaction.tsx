@@ -36,13 +36,12 @@ export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) 
       : null,
     () => {
       if (workspaceSlug && projectId && issueId && comment && comment.id) {
-        issueDetail.fetchIssueCommentReactions(workspaceSlug, projectId, issueId, comment?.id);
+        issueDetail.fetchCommentReactions(workspaceSlug, projectId, comment?.id);
       }
     }
   );
 
-  let issueReactions = issueDetail?.getIssueCommentReactions || null;
-  issueReactions = issueReactions && comment.id ? issueReactions?.[comment.id] : [];
+  const issueReactions = issueDetail?.commentReaction.getCommentReactionsByCommentId(comment.id) || null;
 
   return (
     <div>

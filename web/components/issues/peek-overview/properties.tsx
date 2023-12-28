@@ -39,7 +39,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { fetchPeekIssueDetails } = useIssueDetail();
+  const { fetchIssue } = useIssueDetail();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -76,7 +76,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleCycleOrModuleChange = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    await fetchPeekIssueDetails(workspaceSlug.toString(), projectId.toString(), issue.id);
+    await fetchIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
   };
 
   const handleEditLink = (link: ILinkDetails) => {

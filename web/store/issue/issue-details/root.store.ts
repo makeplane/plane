@@ -1,4 +1,4 @@
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 // types
 import { IIssueRootStore } from "../root.store";
 import { IIssueStore, IssueStore, IIssueStoreActions } from "./issue.store";
@@ -37,6 +37,8 @@ export interface IIssueDetail
   commentReaction: IIssueCommentReactionStore;
   link: IIssueLinkStore;
   subscription: IIssueSubscriptionStore;
+
+  setIssueId: (issueId: string | undefined) => void;
 }
 
 export class IssueDetail implements IIssueDetail {
@@ -63,6 +65,8 @@ export class IssueDetail implements IIssueDetail {
     makeObservable(this, {
       // observables
       issueId: observable.ref,
+
+      setIssueId: action,
     });
 
     // store
@@ -76,6 +80,10 @@ export class IssueDetail implements IIssueDetail {
     this.link = new IssueLinkStore(this);
     this.subscription = new IssueSubscriptionStore(this);
   }
+
+  setIssueId = (issueId: string | undefined) => {
+    this.issueId = issueId;
+  };
 
   // issue
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {

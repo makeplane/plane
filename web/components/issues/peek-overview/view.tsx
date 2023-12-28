@@ -23,7 +23,7 @@ interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  issue: TIssue | null;
+  issue: TIssue | undefined;
   isLoading?: boolean;
   isArchived?: boolean;
   handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -103,13 +103,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const router = useRouter();
   const { peekIssueId } = router.query;
   // store hooks
-  const { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId } =
-    useIssueDetail();
+  const { fetchSubscriptions, activity, reaction, subscription, setIssueId } = useIssueDetail();
   const { currentUser } = useUser();
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
-      setPeekId(issueId);
+      setIssueId(issueId);
       const { query } = router;
       router.push({
         pathname: router.pathname,
@@ -122,7 +121,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     const { query } = router;
 
     if (query.peekIssueId) {
-      setPeekId(null);
+      setIssueId(undefined);
 
       delete query.peekIssueId;
       delete query.peekProjectId;
@@ -139,14 +138,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       : null,
     async () => {
       if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await fetchIssueSubscription(workspaceSlug, projectId, issueId);
+        await fetchSubscriptions(workspaceSlug, projectId, issueId);
       }
     }
   );
 
-  const issueReactions = getIssueReactions || [];
-  const issueActivity = getIssueActivity;
-  const issueSubscription = getIssueSubscription || [];
+  const issueReactions = reaction.getReactionsByIssueId(issueId) || [];
+  const issueActivity = activity.getActivitiesByIssueId(issueId);
+  const issueSubscription = subscription.getSubscriptionByIssueId(issueId) || [];
 
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
