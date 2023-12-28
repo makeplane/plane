@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
