@@ -32,4 +32,10 @@ export type TIssueActivity = {
   workspace_detail?: IWorkspaceLite;
 };
 
-export type TIssueActivityMap = Record<string, string[]>; // Record defines issueId as key and  activityId's as value
+export type TIssueActivityMap = {
+  [issue_id: string]: TIssueActivity;
+};
+
+export type TIssueActivityIdMap = {
+  [issue_id: string]: string[];
+};

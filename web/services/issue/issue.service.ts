@@ -1,14 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // type
-import type {
-  TIssue,
-  IIssueActivity,
-  ISubIssueResponse,
-  IIssueDisplayProperties,
-  ILinkDetails,
-  TIssueLink,
-} from "types";
+import type { TIssue, IIssueActivity, IIssueDisplayProperties, ILinkDetails, TIssueLink, TIssueSubIssues } from "types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -165,7 +158,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string): Promise<ISubIssueResponse> {
+  async subIssues(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueSubIssues> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -178,7 +171,7 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     data: { sub_issue_ids: string[] }
-  ): Promise<any> {
+  ): Promise<TIssueSubIssues> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {

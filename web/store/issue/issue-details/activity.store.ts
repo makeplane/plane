@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { TIssueActivity } from "types";
+import { TIssueActivity, TIssueActivityIdMap, TIssueActivityMap } from "types";
 
 export interface IIssueActivityStoreActions {
   // actions
@@ -13,8 +13,8 @@ export interface IIssueActivityStoreActions {
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
-  activities: Record<string, string[]>; // Record defines issueId as key and  activityId's as value
-  activityMap: Record<string, TIssueActivity>; // Record defines activityId as key and activities as value
+  activities: TIssueActivityIdMap;
+  activityMap: TIssueActivityMap;
   // computed
   issueActivities: string[] | undefined;
   // helper methods
@@ -24,8 +24,8 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
 
 export class IssueActivityStore implements IIssueActivityStore {
   // observables
-  activities: Record<string, string[]> = {};
-  activityMap: Record<string, TIssueActivity> = {};
+  activities: TIssueActivityIdMap = {};
+  activityMap: TIssueActivityMap = {};
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services

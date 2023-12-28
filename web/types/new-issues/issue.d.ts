@@ -29,7 +29,6 @@ export type TIssue = {
   is_draft: boolean;
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
-  // issue details
 };
 
 export type TIssueMap = {

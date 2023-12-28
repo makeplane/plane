@@ -12,7 +12,8 @@ import {
 } from "./comment_reaction.store";
 import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
 import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
-import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachement.store";
+import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
+import { IIssueSubIssuesStore, IssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
 
 import { TIssue, IIssueActivity, TIssueLink } from "types";
 
@@ -23,10 +24,21 @@ export interface IIssueDetail
     IIssueCommentStoreActions,
     IIssueCommentReactionStoreActions,
     IIssueLinkStoreActions,
+    IIssueSubIssuesStoreActions,
     IIssueSubscriptionStoreActions,
     IIssueAttachmentStoreActions {
   // observables
   issueId: string | undefined;
+  isIssueLinkModalOpen: boolean;
+  isParentIssueModalOpen: boolean;
+  isDeleteIssueModalOpen: boolean;
+  // computed
+  isAnyModalOpen: boolean;
+  // actions
+  setIssueId: (issueId: string | undefined) => void;
+  toggleIssueLinkModal: (value?: boolean) => void;
+  toggleParentIssueModal: (value?: boolean) => void;
+  toggleDeleteIssueModal: (value?: boolean) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -35,31 +47,17 @@ export interface IIssueDetail
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
+  subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
   subscription: IIssueSubscriptionStore;
-
-  setIssueId: (issueId: string | undefined) => void;
-
-  // computed
-  isAnyModalOpen: boolean;
-
-  isIssueLinkModalOpen: boolean;
-  isParentIssueModalOpen: boolean;
-  isDeleteIssueModalOpen: boolean;
-
-  toggleIssueLinkModal: (value?: boolean) => void;
-  toggleParentIssueModal: (value?: boolean) => void;
-  toggleDeleteIssueModal: (value?: boolean) => void;
 }
 
 export class IssueDetail implements IIssueDetail {
   // observables
   issueId: string | undefined = undefined;
-
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
-
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -68,6 +66,7 @@ export class IssueDetail implements IIssueDetail {
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
+  subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
   subscription: IIssueSubscriptionStore;
 
@@ -75,7 +74,6 @@ export class IssueDetail implements IIssueDetail {
     makeObservable(this, {
       // observables
       issueId: observable.ref,
-
       isIssueLinkModalOpen: observable.ref,
       isParentIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
@@ -96,14 +94,17 @@ export class IssueDetail implements IIssueDetail {
     this.activity = new IssueActivityStore(this);
     this.comment = new IssueCommentStore(this);
     this.commentReaction = new IssueCommentReactionStore(this);
+    this.subIssues = new IssueSubIssuesStore(this);
     this.link = new IssueLinkStore(this);
     this.subscription = new IssueSubscriptionStore(this);
   }
 
+  // computed
   get isAnyModalOpen() {
-    return Boolean(this.isIssueLinkModalOpen || this.isParentIssueModalOpen || this.isDeleteIssueModalOpen);
+    return this.isIssueLinkModalOpen || this.isParentIssueModalOpen || this.isDeleteIssueModalOpen;
   }
 
+  // actions
   setIssueId = (issueId: string | undefined) => {
     this.issueId = issueId;
   };
@@ -181,6 +182,12 @@ export class IssueDetail implements IIssueDetail {
   ) => this.link.updateLink(workspaceSlug, projectId, issueId, linkId, data);
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) =>
     this.link.removeLink(workspaceSlug, projectId, issueId, linkId);
+
+  // sub issues
+  fetchSubIssues = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+  createSubIssues = async (workspaceSlug: string, projectId: string, issueId: string, data: string[]) =>
+    this.subIssues.createSubIssues(workspaceSlug, projectId, issueId, data);
 
   // subscription
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) =>

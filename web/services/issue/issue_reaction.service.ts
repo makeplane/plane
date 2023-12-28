@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IssueCommentReaction, IssueReactionForm, IssueCommentReactionForm, TIssueReaction } from "types";
+import type { TIssueCommentReaction, TIssueReaction } from "types";
 
 export class IssueReactionService extends APIService {
   constructor() {
@@ -13,7 +13,7 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: IssueReactionForm
+    data: Partial<TIssueReaction>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`, data)
       .then((response) => response?.data)
@@ -44,7 +44,7 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     commentId: string,
-    data: IssueCommentReactionForm
+    data: Partial<TIssueCommentReaction>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`, data)
       .then((response) => response?.data)
@@ -57,7 +57,7 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     commentId: string
-  ): Promise<IssueCommentReaction[]> {
+  ): Promise<TIssueCommentReaction[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
