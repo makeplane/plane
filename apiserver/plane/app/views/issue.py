@@ -1471,10 +1471,18 @@ class IssueRelationViewSet(BaseViewSet):
                 status=status.HTTP_201_CREATED,
             )
 
-    def destroy(self, request, slug, project_id, issue_id, pk):
-        issue_relation = IssueRelation.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
-        )
+    def remove_relation(self, request, slug, project_id, issue_id):
+        relation_type = request.data.get("relation_type", None)
+        related_issue = request.data.get("related_issue", None)
+
+        if relation_type == "blocking":
+            issue_relation = IssueRelation.objects.get(
+                workspace__slug=slug, project_id=project_id, issue_id=related_issue, relate_issue_id=issue_id
+            )
+        else:
+            issue_relation = IssueRelation.objects.get(
+                workspace__slug=slug, project_id=project_id, issue_id=issue_id, related_issue_id=related_issue
+            )
         current_instance = json.dumps(
             IssueRelationSerializer(issue_relation).data,
             cls=DjangoJSONEncoder,

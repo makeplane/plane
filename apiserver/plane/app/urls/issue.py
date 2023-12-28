@@ -282,10 +282,10 @@ urlpatterns = [
         name="issue-relation",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/remove-relation/",
         IssueRelationViewSet.as_view(
             {
-                "delete": "destroy",
+                "post": "remove_relation",
             }
         ),
         name="issue-relation",

@@ -1276,40 +1276,36 @@ def create_issue_relation_activity(
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
-    if current_instance is None and requested_data.get("related_list") is not None:
-        for issue_relation in requested_data.get("related_list"):
-            if issue_relation.get("relation_type") == "blocked_by":
-                relation_type = "blocking"
-            else:
-                relation_type = issue_relation.get("relation_type")
-            issue = Issue.objects.get(pk=issue_relation.get("issue"))
+    if current_instance is None and requested_data.get("issues") is not None:
+        for related_issue in requested_data.get("issues"):    
+            issue = Issue.objects.get(pk=issue_id)
             issue_activities.append(
                 IssueActivity(
-                    issue_id=issue_relation.get("related_issue"),
+                    issue_id=issue_id,
                     actor_id=actor_id,
                     verb="created",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field=relation_type,
+                    field="blocked_by" if requested_data.get("relation_type") == "blocking" else requested_data.get("relation_type"),
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f"added {relation_type} relation",
-                    old_identifier=issue_relation.get("issue"),
+                    comment=f"added {requested_data.get('relation_type')} relation",
+                    old_identifier=related_issue,
                 )
             )
-            issue = Issue.objects.get(pk=issue_relation.get("related_issue"))
+            issue = Issue.objects.get(pk=related_issue)
             issue_activities.append(
                 IssueActivity(
-                    issue_id=issue_relation.get("issue"),
+                    issue_id=related_issue,
                     actor_id=actor_id,
                     verb="created",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field=f'{issue_relation.get("relation_type")}',
+                    field="blocking" if requested_data.get("relation_type") == "blocked_by" else requested_data.get("relation_type"),
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f'added {issue_relation.get("relation_type")} relation',
-                    old_identifier=issue_relation.get("related_issue"),
+                    comment=f'added {requested_data.get("relation_type")} relation',
+                    old_identifier=issue_id,
                     epoch=epoch,
                 )
             )
