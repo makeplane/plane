@@ -22,7 +22,7 @@ export * from "./view-props";
 export * from "./workspace-views";
 export * from "./webhook";
 // TODO: Remove this after development and the refactor/mobx-store-issue branch is stable
-export * from "./new-issues/base";
+export * from "./issues/base";
 
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
