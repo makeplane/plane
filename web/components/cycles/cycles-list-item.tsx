@@ -51,6 +51,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const [deleteModal, setDeleteModal] = useState(false);
   // computed
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+  console.log("status", getDateRangeStatus("2023-12-29", "2023-12-30"));
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
