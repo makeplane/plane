@@ -253,32 +253,31 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   )}
 
                   {project.archive_in > 0 && (
-                    <CustomMenu.MenuItem
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)}
-                    >
-                      <div className="flex items-center justify-start gap-2">
-                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Archived Issues</span>
-                      </div>
+                    <CustomMenu.MenuItem>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Archived Issues</span>
+                        </div>
+                      </Link>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem
-                    onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/draft-issues`)}
-                  >
-                    <div className="flex items-center justify-start gap-2">
-                      <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                      <span>Draft Issues</span>
-                    </div>
+                  <CustomMenu.MenuItem>
+                    <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
+                      <div className="flex items-center justify-start gap-2">
+                        <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                        <span>Draft Issues</span>
+                      </div>
+                    </Link>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem
-                    onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
-                  >
-                    <div className="flex items-center justify-start gap-2">
-                      <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>Settings</span>
-                    </div>
+                  <CustomMenu.MenuItem>
+                    <Link href={`/${workspaceSlug}/projects/${project?.id}/settings`}>
+                      <div className="flex items-center justify-start gap-2">
+                        <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>Settings</span>
+                      </div>
+                    </Link>
                   </CustomMenu.MenuItem>
-
                   {/* leave project */}
                   {isViewerOrGuest && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
