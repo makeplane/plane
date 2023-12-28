@@ -51,7 +51,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       as="div"
       value={value}
       onChange={(val) => onChange(val)}
-      className="relative flex-shrink-0"
+      className="relative flex-shrink-0 h-full"
       multiple
       disabled={disabled}
     >
@@ -60,7 +60,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
           <Combobox.Button as={Fragment}>
             <div
               ref={setReferenceElement}
-              className="flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
+              className="h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
             >
               {label ? (
                 label
@@ -73,9 +73,9 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                   />
                 </span>
               ) : (
-                <div className="flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
-                  <Tag className="h-3 w-3 text-custom-text-300" />
-                  <span className="text-custom-text-300">Label</span>
+                <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
+                  <Tag className="h-3 w-3 flex-shrink-0" />
+                  <span>Labels</span>
                 </div>
               )}
             </div>

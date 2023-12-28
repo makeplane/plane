@@ -75,7 +75,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     toggleIssueLinkModal(true);
   };
 
-  const projectDetails = workspaceSlug ? getProjectById(issue.project_id) : null;
+  const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
@@ -222,33 +222,38 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <span className="border-t border-custom-border-200" />
 
         <div className="flex w-full flex-col gap-5 py-5">
-          <div className="flex w-full items-center gap-2">
-            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
-              <ContrastIcon className="h-4 w-4 flex-shrink-0" />
-              <p>Cycle</p>
+          {projectDetails?.cycle_view && (
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
+                <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+                <p>Cycle</p>
+              </div>
+              <div>
+                <SidebarCycleSelect
+                  issueDetail={issue}
+                  disabled={disableUserActions}
+                  handleIssueUpdate={handleCycleOrModuleChange}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarCycleSelect
-                issueDetail={issue}
-                disabled={disableUserActions}
-                handleIssueUpdate={handleCycleOrModuleChange}
-              />
-            </div>
-          </div>
+          )}
 
-          <div className="flex w-full items-center gap-2">
-            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
-              <DiceIcon className="h-4 w-4 flex-shrink-0" />
-              <p>Module</p>
+          {projectDetails?.module_view && (
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
+                <DiceIcon className="h-4 w-4 flex-shrink-0" />
+                <p>Module</p>
+              </div>
+              <div>
+                <SidebarModuleSelect
+                  issueDetail={issue}
+                  disabled={disableUserActions}
+                  handleIssueUpdate={handleCycleOrModuleChange}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarModuleSelect
-                issueDetail={issue}
-                disabled={disableUserActions}
-                handleIssueUpdate={handleCycleOrModuleChange}
-              />
-            </div>
-          </div>
+          )}
+
           <div className="flex w-full items-start gap-2">
             <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <Tag className="h-4 w-4 flex-shrink-0" />

@@ -252,7 +252,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
       <form onSubmit={handleSubmit(handleCreateUpdateIssue)}>
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && !status && (
               <Controller
                 control={control}
                 name="project_id"
@@ -458,12 +458,14 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="label_ids"
                     render={({ field: { value, onChange } }) => (
-                      <IssueLabelSelect
-                        setIsOpen={setLabelModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <IssueLabelSelect
+                          setIsOpen={setLabelModal}
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                        />
+                      </div>
                     )}
                   />
                 )}

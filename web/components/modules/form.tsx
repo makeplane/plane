@@ -78,22 +78,24 @@ export const ModuleForm: React.FC<Props> = ({
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
         <div className="flex items-center gap-x-3">
-          <Controller
-            control={control}
-            name="project"
-            render={({ field: { value, onChange } }) => (
-              <div className="h-7">
-                <ProjectDropdown
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                    setActiveProject(val);
-                  }}
-                  buttonVariant="border-with-text"
-                />
-              </div>
-            )}
-          />
+          {!status && (
+            <Controller
+              control={control}
+              name="project"
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectDropdown
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
+                    buttonVariant="border-with-text"
+                  />
+                </div>
+              )}
+            />
+          )}
           <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
         </div>
 

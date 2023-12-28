@@ -157,6 +157,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     });
   };
 
+  const projectDetails = issueDetail ? getProjectById(issueDetail?.project_id) : null;
+
   const showFirstSection =
     fieldsToShow.includes("all") ||
     fieldsToShow.includes("state") ||
@@ -229,7 +231,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
             ) : null}
             <h4 className="text-lg font-medium text-custom-text-300">
-              {issueDetail && getProjectById(issueDetail.project_id)?.identifier}-{issueDetail?.sequence_id}
+              {projectDetails?.identifier}-{issueDetail?.sequence_id}
             </h4>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -536,7 +538,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             )}
             {showThirdSection && (
               <div className="py-1">
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
@@ -551,7 +553,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     </div>
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DiceIcon className="h-4 w-4 flex-shrink-0" />

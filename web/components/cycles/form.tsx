@@ -45,20 +45,22 @@ export const CycleForm: React.FC<Props> = (props) => {
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5">
         <div className="flex items-center gap-x-3">
-          <Controller
-            control={control}
-            name="project"
-            render={({ field: { value, onChange } }) => (
-              <ProjectDropdown
-                value={value}
-                onChange={(val) => {
-                  onChange(val);
-                  setActiveProject(val);
-                }}
-                buttonVariant="background-with-text"
-              />
-            )}
-          />
+          {!status && (
+            <Controller
+              control={control}
+              name="project"
+              render={({ field: { value, onChange } }) => (
+                <ProjectDropdown
+                  value={value}
+                  onChange={(val) => {
+                    onChange(val);
+                    setActiveProject(val);
+                  }}
+                  buttonVariant="background-with-text"
+                />
+              )}
+            />
+          )}
           <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Cycle</h3>
         </div>
         <div className="space-y-3">

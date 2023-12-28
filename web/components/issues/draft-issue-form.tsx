@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Sparkle, X } from "lucide-react";
 // hooks
-import { useApplication, useMention } from "hooks/store";
+import { useApplication, useEstimate, useMention } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // services
@@ -108,10 +108,12 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+  // store hooks
+  const { areEstimatesActiveForProject } = useEstimate();
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
   const { setToastAlert } = useToast();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // refs
   const editorRef = useRef<any>(null);
   // router
@@ -483,13 +485,15 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="assignee_ids"
                     render={({ field: { value, onChange } }) => (
-                      <ProjectMemberDropdown
-                        projectId={projectId}
-                        value={value}
-                        onChange={onChange}
-                        multiple
-                        buttonVariant="background-with-text"
-                      />
+                      <div className="h-7">
+                        <ProjectMemberDropdown
+                          projectId={projectId}
+                          value={value}
+                          onChange={onChange}
+                          multiple
+                          buttonVariant="background-with-text"
+                        />
+                      </div>
                     )}
                   />
                 )}
@@ -498,69 +502,68 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="label_ids"
                     render={({ field: { value, onChange } }) => (
-                      <IssueLabelSelect
-                        setIsOpen={setLabelModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <IssueLabelSelect
+                          setIsOpen={setLabelModal}
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                        />
+                      </div>
                     )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
-                  <div>
-                    <Controller
-                      control={control}
-                      name="start_date"
-                      render={({ field: { value, onChange } }) => (
-                        <div className="h-7">
-                          <DateDropdown
-                            value={value}
-                            onChange={onChange}
-                            buttonVariant="border-with-text"
-                            placeholder="Start date"
-                            maxDate={maxDate ?? undefined}
-                          />
-                        </div>
-                      )}
-                    />
-                  </div>
+                  <Controller
+                    control={control}
+                    name="start_date"
+                    render={({ field: { value, onChange } }) => (
+                      <div className="h-7">
+                        <DateDropdown
+                          value={value}
+                          onChange={onChange}
+                          buttonVariant="border-with-text"
+                          placeholder="Start date"
+                          maxDate={maxDate ?? undefined}
+                        />
+                      </div>
+                    )}
+                  />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
-                  <div>
-                    <Controller
-                      control={control}
-                      name="target_date"
-                      render={({ field: { value, onChange } }) => (
-                        <div className="h-7">
-                          <DateDropdown
-                            value={value}
-                            onChange={onChange}
-                            buttonVariant="border-with-text"
-                            placeholder="Due date"
-                            minDate={minDate ?? undefined}
-                          />
-                        </div>
-                      )}
-                    />
-                  </div>
+                  <Controller
+                    control={control}
+                    name="target_date"
+                    render={({ field: { value, onChange } }) => (
+                      <div className="h-7">
+                        <DateDropdown
+                          value={value}
+                          onChange={onChange}
+                          buttonVariant="border-with-text"
+                          placeholder="Due date"
+                          minDate={minDate ?? undefined}
+                        />
+                      </div>
+                    )}
+                  />
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-                  <div>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
+                  areEstimatesActiveForProject(projectId) && (
                     <Controller
                       control={control}
                       name="estimate_point"
                       render={({ field: { value, onChange } }) => (
-                        <EstimateDropdown
-                          value={value}
-                          onChange={onChange}
-                          projectId={projectId}
-                          buttonVariant="background-with-text"
-                        />
+                        <div className="h-7">
+                          <EstimateDropdown
+                            value={value}
+                            onChange={onChange}
+                            projectId={projectId}
+                            buttonVariant="background-with-text"
+                          />
+                        </div>
                       )}
                     />
-                  </div>
-                )}
+                  )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <Controller
                     control={control}
