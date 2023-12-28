@@ -64,6 +64,7 @@ from .issue import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
+    IssueRelationLiteSerializer,
 
 )
 

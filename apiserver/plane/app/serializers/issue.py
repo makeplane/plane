@@ -278,17 +278,27 @@ class IssueLabelSerializer(BaseSerializer):
         ]
 
 
+class IssueRelationLiteSerializer(DynamicBaseSerializer):
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "project",
+            "sequence_id",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+        ]
+
+
 class IssueRelationSerializer(BaseSerializer):
-    issue_detail = IssueProjectLiteSerializer(read_only=True, source="related_issue")
+    issue_detail = IssueRelationLiteSerializer(read_only=True, source="related_issue")
 
     class Meta:
         model = IssueRelation
         fields = [
             "issue_detail",
-            "relation_type",
-            "related_issue",
-            "issue",
-            "id"
         ]
         read_only_fields = [
             "workspace",
@@ -296,16 +306,12 @@ class IssueRelationSerializer(BaseSerializer):
         ]
 
 class RelatedIssueSerializer(BaseSerializer):
-    issue_detail = IssueProjectLiteSerializer(read_only=True, source="issue")
+    issue_detail = IssueRelationLiteSerializer(read_only=True, source="issue")
 
     class Meta:
         model = IssueRelation
         fields = [
             "issue_detail",
-            "relation_type",
-            "related_issue",
-            "issue",
-            "id"
         ]
         read_only_fields = [
             "workspace",
