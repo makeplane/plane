@@ -244,7 +244,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           </div>
         </div>
         {workspaceLinks.map((link) => (
-          <a className="block w-full">
+          <a className="block w-full" key={link.name}>
             <div
               className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-onboarding-text-200 
                 outline-none  focus:bg-custom-sidebar-background-80
@@ -272,7 +272,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
               <ChevronDown className="h-4 w-4" />
             </div>
             {projectLinks.map((link) => (
-              <a className="ml-6 block w-full">
+              <a className="ml-6 block w-full" key={link.name}>
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-custom-sidebar-text-200 
                     outline-none  focus:bg-custom-sidebar-background-80

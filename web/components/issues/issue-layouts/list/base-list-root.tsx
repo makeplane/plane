@@ -116,35 +116,30 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         }
       />
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleIssues]
   );
 
   return (
     <>
-      {issues?.loader === "init-loader" ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
-      ) : (
-        <div className={`relative h-full w-full bg-custom-background-90`}>
-          <List
-            issuesMap={issueMap}
-            displayProperties={displayProperties}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={renderQuickActions}
-            issueIds={issueIds}
-            showEmptyGroup={showEmptyGroup}
-            viewId={viewId}
-            quickAddCallback={issues?.quickAddIssue}
-            enableIssueQuickAdd={!!enableQuickAdd}
-            canEditProperties={canEditProperties}
-            disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        </div>
-      )}
+      <div className={`relative h-full w-full bg-custom-background-90`}>
+        <List
+          issuesMap={issueMap}
+          displayProperties={displayProperties}
+          group_by={group_by}
+          handleIssues={handleIssues}
+          quickActions={renderQuickActions}
+          issueIds={issueIds}
+          showEmptyGroup={showEmptyGroup}
+          viewId={viewId}
+          quickAddCallback={issues?.quickAddIssue}
+          enableIssueQuickAdd={!!enableQuickAdd}
+          canEditProperties={canEditProperties}
+          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+          currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
+        />
+      </div>
 
       {/* {workspaceSlug && peekIssueId && peekProjectId && (
         <IssuePeekOverview

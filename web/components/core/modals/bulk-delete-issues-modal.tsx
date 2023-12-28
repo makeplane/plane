@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// react hook form
+import { observer } from "mobx-react-lite";
 import { SubmitHandler, useForm } from "react-hook-form";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import { IssueService } from "services/issue";
@@ -17,7 +16,10 @@ import { Search } from "lucide-react";
 import { IUser, TIssue } from "types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { useProject, useProjectState } from "hooks/store";
+// store hooks
+import { useProject } from "hooks/store";
+// components
+import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -31,13 +33,12 @@ type Props = {
 
 const issueService = new IssueService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
+export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // hooks
-  const { getProjectStates } = useProjectState();
   const { getProjectById } = useProject();
   // states
   const [query, setQuery] = useState("");
@@ -167,37 +168,11 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
                           )}
                           <ul className="text-sm text-custom-text-200">
                             {filteredIssues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                as="div"
-                                value={issue.id}
-                                className={({ active }) =>
-                                  `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  }`
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={watch("delete_issue_ids").includes(issue.id)}
-                                    readOnly
-                                  />
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor:
-                                        getProjectStates(issue?.project_id)?.find(
-                                          (state) => issue?.state_id == state.id
-                                        )?.color || "",
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0 text-xs">
-                                    {projectDetails?.identifier}-{issue.sequence_id}
-                                  </span>
-                                  <span>{issue.name}</span>
-                                </div>
-                              </Combobox.Option>
+                              <BulkDeleteIssuesModalItem
+                                issue={issue}
+                                identifier={projectDetails?.identifier}
+                                delete_issue_ids={watch("delete_issue_ids").includes(issue.id)}
+                              />
                             ))}
                           </ul>
                         </li>
@@ -231,4 +206,4 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});
