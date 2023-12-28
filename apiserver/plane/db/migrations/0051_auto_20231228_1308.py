@@ -9,7 +9,7 @@ def project_emoji(apps, schema_editor):
     bulk_project_emoji = []
     for project in Project.objects.all():
         if project.emoji:
-            emoji_hex = hex(int(project.emoji))
+            emoji_hex = hex(int(project.emoji))[2:]
             project.emoji = emoji_hex
             bulk_project_emoji.append(project)
 
@@ -22,7 +22,7 @@ def issue_reaction(apps, schema_editor):
     bulk_issue_reaction = []
     for issue in IssueReaction.objects.all():
         if issue.reaction:
-            emoji_hex = hex(int(issue.reaction))
+            emoji_hex = hex(int(issue.reaction))[2:]
             issue.reaction = emoji_hex
             bulk_issue_reaction.append(issue)
 
@@ -37,7 +37,7 @@ def comment_reaction(apps, schema_editor):
     bulk_comment_reaction = []
     for comment in CommentReaction.objects.all():
         if comment.reaction:
-            emoji_hex = hex(int(comment.reaction))
+            emoji_hex = hex(int(comment.reaction))[2:]
             comment.reaction = emoji_hex
             bulk_comment_reaction.append(comment)
 
