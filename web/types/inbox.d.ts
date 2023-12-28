@@ -1,7 +1,7 @@
-import { IIssue } from "./issues";
+import { TIssue } from "./issues";
 import type { IProjectLite } from "./projects";
 
-export interface IInboxIssue extends IIssue {
+export interface IInboxIssue extends TIssue {
   issue_inbox: {
     duplicate_to: string | null;
     id: string;

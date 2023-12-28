@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import { IPage, IPageBlock, IIssue } from "types";
+import { IPage, IPageBlock, TIssue } from "types";
 
 export class PageService extends APIService {
   constructor() {
@@ -150,7 +150,7 @@ export class PageService extends APIService {
     projectId: string,
     pageId: string,
     blockId: string
-  ): Promise<IIssue> {
+  ): Promise<TIssue> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
     )

@@ -7,7 +7,7 @@ import { CalendarChart, IssuePeekOverview } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IGroupedIssues, IIssue } from "types";
+import { TGroupedIssues, TIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
@@ -22,9 +22,9 @@ interface IBaseCalendarRoot {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
 }
@@ -42,7 +42,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
-  const groupedIssueIds = (issueStore.groupedIssueIds ?? {}) as IGroupedIssues;
+  const groupedIssueIds = (issueStore.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const onDragEnd = async (result: DropResult) => {
     if (!result) return;
@@ -73,7 +73,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   };
 
   const handleIssues = useCallback(
-    async (date: string, issue: IIssue, action: EIssueActions) => {
+    async (date: string, issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         await issueActions[action]!(issue);
       }
@@ -119,7 +119,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
           handleIssue={async (issueToUpdate) =>
-            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, EIssueActions.UPDATE)
+            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as TIssue, EIssueActions.UPDATE)
           }
         />
       )}

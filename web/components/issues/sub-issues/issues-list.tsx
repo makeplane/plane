@@ -3,7 +3,7 @@ import useSWR from "swr";
 // components
 import { SubIssues } from "./issue";
 // types
-import { IUser, IIssue } from "types";
+import { IUser, TIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // services
 import { IssueService } from "services/issue";
@@ -13,20 +13,20 @@ import { SUB_ISSUES } from "constants/fetch-keys";
 export interface ISubIssuesRootList {
   workspaceSlug: string;
   projectId: string;
-  parentIssue: IIssue;
+  parentIssue: TIssue;
   spacingLeft?: number;
   user: IUser | undefined;
   editable: boolean;
-  removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
+  removeIssueFromSubIssues: (parentIssueId: string, issue: TIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
   handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",
     issueId: string,
-    issue?: IIssue | null
+    issue?: TIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
 }
 
 const issueService = new IssueService();
@@ -68,7 +68,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
         {issues &&
           issues.sub_issues &&
           issues.sub_issues.length > 0 &&
-          issues.sub_issues.map((issue: IIssue) => (
+          issues.sub_issues.map((issue: TIssue) => (
             <SubIssues
               key={`${issue?.id}`}
               workspaceSlug={workspaceSlug}

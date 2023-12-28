@@ -12,24 +12,24 @@ import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  formKey: keyof IIssue;
+  formKey: keyof TIssue;
   groupId?: string;
   subGroupId?: string | null;
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   onOpen?: () => void;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -82,7 +82,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     register,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   const handleClose = () => {
     setIsOpen(false);
@@ -99,7 +99,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
       setToastAlert({
         type: "error",
@@ -109,7 +109,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     });
   }, [errors, setToastAlert]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
+  const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !groupId || !workspaceDetail || !projectDetail || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });

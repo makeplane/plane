@@ -13,12 +13,12 @@ import { ExistingIssuesListModal } from "components/core";
 // services
 import { IssueService } from "services/issue";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
-  submitChanges: (formData?: Partial<IIssue>) => void;
-  watch: UseFormWatch<IIssue>;
+  submitChanges: (formData?: Partial<TIssue>) => void;
+  watch: UseFormWatch<TIssue>;
   disabled?: boolean;
 };
 
@@ -86,10 +86,10 @@ export const SidebarRelatesSelect: React.FC<Props> = observer((props) => {
   };
 
   const relatedToIssueRelation = [
-    ...(watch("related_issues")?.filter((i) => i.relation_type === "relates_to") ?? []),
+    ...(watch("related_issues")?.filter((i: any) => i.relation_type === "relates_to") ?? []),
     ...(watch("issue_relations") ?? [])
-      ?.filter((i) => i.relation_type === "relates_to")
-      .map((i) => ({
+      ?.filter((i: any) => i.relation_type === "relates_to")
+      .map((i: any) => ({
         ...i,
         issue_detail: i.issue_detail,
         related_issue: i.issue_detail?.id,

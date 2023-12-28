@@ -6,7 +6,7 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { IssueArchiveService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags, IIssue } from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IArchivedIssues {
   // observable
@@ -14,10 +14,10 @@ export interface IArchivedIssues {
   issues: { [project_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   removeIssueFromArchived: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: undefined;
 }
@@ -72,7 +72,7 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
     const _issues = this.rootIssueStore.issues.getIssuesByIds(archivedIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);

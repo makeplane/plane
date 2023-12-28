@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { InboxService } from "services/inbox.service";
 // types
 import { RootStore } from "store/root.store";
-import { IInboxIssue, IIssue, TInboxStatus } from "types";
+import { IInboxIssue, TIssue, TInboxStatus } from "types";
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
@@ -28,7 +28,7 @@ export interface IInboxIssuesStore {
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    data: Partial<IIssue>
+    data: Partial<TIssue>
   ) => Promise<IInboxIssue>;
   updateIssue: (
     workspaceSlug: string,
@@ -149,11 +149,11 @@ export class InboxIssuesStore implements IInboxIssuesStore {
    * @param data
    * @returns Promise<IInboxIssue>
    */
-  createIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<IIssue>) => {
+  createIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TIssue>) => {
     const payload = {
       issue: {
         name: data.name,
-        description: data.description,
+        // description: data.description,
         description_html: data.description_html,
         priority: data.priority,
       },

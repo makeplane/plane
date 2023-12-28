@@ -14,16 +14,16 @@ import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { IInboxIssue, IIssue } from "types";
+import { IInboxIssue, TIssue } from "types";
 import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
-  assignees: [],
+  assignee_ids: [],
   priority: "low",
   target_date: new Date().toString(),
-  labels: [],
+  label_ids: [],
 };
 
 export const InboxMainContent: React.FC = observer(() => {
@@ -40,7 +40,7 @@ export const InboxMainContent: React.FC = observer(() => {
   } = useUser();
   const { projectStates } = useProjectState();
   // form info
-  const { reset, control, watch } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<TIssue>({
     defaultValues,
   });
 
@@ -54,7 +54,7 @@ export const InboxMainContent: React.FC = observer(() => {
 
   const issuesList = currentInboxIssues;
   const issueDetails = inboxIssueId ? getIssueById(inboxId as string, inboxIssueId.toString()) : undefined;
-  const currentIssueState = projectStates?.find((s) => s.id === issueDetails?.state);
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetails?.state_id);
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
@@ -120,8 +120,8 @@ export const InboxMainContent: React.FC = observer(() => {
 
     reset({
       ...issueDetails,
-      assignees: issueDetails.assignees ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels: issueDetails.labels ?? issueDetails.labels,
+      assignee_ids: issueDetails.assignee_ids ?? issueDetails.assignee_ids,
+      label_ids: issueDetails.label_ids ?? issueDetails.label_ids,
     });
   }, [issueDetails, reset, inboxIssueId]);
 

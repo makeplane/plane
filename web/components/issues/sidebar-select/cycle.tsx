@@ -8,13 +8,13 @@ import { CycleService } from "services/cycle.service";
 // ui
 import { ContrastIcon, CustomSearchSelect, Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
-  issueDetail: IIssue | undefined;
+  issueDetail: TIssue | undefined;
   handleCycleChange?: (cycleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;

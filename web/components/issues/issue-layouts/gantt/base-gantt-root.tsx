@@ -12,7 +12,7 @@ import {
   IssueGanttSidebar,
 } from "components/gantt-chart";
 // types
-import { IIssue, TUnGroupedIssues } from "types";
+import { TIssue, TUnGroupedIssues } from "types";
 import { EUserProjectRoles } from "constants/project";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
@@ -25,9 +25,9 @@ interface IBaseGanttRoot {
   issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
   viewId?: string;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
 }
 
@@ -48,17 +48,17 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const issues = issueIds.map((id) => issueMap?.[id]);
 
-  const updateIssueBlockStructure = async (issue: IIssue, data: IBlockUpdateData) => {
+  const updateIssueBlockStructure = async (issue: TIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, payload, viewId);
+    await issueStore.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, payload, viewId);
   };
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         await issueActions[action]!(issue);
       }
@@ -74,9 +74,9 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blocks={issues ? renderIssueBlocksStructure(issues as IIssue[]) : null}
+          blocks={issues ? renderIssueBlocksStructure(issues as TIssue[]) : null}
           blockUpdateHandler={updateIssueBlockStructure}
-          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} />}
+          blockToRender={(data: TIssue) => <IssueGanttBlock data={data} />}
           sidebarToRender={(props) => (
             <IssueGanttSidebar
               {...props}
@@ -98,7 +98,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
           handleIssue={async (issueToUpdate, action) => {
-            await handleIssues(issueToUpdate as IIssue, action);
+            await handleIssues(issueToUpdate as TIssue, action);
           }}
         />
       )}

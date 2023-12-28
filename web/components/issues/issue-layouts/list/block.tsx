@@ -5,14 +5,15 @@ import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayProperties, IIssueMap } from "types";
+import { TIssue, IIssueDisplayProperties, TIssueMap } from "types";
 import { EIssueActions } from "../types";
+import { useProject } from "hooks/store";
 
 interface IssueBlockProps {
   issueId: string;
-  issuesMap: IIssueMap;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  issuesMap: TIssueMap;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
@@ -21,7 +22,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // router
   const router = useRouter();
-  const updateIssue = (issueToUpdate: IIssue) => {
+  const updateIssue = (issueToUpdate: TIssue) => {
     handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
@@ -34,18 +35,20 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
     });
   };
 
-  const canEditIssueProperties = canEditProperties(issue.project);
+  const canEditIssueProperties = canEditProperties(issue.project_id);
+  const { getProjectById } = useProject();
+  const projectDetails = getProjectById(issue.project_id);
 
   return (
     <>
       <div className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm">
         {displayProperties && displayProperties?.key && (
           <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-            {issue?.project_detail?.identifier}-{issue.sequence_id}
+            {projectDetails?.identifier}-{issue.sequence_id}
           </div>
         )}
 

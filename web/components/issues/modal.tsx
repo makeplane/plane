@@ -12,16 +12,16 @@ import { IssueDraftService } from "services/issue";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
-import type { IIssue } from "types";
+import type { TIssue } from "types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IssuesModalProps {
-  data?: IIssue | null;
+  data?: TIssue | null;
   handleClose: () => void;
   isOpen: boolean;
-  prePopulateData?: Partial<IIssue>;
+  prePopulateData?: Partial<TIssue>;
   fieldsToShow?: (
     | "project"
     | "name"
@@ -38,8 +38,8 @@ export interface IssuesModalProps {
     | "module"
     | "cycle"
   )[];
-  onSubmit?: (data: Partial<IIssue>) => Promise<void>;
-  handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
+  onSubmit?: (data: Partial<TIssue>) => Promise<void>;
+  handleSubmit?: (data: Partial<TIssue>) => Promise<void>;
   currentStore?: TCreateModalStoreTypes;
 }
 
@@ -61,7 +61,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [formDirtyState, setFormDirtyState] = useState<any>(null);
   const [showConfirmDiscard, setShowConfirmDiscard] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
-  const [prePopulateData, setPreloadedData] = useState<Partial<IIssue>>({});
+  const [prePopulateData, setPreloadedData] = useState<Partial<TIssue>>({});
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query as {
@@ -127,28 +127,28 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   useEffect(() => {
     setPreloadedData(prePopulateDataProps ?? {});
 
-    if (cycleId && !prePopulateDataProps?.cycle) {
+    if (cycleId && !prePopulateDataProps?.cycle_id) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        cycle: cycleId.toString(),
+        cycle_id: cycleId.toString(),
       }));
     }
-    if (moduleId && !prePopulateDataProps?.module) {
+    if (moduleId && !prePopulateDataProps?.module_id) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        module: moduleId.toString(),
+        module_id: moduleId.toString(),
       }));
     }
     if (
       (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
-      !prePopulateDataProps?.assignees
+      !prePopulateDataProps?.assignee_ids
     ) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        assignees: prePopulateDataProps?.assignees ?? [currentUser?.id ?? ""],
+        assignees: prePopulateDataProps?.assignee_ids ?? [currentUser?.id ?? ""],
       }));
     }
   }, [prePopulateDataProps, cycleId, moduleId, router.asPath, currentUser?.id]);
@@ -205,8 +205,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
-    if (data && data.project) {
-      setActiveProject(data.project);
+    if (data && data.project_id) {
+      setActiveProject(data.project_id);
       return;
     }
 
@@ -216,21 +216,21 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
   }, [data, projectId, workspaceProjectIds, isOpen, activeProject]);
 
-  const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
+  const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project, cycleId, [issue.id]);
+    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
     fetchCycleDetails(workspaceSlug, activeProject, cycleId);
   };
 
-  const addIssueToModule = async (issue: IIssue, moduleId: string) => {
+  const addIssueToModule = async (issue: TIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
     await moduleIssues.addIssueToModule(workspaceSlug, activeProject, moduleId, [issue.id]);
     fetchModuleDetails(workspaceSlug, activeProject, moduleId);
   };
 
-  const createIssue = async (payload: Partial<IIssue>) => {
+  const createIssue = async (payload: Partial<TIssue>) => {
     if (!workspaceSlug || !dataIdToUpdate) return;
 
     await currentIssueStore
@@ -243,8 +243,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         } else {
           currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
-          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res, payload.cycle);
-          if (payload.module && payload.module !== "") await addIssueToModule(res, payload.module);
+          if (payload.cycle_id && payload.cycle_id !== "") await addIssueToCycle(res, payload.cycle_id);
+          if (payload.module_id && payload.module_id !== "") await addIssueToModule(res, payload.module_id);
 
           setToastAlert({
             type: "success",
@@ -263,7 +263,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
               groupId: currentWorkspace?.id!,
             }
           );
-          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+          if (payload.parent_id && payload.parent_id !== "") mutate(SUB_ISSUES(payload.parent_id));
         }
       })
       .catch((err) => {
@@ -291,7 +291,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const createDraftIssue = async () => {
     if (!workspaceSlug || !activeProject || !currentUser) return;
 
-    const payload: Partial<IIssue> = {
+    const payload: Partial<TIssue> = {
       ...formDirtyState,
     };
 
@@ -308,10 +308,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         setFormDirtyState(null);
         setShowConfirmDiscard(false);
 
-        if (payload.assignees?.some((assignee) => assignee === currentUser?.id))
+        if (payload.assignee_ids?.some((assignee) => assignee === currentUser?.id))
           mutate(USER_ISSUE(workspaceSlug as string));
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        if (payload.parent_id && payload.parent_id !== "") mutate(SUB_ISSUES(payload.parent_id));
       })
       .catch((err) => {
         setToastAlert({
@@ -322,7 +322,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       });
   };
 
-  const updateIssue = async (payload: Partial<IIssue>) => {
+  const updateIssue = async (payload: Partial<TIssue>) => {
     if (!workspaceSlug || !dataIdToUpdate || !data) return;
 
     await currentIssueStore
@@ -368,12 +368,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IIssue>) => {
+  const handleFormSubmit = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !dataIdToUpdate || !currentStore) return;
 
-    const payload: Partial<IIssue> = {
+    const payload: Partial<TIssue> = {
       ...formData,
-      description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
 

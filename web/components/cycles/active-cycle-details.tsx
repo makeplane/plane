@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useApplication, useCycle, useIssues } from "hooks/store";
+import { useApplication, useCycle, useIssues, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
@@ -82,6 +82,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   } = useApplication();
   const { fetchActiveCycle, projectActiveCycleId, getActiveCycleById, addCycleToFavorites, removeCycleFromFavorites } =
     useCycle();
+  const { getProjectStates } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -455,8 +456,16 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 />
               </div>
               <div className="w-16 text-end text-xs text-custom-text-200">
-                {issueIds?.filter((issueId) => issueMap[issueId]?.state_detail?.group === "completed")?.length} of{" "}
-                {issueIds?.length}
+                of{" "}
+                {
+                  issueIds?.filter(
+                    (issueId) =>
+                      getProjectStates(issueMap[issueId]?.project_id).find(
+                        (issue) => issue.id === issueMap[issueId]?.state_id
+                      )?.group === "completed"
+                  )?.length
+                }{" "}
+                of {issueIds?.length}
               </div>
             </div>
           )}

@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
@@ -38,14 +38,14 @@ export interface IBaseKanBanLayout {
     | IProfileIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
   showLoader?: boolean;
   viewId?: string;
   currentStore?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
@@ -166,7 +166,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   };
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         await issueActions[action]!(issue);
       }
@@ -175,7 +175,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   );
 
   const renderQuickActions = useCallback(
-    (issue: IIssue, customActionButton?: React.ReactElement) => (
+    (issue: TIssue, customActionButton?: React.ReactElement) => (
       <QuickActions
         customActionButton={customActionButton}
         issue={issue}
@@ -280,7 +280,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
+          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as TIssue, EIssueActions.UPDATE)}
         />
       )}
     </>

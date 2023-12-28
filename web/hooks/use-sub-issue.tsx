@@ -5,7 +5,7 @@ import useSWR, { mutate } from "swr";
 // services
 import { IssueService } from "services/issue";
 // types
-import { IIssue, ISubIssueResponse } from "types";
+import { TIssue, ISubIssueResponse } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
@@ -22,11 +22,11 @@ const useSubIssue = (projectId: string, issueId: string, isExpanded: boolean) =>
     shouldFetch ? () => issueService.subIssues(workspaceSlug as string, projectId as string, issueId as string) : null
   );
 
-  const mutateSubIssues = (issue: IIssue, data: Partial<IIssue>) => {
-    if (!issue.parent) return;
+  const mutateSubIssues = (issue: TIssue, data: Partial<TIssue>) => {
+    if (!issue.parent_id) return;
 
     mutate(
-      SUB_ISSUES(issue.parent!),
+      SUB_ISSUES(issue.parent_id!),
       (prev_data: any) => {
         return {
           ...prev_data,

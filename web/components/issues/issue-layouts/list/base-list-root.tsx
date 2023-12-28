@@ -1,7 +1,7 @@
 import { List } from "./default";
 import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
 import { observer } from "mobx-react-lite";
@@ -42,13 +42,13 @@ interface IBaseListRoot {
     | IArchivedIssues;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
   currentStore: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
@@ -95,7 +95,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         await issueActions[action]!(issue);
       }
@@ -104,7 +104,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   const renderQuickActions = useCallback(
-    (issue: IIssue) => (
+    (issue: TIssue) => (
       <QuickActions
         issue={issue}
         handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
@@ -146,14 +146,14 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         </div>
       )}
 
-      {workspaceSlug && peekIssueId && peekProjectId && (
+      {/* {workspaceSlug && peekIssueId && peekProjectId && (
         <IssuePeekOverview
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
+          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as TIssue, EIssueActions.UPDATE)}
         />
-      )}
+      )} */}
     </>
   );
 });

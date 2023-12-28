@@ -6,7 +6,7 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { UserService } from "services/user.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import { IIssue, IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 interface IProfileIssueTabTypes {
   assigned: string[];
@@ -20,7 +20,7 @@ export interface IProfileIssues {
   currentView: "assigned" | "created" | "subscribed";
   issues: { [userId: string]: IProfileIssueTabTypes };
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   viewFlags: ViewFlags;
   // actions
   fetchIssues: (
@@ -29,26 +29,26 @@ export interface IProfileIssues {
     loadType: TLoader,
     userId?: string | undefined,
     view?: "assigned" | "created" | "subscribed"
-  ) => Promise<IIssueResponse>;
+  ) => Promise<TIssue>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     userId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     userId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     userId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   quickAddIssue: undefined;
 }
 
@@ -102,7 +102,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -173,7 +173,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
   createIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     userId: string | undefined = undefined
   ) => {
     try {
@@ -197,7 +197,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     userId: string | undefined = undefined
   ) => {
     try {
@@ -207,7 +207,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       const response = await this.rootIssueStore.projectIssues.updateIssue(
         workspaceSlug,
         projectId,
-        data.id as keyof IIssue,
+        data.id as keyof TIssue,
         data
       );
 

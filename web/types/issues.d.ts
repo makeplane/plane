@@ -141,7 +141,7 @@ export interface ISubIssuesState {
 
 export interface ISubIssueResponse {
   state_distribution: ISubIssuesState;
-  sub_issues: IIssue[];
+  sub_issues: TIssue[];
 }
 
 export interface BlockeIssueDetail {
@@ -243,13 +243,13 @@ export interface IIssueAttachment {
 }
 
 export interface IIssueViewProps {
-  groupedIssues: { [key: string]: IIssue[] } | undefined;
+  groupedIssues: { [key: string]: TIssue[] } | undefined;
   displayFilters: IIssueDisplayFilterOptions | undefined;
   isEmpty: boolean;
   mutateIssues: KeyedMutator<
-    | IIssue[]
+    | TIssue[]
     | {
-        [key: string]: IIssue[];
+        [key: string]: TIssue[];
       }
   >;
   params: any;
@@ -257,24 +257,6 @@ export interface IIssueViewProps {
 }
 
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
-
-export type TLoader = "init-loader" | "mutation" | undefined;
-
-export interface IGroupedIssues {
-  [group_id: string]: string[];
-}
-
-export interface ISubGroupedIssues {
-  [sub_grouped_id: string]: {
-    [group_id: string]: string[];
-  };
-}
-
-export type TUnGroupedIssues = string[];
-
-export interface IIssueResponse {
-  [issue_id: string]: IIssue;
-}
 
 export interface ViewFlags {
   enableQuickAdd: boolean;
@@ -295,9 +277,68 @@ export interface IGroupByColumn {
   id: string;
   name: string;
   Icon: ReactElement | undefined;
-  payload: Partial<IIssue>;
+  payload: Partial<TIssue>;
 }
 
 export interface IIssueMap {
-  [key: string]: IIssue;
+  [key: string]: TIssue;
 }
+
+// new issue structure types
+export type TIssue = {
+  id: string;
+  name: string;
+  state_id: string;
+  description_html: string;
+  sort_order: number;
+  completed_at: string | null;
+  estimate_point: number | null;
+  priority: TIssuePriorities;
+  start_date: string;
+  target_date: string;
+  sequence_id: number;
+  project_id: string;
+  parent_id: string | null;
+  cycle_id: string | null;
+  module_id: string | null;
+  label_ids: string[];
+  assignee_ids: string[];
+  sub_issues_count: number;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  updated_by: string;
+  attachment_count: number;
+  link_count: number;
+  is_subscribed: boolean;
+  archived_at: boolean;
+  is_draft: boolean;
+  // tempId is used for optimistic updates. It is not a part of the API response.
+  tempId?: string;
+  // issue details
+  related_issues: any;
+  issue_reactions: any;
+  issue_relations: any;
+  issue_cycle: any;
+  issue_module: any;
+  parent_detail: any;
+  issue_link: any;
+};
+
+export type TIssueMap = {
+  [issue_id: string]: TIssue;
+};
+
+export type TLoader = "init-loader" | "mutation" | undefined;
+
+export type TGroupedIssues = {
+  [group_id: string]: string[];
+};
+
+export type TSubGroupedIssues = {
+  [sub_grouped_id: string]: {
+    [group_id: string]: string[];
+  };
+};
+
+export type TUnGroupedIssues = string[];

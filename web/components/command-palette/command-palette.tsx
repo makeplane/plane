@@ -217,7 +217,7 @@ export const CommandPalette: FC = observer(() => {
         isOpen={isCreateIssueModalOpen}
         handleClose={() => toggleCreateIssueModal(false)}
         prePopulateData={
-          cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
+          cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_id: moduleId.toString() } : undefined
         }
         currentStore={createIssueStoreType}
       />

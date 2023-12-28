@@ -7,7 +7,7 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IGroupedIssues, IIssue, IIssueResponse } from "types";
+import { TGroupedIssues, TIssue, TIssueMap } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useCalendarView } from "hooks/store/use-calendar-view";
@@ -19,17 +19,17 @@ import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  issues: IIssueResponse | undefined;
-  groupedIssueIds: IGroupedIssues;
+  issues: TIssueMap | undefined;
+  groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 

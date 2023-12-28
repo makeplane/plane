@@ -5,11 +5,11 @@ import { IssuePropertyAssignee } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -17,17 +17,17 @@ type Props = {
 export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
       <IssuePropertyAssignee
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.assignees}
+        projectId={issue.project_id ?? null}
+        value={issue.assignee_ids}
         onChange={(data) => {
-          onChange(issue, { assignees: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { assignees: data });
+          onChange(issue, { assignee_ids: data });
+          if (issue.parent_id) {
+            mutateSubIssues(issue, { assignee_ids: data });
           }
         }}
         className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"

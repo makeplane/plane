@@ -15,22 +15,22 @@ import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 
-const defaultValues: Partial<IIssue> = {
-  description: "",
+const defaultValues: Partial<TIssue> = {
+  // description: "",
   description_html: "",
   estimate_point: null,
   issue_cycle: null,
   issue_module: null,
   name: "",
   priority: "low",
-  start_date: null,
-  state: "",
-  target_date: null,
+  start_date: undefined,
+  state_id: "",
+  target_date: undefined,
 };
 
 // services
@@ -52,15 +52,15 @@ const IssueDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-  const { reset, control, watch } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<TIssue>({
     defaultValues,
   });
 
   const submitChanges = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate<IIssue>(
+      mutate<TIssue>(
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
           if (!prevData) return prevData;
@@ -73,7 +73,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
         false
       );
 
-      const payload: Partial<IIssue> = {
+      const payload: Partial<TIssue> = {
         ...formData,
       };
 

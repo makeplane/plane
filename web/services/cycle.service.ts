@@ -1,7 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { CycleDateCheckData, ICycle, IIssue, IIssueResponse } from "types";
+import type { CycleDateCheckData, ICycle, TIssue, TIssueMap } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -38,7 +38,7 @@ export class CycleService extends APIService {
       });
   }
 
-  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<IIssue[]> {
+  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -51,7 +51,7 @@ export class CycleService extends APIService {
     projectId: string,
     cycleId: string,
     queries?: any
-  ): Promise<IIssueResponse> {
+  ): Promise<TIssueMap> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
       params: queries,
     })

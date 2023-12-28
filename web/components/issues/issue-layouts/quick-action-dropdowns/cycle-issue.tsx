@@ -9,7 +9,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssuesStoreType } from "constants/issue";
 
@@ -21,7 +21,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
 
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<IIssue | null>(null);
+  const [issueToEdit, setIssueToEdit] = useState<TIssue | null>(null);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const { setToastAlert } = useToast();

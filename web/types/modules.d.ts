@@ -1,7 +1,7 @@
 import type {
   IUser,
   IUserLite,
-  IIssue,
+  TIssue,
   IProject,
   IWorkspace,
   IWorkspaceLite,
@@ -58,7 +58,7 @@ export interface ModuleIssueResponse {
   created_by: string;
   id: string;
   issue: string;
-  issue_detail: IIssue;
+  issue_detail: TIssue;
   module: string;
   module_detail: IModule;
   project: string;
@@ -75,4 +75,4 @@ export type ModuleLink = {
 
 export type SelectModuleType = (IModule & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
-export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | undefined;
+export type SelectIssue = (TIssue & { actionType: "edit" | "delete" | "create" }) | undefined;

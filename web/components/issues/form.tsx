@@ -29,32 +29,32 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // types
-import type { IIssue, ISearchIssueResponse } from "types";
+import type { TIssue, ISearchIssueResponse } from "types";
 
-const defaultValues: Partial<IIssue> = {
-  project: "",
+const defaultValues: Partial<TIssue> = {
+  project_id: "",
   name: "",
   description_html: "<p></p>",
   estimate_point: null,
-  state: "",
-  parent: null,
+  state_id: "",
+  parent_id: null,
   priority: "none",
-  assignees: [],
-  labels: [],
-  start_date: null,
-  target_date: null,
+  assignee_ids: [],
+  label_ids: [],
+  start_date: undefined,
+  target_date: undefined,
 };
 
 export interface IssueFormProps {
-  handleFormSubmit: (values: Partial<IIssue>) => Promise<void>;
-  initialData?: Partial<IIssue>;
+  handleFormSubmit: (values: Partial<TIssue>) => Promise<void>;
+  initialData?: Partial<TIssue>;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleDiscardClose: () => void;
   status: boolean;
-  handleFormDirty: (payload: Partial<IIssue> | null) => void;
+  handleFormDirty: (payload: Partial<TIssue> | null) => void;
   fieldsToShow: (
     | "project"
     | "name"
@@ -119,26 +119,25 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     getValues,
     setValue,
     setFocus,
-  } = useForm<IIssue>({
+  } = useForm<TIssue>({
     defaultValues: initialData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
   const issueName = watch("name");
 
-  const payload: Partial<IIssue> = {
+  const payload: Partial<TIssue> = {
     name: getValues("name"),
-    description: getValues("description"),
-    state: getValues("state"),
+    state_id: getValues("state_id"),
     priority: getValues("priority"),
-    assignees: getValues("assignees"),
-    labels: getValues("labels"),
+    assignee_ids: getValues("assignee_ids"),
+    label_ids: getValues("label_ids"),
     start_date: getValues("start_date"),
     target_date: getValues("target_date"),
-    project: getValues("project"),
-    parent: getValues("parent"),
-    cycle: getValues("cycle"),
-    module: getValues("module"),
+    project_id: getValues("project_id"),
+    parent_id: getValues("parent_id"),
+    cycle_id: getValues("cycle_id"),
+    module_id: getValues("module_id"),
   };
 
   useEffect(() => {
@@ -147,22 +146,14 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(payload), isDirty]);
 
-  const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
+  const handleCreateUpdateIssue = async (formData: Partial<TIssue>) => {
     await handleFormSubmit(formData);
 
     setGptAssistantModal(false);
 
     reset({
       ...defaultValues,
-      project: projectId,
-      description: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-          },
-        ],
-      },
+      project_id: projectId,
       description_html: "<p></p>",
     });
     editorRef?.current?.clearEditor();
@@ -171,7 +162,6 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {});
     setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     editorRef.current?.setEditorValue(`${watch("description_html")}`);
   };
@@ -228,7 +218,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   useEffect(() => {
     reset({
       ...getValues(),
-      project: projectId,
+      project_id: projectId,
     });
   }, [getValues, projectId, reset]);
 
@@ -250,7 +240,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
-            onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
+            onSuccess={(response) => setValue("label_ids", [...watch("label_ids"), response.id])}
           />
         </>
       )}
@@ -260,7 +250,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
             {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && (
               <Controller
                 control={control}
-                name="project"
+                name="project_id"
                 rules={{
                   required: true,
                 }}
@@ -280,7 +270,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               {status ? "Update" : "Create"} Issue
             </h3>
           </div>
-          {watch("parent") &&
+          {watch("parent_id") &&
             (fieldsToShow.includes("all") || fieldsToShow.includes("parent")) &&
             selectedParentIssue && (
               <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
@@ -298,7 +288,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
-                      setValue("parent", null);
+                      setValue("parent_id", null);
                       setSelectedParentIssue(null);
                     }}
                   />
@@ -384,7 +374,6 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         customClassName="min-h-[7rem] border-custom-border-100"
                         onChange={(description: Object, description_html: string) => {
                           onChange(description_html);
-                          setValue("description", description);
                         }}
                         mentionHighlights={mentionHighlights}
                         mentionSuggestions={mentionSuggestions}
@@ -414,7 +403,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <Controller
                     control={control}
-                    name="state"
+                    name="state_id"
                     render={({ field: { value, onChange } }) => (
                       <IssueStateSelect
                         setIsOpen={setStateModal}
@@ -437,7 +426,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
                   <Controller
                     control={control}
-                    name="assignees"
+                    name="assignee_ids"
                     render={({ field: { value, onChange } }) => (
                       <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                     )}
@@ -446,7 +435,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
                   <Controller
                     control={control}
-                    name="labels"
+                    name="label_ids"
                     render={({ field: { value, onChange } }) => (
                       <IssueLabelSelect
                         setIsOpen={setLabelModal}
@@ -492,7 +481,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
                   <Controller
                     control={control}
-                    name="module"
+                    name="module_id"
                     render={({ field: { value, onChange } }) => (
                       <IssueModuleSelect
                         workspaceSlug={workspaceSlug as string}
@@ -508,7 +497,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
                   <Controller
                     control={control}
-                    name="cycle"
+                    name="cycle_id"
                     render={({ field: { value, onChange } }) => (
                       <IssueCycleSelect
                         workspaceSlug={workspaceSlug as string}
@@ -534,7 +523,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <>
-                    {watch("parent") ? (
+                    {watch("parent_id") ? (
                       <CustomMenu
                         customButton={
                           <button
@@ -556,7 +545,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
+                        <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent_id", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </CustomMenu>
@@ -575,7 +564,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
 
                     <Controller
                       control={control}
-                      name="parent"
+                      name="parent_id"
                       render={({ field: { onChange } }) => (
                         <ParentIssuesListModal
                           isOpen={parentIssueListModalOpen}

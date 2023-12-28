@@ -2,15 +2,15 @@ import { FC } from "react";
 // components
 import { IssueBlock } from "components/issues";
 // types
-import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueMap, TUnGroupedIssues } from "types";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 
 interface Props {
-  issueIds: IGroupedIssues | TUnGroupedIssues | any;
-  issuesMap: IIssueMap;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
 }
 

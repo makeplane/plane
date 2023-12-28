@@ -17,18 +17,18 @@ import {
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueLink, ILinkDetails } from "types";
+import { TIssue, IIssueLink, ILinkDetails } from "types";
 
 interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  issue: IIssue | null;
+  issue: TIssue | null;
   isLoading?: boolean;
   isArchived?: boolean;
   handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
   redirectToIssueDetail: () => void;
-  issueUpdate: (issue: Partial<IIssue>) => void;
+  issueUpdate: (issue: Partial<TIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   issueCommentCreate: (comment: any) => void;
@@ -234,7 +234,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
                   {issue?.created_by !== currentUser?.id &&
-                    !issue?.assignees.includes(currentUser?.id ?? "") &&
+                    !issue?.assignee_ids.includes(currentUser?.id ?? "") &&
                     !router.pathname.includes("[archivedIssueId]") && (
                       <Button
                         size="sm"

@@ -6,7 +6,7 @@ import { useCycle, useIssues } from "hooks/store";
 import { BaseGanttRoot } from "./base-gantt-root";
 import { EIssuesStoreType } from "constants/issue";
 import { EIssueActions } from "../types";
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 export const CycleGanttLayout: React.FC = observer(() => {
   // router
@@ -17,23 +17,23 @@ export const CycleGanttLayout: React.FC = observer(() => {
   const { fetchCycleDetails } = useCycle();
 
   const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (issue: TIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
-      fetchCycleDetails(workspaceSlug.toString(), issue.project, cycleId.toString());
+      await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, cycleId.toString());
+      fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId.toString());
     },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
+    [EIssueActions.DELETE]: async (issue: TIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
-      fetchCycleDetails(workspaceSlug.toString(), issue.project, cycleId.toString());
+      await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, cycleId.toString());
+      fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId.toString());
     },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+    [EIssueActions.REMOVE]: async (issue: TIssue) => {
+      if (!workspaceSlug || !cycleId || !issue.id) return;
 
-      await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project, cycleId.toString(), issue.id);
-      fetchCycleDetails(workspaceSlug.toString(), issue.project, cycleId.toString());
+      await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, cycleId.toString(), issue.id);
+      fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId.toString());
     },
   };
 

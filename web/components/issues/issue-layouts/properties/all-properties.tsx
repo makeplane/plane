@@ -8,14 +8,15 @@ import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
+import { TIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssuePropertyEstimates } from "./estimates";
 import { IssuePropertyAssignee } from "./assignee";
+import { useLabel, useProjectState } from "hooks/store";
 
 export interface IIssueProperties {
-  issue: IIssue;
-  handleIssues: (issue: IIssue) => void;
+  issue: TIssue;
+  handleIssues: (issue: TIssue) => void;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
@@ -24,8 +25,11 @@ export interface IIssueProperties {
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
 
+  const { stateMap } = useProjectState();
+  const { labelMap } = useLabel();
+
   const handleState = (state: IState) => {
-    handleIssues({ ...issue, state: state.id });
+    handleIssues({ ...issue, state_id: state.id });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
@@ -33,11 +37,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues({ ...issue, labels: ids });
+    handleIssues({ ...issue, label_ids: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues({ ...issue, assignees: ids });
+    handleIssues({ ...issue, assignee_ids: ids });
   };
 
   const handleStartDate = (date: string) => {
@@ -54,15 +58,18 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   if (!displayProperties) return null;
 
+  const defaultStateOptions = [stateMap[issue?.state_id]];
+  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+
   return (
     <div className={className}>
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
         <IssuePropertyState
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.state || null}
-          defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
+          projectId={issue?.project_id || null}
+          value={issue?.state_id || null}
+          defaultOptions={defaultStateOptions}
           onChange={handleState}
           disabled={isReadOnly}
           hideDropdownArrow
@@ -72,7 +79,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
         <IssuePropertyPriority
-          value={issue?.priority || null}
+          value={issue?.priority}
           onChange={handlePriority}
           disabled={isReadOnly}
           hideDropdownArrow
@@ -83,9 +90,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.labels || null}
-          defaultOptions={issue?.label_details ? issue.label_details : []}
+          projectId={issue?.project_id || null}
+          value={issue?.label_ids || null}
+          defaultOptions={defaultLabelOptions}
           onChange={handleLabel}
           disabled={isReadOnly}
           hideDropdownArrow
@@ -115,8 +122,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <IssuePropertyAssignee
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.assignees || null}
+          projectId={issue?.project_id || null}
+          value={issue?.assignee_ids || null}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={isReadOnly}
@@ -127,7 +134,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* estimates */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
         <IssuePropertyEstimates
-          projectId={issue?.project_detail?.id || null}
+          projectId={issue?.project_id || null}
           value={issue?.estimate_point || null}
           onChange={handleEstimate}
           disabled={isReadOnly}

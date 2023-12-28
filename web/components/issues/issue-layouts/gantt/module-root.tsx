@@ -6,7 +6,7 @@ import { useIssues, useModule } from "hooks/store";
 import { BaseGanttRoot } from "./base-gantt-root";
 import { EIssuesStoreType } from "constants/issue";
 import { EIssueActions } from "../types";
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 export const ModuleGanttLayout: React.FC = observer(() => {
   // router
@@ -17,23 +17,23 @@ export const ModuleGanttLayout: React.FC = observer(() => {
   const { fetchModuleDetails } = useModule();
 
   const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (issue: TIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await issues.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId.toString());
-      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
+      await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
+      fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId.toString());
     },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
+    [EIssueActions.DELETE]: async (issue: TIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await issues.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
-      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
+      await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
+      fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId.toString());
     },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
+    [EIssueActions.REMOVE]: async (issue: TIssue) => {
+      if (!workspaceSlug || !moduleId || !issue.id) return;
 
-      await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
-      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
+      await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
+      fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId.toString());
     },
   };
 

@@ -5,15 +5,15 @@ import { IssueService } from "services/issue";
 // components
 import { PrioritySelect } from "components/project";
 // types
-import { IIssue, IState } from "types";
+import { TIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 import { IssuePropertyAssignee, IssuePropertyState } from "../issue-layouts/properties";
 
 export interface IIssueProperty {
   workspaceSlug: string;
-  parentIssue: IIssue;
-  issue: IIssue;
+  parentIssue: TIssue;
+  issue: TIssue;
   editable: boolean;
 }
 
@@ -29,21 +29,20 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
 
   const handleStateChange = (data: IState) => {
     partialUpdateIssue({
-      state: data.id,
-      state_detail: data,
+      state_id: data.id,
     });
   };
 
   const handleAssigneeChange = (data: string[]) => {
-    partialUpdateIssue({ assignees: data });
+    partialUpdateIssue({ assignee_ids: data });
   };
 
-  const partialUpdateIssue = async (data: Partial<IIssue>) => {
+  const partialUpdateIssue = async (data: Partial<TIssue>) => {
     mutate(
       workspaceSlug && parentIssue ? SUB_ISSUES(parentIssue.id) : null,
       (elements: any) => {
         const _elements = { ...elements };
-        const _issues = _elements.sub_issues.map((element: IIssue) =>
+        const _issues = _elements.sub_issues.map((element: TIssue) =>
           element.id === issue.id ? { ...element, ...data } : element
         );
         _elements["sub_issues"] = [..._issues];
@@ -52,12 +51,12 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
       false
     );
 
-    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project, issue.id, data);
+    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project_id, issue.id, data);
 
     mutate(
       SUB_ISSUES(parentIssue.id),
       (elements: any) => {
-        const _elements = elements.sub_issues.map((element: IIssue) =>
+        const _elements = elements.sub_issues.map((element: TIssue) =>
           element.id === issue.id ? issueResponse : element
         );
         elements["sub_issues"] = _elements;
@@ -75,8 +74,8 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
 
       <div className="flex-shrink-0">
         <IssuePropertyState
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.state || null}
+          projectId={issue?.project_id || null}
+          value={issue?.state_id || null}
           onChange={(data) => handleStateChange(data)}
           disabled={!editable}
           hideDropdownArrow
@@ -85,8 +84,8 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
 
       <div className="flex-shrink-0">
         <IssuePropertyAssignee
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.assignees || null}
+          projectId={issue?.project_id || null}
+          value={issue?.assignee_ids || null}
           hideDropdownArrow
           onChange={(val) => handleAssigneeChange(val)}
           disabled={!editable}

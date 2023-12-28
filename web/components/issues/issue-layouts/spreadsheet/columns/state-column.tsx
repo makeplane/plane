@@ -5,11 +5,12 @@ import { IssuePropertyState } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, IState } from "types";
+import { TIssue, IState } from "types";
+import { useProjectState } from "hooks/store";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   states: IState[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
@@ -17,21 +18,25 @@ type Props = {
 
 export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
   const { issue, onChange, states, expandedIssues, disabled } = props;
+  // hooks
+  const { stateMap } = useProjectState();
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
+
+  const defaultStateOptions = [stateMap[issue?.state_id]];
 
   return (
     <>
       <IssuePropertyState
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.state}
-        defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
+        projectId={issue.project_id ?? null}
+        value={issue.state_id}
+        defaultOptions={defaultStateOptions}
         onChange={(data) => {
-          onChange(issue, { state: data.id, state_detail: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { state: data.id, state_detail: data });
+          onChange(issue, { state_id: data.id });
+          if (issue.parent_id) {
+            mutateSubIssues(issue, { state_id: data.id });
           }
         }}
         className="w-full !h-11 border-b-[0.5px] border-custom-border-200"
