@@ -29,8 +29,8 @@ export interface IIssueCommentReactionStoreActions {
 
 export interface IIssueCommentReactionStore extends IIssueCommentReactionStoreActions {
   // observables
-  commentReactions: TIssueCommentReactionIdMap; // Record defines commentId as key and reactionId's as value
-  commentReactionMap: TIssueCommentReactionMap; // Record defines reactionId as key and reactions as value
+  commentReactions: TIssueCommentReactionIdMap;
+  commentReactionMap: TIssueCommentReactionMap;
   // helper methods
   getCommentReactionsByCommentId: (commentId: string) => string[] | undefined;
   getCommentReactionById: (reactionId: string) => TIssueCommentReaction | undefined;

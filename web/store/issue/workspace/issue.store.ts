@@ -17,7 +17,7 @@ export interface IWorkspaceIssues {
   // computed
   groupedIssueIds: TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<TIssue>;
+  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -104,11 +104,15 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
       runInAction(() => {
-        set(this.issues, [viewId], Object.keys(response));
+        set(
+          this.issues,
+          [viewId],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

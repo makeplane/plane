@@ -156,7 +156,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const issueReactions = reaction.getReactionsByIssueId(issueId) || [];
   const issueActivity = activity.getActivitiesByIssueId(issueId);
-  const issueSubscription = subscription.getSubscriptionByIssueId(issueId) || [];
+  const issueSubscription = subscription.getSubscriptionByIssueId(issueId) || {};
 
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 

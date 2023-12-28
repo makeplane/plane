@@ -1,13 +1,13 @@
 import React from "react";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useIssueDetail } from "hooks/store";
 // components
 import { StateDropdown } from "components/dropdowns";
 // types
 import { TIssue, IState } from "types";
 
 type Props = {
-  issue: TIssue;
+  issueId: string;
   onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   states: IState[] | undefined;
   expandedIssues: string[];
@@ -15,36 +15,38 @@ type Props = {
 };
 
 export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, states, expandedIssues, disabled } = props;
+  const { issueId, onChange, states, expandedIssues, disabled } = props;
+  const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+  const issueDetail = issue.getIssueById(issueId);
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
+  const isExpanded = expandedIssues.indexOf(issueId) > -1;
+
+  // const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
-      <div className="h-11 border-b-[0.5px] border-custom-border-200">
-        <StateDropdown
-          projectId={issue.project_id}
-          value={issue.state_id}
-          onChange={(data) => {
-            onChange(issue, { state_id: data });
-            if (issue.parent_id) mutateSubIssues(issue, { state_id: data });
-          }}
-          disabled={disabled}
-          buttonVariant="transparent-with-text"
-          buttonClassName="rounded-none"
-        />
-      </div>
+      {issueDetail && (
+        <div className="h-11 border-b-[0.5px] border-custom-border-200">
+          <StateDropdown
+            projectId={issueDetail.project_id}
+            value={issueDetail.state_id}
+            onChange={(data) => onChange(issueDetail, { state_id: data })}
+            disabled={disabled}
+            buttonVariant="transparent-with-text"
+            buttonClassName="rounded-none"
+          />
+        </div>
+      )}
 
       {isExpanded &&
-        !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue) => (
+        subIssues.map((subIssueId) => (
           <SpreadsheetStateColumn
-            key={subIssue.id}
-            issue={subIssue}
+            key={subIssueId}
+            issueId={subIssueId}
             onChange={onChange}
             states={states}
             expandedIssues={expandedIssues}

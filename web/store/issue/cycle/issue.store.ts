@@ -24,7 +24,7 @@ export interface ICycleIssues {
     projectId: string,
     loadType: TLoader,
     cycleId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -60,7 +60,7 @@ export interface ICycleIssues {
       new_cycle_id: string;
     }
   ) => Promise<TIssue>;
-  fetchActiveCycleIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TIssue | undefined>;
+  fetchActiveCycleIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TIssue[] | undefined>;
 }
 
 export class CycleIssues extends IssueHelperStore implements ICycleIssues {
@@ -149,11 +149,15 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
 
       runInAction(() => {
-        set(this.issues, [cycleId], Object.keys(response));
+        set(
+          this.issues,
+          [cycleId],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

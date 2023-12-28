@@ -22,7 +22,7 @@ export interface IModuleIssues {
     projectId: string,
     loadType: TLoader,
     moduleId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -142,11 +142,15 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
       runInAction(() => {
-        set(this.issues, [moduleId], Object.keys(response));
+        set(
+          this.issues,
+          [moduleId],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

@@ -291,7 +291,9 @@ CELERY_IMPORTS = (
 
 # Sentry Settings
 # Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").startswith("https://"):
+if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
+    "SENTRY_DSN"
+).startswith("https://"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
         integrations=[

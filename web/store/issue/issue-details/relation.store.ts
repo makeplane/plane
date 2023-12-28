@@ -4,19 +4,25 @@ import set from "lodash/set";
 import { IssueReactionService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "types";
+import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap, TIssueRelationTypes } from "types";
 
-export interface IIssueReactionStoreActions {
+export interface IIssueRelationStoreActions {
   // actions
-  fetchReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueReaction[]>;
-  createReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
-  removeReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
+  fetchRelations: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueReaction[]>;
+  createRelation: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    relationType: TIssueRelationTypes,
+    reaction: string
+  ) => Promise<any>;
+  removeRelation: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
 }
 
-export interface IIssueReactionStore extends IIssueReactionStoreActions {
+export interface IIssueRelationStore extends IIssueRelationStoreActions {
   // observables
-  reactions: TIssueReactionIdMap;
-  reactionMap: TIssueReactionMap;
+  reactions: TIssueReactionIdMap; // Record defines issueId as key and reactionId's as value
+  reactionMap: TIssueReactionMap; // Record defines reactionId as key and reactions as value
   // computed
   issueReactions: string[] | undefined;
   // helper methods
@@ -24,7 +30,7 @@ export interface IIssueReactionStore extends IIssueReactionStoreActions {
   getReactionById: (reactionId: string) => TIssueReaction | undefined;
 }
 
-export class IssueReactionStore implements IIssueReactionStore {
+export class IssueRelationStore implements IIssueRelationStore {
   // observables
   reactions: TIssueReactionIdMap = {};
   reactionMap: TIssueReactionMap = {};
@@ -41,9 +47,9 @@ export class IssueReactionStore implements IIssueReactionStore {
       // computed
       issueReactions: computed,
       // actions
-      fetchReactions: action,
-      createReaction: action,
-      removeReaction: action,
+      fetchRelations: action,
+      createRelation: action,
+      removeRelation: action,
     });
     // root store
     this.rootIssueDetailStore = rootStore;
@@ -70,7 +76,7 @@ export class IssueReactionStore implements IIssueReactionStore {
   };
 
   // actions
-  fetchReactions = async (workspaceSlug: string, projectId: string, issueId: string) => {
+  fetchRelations = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const response = await this.issueReactionService.listIssueReactions(workspaceSlug, projectId, issueId);
 
@@ -85,7 +91,7 @@ export class IssueReactionStore implements IIssueReactionStore {
     }
   };
 
-  createReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => {
+  createRelation = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => {
     try {
       const response = await this.issueReactionService.createIssueReaction(workspaceSlug, projectId, issueId, {
         reaction,
@@ -102,7 +108,7 @@ export class IssueReactionStore implements IIssueReactionStore {
     }
   };
 
-  removeReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => {
+  removeRelation = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => {
     try {
       const reactionIndex = this.reactions[issueId].findIndex((_reaction) => _reaction === reaction);
       if (reactionIndex >= 0)
@@ -116,7 +122,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       return response;
     } catch (error) {
       // TODO: Replace with fetch issue details
-      // this.fetchReactions(workspaceSlug, projectId, issueId);
+      // this.fetchRelations(workspaceSlug, projectId, issueId);
       throw error;
     }
   };

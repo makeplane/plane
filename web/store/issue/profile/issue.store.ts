@@ -29,7 +29,7 @@ export interface IProfileIssues {
     loadType: TLoader,
     userId?: string | undefined,
     view?: "assigned" | "created" | "subscribed"
-  ) => Promise<TIssue>;
+  ) => Promise<TIssue[]>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -157,11 +157,15 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
       runInAction(() => {
-        set(this.issues, [userId, view], Object.keys(response));
+        set(
+          this.issues,
+          [userId, view],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

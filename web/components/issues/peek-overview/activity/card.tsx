@@ -10,13 +10,14 @@ import { IssueCommentCard } from "./comment-card";
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
 import { IIssueActivity, IUser } from "types";
+import { useIssueDetail } from "hooks/store";
 
 interface IIssueActivityCard {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   user: IUser | null;
-  issueActivity: IIssueActivity[] | null;
+  issueActivity: string[] | undefined;
   issueCommentUpdate: (comment: any) => void;
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
@@ -36,13 +37,16 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
     issueCommentReactionRemove,
   } = props;
 
+  const { activity } = useIssueDetail();
+
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
         {issueActivity ? (
           issueActivity.length > 0 &&
-          issueActivity.map((activityItem, index) => {
+          issueActivity.map((activityId, index) => {
             // determines what type of action is performed
+            const activityItem = activity.getActivityById(activityId) as IIssueActivity;
             const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
 
             if ("field" in activityItem && activityItem.field !== "updated_by") {
@@ -88,7 +92,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                         </div>
                       </div>
                       <div className="min-w-0 flex-1 py-3">
-                        <div className="break-words text-xs text-custom-text-200">
+                        <div className="flex gap-1 break-words text-xs text-custom-text-200">
                           {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                             <span className="text-gray font-medium">Plane</span>
                           ) : activityItem.actor_detail.is_bot ? (
@@ -101,8 +105,8 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                                   : activityItem.actor_detail.display_name}
                               </span>
                             </Link>
-                          )}{" "}
-                          {message}{" "}
+                          )}
+                          {message}
                           <Tooltip
                             tooltipContent={`${renderLongDateFormat(activityItem.created_at)}, ${render24HourFormatTime(
                               activityItem.created_at
