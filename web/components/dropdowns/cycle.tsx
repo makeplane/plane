@@ -29,8 +29,9 @@ type Props = {
 
 type ButtonProps = {
   className?: string;
-  hideText?: boolean;
   cycle: ICycle | null;
+  hideText?: boolean;
+  dropdownArrow: boolean;
 };
 
 type DropdownOptions =
@@ -42,7 +43,7 @@ type DropdownOptions =
   | undefined;
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, hideText = false, cycle } = props;
+  const { className, cycle, dropdownArrow, hideText = false } = props;
 
   return (
     <div
@@ -53,12 +54,13 @@ const BorderButton = (props: ButtonProps) => {
     >
       <ContrastIcon className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{cycle?.name ?? "Cycle"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, hideText = false, cycle } = props;
+  const { className, cycle, dropdownArrow, hideText = false } = props;
 
   return (
     <div
@@ -66,12 +68,13 @@ const BackgroundButton = (props: ButtonProps) => {
     >
       <ContrastIcon className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{cycle?.name ?? "Cycle"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, hideText = false, cycle } = props;
+  const { className, cycle, dropdownArrow, hideText = false } = props;
 
   return (
     <div
@@ -82,6 +85,7 @@ const TransparentButton = (props: ButtonProps) => {
     >
       <ContrastIcon className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{cycle?.name ?? "Cycle"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
@@ -185,19 +189,45 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton cycle={selectedCycle} className={buttonClassName} />
+              <BorderButton
+                cycle={selectedCycle}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton cycle={selectedCycle} className={buttonClassName} hideText />
+              <BorderButton
+                cycle={selectedCycle}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton cycle={selectedCycle} className={buttonClassName} />
+              <BackgroundButton
+                cycle={selectedCycle}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton cycle={selectedCycle} className={buttonClassName} hideText />
+              <BackgroundButton
+                cycle={selectedCycle}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton cycle={selectedCycle} className={buttonClassName} />
+              <TransparentButton
+                cycle={selectedCycle}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton cycle={selectedCycle} className={buttonClassName} hideText />
+              <TransparentButton
+                cycle={selectedCycle}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : null}
-            {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
           </button>
         )}
       </Combobox.Button>

@@ -27,12 +27,13 @@ type Props = {
 
 type ButtonProps = {
   className?: string;
+  dropdownArrow: boolean;
   hideText?: boolean;
   project: IProject | null;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, hideText = false, project } = props;
+  const { className, dropdownArrow, hideText = false, project } = props;
 
   return (
     <div
@@ -45,12 +46,13 @@ const BorderButton = (props: ButtonProps) => {
         {project?.emoji ? renderEmoji(project?.emoji) : project?.icon_prop ? renderEmoji(project?.icon_prop) : null}
       </span>
       {!hideText && <span className="flex-grow truncate">{project?.name ?? "Project"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, hideText = false, project } = props;
+  const { className, dropdownArrow, hideText = false, project } = props;
 
   return (
     <div
@@ -60,12 +62,13 @@ const BackgroundButton = (props: ButtonProps) => {
         {project?.emoji ? renderEmoji(project?.emoji) : project?.icon_prop ? renderEmoji(project?.icon_prop) : null}
       </span>
       {!hideText && <span className="flex-grow truncate">{project?.name ?? "Project"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, hideText = false, project } = props;
+  const { className, dropdownArrow, hideText = false, project } = props;
 
   return (
     <div
@@ -78,6 +81,7 @@ const TransparentButton = (props: ButtonProps) => {
         {project?.emoji ? renderEmoji(project?.emoji) : project?.icon_prop ? renderEmoji(project?.icon_prop) : null}
       </span>
       {!hideText && <span className="flex-grow truncate">{project?.name ?? "Project"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
@@ -165,19 +169,45 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton project={selectedProject} className={buttonClassName} />
+              <BorderButton
+                project={selectedProject}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton project={selectedProject} className={buttonClassName} hideText />
+              <BorderButton
+                project={selectedProject}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton project={selectedProject} className={buttonClassName} />
+              <BackgroundButton
+                project={selectedProject}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton project={selectedProject} className={buttonClassName} hideText />
+              <BackgroundButton
+                project={selectedProject}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton project={selectedProject} className={buttonClassName} />
+              <TransparentButton
+                project={selectedProject}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton project={selectedProject} className={buttonClassName} hideText />
+              <TransparentButton
+                project={selectedProject}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : null}
-            {dropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
           </button>
         )}
       </Combobox.Button>

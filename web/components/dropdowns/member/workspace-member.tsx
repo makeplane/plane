@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 // hooks
 import { useMember, useUser } from "hooks/store";
 // components
@@ -100,19 +100,51 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton userIds={value} className={buttonClassName} placeholder={placeholder} />
+              <BorderButton
+                userIds={value}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                placeholder={placeholder}
+              />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton userIds={value} className={buttonClassName} placeholder={placeholder} hideText />
+              <BorderButton
+                userIds={value}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                placeholder={placeholder}
+                hideText
+              />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton userIds={value} className={buttonClassName} placeholder={placeholder} />
+              <BackgroundButton
+                userIds={value}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                placeholder={placeholder}
+              />
             ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton userIds={value} className={buttonClassName} placeholder={placeholder} hideText />
+              <BackgroundButton
+                userIds={value}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                placeholder={placeholder}
+                hideText
+              />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton userIds={value} className={buttonClassName} placeholder={placeholder} />
+              <TransparentButton
+                userIds={value}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                placeholder={placeholder}
+              />
             ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton userIds={value} className={buttonClassName} placeholder={placeholder} hideText />
+              <TransparentButton
+                userIds={value}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                placeholder={placeholder}
+                hideText
+              />
             ) : null}
-            {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
           </button>
         )}
       </Combobox.Button>

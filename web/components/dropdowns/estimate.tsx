@@ -27,8 +27,9 @@ type Props = {
 
 type ButtonProps = {
   className?: string;
-  hideText?: boolean;
   estimatePoint: string | null;
+  dropdownArrow: boolean;
+  hideText?: boolean;
 };
 
 type DropdownOptions =
@@ -40,7 +41,7 @@ type DropdownOptions =
   | undefined;
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, hideText = false, estimatePoint } = props;
+  const { className, estimatePoint, dropdownArrow, hideText = false } = props;
 
   return (
     <div
@@ -51,12 +52,13 @@ const BorderButton = (props: ButtonProps) => {
     >
       <Triangle className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{estimatePoint !== null ? estimatePoint : "Estimate"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, hideText = false, estimatePoint } = props;
+  const { className, estimatePoint, dropdownArrow, hideText = false } = props;
 
   return (
     <div
@@ -64,12 +66,13 @@ const BackgroundButton = (props: ButtonProps) => {
     >
       <Triangle className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{estimatePoint !== null ? estimatePoint : "Estimate"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, hideText = false, estimatePoint } = props;
+  const { className, estimatePoint, dropdownArrow, hideText = false } = props;
 
   return (
     <div
@@ -80,6 +83,7 @@ const TransparentButton = (props: ButtonProps) => {
     >
       <Triangle className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{estimatePoint !== null ? estimatePoint : "Estimate"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
@@ -179,19 +183,45 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton estimatePoint={selectedEstimate} className={buttonClassName} />
+              <BorderButton
+                estimatePoint={selectedEstimate}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton estimatePoint={selectedEstimate} className={buttonClassName} hideText />
+              <BorderButton
+                estimatePoint={selectedEstimate}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton estimatePoint={selectedEstimate} className={buttonClassName} />
+              <BackgroundButton
+                estimatePoint={selectedEstimate}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton estimatePoint={selectedEstimate} className={buttonClassName} hideText />
+              <BackgroundButton
+                estimatePoint={selectedEstimate}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton estimatePoint={selectedEstimate} className={buttonClassName} />
+              <TransparentButton
+                estimatePoint={selectedEstimate}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton estimatePoint={selectedEstimate} className={buttonClassName} hideText />
+              <TransparentButton
+                estimatePoint={selectedEstimate}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : null}
-            {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
           </button>
         )}
       </Combobox.Button>

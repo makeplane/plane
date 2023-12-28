@@ -29,13 +29,14 @@ type Props = {
 
 type ButtonProps = {
   className?: string;
+  dropdownArrow: boolean;
   hideText?: boolean;
   highlightUrgent: boolean;
   priority: TIssuePriorities;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, hideText = false, highlightUrgent, priority } = props;
+  const { className, dropdownArrow, hideText = false, highlightUrgent, priority } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
@@ -83,12 +84,13 @@ const BorderButton = (props: ButtonProps) => {
         />
       </div>
       {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, hideText = false, highlightUrgent, priority } = props;
+  const { className, dropdownArrow, hideText = false, highlightUrgent, priority } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
@@ -136,12 +138,13 @@ const BackgroundButton = (props: ButtonProps) => {
         />
       </div>
       {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, hideText = false, highlightUrgent, priority } = props;
+  const { className, dropdownArrow, hideText = false, highlightUrgent, priority } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
@@ -189,6 +192,7 @@ const TransparentButton = (props: ButtonProps) => {
         />
       </div>
       {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
@@ -276,29 +280,51 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} />
+              <BorderButton
+                priority={value}
+                className={buttonClassName}
+                highlightUrgent={highlightUrgent}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} hideText />
+              <BorderButton
+                priority={value}
+                className={buttonClassName}
+                highlightUrgent={highlightUrgent}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} />
+              <BackgroundButton
+                priority={value}
+                className={buttonClassName}
+                highlightUrgent={highlightUrgent}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "background-without-text" ? (
               <BackgroundButton
                 priority={value}
                 className={buttonClassName}
                 highlightUrgent={highlightUrgent}
+                dropdownArrow={dropdownArrow && !disabled}
                 hideText
               />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton priority={value} className={buttonClassName} highlightUrgent={highlightUrgent} />
+              <TransparentButton
+                priority={value}
+                className={buttonClassName}
+                highlightUrgent={highlightUrgent}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "transparent-without-text" ? (
               <TransparentButton
                 priority={value}
                 className={buttonClassName}
                 highlightUrgent={highlightUrgent}
+                dropdownArrow={dropdownArrow && !disabled}
                 hideText
               />
             ) : null}
-            {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
           </button>
         )}
       </Combobox.Button>

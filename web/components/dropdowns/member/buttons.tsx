@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { ChevronDown } from "lucide-react";
 // hooks
 import { useMember } from "hooks/store";
 // ui
@@ -8,6 +9,7 @@ import { cn } from "helpers/common.helper";
 
 type ButtonProps = {
   className?: string;
+  dropdownArrow: boolean;
   placeholder: string;
   hideText?: boolean;
   userIds: string | string[] | null;
@@ -39,7 +41,7 @@ const ButtonAvatars = observer(({ userIds }: { userIds: string | string[] | null
 });
 
 export const BorderButton = observer((props: ButtonProps) => {
-  const { className, hideText = false, placeholder, userIds } = props;
+  const { className, dropdownArrow, hideText = false, placeholder, userIds } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -58,12 +60,13 @@ export const BorderButton = observer((props: ButtonProps) => {
           {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
         </span>
       )}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 });
 
 export const BackgroundButton = observer((props: ButtonProps) => {
-  const { className, hideText = false, placeholder, userIds } = props;
+  const { className, dropdownArrow, hideText = false, placeholder, userIds } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -79,12 +82,13 @@ export const BackgroundButton = observer((props: ButtonProps) => {
           {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
         </span>
       )}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 });
 
 export const TransparentButton = observer((props: ButtonProps) => {
-  const { className, hideText = false, placeholder, userIds } = props;
+  const { className, dropdownArrow, hideText = false, placeholder, userIds } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -103,6 +107,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
           {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
         </span>
       )}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 });

@@ -29,12 +29,13 @@ type Props = {
 
 type ButtonProps = {
   className?: string;
+  dropdownArrow: boolean;
   hideText?: boolean;
   state: IState | undefined;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, hideText = false, state } = props;
+  const { className, dropdownArrow, hideText = false, state } = props;
 
   return (
     <div
@@ -45,12 +46,13 @@ const BorderButton = (props: ButtonProps) => {
     >
       <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, hideText = false, state } = props;
+  const { className, dropdownArrow, hideText = false, state } = props;
 
   return (
     <div
@@ -58,12 +60,13 @@ const BackgroundButton = (props: ButtonProps) => {
     >
       <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, hideText = false, state } = props;
+  const { className, dropdownArrow, hideText = false, state } = props;
 
   return (
     <div
@@ -74,6 +77,7 @@ const TransparentButton = (props: ButtonProps) => {
     >
       <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
+      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
     </div>
   );
 };
@@ -163,19 +167,45 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             })}
           >
             {buttonVariant === "border-with-text" ? (
-              <BorderButton state={selectedState} className={buttonClassName} />
+              <BorderButton
+                state={selectedState}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "border-without-text" ? (
-              <BorderButton state={selectedState} className={buttonClassName} hideText />
+              <BorderButton
+                state={selectedState}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton state={selectedState} className={buttonClassName} />
+              <BackgroundButton
+                state={selectedState}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton state={selectedState} className={buttonClassName} hideText />
+              <BackgroundButton
+                state={selectedState}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton state={selectedState} className={buttonClassName} />
+              <TransparentButton
+                state={selectedState}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+              />
             ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton state={selectedState} className={buttonClassName} hideText />
+              <TransparentButton
+                state={selectedState}
+                className={buttonClassName}
+                dropdownArrow={dropdownArrow && !disabled}
+                hideText
+              />
             ) : null}
-            {dropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
           </button>
         )}
       </Combobox.Button>
