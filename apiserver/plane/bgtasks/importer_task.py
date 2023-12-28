@@ -8,6 +8,7 @@ import json
 from django.db.models import Q, Max
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
+from django.db import transaction
 
 # Third Party imports
 from celery import shared_task
@@ -34,30 +35,41 @@ from plane.db.models import (
 )
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
-
+@shared_task(queue="internal_tasks")
+@transaction.atomic
 def update_imported_items(
-    importer_id, entity, external_id, entity_id, already_exists=False, reason="",
+    importer_id,
+    entity,
+    external_id,
+    entity_id,
+    already_exists=False,
+    reason="",
 ):
-    """Update the imported data json with key and external_id and pid (plane_id)"""
-
-    importer = Importer.objects.get(pk=importer_id)
-    if importer.imported_data:
-        importer.imported_data.setdefault(str(entity), {})[str(external_id)] = {
-            "pid": str(entity_id),
-            "already_exists": already_exists,
-            "reason": reason,
-        }
-    else:
-        importer.imported_data = {
-            str(entity): {
-                str(external_id): {
-                    "pid": str(entity_id),
-                    "already_exists": already_exists,
-                    "reason": reason,
+    try:
+        """Update the imported data json with key and external_id and pid (plane_id)"""
+        importer = Importer.objects.get(pk=importer_id)
+        if importer.imported_data:
+            importer.imported_data.setdefault(str(entity), {})[str(external_id)] = {
+                "pid": str(entity_id),
+                "already_exists": already_exists,
+                "reason": reason,
+            }
+            importer.save()
+        else:
+            importer.imported_data = {
+                str(entity): {
+                    str(external_id): {
+                        "pid": str(entity_id),
+                        "already_exists": already_exists,
+                        "reason": reason,
+                    }
                 }
             }
-        }
-    importer.save()
+            importer.save()
+        return
+    except Exception as e:
+        print(e)
+        return
 
 
 def generate_random_hex_color():
@@ -114,7 +126,7 @@ def resolve_state(data):
                 existing.external_id = state_data.get("external_id")
                 existing.external_source = state_data.get("external_source")
                 existing.save()
-                update_imported_items(
+                update_imported_items.delay(
                     importer_id=importer_id,
                     entity="states",
                     entity_id=existing.id,
@@ -131,7 +143,7 @@ def resolve_state(data):
                     external_source=state_data.get("external_source"),
                     created_by_id=created_by_id,
                 )
-                update_imported_items(
+                update_imported_items.delay(
                     importer_id=importer_id,
                     entity="states",
                     entity_id=state.id,
@@ -148,40 +160,52 @@ def resolve_labels(data):
     importer_id = data.get("importer_id")
 
     bulk_labels = []
-
     for label in labels_data:
-        existing = Label.objects.filter(
-            workspace_id=workspace_id, project_id=project_id, name=label.get("name")
-        ).first()
-
-        if existing:
-            existing.external_id = label.get("external_id")
-            existing.external_source = label.get("external_source")
-            existing.save()
-            update_imported_items(
-                importer_id=importer_id,
-                entity="labels",
-                entity_id=existing.id,
-                external_id=label.get("external_id"),
-            )
-            bulk_labels.append(existing)
-        else:
-            new_label = Label.objects.create(
+        name = label.get("name")
+        external_id = label.get("external_id")
+        external_source = label.get("external_source")
+        try:
+            existing = Label.objects.filter(
                 workspace_id=workspace_id,
                 project_id=project_id,
-                created_by_id=created_by_id,
-                color=label.get("color", generate_random_hex_color()),
-                name=label.get("name"),
-                external_id=label.get("external_id"),
-                external_source=label.get("external_source"),
-            )
-            update_imported_items(
+                name__exact=name,
+            ).first()
+            if existing:
+                existing.external_id = label.get("external_id")
+                existing.external_source = label.get("external_source")
+                existing.save()
+                update_imported_items.delay(
+                    importer_id=importer_id,
+                    entity="labels",
+                    entity_id=existing.id,
+                    external_id=label.get("external_id"),
+                )
+                bulk_labels.append(existing)
+            else:
+                new_label = Label.objects.create(
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    created_by_id=created_by_id,
+                    color=label.get("color", generate_random_hex_color()),
+                    name=name,
+                    external_id=external_id,
+                    external_source=external_source,
+                )
+                update_imported_items.delay(
+                    importer_id=importer_id,
+                    entity="labels",
+                    entity_id=new_label.id,
+                    external_id=label.get("external_id"),
+                )
+                bulk_labels.append(new_label)
+        except Exception as e:
+            update_imported_items.delay(
                 importer_id=importer_id,
-                entity="labels",
-                entity_id=new_label.id,
-                external_id=label.get("external_id"),
+                entity="failed_labels",
+                entity_id=None,
+                external_id=external_id,
+                reason=str(e),
             )
-            bulk_labels.append(new_label)
 
     return bulk_labels
 
@@ -223,7 +247,7 @@ def resolve_assignees(data):
                     )
                 except Exception as e:
                     pass
-                update_imported_items(
+                update_imported_items.delay(
                     importer_id=importer_id,
                     entity="users",
                     entity_id=user.id,
@@ -266,7 +290,7 @@ def resolve_assignees(data):
                     )
                 except Exception as e:
                     pass
-                update_imported_items(
+                update_imported_items.delay(
                     importer_id=importer_id,
                     entity="users",
                     entity_id=user.id,
@@ -295,7 +319,7 @@ def resolve_cycle(data):
         cycle.external_id = cycle_data.get("external_id")
         cycle.external_source = cycle_data.get("external_source")
         cycle.save()
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="cycles",
             entity_id=cycle.id,
@@ -311,7 +335,7 @@ def resolve_cycle(data):
             external_source=cycle_data.get("external_source"),
             created_by_id=created_by_id,
         )
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="cycles",
             entity_id=cycle.id,
@@ -335,7 +359,7 @@ def resolve_module(data):
     if module:
         module.external_id = module_data.get("external_id")
         module.external_source = module_data.get("external_source")
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="modules",
             entity_id=module.id,
@@ -351,7 +375,7 @@ def resolve_module(data):
             name=module_data.get("name"),
             created_by_id=created_by_id,
         )
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="modules",
             entity_id=module.id,
@@ -400,7 +424,7 @@ def import_member_sync(data):
             )
         except Exception as e:
             pass
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="users",
             entity_id=user.id,
@@ -443,7 +467,7 @@ def import_member_sync(data):
             )
         except Exception as e:
             pass
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="users",
             entity_id=user.id,
@@ -475,7 +499,7 @@ def import_issue_sync(data):
 
         # Check if the issue already synced to Plane
         if existing_issue:
-            update_imported_items(
+            update_imported_items.delay(
                 importer_id=importer_id,
                 entity_id=existing_issue.id,
                 external_id=external_id,
@@ -524,7 +548,7 @@ def import_issue_sync(data):
             state=state,
             name=data.get(
                 "name", f"Issue Created through importer from {external_source}"
-            ),
+            )[:254],
             description_html=data.get("description_html", "<p></p>"),
             sequence_id=last_id,
             sort_order=largest_sort_order,
@@ -536,7 +560,7 @@ def import_issue_sync(data):
             external_source=data.get("external_source"),
             parent=parent_issue,
         )
-        update_imported_items(
+        update_imported_items.delay(
             importer_id=importer_id,
             entity="issues",
             external_id=data.get("external_id"),
@@ -562,22 +586,23 @@ def import_issue_sync(data):
                 "Content-Type": "application/json",
                 "x-api-key": settings.SEGWAY_KEY,
             }
-            data = {
-                "total_issues": total_issues,
-                "processed_issues": processed_issues,
-            }
             _ = requests.post(
                 f"{settings.SEGWAY_BASE_URL}/api/importer/{external_source}/status",
-                data=json.dumps(data),
+                data=json.dumps(
+                    {
+                        "total_issues": total_issues,
+                        "processed_issues": processed_issues,
+                    }
+                ),
                 headers=headers,
             )
     except Exception as e:
-        update_imported_items(
+        update_imported_items.delay(
             entity="failed_issues",
             entity_id=None,
             external_id=external_id,
             importer_id=importer_id,
-            reason=str(e)
+            reason=str(e),
         )
 
         total_issues = importer.data.get("total_issues")
@@ -599,13 +624,14 @@ def import_issue_sync(data):
                 "Content-Type": "application/json",
                 "x-api-key": settings.SEGWAY_KEY,
             }
-            data = {
-                "total_issues": total_issues,
-                "processed_issues": processed_issues,
-            }
             _ = requests.post(
                 f"{settings.SEGWAY_BASE_URL}/api/importer/{external_source}/status",
-                data=json.dumps(data),
+                data=json.dumps(
+                    {
+                        "total_issues": total_issues,
+                        "processed_issues": processed_issues,
+                    }
+                ),
                 headers=headers,
             )
 
@@ -640,8 +666,7 @@ def import_issue_sync(data):
                 sub_issue.get("external_id") for sub_issue in data.get("sub_issues")
             ],
             external_source__in=[
-                sub_issue.get("external_source")
-                for sub_issue in data.get("sub_issues")
+                sub_issue.get("external_source") for sub_issue in data.get("sub_issues")
             ],
         ):
             sub_issue.parent = issue

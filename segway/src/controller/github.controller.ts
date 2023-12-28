@@ -97,10 +97,9 @@ export class GithubController {
         name: typeof label === "object" && label !== null ? label.name : label,
         color: typeof label === "object" && label !== null ? label.color : null,
         external_id: typeof label == "object" && label !== null ? label.id : null,
-        external_source: "github",  
+        external_source: "github",
       })
     );
-
     return issueLabels;
   };
 
@@ -314,19 +313,6 @@ export class GithubController {
             issue.number,
             issue.labels
           );
-          const labelList: any = [];
-          githubLabels.forEach((githubLabel) =>
-            labelList.push({
-              name: githubLabel.name,
-              external_issue_id: issue.id,
-              external_issue_source: "github",
-              color: `#${githubLabel.color}`,
-              workspace_id: workspace_id,
-              project_id: project_id,
-              created_by_id: created_by,
-              importer_id: importer_id,
-            })
-          );
 
           // Issue sync
           const issueSync = {
@@ -349,7 +335,7 @@ export class GithubController {
                 parent_id: null,
                 importer_id: importer_id,
                 comments: commentList,
-                labels: labelList,
+                labels: githubLabels,
               },
             },
           };
