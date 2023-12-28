@@ -16,7 +16,7 @@ export interface IDraftIssues {
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
@@ -100,11 +100,15 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
       const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
 
       runInAction(() => {
-        set(this.issues, [projectId], Object.keys(response));
+        set(
+          this.issues,
+          [projectId],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

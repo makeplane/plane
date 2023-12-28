@@ -15,6 +15,7 @@ import {
   IWorkspaceViewProps,
   IUserProjectsRole,
   TIssueMap,
+  TIssue,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 
@@ -257,7 +258,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: any): Promise<TIssueMap> {
+  async getViewIssues(workspaceSlug: string, params: any): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
       params,
     })

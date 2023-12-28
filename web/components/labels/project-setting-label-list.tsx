@@ -212,6 +212,19 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
             <Loader.Item height="42px" />
           </Loader>
         )}
+
+        {/* empty state */}
+        {projectLabels && projectLabels.length === 0 && (
+          <EmptyState
+            title="No labels yet"
+            description="Create labels to help organize and filter issues in your project."
+            image={emptyLabel}
+            primaryButton={{
+              text: "Add label",
+              onClick: () => newLabel(),
+            }}
+          />
+        )}
       </div>
     </>
   );

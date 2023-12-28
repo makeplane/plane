@@ -50,7 +50,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             if field == "sequence_id":
-                sequences = re.findall(r"\d+\.\d+|\d+", query)
+                # Match whole integers only (exclude decimal numbers)
+                sequences = re.findall(r"\b\d+\b", query)
                 for sequence_id in sequences:
                     q |= Q(**{"sequence_id": sequence_id})
             else:

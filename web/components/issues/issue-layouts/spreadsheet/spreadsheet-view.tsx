@@ -116,7 +116,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     issue ? (
                       <SpreadsheetIssuesColumn
                         key={`${issue?.id}_${index}`}
-                        issue={issue}
+                        issueId={issue.id}
                         expandedIssues={expandedIssues}
                         setExpandedIssues={setExpandedIssues}
                         properties={displayProperties}

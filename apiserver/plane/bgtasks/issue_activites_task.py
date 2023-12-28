@@ -112,8 +112,8 @@ def track_parent(
     epoch,
 ):
     if current_instance.get("parent") != requested_data.get("parent"):
-        old_parent = Issue.objects.filter(pk=current_instance.get("parent")).first()
-        new_parent = Issue.objects.filter(pk=requested_data.get("parent")).first()
+        old_parent = Issue.objects.filter(pk=current_instance.get("parent")).first() if current_instance.get("parent") is not None else None
+        new_parent = Issue.objects.filter(pk=requested_data.get("parent")).first() if requested_data.get("parent") is not None else None
 
         issue_activities.append(
             IssueActivity(

@@ -36,9 +36,9 @@ export interface IIssueDetail
   isAnyModalOpen: boolean;
   // actions
   setIssueId: (issueId: string | undefined) => void;
-  toggleIssueLinkModal: (value?: boolean) => void;
-  toggleParentIssueModal: (value?: boolean) => void;
-  toggleDeleteIssueModal: (value?: boolean) => void;
+  toggleIssueLinkModal: (value: boolean) => void;
+  toggleParentIssueModal: (value: boolean) => void;
+  toggleDeleteIssueModal: (value: boolean) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -105,9 +105,10 @@ export class IssueDetail implements IIssueDetail {
   }
 
   // actions
-  setIssueId = (issueId: string | undefined) => {
-    this.issueId = issueId;
-  };
+  setIssueId = (issueId: string | undefined) => (this.issueId = issueId);
+  toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
+  toggleParentIssueModal = (value: boolean) => (this.isParentIssueModalOpen = value);
+  toggleDeleteIssueModal = (value: boolean) => (this.isDeleteIssueModalOpen = value);
 
   // issue
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
@@ -196,26 +197,4 @@ export class IssueDetail implements IIssueDetail {
     this.subscription.createSubscription(workspaceSlug, projectId, issueId);
   removeSubscription = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.subscription.removeSubscription(workspaceSlug, projectId, issueId);
-
-  toggleIssueLinkModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isIssueLinkModalOpen = value;
-    } else {
-      this.isIssueLinkModalOpen = !this.isIssueLinkModalOpen;
-    }
-  };
-  toggleParentIssueModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isParentIssueModalOpen = value;
-    } else {
-      this.isParentIssueModalOpen = !this.isParentIssueModalOpen;
-    }
-  };
-  toggleDeleteIssueModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isDeleteIssueModalOpen = value;
-    } else {
-      this.isDeleteIssueModalOpen = !this.isDeleteIssueModalOpen;
-    }
-  };
 }

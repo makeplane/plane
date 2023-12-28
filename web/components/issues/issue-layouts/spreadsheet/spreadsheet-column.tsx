@@ -166,7 +166,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 <SpreadsheetStateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                   states={states}
                 />
@@ -174,28 +174,28 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 <SpreadsheetPriorityColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "estimate" ? (
                 <SpreadsheetEstimateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "assignee" ? (
                 <SpreadsheetAssigneeColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "labels" ? (
                 <SpreadsheetLabelColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   labels={labels}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
@@ -203,26 +203,26 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 <SpreadsheetStartDateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "due_date" ? (
                 <SpreadsheetDueDateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "created_on" ? (
-                <SpreadsheetCreatedOnColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetCreatedOnColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "updated_on" ? (
-                <SpreadsheetUpdatedOnColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetUpdatedOnColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "link" ? (
-                <SpreadsheetLinkColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetLinkColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "attachment_count" ? (
-                <SpreadsheetAttachmentColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetAttachmentColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "sub_issue_count" ? (
-                <SpreadsheetSubIssueColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetSubIssueColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : null}
             </div>
           );

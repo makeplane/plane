@@ -11,8 +11,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";

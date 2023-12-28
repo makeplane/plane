@@ -23,7 +23,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
-    copyUrlToClipboard(`/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`).then(() =>
+    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`).then(() =>
       setToastAlert({
         type: "success",
         title: "Link copied",
