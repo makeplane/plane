@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-
+// hooks
+import { useIssueDetail, useProject } from "hooks/store";
 // components
 import { ParentIssuesListModal } from "components/issues";
 // icons
 import { X } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "types";
-import { useProject } from "hooks/store";
 
 type Props = {
   onChange: (value: string) => void;
@@ -17,8 +17,9 @@ type Props = {
 };
 
 export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, disabled = false }) => {
-  const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+
+  const { isParentIssueModalOpen, toggleParentIssueModal } = useIssueDetail();
 
   const router = useRouter();
   const { projectId, issueId } = router.query;
@@ -29,8 +30,8 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
   return (
     <>
       <ParentIssuesListModal
-        isOpen={isParentModalOpen}
-        handleClose={() => setIsParentModalOpen(false)}
+        isOpen={isParentIssueModalOpen}
+        handleClose={() => toggleParentIssueModal(false)}
         onChange={(issue) => {
           onChange(issue.id);
           setSelectedParentIssue(issue);
@@ -49,7 +50,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
             onChange("");
             setSelectedParentIssue(null);
           } else {
-            setIsParentModalOpen(true);
+            toggleParentIssueModal(true);
           }
         }}
         disabled={disabled}

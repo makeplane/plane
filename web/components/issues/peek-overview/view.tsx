@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -18,6 +18,7 @@ import {
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
 import { TIssue, IIssueLink, ILinkDetails } from "types";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -97,13 +98,23 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  // ref
+  const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // router
   const router = useRouter();
   const { peekIssueId } = router.query;
   // store hooks
-  const { fetchSubscriptions, activity, reaction, subscription, setIssueId } = useIssueDetail();
+  const {
+    fetchSubscriptions,
+    activity,
+    reaction,
+    subscription,
+    setIssueId,
+    isAnyModalOpen,
+    isDeleteIssueModalOpen,
+    toggleDeleteIssueModal,
+  } = useIssueDetail();
   const { currentUser } = useUser();
 
   const updateRoutePeekId = () => {
@@ -149,12 +160,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
+  useOutsideClickDetector(issuePeekOverviewRef, () => !isAnyModalOpen && removeRoutePeekId());
+
   return (
     <>
       {issue && !isArchived && (
         <DeleteIssueModal
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isDeleteIssueModalOpen}
+          handleClose={() => toggleDeleteIssueModal(false)}
           data={issue}
           onSubmit={handleDeleteIssue}
         />
@@ -162,8 +175,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       {issue && isArchived && (
         <DeleteArchivedIssueModal
           data={issue}
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isDeleteIssueModalOpen}
+          handleClose={() => toggleDeleteIssueModal(false)}
           onSubmit={handleDeleteIssue}
         />
       )}
@@ -176,6 +189,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
         {issueId === peekIssueId && (
           <div
+            ref={issuePeekOverviewRef}
             className={`fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300 
           ${peekMode === "side-peek" ? `bottom-0 right-0 top-0 w-full md:w-[50%]` : ``}
           ${peekMode === "modal" ? `left-[50%] top-[50%] h-5/6 w-5/6 -translate-x-[50%] -translate-y-[50%]` : ``}
@@ -253,7 +267,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
                   {!disableUserActions && (
-                    <button onClick={() => setDeleteIssueModal(true)}>
+                    <button onClick={() => toggleDeleteIssueModal(true)}>
                       <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                     </button>
                   )}
