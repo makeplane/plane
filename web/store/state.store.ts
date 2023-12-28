@@ -88,7 +88,6 @@ export class StateStore implements IStateStore {
    * @returns IState[]
    */
   getProjectStates(projectId: string) {
-    console.log("stateMap", this);
     return Object.values(this.stateMap).filter((state) => state.project === projectId);
   }
 
