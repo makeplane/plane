@@ -11,6 +11,10 @@ from django.db.models import (
     Count,
     Prefetch,
     Sum,
+    Case,
+    When,
+    Value,
+    CharField
 )
 from django.core import serializers
 from django.utils import timezone
@@ -157,6 +161,28 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     ),
                 )
             )
+            .annotate(
+                status=Case(
+                    When(
+                        Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
+                        then=Value("CURRENT")
+                    ),
+                    When(
+                        start_date__gt=timezone.now(),
+                        then=Value("UPCOMING")
+                    ),
+                    When(
+                        end_date__lt=timezone.now(),
+                        then=Value("COMPLETED")
+                    ),
+                    When(
+                        Q(start_date__isnull=True) & Q(end_date__isnull=True),
+                        then=Value("DRAFT")
+                    ),
+                    default=Value("DRAFT"), 
+                    output_field=CharField(), 
+                )
+            )
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
@@ -177,7 +203,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
 
-        queryset = queryset.order_by("-is_favorite","-created_at")
+        queryset = queryset.order_by("-is_favorite", "-created_at")
 
         # Current Cycle
         if cycle_view == "current":
@@ -575,7 +601,9 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
         )
 
-        issues = IssueStateSerializer(issues, many=True, fields=fields if fields else None).data
+        issues = IssueStateSerializer(
+            issues, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(issue_dict, status=status.HTTP_200_OK)
 
