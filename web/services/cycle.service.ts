@@ -51,7 +51,7 @@ export class CycleService extends APIService {
     projectId: string,
     cycleId: string,
     queries?: any
-  ): Promise<TIssueMap> {
+  ): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
       params: queries,
     })
