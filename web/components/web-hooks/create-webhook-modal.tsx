@@ -21,7 +21,13 @@ interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;
   isOpen: boolean;
   clearSecretKey: () => void;
-  createWebhook: (workspaceSlug: string, data: Partial<IWebhook>) => Promise<WebhookWithKey>;
+  createWebhook: (
+    workspaceSlug: string,
+    data: Partial<IWebhook>
+  ) => Promise<{
+    webHook: IWebhook;
+    secretKey: string | null;
+  }>;
   onClose: () => void;
 }
 
@@ -71,7 +77,7 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
 
         setGeneratedKey(webHook);
 
-        const csvData = getCurrentHookAsCSV(currentWorkspace, webHook, secretKey);
+        const csvData = getCurrentHookAsCSV(currentWorkspace, webHook, secretKey ?? undefined);
         csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
       })
       .catch((error) => {
