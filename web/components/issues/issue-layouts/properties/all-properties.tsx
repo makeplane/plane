@@ -1,5 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Layers, Link, Paperclip } from "lucide-react";
+// hooks
+import { useLabel } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { IssuePropertyDate } from "../properties/date";
@@ -7,11 +9,11 @@ import { Tooltip } from "@plane/ui";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // types
-import { IIssue, IIssueDisplayProperties, TIssuePriorities } from "types";
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "types";
 
 export interface IIssueProperties {
-  issue: IIssue;
-  handleIssues: (issue: IIssue) => void;
+  issue: TIssue;
+  handleIssues: (issue: TIssue) => void;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
@@ -19,9 +21,10 @@ export interface IIssueProperties {
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
+  const { labelMap } = useLabel();
 
   const handleState = (stateId: string) => {
-    handleIssues({ ...issue, state: stateId });
+    handleIssues({ ...issue, state_id: stateId });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
@@ -29,11 +32,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues({ ...issue, labels: ids });
+    handleIssues({ ...issue, label_ids: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues({ ...issue, assignees: ids });
+    handleIssues({ ...issue, assignee_ids: ids });
   };
 
   const handleStartDate = (date: string) => {
@@ -50,6 +53,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   if (!displayProperties) return null;
 
+  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+
   return (
     <div className={className}>
       {/* basic properties */}
@@ -57,9 +62,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
         <div className="h-5">
           <StateDropdown
-            value={issue.state}
+            value={issue.state_id}
             onChange={handleState}
-            projectId={issue.project}
+            projectId={issue.project_id}
             disabled={isReadOnly}
             buttonVariant="border-with-text"
           />
@@ -83,9 +88,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.labels || null}
-          defaultOptions={issue?.label_details ? issue.label_details : []}
+          projectId={issue?.project_id || null}
+          value={issue?.label_ids || null}
+          defaultOptions={defaultLabelOptions}
           onChange={handleLabel}
           disabled={isReadOnly}
           hideDropdownArrow
@@ -116,13 +121,13 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <div className="h-5">
           <ProjectMemberDropdown
-            projectId={issue?.project}
-            value={issue?.assignees}
+            projectId={issue?.project_id}
+            value={issue?.assignee_ids}
             onChange={handleAssignee}
             disabled={isReadOnly}
             multiple
-            buttonVariant={issue.assignees.length > 0 ? "transparent-without-text" : "border-without-text"}
-            buttonClassName={issue.assignees.length > 0 ? "hover:bg-transparent px-0" : ""}
+            buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "border-without-text"}
+            buttonClassName={issue.assignee_ids.length > 0 ? "hover:bg-transparent px-0" : ""}
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -133,7 +138,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           <EstimateDropdown
             value={issue.estimate_point}
             onChange={handleEstimate}
-            projectId={issue.project}
+            projectId={issue.project_id}
             disabled={isReadOnly}
             buttonVariant="border-with-text"
           />

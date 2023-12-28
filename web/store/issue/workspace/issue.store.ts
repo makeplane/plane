@@ -7,7 +7,7 @@ import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
-import { IIssue, IIssueResponse, TLoader, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IWorkspaceIssues {
   // observable
@@ -17,26 +17,26 @@ export interface IWorkspaceIssues {
   // computed
   groupedIssueIds: TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<IIssueResponse>;
+  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<TIssue>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
 }
 
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
@@ -89,7 +89,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IIssueResponse | TUnGroupedIssues | undefined = undefined;
+    let issues: TIssue | TUnGroupedIssues | undefined = undefined;
 
     issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
 
@@ -121,7 +121,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   createIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId: string | undefined = undefined
   ) => {
     try {
@@ -145,7 +145,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId: string | undefined = undefined
   ) => {
     try {

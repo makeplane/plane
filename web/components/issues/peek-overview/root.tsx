@@ -9,7 +9,7 @@ import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, IIssueLink } from "types";
+import { TIssue, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
@@ -19,7 +19,7 @@ interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => void;
+  handleIssue: (issue: Partial<TIssue>, action: EIssueActions) => void;
   isArchived?: boolean;
   children?: ReactNode;
 }
@@ -29,7 +29,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // router
   const router = useRouter();
   const { peekIssueId } = router.query;
-  //TODO
+  // FIXME
   // store hooks
   // const {
   //   archivedIssueDetail: {
@@ -40,23 +40,22 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // } = useMobxStore();
 
   const {
-    createIssueComment,
-    updateIssueComment,
-    removeIssueComment,
-    creationIssueCommentReaction,
-    removeIssueCommentReaction,
-    createIssueReaction,
-    removeIssueReaction,
-    createIssueSubscription,
-    removeIssueSubscription,
-    createIssueLink,
-    updateIssueLink,
-    deleteIssueLink,
-    getIssue,
-    loader,
-    fetchPeekIssueDetails,
-    setPeekId,
-    fetchIssueActivity,
+    createComment,
+    updateComment,
+    removeComment,
+    createCommentReaction,
+    removeCommentReaction,
+    createReaction,
+    removeReaction,
+    createSubscription,
+    removeSubscription,
+    createLink,
+    updateLink,
+    removeLink,
+    issue: { getIssueById, fetchIssue },
+    // loader,
+    setIssueId,
+    fetchActivities,
   } = useIssueDetail();
   const {
     issues: { removeIssue },
@@ -72,9 +71,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (workspaceSlug && projectId && peekIssueId) {
       //if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
       //else
-      await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId.toString());
+      await fetchIssue(workspaceSlug, projectId, peekIssueId.toString());
     }
-  }, [fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId]);
+  }, [fetchIssue, workspaceSlug, projectId, peekIssueId]);
 
   useEffect(() => {
     fetchIssueDetail();
@@ -103,52 +102,51 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // const issue = isArchived ? getArchivedIssue : getIssue;
   // const isLoading = isArchived ? archivedIssueLoader : loader;
 
-  const issue = getIssue;
-  const isLoading = loader;
+  const issue = getIssueById(issueId);
+  const isLoading = false;
 
-  const issueUpdate = async (_data: Partial<IIssue>) => {
+  const issueUpdate = async (_data: Partial<TIssue>) => {
     if (handleIssue) {
       await handleIssue(_data, EIssueActions.UPDATE);
-      fetchIssueActivity(workspaceSlug, projectId, issueId);
+      fetchActivities(workspaceSlug, projectId, issueId);
     }
   };
 
-  const issueReactionCreate = (reaction: string) => createIssueReaction(workspaceSlug, projectId, issueId, reaction);
+  const issueReactionCreate = (reaction: string) => createReaction(workspaceSlug, projectId, issueId, reaction);
 
-  const issueReactionRemove = (reaction: string) => removeIssueReaction(workspaceSlug, projectId, issueId, reaction);
+  const issueReactionRemove = (reaction: string) => removeReaction(workspaceSlug, projectId, issueId, reaction);
 
-  const issueCommentCreate = (comment: any) => createIssueComment(workspaceSlug, projectId, issueId, comment);
+  const issueCommentCreate = (comment: any) => createComment(workspaceSlug, projectId, issueId, comment);
 
-  const issueCommentUpdate = (comment: any) =>
-    updateIssueComment(workspaceSlug, projectId, issueId, comment?.id, comment);
+  const issueCommentUpdate = (comment: any) => updateComment(workspaceSlug, projectId, issueId, comment?.id, comment);
 
-  const issueCommentRemove = (commentId: string) => removeIssueComment(workspaceSlug, projectId, issueId, commentId);
+  const issueCommentRemove = (commentId: string) => removeComment(workspaceSlug, projectId, issueId, commentId);
 
   const issueCommentReactionCreate = (commentId: string, reaction: string) =>
-    creationIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
+    createCommentReaction(workspaceSlug, projectId, commentId, reaction);
 
   const issueCommentReactionRemove = (commentId: string, reaction: string) =>
-    removeIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
+    removeCommentReaction(workspaceSlug, projectId, commentId, reaction);
 
-  const issueSubscriptionCreate = () => createIssueSubscription(workspaceSlug, projectId, issueId);
+  const issueSubscriptionCreate = () => createSubscription(workspaceSlug, projectId, issueId);
 
-  const issueSubscriptionRemove = () => removeIssueSubscription(workspaceSlug, projectId, issueId);
+  const issueSubscriptionRemove = () => removeSubscription(workspaceSlug, projectId, issueId);
 
-  const issueLinkCreate = (formData: IIssueLink) => createIssueLink(workspaceSlug, projectId, issueId, formData);
+  const issueLinkCreate = (formData: IIssueLink) => createLink(workspaceSlug, projectId, issueId, formData);
 
   const issueLinkUpdate = (formData: IIssueLink, linkId: string) =>
-    updateIssueLink(workspaceSlug, projectId, issueId, linkId, formData);
+    updateLink(workspaceSlug, projectId, issueId, linkId, formData);
 
-  const issueLinkDelete = (linkId: string) => deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
+  const issueLinkDelete = (linkId: string) => removeLink(workspaceSlug, projectId, issueId, linkId);
 
   const handleDeleteIssue = async () => {
     if (!issue) return;
 
     if (isArchived) await removeIssue(workspaceSlug, projectId, issue?.id);
-    //TODO else delete...
+    // FIXME else delete...
     const { query } = router;
     if (query.peekIssueId) {
-      setPeekId(null);
+      setIssueId(undefined);
       delete query.peekIssueId;
       delete query.peekProjectId;
       router.push({

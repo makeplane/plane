@@ -275,6 +275,7 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/",
         IssueRelationViewSet.as_view(
             {
+                "get": "list",
                 "post": "create",
             }
         ),

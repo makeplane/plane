@@ -7,7 +7,7 @@ import { useIssues } from "hooks/store/use-issues";
 import { ProjectIssueQuickActions } from "components/issues";
 import { BaseKanBanRoot } from "../base-kanban-root";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { EIssuesStoreType } from "constants/issue";
@@ -22,15 +22,15 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug) return;
 
-        await issues.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug) return;
 
-        await issues.removeIssue(workspaceSlug, issue.project, issue.id);
+        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
       },
     }),
     [issues, workspaceSlug]

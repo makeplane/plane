@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // components
 import { ArchivedIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { EIssueActions } from "../../types";
@@ -19,7 +19,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !projectId) return;
 
         await issues.removeIssue(workspaceSlug, projectId, issue.id);

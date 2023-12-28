@@ -13,12 +13,12 @@ import { ExistingIssuesListModal } from "components/core";
 // icons
 import { BlockedIcon } from "@plane/ui";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
-  submitChanges: (formData: Partial<IIssue>) => void;
-  watch: UseFormWatch<IIssue>;
+  submitChanges: (formData: Partial<TIssue>) => void;
+  watch: UseFormWatch<TIssue>;
   disabled?: boolean;
 };
 
@@ -41,7 +41,7 @@ export const SidebarBlockedSelect: React.FC<Props> = observer((props) => {
     setIsBlockedModalOpen(false);
   };
 
-  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockedByIssue = watch("related_issues")?.filter((i: any) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -80,10 +80,11 @@ export const SidebarBlockedSelect: React.FC<Props> = observer((props) => {
           })),
         ],
       })
-      .then((response) => {
-        submitChanges({
-          related_issues: [...watch("related_issues"), ...response],
-        });
+      .then(() => {
+        // TODO: check_with_backend
+        // submitChanges({
+        //   related_issues: [...watch("related_issues"), ...response],
+        // });
       });
 
     handleClose();
@@ -106,7 +107,7 @@ export const SidebarBlockedSelect: React.FC<Props> = observer((props) => {
         <div className="space-y-1 sm:basis-1/2">
           <div className="flex flex-wrap gap-1">
             {blockedByIssue && blockedByIssue.length > 0
-              ? blockedByIssue.map((relation) => (
+              ? blockedByIssue.map((relation: any) => (
                   <div
                     key={relation?.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
@@ -124,7 +125,7 @@ export const SidebarBlockedSelect: React.FC<Props> = observer((props) => {
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedRelations = watch("related_issues")?.filter((i) => i.id !== relation.id);
+                        const updatedRelations = watch("related_issues")?.filter((i: any) => i.id !== relation.id);
 
                         submitChanges({
                           related_issues: updatedRelations,

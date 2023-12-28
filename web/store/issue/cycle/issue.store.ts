@@ -7,16 +7,7 @@ import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import {
-  IGroupedIssues,
-  IIssue,
-  IIssueResponse,
-  ISubGroupedIssues,
-  TIssueGroupByOptions,
-  TLoader,
-  TUnGroupedIssues,
-  ViewFlags,
-} from "types";
+import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "types";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
@@ -26,41 +17,41 @@ export interface ICycleIssues {
   issues: { [cycle_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
     cycleId?: string | undefined
-  ) => Promise<IIssueResponse | undefined>;
+  ) => Promise<TIssue | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     cycleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     cycleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     cycleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     cycleId?: string | undefined
-  ) => Promise<IIssue>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<IIssue>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<IIssue>;
+  ) => Promise<TIssue>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<TIssue>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<TIssue>;
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -68,12 +59,8 @@ export interface ICycleIssues {
     payload: {
       new_cycle_id: string;
     }
-  ) => Promise<IIssue>;
-  fetchActiveCycleIssues: (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ) => Promise<IIssueResponse | undefined>;
+  ) => Promise<TIssue>;
+  fetchActiveCycleIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TIssue | undefined>;
 }
 
 export class CycleIssues extends IssueHelperStore implements ICycleIssues {
@@ -132,7 +119,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     const _issues = this.rootIssueStore.issues.getIssuesByIds(cycleIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -140,8 +127,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     } else if (layout === "kanban" && groupBy && orderBy) {
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
       else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", _issues, true);
+    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
     else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
     else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
@@ -180,7 +166,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
   createIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     cycleId: string | undefined = undefined
   ) => {
     try {
@@ -199,7 +185,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     cycleId: string | undefined = undefined
   ) => {
     try {
@@ -239,7 +225,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
   quickAddIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     cycleId: string | undefined = undefined
   ) => {
     try {

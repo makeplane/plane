@@ -3,23 +3,23 @@ import isEmpty from "lodash/isEmpty";
 // store
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
-export interface IIssueStore {
+export type IIssueStore = {
   // observables
-  issuesMap: Record<string, IIssue>; // Record defines issue_id as key and IIssue as value
+  issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
   // actions
-  addIssue(issues: IIssue[]): void;
-  updateIssue(issueId: string, issue: Partial<IIssue>): void;
+  addIssue(issues: TIssue[]): void;
+  updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
-  getIssueById(issueId: string): undefined | IIssue;
-  getIssuesByIds(issueIds: string[]): undefined | Record<string, IIssue>; // Record defines issue_id as key and IIssue as value
-}
+  getIssueById(issueId: string): undefined | TIssue;
+  getIssuesByIds(issueIds: string[]): undefined | Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
+};
 
 export class IssueStore implements IIssueStore {
   // observables
-  issuesMap: { [issue_id: string]: IIssue } = {};
+  issuesMap: { [issue_id: string]: TIssue } = {};
 
   constructor() {
     makeObservable(this, {
@@ -35,10 +35,10 @@ export class IssueStore implements IIssueStore {
   // actions
   /**
    * @description This method will add issues to the issuesMap
-   * @param {IIssue[]} issues
+   * @param {TIssue[]} issues
    * @returns {void}
    */
-  addIssue = (issues: IIssue[]) => {
+  addIssue = (issues: TIssue[]) => {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
@@ -50,14 +50,14 @@ export class IssueStore implements IIssueStore {
   /**
    * @description This method will update the issue in the issuesMap
    * @param {string} issueId
-   * @param {Partial<IIssue>} issue
+   * @param {Partial<TIssue>} issue
    * @returns {void}
    */
-  updateIssue = (issueId: string, issue: Partial<IIssue>) => {
+  updateIssue = (issueId: string, issue: Partial<TIssue>) => {
     if (!issue || !issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
     runInAction(() => {
       Object.keys(issue).forEach((key) => {
-        set(this.issuesMap, [issueId, key], issue[key as keyof IIssue]);
+        set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });
   };
@@ -78,7 +78,7 @@ export class IssueStore implements IIssueStore {
   /**
    * @description This method will return the issue from the issuesMap
    * @param {string} issueId
-   * @returns {IIssue | undefined}
+   * @returns {TIssue | undefined}
    */
   getIssueById = (issueId: string) => {
     if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
@@ -88,11 +88,11 @@ export class IssueStore implements IIssueStore {
   /**
    * @description This method will return the issues from the issuesMap
    * @param {string[]} issueIds
-   * @returns {Record<string, IIssue> | undefined}
+   * @returns {Record<string, TIssue> | undefined}
    */
   getIssuesByIds = (issueIds: string[]) => {
     if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return undefined;
-    const filteredIssues: { [key: string]: IIssue } = {};
+    const filteredIssues: { [key: string]: TIssue } = {};
     Object.values(this.issuesMap).forEach((issue) => {
       if (issueIds.includes(issue.id)) {
         filteredIssues[issue.id] = issue;

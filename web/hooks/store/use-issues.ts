@@ -10,53 +10,53 @@ import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { IArchivedIssues, IArchivedIssuesFilter } from "store/issue/archived";
 import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
-import { IIssueResponse } from "types";
+import { TIssueMap } from "types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
 export interface IStoreIssues {
   [EIssuesStoreType.GLOBAL]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IWorkspaceIssues;
     issuesFilter: IWorkspaceIssuesFilter;
   };
   [EIssuesStoreType.PROFILE]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IProfileIssues;
     issuesFilter: IProfileIssuesFilter;
   };
   [EIssuesStoreType.PROJECT]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IProjectIssues;
     issuesFilter: IProjectIssuesFilter;
   };
   [EIssuesStoreType.CYCLE]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: ICycleIssues;
     issuesFilter: ICycleIssuesFilter;
   };
   [EIssuesStoreType.MODULE]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IModuleIssues;
     issuesFilter: IModuleIssuesFilter;
   };
   [EIssuesStoreType.PROJECT_VIEW]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IProjectViewIssues;
     issuesFilter: IProjectViewIssuesFilter;
   };
   [EIssuesStoreType.ARCHIVED]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IArchivedIssues;
     issuesFilter: IArchivedIssuesFilter;
   };
   [EIssuesStoreType.DRAFT]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: IDraftIssues;
     issuesFilter: IDraftIssuesFilter;
   };
   [EIssuesStoreType.DEFAULT]: {
-    issueMap: IIssueResponse;
+    issueMap: TIssueMap;
     issues: undefined;
     issuesFilter: undefined;
   };

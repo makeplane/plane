@@ -4,11 +4,11 @@ import useSubIssue from "hooks/use-sub-issue";
 // components
 import { PriorityDropdown } from "components/dropdowns";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -16,7 +16,7 @@ type Props = {
 export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
@@ -25,7 +25,7 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
           value={issue.priority}
           onChange={(data) => {
             onChange(issue, { priority: data });
-            if (issue.parent) mutateSubIssues(issue, { priority: data });
+            if (issue.parent_id) mutateSubIssues(issue, { priority: data });
           }}
           disabled={disabled}
           buttonVariant="transparent-with-text"
@@ -37,7 +37,7 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue: TIssue) => (
           <SpreadsheetPriorityColumn
             key={subIssue.id}
             issue={subIssue}

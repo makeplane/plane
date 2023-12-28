@@ -8,13 +8,13 @@ import { CycleService } from "services/cycle.service";
 // ui
 import { ContrastIcon, CustomSearchSelect, Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
-  issueDetail: IIssue | undefined;
+  issueDetail: TIssue | undefined;
   handleCycleChange?: (cycleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
@@ -38,7 +38,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string) //TODO, "incomplete")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string) // FIXME, "incomplete")
       : null
   );
 

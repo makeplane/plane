@@ -17,18 +17,18 @@ import { GptAssistantModal } from "components/core";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const defaultValues: Partial<IIssue> = {
-  project: "",
+const defaultValues: Partial<TIssue> = {
+  project_id: "",
   name: "",
   description_html: "<p></p>",
-  parent: null,
+  parent_id: null,
   priority: "none",
 };
 
@@ -79,7 +79,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
 
   const issueName = watch("name");
 
-  const handleFormSubmit = async (formData: Partial<IIssue>) => {
+  const handleFormSubmit = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
     await createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
@@ -120,7 +120,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {});
+    // setValue("description", {});
     setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     editorRef.current?.setEditorValue(`${watch("description_html")}`);
   };

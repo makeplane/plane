@@ -7,7 +7,7 @@ import debounce from "lodash/debounce";
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // services
 import { FileService } from "services/file.service";
 import { useMention } from "hooks/store";
@@ -48,7 +48,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     reset,
     control,
     formState: { errors },
-  } = useForm<IIssue>({
+  } = useForm<TIssue>({
     defaultValues: {
       name: "",
       description_html: "",
@@ -72,7 +72,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   }, [issue.id]); // TODO: verify the exhaustive-deps warning
 
   const handleDescriptionFormSubmit = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
       await handleFormSubmit({
@@ -136,7 +136,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 }}
                 required
                 className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
-                hasError={Boolean(errors?.description)}
+                hasError={Boolean(errors?.name)}
                 role="textbox"
                 disabled={!isAllowed}
               />

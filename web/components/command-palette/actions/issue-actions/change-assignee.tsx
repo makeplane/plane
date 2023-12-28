@@ -7,12 +7,12 @@ import { useIssues, useMember } from "hooks/store";
 // ui
 import { Avatar } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
-  issue: IIssue;
+  issue: TIssue;
 };
 
 export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
@@ -45,7 +45,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
               />
               {memberDetails?.member?.display_name}
             </div>
-            {issue.assignees.includes(memberDetails?.member?.id ?? "") && (
+            {issue.assignee_ids.includes(memberDetails?.member?.id ?? "") && (
               <div>
                 <Check className="h-3 w-3" />
               </div>
@@ -55,7 +55,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
       };
     }) ?? [];
 
-  const handleUpdateIssue = async (formData: Partial<IIssue>) => {
+  const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;
 
     const payload = { ...formData };
@@ -65,12 +65,12 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   };
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees ?? [];
+    const updatedAssignees = issue.assignee_ids ?? [];
 
     if (updatedAssignees.includes(assignee)) updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
     else updatedAssignees.push(assignee);
 
-    handleUpdateIssue({ assignees: updatedAssignees });
+    handleUpdateIssue({ assignee_ids: updatedAssignees });
     closePalette();
   };
 

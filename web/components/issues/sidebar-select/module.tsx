@@ -7,13 +7,13 @@ import { useIssues, useModule } from "hooks/store";
 // ui
 import { CustomSearchSelect, DiceIcon, Spinner, Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
-  issueDetail: IIssue | undefined;
+  issueDetail: TIssue | undefined;
   handleModuleChange?: (moduleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;

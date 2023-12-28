@@ -3,11 +3,11 @@ import useSubIssue from "hooks/use-sub-issue";
 // components
 import { EstimateDropdown } from "components/dropdowns";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, formData: Partial<IIssue>) => void;
+  issue: TIssue;
+  onChange: (issue: TIssue, formData: Partial<TIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -17,7 +17,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
@@ -26,9 +26,9 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
           value={issue.estimate_point}
           onChange={(data) => {
             onChange(issue, { estimate_point: data });
-            if (issue.parent) mutateSubIssues(issue, { estimate_point: data });
+            if (issue.parent_id) mutateSubIssues(issue, { estimate_point: data });
           }}
-          projectId={issue.project}
+          projectId={issue.project_id}
           disabled={disabled}
           buttonVariant="transparent-with-text"
           buttonClassName="rounded-none"
@@ -39,7 +39,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue: TIssue) => (
           <SpreadsheetEstimateColumn
             key={subIssue.id}
             issue={subIssue}

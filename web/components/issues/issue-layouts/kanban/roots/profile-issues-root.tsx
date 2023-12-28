@@ -5,7 +5,7 @@ import { useIssues, useUser } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
@@ -25,15 +25,15 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !userId) return;
 
         await issues.updateIssue(workspaceSlug, userId, issue.id, issue);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !userId) return;
 
-        await issues.removeIssue(workspaceSlug, issue.project, issue.id, userId);
+        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id, userId);
       },
     }),
     [issues, workspaceSlug, userId]

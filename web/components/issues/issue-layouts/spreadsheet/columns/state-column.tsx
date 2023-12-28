@@ -4,11 +4,11 @@ import useSubIssue from "hooks/use-sub-issue";
 // components
 import { StateDropdown } from "components/dropdowns";
 // types
-import { IIssue, IState } from "types";
+import { TIssue, IState } from "types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   states: IState[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
@@ -19,17 +19,17 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
       <div className="h-11 border-b-[0.5px] border-custom-border-200">
         <StateDropdown
-          projectId={issue.project}
-          value={issue.state}
+          projectId={issue.project_id}
+          value={issue.state_id}
           onChange={(data) => {
-            onChange(issue, { state: data });
-            if (issue.parent) mutateSubIssues(issue, { state: data });
+            onChange(issue, { state_id: data });
+            if (issue.parent_id) mutateSubIssues(issue, { state_id: data });
           }}
           disabled={disabled}
           buttonVariant="transparent-with-text"

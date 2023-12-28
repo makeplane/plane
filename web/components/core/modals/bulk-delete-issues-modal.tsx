@@ -14,9 +14,10 @@ import { Button, LayersIcon } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
-import { IUser, IIssue } from "types";
+import { IUser, TIssue } from "types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { useProject, useProjectState } from "hooks/store";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -35,6 +36,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { getProjectStates } = useProjectState();
+  const { getProjectById } = useProject();
   // states
   const [query, setQuery] = useState("");
   // fetching project issues.
@@ -99,13 +103,15 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
       );
   };
 
-  const filteredIssues: IIssue[] =
+  const projectDetails = getProjectById(projectId as string);
+
+  const filteredIssues: TIssue[] =
     query === ""
       ? Object.values(issues ?? {})
       : Object.values(issues ?? {})?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
-            `${issue.project_detail.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
+            `${projectDetails?.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
         ) ?? [];
 
   return (
@@ -180,11 +186,14 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
                                   <span
                                     className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                     style={{
-                                      backgroundColor: issue.state_detail.color,
+                                      backgroundColor:
+                                        getProjectStates(issue?.project_id)?.find(
+                                          (state) => issue?.state_id == state.id
+                                        )?.color || "",
                                     }}
                                   />
                                   <span className="flex-shrink-0 text-xs">
-                                    {issue.project_detail.identifier}-{issue.sequence_id}
+                                    {projectDetails?.identifier}-{issue.sequence_id}
                                   </span>
                                   <span>{issue.name}</span>
                                 </div>

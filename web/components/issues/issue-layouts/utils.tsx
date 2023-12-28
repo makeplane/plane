@@ -25,11 +25,11 @@ export const getGroupByColumns = (
     case "priority":
       return getPriorityColumns();
     case "labels":
-      return getLabelsColumns(projectLabel);
+      return getLabelsColumns(projectLabel) as any;
     case "assignees":
-      return getAssigneeColumns(member);
+      return getAssigneeColumns(member) as any;
     case "created_by":
-      return getCreatedByColumns(member);
+      return getCreatedByColumns(member) as any;
     default:
       if (includeNone) return [{ id: `null`, name: `All Issues`, payload: {}, Icon: undefined }];
   }
@@ -51,7 +51,7 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
         Icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
         payload: { project: project.id },
       };
-    });
+    }) as any;
 };
 
 const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefined => {
@@ -67,7 +67,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
       </div>
     ),
     payload: { state: state.id },
-  }));
+  })) as any;
 };
 
 const getStateGroupColumns = () => {

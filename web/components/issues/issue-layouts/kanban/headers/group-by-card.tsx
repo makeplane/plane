@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "types";
 import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
@@ -24,10 +24,10 @@ interface IHeaderGroupByCard {
   count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  issuePayload: Partial<IIssue>;
+  issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   currentStore?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {

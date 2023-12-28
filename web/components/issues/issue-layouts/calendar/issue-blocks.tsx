@@ -8,12 +8,13 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
-import { IIssue, IIssueResponse } from "types";
+import { TIssue, TIssueMap } from "types";
+import { useProject, useProjectState } from "hooks/store";
 
 type Props = {
-  issues: IIssueResponse | undefined;
+  issues: TIssueMap | undefined;
   issueIdList: string[] | null;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   showAllIssues?: boolean;
 };
 
@@ -21,18 +22,20 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues, issueIdList, quickActions, showAllIssues = false } = props;
   // router
   const router = useRouter();
-
+  // hooks
+  const { getProjectById } = useProject();
+  const { getProjectStates } = useProjectState();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: IIssue) => {
+  const handleIssuePeekOverview = (issue: TIssue) => {
     const { query } = router;
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
     });
   };
 
@@ -81,11 +84,13 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     <span
                       className="h-full w-0.5 flex-shrink-0 rounded"
                       style={{
-                        backgroundColor: issue.state_detail.color,
+                        backgroundColor: getProjectStates(issue?.project_id).find(
+                          (state) => state?.id == issue?.state_id
+                        )?.color,
                       }}
                     />
                     <div className="flex-shrink-0 text-xs text-custom-text-300">
-                      {issue.project_detail.identifier}-{issue.sequence_id}
+                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                     </div>
                     <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
                       <div className="truncate text-xs">{issue.name}</div>

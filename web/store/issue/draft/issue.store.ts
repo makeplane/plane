@@ -6,7 +6,7 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { IssueDraftService } from "services/issue/issue_draft.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import { IIssue, IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IDraftIssues {
   // observable
@@ -14,12 +14,12 @@ export interface IDraftIssues {
   issues: { [project_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue>;
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   quickAddIssue: undefined;
 }
 
@@ -79,7 +79,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -114,7 +114,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
     try {
       const response = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, data);
 
@@ -130,7 +130,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     }
   };
 
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
       this.rootStore.issues.updateIssue(issueId, data);
       const response = await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);

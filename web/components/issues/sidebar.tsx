@@ -5,7 +5,7 @@ import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail, useIssues, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useIssues, useProject, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 // services
@@ -32,7 +32,7 @@ import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserG
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { IIssue, IIssueLink, ILinkDetails } from "types";
+import type { TIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
@@ -41,8 +41,8 @@ import { EIssuesStoreType } from "constants/issue";
 type Props = {
   control: any;
   submitChanges: (formData: any) => void;
-  issueDetail: IIssue | undefined;
-  watch: UseFormWatch<IIssue>;
+  issueDetail: TIssue | undefined;
+  watch: UseFormWatch<TIssue>;
   fieldsToShow?: (
     | "state"
     | "assignee"
@@ -76,8 +76,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { createIssueLink, updateIssueLink, deleteIssueLink } = useIssueDetail();
-
+  const { createLink, updateLink, removeLink } = useIssueDetail();
+  const { getProjectById } = useProject();
   const {
     issues: { removeIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
@@ -132,17 +132,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const issueLinkCreate = (formData: IIssueLink) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
+    createLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
   };
 
   const issueLinkUpdate = (formData: IIssueLink, linkId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
+    updateLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
   };
 
   const issueLinkDelete = (linkId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    deleteIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
+    removeLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
   };
 
   const handleCopyText = () => {
@@ -190,7 +190,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state);
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state_id);
 
   return (
     <>
@@ -229,12 +229,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
             ) : null}
             <h4 className="text-lg font-medium text-custom-text-300">
-              {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
+              {issueDetail && getProjectById(issueDetail.project_id)?.identifier}-{issueDetail?.sequence_id}
             </h4>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {issueDetail?.created_by !== currentUser?.id &&
-              !issueDetail?.assignees.includes(currentUser?.id ?? "") &&
+              !issueDetail?.assignee_ids.includes(currentUser?.id ?? "") &&
               !router.pathname.includes("[archivedIssueId]") &&
               (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
                 <Button
@@ -402,7 +402,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <SidebarBlockerSelect
                     issueId={issueId as string}
                     submitChanges={(data: any) => {
-                      mutate<IIssue>(
+                      mutate<TIssue>(
                         ISSUE_DETAILS(issueId as string),
                         (prevData) => {
                           if (!prevData) return prevData;
@@ -423,7 +423,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <SidebarBlockedSelect
                     issueId={issueId as string}
                     submitChanges={(data: any) => {
-                      mutate<IIssue>(
+                      mutate<TIssue>(
                         ISSUE_DETAILS(issueId as string),
                         (prevData) => {
                           if (!prevData) return prevData;
@@ -445,7 +445,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     issueId={issueId as string}
                     submitChanges={(data: any) => {
                       if (!data) return mutate(ISSUE_DETAILS(issueId as string));
-                      mutate<IIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
+                      mutate<TIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
                         if (!prevData) return prevData;
                         return {
                           ...prevData,
@@ -463,7 +463,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     issueId={issueId as string}
                     submitChanges={(data: any) => {
                       if (!data) return mutate(ISSUE_DETAILS(issueId as string));
-                      mutate<IIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
+                      mutate<TIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
                         if (!prevData) return prevData;
                         return {
                           ...prevData,
@@ -578,7 +578,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="space-y-1 sm:w-1/2">
                 <SidebarLabelSelect
                   issueDetails={issueDetail}
-                  labelList={issueDetail?.labels ?? []}
+                  labelList={issueDetail?.label_ids ?? []}
                   submitChanges={submitChanges}
                   isNotAllowed={!isAllowed}
                   uneditable={uneditable || !isAllowed}

@@ -7,13 +7,13 @@ import { useIssues } from "hooks/store";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // types
-import { IIssue, TIssuePriorities } from "types";
+import { TIssue, TIssuePriorities } from "types";
 // constants
 import { EIssuesStoreType, ISSUE_PRIORITIES } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
-  issue: IIssue;
+  issue: TIssue;
 };
 
 export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
@@ -26,7 +26,7 @@ export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
     issues: { updateIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
 
-  const submitChanges = async (formData: Partial<IIssue>) => {
+  const submitChanges = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;
 
     const payload = { ...formData };

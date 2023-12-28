@@ -4,35 +4,48 @@ import indexOf from "lodash/indexOf";
 import reverse from "lodash/reverse";
 import values from "lodash/values";
 // types
-import { IIssue, IIssueResponse, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 import { IIssueRootStore } from "../root.store";
-
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 
-export interface IIssueHelperStore {
+export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
+
+export type TIssueHelperStore = {
   // helper methods
   groupedIssues(
-    groupBy: TIssueGroupByOptions,
+    groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: IIssueResponse,
+    issues: TIssueMap,
     isCalendarIssues?: boolean
   ): { [group_id: string]: string[] };
   subGroupedIssues(
-    subGroupBy: TIssueGroupByOptions,
-    groupBy: TIssueGroupByOptions,
+    subGroupBy: TIssueDisplayFilterOptions,
+    groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: IIssueResponse
+    issues: TIssueMap
   ): { [sub_group_id: string]: { [group_id: string]: string[] } };
-  unGroupedIssues(orderBy: TIssueOrderByOptions, issues: IIssueResponse): string[];
+  unGroupedIssues(orderBy: TIssueOrderByOptions, issues: TIssueMap): string[];
   issueDisplayFiltersDefaultData(groupBy: string | null): string[];
-  issuesSortWithOrderBy(issueObject: IIssueResponse, key: Partial<TIssueOrderByOptions>): IIssue[];
-  getGroupArray(value: string[] | string | null, isDate?: boolean): string[];
-}
+  issuesSortWithOrderBy(issueObject: TIssueMap, key: Partial<TIssueOrderByOptions>): TIssue[];
+  getGroupArray(value: boolean | number | string | string[] | null, isDate?: boolean): string[];
+};
 
-export class IssueHelperStore implements IIssueHelperStore {
+const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
+  project: "project_id",
+  state: "state_id",
+  "state_detail.group": "state_group" as keyof TIssue, // state_detail.group is only being used for state_group display,
+  priority: "priority",
+  labels: "label_ids",
+  created_by: "created_by",
+  assignees: "assignee_ids",
+  mentions: "assignee_ids",
+  target_date: "target_date",
+};
+
+export class IssueHelperStore implements TIssueHelperStore {
   // root store
   rootStore;
 
@@ -41,12 +54,13 @@ export class IssueHelperStore implements IIssueHelperStore {
   }
 
   groupedIssues = (
-    groupBy: TIssueGroupByOptions,
+    groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: IIssueResponse,
+    issues: TIssueMap,
     isCalendarIssues: boolean = false
   ) => {
     const _issues: { [group_id: string]: string[] } = {};
+    if (!groupBy) return _issues;
 
     this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
       _issues[group] = [];
@@ -56,7 +70,13 @@ export class IssueHelperStore implements IIssueHelperStore {
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
-      const groupArray = this.getGroupArray(get(_issue, groupBy as keyof IIssue), isCalendarIssues);
+      let groupArray = [];
+
+      if (groupBy === "state_detail.group") {
+        const state_group =
+          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        groupArray = [state_group];
+      } else groupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]), isCalendarIssues);
 
       for (const group of groupArray) {
         if (group && _issues[group]) _issues[group].push(_issue.id);
@@ -68,12 +88,13 @@ export class IssueHelperStore implements IIssueHelperStore {
   };
 
   subGroupedIssues = (
-    subGroupBy: TIssueGroupByOptions,
-    groupBy: TIssueGroupByOptions,
+    subGroupBy: TIssueDisplayFilterOptions,
+    groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: IIssueResponse
+    issues: TIssueMap
   ) => {
     const _issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
+    if (!subGroupBy || !groupBy) return _issues;
 
     this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group: any) => {
       const groupByIssues: { [group_id: string]: string[] } = {};
@@ -87,8 +108,17 @@ export class IssueHelperStore implements IIssueHelperStore {
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
-      const subGroupArray = this.getGroupArray(get(_issue, subGroupBy as keyof IIssue));
-      const groupArray = this.getGroupArray(get(_issue, groupBy as keyof IIssue));
+      let subGroupArray = [];
+      let groupArray = [];
+      if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
+        const state_group =
+          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        subGroupArray = [state_group];
+        groupArray = [state_group];
+      } else {
+        subGroupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]));
+        groupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]));
+      }
 
       for (const subGroup of subGroupArray) {
         for (const group of groupArray) {
@@ -102,7 +132,7 @@ export class IssueHelperStore implements IIssueHelperStore {
     return _issues;
   };
 
-  unGroupedIssues = (orderBy: TIssueOrderByOptions, issues: IIssueResponse) =>
+  unGroupedIssues = (orderBy: TIssueOrderByOptions, issues: TIssueMap) =>
     this.issuesSortWithOrderBy(issues, orderBy).map((issue) => issue.id);
 
   issueDisplayFiltersDefaultData = (groupBy: string | null): string[] => {
@@ -126,7 +156,7 @@ export class IssueHelperStore implements IIssueHelperStore {
     }
   };
 
-  issuesSortWithOrderBy = (issueObject: IIssueResponse, key: Partial<TIssueOrderByOptions>): IIssue[] => {
+  issuesSortWithOrderBy = (issueObject: TIssueMap, key: Partial<TIssueOrderByOptions>): TIssue[] => {
     let array = values(issueObject);
     array = reverse(sortBy(array, "created_at"));
     switch (key) {
@@ -138,7 +168,7 @@ export class IssueHelperStore implements IIssueHelperStore {
       case "-state__name":
         return sortBy(array, "state");
 
-      //dates
+      // dates
       case "created_at":
         return sortBy(array, "created_at");
       case "-created_at":
@@ -159,17 +189,17 @@ export class IssueHelperStore implements IIssueHelperStore {
       case "-target_date":
         return reverse(sortBy(array, "target_date"));
 
-      //custom
+      // custom
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return reverse(sortBy(array, (_issue: IIssue) => indexOf(sortArray, _issue.priority)));
+        return reverse(sortBy(array, (_issue: TIssue) => indexOf(sortArray, _issue.priority)));
       }
       case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return sortBy(array, (_issue: IIssue) => indexOf(sortArray, _issue.priority));
+        return sortBy(array, (_issue: TIssue) => indexOf(sortArray, _issue.priority));
       }
 
-      //number
+      // number
       case "attachment_count":
         return sortBy(array, "attachment_count");
       case "-attachment_count":
@@ -190,7 +220,7 @@ export class IssueHelperStore implements IIssueHelperStore {
       case "-sub_issues_count":
         return reverse(sortBy(array, "sub_issues_count"));
 
-      //Array
+      // Array
       case "labels__name":
         return reverse(sortBy(array, "labels"));
       case "-labels__name":
@@ -206,11 +236,14 @@ export class IssueHelperStore implements IIssueHelperStore {
     }
   };
 
-  getGroupArray(value: string[] | string | null, isDate: boolean = false) {
-    if (Array.isArray(value)) {
+  getGroupArray(value: boolean | number | string | string[] | null, isDate: boolean = false): string[] {
+    if (!value || value === null || value === undefined) return ["None"];
+    if (Array.isArray(value))
       if (value.length) return value;
       else return ["None"];
-    } else if (isDate) return [renderDateFormat(value) || "None"];
+    else if (typeof value === "boolean") return [value ? "True" : "False"];
+    else if (typeof value === "number") return [value.toString()];
+    else if (isDate) return [renderDateFormat(value) || "None"];
     else return [value || "None"];
   }
 }

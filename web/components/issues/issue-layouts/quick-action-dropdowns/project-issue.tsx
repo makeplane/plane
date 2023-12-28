@@ -10,7 +10,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constant
 import { EUserProjectRoles } from "constants/project";
@@ -23,7 +23,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   const { workspaceSlug } = router.query;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<IIssue | null>(null);
+  const [issueToEdit, setIssueToEdit] = useState<TIssue | null>(null);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store hooks
   const {

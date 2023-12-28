@@ -8,27 +8,27 @@ import { IssuePeekOverview } from "components/issues";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { IUser, IIssue } from "types";
+import { IUser, TIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 export interface ISubIssues {
   workspaceSlug: string;
   projectId: string;
-  parentIssue: IIssue;
+  parentIssue: TIssue;
   issue: any;
   spacingLeft?: number;
   user: IUser | undefined;
   editable: boolean;
-  removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
+  removeIssueFromSubIssues: (parentIssueId: string, issue: TIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
   handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",
     issueId: string,
-    issue?: IIssue | null
+    issue?: TIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -54,7 +54,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
     });
   };
 

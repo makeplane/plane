@@ -12,7 +12,7 @@ from celery import shared_task
 from plane.db.models import FileAsset
 
 
-@shared_task(queue='internal_tasks')
+@shared_task
 def delete_file_asset():
 
     # file assets to delete

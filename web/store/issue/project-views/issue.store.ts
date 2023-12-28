@@ -6,16 +6,7 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { IssueService } from "services/issue/issue.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import {
-  IIssue,
-  TIssueGroupByOptions,
-  IIssueResponse,
-  TLoader,
-  IGroupedIssues,
-  ISubGroupedIssues,
-  TUnGroupedIssues,
-  ViewFlags,
-} from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IProjectViewIssues {
   // observable
@@ -23,39 +14,39 @@ export interface IProjectViewIssues {
   issues: { [view_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
     viewId?: string | undefined
-  ) => Promise<IIssueResponse | undefined>;
+  ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
 }
 
 export class ProjectViewIssues extends IssueHelperStore implements IProjectViewIssues {
@@ -109,7 +100,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -117,8 +108,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     } else if (layout === "kanban" && groupBy && orderBy) {
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
       else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", _issues, true);
+    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
     else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
     else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
@@ -157,7 +147,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
   createIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId: string | undefined = undefined
   ) => {
     try {
@@ -180,7 +170,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     viewId: string | undefined = undefined
   ) => {
     try {
@@ -221,7 +211,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
   quickAddIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId: string | undefined = undefined
   ) => {
     try {

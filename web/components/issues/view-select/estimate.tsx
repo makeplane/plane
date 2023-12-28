@@ -7,10 +7,10 @@ import { useEstimate } from "hooks/store";
 // ui
 import { CustomSelect, Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  issue: IIssue;
+  issue: TIssue;
   onChange: (data: number) => void;
   tooltipPosition?: "top" | "bottom";
   customButton?: boolean;

@@ -1460,7 +1460,7 @@ def delete_draft_issue_activity(
 
 
 # Receive message from room group
-@shared_task(queue='internal_tasks')
+@shared_task
 def issue_activity(
     type,
     requested_data,

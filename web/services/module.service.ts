@@ -1,7 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IModule, IIssue, ILinkDetails, ModuleLink, IIssueResponse } from "types";
+import type { IModule, TIssue, ILinkDetails, ModuleLink, TIssueMap } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
 export class ModuleService extends APIService {
@@ -62,12 +62,7 @@ export class ModuleService extends APIService {
       });
   }
 
-  async getModuleIssues(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    queries?: any
-  ): Promise<IIssueResponse> {
+  async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string, queries?: any): Promise<TIssueMap> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
       params: queries,
     })
@@ -82,7 +77,7 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     queries?: any
-  ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
+  ): Promise<TIssue[] | { [key: string]: TIssue[] }> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
       params: queries,
     })
@@ -100,7 +95,7 @@ export class ModuleService extends APIService {
   ): Promise<
     {
       issue: string;
-      issue_detail: IIssue;
+      issue_detail: TIssue;
       module: string;
       module_detail: IModule;
     }[]

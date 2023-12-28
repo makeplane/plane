@@ -9,7 +9,7 @@ import { CustomMenu } from "@plane/ui";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "types";
 import useToast from "hooks/use-toast";
 import { useState } from "react";
 import { TCreateModalStoreTypes } from "constants/issue";
@@ -18,10 +18,10 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  issuePayload: Partial<IIssue>;
+  issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   currentStore: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard = observer(

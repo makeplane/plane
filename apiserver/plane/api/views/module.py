@@ -166,22 +166,20 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
         )
-        issue_activity.apply_async(
-            args=[],
-            kwargs={
-                'type': "module.activity.deleted",
-                'requested_data': json.dumps({
+        issue_activity.delay(
+            type="module.activity.deleted",
+            requested_data=json.dumps(
+                {
                     "module_id": str(pk),
                     "module_name": str(module.name),
                     "issues": [str(issue_id) for issue_id in module_issues],
-                }),
-                'actor_id': str(request.user.id),
-                'issue_id': None,
-                'project_id': str(project_id),
-                'current_instance': None,
-                'epoch': int(timezone.now().timestamp()),
-            },
-            routing_key='external',
+                }
+            ),
+            actor_id=str(request.user.id),
+            issue_id=None,
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
         )
         module.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -332,21 +330,21 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
         # Capture Issue Activity
-        issue_activity.apply_async(
-            args=[],
-            kwargs={
-                'type': "module.activity.created",
-                'requested_data': json.dumps({"modules_list": str(issues)}),
-                'actor_id': str(self.request.user.id),
-                'issue_id': None,
-                'project_id': str(self.kwargs.get("project_id", None)),
-                'current_instance': json.dumps({
+        issue_activity.delay(
+            type="module.activity.created",
+            requested_data=json.dumps({"modules_list": str(issues)}),
+            actor_id=str(self.request.user.id),
+            issue_id=None,
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
                     "updated_module_issues": update_module_issue_activity,
-                    "created_module_issues": serializers.serialize("json", record_to_create),
-                }),
-                'epoch': int(timezone.now().timestamp()),
-            },
-            routing_key='external',
+                    "created_module_issues": serializers.serialize(
+                        "json", record_to_create
+                    ),
+                }
+            ),
+            epoch=int(timezone.now().timestamp()),
         )
 
         return Response(
@@ -359,20 +357,18 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             workspace__slug=slug, project_id=project_id, module_id=module_id, issue_id=issue_id
         )
         module_issue.delete()
-        issue_activity.apply_async(
-            args=[],  # If no positional arguments are required
-            kwargs={
-                'type': "module.activity.deleted",
-                'requested_data': json.dumps({
+        issue_activity.delay(
+            type="module.activity.deleted",
+            requested_data=json.dumps(
+                {
                     "module_id": str(module_id),
                     "issues": [str(module_issue.issue_id)],
-                }),
-                'actor_id': str(request.user.id),
-                'issue_id': str(issue_id),
-                'project_id': str(project_id),
-                'current_instance': None,
-                'epoch': int(timezone.now().timestamp()),
-            },
-            routing_key='external',
+                }
+            ),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -163,7 +163,7 @@ export const ProjectSidebarList: FC = observer(() => {
                                 key={projectId}
                                 draggableId={projectId}
                                 index={index}
-                                //TODO refactor the Draggable to a different component
+                                // FIXME refactor the Draggable to a different component
                                 //isDragDisabled={!project.is_member}
                               >
                                 {(provided, snapshot) => (

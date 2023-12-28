@@ -4,7 +4,7 @@ import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from 
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // hooks
-import { useInboxIssues } from "hooks/store";
+import { useInboxIssues, useProject } from "hooks/store";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // constants
@@ -22,6 +22,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, inboxId } = router.query;
   // store hooks
   const { getIssueById } = useInboxIssues();
+  const { getProjectById } = useProject();
   // derived values
   const issue = getIssueById(inboxId as string, props.issueId);
   const issueStatus = issue?.issue_inbox[0].status;
@@ -38,7 +39,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       >
         <div className="flex items-center gap-x-2">
           <p className="flex-shrink-0 text-xs text-custom-text-200">
-            {issue.project_detail?.identifier}-{issue.sequence_id}
+            {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
           </p>
           <h5 className="truncate text-sm">{issue.name}</h5>
         </div>

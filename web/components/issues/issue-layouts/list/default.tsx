@@ -5,10 +5,10 @@ import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
 import {
   GroupByColumnTypes,
-  IGroupedIssues,
-  IIssue,
+  TGroupedIssues,
+  TIssue,
   IIssueDisplayProperties,
-  IIssueMap,
+  TIssueMap,
   TUnGroupedIssues,
 } from "types";
 import { EIssueActions } from "../types";
@@ -18,12 +18,12 @@ import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
 
 export interface IGroupByList {
-  issueIds: IGroupedIssues | TUnGroupedIssues | any;
-  issuesMap: IIssueMap;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
   group_by: string | null;
   is_list?: boolean;
-  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
@@ -31,12 +31,12 @@ export interface IGroupByList {
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
   currentStore: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
 }
 
@@ -70,14 +70,14 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    if (groupByKey === null) return { state: defaultState?.id };
+    if (groupByKey === null) return { state_id: defaultState?.id };
     else {
       if (groupByKey === "state") return { state: groupByKey === "state" ? value : defaultState?.id };
-      else return { state: defaultState?.id, [groupByKey]: value };
+      else return { state_id: defaultState?.id, [groupByKey]: value };
     }
   };
 
-  const validateEmptyIssueGroups = (issues: IIssue[]) => {
+  const validateEmptyIssueGroups = (issues: TIssue[]) => {
     const issuesCount = issues?.length || 0;
     if (!showEmptyGroup && issuesCount <= 0) return false;
     return true;
@@ -131,11 +131,11 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 };
 
 export interface IList {
-  issueIds: IGroupedIssues | TUnGroupedIssues | any;
-  issuesMap: IIssueMap;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
   group_by: string | null;
-  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
@@ -143,13 +143,13 @@ export interface IList {
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
   currentStore: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const List: React.FC<IList> = (props) => {

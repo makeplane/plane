@@ -91,9 +91,6 @@ class IssueView(WorkspaceBaseModel):
     access = models.PositiveSmallIntegerField(
         default=1, choices=((0, "Private"), (1, "Public"))
     )
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, null=True, related_name="project_%(class)s"
-    )
     sort_order = models.FloatField(default=65535)
 
     class Meta:

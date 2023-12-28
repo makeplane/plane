@@ -10,12 +10,13 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssue } from "types";
+import type { TIssue } from "types";
+import { useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue | null;
+  data: TIssue | null;
   onSubmit?: () => Promise<void> | void;
 };
 
@@ -30,6 +31,8 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const { workspaceSlug } = router.query;
   // toast alert
   const { setToastAlert } = useToast();
+  // hooks
+  const { getProjectById } = useProject();
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -46,7 +49,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
     setIsDeleteLoading(true);
 
     await issueDraftService
-      .deleteDraftIssue(workspaceSlug.toString(), data.project, data.id)
+      .deleteDraftIssue(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
@@ -110,7 +113,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {data && getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the draft issue will be permanently removed. This action cannot
                       be undone.

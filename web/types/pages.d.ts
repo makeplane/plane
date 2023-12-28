@@ -1,5 +1,5 @@
 // types
-import { IIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "types";
+import { TIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "types";
 
 export interface IPage {
   access: number;
@@ -43,7 +43,7 @@ export interface IPageBlock {
   description_stripped: any;
   id: string;
   issue: string | null;
-  issue_detail: IIssue | null;
+  issue_detail: TIssue | null;
   name: string;
   page: string;
   project: string;

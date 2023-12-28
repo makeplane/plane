@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
+import { useApplication, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
@@ -31,6 +31,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
     eventTracker: { postHogEventTracker },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
+  const { getProjectById } = useProject();
 
   const { setToastAlert } = useToast();
 
@@ -130,7 +131,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? The issue will only be deleted from the inbox and this action cannot be undone.
                     </p>

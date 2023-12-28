@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
@@ -23,12 +23,12 @@ export const DraftIssueListLayout: FC = observer(() => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !projectId) return;
 
         await issues.updateIssue(workspaceSlug, projectId, issue.id, issue);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !projectId) return;
 
         await issues.removeIssue(workspaceSlug, projectId, issue.id);

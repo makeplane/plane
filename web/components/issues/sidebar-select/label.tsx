@@ -12,10 +12,10 @@ import useToast from "hooks/use-toast";
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
 // types
-import { IIssue, IIssueLabel } from "types";
+import { TIssue, IIssueLabel } from "types";
 
 type Props = {
-  issueDetails: IIssue | undefined;
+  issueDetails: TIssue | undefined;
   labelList: string[];
   submitChanges: (formData: any) => void;
   isNotAllowed: boolean;
@@ -58,7 +58,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
       .then((res) => {
         reset(defaultValues);
 
-        submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
+        submitChanges({ labels: [...(issueDetails?.label_ids ?? []), res.id] });
 
         setCreateLabelForm(false);
       })
@@ -111,9 +111,9 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
         })}
         <IssueLabelSelect
           setIsOpen={setCreateLabelForm}
-          value={issueDetails?.labels ?? []}
+          value={issueDetails?.label_ids ?? []}
           onChange={(val: any) => submitChanges({ labels: val })}
-          projectId={issueDetails?.project_detail.id ?? ""}
+          projectId={issueDetails?.project_id ?? ""}
           label={
             <span
               className={`flex ${

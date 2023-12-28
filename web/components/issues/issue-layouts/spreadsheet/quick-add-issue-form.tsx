@@ -10,23 +10,23 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "types";
 
 type Props = {
-  formKey: keyof IIssue;
+  formKey: keyof TIssue;
   groupId?: string;
   subGroupId?: string | null;
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -65,7 +65,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   // ref
   const ref = useRef<HTMLFormElement>(null);
@@ -92,7 +92,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
       setToastAlert({
         type: "error",
@@ -102,7 +102,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     });
   }, [errors, setToastAlert]);
 
-  // const onSubmitHandler = async (formData: IIssue) => {
+  // const onSubmitHandler = async (formData: TIssue) => {
   //   if (isSubmitting || !workspaceSlug || !projectId) return;
 
   //   // resetting the form so that user can add another issue quickly
@@ -143,7 +143,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //   }
   // };
 
-  const onSubmitHandler = async (formData: IIssue) => {
+  const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !currentWorkspace || !currentProjectDetails) return;
 
     reset({ ...defaultValues });
@@ -155,7 +155,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
 
     try {
       quickAddCallback &&
-        (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as IIssue, viewId));
+        (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as TIssue, viewId));
       setToastAlert({
         type: "success",
         title: "Success!",

@@ -11,7 +11,7 @@ import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-acti
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes, TUnGroupedIssues } from "types";
+import { TIssue, IIssueDisplayFilterOptions, TStaticViewTypes, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
@@ -73,14 +73,14 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
   const issueActions = useMemo(
     () => ({
-      [EIssueActions.UPDATE]: async (issue: IIssue) => {
-        const projectId = issue.project;
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
         if (!workspaceSlug || !projectId) return;
 
         await updateIssue(workspaceSlug, projectId, issue.id, issue, currentIssueView);
       },
-      [EIssueActions.DELETE]: async (issue: IIssue) => {
-        const projectId = issue.project;
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
         if (!workspaceSlug || !projectId) return;
 
         await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
@@ -90,7 +90,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   );
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
       if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
     },

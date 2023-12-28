@@ -3,7 +3,7 @@ import { ICycleIssues } from "store/issue/cycle";
 import { IModuleIssues } from "store/issue/module";
 import { IProjectIssues } from "store/issue/project";
 import { IProjectViewIssues } from "store/issue/project-views";
-import { IGroupedIssues, IIssueMap } from "types";
+import { TGroupedIssues, IIssueMap } from "types";
 
 export const handleDragDrop = async (
   source: DraggableLocation,
@@ -12,7 +12,7 @@ export const handleDragDrop = async (
   projectId: string | undefined,
   store: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues,
   issueMap: IIssueMap,
-  issueWithIds: IGroupedIssues,
+  issueWithIds: TGroupedIssues,
   viewId: string | null = null // it can be moduleId, cycleId
 ) => {
   if (!issueMap || !issueWithIds || !workspaceSlug || !projectId) return;

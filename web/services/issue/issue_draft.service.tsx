@@ -1,14 +1,14 @@
 import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "types";
+import { TIssueMap } from "types";
 
 export class IssueDraftService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getDraftIssues(workspaceSlug: string, projectId: string, query?: any): Promise<IIssueResponse> {
+  async getDraftIssues(workspaceSlug: string, projectId: string, query?: any): Promise<TIssueMap> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
       params: { ...query },
     })

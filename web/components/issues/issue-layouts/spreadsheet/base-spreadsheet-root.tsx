@@ -6,7 +6,7 @@ import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
-import { IIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
+import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
@@ -23,9 +23,9 @@ interface IBaseSpreadsheetRoot {
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => void;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => void;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => void;
+    [EIssueActions.DELETE]: (issue: TIssue) => void;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => void;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => void;
   };
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
@@ -61,7 +61,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const issues = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         issueActions[action]!(issue);
       }

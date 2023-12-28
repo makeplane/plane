@@ -7,16 +7,7 @@ import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import {
-  IIssue,
-  TIssueGroupByOptions,
-  IIssueResponse,
-  TLoader,
-  IGroupedIssues,
-  ISubGroupedIssues,
-  TUnGroupedIssues,
-  ViewFlags,
-} from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
 
 export interface IModuleIssues {
   // observable
@@ -24,46 +15,46 @@ export interface IModuleIssues {
   issues: { [module_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
     moduleId?: string | undefined
-  ) => Promise<IIssueResponse | undefined>;
+  ) => Promise<TIssue | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     moduleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     moduleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     moduleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     moduleId?: string | undefined
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<any>;
   removeIssueFromModule: (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
     issueId: string
-  ) => Promise<IIssue>;
+  ) => Promise<TIssue>;
 }
 
 export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
@@ -121,7 +112,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds);
     if (!_issues) return undefined;
 
-    let issues: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -129,8 +120,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     } else if (layout === "kanban" && groupBy && orderBy) {
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
       else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", _issues, true);
+    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
     else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
     else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
@@ -169,7 +159,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   createIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     moduleId: string | undefined = undefined
   ) => {
     try {
@@ -187,7 +177,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>,
+    data: Partial<TIssue>,
     moduleId: string | undefined = undefined
   ) => {
     try {
@@ -227,7 +217,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   quickAddIssue = async (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     moduleId: string | undefined = undefined
   ) => {
     try {

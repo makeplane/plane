@@ -12,13 +12,13 @@ import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdow
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { IIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
+import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
 interface IPeekOverviewProperties {
-  issue: IIssue;
-  issueUpdate: (issue: Partial<IIssue>) => void;
+  issue: TIssue;
+  issueUpdate: (issue: Partial<TIssue>) => void;
   issueLinkCreate: (data: IIssueLink) => Promise<ILinkDetails>;
   issueLinkUpdate: (data: IIssueLink, linkId: string) => Promise<ILinkDetails>;
   issueLinkDelete: (linkId: string) => Promise<void>;
@@ -28,55 +28,54 @@ interface IPeekOverviewProperties {
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { issue, issueUpdate, issueLinkCreate, issueLinkUpdate, issueLinkDelete, disableUserActions } = props;
   // states
-  const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { fetchPeekIssueDetails } = useIssueDetail();
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { fetchIssue, isIssueLinkModalOpen, toggleIssueLinkModal } = useIssueDetail();
   const { getProjectById } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const handleState = (_state: string) => {
-    issueUpdate({ ...issue, state: _state });
+    issueUpdate({ ...issue, state_id: _state });
   };
   const handlePriority = (_priority: TIssuePriorities) => {
     issueUpdate({ ...issue, priority: _priority });
   };
   const handleAssignee = (_assignees: string[]) => {
-    issueUpdate({ ...issue, assignees: _assignees });
+    issueUpdate({ ...issue, assignee_ids: _assignees });
   };
   const handleEstimate = (_estimate: number | null) => {
     issueUpdate({ ...issue, estimate_point: _estimate });
   };
   const handleStartDate = (_startDate: string | null) => {
-    issueUpdate({ ...issue, start_date: _startDate });
+    issueUpdate({ ...issue, start_date: _startDate || undefined });
   };
   const handleTargetDate = (_targetDate: string | null) => {
-    issueUpdate({ ...issue, target_date: _targetDate });
+    issueUpdate({ ...issue, target_date: _targetDate || undefined });
   };
   const handleParent = (_parent: string) => {
-    issueUpdate({ ...issue, parent: _parent });
+    issueUpdate({ ...issue, parent_id: _parent });
   };
-  const handleLabels = (formData: Partial<IIssue>) => {
+  const handleLabels = (formData: Partial<TIssue>) => {
     issueUpdate({ ...issue, ...formData });
   };
 
   const handleCycleOrModuleChange = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    await fetchPeekIssueDetails(workspaceSlug.toString(), projectId.toString(), issue.id);
+    await fetchIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
   };
 
   const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
-    setLinkModal(true);
+    toggleIssueLinkModal(true);
   };
 
-  const projectDetails = workspaceSlug ? getProjectById(issue.project) : null;
+  const projectDetails = workspaceSlug ? getProjectById(issue.project_id) : null;
   const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
@@ -88,9 +87,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   return (
     <>
       <LinkModal
-        isOpen={linkModal}
+        isOpen={isIssueLinkModalOpen}
         handleClose={() => {
-          setLinkModal(false);
+          toggleIssueLinkModal(false);
           setSelectedLinkToUpdate(null);
         }}
         data={selectedLinkToUpdate}
@@ -108,9 +107,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
             <div>
               <StateDropdown
-                value={issue?.state || ""}
+                value={issue?.state_id || ""}
                 onChange={handleState}
-                projectId={issue.project}
+                projectId={issue.project_id}
                 disabled={disableUserActions}
                 buttonVariant="background-with-text"
               />
@@ -123,19 +122,17 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
-            <div className="h-5">
-              <div className="h-5 sm:w-1/2">
-                <ProjectMemberDropdown
-                  value={issue.assignees}
-                  onChange={handleAssignee}
-                  disabled={disableUserActions}
-                  projectId={projectId?.toString() ?? ""}
-                  placeholder="Assignees"
-                  multiple
-                  buttonVariant={issue.assignees?.length > 0 ? "transparent-without-text" : "background-with-text"}
-                  buttonClassName={issue.assignees?.length > 0 ? "hover:bg-transparent px-0" : ""}
-                />
-              </div>
+            <div className="h-5 sm:w-1/2">
+              <ProjectMemberDropdown
+                value={issue.assignee_ids}
+                onChange={handleAssignee}
+                disabled={disableUserActions}
+                projectId={projectId?.toString() ?? ""}
+                placeholder="Assignees"
+                multiple
+                buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
+              />
             </div>
           </div>
 
@@ -166,7 +163,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 <EstimateDropdown
                   value={issue.estimate_point}
                   onChange={handleEstimate}
-                  projectId={issue.project}
+                  projectId={issue.project_id}
                   disabled={disableUserActions}
                   buttonVariant="background-with-text"
                 />
@@ -260,7 +257,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div className="flex w-full flex-col gap-3">
               <SidebarLabelSelect
                 issueDetails={issue}
-                labelList={issue.labels}
+                labelList={issue.label_ids}
                 submitChanges={handleLabels}
                 isNotAllowed={disableUserActions}
                 uneditable={disableUserActions}
@@ -285,7 +282,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     className={`flex ${
                       disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
                     } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
-                    onClick={() => setLinkModal(true)}
+                    onClick={() => toggleIssueLinkModal(true)}
                     disabled={false}
                   >
                     <Plus className="h-3 w-3" /> New
