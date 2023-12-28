@@ -28,14 +28,14 @@ export interface IIssueStore extends IIssueStoreActions {
 
 export class IssueStore implements IIssueStore {
   // root store
-  rootIssueDetail: IIssueDetail;
+  rootIssueDetailStore: IIssueDetail;
   // services
   issueService;
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {});
     // root store
-    this.rootIssueDetail = rootStore;
+    this.rootIssueDetailStore = rootStore;
     // services
     this.issueService = new IssueService();
   }
@@ -43,7 +43,7 @@ export class IssueStore implements IIssueStore {
   // helper methods
   getIssueById = (issueId: string) => {
     if (!issueId) return undefined;
-    return this.rootIssueDetail.rootIssueStore.issues.getIssueById(issueId) ?? undefined;
+    return this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId) ?? undefined;
   };
 
   // actions
@@ -52,24 +52,27 @@ export class IssueStore implements IIssueStore {
       const issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
       if (!issue) throw new Error("Issue not found");
 
-      this.rootIssueDetail.rootIssueStore.issues.addIssue([issue]);
+      this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
 
       // issue reactions
-      this.rootIssueDetail.reaction.fetchReactions(workspaceSlug, projectId, issueId);
+      this.rootIssueDetailStore.reaction.fetchReactions(workspaceSlug, projectId, issueId);
 
       // fetch issue links
-      this.rootIssueDetail.link.fetchLinks(workspaceSlug, projectId, issueId);
+      this.rootIssueDetailStore.link.fetchLinks(workspaceSlug, projectId, issueId);
 
       // fetch issue attachments
-      this.rootIssueDetail.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
+      this.rootIssueDetailStore.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
 
       // fetch issue relations
 
       // fetch issue activity
-      this.rootIssueDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
       // fetch issue subscription
-      this.rootIssueDetail.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
+      this.rootIssueDetailStore.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
+
+      // fetch sub issues
+      this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
 
       return issue;
     } catch (error) {
@@ -78,20 +81,35 @@ export class IssueStore implements IIssueStore {
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
-    this.rootIssueDetail.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+    this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetail.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+    this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) =>
-    this.rootIssueDetail.rootIssueStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+    this.rootIssueDetailStore.rootIssueStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
 
   removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) =>
-    this.rootIssueDetail.rootIssueStore.cycleIssues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+    this.rootIssueDetailStore.rootIssueStore.cycleIssues.removeIssueFromCycle(
+      workspaceSlug,
+      projectId,
+      cycleId,
+      issueId
+    );
 
   addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) =>
-    this.rootIssueDetail.rootIssueStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, issueIds);
+    this.rootIssueDetailStore.rootIssueStore.moduleIssues.addIssueToModule(
+      workspaceSlug,
+      projectId,
+      moduleId,
+      issueIds
+    );
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) =>
-    this.rootIssueDetail.rootIssueStore.moduleIssues.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+    this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssueFromModule(
+      workspaceSlug,
+      projectId,
+      moduleId,
+      issueId
+    );
 }

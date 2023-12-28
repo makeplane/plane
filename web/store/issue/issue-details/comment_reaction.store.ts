@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { IssueReactionService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { IssueCommentReaction } from "types";
+import { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "types";
 
 export interface IIssueCommentReactionStoreActions {
   // actions
@@ -12,7 +12,7 @@ export interface IIssueCommentReactionStoreActions {
     workspaceSlug: string,
     projectId: string,
     commentId: string
-  ) => Promise<IssueCommentReaction[]>;
+  ) => Promise<TIssueCommentReaction[]>;
   createCommentReaction: (
     workspaceSlug: string,
     projectId: string,
@@ -29,17 +29,17 @@ export interface IIssueCommentReactionStoreActions {
 
 export interface IIssueCommentReactionStore extends IIssueCommentReactionStoreActions {
   // observables
-  commentReactions: Record<string, string[]>; // Record defines commentId as key and reactionId's as value
-  commentReactionMap: Record<string, IssueCommentReaction>; // Record defines reactionId as key and reactions as value
+  commentReactions: TIssueCommentReactionIdMap; // Record defines commentId as key and reactionId's as value
+  commentReactionMap: TIssueCommentReactionMap; // Record defines reactionId as key and reactions as value
   // helper methods
   getCommentReactionsByCommentId: (commentId: string) => string[] | undefined;
-  getCommentReactionById: (reactionId: string) => IssueCommentReaction | undefined;
+  getCommentReactionById: (reactionId: string) => TIssueCommentReaction | undefined;
 }
 
 export class IssueCommentReactionStore implements IIssueCommentReactionStore {
   // observables
-  commentReactions: Record<string, string[]> = {};
-  commentReactionMap: Record<string, IssueCommentReaction> = {};
+  commentReactions: TIssueCommentReactionIdMap = {};
+  commentReactionMap: TIssueCommentReactionMap = {};
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services

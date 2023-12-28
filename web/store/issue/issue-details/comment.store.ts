@@ -4,21 +4,21 @@ import set from "lodash/set";
 import { IssueCommentService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { IIssueActivity } from "types";
+import { TIssueActivity } from "types";
 
 export interface IIssueCommentStoreActions {
   createComment: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssueActivity>
+    data: Partial<TIssueActivity>
   ) => Promise<any>;
   updateComment: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     commentId: string,
-    data: Partial<IIssueActivity>
+    data: Partial<TIssueActivity>
   ) => Promise<any>;
   removeComment: (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => Promise<any>;
 }
@@ -44,7 +44,7 @@ export class IssueCommentStore implements IIssueCommentStore {
     this.issueCommentService = new IssueCommentService();
   }
 
-  createComment = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssueActivity>) => {
+  createComment = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueActivity>) => {
     try {
       const response = await this.issueCommentService.createIssueComment(workspaceSlug, projectId, issueId, data);
 
@@ -64,12 +64,12 @@ export class IssueCommentStore implements IIssueCommentStore {
     projectId: string,
     issueId: string,
     commentId: string,
-    data: Partial<IIssueActivity>
+    data: Partial<TIssueActivity>
   ) => {
     try {
       runInAction(() => {
         Object.keys(data).forEach((key) => {
-          set(this.rootIssueDetail.activity.activityMap, [commentId, key], data[key as keyof IIssueActivity]);
+          set(this.rootIssueDetail.activity.activityMap, [commentId, key], data[key as keyof TIssueActivity]);
         });
       });
 
