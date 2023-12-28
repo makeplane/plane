@@ -1,4 +1,4 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
 // services
 import { IssueService } from "services/issue";
@@ -15,6 +15,8 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
   activities: Record<string, string[]>; // Record defines issueId as key and  activityId's as value
   activityMap: Record<string, TIssueActivity>; // Record defines activityId as key and activities as value
+  // computed
+  issueActivities: string[] | undefined;
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
@@ -34,6 +36,8 @@ export class IssueActivityStore implements IIssueActivityStore {
       // observables
       activities: observable,
       activityMap: observable,
+      // computed
+      issueActivities: computed,
       // actions
       fetchActivities: action,
     });
@@ -41,6 +45,13 @@ export class IssueActivityStore implements IIssueActivityStore {
     this.rootIssueDetailStore = rootStore;
     // services
     this.issueService = new IssueService();
+  }
+
+  // computed
+  get issueActivities() {
+    const issueId = this.rootIssueDetailStore.issueId;
+    if (!issueId) return undefined;
+    return this.activities[issueId] ?? undefined;
   }
 
   // helper methods
@@ -58,8 +69,6 @@ export class IssueActivityStore implements IIssueActivityStore {
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const activities = await this.issueService.getIssueActivities(workspaceSlug, projectId, issueId);
-
-      console.log("activities", activities);
 
       const activityIds = activities.map((activity) => activity.id);
       runInAction(() => {

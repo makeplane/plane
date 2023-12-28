@@ -5,7 +5,7 @@ import { RootStore } from "../root.store";
 // issues data store
 import { IState } from "types";
 import { IIssueStore, IssueStore } from "./issue.store";
-import { IIssueDetailStore, IssueDetailStore } from "./issue_detail.store";
+import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
 import { IProfileIssuesFilter, ProfileIssuesFilter, IProfileIssues, ProfileIssues } from "./profile";
 import { IProjectIssuesFilter, ProjectIssuesFilter, IProjectIssues, ProjectIssues } from "./project";
@@ -39,7 +39,7 @@ export interface IIssueRootStore {
 
   issues: IIssueStore;
 
-  issueDetail: IIssueDetailStore;
+  issueDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -113,7 +113,7 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  issueDetail: IIssueDetailStore;
+  issueDetail: IIssueDetail;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
@@ -150,7 +150,7 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issues = new IssueStore();
 
-    this.issueDetail = new IssueDetailStore(this, rootStore);
+    this.issueDetail = new IssueDetail(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this);
