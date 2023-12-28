@@ -50,13 +50,20 @@ export class IssueStore implements IIssueStore {
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
-      this.rootIssueDetail.rootIssueStore.issues.updateIssue(issue.id, issue);
+      if (!issue) throw new Error("Issue not found");
+
+      this.rootIssueDetail.rootIssueStore.issues.addIssue([issue]);
 
       // issue reactions
       this.rootIssueDetail.reaction.fetchReactions(workspaceSlug, projectId, issueId);
 
       // fetch issue links
       this.rootIssueDetail.link.fetchLinks(workspaceSlug, projectId, issueId);
+
+      // fetch issue attachments
+      this.rootIssueDetail.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
+
+      // fetch issue relations
 
       // fetch issue activity
       this.rootIssueDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);

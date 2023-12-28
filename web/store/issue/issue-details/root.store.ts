@@ -12,6 +12,7 @@ import {
 } from "./comment_reaction.store";
 import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
 import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
+import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachement.store";
 
 import { TIssue, IIssueActivity, TIssueLink } from "types";
 
@@ -22,13 +23,15 @@ export interface IIssueDetail
     IIssueCommentStoreActions,
     IIssueCommentReactionStoreActions,
     IIssueLinkStoreActions,
-    IIssueSubscriptionStoreActions {
+    IIssueSubscriptionStoreActions,
+    IIssueAttachmentStoreActions {
   // observables
   issueId: string | undefined;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
   reaction: IIssueReactionStore;
+  attachment: IIssueAttachmentStore;
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
@@ -49,6 +52,7 @@ export class IssueDetail implements IIssueDetail {
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
   reaction: IIssueReactionStore;
+  attachment: IIssueAttachmentStore;
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
@@ -65,6 +69,7 @@ export class IssueDetail implements IIssueDetail {
     this.rootIssueStore = rootStore;
     this.issue = new IssueStore(this);
     this.reaction = new IssueReactionStore(this);
+    this.attachment = new IssueAttachmentStore(this);
     this.activity = new IssueActivityStore(this);
     this.comment = new IssueCommentStore(this);
     this.commentReaction = new IssueCommentReactionStore(this);
@@ -122,6 +127,14 @@ export class IssueDetail implements IIssueDetail {
     this.commentReaction.createCommentReaction(workspaceSlug, projectId, commentId, reaction);
   removeCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) =>
     this.commentReaction.removeCommentReaction(workspaceSlug, projectId, commentId, reaction);
+
+  // attachments
+  fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
+  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) =>
+    this.attachment.createAttachment(workspaceSlug, projectId, issueId, data);
+  removeAttachment = async (workspaceSlug: string, projectId: string, issueId: string, attachmentId: string) =>
+    this.attachment.removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
 
   // link
   fetchLinks = async (workspaceSlug: string, projectId: string, issueId: string) =>
