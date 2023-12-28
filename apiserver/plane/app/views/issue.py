@@ -718,6 +718,13 @@ class SubIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
@@ -738,7 +745,7 @@ class SubIssuesEndpoint(BaseAPIView):
             item["state_group"]: item["state_count"] for item in state_distribution
         }
 
-        serializer = IssueLiteSerializer(
+        serializer = IssueSerializer(
             sub_issues,
             many=True,
         )
@@ -785,7 +792,7 @@ class SubIssuesEndpoint(BaseAPIView):
         ]
 
         return Response(
-            IssueFlatSerializer(updated_sub_issues, many=True).data,
+            IssueSerializer(updated_sub_issues, many=True).data,
             status=status.HTTP_200_OK,
         )
 
