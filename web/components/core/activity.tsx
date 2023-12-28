@@ -10,7 +10,6 @@ import {
   CopyPlus,
   Calendar,
   Link2Icon,
-  RocketIcon,
   Users2Icon,
   ArchiveIcon,
   PaperclipIcon,
@@ -46,8 +45,8 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
         rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
       >
-        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-        <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}{" "}
+        <span className="font-normal">{activity.issue_detail?.name}</span>
       </a>
     </Tooltip>
   );
@@ -165,7 +164,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               attachment
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -241,7 +239,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -256,7 +253,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -271,7 +267,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -400,7 +395,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -422,7 +416,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -444,7 +437,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -471,7 +463,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -486,7 +477,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -501,7 +491,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
