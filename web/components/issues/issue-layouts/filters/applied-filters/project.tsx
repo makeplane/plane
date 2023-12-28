@@ -10,11 +10,10 @@ type Props = {
   handleRemove: (val: string) => void;
   projects: IProject[] | undefined;
   values: string[];
-  disableClearOption?: boolean;
 };
 
 export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, projects, values, disableClearOption } = props;
+  const { handleRemove, projects, values } = props;
 
   return (
     <>
@@ -35,15 +34,13 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
               </span>
             )}
             <span className="normal-case">{projectDetails.name}</span>
-            {!disableClearOption && (
-              <button
-                type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-                onClick={() => handleRemove(projectId)}
-              >
-                <X size={10} strokeWidth={2} />
-              </button>
-            )}
+            <button
+              type="button"
+              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              onClick={() => handleRemove(projectId)}
+            >
+              <X size={10} strokeWidth={2} />
+            </button>
           </div>
         );
       })}

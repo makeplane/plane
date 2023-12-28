@@ -9,11 +9,10 @@ type Props = {
   handleRemove: (val: string) => void;
   labels: IIssueLabel[] | undefined;
   values: string[];
-  disableClearOption?: boolean;
 };
 
 export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, labels, values, disableClearOption } = props;
+  const { handleRemove, labels, values } = props;
 
   return (
     <>
@@ -31,15 +30,13 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
               }}
             />
             <span className="normal-case">{labelDetails.name}</span>
-            {!disableClearOption && (
-              <button
-                type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-                onClick={() => handleRemove(labelId)}
-              >
-                <X size={10} strokeWidth={2} />
-              </button>
-            )}
+            <button
+              type="button"
+              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              onClick={() => handleRemove(labelId)}
+            >
+              <X size={10} strokeWidth={2} />
+            </button>
           </div>
         );
       })}

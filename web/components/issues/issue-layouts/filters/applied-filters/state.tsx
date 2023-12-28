@@ -10,11 +10,10 @@ type Props = {
   handleRemove: (val: string) => void;
   states: IState[];
   values: string[];
-  disableClearOption: boolean | undefined;
 };
 
 export const AppliedStateFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, states, values, disableClearOption } = props;
+  const { handleRemove, states, values } = props;
 
   return (
     <>
@@ -27,15 +26,13 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
           <div key={stateId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <StateGroupIcon color={stateDetails.color} stateGroup={stateDetails.group} height="12px" width="12px" />
             {stateDetails.name}
-            {!disableClearOption && (
-              <button
-                type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-                onClick={() => handleRemove(stateId)}
-              >
-                <X size={10} strokeWidth={2} />
-              </button>
-            )}
+            <button
+              type="button"
+              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              onClick={() => handleRemove(stateId)}
+            >
+              <X size={10} strokeWidth={2} />
+            </button>
           </div>
         );
       })}

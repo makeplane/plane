@@ -11,11 +11,10 @@ import { DATE_FILTER_OPTIONS } from "constants/filters";
 type Props = {
   handleRemove: (val: string) => void;
   values: string[];
-  disableClearOption?: boolean;
 };
 
 export const AppliedDateFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, values, disableClearOption } = props;
+  const { handleRemove, values } = props;
 
   const getDateLabel = (value: string): string => {
     let dateLabel = "";
@@ -41,15 +40,13 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
       {values.map((date) => (
         <div key={date} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
           <span className="normal-case">{getDateLabel(date)}</span>
-          {!disableClearOption && (
-            <button
-              type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-              onClick={() => handleRemove(date)}
-            >
-              <X size={10} strokeWidth={2} />
-            </button>
-          )}
+          <button
+            type="button"
+            className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+            onClick={() => handleRemove(date)}
+          >
+            <X size={10} strokeWidth={2} />
+          </button>
         </div>
       ))}
     </>

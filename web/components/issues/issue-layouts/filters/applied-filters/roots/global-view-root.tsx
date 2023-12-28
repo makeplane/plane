@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 
@@ -10,16 +9,10 @@ import { AppliedFiltersList } from "components/issues";
 import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store/issues/types";
 
-type Props = {
-  disableClearFilterOptions?: (keyof IIssueFilterOptions)[];
-};
-
-export const GlobalViewsAppliedFiltersRoot: React.FC<Props> = observer((props) => {
-  const { disableClearFilterOptions } = props;
-  // router
+export const GlobalViewsAppliedFiltersRoot = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string; globalViewId: string };
-  // mobx store
+
   const {
     project: { workspaceProjects },
     workspace: { workspaceLabels },
@@ -90,7 +83,6 @@ export const GlobalViewsAppliedFiltersRoot: React.FC<Props> = observer((props) =
         appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        disableClearFilterOptions={disableClearFilterOptions}
       />
 
       {/* {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data.filters ?? {}) && (
