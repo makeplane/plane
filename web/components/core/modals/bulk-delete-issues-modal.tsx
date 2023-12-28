@@ -172,6 +172,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                                 issue={issue}
                                 identifier={projectDetails?.identifier}
                                 delete_issue_ids={watch("delete_issue_ids").includes(issue.id)}
+                                key={issue.id}
                               />
                             ))}
                           </ul>
