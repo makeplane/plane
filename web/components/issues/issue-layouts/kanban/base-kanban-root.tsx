@@ -188,6 +188,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         }
       />
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [issueActions, handleIssues]
   );
 

@@ -17,6 +17,7 @@ export interface IStateStore {
   // computed actions
   getStateById: (stateId: string) => IState | undefined;
   getProjectStates: (projectId: string) => IState[];
+  getStateById: (stateId: string) => IState | undefined;
   // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   // crud actions
@@ -98,6 +99,15 @@ export class StateStore implements IStateStore {
    * @returns IState[]
    */
   getProjectStates = (projectId: string) => Object.values(this.stateMap).filter((state) => state.project === projectId);
+
+  /**
+   * Return the state by stateId from stateMap
+   * @param stateId
+   * @returns IState
+   */
+  getStateById(stateId: string) {
+    return this.stateMap[stateId];
+  }
 
   /**
    * fetches the stateMap of a project
