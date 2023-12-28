@@ -47,6 +47,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       subIssues: observable,
       // actions
       fetchSubIssues: action,
+      createSubIssues: action,
     });
     // root store
     this.rootIssueDetailStore = rootStore;
