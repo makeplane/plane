@@ -8,6 +8,23 @@ import {
 } from "../db/schema/project.schema";
 
 export class ProjectService {
+  async getProjectByIdentifier(identifier: string) {
+    const db = DatabaseSingleton.getInstance().db;
+
+    if (!db) {
+      throw new Error("Database not found");
+    }
+
+    try {
+      const project = await db.query.projects.findFirst({
+        where: eq(projects.identifier, identifier),
+      });
+      return project;
+    } catch (error) {
+      throw new Error("Database not found");
+    }
+  }
+
   async getProjectsForWorkspace(workspaceId: string) {
     const db = DatabaseSingleton.getInstance().db;
     if (!db) {

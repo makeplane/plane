@@ -22,6 +22,50 @@ export class SlackService {
     }
   }
 
+  async sendEphemeralMessage(userId: string, text: string) {
+    const slackConfig = await this.getConfig();
+    const slackMetadata = await this.getMetadata();
+    if (!slackConfig || !slackMetadata) {
+      return;
+    }
+    try {
+      await fetch("https://slack.com/api/chat.postEphemeral", {
+        method: "POST",
+        body: JSON.stringify({
+          user: userId,
+          channel: slackMetadata.slackMetadata.incoming_webhook.channel_id,
+          text: text,
+        }),
+        headers: {
+          authorization: `Bearer ${slackConfig.slackConfig.access_token}`,
+          "content-type": "application/json",
+        },
+      });
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+
+  async getUserInfo(userId: string) {
+    const slackConfig = await this.getConfig();
+    if (!slackConfig) {
+      return;
+    }
+    const slackAccessToken = slackConfig.slackConfig.access_token;
+
+    try {
+      return await fetch(`https://slack.com/api/users.info?user=${userId}`, {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${slackAccessToken}`,
+        },
+      });
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+
   async getIntegration(): Promise<{ integrationId: string } | void> {
     const db = DatabaseSingleton.getInstance().db;
     if (db) {
