@@ -279,17 +279,24 @@ class IssueLabelSerializer(BaseSerializer):
 
 
 class IssueRelationLiteSerializer(DynamicBaseSerializer):
+    project_id = serializers.PrimaryKeyRelatedField(read_only=True, source="project")
     class Meta:
         model = Issue
         fields = [
             "id",
             "project",
+            "project_id",
             "sequence_id",
         ]
         read_only_fields = [
             "workspace",
             "project",
         ]
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["project_id"] = data.pop("project")
+        return data
 
 
 class IssueRelationSerializer(BaseSerializer):
