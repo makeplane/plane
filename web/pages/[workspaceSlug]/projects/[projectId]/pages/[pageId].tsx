@@ -496,18 +496,22 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       <Sparkle className="h-4 w-4" />
                       AI
                     </button>
-                    <GptAssistantModal
-                      isOpen={gptModalOpen}
-                      handleClose={() => {
-                        setGptModal(false);
-                      }}
-                      inset="top-9 right-[68px] !w-1/2 !max-h-[50%]"
-                      content=""
-                      onResponse={(response) => {
-                        handleAiAssistance(response);
-                      }}
-                      projectId={projectId.toString()}
-                    />
+                    <div
+                      className={`absolute top-9 right-[68px] w-1/2 !max-h-[50%] z-20 flex  flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
+                        gptModalOpen ? "block" : "hidden"
+                      }`}
+                    >
+                      <GptAssistantModal
+                        isOpen={gptModalOpen}
+                        handleClose={() => {
+                          setGptModal(false);
+                        }}
+                        onResponse={(response) => {
+                          handleAiAssistance(response);
+                        }}
+                        projectId={projectId.toString()}
+                      />
+                    </div>
                   </>
                 )}
               </div>

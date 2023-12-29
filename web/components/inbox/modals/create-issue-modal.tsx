@@ -277,21 +277,24 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             )}
                           />
                           {envConfig?.has_openai_configured && (
-                            <GptAssistantModal
-                              isOpen={gptAssistantModal}
-                              handleClose={() => {
-                                setGptAssistantModal(false);
-                                // this is done so that the title do not reset after gpt popover closed
-                                reset(getValues());
-                              }}
-                              inset="top-2 left-0"
-                              content=""
-                              htmlContent={watch("description_html")}
-                              onResponse={(response) => {
-                                handleAiAssistance(response);
-                              }}
-                              projectId={projectId}
-                            />
+                            <div
+                              className={`absolute top-2 left-0 z-20 flex w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
+                                gptAssistantModal ? "block" : "hidden"
+                              }`}
+                            >
+                              <GptAssistantModal
+                                isOpen={gptAssistantModal}
+                                handleClose={() => {
+                                  setGptAssistantModal(false);
+                                  // this is done so that the title do not reset after gpt popover closed
+                                  reset(getValues());
+                                }}
+                                onResponse={(response) => {
+                                  handleAiAssistance(response);
+                                }}
+                                projectId={projectId}
+                              />
+                            </div>
                           )}
                         </div>
 
