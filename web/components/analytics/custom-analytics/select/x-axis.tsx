@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // ui
 import { CustomSelect } from "@plane/ui";
 // types
-import { IAnalyticsParams, TXAxisValues } from "types";
+import { IAnalyticsParams, TXAxisValues } from "@plane/types";
 // constants
 import { ANALYTICS_X_AXIS_VALUES } from "constants/analytics";
 

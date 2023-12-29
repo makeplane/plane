@@ -10,7 +10,7 @@ import useDebounce from "hooks/use-debounce";
 // ui
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // types
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
+import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

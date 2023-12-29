@@ -6,7 +6,7 @@ import { DateDropdown } from "components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issueId: string;

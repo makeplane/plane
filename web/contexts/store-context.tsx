@@ -15,6 +15,5 @@ const initializeStore = () => {
 
 export const StoreProvider = ({ children }: any) => {
   const store = initializeStore();
-  console.log("store", store);
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 };

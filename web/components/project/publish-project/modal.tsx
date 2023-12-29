@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 import { Button, Loader, ToggleSwitch } from "@plane/ui";
 import { CustomPopover } from "./popover";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
 
 type Props = {
@@ -160,7 +160,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         return res;
       })
       .catch((error) => {
-        console.log("error", error);
+        console.error("error", error);
         return error;
       });
   };

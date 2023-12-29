@@ -17,8 +17,8 @@ import { Tooltip } from "@plane/ui";
 // images
 import emptyCycle from "public/empty-state/empty_cycles.webp";
 // types
-import { TCycleView, TCycleLayout } from "types";
-import { NextPageWithLayout } from "types/app";
+import { TCycleView, TCycleLayout } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";

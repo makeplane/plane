@@ -7,7 +7,7 @@ import { useIssues } from "hooks/store";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // types
-import { TIssue, TIssuePriorities } from "types";
+import { TIssue, TIssuePriorities } from "@plane/types";
 // constants
 import { EIssuesStoreType, ISSUE_PRIORITIES } from "constants/issue";
 

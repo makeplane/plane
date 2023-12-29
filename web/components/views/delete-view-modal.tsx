@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IProjectView } from "types";
+import { IProjectView } from "@plane/types";
 
 type Props = {
   data: IProjectView;

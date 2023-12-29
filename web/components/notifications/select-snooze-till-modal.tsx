@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 import { Button, CustomSelect } from "@plane/ui";
 import { CustomDatePicker } from "components/ui";
 // types
-import type { IUserNotification } from "types";
+import type { IUserNotification } from "@plane/types";
 
 type SnoozeModalProps = {
   isOpen: boolean;

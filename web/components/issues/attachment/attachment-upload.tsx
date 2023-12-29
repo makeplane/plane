@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // services
 import { IssueAttachmentService } from "services/issue";
 // types
-import { IIssueAttachment } from "types";
+import { IIssueAttachment } from "@plane/types";
 // fetch-keys
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // constants

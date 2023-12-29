@@ -3,7 +3,7 @@ import { ProfileEmptyState, PieGraph } from "components/ui";
 // image
 import stateGraph from "public/empty-state/state_graph.svg";
 // types
-import { IUserProfileData, IUserStateDistribution } from "types";
+import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 

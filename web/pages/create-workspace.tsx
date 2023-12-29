@@ -14,8 +14,8 @@ import { CreateWorkspaceForm } from "components/workspace";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { IWorkspace } from "types";
-import { NextPageWithLayout } from "types/app";
+import { IWorkspace } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router

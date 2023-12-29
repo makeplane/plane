@@ -9,7 +9,7 @@ import { AppLayout } from "layouts/app-layout";
 import { InboxActionsHeader, InboxMainContent, InboxIssuesListSidebar } from "components/inbox";
 import { ProjectInboxHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = () => {
   const router = useRouter();

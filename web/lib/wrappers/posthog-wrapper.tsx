@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 // mobx store provider
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 
@@ -59,7 +59,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (posthogAPIKey) {

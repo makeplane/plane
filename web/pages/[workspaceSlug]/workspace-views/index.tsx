@@ -9,7 +9,7 @@ import { Input } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 

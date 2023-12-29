@@ -3,7 +3,7 @@ import { WebhookSecretKey } from "./form";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 type Props = {
   handleClose: () => void;

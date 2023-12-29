@@ -5,7 +5,7 @@ import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
 // types
-import { TStaticViewTypes } from "types";
+import { TStaticViewTypes } from "@plane/types";
 
 export enum EUserWorkspaceRoles {
   GUEST = 5,

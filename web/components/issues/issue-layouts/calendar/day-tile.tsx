@@ -7,7 +7,7 @@ import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "c
 import { renderDateFormat } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
-import { TGroupedIssues, TIssue, TIssueMap } from "types";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";

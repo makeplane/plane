@@ -5,7 +5,7 @@ import { IssueColumn } from "components/issues";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // types
-import { TIssue, IIssueDisplayProperties } from "types";
+import { TIssue, IIssueDisplayProperties } from "@plane/types";
 
 type Props = {
   issueId: string;

@@ -13,7 +13,7 @@ import { ExistingIssuesListModal } from "components/core";
 // icons
 import { BlockedIcon } from "@plane/ui";
 // types
-import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "@plane/types";
 
 type Props = {
   issueId?: string;

@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { IssueActivityCard, IssueCommentEditor } from "components/issues";
 // types
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 
 type Props = {
   workspaceSlug: string;

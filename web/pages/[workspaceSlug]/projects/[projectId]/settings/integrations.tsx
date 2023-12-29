@@ -16,8 +16,8 @@ import { Loader } from "@plane/ui";
 // images
 import emptyIntegration from "public/empty-state/integration.svg";
 // types
-import { IProject } from "types";
-import { NextPageWithLayout } from "types/app";
+import { IProject } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 

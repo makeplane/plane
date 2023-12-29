@@ -10,7 +10,7 @@ import {
 } from "components/issues";
 import { Spinner, LayersIcon } from "@plane/ui";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "@plane/types";
 import { EIssueActions } from "../types";
 
 type Props = {

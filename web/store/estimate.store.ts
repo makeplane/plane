@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { ProjectEstimateService } from "services/project";
 // types
 import { RootStore } from "store/root.store";
-import { IEstimate, IEstimateFormData } from "types";
+import { IEstimate, IEstimateFormData } from "@plane/types";
 
 export interface IEstimateStore {
   // observables

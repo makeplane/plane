@@ -16,7 +16,7 @@ import {
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "types";
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 
 export interface IIssueProperties {
   issue: TIssue;

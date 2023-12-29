@@ -7,7 +7,7 @@ import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cy
 // ui components
 import { Loader } from "@plane/ui";
 // types
-import { TCycleLayout, TCycleView } from "types";
+import { TCycleLayout, TCycleView } from "@plane/types";
 
 export interface ICyclesView {
   filter: TCycleView;

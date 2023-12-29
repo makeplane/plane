@@ -20,7 +20,7 @@ import latestFeatures from "public/onboarding/onboarding-pages.svg";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 type TResetPasswordFormValues = {
   email: string;

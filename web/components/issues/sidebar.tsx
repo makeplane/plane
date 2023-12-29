@@ -32,7 +32,7 @@ import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserG
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { TIssue, IIssueLink, ILinkDetails } from "types";
+import type { TIssue, IIssueLink, ILinkDetails } from "@plane/types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";

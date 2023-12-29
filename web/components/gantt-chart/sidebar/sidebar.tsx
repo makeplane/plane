@@ -12,7 +12,7 @@ import { GanttInlineCreateIssueForm, IssueGanttSidebarBlock } from "components/i
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;

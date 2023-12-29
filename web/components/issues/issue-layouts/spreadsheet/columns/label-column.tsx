@@ -5,7 +5,7 @@ import { IssuePropertyLabels } from "../../properties";
 // hooks
 import { useIssueDetail, useLabel } from "hooks/store";
 // types
-import { TIssue, IIssueLabel } from "types";
+import { TIssue, IIssueLabel } from "@plane/types";
 
 type Props = {
   issueId: string;

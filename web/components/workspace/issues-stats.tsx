@@ -5,7 +5,7 @@ import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { Info } from "lucide-react";
 // types
-import { IUserWorkspaceDashboard } from "types";
+import { IUserWorkspaceDashboard } from "@plane/types";
 import { useRouter } from "next/router";
 import Link from "next/link";
 

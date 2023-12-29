@@ -12,7 +12,7 @@ import {
   IssueGanttSidebar,
 } from "components/gantt-chart";
 // types
-import { TIssue, TUnGroupedIssues } from "types";
+import { TIssue, TUnGroupedIssues } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";

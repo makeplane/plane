@@ -7,7 +7,7 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { TGroupedIssues, TIssue, TIssueMap } from "types";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useCalendarView } from "hooks/store/use-calendar-view";

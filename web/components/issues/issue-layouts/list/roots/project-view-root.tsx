@@ -5,7 +5,7 @@ import { useIssues } from "hooks/store";
 // constants
 import { useRouter } from "next/router";
 import { EIssueActions } from "../../types";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // components
 import { BaseListRoot } from "../base-list-root";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";

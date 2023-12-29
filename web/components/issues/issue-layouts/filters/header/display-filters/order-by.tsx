@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
-import { TIssueOrderByOptions } from "types";
+import { TIssueOrderByOptions } from "@plane/types";
 // constants
 import { ISSUE_ORDER_BY_OPTIONS } from "constants/issue";
 

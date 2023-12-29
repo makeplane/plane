@@ -10,7 +10,7 @@ import { Button, Input } from "@plane/ui";
 import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
 import { UserImageUploadModal } from "components/core";
 // types
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 // services
 import { FileService } from "services/file.service";
 // assets

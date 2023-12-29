@@ -10,7 +10,7 @@ import {
   TIssueParams,
   IProject,
   IWorkspace,
-} from "types";
+} from "@plane/types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 

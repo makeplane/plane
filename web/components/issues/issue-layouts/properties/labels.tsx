@@ -9,7 +9,7 @@ import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;

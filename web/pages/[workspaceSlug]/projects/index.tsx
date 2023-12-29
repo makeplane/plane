@@ -5,7 +5,7 @@ import { ProjectsHeader } from "components/headers";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectsPage: NextPageWithLayout = () => <ProjectCardList />;
 

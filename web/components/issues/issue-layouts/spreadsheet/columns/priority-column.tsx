@@ -4,7 +4,7 @@ import { useIssueDetail } from "hooks/store";
 // components
 import { PriorityDropdown } from "components/dropdowns";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issueId: string;

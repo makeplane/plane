@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "types";
+import type { IProject } from "@plane/types";
 
 type DeleteProjectModal = {
   isOpen: boolean;

@@ -12,8 +12,8 @@ import useToast from "hooks/use-toast";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 import { ProjectSettingHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IProject } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

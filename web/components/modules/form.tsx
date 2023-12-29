@@ -8,7 +8,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { IModule } from "types";
+import { IModule } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>) => Promise<void>;

@@ -11,7 +11,7 @@ import {
   TIssuePriorities,
   TIssueTypeFilters,
   TStateGroups,
-} from "types";
+} from "@plane/types";
 
 export enum EIssuesStoreType {
   GLOBAL = "GLOBAL",

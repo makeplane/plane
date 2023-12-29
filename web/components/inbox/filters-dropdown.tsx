@@ -8,7 +8,7 @@ import { MultiLevelDropdown } from "components/ui";
 // icons
 import { PriorityIcon } from "@plane/ui";
 // types
-import { IInboxFilterOptions } from "types";
+import { IInboxFilterOptions } from "@plane/types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 import { ISSUE_PRIORITIES } from "constants/issue";

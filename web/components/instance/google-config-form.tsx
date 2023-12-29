@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "types/instance";
+import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";

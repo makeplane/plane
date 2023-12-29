@@ -10,7 +10,7 @@ import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { IArchivedIssues, IArchivedIssuesFilter } from "store/issue/archived";
 import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
-import { TIssueMap } from "types";
+import { TIssueMap } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 

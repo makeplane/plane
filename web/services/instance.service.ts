@@ -2,12 +2,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type {
-  IFormattedInstanceConfiguration,
-  IInstance,
-  IInstanceAdmin,
-  IInstanceConfiguration,
-} from "types/instance";
+import type { IFormattedInstanceConfiguration, IInstance, IInstanceAdmin, IInstanceConfiguration } from "@plane/types";
 
 export class InstanceService extends APIService {
   constructor() {

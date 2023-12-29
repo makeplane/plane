@@ -13,7 +13,7 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TUnGroupedIssues,
-} from "types";
+} from "@plane/types";
 // constants
 import { EIssueActions } from "../types";
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";

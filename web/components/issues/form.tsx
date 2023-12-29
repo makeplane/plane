@@ -31,7 +31,7 @@ import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import type { TIssue, ISearchIssueResponse } from "types";
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",

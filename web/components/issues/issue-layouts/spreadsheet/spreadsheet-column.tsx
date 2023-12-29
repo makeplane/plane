@@ -27,7 +27,7 @@ import {
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, TIssueOrderByOptions } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, TIssueOrderByOptions } from "@plane/types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 

@@ -9,7 +9,7 @@ import { ReactionSelector } from "components/core";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IssueCommentReaction } from "types";
+import { IssueCommentReaction } from "@plane/types";
 
 type Props = {
   projectId?: string | string[];

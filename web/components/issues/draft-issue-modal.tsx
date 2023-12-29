@@ -13,7 +13,7 @@ import { useIssues, useProject, useUser } from "hooks/store";
 // components
 import { DraftIssueForm } from "components/issues";
 // types
-import type { TIssue } from "types";
+import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 // fetch-keys
 import { PROJECT_ISSUES_DETAILS, USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";

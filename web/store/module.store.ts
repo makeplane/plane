@@ -5,7 +5,7 @@ import sortBy from "lodash/sortBy";
 import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
 // types
-import { IModule, ILinkDetails } from "types";
+import { IModule, ILinkDetails } from "@plane/types";
 import { RootStore } from "store/root.store";
 
 export interface IModuleStore {

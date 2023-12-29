@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Loader } from "@plane/ui";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [

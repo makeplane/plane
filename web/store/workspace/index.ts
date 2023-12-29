@@ -2,7 +2,7 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { RootStore } from "../root.store";
 import set from "lodash/set";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // sub-stores

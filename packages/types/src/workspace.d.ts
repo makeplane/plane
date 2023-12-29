@@ -1,5 +1,5 @@
 import { EUserWorkspaceRoles } from "constants/workspace";
-import type { IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "types";
+import type { IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "@plane/types";
 
 export interface IWorkspace {
   readonly id: string;

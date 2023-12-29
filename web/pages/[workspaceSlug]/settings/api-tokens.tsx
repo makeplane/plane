@@ -15,7 +15,7 @@ import { Button, Spinner } from "@plane/ui";
 // services
 import { APITokenService } from "services/api_token.service";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { EUserWorkspaceRoles } from "constants/workspace";

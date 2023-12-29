@@ -1,4 +1,4 @@
-import type { IUser, TIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "types";
+import type { IUser, TIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "@plane/types";
 
 export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
 

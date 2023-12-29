@@ -3,7 +3,7 @@ import { isFuture, isPast } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // types
-import { ICycle, CycleDateCheckData } from "types";
+import { ICycle, CycleDateCheckData } from "@plane/types";
 // mobx
 import { RootStore } from "store/root.store";
 // services

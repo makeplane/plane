@@ -1,6 +1,6 @@
 import { memo } from "react";
 //types
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "types";
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";

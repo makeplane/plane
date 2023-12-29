@@ -1,5 +1,5 @@
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueFilterOptions } from "@plane/types";
 
 export const calculateTotalFilters = (filters: IIssueFilterOptions): number =>
   filters && Object.keys(filters).length > 0

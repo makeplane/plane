@@ -1,7 +1,7 @@
 import React from "react";
 // hooks
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { useIssueDetail } from "hooks/store";
 
 type Props = {

@@ -13,7 +13,7 @@ import { IssueCommentReaction } from "./comment-reaction";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import type { IIssueActivity, IUser } from "types";
+import type { IIssueActivity, IUser } from "@plane/types";
 
 // services
 const fileService = new FileService();

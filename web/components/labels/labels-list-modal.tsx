@@ -9,7 +9,7 @@ import { useLabel } from "hooks/store";
 // icons
 import { LayerStackIcon } from "@plane/ui";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

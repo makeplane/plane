@@ -11,7 +11,7 @@ import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-acti
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { TIssue, IIssueDisplayFilterOptions, TStaticViewTypes, TUnGroupedIssues } from "types";
+import { TIssue, IIssueDisplayFilterOptions, TStaticViewTypes, TUnGroupedIssues } from "@plane/types";
 import { EIssueActions } from "../types";
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";

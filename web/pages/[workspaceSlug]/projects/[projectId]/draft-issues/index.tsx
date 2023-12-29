@@ -7,7 +7,7 @@ import { AppLayout } from "layouts/app-layout";
 import { DraftIssueLayoutRoot } from "components/issues/issue-layouts/roots/draft-issue-layout-root";
 import { ProjectDraftIssueHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectDraftIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();

@@ -24,7 +24,7 @@ import {
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { IIssueActivity } from "types";
+import { IIssueActivity } from "@plane/types";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();

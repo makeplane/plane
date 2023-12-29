@@ -5,7 +5,7 @@ import { IssueService } from "services/issue";
 // components
 import { PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 

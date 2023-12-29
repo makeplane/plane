@@ -7,7 +7,7 @@ import {
   IIssueFilters,
   IIssueFiltersResponse,
   TIssueParams,
-} from "types";
+} from "@plane/types";
 // constants
 import { isNil } from "constants/common";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";

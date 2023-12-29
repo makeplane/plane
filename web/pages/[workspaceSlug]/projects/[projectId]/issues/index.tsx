@@ -3,7 +3,7 @@ import { ReactElement } from "react";
 import { ProjectLayoutRoot } from "components/issues";
 import { ProjectIssuesHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 

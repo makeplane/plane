@@ -11,7 +11,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { IEstimate, IEstimateFormData } from "types";
+import { IEstimate, IEstimateFormData } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

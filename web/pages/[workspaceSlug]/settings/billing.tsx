@@ -9,7 +9,7 @@ import { WorkspaceSettingHeader } from "components/headers";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 

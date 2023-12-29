@@ -7,7 +7,7 @@ import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services

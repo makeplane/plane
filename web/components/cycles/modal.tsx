@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 // components
 import { CycleForm } from "components/cycles";
 // types
-import type { CycleDateCheckData, ICycle } from "types";
+import type { CycleDateCheckData, ICycle } from "@plane/types";
 
 type CycleModalProps = {
   isOpen: boolean;

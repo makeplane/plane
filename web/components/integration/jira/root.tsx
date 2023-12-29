@@ -24,7 +24,7 @@ import {
 // assets
 import JiraLogo from "public/services/jira.svg";
 // types
-import { IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "@plane/types";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -83,7 +83,7 @@ export const JiraImporterRoot: React.FC = () => {
         router.push(`/${workspaceSlug}/settings/imports`);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

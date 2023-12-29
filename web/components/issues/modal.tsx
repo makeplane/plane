@@ -12,7 +12,7 @@ import { IssueDraftService } from "services/issue";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
-import type { TIssue } from "types";
+import type { TIssue } from "@plane/types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";

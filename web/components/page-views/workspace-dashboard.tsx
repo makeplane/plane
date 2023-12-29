@@ -50,7 +50,7 @@ export const WorkspaceDashboardView = observer(() => {
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 

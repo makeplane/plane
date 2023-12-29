@@ -6,7 +6,7 @@ import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { IssueService } from "services/issue/issue.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IProjectViewIssues {
   // observable

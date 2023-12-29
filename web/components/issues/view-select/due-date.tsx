@@ -10,7 +10,7 @@ import {
   renderShortMonthDate,
 } from "helpers/date-time.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;

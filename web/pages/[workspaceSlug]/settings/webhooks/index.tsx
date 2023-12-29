@@ -13,7 +13,7 @@ import { WebhooksList, WebhooksEmptyState, CreateWebhookModal } from "components
 // ui
 import { Button, Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const WebhooksListPage: NextPageWithLayout = observer(() => {
   // states

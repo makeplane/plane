@@ -3,7 +3,7 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 import { APITokenService } from "services/api_token.service";
 import { RootStore } from "../root.store";
 // types
-import { IApiToken } from "types/api_token";
+import { IApiToken } from "@plane/types";
 
 export interface IApiTokenStore {
   // observables

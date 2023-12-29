@@ -6,7 +6,7 @@ import { useUser } from "hooks/store";
 // components
 import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "components/onboarding";
 // types
-import { IWorkspace, TOnboardingSteps } from "types";
+import { IWorkspace, TOnboardingSteps } from "@plane/types";
 
 type Props = {
   finishOnboarding: () => Promise<void>;

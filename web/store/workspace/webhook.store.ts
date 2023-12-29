@@ -1,6 +1,6 @@
 // mobx
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 import { WebhookService } from "services/webhook.service";
 import { RootStore } from "../root.store";
 

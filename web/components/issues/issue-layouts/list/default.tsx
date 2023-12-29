@@ -10,7 +10,7 @@ import {
   IIssueDisplayProperties,
   TIssueMap,
   TUnGroupedIssues,
-} from "types";
+} from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
 import { HeaderGroupByCard } from "./headers/group-by-card";

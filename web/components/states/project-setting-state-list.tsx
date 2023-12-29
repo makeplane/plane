@@ -38,9 +38,6 @@ export const ProjectSettingStateList: React.FC = observer(() => {
   // derived values
   const orderedStateGroups = orderStateGroups(groupedProjectStates!);
 
-  console.log("groupedStates", groupedProjectStates);
-  console.log("orderedStateGroups", orderedStateGroups);
-
   return (
     <>
       <DeleteStateModal

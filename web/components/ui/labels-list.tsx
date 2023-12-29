@@ -2,7 +2,7 @@ import { FC } from "react";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 type IssueLabelsListProps = {
   labels?: (IIssueLabel | undefined)[];

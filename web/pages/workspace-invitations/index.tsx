@@ -14,7 +14,7 @@ import { Spinner } from "@plane/ui";
 // icons
 import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 

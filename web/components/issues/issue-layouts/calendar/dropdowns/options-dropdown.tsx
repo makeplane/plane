@@ -10,7 +10,7 @@ import { ToggleSwitch } from "@plane/ui";
 // icons
 import { Check, ChevronUp } from "lucide-react";
 // types
-import { TCalendarLayouts } from "types";
+import { TCalendarLayouts } from "@plane/types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
 import { EIssueFilterType } from "constants/issue";

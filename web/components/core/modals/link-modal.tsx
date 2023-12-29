@@ -7,7 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IIssueLink, ILinkDetails, ModuleLink } from "types";
+import type { IIssueLink, ILinkDetails, ModuleLink } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

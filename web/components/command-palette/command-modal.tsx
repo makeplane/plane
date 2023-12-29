@@ -26,7 +26,7 @@ import {
 } from "components/command-palette";
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // types
-import { IWorkspaceSearchResults } from "types";
+import { IWorkspaceSearchResults } from "@plane/types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { RefreshCw } from "lucide-react";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";
 
 type Props = {
