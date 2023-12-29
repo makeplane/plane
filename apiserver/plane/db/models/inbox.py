@@ -39,6 +39,8 @@ class InboxIssue(ProjectBaseModel):
         "db.Issue", related_name="inbox_duplicate", on_delete=models.SET_NULL, null=True
     )
     source = models.TextField(blank=True, null=True)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "InboxIssue"
