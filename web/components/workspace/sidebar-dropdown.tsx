@@ -16,7 +16,7 @@ import { Avatar, Loader } from "@plane/ui";
 import { IWorkspace } from "types";
 
 // Static Data
-const userLinks = (workspaceSlug: string, userId: string) => [
+const WORKSPACE_DROPDOWN_ITEMS = (workspaceSlug: string, userId: string) => [
   {
     name: "Workspace Settings",
     href: `/${workspaceSlug}/settings`,
@@ -155,8 +155,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         workspaces.map((workspace: IWorkspace) => (
                           <Menu.Item key={workspace.id}>
                             {() => (
-                              <button
-                                type="button"
+                              <Link
+                                href={`/${workspace.slug}`}
                                 onClick={() => handleWorkspaceNavigation(workspace)}
                                 className="flex w-full items-center justify-between gap-1 rounded-md p-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
                               >
@@ -190,7 +190,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                                     <Check className="h-3 w-3.5 text-custom-sidebar-text-100" />
                                   </span>
                                 )}
-                              </button>
+                              </Link>
                             )}
                           </Menu.Item>
                         ))
@@ -198,17 +198,19 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         <p>No workspace found!</p>
                       )}
                       <div className="sticky bottom-0 z-10 h-full w-full bg-custom-background-100">
-                        <Menu.Item
-                          as="button"
-                          type="button"
-                          onClick={() => {
-                            setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
-                            router.push("/create-workspace");
-                          }}
-                          className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                        >
-                          <Plus className="h-4 w-4" />
-                          Create Workspace
+                        <Menu.Item>
+                          {() => (
+                            <Link
+                              href="/create-workspace"
+                              className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                              onClick={() => {
+                                setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
+                              }}
+                            >
+                              <Plus className="h-4 w-4" />
+                              Create Workspace
+                            </Link>
+                          )}
                         </Menu.Item>
                       </div>
                     </div>
@@ -222,18 +224,20 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   )}
                 </div>
                 <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-200 px-3 py-2 text-sm">
-                  {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                    <Menu.Item
-                      key={index}
-                      as="div"
-                      onClick={() => {
-                        router.push(link.href);
-                      }}
-                      className="flex w-full cursor-pointer items-center justify-start rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                    >
-                      {link.name}
-                    </Menu.Item>
-                  ))}
+                  {WORKSPACE_DROPDOWN_ITEMS(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map(
+                    (link, index) => (
+                      <Menu.Item key={index} as="div" className="flex w-full">
+                        {() => (
+                          <Link
+                            className="flex w-full cursor-pointer items-center justify-start rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                            href={link.href}
+                          >
+                            {link.name}
+                          </Link>
+                        )}
+                      </Menu.Item>
+                    )
+                  )}
                 </div>
                 <div className="w-full border-t border-t-custom-sidebar-border-100 px-3 py-2">
                   <Menu.Item

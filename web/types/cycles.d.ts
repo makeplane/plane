@@ -2,6 +2,8 @@ import type { IUser, IIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, 
 
 export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
 
+export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
+
 export type TCycleLayout = "list" | "board" | "gantt";
 
 export interface ICycle {
@@ -24,6 +26,7 @@ export interface ICycle {
   owned_by: IUser;
   project: string;
   project_detail: IProjectLite;
+  status: TCycleGroups;
   sort_order: number;
   start_date: string | null;
   started_issues: number;

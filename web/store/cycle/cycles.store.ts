@@ -7,7 +7,6 @@ import { RootStore } from "../root";
 import { ProjectService } from "services/project";
 import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
-import { getDateRangeStatus } from "helpers/date-time.helper";
 
 export interface ICycleStore {
   loader: boolean;
@@ -318,7 +317,7 @@ export class CycleStore implements ICycleStore {
   };
 
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycle: ICycle) => {
-    const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+    const cycleStatus = cycle.status;
 
     const statusCyclesList = this.cycles[projectId]?.[cycleStatus] ?? [];
     const allCyclesList = this.projectCycles ?? [];
@@ -379,7 +378,7 @@ export class CycleStore implements ICycleStore {
   };
 
   removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycle: ICycle) => {
-    const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+    const cycleStatus = cycle.status;
 
     const statusCyclesList = this.cycles[projectId]?.[cycleStatus] ?? [];
     const allCyclesList = this.projectCycles ?? [];
