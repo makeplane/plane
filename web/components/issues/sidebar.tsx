@@ -540,6 +540,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             </div>
           )}
+
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
             <div className={`py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">

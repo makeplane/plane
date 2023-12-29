@@ -120,7 +120,7 @@ export const SidebarIssueRelationSelect: React.FC<Props> = observer((props) => {
                       className={`group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs duration-300 ${issueRelationObject[relationKey].className}`}
                     >
                       <a
-                        href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${issueId}`}
+                        href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${relationIssueId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1"
