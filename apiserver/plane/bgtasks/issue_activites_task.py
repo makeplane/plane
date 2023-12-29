@@ -112,8 +112,16 @@ def track_parent(
     epoch,
 ):
     if current_instance.get("parent") != requested_data.get("parent"):
-        old_parent = Issue.objects.filter(pk=current_instance.get("parent")).first() if current_instance.get("parent") is not None else None
-        new_parent = Issue.objects.filter(pk=requested_data.get("parent")).first() if requested_data.get("parent") is not None else None
+        old_parent = (
+            Issue.objects.filter(pk=current_instance.get("parent")).first()
+            if current_instance.get("parent") is not None
+            else None
+        )
+        new_parent = (
+            Issue.objects.filter(pk=requested_data.get("parent")).first()
+            if requested_data.get("parent") is not None
+            else None
+        )
 
         issue_activities.append(
             IssueActivity(
@@ -714,7 +722,9 @@ def create_cycle_issue_activity(
         cycle = Cycle.objects.filter(
             pk=created_record.get("fields").get("cycle")
         ).first()
-        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
+        issue = Issue.objects.filter(
+            pk=created_record.get("fields").get("issue")
+        ).first()
         if issue:
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
@@ -830,7 +840,9 @@ def create_module_issue_activity(
         module = Module.objects.filter(
             pk=created_record.get("fields").get("module")
         ).first()
-        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
+        issue = Issue.objects.filter(
+            pk=created_record.get("fields").get("issue")
+        ).first()
         if issue:
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
@@ -1286,10 +1298,10 @@ def create_issue_relation_activity(
                     verb="created",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field="blocked_by" if requested_data.get("relation_type") == "blocking" else requested_data.get("relation_type"),
+                    field=requested_data.get("relation_type"),
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f"added {'blocked_by' if requested_data.get('relation_type') == 'blocking' else requested_data.get('relation_type')} relation",
+                    comment=f"added {requested_data.get('relation_type')} relation",
                     old_identifier=related_issue,
                 )
             )
@@ -1301,10 +1313,16 @@ def create_issue_relation_activity(
                     verb="created",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field="blocking" if requested_data.get("relation_type") == "blocked_by" else requested_data.get("relation_type"),
+                    field="blocking"
+                    if requested_data.get("relation_type") == "blocked_by"
+                    else (
+                        "blocked_by"
+                        if requested_data.get("relation_type") == "blocking"
+                        else requested_data.get("relation_type")
+                    ),
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f'added {"blocking" if requested_data.get("relation_type") == "blocked_by" else requested_data.get("relation_type")} relation',
+                    comment=f'added {"blocking" if requested_data.get("relation_type") == "blocked_by" else ("blocked_by" if requested_data.get("relation_type") == "blocking" else requested_data.get("relation_type")),} relation',
                     old_identifier=issue_id,
                     epoch=epoch,
                 )
@@ -1362,7 +1380,6 @@ def delete_issue_relation_activity(
                 epoch=epoch,
             )
         )
-
 
 def create_draft_issue_activity(
     requested_data,
