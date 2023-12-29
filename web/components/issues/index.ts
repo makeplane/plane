@@ -24,3 +24,6 @@ export * from "./delete-draft-issue-modal";
 
 // archived issue
 export * from "./delete-archived-issue-modal";
+
+// issue links
+export * from "./issue-links";

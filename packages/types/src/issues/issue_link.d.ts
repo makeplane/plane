@@ -1,11 +1,14 @@
-export type TIssueLink = {
+export type TIssueLinkEditableFields = {
+  title: string;
+  url: string;
+};
+
+export type TIssueLink = TIssueLinkEditableFields & {
   created_at: Date;
   created_by: string;
   created_by_detail: IUserLite;
   id: string;
   metadata: any;
-  title: string;
-  url: string;
 };
 
 export type TIssueLinkMap = {

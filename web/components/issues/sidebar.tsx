@@ -3,16 +3,15 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
-import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
+import { Bell, CalendarDays, LinkIcon, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail, useIssues, useProject, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssues, useProject, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 // services
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // components
-import { LinkModal, LinksList } from "components/core";
 import {
   DeleteIssueModal,
   SidebarIssueRelationSelect,
@@ -20,6 +19,7 @@ import {
   SidebarModuleSelect,
   SidebarParentSelect,
   SidebarLabelSelect,
+  IssueLinkRoot,
 } from "components/issues";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // ui
@@ -29,7 +29,7 @@ import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserG
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { TIssue, IIssueLink, ILinkDetails } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
@@ -70,10 +70,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { control, submitChanges, issueDetail, watch: watchIssue, fieldsToShow = ["all"], uneditable = false } = props;
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { createLink, updateLink, removeLink } = useIssueDetail();
   const { getProjectById } = useProject();
   const {
     issues: { removeIssue },
@@ -127,21 +124,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     [workspaceSlug, projectId, issueId, issueDetail, currentUser]
   );
 
-  const issueLinkCreate = (formData: IIssueLink) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    createLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
-  };
-
-  const issueLinkUpdate = (formData: IIssueLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    updateLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
-  };
-
-  const issueLinkDelete = (linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    removeLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
-  };
-
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
@@ -182,28 +164,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const handleEditLink = (link: ILinkDetails) => {
-    setSelectedLinkToUpdate(link);
-    setLinkModal(true);
-  };
-
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state_id);
 
   return (
     <>
-      <LinkModal
-        isOpen={linkModal}
-        handleClose={() => {
-          setLinkModal(false);
-          setSelectedLinkToUpdate(null);
-        }}
-        data={selectedLinkToUpdate}
-        status={selectedLinkToUpdate ? true : false}
-        createIssueLink={issueLinkCreate}
-        updateIssueLink={issueLinkUpdate}
-      />
       {workspaceSlug && projectId && issueDetail && (
         <DeleteIssueModal
           handleClose={() => setDeleteIssueModal(false)}
@@ -215,6 +181,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           }}
         />
       )}
+
       <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
           <div className="flex items-center gap-x-2">
@@ -542,40 +509,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           )}
 
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <div className={`py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
-              <div className="flex items-center justify-between gap-2">
-                <h4>Links</h4>
-                {isAllowed && (
-                  <button
-                    type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
-                      uneditable ? "cursor-not-allowed" : "cursor-pointer"
-                    }`}
-                    onClick={() => setLinkModal(true)}
-                    disabled={uneditable}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              {issueDetail?.issue_link && issueDetail.issue_link.length > 0 && (
-                <div className="mt-2 space-y-2">
-                  {
-                    <LinksList
-                      links={issueDetail.issue_link}
-                      handleDeleteLink={issueLinkDelete}
-                      handleEditLink={handleEditLink}
-                      userAuth={{
-                        isGuest: currentProjectRole === 5,
-                        isViewer: currentProjectRole === 10,
-                        isMember: currentProjectRole === 15,
-                        isOwner: currentProjectRole === 20,
-                      }}
-                    />
-                  }
-                </div>
-              )}
-            </div>
+            <IssueLinkRoot uneditable={uneditable} isAllowed={isAllowed} />
           )}
         </div>
       </div>
