@@ -1,10 +1,10 @@
-import { UploadImage } from "@plane/editor-types";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
+import { UploadImage } from "src/types/upload-image";
 
 const uploadKey = new PluginKey("upload-image");
 
-const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
+export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
   new Plugin({
     key: uploadKey,
     state: {
@@ -43,7 +43,7 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
 
           cancelButton.appendChild(svgElement);
           placeholder.appendChild(cancelButton);
-          const deco = Decoration.widget(pos + 1, placeholder, {
+          const deco = Decoration.widget(pos, placeholder, {
             id,
           });
           set = set.add(tr.doc, [deco]);
@@ -59,8 +59,6 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
       },
     },
   });
-
-export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);
@@ -133,7 +131,8 @@ export async function startImageUpload(
     const imageSrc = typeof src === "object" ? reader.result : src;
 
     const node = schema.nodes.image.create({ src: imageSrc });
-    const transaction = view.state.tr.replaceWith(pos, pos, node).setMeta(uploadKey, { remove: { id } });
+    const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
+
     view.dispatch(transaction);
   } catch (error) {
     console.error("Upload error: ", error);

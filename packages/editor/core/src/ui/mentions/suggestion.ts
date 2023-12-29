@@ -2,10 +2,10 @@ import { ReactRenderer } from "@tiptap/react";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 
-import MentionList from "./MentionList";
-import { IMentionSuggestion } from "@plane/editor-types";
+import { MentionList } from "src/ui/mentions/mention-list";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
 
-const Suggestion = (suggestions: IMentionSuggestion[]) => ({
+export const Suggestion = (suggestions: IMentionSuggestion[]) => ({
   items: ({ query }: { query: string }) =>
     suggestions.filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5),
   render: () => {
@@ -55,5 +55,3 @@ const Suggestion = (suggestions: IMentionSuggestion[]) => ({
     };
   },
 });
-
-export default Suggestion;

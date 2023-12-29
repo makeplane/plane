@@ -56,11 +56,11 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   };
 
   const handleRegenerateSecretKey = () => {
-    if (!workspaceSlug || !webhookId) return;
+    if (!workspaceSlug || !data.id) return;
 
     setIsRegenerating(true);
 
-    regenerateSecretKey(workspaceSlug.toString(), webhookId.toString())
+    regenerateSecretKey(workspaceSlug.toString(), data.id)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -92,10 +92,10 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
     <>
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
-          <div className="text-sm font-medium">Secret key</div>
+          {webhookId && <div className="text-sm font-medium">Secret key</div>}
           <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
           <div className="flex items-center gap-4">
-            <div className="flex min-w-[30rem] max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
+            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
               <div className="select-none overflow-hidden font-medium">
                 {shouldShowKey ? (
                   <p className="text-xs">{webhookSecretKey}</p>

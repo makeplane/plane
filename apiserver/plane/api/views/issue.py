@@ -221,11 +221,20 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def patch(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueSerializer(issue, data=request.data, partial=True)
+        serializer = IssueSerializer(
+            issue,
+            data=request.data,
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+            },
+            partial=True,
+        )
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(

@@ -291,7 +291,9 @@ CELERY_IMPORTS = (
 
 # Sentry Settings
 # Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").startswith("https://"):
+if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
+    "SENTRY_DSN"
+).startswith("https://"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
         integrations=[
@@ -334,3 +336,5 @@ INSTANCE_KEY = os.environ.get(
 
 # Skip environment variable configuration
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))

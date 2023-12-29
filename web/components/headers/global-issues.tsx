@@ -95,7 +95,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                   <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
                 )
               }
-              label={`Workspace ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
+              label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
             />
           </Breadcrumbs>
         </div>

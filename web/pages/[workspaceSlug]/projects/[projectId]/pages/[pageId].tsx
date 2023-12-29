@@ -177,7 +177,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     onErrorAction: () => void
   ) => {
     const commonSwrOptions: MutatorOptions = {
-      revalidate: true,
+      revalidate: false,
       populateCache: false,
       rollbackOnError: () => {
         onErrorAction();
@@ -200,6 +200,22 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       ...commonSwrOptions,
     });
   };
+
+  useEffect(() => {
+    mutatePageDetails(undefined, {
+      revalidate: true,
+      populateCache: true,
+      rollbackOnError: () => {
+        actionCompleteAlert({
+          title: `Page could not be updated`,
+          message: `Sorry, page could not be updated, please try again later`,
+          type: "error",
+        });
+        return true;
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -246,6 +262,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // ================ Page Menu Actions ==================
   const duplicate_page = async () => {
     const currentPageValues = getValues();
+
+    if (!currentPageValues?.description_html) {
+      currentPageValues.description_html = pageDetails?.description_html as string;
+    }
+
     const formData: Partial<IPage> = {
       name: "Copy of " + pageDetails?.name,
       description_html: currentPageValues.description_html,
@@ -336,7 +357,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
     }, 1500),
-    [handleSubmit]
+    [handleSubmit, pageDetails]
   );
 
   if (error)

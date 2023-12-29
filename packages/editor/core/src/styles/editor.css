@@ -6,6 +6,12 @@
   height: 0;
 }
 
+/* block quotes */
+.ProseMirror blockquote p::before,
+.ProseMirror blockquote p::after {
+  display: none;
+}
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
@@ -15,9 +21,10 @@
 }
 
 /* Custom image styles */
-
 .ProseMirror img {
   transition: filter 0.1s ease-in-out;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 
   &:hover {
     cursor: pointer;
@@ -53,11 +60,12 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   background-color: rgb(var(--color-background-100));
   margin: 0;
   cursor: pointer;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 0.8rem;
+  height: 0.8rem;
   position: relative;
-  border: 2px solid rgb(var(--color-text-100));
-  margin-right: 0.3rem;
+  border: 1.5px solid rgb(var(--color-text-100));
+  margin-right: 0.2rem;
+  margin-top: 0.15rem;
   display: grid;
   place-content: center;
 
@@ -71,8 +79,8 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 
   &::before {
     content: "";
-    width: 0.65em;
-    height: 0.65em;
+    width: 0.5em;
+    height: 0.5em;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em;
@@ -133,6 +141,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .img-placeholder {
   position: relative;
   width: 35%;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 
   &:before {
     content: "";
@@ -159,7 +169,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   table {
     border-collapse: collapse;
     table-layout: fixed;
-    margin: 0;
+    margin: 0.5em 0 0.5em 0;
+
     border: 1px solid rgb(var(--color-border-200));
     width: 100%;
 
@@ -228,4 +239,35 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 
 .ProseMirror table * .is-empty::before {
   opacity: 0;
+}
+
+.ProseMirror pre {
+  background: rgba(var(--color-background-80));
+  border-radius: 0.5rem;
+  color: rgba(var(--color-text-100));
+  font-family: "JetBrainsMono", monospace;
+  padding: 0.75rem 1rem;
+}
+
+.ProseMirror pre code {
+  background: none;
+  color: inherit;
+  font-size: 0.8rem;
+  padding: 0;
+}
+
+div[data-type="horizontalRule"] {
+  line-height: 0;
+  padding: 0.25rem 0;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  & > div {
+    border-bottom: 1px solid rgb(var(--color-text-100));
+  }
+}
+
+/* image resizer */
+.moveable-control-box {
+  z-index: 10 !important;
 }

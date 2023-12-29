@@ -1,15 +1,15 @@
 import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 import { useRouter } from "next/router";
 import { useState, forwardRef, useEffect } from "react";
-import { EditorHeader } from "../components/editor-header";
-import { PageRenderer } from "../components/page-renderer";
-import { SummarySideBar } from "../components/summary-side-bar";
-import { IssueWidgetExtension } from "../extensions/widgets/IssueEmbedWidget";
-import { IEmbedConfig } from "../extensions/widgets/IssueEmbedWidget/types";
-import { useEditorMarkings } from "../hooks/use-editor-markings";
-import { DocumentDetails } from "../types/editor-types";
-import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "../types/menu-actions";
-import { getMenuOptions } from "../utils/menu-options";
+import { EditorHeader } from "src/ui/components/editor-header";
+import { PageRenderer } from "src/ui/components/page-renderer";
+import { SummarySideBar } from "src/ui/components/summary-side-bar";
+import { IssueWidgetExtension } from "src/ui/extensions/widgets/issue-embed-widget";
+import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
+import { useEditorMarkings } from "src/hooks/use-editor-markings";
+import { DocumentDetails } from "src/types/editor-types";
+import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
+import { getMenuOptions } from "src/utils/menu-options";
 
 interface IDocumentReadOnlyEditor {
   value: string;
