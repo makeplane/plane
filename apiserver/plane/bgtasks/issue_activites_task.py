@@ -1277,8 +1277,8 @@ def create_issue_relation_activity(
         json.loads(current_instance) if current_instance is not None else None
     )
     if current_instance is None and requested_data.get("issues") is not None:
-        for related_issue in requested_data.get("issues"):    
-            issue = Issue.objects.get(pk=issue_id)
+        for related_issue in requested_data.get("issues"): 
+            issue = Issue.objects.get(pk=related_issue)
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
@@ -1293,7 +1293,7 @@ def create_issue_relation_activity(
                     old_identifier=related_issue,
                 )
             )
-            issue = Issue.objects.get(pk=related_issue)
+            issue = Issue.objects.get(pk=issue_id)
             issue_activities.append(
                 IssueActivity(
                     issue_id=related_issue,
