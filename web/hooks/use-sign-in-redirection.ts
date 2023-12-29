@@ -26,8 +26,6 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
     return !disallowedSchemes.test(url);
   };
 
-  console.log("next_path", next_path);
-
   const handleSignInRedirection = useCallback(
     async (user: IUser) => {
       try {

@@ -83,8 +83,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     }
   };
 
-  // console.log("projectLabels", projectLabels);
-
   return (
     <>
       <DeleteLabelModal

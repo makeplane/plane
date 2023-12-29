@@ -99,7 +99,6 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleZoomWorkspace = (value: string) => {
-    // console.log(lastWorkspaceName,value);
     if (lastWorkspaceName === value) return;
     lastWorkspaceName = value;
     if (timer > 0) {
