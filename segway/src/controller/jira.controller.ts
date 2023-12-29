@@ -17,6 +17,8 @@ const IMPORTER_TASK_ROUTE = "plane.bgtasks.importer_task.import_issue_sync";
 const IMPORTER_STATUS_TASK_ROUTE =
   "plane.bgtasks.importer_task.import_status_sync";
 const MEMBER_TASK_ROUTE = "plane.bgtasks.importer_task.import_member_sync";
+const LABEL_TASK_ROUTE = "plane.bgtasks.importer_task.import_label_sync";
+const MODULE_TASK_ROUTE = "plane.bgtasks.importer_task.import_module_sync"
 
 @Controller("api/jira")
 export class JiraController {
@@ -106,6 +108,7 @@ export class JiraController {
         project_id,
         created_by,
         importer_id,
+        config: { epics_to_modules },
       } = req.body;
 
       const auth = {
@@ -117,8 +120,7 @@ export class JiraController {
         Accept: "application/json",
       };
 
-      const url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic, subtasks&maxResults=100&expand=renderedFields`;
-
+      // Users
       for (const user of users) {
         if (
           user?.email &&
@@ -137,9 +139,39 @@ export class JiraController {
             },
             other_data: {}, // other data
           };
-
           this.mq?.publish(memberSync, MEMBER_TASK_ROUTE);
         }
+      }
+
+      // All labels
+      const labelsUrl = `https://${cloud_hostname}/rest/api/3/label/?jql=project=${project_key}`;
+      const { data } = await axios({
+        url: labelsUrl,
+        auth: auth,
+        method: "get",
+      });
+
+      for (const label of data.values) {
+        const labelSync = {
+          args: [],
+          kwargs: {
+            data: {
+              name: label,
+              external_source: "jira",
+              project_id: project_id,
+              workspace_id: workspace_id,
+              importer_id: importer_id,
+              created_by_id: created_by,
+            },
+          },
+        };
+        this.mq?.publish(labelSync, LABEL_TASK_ROUTE);
+      }
+
+      // All issues
+      let url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key}&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic, subtasks&maxResults=100&expand=renderedFields`;
+      if (epics_to_modules) {
+         url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key} AND issuetype != Epic&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic, subtasks&maxResults=100&expand=renderedFields`;
       }
 
       for await (const issue of loadIssues(url, auth)) {
@@ -249,6 +281,30 @@ export class JiraController {
         };
 
         this.mq?.publish(issuesSync, `${IMPORTER_TASK_ROUTE}`);
+      }
+
+
+      if (epics_to_modules){
+        const url = `https://${cloud_hostname}/rest/api/3/search/?jql=project=${project_key} AND issuetype = Epic&fields=comment, issuetype, summary, description, assignee, priority, status, labels, duedate, parent, parentEpic, subtasks&maxResults=100&expand=renderedFields`;
+        for await (const issue of loadIssues(url, auth)) {
+          const moduleSync = {
+            args: [], // args
+            kwargs: {
+              data: {
+                type: "issue.create",
+                name: issue.fields.summary.substring(0, 250),
+                workspace_id,
+                project_id,
+                created_by_id: created_by,
+                external_id: issue.id,
+                external_source: "jira",
+                importer_id,
+              },
+            }, // kwargs
+            other_data: {}, // other data
+          };
+          this.mq?.publish(moduleSync, MODULE_TASK_ROUTE);
+        }
       }
 
       return;

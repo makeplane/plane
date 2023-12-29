@@ -147,11 +147,15 @@ def resolve_state(data):
                 ).first()
         else:
             with transaction.atomic():
-                existing = State.objects.select_for_update().filter(
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    name=state_data.get("name"),
-                ).first()
+                existing = (
+                    State.objects.select_for_update()
+                    .filter(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        name=state_data.get("name"),
+                    )
+                    .first()
+                )
 
                 if existing:
                     existing.external_id = state_data.get("external_id")
@@ -197,11 +201,15 @@ def resolve_labels(data):
         external_source = label.get("external_source")
         try:
             with transaction.atomic():
-                existing = Label.objects.select_for_update().filter(
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    name__exact=name,
-                ).first()
+                existing = (
+                    Label.objects.select_for_update()
+                    .filter(
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        name__exact=name,
+                    )
+                    .first()
+                )
                 if existing:
                     existing.external_id = label.get("external_id")
                     existing.external_source = label.get("external_source")
@@ -341,12 +349,16 @@ def resolve_cycle(data):
     importer_id = data.get("importer_id")
 
     with transaction.atomic():
-        cycle = Cycle.objects.select_for_update().filter(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            external_id=cycle_data.get("external_id"),
-            external_source=cycle_data.get("external_source"),
-        ).first()
+        cycle = (
+            Cycle.objects.select_for_update()
+            .filter(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                external_id=cycle_data.get("external_id"),
+                external_source=cycle_data.get("external_source"),
+            )
+            .first()
+        )
 
         if cycle:
             cycle.external_id = cycle_data.get("external_id")
@@ -385,11 +397,15 @@ def resolve_module(data):
     importer_id = data.get("importer_id")
 
     with transaction.atomic():
-        module = Module.objects.select_for_update().filter(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            name=module_data.get("name"),
-        ).first()
+        module = (
+            Module.objects.select_for_update()
+            .filter(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                name=module_data.get("name"),
+            )
+            .first()
+        )
 
         if module:
             module.external_id = module_data.get("external_id")
@@ -522,11 +538,15 @@ def import_label_sync(data):
     color = data.get("color", generate_random_hex_color())
     try:
         with transaction.atomic():
-            existing = Label.objects.select_for_update().filter(
-                workspace_id=workspace_id,
-                project_id=project_id,
-                name__exact=name,
-            ).first()
+            existing = (
+                Label.objects.select_for_update()
+                .filter(
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    name__exact=name,
+                )
+                .first()
+            )
             if existing:
                 existing.external_id = external_id
                 existing.external_source = external_source
@@ -775,6 +795,63 @@ def import_issue_sync(data):
             issue=issue,
             created_by_id=created_by_id,
         )
+
+
+@shared_task(queue="segway_tasks")
+def import_module_sync(data):
+    project_id = data.get("project_id")
+    workspace_id = data.get("workspace_id")
+    created_by_id = data.get("created_by_id")
+    importer_id = data.get("importer_id")
+    name = data.get("name")
+    external_id = data.get("external_id")
+    external_source = data.get("external_source")
+    try:
+        with transaction.atomic():
+            module = (
+                Module.objects.select_for_update()
+                .filter(
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    name=name,
+                )
+                .first()
+            )
+
+            if module:
+                module.external_id = external_id
+                module.external_source = external_source
+                update_imported_items(
+                    importer_id=importer_id,
+                    entity="modules",
+                    entity_id=module.id,
+                    external_id=external_id,
+                )
+            else:
+                module = Module.objects.create(
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    external_id=external_id,
+                    external_source=external_source,
+                    name=name,
+                    created_by_id=created_by_id,
+                )
+                update_imported_items(
+                    importer_id=importer_id,
+                    entity="modules",
+                    entity_id=module.id,
+                    external_id=external_id,
+                )
+        return
+    except Exception as e:
+        update_imported_items(
+            importer_id=importer_id,
+            entity="failed_modules",
+            entity_id=module.id,
+            external_id=external_id,
+            reason=str(e),
+        )
+        return
 
 
 @shared_task(queue="segway_tasks")
