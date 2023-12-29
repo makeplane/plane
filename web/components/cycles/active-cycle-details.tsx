@@ -28,7 +28,7 @@ import { ViewIssueLabel } from "components/issues";
 // icons
 import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
 // helpers
-import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
@@ -137,7 +137,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     cancelled: cycle.cancelled_issues,
   };
 
-  const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+  const cycleStatus = cycle.status.toLocaleLowerCase();
 
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

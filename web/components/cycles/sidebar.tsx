@@ -31,7 +31,6 @@ import {
 import { copyUrlToClipboard } from "helpers/string.helper";
 import {
   findHowManyDaysLeft,
-  getDateRangeStatus,
   isDateGreaterThanToday,
   renderDateFormat,
   renderShortDate,
@@ -275,10 +274,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
+  const cycleStatus = cycleDetails.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
   const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
