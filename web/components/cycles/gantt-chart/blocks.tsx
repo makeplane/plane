@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
-import { getDateRangeStatus, renderShortDate } from "helpers/date-time.helper";
+import { renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
@@ -11,8 +11,7 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const cycleStatus = getDateRangeStatus(data?.start_date, data?.end_date);
-
+  const cycleStatus = data.status.toLocaleLowerCase();
   return (
     <div
       className="relative flex h-full w-full items-center rounded"
@@ -21,12 +20,12 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-              ? "#f7ae59"
-              : cycleStatus === "completed"
-                ? "#3f76ff"
-                : cycleStatus === "draft"
-                  ? "rgb(var(--color-text-200))"
-                  : "",
+            ? "#f7ae59"
+            : cycleStatus === "completed"
+            ? "#3f76ff"
+            : cycleStatus === "draft"
+            ? "rgb(var(--color-text-200))"
+            : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
     >
@@ -52,7 +51,7 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const cycleStatus = getDateRangeStatus(data?.start_date, data?.end_date);
+  const cycleStatus = data.status.toLocaleLowerCase();
 
   return (
     <div
@@ -65,12 +64,12 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-              ? "#f7ae59"
-              : cycleStatus === "completed"
-                ? "#3f76ff"
-                : cycleStatus === "draft"
-                  ? "rgb(var(--color-text-200))"
-                  : ""
+            ? "#f7ae59"
+            : cycleStatus === "completed"
+            ? "#3f76ff"
+            : cycleStatus === "draft"
+            ? "rgb(var(--color-text-200))"
+            : ""
         }`}
       />
       <h6 className="flex-grow truncate text-sm font-medium">{data?.name}</h6>
