@@ -33,7 +33,8 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
             projectId={issueDetail.project_id}
             disabled={disabled}
             buttonVariant="transparent-with-text"
-            buttonClassName="rounded-none"
+            buttonClassName="rounded-none text-left"
+            buttonContainerClassName="w-full"
           />
         </div>
       )}
@@ -41,7 +42,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
       {isExpanded &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssueId: string) => (
+        subIssues.map((subIssueId) => (
           <SpreadsheetEstimateColumn
             key={subIssueId}
             issueId={subIssueId}

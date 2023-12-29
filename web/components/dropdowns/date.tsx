@@ -13,6 +13,7 @@ import { Placement } from "@popperjs/core";
 
 type Props = {
   buttonClassName?: string;
+  buttonContainerClassName?: string;
   buttonVariant: TButtonVariants;
   disabled?: boolean;
   icon?: React.ReactNode;
@@ -111,6 +112,7 @@ const TransparentButton = (props: ButtonProps) => {
 export const DateDropdown: React.FC<Props> = (props) => {
   const {
     buttonClassName = "",
+    buttonContainerClassName,
     buttonVariant,
     disabled = false,
     icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
@@ -149,10 +151,14 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <button
               ref={setReferenceElement}
               type="button"
-              className={cn("block h-full max-w-full outline-none", {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              })}
+              className={cn(
+                "block h-full max-w-full outline-none",
+                {
+                  "cursor-not-allowed text-custom-text-200": disabled,
+                  "cursor-pointer": !disabled,
+                },
+                buttonContainerClassName
+              )}
             >
               {buttonVariant === "border-with-text" ? (
                 <BorderButton

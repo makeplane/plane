@@ -31,7 +31,8 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = (props) => {
             onChange={(data) => onChange(issueDetail, { priority: data })}
             disabled={disabled}
             buttonVariant="transparent-with-text"
-            buttonClassName="rounded-none"
+            buttonClassName="rounded-none text-left"
+            buttonContainerClassName="w-full"
           />
         </div>
       )}

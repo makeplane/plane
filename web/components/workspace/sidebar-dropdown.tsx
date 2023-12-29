@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
 import { mutate } from "swr";
-import { Check, ChevronDown, CircleUserRound, LogOut, Mail, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // hooks
@@ -18,22 +18,22 @@ import { IWorkspace } from "types";
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
+    key: "workspace_invites",
+    name: "Workspace invites",
+    href: "/invitations",
+    icon: Mails,
+  },
+  {
+    key: "view_profile",
+    name: "View profile",
+    href: `/${workspaceSlug}/profile/${userId}`,
+    icon: CircleUserRound,
+  },
+  {
     key: "settings",
     name: "Settings",
     href: `/${workspaceSlug}/settings`,
     icon: Settings,
-  },
-  {
-    key: "workspace_invites",
-    name: "Workspace invites",
-    href: "/invitations",
-    icon: Mail,
-  },
-  {
-    key: "my_profile",
-    name: "My profile",
-    href: `/${workspaceSlug}/profile/${userId}`,
-    icon: CircleUserRound,
   },
 ];
 

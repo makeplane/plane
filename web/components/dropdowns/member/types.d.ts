@@ -4,6 +4,7 @@ import { TButtonVariants } from "../types";
 export type MemberDropdownProps = {
   button?: ReactNode;
   buttonClassName?: string;
+  buttonContainerClassName?: string;
   buttonVariant: TButtonVariants;
   className?: string;
   disabled?: boolean;

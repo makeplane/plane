@@ -16,6 +16,7 @@ import { TButtonVariants } from "./types";
 type Props = {
   button?: ReactNode;
   buttonClassName?: string;
+  buttonContainerClassName?: string;
   buttonVariant: TButtonVariants;
   className?: string;
   disabled?: boolean;
@@ -90,6 +91,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   const {
     button,
     buttonClassName,
+    buttonContainerClassName,
     buttonVariant,
     className = "",
     disabled = false,
@@ -156,17 +158,25 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     >
       <Combobox.Button as={Fragment}>
         {button ? (
-          <button ref={setReferenceElement} type="button" className="block h-full w-full outline-none">
+          <button
+            ref={setReferenceElement}
+            type="button"
+            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+          >
             {button}
           </button>
         ) : (
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full max-w-full outline-none", {
-              "cursor-not-allowed text-custom-text-200": disabled,
-              "cursor-pointer": !disabled,
-            })}
+            className={cn(
+              "block h-full max-w-full outline-none",
+              {
+                "cursor-not-allowed text-custom-text-200": disabled,
+                "cursor-pointer": !disabled,
+              },
+              buttonContainerClassName
+            )}
           >
             {buttonVariant === "border-with-text" ? (
               <BorderButton

@@ -29,7 +29,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { projectCycleIds } = useCycle();
+  const { currentProjectCycleIds } = useCycle();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -52,7 +52,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     [handleCurrentLayout, setCycleTab]
   );
 
-  const totalCycles = projectCycleIds?.length ?? 0;
+  const totalCycles = currentProjectCycleIds?.length ?? 0;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
