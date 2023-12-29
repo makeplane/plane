@@ -1477,7 +1477,7 @@ class IssueRelationViewSet(BaseViewSet):
 
         if relation_type == "blocking":
             issue_relation = IssueRelation.objects.get(
-                workspace__slug=slug, project_id=project_id, issue_id=related_issue, relate_issue_id=issue_id
+                workspace__slug=slug, project_id=project_id, issue_id=related_issue, related_issue_id=issue_id
             )
         else:
             issue_relation = IssueRelation.objects.get(
