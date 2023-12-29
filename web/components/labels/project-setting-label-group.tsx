@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 // icons
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 import {
   Draggable,
   DraggableProvided,

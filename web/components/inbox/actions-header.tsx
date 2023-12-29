@@ -19,7 +19,7 @@ import { Button } from "@plane/ui";
 // icons
 import { CheckCircle2, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
-import type { TInboxStatus } from "types";
+import type { TInboxStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 
 export const InboxActionsHeader = observer(() => {

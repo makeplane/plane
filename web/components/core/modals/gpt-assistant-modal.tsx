@@ -11,7 +11,7 @@ import { Button, Input } from "@plane/ui";
 // components
 import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
-import { TIssue, IPageBlock } from "types";
+import { TIssue, IPageBlock } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { CycleDateCheckData, ICycle, TIssue, TIssueMap } from "types";
+import type { CycleDateCheckData, ICycle, TIssue, TIssueMap } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 

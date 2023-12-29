@@ -5,7 +5,7 @@ import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Spinner, Tooltip } from "@plane/ui";
 // types
-import { TIssue, IIssueDisplayProperties, TIssueMap } from "types";
+import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 import { useProject } from "hooks/store";
 

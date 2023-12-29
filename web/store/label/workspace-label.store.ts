@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { IssueLabelService } from "services/issue";
 // types
 import { RootStore } from "store/root.store";
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 import { ILabelRootStore } from "store/label";
 
 export interface IWorkspaceLabelStore {

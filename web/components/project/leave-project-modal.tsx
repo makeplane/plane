@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 
 type FormData = {
   projectName: string;

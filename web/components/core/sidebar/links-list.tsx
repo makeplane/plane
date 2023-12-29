@@ -5,7 +5,7 @@ import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { ILinkDetails, UserAuth } from "types";
+import { ILinkDetails, UserAuth } from "@plane/types";
 // hooks
 import useToast from "hooks/use-toast";
 

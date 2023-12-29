@@ -8,7 +8,7 @@ import {
   ModulePlannedIcon,
 } from "components/icons";
 // types
-import { TModuleStatus } from "types";
+import { TModuleStatus } from "@plane/types";
 
 type Props = {
   status: TModuleStatus;

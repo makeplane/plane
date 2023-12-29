@@ -1,5 +1,5 @@
 import { renderDateFormat } from "helpers/date-time.helper";
-import { IWebhook, IWorkspace } from "types";
+import { IWebhook, IWorkspace } from "@plane/types";
 
 export const getCurrentHookAsCSV = (
   currentWorkspace: IWorkspace | null,

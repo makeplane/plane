@@ -10,7 +10,7 @@ import { CycleService } from "services/cycle.service";
 import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
 import { CycleGanttBlock } from "components/cycles";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

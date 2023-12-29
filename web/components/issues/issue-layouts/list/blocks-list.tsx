@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { IssueBlock } from "components/issues";
 // types
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "types";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { EIssueActions } from "../types";
 
 interface Props {

@@ -25,7 +25,7 @@ import { EmptyState } from "components/common";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 const LABELS_ROOT = "labels.root";
 
@@ -82,8 +82,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
       return;
     }
   };
-
-  console.log("projectLabels", projectLabels);
 
   return (
     <>

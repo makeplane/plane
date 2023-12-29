@@ -13,7 +13,7 @@ import { StoreProvider } from "contexts/store-context";
 
 import { AppProvider } from "lib/app-provider";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;

@@ -6,7 +6,7 @@ import { IssueLabelService } from "services/issue";
 import { buildTree } from "helpers/array.helper";
 // types
 import { RootStore } from "store/root.store";
-import { IIssueLabel, IIssueLabelTree } from "types";
+import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 import { ILabelRootStore } from "store/label";
 
 export interface IProjectLabelStore {

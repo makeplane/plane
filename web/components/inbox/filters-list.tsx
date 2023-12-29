@@ -10,7 +10,7 @@ import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IInboxFilterOptions, TIssuePriorities } from "types";
+import { IInboxFilterOptions, TIssuePriorities } from "@plane/types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 

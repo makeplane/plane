@@ -3,7 +3,7 @@ import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue 
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
 import { useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";

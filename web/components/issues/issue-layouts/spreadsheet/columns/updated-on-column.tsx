@@ -5,7 +5,7 @@ import React from "react";
 // helpers
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { useIssueDetail } from "hooks/store";
 
 type Props = {

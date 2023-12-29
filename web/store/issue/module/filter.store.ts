@@ -13,7 +13,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilters,
   TIssueParams,
-} from "types";
+} from "@plane/types";
 // constants
 import { EIssueFilterType } from "constants/issue";
 // services

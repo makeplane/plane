@@ -10,7 +10,7 @@ import { ArchiveRestore } from "lucide-react";
 // constants
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

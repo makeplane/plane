@@ -11,7 +11,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 const Inputs = (props: any) => {
   const { register, setFocus, projectDetail } = props;

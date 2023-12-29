@@ -6,7 +6,7 @@ import { useWebhook } from "hooks/store";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 interface IWebhookListItem {
   webhook: IWebhook;

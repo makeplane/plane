@@ -10,7 +10,8 @@
     "packages/eslint-config-custom",
     "packages/tailwind-config-custom",
     "packages/tsconfig",
-    "packages/ui"
+    "packages/ui",
+    "packages/types"
   ],
   "scripts": {
     "build": "turbo run build",

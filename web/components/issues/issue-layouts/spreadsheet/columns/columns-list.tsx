@@ -4,7 +4,7 @@ import { useProject } from "hooks/store";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "@plane/types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;

@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IPage } from "types";
+import type { IPage } from "@plane/types";
 
 type TConfirmPageDeletionProps = {
   data?: IPage | null;

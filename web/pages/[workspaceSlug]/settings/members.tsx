@@ -14,8 +14,8 @@ import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/w
 // ui
 import { Button } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWorkspaceBulkInviteFormData } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 

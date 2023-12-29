@@ -6,7 +6,7 @@ import { IProfileIssues } from "store/issue/profile";
 import { IProjectIssues } from "store/issue/project";
 import { IProjectViewIssues } from "store/issue/project-views";
 import { IWorkspaceIssues } from "store/issue/workspace";
-import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "types";
+import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "@plane/types";
 
 export const handleDragDrop = async (
   source: DraggableLocation | null | undefined,

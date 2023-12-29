@@ -8,7 +8,7 @@ import { useApplication, useProject } from "hooks/store";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // types
-import { IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "@plane/types";
 
 export const JiraGetImportDetail: React.FC = observer(() => {
   // store hooks

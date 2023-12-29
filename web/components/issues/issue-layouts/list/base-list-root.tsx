@@ -1,7 +1,7 @@
 import { List } from "./default";
 import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
 import { observer } from "mobx-react-lite";

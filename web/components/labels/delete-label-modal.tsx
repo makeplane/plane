@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssueLabel } from "types";
+import type { IIssueLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

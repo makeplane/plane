@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { InboxService } from "services/inbox.service";
 // types
 import { RootStore } from "store/root.store";
-import { IInbox } from "types";
+import { IInbox } from "@plane/types";
 
 export interface IInboxStore {
   // observables

@@ -11,7 +11,7 @@ import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
 // types
-import { IWebhook, IWorkspace, TWebhookEventTypes } from "types";
+import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 
 interface WebhookWithKey {
   webHook: IWebhook;

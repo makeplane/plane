@@ -3,7 +3,7 @@ import isEmpty from "lodash/isEmpty";
 // store
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 export type IIssueStore = {
   // observables

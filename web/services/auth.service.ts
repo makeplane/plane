@@ -9,7 +9,7 @@ import {
   ILoginTokenResponse,
   IMagicSignInData,
   IPasswordSignInData,
-} from "types/auth";
+} from "@plane/types";
 
 export class AuthService extends APIService {
   constructor() {

@@ -9,7 +9,7 @@ import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { TIssue, IIssueLink } from "types";
+import { TIssue, IIssueLink } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";

@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { InboxService } from "services/inbox.service";
 // types
 import { RootStore } from "store/root.store";
-import { IInbox, IInboxFilterOptions, IInboxQueryParams } from "types";
+import { IInbox, IInboxFilterOptions, IInboxQueryParams } from "@plane/types";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
 

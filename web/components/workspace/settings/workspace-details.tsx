@@ -16,7 +16,7 @@ import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 

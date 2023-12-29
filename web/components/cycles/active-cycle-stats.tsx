@@ -7,7 +7,7 @@ import { SingleProgressStats } from "components/core";
 // ui
 import { Avatar } from "@plane/ui";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 
 type Props = {
   cycle: ICycle;

@@ -4,7 +4,7 @@ import { Tooltip, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { useProject, useProjectState } from "hooks/store";
 
 export const IssueGanttBlock = ({ data }: { data: TIssue }) => {

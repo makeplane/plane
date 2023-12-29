@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 // types
-import type { IState } from "types";
+import type { IState } from "@plane/types";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 

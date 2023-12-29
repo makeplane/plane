@@ -18,8 +18,8 @@ import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane
 // icons
 import { ChevronDown, User2 } from "lucide-react";
 // types
-import type { IUser } from "types";
-import type { NextPageWithLayout } from "types/app";
+import type { IUser } from "@plane/types";
+import type { NextPageWithLayout } from "lib/types";
 // constants
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";

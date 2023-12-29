@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { IUser, IPageBlock } from "types";
+import { IUser, IPageBlock } from "@plane/types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 

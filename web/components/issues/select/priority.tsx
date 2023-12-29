@@ -3,7 +3,7 @@ import React from "react";
 // ui
 import { CustomSelect, PriorityIcon } from "@plane/ui";
 // types
-import { TIssuePriorities } from "types";
+import { TIssuePriorities } from "@plane/types";
 // constants
 import { PRIORITIES } from "constants/project";
 

@@ -20,7 +20,7 @@ import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
 import { useUser, useWorkspace } from "hooks/store";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // assets
 import projectEmoji from "public/emoji/project-emoji.svg";
 
@@ -99,7 +99,6 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleZoomWorkspace = (value: string) => {
-    // console.log(lastWorkspaceName,value);
     if (lastWorkspaceName === value) return;
     lastWorkspaceName = value;
     if (timer > 0) {

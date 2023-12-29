@@ -1,4 +1,4 @@
-import { TIssueOrderByOptions } from "types";
+import { TIssueOrderByOptions } from "@plane/types";
 import { LayersIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarClock, CalendarCheck } from "lucide-react";
 import { FC } from "react";

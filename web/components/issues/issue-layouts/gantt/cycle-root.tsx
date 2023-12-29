@@ -6,7 +6,7 @@ import { useCycle, useIssues } from "hooks/store";
 import { BaseGanttRoot } from "./base-gantt-root";
 import { EIssuesStoreType } from "constants/issue";
 import { EIssueActions } from "../types";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 export const CycleGanttLayout: React.FC = observer(() => {
   // router

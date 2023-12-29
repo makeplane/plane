@@ -8,7 +8,7 @@ import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleC
 // icons
 import { ArchiveX } from "lucide-react";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 

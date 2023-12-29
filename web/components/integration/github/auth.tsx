@@ -5,7 +5,7 @@ import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IWorkspaceIntegration } from "types";
+import { IWorkspaceIntegration } from "@plane/types";
 
 type Props = {
   workspaceIntegration: false | IWorkspaceIntegration | undefined;

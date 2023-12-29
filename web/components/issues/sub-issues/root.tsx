@@ -16,7 +16,7 @@ import { CustomMenu } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IUser, TIssue, ISearchIssueResponse } from "types";
+import { IUser, TIssue, ISearchIssueResponse } from "@plane/types";
 // services
 import { IssueService } from "services/issue";
 // fetch keys

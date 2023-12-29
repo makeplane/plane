@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 import { EIssueActions } from "../../types";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { EIssuesStoreType } from "constants/issue";
 

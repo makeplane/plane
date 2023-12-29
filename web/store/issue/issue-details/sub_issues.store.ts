@@ -10,7 +10,7 @@ import {
   TIssueSubIssuesStateDistributionMap,
   TIssueSubIssuesIdMap,
   TSubIssuesStateDistribution,
-} from "types";
+} from "@plane/types";
 
 export interface IIssueSubIssuesStoreActions {
   fetchSubIssues: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueSubIssues>;

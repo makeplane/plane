@@ -13,7 +13,7 @@ import { EmptyState } from "components/common";
 // assets
 import emptyView from "public/empty-state/view.svg";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectViewIssuesPage: NextPageWithLayout = () => {
   // router

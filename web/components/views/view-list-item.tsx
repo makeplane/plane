@@ -14,7 +14,7 @@ import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IProjectView } from "types";
+import { IProjectView } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

@@ -3,7 +3,7 @@ import { action, observable, runInAction, makeObservable } from "mobx";
 import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
 // interfaces
-import { IUser, IUserSettings } from "types/users";
+import { IUser, IUserSettings } from "@plane/types";
 // store
 import { RootStore } from "../root.store";
 import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";

@@ -8,7 +8,7 @@ import { CycleService } from "services/cycle.service";
 // ui
 import { ContrastIcon, CustomSearchSelect, Spinner, Tooltip } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // fetch-keys
 import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
@@ -67,7 +67,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
         mutate(CYCLE_ISSUES(cycleId));
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       })
       .finally(() => {
         setIsUpdating(false);

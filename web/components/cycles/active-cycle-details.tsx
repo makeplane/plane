@@ -30,7 +30,7 @@ import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } fro
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 import { ACTIVE_CYCLE_ISSUES } from "store/issue/cycle";
 

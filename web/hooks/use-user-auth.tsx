@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // types
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 
 const workspaceService = new WorkspaceService();
 type Props = {

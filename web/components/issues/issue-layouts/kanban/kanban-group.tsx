@@ -1,6 +1,13 @@
 import { Droppable } from "@hello-pangea/dnd";
 //types
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "types";
+import {
+  TGroupedIssues,
+  TIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  TSubGroupedIssues,
+  TUnGroupedIssues,
+} from "@plane/types";
 import { EIssueActions } from "../types";
 //components
 import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";

@@ -17,7 +17,7 @@ import emptyAnalytics from "public/empty-state/empty_analytics.webp";
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
   // store hooks

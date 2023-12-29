@@ -1,6 +1,6 @@
 import { useEffect, ReactNode, FC } from "react";
 // hooks
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 
 declare global {
   interface Window {

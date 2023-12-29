@@ -15,7 +15,7 @@ import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStor
 import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
 import { IIssueSubIssuesStore, IssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
 
-import { TIssue, IIssueActivity, TIssueLink } from "types";
+import { TIssue, IIssueActivity, TIssueLink } from "@plane/types";
 
 export interface IIssueDetail
   extends IIssueStoreActions,

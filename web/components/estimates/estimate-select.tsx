@@ -6,7 +6,7 @@ import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 import { Placement } from "@popperjs/core";
 // constants
-import { IEstimatePoint } from "types";
+import { IEstimatePoint } from "@plane/types";
 
 type Props = {
   value: number | null;

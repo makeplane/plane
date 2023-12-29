@@ -12,7 +12,7 @@ import { WorkspaceService } from "services/workspace.service";
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
 
@@ -71,7 +71,7 @@ export const Invitations: React.FC<Props> = (props) => {
         await mutateInvitations();
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         postHogEventTracker("MEMBER_ACCEPTED", { state: "FAILED", accepted_from: "App" });
       })
       .finally(() => setIsJoiningWorkspaces(false));

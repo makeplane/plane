@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";

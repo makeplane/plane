@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IState } from "types";
+import type { IState } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

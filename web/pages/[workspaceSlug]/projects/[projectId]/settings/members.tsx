@@ -6,7 +6,7 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingHeader } from "components/headers";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "components/project";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const MembersSettingsPage: NextPageWithLayout = () => (
   <section className={`w-full overflow-y-auto py-8 pr-9`}>

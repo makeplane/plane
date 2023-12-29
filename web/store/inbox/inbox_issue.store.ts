@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { InboxService } from "services/inbox.service";
 // types
 import { RootStore } from "store/root.store";
-import { IInboxIssue, TIssue, TInboxStatus } from "types";
+import { IInboxIssue, TIssue, TInboxStatus } from "@plane/types";
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 

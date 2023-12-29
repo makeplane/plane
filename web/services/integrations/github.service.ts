@@ -2,7 +2,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IGithubRepoInfo, IGithubServiceImportFormData } from "types";
+import { IGithubRepoInfo, IGithubServiceImportFormData } from "@plane/types";
 
 const integrationServiceType: string = "github";
 

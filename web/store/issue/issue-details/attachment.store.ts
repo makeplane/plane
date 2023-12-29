@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { IssueAttachmentService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "types";
+import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "@plane/types";
 
 export interface IIssueAttachmentStoreActions {
   fetchAttachments: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueAttachment[]>;

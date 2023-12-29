@@ -6,7 +6,7 @@ import { useProject, useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IProject } from "types";
+import type { IProject } from "@plane/types";
 
 // type
 type TJoinProjectModalProps = {

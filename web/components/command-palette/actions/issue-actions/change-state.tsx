@@ -8,7 +8,7 @@ import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
 import { Check } from "lucide-react";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {

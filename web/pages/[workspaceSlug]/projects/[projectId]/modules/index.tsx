@@ -5,7 +5,7 @@ import { AppLayout } from "layouts/app-layout";
 import { ModulesListView } from "components/modules";
 import { ModulesListHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectModulesPage: NextPageWithLayout = () => <ModulesListView />;
 

@@ -6,7 +6,7 @@ import { useEstimate } from "hooks/store";
 // ui
 import { CustomSelect, Tooltip } from "@plane/ui";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;

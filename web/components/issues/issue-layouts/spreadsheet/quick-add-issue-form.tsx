@@ -10,7 +10,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   formKey: keyof TIssue;

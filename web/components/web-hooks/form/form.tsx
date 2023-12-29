@@ -16,7 +16,7 @@ import {
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IWebhook, TWebhookEventTypes } from "types";
+import { IWebhook, TWebhookEventTypes } from "@plane/types";
 
 type Props = {
   data?: Partial<IWebhook>;

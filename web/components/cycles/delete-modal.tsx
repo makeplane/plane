@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // components
 import { Button } from "@plane/ui";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 
 interface ICycleDelete {
   cycle: ICycle;

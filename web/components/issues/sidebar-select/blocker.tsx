@@ -13,7 +13,7 @@ import { IssueService } from "services/issue";
 // icons
 import { BlockerIcon } from "@plane/ui";
 // types
-import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "@plane/types";
 
 type Props = {
   issueId?: string;

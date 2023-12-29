@@ -7,7 +7,7 @@ import { CalendarChart, IssuePeekOverview } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { TGroupedIssues, TIssue } from "types";
+import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";

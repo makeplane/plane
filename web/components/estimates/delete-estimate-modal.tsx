@@ -7,7 +7,7 @@ import { AlertTriangle } from "lucide-react";
 import { useEstimate } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
-import { IEstimate } from "types";
+import { IEstimate } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 

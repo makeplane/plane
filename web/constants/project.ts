@@ -1,5 +1,5 @@
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { TIssuePriorities } from "types";
+import { TIssuePriorities } from "@plane/types";
 
 export enum EUserProjectRoles {
   GUEST = 5,

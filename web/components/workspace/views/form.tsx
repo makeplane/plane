@@ -8,7 +8,7 @@ import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // types
-import { IWorkspaceView } from "types";
+import { IWorkspaceView } from "@plane/types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 

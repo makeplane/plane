@@ -23,7 +23,7 @@ import { SubIssuesRoot } from "./sub-issues";
 // ui
 import { CustomMenu, LayersIcon, StateGroupIcon } from "@plane/ui";
 // types
-import { TIssue, IIssueActivity } from "types";
+import { TIssue, IIssueActivity } from "@plane/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, SUB_ISSUES } from "constants/fetch-keys";
 // constants

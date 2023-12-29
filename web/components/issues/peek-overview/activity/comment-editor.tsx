@@ -11,7 +11,7 @@ import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssueActivity } from "types";
+import type { IIssueActivity } from "@plane/types";
 
 const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",

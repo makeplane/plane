@@ -11,8 +11,8 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { WorkspaceSettingHeader } from "components/headers";
 import { WebhookForm, getCurrentHookAsCSV } from "components/web-hooks";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWebhook } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IWebhook } from "@plane/types";
 // helpers
 import { csvDownload } from "helpers/download.helper";
 

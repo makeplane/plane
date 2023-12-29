@@ -4,7 +4,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { DateSelect } from "components/ui";
 import { IssueProjectSelect } from "components/issues/select";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;

@@ -4,7 +4,7 @@ import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 
 type Props = {
   appliedFilters: string[] | null;

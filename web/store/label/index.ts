@@ -1,7 +1,7 @@
 import { observable, makeObservable, action } from "mobx";
 import { RootStore } from "../root.store";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 import { IProjectLabelStore, ProjectLabelStore } from "./project-label.store";
 import { IWorkspaceLabelStore, WorkspaceLabelStore } from "./workspace-label.store";
 

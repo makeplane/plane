@@ -7,7 +7,7 @@ import { IssueProperties } from "../properties/all-properties";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "types";
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 import { useRouter } from "next/router";
 import { useProject } from "hooks/store";

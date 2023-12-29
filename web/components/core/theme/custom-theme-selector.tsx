@@ -6,7 +6,7 @@ import { useUser } from "hooks/store";
 // ui
 import { Button, InputColorPicker } from "@plane/ui";
 // types
-import { IUserTheme } from "types";
+import { IUserTheme } from "@plane/types";
 
 const inputRules = {
   required: "Background color is required",

@@ -13,7 +13,7 @@ import { Spinner } from "@plane/ui";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   // states

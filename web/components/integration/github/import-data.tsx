@@ -10,7 +10,7 @@ import { Button, CustomSearchSelect, ToggleSwitch } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegration } from "types";
+import { IWorkspaceIntegration } from "@plane/types";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;

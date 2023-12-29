@@ -1,7 +1,7 @@
 import { PrioritySelect } from "components/project";
 import { observer } from "mobx-react-lite";
 // types
-import { TIssuePriorities } from "types";
+import { TIssuePriorities } from "@plane/types";
 
 export interface IIssuePropertyPriority {
   value: TIssuePriorities;

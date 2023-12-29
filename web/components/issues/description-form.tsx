@@ -7,7 +7,7 @@ import debounce from "lodash/debounce";
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // services
 import { FileService } from "services/file.service";
 import { useMention } from "hooks/store";

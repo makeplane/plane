@@ -15,7 +15,7 @@ import { SelectRepository, SelectChannel } from "components/integration";
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
 // types
-import { IWorkspaceIntegration } from "types";
+import { IWorkspaceIntegration } from "@plane/types";
 // fetch-keys
 import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
 
@@ -78,8 +78,7 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
         });
       })
       .catch((err) => {
-        console.log(err);
-
+        console.error(err);
         setToastAlert({
           type: "error",
           title: "Error!",

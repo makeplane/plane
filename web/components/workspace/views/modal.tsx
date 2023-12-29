@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 // components
 import { WorkspaceViewForm } from "components/workspace";
 // types
-import { IWorkspaceView } from "types/workspace-views";
+import { IWorkspaceView } from "@plane/types";
 
 type Props = {
   data?: IWorkspaceView;

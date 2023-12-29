@@ -14,7 +14,7 @@ import {
   IIssueFilters,
   TIssueParams,
   IIssueFiltersResponse,
-} from "types";
+} from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // services

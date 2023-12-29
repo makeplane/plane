@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { IssueReactionService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "types";
+import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
 
 export interface IIssueReactionStoreActions {
   // actions

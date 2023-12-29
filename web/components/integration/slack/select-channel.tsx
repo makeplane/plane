@@ -10,7 +10,7 @@ import { AppInstallationService } from "services/app_installation.service";
 // ui
 import { Loader } from "@plane/ui";
 // types
-import { IWorkspaceIntegration, ISlackIntegration } from "types";
+import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
 
@@ -76,7 +76,7 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
     });
     appInstallationService
       .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   const handleAuth = async () => {

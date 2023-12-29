@@ -10,7 +10,7 @@ import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router

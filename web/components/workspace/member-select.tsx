@@ -7,7 +7,7 @@ import { Listbox } from "@headlessui/react";
 // icons
 import { Check, Search, User2 } from "lucide-react";
 // types
-import { IWorkspaceMember } from "types";
+import { IWorkspaceMember } from "@plane/types";
 import { useMember } from "hooks/store";
 
 export interface IWorkspaceMemberSelect {

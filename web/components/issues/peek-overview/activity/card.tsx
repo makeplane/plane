@@ -9,7 +9,7 @@ import { IssueCommentCard } from "./comment-card";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity, IUser } from "types";
+import { IIssueActivity, IUser } from "@plane/types";
 import { useIssueDetail } from "hooks/store";
 
 interface IIssueActivityCard {

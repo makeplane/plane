@@ -5,7 +5,7 @@ import { ProjectViewsList } from "components/views";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectViewsPage: NextPageWithLayout = () => <ProjectViewsList />;
 

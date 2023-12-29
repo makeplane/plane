@@ -10,7 +10,7 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { TIssue } from "types";
+import type { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";
 
 type Props = {
@@ -61,7 +61,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         handleClose();
         setToastAlert({
           title: "Error",

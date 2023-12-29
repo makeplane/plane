@@ -5,7 +5,7 @@ import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
-import { IModule } from "types";
+import { IModule } from "@plane/types";
 // constants
 import { MODULE_STATUS } from "constants/module";
 

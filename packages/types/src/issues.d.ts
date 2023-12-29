@@ -12,7 +12,7 @@ import type {
   Properties,
   IIssueDisplayFilterOptions,
   IIssueReaction,
-} from "types";
+} from "@plane/types";
 
 export interface IIssueCycle {
   id: string;

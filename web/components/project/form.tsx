@@ -8,7 +8,7 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // types
-import { IProject, IWorkspace } from "types";
+import { IProject, IWorkspace } from "@plane/types";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";

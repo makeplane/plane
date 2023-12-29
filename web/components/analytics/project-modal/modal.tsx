@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // components
 import { ProjectAnalyticsModalHeader, ProjectAnalyticsModalMainContent } from "components/analytics";
 // types
-import { ICycle, IModule, IProject } from "types";
+import { ICycle, IModule, IProject } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
