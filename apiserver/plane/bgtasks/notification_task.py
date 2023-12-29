@@ -282,66 +282,66 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
 
         issue_subscribers = list(set(issue_subscribers + issue_assignees) - {uuid.UUID(actor_id)})
 
-        for subscriber in issue_subscribers:
-            if subscriber in issue_subscribers:
-                sender = "in_app:issue_activities:subscribed"
-            if issue.created_by_id is not None and subscriber == issue.created_by_id:
-                sender = "in_app:issue_activities:created"
-            if subscriber in issue_assignees:
-                sender = "in_app:issue_activities:assigned"
-
-            for issue_activity in issue_activities_created:
-                issue_comment = issue_activity.get("issue_comment")
-                if issue_comment is not None:
-                    issue_comment = IssueComment.objects.get(
-                        id=issue_comment, issue_id=issue_id, project_id=project_id, workspace_id=project.workspace_id)
-                    
-                bulk_notifications.append(
-                    Notification(
-                        workspace=project.workspace,
-                        sender=sender,
-                        triggered_by_id=actor_id,
-                        receiver_id=subscriber,
-                        entity_identifier=issue_id,
-                        entity_name="issue",
-                        project=project,
-                        title=issue_activity.get("comment"),
-                        data={
-                            "issue": {
-                                "id": str(issue_id),
-                                "name": str(issue.name),
-                                "identifier": str(issue.project.identifier),
-                                "sequence_id": issue.sequence_id,
-                                "state_name": issue.state.name,
-                                "state_group": issue.state.group,
-                            },
-                            "issue_activity": {
-                                "id": str(issue_activity.get("id")),
-                                "verb": str(issue_activity.get("verb")),
-                                "field": str(issue_activity.get("field")),
-                                "actor": str(issue_activity.get("actor_id")),
-                                "new_value": str(issue_activity.get("new_value")),
-                                "old_value": str(issue_activity.get("old_value")),
-                                "issue_comment": str(
-                                    issue_comment.comment_stripped
-                                    if issue_activity.get("issue_comment") is not None
-                                    else ""
-                                ),
-                            },
-                        },
-                    )
-                )
-
-        # Add Mentioned as Issue Subscribers
-        IssueSubscriber.objects.bulk_create(
-            mention_subscribers + comment_mention_subscribers, batch_size=100)
-
         last_activity = (
             IssueActivity.objects.filter(issue_id=issue_id)
             .order_by("-created_at")
             .first()
         )
-        
+
+        if last_activity.field != "description":
+            for subscriber in issue_subscribers:
+                if subscriber in issue_subscribers:
+                    sender = "in_app:issue_activities:subscribed"
+                if issue.created_by_id is not None and subscriber == issue.created_by_id:
+                    sender = "in_app:issue_activities:created"
+                if subscriber in issue_assignees:
+                    sender = "in_app:issue_activities:assigned"
+
+                for issue_activity in issue_activities_created:
+                    issue_comment = issue_activity.get("issue_comment")
+                    if issue_comment is not None:
+                        issue_comment = IssueComment.objects.get(
+                            id=issue_comment, issue_id=issue_id, project_id=project_id, workspace_id=project.workspace_id)
+                        
+                    bulk_notifications.append(
+                        Notification(
+                            workspace=project.workspace,
+                            sender=sender,
+                            triggered_by_id=actor_id,
+                            receiver_id=subscriber,
+                            entity_identifier=issue_id,
+                            entity_name="issue",
+                            project=project,
+                            title=issue_activity.get("comment"),
+                            data={
+                                "issue": {
+                                    "id": str(issue_id),
+                                    "name": str(issue.name),
+                                    "identifier": str(issue.project.identifier),
+                                    "sequence_id": issue.sequence_id,
+                                    "state_name": issue.state.name,
+                                    "state_group": issue.state.group,
+                                },
+                                "issue_activity": {
+                                    "id": str(issue_activity.get("id")),
+                                    "verb": str(issue_activity.get("verb")),
+                                    "field": str(issue_activity.get("field")),
+                                    "actor": str(issue_activity.get("actor_id")),
+                                    "new_value": str(issue_activity.get("new_value")),
+                                    "old_value": str(issue_activity.get("old_value")),
+                                    "issue_comment": str(
+                                        issue_comment.comment_stripped
+                                        if issue_activity.get("issue_comment") is not None
+                                        else ""
+                                    ),
+                                },
+                            },
+                        )
+                    )
+
+        # Add Mentioned as Issue Subscribers
+        IssueSubscriber.objects.bulk_create(
+            mention_subscribers + comment_mention_subscribers, batch_size=100)
         actor = User.objects.get(pk=actor_id)
         
         for mention_id in comment_mentions:
