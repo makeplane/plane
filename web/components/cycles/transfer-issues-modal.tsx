@@ -15,8 +15,6 @@ import { AlertCircle, Search, X } from "lucide-react";
 import { INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
 import { ICycle } from "types";
-//helper
-import { getDateRangeStatus } from "helpers/date-time.helper";
 
 type Props = {
   isOpen: boolean;
@@ -138,7 +136,7 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
                             <div className="flex w-full justify-between">
                               <span>{option?.name}</span>
                               <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
-                                {getDateRangeStatus(option?.start_date, option?.end_date)}
+                                {option.status}
                               </span>
                             </div>
                           </button>
