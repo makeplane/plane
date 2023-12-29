@@ -63,8 +63,6 @@ export class IssueStore implements IIssueStore {
       // fetch issue attachments
       this.rootIssueDetailStore.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
 
-      // fetch issue relations
-
       // fetch issue activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
@@ -73,6 +71,9 @@ export class IssueStore implements IIssueStore {
 
       // fetch sub issues
       this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+
+      // fetch issue relations
+      this.rootIssueDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
 
       return issue;
     } catch (error) {

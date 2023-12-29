@@ -35,12 +35,12 @@ export class MentionStore implements IMentionStore {
       const memberDetails = this.rootStore.memberRoot.project.getProjectMemberDetails(memberId);
 
       return {
-        id: `${memberDetails?.member.id}`,
+        id: `${memberDetails?.member?.id}`,
         type: "User",
-        title: `${memberDetails?.member.display_name}`,
-        subtitle: memberDetails?.member.email ?? "",
-        avatar: `${memberDetails?.member.avatar}`,
-        redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.member.id}`,
+        title: `${memberDetails?.member?.display_name}`,
+        subtitle: memberDetails?.member?.email ?? "",
+        avatar: `${memberDetails?.member?.avatar}`,
+        redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.member?.id}`,
       };
     });
 

@@ -176,7 +176,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
                     {getProjectById(parentDetail?.project_id)?.identifier}-{parentDetail?.sequence_id}
                   </span>
                 </div>
-                <span className="truncate text-custom-text-100">{parentDetail?.name.substring(0, 50)}</span>
+                <span className="truncate text-custom-text-100">{(parentDetail?.name ?? "").substring(0, 50)}</span>
               </div>
             </Link>
 

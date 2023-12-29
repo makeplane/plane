@@ -15,14 +15,11 @@ import { ModuleService } from "services/module.service";
 import { LinkModal, LinksList } from "components/core";
 import {
   DeleteIssueModal,
-  SidebarBlockedSelect,
-  SidebarBlockerSelect,
+  SidebarIssueRelationSelect,
   SidebarCycleSelect,
   SidebarModuleSelect,
   SidebarParentSelect,
   SidebarLabelSelect,
-  SidebarDuplicateSelect,
-  SidebarRelatesSelect,
 } from "components/issues";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // ui
@@ -400,84 +397,39 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     </div>
                   </div>
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
-                  <SidebarBlockerSelect
+                  <SidebarIssueRelationSelect
                     issueId={issueId as string}
-                    submitChanges={(data: any) => {
-                      mutate<TIssue>(
-                        ISSUE_DETAILS(issueId as string),
-                        (prevData) => {
-                          if (!prevData) return prevData;
-                          return {
-                            ...prevData,
-                            ...data,
-                          };
-                        },
-                        false
-                      );
-                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                    }}
-                    watch={watchIssue}
+                    relationKey="blocking"
                     disabled={!isAllowed || uneditable}
                   />
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
-                  <SidebarBlockedSelect
+                  <SidebarIssueRelationSelect
                     issueId={issueId as string}
-                    submitChanges={(data: any) => {
-                      mutate<TIssue>(
-                        ISSUE_DETAILS(issueId as string),
-                        (prevData) => {
-                          if (!prevData) return prevData;
-                          return {
-                            ...prevData,
-                            ...data,
-                          };
-                        },
-                        false
-                      );
-                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                    }}
-                    watch={watchIssue}
+                    relationKey="blocked_by"
                     disabled={!isAllowed || uneditable}
                   />
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
-                  <SidebarDuplicateSelect
+                  <SidebarIssueRelationSelect
                     issueId={issueId as string}
-                    submitChanges={(data: any) => {
-                      if (!data) return mutate(ISSUE_DETAILS(issueId as string));
-                      mutate<TIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
-                        if (!prevData) return prevData;
-                        return {
-                          ...prevData,
-                          ...data,
-                        };
-                      });
-                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                    }}
-                    watch={watchIssue}
+                    relationKey="duplicate"
                     disabled={!isAllowed || uneditable}
                   />
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
-                  <SidebarRelatesSelect
+                  <SidebarIssueRelationSelect
                     issueId={issueId as string}
-                    submitChanges={(data: any) => {
-                      if (!data) return mutate(ISSUE_DETAILS(issueId as string));
-                      mutate<TIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
-                        if (!prevData) return prevData;
-                        return {
-                          ...prevData,
-                          ...data,
-                        };
-                      });
-                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                    }}
-                    watch={watchIssue}
+                    relationKey="relates_to"
                     disabled={!isAllowed || uneditable}
                   />
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">

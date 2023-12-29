@@ -19,6 +19,8 @@ import { TIssue } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
+import { observer } from "mobx-react-lite";
+import { useIssueDetail } from "hooks/store";
 
 const defaultValues: Partial<TIssue> = {
   // description: "",
@@ -36,10 +38,16 @@ const defaultValues: Partial<TIssue> = {
 // services
 const issueService = new IssueService();
 
-const IssueDetailsPage: NextPageWithLayout = () => {
+const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const issueDetail = useIssueDetail();
+  useEffect(() => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    issueDetail.fetchIssue(workspaceSlug as string, projectId as string, issueId as string);
+  }, [workspaceSlug, projectId, issueId, issueDetail]);
 
   const {
     data: issueDetails,
@@ -147,7 +155,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 IssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
