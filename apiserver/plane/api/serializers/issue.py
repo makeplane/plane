@@ -96,7 +96,7 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("state")
             and not State.objects.filter(
-                project_id=self.context.get("project_id"), pk=data.get("state")
+                project_id=self.context.get("project_id"), pk=data.get("state").id
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -107,7 +107,7 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"), pk=data.get("parent")
+                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
             ).exists()
         ):
             raise serializers.ValidationError(

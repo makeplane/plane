@@ -56,7 +56,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
 
   if (currentUserError) {
     const redirectTo = router.asPath;
-    router.push(`/?next=${redirectTo}`);
+    router.push(`/?next_path=${redirectTo}`);
     return null;
   }
 

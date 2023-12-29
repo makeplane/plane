@@ -18,6 +18,8 @@ class Cycle(ProjectBaseModel):
     )
     view_props = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Cycle"

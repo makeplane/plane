@@ -128,7 +128,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ))}
           </>
         ) : (
-          <div className="flex h-full flex-shrink-0 cursor-pointer items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
+          <div
+            className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
+              disabled ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+          >
             <Tooltip
               position="top"
               tooltipHeading="Labels"
@@ -147,7 +151,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       ) : (
         <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
           <div
-            className={`h-full flex items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
               noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
             }`}
           >

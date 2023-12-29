@@ -1,29 +1,32 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
-
 // types
 import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store/issues/types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as {
     workspaceSlug: string;
     projectId: string;
   };
-
+  // mobx stores
   const {
     projectLabel: { projectLabels },
     projectState: projectStateStore,
     projectMember: { projectMembers },
     projectIssuesFilter: { issueFilters, updateFilters },
+    user: { currentProjectRole },
   } = useMobxStore();
-
+  // derived values
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   const userFilters = issueFilters?.filters;
 
   // filters whose value not null or empty array
@@ -73,8 +76,9 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
-
-      <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
+      {isEditingAllowed && (
+        <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
+      )}
     </div>
   );
 });

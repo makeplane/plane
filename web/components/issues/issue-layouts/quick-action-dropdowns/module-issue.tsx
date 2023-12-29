@@ -27,7 +27,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
-    copyUrlToClipboard(`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() =>
+    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() =>
       setToastAlert({
         type: "success",
         title: "Link copied",
