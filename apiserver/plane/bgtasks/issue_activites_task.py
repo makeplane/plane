@@ -1289,7 +1289,7 @@ def create_issue_relation_activity(
                     field="blocked_by" if requested_data.get("relation_type") == "blocking" else requested_data.get("relation_type"),
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f"added {requested_data.get('relation_type')} relation",
+                    comment=f"added {'blocked_by' if requested_data.get('relation_type') == 'blocking' else requested_data.get('relation_type')} relation",
                     old_identifier=related_issue,
                 )
             )
@@ -1304,7 +1304,7 @@ def create_issue_relation_activity(
                     field="blocking" if requested_data.get("relation_type") == "blocked_by" else requested_data.get("relation_type"),
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f'added {requested_data.get("relation_type")} relation',
+                    comment=f'added {"blocking" if requested_data.get("relation_type") == "blocked_by" else requested_data.get("relation_type")} relation',
                     old_identifier=issue_id,
                     epoch=epoch,
                 )
