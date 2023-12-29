@@ -3,7 +3,7 @@ import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import { ILinkDetails, UserAuth } from "types";
 // hooks
@@ -89,7 +89,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
           </div>
           <div className="px-5">
             <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
-              Added {timeAgo(link.created_at)}
+              Added {calculateTimeAgo(link.created_at)}
               <br />
               by{" "}
               {link.created_by_detail.is_bot

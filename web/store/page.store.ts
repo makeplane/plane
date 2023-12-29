@@ -6,7 +6,7 @@ import isThisWeek from "date-fns/isThisWeek";
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { RootStore } from "./root";
 import { IPage, IRecentPages } from "types";
@@ -329,7 +329,7 @@ export class PageStore implements IPageStore {
             ...this.archivedPages,
             [projectId]: [
               ...this.archivedPages[projectId],
-              { ...archivedPage, archived_at: renderDateFormat(new Date()) },
+              { ...archivedPage, archived_at: renderFormattedPayloadDate(new Date()) },
             ],
           };
         });

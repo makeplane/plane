@@ -14,7 +14,7 @@ import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
 // helpers
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
@@ -48,7 +48,7 @@ export const ProfileSidebar = () => {
   const userDetails = [
     {
       label: "Joined on",
-      value: renderLongDetailDateFormat(userProjectsData?.user_data.date_joined ?? ""),
+      value: renderFormattedDate(userProjectsData?.user_data.date_joined ?? ""),
     },
     {
       label: "Timezone",

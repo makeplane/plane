@@ -19,7 +19,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { render24HourFormatTime, renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -194,19 +194,19 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
               <div className="flex items-center gap-2.5">
                 {page.archived_at ? (
                   <Tooltip
-                    tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderFormattedDate(
+                    tooltipContent={`Archived at ${renderFormattedTime(page.archived_at)} on ${renderFormattedDate(
                       page.archived_at
                     )}`}
                   >
-                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.archived_at)}</p>
+                    <p className="text-sm text-custom-text-200">{renderFormattedTime(page.archived_at)}</p>
                   </Tooltip>
                 ) : (
                   <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(
+                    tooltipContent={`Last updated at ${renderFormattedTime(
                       page.updated_at
                     )} on ${renderFormattedDate(page.updated_at)}`}
                   >
-                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
+                    <p className="text-sm text-custom-text-200">{renderFormattedTime(page.updated_at)}</p>
                   </Tooltip>
                 )}
                 {isEditingAllowed && (

@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -13,7 +12,7 @@ import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IInboxIssue, IIssue } from "types";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -193,12 +192,12 @@ export const InboxMainContent: React.FC = observer(() => {
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
-                      {renderShortDateWithYearFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
+                      {renderFormattedDate(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   ) : (
                     <p>
                       This issue has been snoozed till{" "}
-                      {renderShortDateWithYearFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
+                      {renderFormattedDate(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   )}
                 </>

@@ -15,7 +15,7 @@ import { ExternalLinkIcon, Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // type
 import { NextPageWithLayout } from "types/app";
 
@@ -70,7 +70,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               : activityItem.actor_detail.display_name}
                           </div>
                           <p className="mt-0.5 text-xs text-custom-text-200">
-                            Commented {timeAgo(activityItem.created_at)}
+                            Commented {calculateTimeAgo(activityItem.created_at)}
                           </p>
                         </div>
                         <div className="issue-comments-section p-0">
@@ -165,7 +165,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               <div className="flex gap-1 truncate">
                                 {message}{" "}
                                 <span className="flex-shrink-0 whitespace-nowrap">
-                                  {timeAgo(activityItem.created_at)}
+                                  {calculateTimeAgo(activityItem.created_at)}
                                 </span>
                               </div>
                             </div>

@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 // services
 import { FileService } from "services/file.service";
 // icons
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 // hooks
 import useUser from "hooks/use-user";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueActivity } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 // services
 const fileService = new FileService();
@@ -98,7 +97,7 @@ export const CommentCard: React.FC<Props> = ({
           <div className="text-xs">
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-custom-text-200">commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</p>
         </div>
         <div className="issue-comments-section p-0">
           <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>

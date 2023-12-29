@@ -136,7 +136,7 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
                             <div className="flex w-full justify-between">
                               <span>{option?.name}</span>
                               <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
-                                {option.status}
+                                {option.status.toLocaleLowerCase()}
                               </span>
                             </div>
                           </button>

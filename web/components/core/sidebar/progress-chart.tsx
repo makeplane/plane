@@ -1,9 +1,9 @@
 import React from "react";
-
+import { eachDayOfInterval } from "date-fns";
 // ui
 import { LineGraph } from "components/ui";
 // helpers
-import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 //types
 import { TCompletionChartDistribution } from "types";
 
@@ -42,25 +42,25 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
 
 const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
   const chartData = Object.keys(distribution).map((key) => ({
-    currentDate: renderShortNumericDateFormat(key),
+    currentDate: renderFormattedDateWithoutYear(key),
     pending: distribution[key],
   }));
 
   const generateXAxisTickValues = () => {
-    const dates = getDatesInRange(startDate, endDate);
+    const dates = eachDayOfInterval({ start: new Date(startDate), end: new Date(endDate) });
 
     const maxDates = 4;
     const totalDates = dates.length;
 
-    if (totalDates <= maxDates) return dates.map((d) => renderShortNumericDateFormat(d));
+    if (totalDates <= maxDates) return dates.map((d) => renderFormattedDateWithoutYear(d));
     else {
       const interval = Math.ceil(totalDates / maxDates);
       const limitedDates = [];
 
-      for (let i = 0; i < totalDates; i += interval) limitedDates.push(renderShortNumericDateFormat(dates[i]));
+      for (let i = 0; i < totalDates; i += interval) limitedDates.push(renderFormattedDateWithoutYear(dates[i]));
 
-      if (!limitedDates.includes(renderShortNumericDateFormat(dates[totalDates - 1])))
-        limitedDates.push(renderShortNumericDateFormat(dates[totalDates - 1]));
+      if (!limitedDates.includes(renderFormattedDateWithoutYear(dates[totalDates - 1])))
+        limitedDates.push(renderFormattedDateWithoutYear(dates[totalDates - 1]));
 
       return limitedDates;
     }

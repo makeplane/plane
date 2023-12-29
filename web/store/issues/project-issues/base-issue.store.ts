@@ -10,7 +10,7 @@ import { IIssueResponse } from "../types";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 
 export interface IIssueBaseStore {
   groupedIssues(
@@ -201,7 +201,7 @@ export class IssueBaseStore implements IIssueBaseStore {
     if (Array.isArray(value)) {
       if (value.length) return value;
       else return ["None"];
-    } else if (isDate) return [renderDateFormat(value) || "None"];
+    } else if (isDate) return [renderFormattedPayloadDate(value ?? "") || "None"];
     else return [value || "None"];
   }
 }

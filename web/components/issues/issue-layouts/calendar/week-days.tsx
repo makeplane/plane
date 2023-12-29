@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { CalendarDayTile } from "components/issues";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
 import { IIssue } from "types";
@@ -65,7 +65,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
         return (
           <CalendarDayTile
             issuesFilterStore={issuesFilterStore}
-            key={renderDateFormat(date.date)}
+            key={renderFormattedPayloadDate(date.date)}
             date={date}
             issues={issues}
             groupedIssueIds={groupedIssueIds}

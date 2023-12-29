@@ -1,5 +1,5 @@
 // helpers
-import { getWeekNumberOfDate, renderDateFormat } from "helpers/date-time.helper";
+import { getWeekNumberOfDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarPayload } from "components/issues";
 
@@ -73,7 +73,7 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
 
       const date = new Date(year, month, dayNumber + 1);
 
-      currentWeekObject[renderDateFormat(date)] = {
+      currentWeekObject[renderFormattedPayloadDate(date)] = {
         date,
         year,
         month,

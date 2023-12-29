@@ -3,12 +3,7 @@ import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
 import { CalendarCheck } from "lucide-react";
 // helpers
-import {
-  findHowManyDaysLeft,
-  renderShortDate,
-  renderShortDateWithYearFormat,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -36,14 +31,10 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const today = new Date();
-  const endDate = new Date(issue.target_date ?? "");
-  const areYearsEqual = endDate.getFullYear() === today.getFullYear();
-
   return (
     <Tooltip
       tooltipHeading="Due date"
-      tooltipContent={issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"}
+      tooltipContent={issue.target_date ? renderFormattedDate(issue.target_date) ?? "N/A" : "N/A"}
       position={tooltipPosition}
     >
       <div
@@ -68,11 +59,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
               {issue.target_date ? (
                 <>
                   <CalendarCheck className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>
-                    {areYearsEqual
-                      ? renderShortDate(issue.target_date ?? "", "_ _")
-                      : renderShortMonthDate(issue.target_date ?? "", "_ _")}
-                  </span>
+                  <span>{renderFormattedDate(issue.target_date) ?? "_ _"}</span>
                 </>
               ) : (
                 <>

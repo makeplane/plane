@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 // icons
 import { AlertTriangle } from "lucide-react";
 import { LayersIcon, Loader } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
 import { IIssueLite } from "types";
@@ -67,7 +66,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
                         </h5>
                         <h5 className="col-span-2">{truncateText(issue.name, 30)}</h5>
                         <h5 className="cursor-default">
-                          {renderShortDateWithYearFormat(new Date(date?.toString() ?? ""))}
+                          {renderFormattedDate(new Date(date?.toString() ?? ""))}
                         </h5>
                       </div>
                     </span>

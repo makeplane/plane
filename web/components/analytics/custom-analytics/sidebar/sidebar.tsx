@@ -14,7 +14,7 @@ import { Button, LayersIcon } from "@plane/ui";
 // icons
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // helpers
-import { renderShortDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "types";
 // fetch-keys
@@ -156,7 +156,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
           {isProjectLevel && (
             <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
               <CalendarDays className="h-3.5 w-3.5" />
-              {renderShortDate(
+              {renderFormattedDate(
                 (cycleId
                   ? cycleDetails?.created_at
                   : moduleId

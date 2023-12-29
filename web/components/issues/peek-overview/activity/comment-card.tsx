@@ -10,7 +10,7 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 // components
 import { IssueCommentReaction } from "./comment-reaction";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueActivity, IUser } from "types";
 
@@ -106,7 +106,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
           <div className="text-xs">
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-custom-text-200">commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</p>
         </div>
 
         <div className="issue-comments-section p-0">

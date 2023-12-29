@@ -20,7 +20,7 @@ import { Spinner } from "@plane/ui";
 // assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IPage, IIssue } from "types";
@@ -279,7 +279,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     mutatePageDetailsHelper(
       pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
       {
-        archived_at: renderDateFormat(new Date()),
+        archived_at: renderFormattedPayloadDate(new Date()),
       },
       ["description_html"],
       () =>

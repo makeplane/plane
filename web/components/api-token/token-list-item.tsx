@@ -5,7 +5,7 @@ import { DeleteApiTokenModal } from "components/api-token";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { renderFormattedDate, timeAgo } from "helpers/date-time.helper";
+import { renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import { IApiToken } from "types/api_token";
 
@@ -49,7 +49,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)}`
                 : "Never expires"
-              : `Expired ${timeAgo(token.expired_at)}`}
+              : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>
         </div>
       </div>

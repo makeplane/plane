@@ -3,7 +3,7 @@ import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
 import { CalendarClock } from "lucide-react";
 // helpers
-import { renderShortDate, renderShortDateWithYearFormat, renderShortMonthDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -30,14 +30,11 @@ export const ViewStartDateSelect: React.FC<Props> = ({
 }) => {
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
-  const today = new Date();
-  const startDate = new Date(issue.start_date ?? "");
-  const areYearsEqual = startDate.getFullYear() === today.getFullYear();
 
   return (
     <Tooltip
       tooltipHeading="Start date"
-      tooltipContent={issue.start_date ? renderShortDateWithYearFormat(issue.start_date) ?? "N/A" : "N/A"}
+      tooltipContent={issue.start_date ? renderFormattedDate(issue.start_date) ?? "N/A" : "N/A"}
       position={tooltipPosition}
     >
       <div className={`group max-w-[6.5rem] flex-shrink-0 ${className}`}>
@@ -56,11 +53,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
               {issue?.start_date ? (
                 <>
                   <CalendarClock className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>
-                    {areYearsEqual
-                      ? renderShortDate(issue?.start_date, "_ _")
-                      : renderShortMonthDate(issue?.start_date, "_ _")}
-                  </span>
+                  <span>{renderFormattedDate(issue?.start_date ?? "_ _")}</span>
                 </>
               ) : (
                 <>
