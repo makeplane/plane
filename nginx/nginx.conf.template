@@ -29,7 +29,7 @@ http {
             proxy_pass http://space:3000/spaces/;
         }
 
-        location /uploads/ {
+        location /${BUCKET_NAME}/ {
             proxy_pass ${AWS_S3_ENDPOINT_URL}/${AWS_S3_BUCKET_NAME};
         }
     }
