@@ -11,7 +11,7 @@ import { ContrastIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 import { TButtonVariants } from "./types";
 
 type Props = {

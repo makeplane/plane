@@ -10,7 +10,7 @@ import { useProject } from "hooks/store";
 import { cn } from "helpers/common.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 import { TButtonVariants } from "./types";
 
 type Props = {

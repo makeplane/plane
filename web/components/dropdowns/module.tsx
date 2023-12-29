@@ -11,7 +11,7 @@ import { DiceIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { IModule } from "types";
+import { IModule } from "@plane/types";
 import { TButtonVariants } from "./types";
 
 type Props = {

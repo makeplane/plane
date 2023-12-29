@@ -11,7 +11,7 @@ import { StateGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 import { TButtonVariants } from "./types";
 
 type Props = {
