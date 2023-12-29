@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Triangle } from "lucide-react";
+import sortBy from "lodash/sortBy";
 // store hooks
 import { useEstimate } from "hooks/store";
 // ui
@@ -51,7 +52,7 @@ export const ViewEstimateSelect: React.FC<Props> = observer((props) => {
           None
         </>
       </CustomSelect.Option>
-      {activeEstimateDetails?.points?.map((estimate) => (
+      {sortBy(activeEstimateDetails?.points, "key")?.map((estimate) => (
         <CustomSelect.Option key={estimate.id} value={estimate.key}>
           <>
             <Triangle className="h-3 w-3" />

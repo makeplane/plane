@@ -294,8 +294,8 @@ export type TIssue = {
   completed_at: string | null;
   estimate_point: number | null;
   priority: TIssuePriorities;
-  start_date: string;
-  target_date: string;
+  start_date: string | null;
+  target_date: string | null;
   sequence_id: number;
   project_id: string;
   parent_id: string | null;

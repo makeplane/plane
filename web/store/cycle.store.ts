@@ -1,6 +1,7 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { set, omit } from "lodash";
 import { isFuture, isPast } from "date-fns";
+import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // types
 import { ICycle, CycleDateCheckData } from "@plane/types";
 // mobx
@@ -15,15 +16,16 @@ export interface ICycleStore {
   cycleMap: Record<string, ICycle>;
   activeCycleMap: Record<string, ICycle>; // TODO: Merge these two into single map
   // computed
-  projectCycleIds: string[] | null;
-  projectCompletedCycleIds: string[] | null;
-  projectUpcomingCycleIds: string[] | null;
-  projectIncompleteCycleIds: string[] | null;
-  projectDraftCycleIds: string[] | null;
-  projectActiveCycleId: string | null;
+  currentProjectCycleIds: string[] | null;
+  currentProjectCompletedCycleIds: string[] | null;
+  currentProjectUpcomingCycleIds: string[] | null;
+  currentProjectIncompleteCycleIds: string[] | null;
+  currentProjectDraftCycleIds: string[] | null;
+  currentProjectActiveCycleId: string | null;
   // computed actions
   getCycleById: (cycleId: string) => ICycle | null;
   getActiveCycleById: (cycleId: string) => ICycle | null;
+  getProjectCycleIds: (projectId: string) => string[] | null;
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   // fetch
@@ -61,15 +63,16 @@ export class CycleStore implements ICycleStore {
       cycleMap: observable,
       activeCycleMap: observable,
       // computed
-      projectCycleIds: computed,
-      projectCompletedCycleIds: computed,
-      projectUpcomingCycleIds: computed,
-      projectIncompleteCycleIds: computed,
-      projectDraftCycleIds: computed,
-      projectActiveCycleId: computed,
+      currentProjectCycleIds: computed,
+      currentProjectCompletedCycleIds: computed,
+      currentProjectUpcomingCycleIds: computed,
+      currentProjectIncompleteCycleIds: computed,
+      currentProjectDraftCycleIds: computed,
+      currentProjectActiveCycleId: computed,
       // computed actions
       getCycleById: action,
       getActiveCycleById: action,
+      getProjectCycleIds: action,
       // actions
       fetchAllCycles: action,
       fetchActiveCycle: action,
@@ -91,71 +94,78 @@ export class CycleStore implements ICycleStore {
   /**
    * returns all cycle ids for a project
    */
-  get projectCycleIds() {
+  get currentProjectCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
-    const allCycles = Object.keys(this.cycleMap ?? {}).filter(
-      (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
-    );
-    return allCycles || null;
+    let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project === projectId);
+    allCycles = sortBy(allCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    const allCycleIds = allCycles.map((c) => c.id);
+    return allCycleIds || null;
   }
 
   /**
    * returns all completed cycle ids for a project
    */
-  get projectCompletedCycleIds() {
-    const allCycles = this.projectCycleIds;
-    if (!allCycles) return null;
-    const completedCycles = allCycles.filter((cycleId) => {
-      const hasEndDatePassed = isPast(new Date(this.cycleMap?.[cycleId]?.end_date ?? ""));
-      return hasEndDatePassed;
+  get currentProjectCompletedCycleIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!projectId) return null;
+    let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
+      const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
+      return c.project === projectId && hasEndDatePassed;
     });
-    return completedCycles || null;
+    completedCycles = sortBy(completedCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    const completedCycleIds = completedCycles.map((c) => c.id);
+    return completedCycleIds || null;
   }
 
   /**
    * returns all upcoming cycle ids for a project
    */
-  get projectUpcomingCycleIds() {
-    const allCycles = this.projectCycleIds;
-    if (!allCycles) return null;
-    const upcomingCycles = allCycles.filter((cycleId) => {
-      const isStartDateUpcoming = isFuture(new Date(this.cycleMap?.[cycleId]?.start_date ?? ""));
-      return isStartDateUpcoming;
+  get currentProjectUpcomingCycleIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!projectId) return null;
+    let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
+      const isStartDateUpcoming = isFuture(new Date(c.start_date ?? ""));
+      return c.project === projectId && isStartDateUpcoming;
     });
-    return upcomingCycles || null;
+    upcomingCycles = sortBy(upcomingCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    const upcomingCycleIds = upcomingCycles.map((c) => c.id);
+    return upcomingCycleIds || null;
   }
 
   /**
    * returns all incomplete cycle ids for a project
    */
-  get projectIncompleteCycleIds() {
-    const allCycles = this.projectCycleIds;
-    if (!allCycles) return null;
-    const incompleteCycles = allCycles.filter((cycleId) => {
-      const hasEndDatePassed = isPast(new Date(this.cycleMap?.[cycleId]?.end_date ?? ""));
-      return !hasEndDatePassed;
+  get currentProjectIncompleteCycleIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!projectId) return null;
+    let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
+      const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
+      return c.project === projectId && !hasEndDatePassed;
     });
-    return incompleteCycles || null;
+    incompleteCycles = sortBy(incompleteCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    const incompleteCycleIds = incompleteCycles.map((c) => c.id);
+    return incompleteCycleIds || null;
   }
 
   /**
    * returns all draft cycle ids for a project
    */
-  get projectDraftCycleIds() {
-    const allCycles = this.projectCycleIds;
-    if (!allCycles) return null;
-    const draftCycles = allCycles.filter((cycleId) => {
-      const cycleDetails = this.cycleMap?.[cycleId];
-      return !cycleDetails?.start_date && !cycleDetails?.end_date;
-    });
-    return draftCycles || null;
+  get currentProjectDraftCycleIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!projectId) return null;
+    let draftCycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) => c.project === projectId && !c.start_date && !c.end_date
+    );
+    draftCycles = sortBy(draftCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    const draftCycleIds = draftCycles.map((c) => c.id);
+    return draftCycleIds || null;
   }
 
   /**
    * returns active cycle id for a project
    */
-  get projectActiveCycleId() {
+  get currentProjectActiveCycleId() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
     const activeCycle = Object.keys(this.activeCycleMap ?? {}).find(
@@ -177,6 +187,17 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   getActiveCycleById = (cycleId: string): ICycle | null => this.activeCycleMap?.[cycleId] ?? null;
+
+  /**
+   * @description returns list of cycle ids of the project id passed as argument
+   * @param projectId
+   */
+  getProjectCycleIds = (projectId: string): string[] | null => {
+    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project === projectId);
+    cycles = sortBy(cycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    const cycleIds = cycles.map((c) => c.id);
+    return cycleIds || null;
+  };
 
   /**
    * @description validates cycle dates
@@ -285,8 +306,8 @@ export class CycleStore implements ICycleStore {
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
-        omit(this.cycleMap, [cycleId]);
-        omit(this.activeCycleMap, [cycleId]);
+        delete this.cycleMap[cycleId];
+        delete this.activeCycleMap[cycleId];
       });
     });
 

@@ -56,9 +56,6 @@ export const WorkspaceDashboardView = observer(() => {
 
   return (
     <>
-      {/* {isProductUpdatesModalOpen && (
-        <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
-      )} */}
       {currentUser && !currentUser.is_tour_completed && (
         <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
           <TourRoot onComplete={handleTourCompleted} />

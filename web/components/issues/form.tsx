@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // hooks
-import { useApplication, useMention } from "hooks/store";
+import { useApplication, useEstimate, useMention, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
@@ -12,22 +12,24 @@ import { FileService } from "services/file.service";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
-import {
-  IssueAssigneeSelect,
-  IssueDateSelect,
-  IssueEstimateSelect,
-  IssueLabelSelect,
-  IssuePrioritySelect,
-  IssueProjectSelect,
-  IssueStateSelect,
-  IssueModuleSelect,
-  IssueCycleSelect,
-} from "components/issues/select";
+import { IssueLabelSelect } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import {
+  CycleDropdown,
+  DateDropdown,
+  EstimateDropdown,
+  ModuleDropdown,
+  PriorityDropdown,
+  ProjectDropdown,
+  ProjectMemberDropdown,
+  StateDropdown,
+} from "components/dropdowns";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
@@ -106,6 +108,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const {
     config: { envConfig },
   } = useApplication();
+  const { getProjectById } = useProject();
+  const { areEstimatesActiveForProject } = useEstimate();
   const { mentionHighlights, mentionSuggestions } = useMention();
   // toast alert
   const { setToastAlert } = useToast();
@@ -139,6 +143,9 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     cycle_id: getValues("cycle_id"),
     module_id: getValues("module_id"),
   };
+
+  // derived values
+  const projectDetails = getProjectById(projectId);
 
   useEffect(() => {
     if (isDirty) handleFormDirty(payload);
@@ -247,22 +254,24 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
       <form onSubmit={handleSubmit(handleCreateUpdateIssue)}>
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && !status && (
               <Controller
                 control={control}
                 name="project_id"
                 rules={{
                   required: true,
                 }}
-                render={({ field: { value, onChange }, fieldState: { error } }) => (
-                  <IssueProjectSelect
-                    value={value}
-                    error={error}
-                    onChange={(val: string) => {
-                      onChange(val);
-                      setActiveProject(val);
-                    }}
-                  />
+                render={({ field: { value, onChange } }) => (
+                  <div className="h-7">
+                    <ProjectDropdown
+                      value={value}
+                      onChange={(val) => {
+                        onChange(val);
+                        setActiveProject(val);
+                      }}
+                      buttonVariant="border-with-text"
+                    />
+                  </div>
                 )}
               />
             )}
@@ -405,12 +414,14 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="state_id"
                     render={({ field: { value, onChange } }) => (
-                      <IssueStateSelect
-                        setIsOpen={setStateModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <StateDropdown
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                          buttonVariant="border-with-text"
+                        />
+                      </div>
                     )}
                   />
                 )}
@@ -419,7 +430,9 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="priority"
                     render={({ field: { value, onChange } }) => (
-                      <IssuePrioritySelect value={value} onChange={onChange} />
+                      <div className="h-7">
+                        <PriorityDropdown value={value} onChange={onChange} buttonVariant="border-with-text" />
+                      </div>
                     )}
                   />
                 )}
@@ -428,7 +441,17 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="assignee_ids"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
+                      <div className="h-7">
+                        <ProjectMemberDropdown
+                          projectId={projectId}
+                          value={value}
+                          onChange={onChange}
+                          buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
+                          buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                          placeholder="Assignees"
+                          multiple
+                        />
+                      </div>
                     )}
                   />
                 )}
@@ -437,30 +460,33 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="label_ids"
                     render={({ field: { value, onChange } }) => (
-                      <IssueLabelSelect
-                        setIsOpen={setLabelModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <IssueLabelSelect
+                          setIsOpen={setLabelModal}
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                        />
+                      </div>
                     )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
-                  <div>
-                    <Controller
-                      control={control}
-                      name="start_date"
-                      render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect
-                          label="Start date"
-                          maxDate={maxDate ?? undefined}
-                          onChange={onChange}
+                  <Controller
+                    control={control}
+                    name="start_date"
+                    render={({ field: { value, onChange } }) => (
+                      <div className="h-7">
+                        <DateDropdown
                           value={value}
+                          onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                          buttonVariant="border-with-text"
+                          placeholder="Start date"
+                          maxDate={maxDate ?? undefined}
                         />
-                      )}
-                    />
-                  </div>
+                      </div>
+                    )}
+                  />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div>
@@ -468,59 +494,68 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                       control={control}
                       name="target_date"
                       render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect
-                          label="Due date"
-                          minDate={minDate ?? undefined}
-                          onChange={onChange}
-                          value={value}
-                        />
+                        <div className="h-7">
+                          <DateDropdown
+                            value={value}
+                            onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                            buttonVariant="border-with-text"
+                            placeholder="Due date"
+                            minDate={minDate ?? undefined}
+                          />
+                        </div>
                       )}
                     />
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
-                  <Controller
-                    control={control}
-                    name="module_id"
-                    render={({ field: { value, onChange } }) => (
-                      <IssueModuleSelect
-                        workspaceSlug={workspaceSlug as string}
-                        projectId={projectId}
-                        value={value}
-                        onChange={(val: string) => {
-                          onChange(val);
-                        }}
-                      />
-                    )}
-                  />
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
                   <Controller
                     control={control}
                     name="cycle_id"
                     render={({ field: { value, onChange } }) => (
-                      <IssueCycleSelect
-                        workspaceSlug={workspaceSlug as string}
-                        projectId={projectId}
-                        value={value}
-                        onChange={(val: string) => {
-                          onChange(val);
-                        }}
-                      />
+                      <div className="h-7">
+                        <CycleDropdown
+                          projectId={projectId}
+                          onChange={onChange}
+                          value={value}
+                          buttonVariant="border-with-text"
+                        />
+                      </div>
                     )}
                   />
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-                  <>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
+                  <Controller
+                    control={control}
+                    name="module_id"
+                    render={({ field: { value, onChange } }) => (
+                      <div className="h-7">
+                        <ModuleDropdown
+                          projectId={projectId}
+                          value={value}
+                          onChange={onChange}
+                          buttonVariant="border-with-text"
+                        />
+                      </div>
+                    )}
+                  />
+                )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
+                  areEstimatesActiveForProject(projectId) && (
                     <Controller
                       control={control}
                       name="estimate_point"
                       render={({ field: { value, onChange } }) => (
-                        <IssueEstimateSelect value={value} onChange={onChange} />
+                        <div className="h-7">
+                          <EstimateDropdown
+                            value={value}
+                            onChange={onChange}
+                            projectId={projectId}
+                            buttonVariant="border-with-text"
+                          />
+                        </div>
                       )}
                     />
-                  </>
-                )}
+                  )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <>
                     {watch("parent_id") ? (
@@ -528,10 +563,10 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         customButton={
                           <button
                             type="button"
-                            className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
+                            className="h-7 flex items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
                           >
                             <div className="flex items-center gap-1 text-custom-text-200">
-                              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                              <LayoutPanelTop className="h-2.5 w-2.5 flex-shrink-0" />
                               <span className="whitespace-nowrap">
                                 {selectedParentIssue &&
                                   `${selectedParentIssue.project__identifier}-
@@ -552,13 +587,11 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     ) : (
                       <button
                         type="button"
-                        className="flex w-min cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
+                        className="h-7 flex items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80"
                         onClick={() => setParentIssueListModalOpen(true)}
                       >
-                        <div className="flex items-center gap-1 text-custom-text-300">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">Add Parent</span>
-                        </div>
+                        <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                        <span className="whitespace-nowrap">Add parent</span>
                       </button>
                     )}
 

@@ -9,8 +9,7 @@ import { PriorityIcon } from "@plane/ui";
 // types
 import { TIssue, TIssuePriorities } from "@plane/types";
 // constants
-import { PRIORITIES } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType, ISSUE_PRIORITIES } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
@@ -43,13 +42,13 @@ export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {PRIORITIES.map((priority) => (
-        <Command.Item key={priority} onSelect={() => handleIssueState(priority)} className="focus:outline-none">
+      {ISSUE_PRIORITIES.map((priority) => (
+        <Command.Item key={priority.key} onSelect={() => handleIssueState(priority.key)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
-            <PriorityIcon priority={priority} />
-            <span className="capitalize">{priority ?? "None"}</span>
+            <PriorityIcon priority={priority.key} />
+            <span className="capitalize">{priority.title ?? "None"}</span>
           </div>
-          <div>{priority === issue.priority && <Check className="h-3 w-3" />}</div>
+          <div>{priority.key === issue.priority && <Check className="h-3 w-3" />}</div>
         </Command.Item>
       ))}
     </>

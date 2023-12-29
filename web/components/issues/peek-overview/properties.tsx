@@ -6,16 +6,8 @@ import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from
 import { useIssueDetail, useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import {
-  SidebarAssigneeSelect,
-  SidebarCycleSelect,
-  SidebarEstimateSelect,
-  SidebarLabelSelect,
-  SidebarModuleSelect,
-  SidebarParentSelect,
-  SidebarPrioritySelect,
-  SidebarStateSelect,
-} from "../sidebar-select";
+import { SidebarCycleSelect, SidebarLabelSelect, SidebarModuleSelect, SidebarParentSelect } from "components/issues";
+import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
@@ -38,10 +30,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   // states
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // store hooks
-  const { fetchIssue, isIssueLinkModalOpen, toggleIssueLinkModal } = useIssueDetail();
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { fetchIssue, isIssueLinkModalOpen, toggleIssueLinkModal } = useIssueDetail();
   const { getProjectById } = useProject();
   // router
   const router = useRouter();
@@ -83,7 +75,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     toggleIssueLinkModal(true);
   };
 
-  const projectDetails = workspaceSlug ? getProjectById(issue.project_id) : null;
+  const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
@@ -114,7 +106,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>State</p>
             </div>
             <div>
-              <SidebarStateSelect value={issue?.state_id || ""} onChange={handleState} disabled={disableUserActions} />
+              <StateDropdown
+                value={issue?.state_id || ""}
+                onChange={handleState}
+                projectId={issue.project_id}
+                disabled={disableUserActions}
+                buttonVariant="background-with-text"
+              />
             </div>
           </div>
 
@@ -124,11 +122,16 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
-            <div>
-              <SidebarAssigneeSelect
-                value={issue.assignee_ids || []}
+            <div className="h-5 sm:w-1/2">
+              <ProjectMemberDropdown
+                value={issue.assignee_ids}
                 onChange={handleAssignee}
                 disabled={disableUserActions}
+                projectId={projectId?.toString() ?? ""}
+                placeholder="Assignees"
+                multiple
+                buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
               />
             </div>
           </div>
@@ -139,11 +142,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
-            <div>
-              <SidebarPrioritySelect
+            <div className="h-5">
+              <PriorityDropdown
                 value={issue.priority || ""}
                 onChange={handlePriority}
                 disabled={disableUserActions}
+                buttonVariant="background-with-text"
               />
             </div>
           </div>
@@ -156,10 +160,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 <p>Estimate</p>
               </div>
               <div>
-                <SidebarEstimateSelect
+                <EstimateDropdown
                   value={issue.estimate_point}
                   onChange={handleEstimate}
+                  projectId={issue.project_id}
                   disabled={disableUserActions}
+                  buttonVariant="background-with-text"
                 />
               </div>
             </div>
@@ -216,33 +222,38 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <span className="border-t border-custom-border-200" />
 
         <div className="flex w-full flex-col gap-5 py-5">
-          <div className="flex w-full items-center gap-2">
-            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
-              <ContrastIcon className="h-4 w-4 flex-shrink-0" />
-              <p>Cycle</p>
+          {projectDetails?.cycle_view && (
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
+                <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+                <p>Cycle</p>
+              </div>
+              <div>
+                <SidebarCycleSelect
+                  issueDetail={issue}
+                  disabled={disableUserActions}
+                  handleIssueUpdate={handleCycleOrModuleChange}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarCycleSelect
-                issueDetail={issue}
-                disabled={disableUserActions}
-                handleIssueUpdate={handleCycleOrModuleChange}
-              />
-            </div>
-          </div>
+          )}
 
-          <div className="flex w-full items-center gap-2">
-            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
-              <DiceIcon className="h-4 w-4 flex-shrink-0" />
-              <p>Module</p>
+          {projectDetails?.module_view && (
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
+                <DiceIcon className="h-4 w-4 flex-shrink-0" />
+                <p>Module</p>
+              </div>
+              <div>
+                <SidebarModuleSelect
+                  issueDetail={issue}
+                  disabled={disableUserActions}
+                  handleIssueUpdate={handleCycleOrModuleChange}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarModuleSelect
-                issueDetail={issue}
-                disabled={disableUserActions}
-                handleIssueUpdate={handleCycleOrModuleChange}
-              />
-            </div>
-          </div>
+          )}
+
           <div className="flex w-full items-start gap-2">
             <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <Tag className="h-4 w-4 flex-shrink-0" />
@@ -285,8 +296,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              {/* TODO: Check_with_backend */}
-              {/* {issue?.issue_link && issue.issue_link.length > 0 ? (
+              {issue?.issue_link && issue.issue_link.length > 0 ? (
                 <LinksList
                   links={issue.issue_link}
                   handleDeleteLink={issueLinkDelete}
@@ -298,7 +308,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                   }}
                 />
-              ) : null} */}
+              ) : null}
             </div>
           </div>
         </div>

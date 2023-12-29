@@ -3,12 +3,11 @@ import { mutate } from "swr";
 // services
 import { IssueService } from "services/issue";
 // components
-import { PrioritySelect } from "components/project";
+import { PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // types
-import { TIssue, IState } from "@plane/types";
+import { TIssue } from "@plane/types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-import { IssuePropertyAssignee, IssuePropertyState } from "../issue-layouts/properties";
 
 export interface IIssueProperty {
   workspaceSlug: string;
@@ -27,9 +26,9 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
     partialUpdateIssue({ priority: data });
   };
 
-  const handleStateChange = (data: IState) => {
+  const handleStateChange = (data: string) => {
     partialUpdateIssue({
-      state_id: data.id,
+      state_id: data,
     });
   };
 
@@ -68,27 +67,35 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
 
   return (
     <div className="relative flex items-center gap-2">
-      <div className="flex-shrink-0">
-        <PrioritySelect value={issue.priority} onChange={handlePriorityChange} hideDropdownArrow disabled={!editable} />
-      </div>
-
-      <div className="flex-shrink-0">
-        <IssuePropertyState
-          projectId={issue?.project_id || null}
-          value={issue?.state_id || null}
-          onChange={(data) => handleStateChange(data)}
+      <div className="h-5 flex-shrink-0">
+        <StateDropdown
+          value={issue?.state_id}
+          projectId={issue?.project_id}
+          onChange={handleStateChange}
           disabled={!editable}
-          hideDropdownArrow
+          buttonVariant="border-with-text"
         />
       </div>
 
-      <div className="flex-shrink-0">
-        <IssuePropertyAssignee
-          projectId={issue?.project_id || null}
-          value={issue?.assignee_ids || null}
-          hideDropdownArrow
-          onChange={(val) => handleAssigneeChange(val)}
+      <div className="h-5 flex-shrink-0">
+        <PriorityDropdown
+          value={issue.priority}
+          onChange={handlePriorityChange}
           disabled={!editable}
+          buttonVariant="border-without-text"
+          buttonClassName="border"
+        />
+      </div>
+
+      <div className="h-5 flex-shrink-0">
+        <ProjectMemberDropdown
+          projectId={issue?.project_id}
+          value={issue?.assignee_ids}
+          onChange={handleAssigneeChange}
+          disabled={!editable}
+          multiple
+          buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "border-without-text"}
+          buttonClassName={issue.assignee_ids.length > 0 ? "hover:bg-transparent px-0" : ""}
         />
       </div>
     </div>
