@@ -1,5 +1,6 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // services
 import { ProjectMemberService } from "services/project";
 // types
@@ -9,6 +10,7 @@ import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite 
 import { EUserProjectRoles } from "constants/project";
 import { IMemberRootStore } from ".";
 import { IRouterStore } from "store/application/router.store";
+import { IUserRootStore } from "store/user";
 
 interface IProjectMemberDetails {
   id: string;
@@ -47,10 +49,11 @@ export interface IProjectMemberStore {
 export class ProjectMemberStore implements IProjectMemberStore {
   // observables
   projectMemberMap: {
-    [projectId: string]: Record<string, IProjectMember>;
+    [projectId: string]: Record<string, IProjectMembership>;
   } = {};
   // stores
   routerStore: IRouterStore;
+  userStore: IUserRootStore;
   memberRoot: IMemberRootStore;
   // services
   projectMemberService;
@@ -73,6 +76,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
 
     // root store
     this.routerStore = _rootStore.app.router;
+    this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
     // services
     this.projectMemberService = new ProjectMemberService();
@@ -84,7 +88,13 @@ export class ProjectMemberStore implements IProjectMemberStore {
   get projectMemberIds() {
     const projectId = this.routerStore.projectId;
     if (!projectId) return null;
-    return Object.keys(this.projectMemberMap?.[projectId] ?? {});
+    let members = Object.values(this.projectMemberMap?.[projectId] ?? {});
+    members = sortBy(members, [
+      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => this.memberRoot.memberMap?.[m.member]?.display_name.toLowerCase(),
+    ]);
+    const memberIds = members.map((m) => m.member);
+    return memberIds;
   }
 
   /**
@@ -105,7 +115,19 @@ export class ProjectMemberStore implements IProjectMemberStore {
     return memberDetails;
   };
 
-  getProjectMemberIds = (projectId: string): string[] | null => Object.keys(this.projectMemberMap?.[projectId] ?? {});
+  /**
+   * @description get the list of all the user ids of all the members of a project using projectId
+   * @param projectId
+   */
+  getProjectMemberIds = (projectId: string): string[] | null => {
+    let members = Object.values(this.projectMemberMap?.[projectId] ?? {});
+    members = sortBy(members, [
+      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
+    ]);
+    const memberIds = members.map((m) => m.member);
+    return memberIds;
+  };
 
   /**
    * @description fetch the list of all the members of a project

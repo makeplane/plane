@@ -1,18 +1,22 @@
-// mobx
 import { observer } from "mobx-react-lite";
-// lucide icons
-import { Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+// hooks
+import { useLabel } from "hooks/store";
 // components
-import { IssuePropertyState } from "../properties/state";
-import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
-import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { TIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "@plane/types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { IssuePropertyEstimates } from "./estimates";
-import { IssuePropertyAssignee } from "./assignee";
-import { useLabel, useProjectState } from "hooks/store";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  ProjectMemberDropdown,
+  StateDropdown,
+} from "components/dropdowns";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+// types
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -24,12 +28,10 @@ export interface IIssueProperties {
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
-
-  const { stateMap } = useProjectState();
   const { labelMap } = useLabel();
 
-  const handleState = (state: IState) => {
-    handleIssues({ ...issue, state_id: state.id });
+  const handleState = (stateId: string) => {
+    handleIssues({ ...issue, state_id: stateId });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
@@ -44,12 +46,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     handleIssues({ ...issue, assignee_ids: ids });
   };
 
-  const handleStartDate = (date: string) => {
-    handleIssues({ ...issue, start_date: date });
+  const handleStartDate = (date: Date | null) => {
+    handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleTargetDate = (date: string) => {
-    handleIssues({ ...issue, target_date: date });
+  const handleTargetDate = (date: Date | null) => {
+    handleIssues({ ...issue, target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
   const handleEstimate = (value: number | null) => {
@@ -58,7 +60,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   if (!displayProperties) return null;
 
-  const defaultStateOptions = [stateMap[issue?.state_id]];
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
   return (
@@ -66,24 +67,28 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <IssuePropertyState
-          projectId={issue?.project_id || null}
-          value={issue?.state_id || null}
-          defaultOptions={defaultStateOptions}
-          onChange={handleState}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5">
+          <StateDropdown
+            value={issue.state_id}
+            onChange={handleState}
+            projectId={issue.project_id}
+            disabled={isReadOnly}
+            buttonVariant="border-with-text"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <IssuePropertyPriority
-          value={issue?.priority}
-          onChange={handlePriority}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5">
+          <PriorityDropdown
+            value={issue?.priority || null}
+            onChange={handlePriority}
+            disabled={isReadOnly}
+            buttonVariant="border-without-text"
+            buttonClassName="border"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* label */}
@@ -101,45 +106,58 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-        <IssuePropertyDate
-          value={issue?.start_date || null}
-          onChange={(date: string) => handleStartDate(date)}
-          disabled={isReadOnly}
-          type="start_date"
-        />
+        <div className="h-5">
+          <DateDropdown
+            value={issue.start_date ?? null}
+            onChange={handleStartDate}
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            placeholder="Start date"
+            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            disabled={isReadOnly}
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <IssuePropertyDate
-          value={issue?.target_date || null}
-          onChange={(date: string) => handleTargetDate(date)}
-          disabled={isReadOnly}
-          type="target_date"
-        />
+        <div className="h-5">
+          <DateDropdown
+            value={issue?.target_date ?? null}
+            onChange={handleTargetDate}
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            placeholder="Due date"
+            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
+            disabled={isReadOnly}
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <IssuePropertyAssignee
-          projectId={issue?.project_id || null}
-          value={issue?.assignee_ids || null}
-          hideDropdownArrow
-          onChange={handleAssignee}
-          disabled={isReadOnly}
-          multiple
-        />
+        <div className="h-5">
+          <ProjectMemberDropdown
+            projectId={issue?.project_id}
+            value={issue?.assignee_ids}
+            onChange={handleAssignee}
+            disabled={isReadOnly}
+            multiple
+            buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "border-without-text"}
+            buttonClassName={issue.assignee_ids.length > 0 ? "hover:bg-transparent px-0" : ""}
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* estimates */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-        <IssuePropertyEstimates
-          projectId={issue?.project_id || null}
-          value={issue?.estimate_point || null}
-          onChange={handleEstimate}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5">
+          <EstimateDropdown
+            value={issue.estimate_point}
+            onChange={handleEstimate}
+            projectId={issue.project_id}
+            disabled={isReadOnly}
+            buttonVariant="border-with-text"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* extra render properties */}

@@ -9,11 +9,11 @@ import { useModule, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
+import { DeleteModuleModal } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 // ui
 import { CustomRangeDatePicker } from "components/ui";
-import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon } from "@plane/ui";
+import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
 // icon
 import {
   AlertCircle,
@@ -25,6 +25,7 @@ import {
   LinkIcon,
   Plus,
   Trash2,
+  UserCircle2,
 } from "lucide-react";
 // helpers
 import {
@@ -39,6 +40,7 @@ import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { ProjectMemberDropdown } from "components/dropdowns";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -235,7 +237,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   if (!moduleDetails)
     return (
-      <Loader className="px-5">
+      <Loader>
         <div className="space-y-2">
           <Loader.Item height="15px" width="50%" />
           <Loader.Item height="15px" width="30%" />
@@ -463,32 +465,64 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               </Popover>
             </div>
           </div>
-          <Controller
-            control={control}
-            name="lead"
-            render={({ field: { value } }) => (
-              <SidebarLeadSelect
-                disabled={!isEditingAllowed}
-                value={value}
-                onChange={(val: string) => {
-                  submitChanges({ lead: val });
-                }}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="members"
-            render={({ field: { value } }) => (
-              <SidebarMembersSelect
-                disabled={!isEditingAllowed}
-                value={value}
-                onChange={(val: string[]) => {
-                  submitChanges({ members: val });
-                }}
-              />
-            )}
-          />
+        </div>
+
+        {moduleDetails.description && (
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+            {moduleDetails.description}
+          </span>
+        )}
+
+        <div className="flex flex-col gap-5 pb-6 pt-2.5">
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+              <UserCircle2 className="h-4 w-4" />
+              <span className="text-base">Lead</span>
+            </div>
+            <Controller
+              control={control}
+              name="lead"
+              render={({ field: { value } }) => (
+                <div className="w-1/2">
+                  <ProjectMemberDropdown
+                    value={value ?? null}
+                    onChange={(val) => {
+                      submitChanges({ lead: val });
+                    }}
+                    projectId={projectId?.toString() ?? ""}
+                    multiple={false}
+                    buttonVariant="background-with-text"
+                    placeholder="Lead"
+                  />
+                </div>
+              )}
+            />
+          </div>
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+              <UserGroupIcon className="h-4 w-4" />
+              <span className="text-base">Members</span>
+            </div>
+            <Controller
+              control={control}
+              name="members"
+              render={({ field: { value } }) => (
+                <div className="w-1/2">
+                  <ProjectMemberDropdown
+                    value={value ?? []}
+                    onChange={(val: string[]) => {
+                      submitChanges({ members: val });
+                    }}
+                    multiple
+                    projectId={projectId?.toString() ?? ""}
+                    buttonVariant={value && value?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                    buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
+                    disabled={!isEditingAllowed}
+                  />
+                </div>
+              )}
+            />
+          </div>
 
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">

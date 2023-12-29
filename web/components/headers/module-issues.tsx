@@ -188,7 +188,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   placement="bottom-start"
                 >
                   {projectModuleIds?.map((moduleId) => (
-                    <ModuleDropdownOption moduleId={moduleId} />
+                    <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
                   ))}
                 </CustomMenu>
               }

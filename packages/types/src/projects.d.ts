@@ -77,7 +77,7 @@ export interface IProjectMember {
   project: IProjectLite;
   workspace: IWorkspaceLite;
   comment: string;
-  role: TUserProjectRole;
+  role: EUserProjectRoles;
 
   preferences: ProjectPreferences;
 

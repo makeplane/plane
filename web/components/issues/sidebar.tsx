@@ -15,19 +15,16 @@ import { ModuleService } from "services/module.service";
 import { LinkModal, LinksList } from "components/core";
 import {
   DeleteIssueModal,
-  SidebarAssigneeSelect,
   SidebarBlockedSelect,
   SidebarBlockerSelect,
   SidebarCycleSelect,
   SidebarModuleSelect,
   SidebarParentSelect,
-  SidebarPrioritySelect,
-  SidebarStateSelect,
-  SidebarEstimateSelect,
   SidebarLabelSelect,
   SidebarDuplicateSelect,
   SidebarRelatesSelect,
 } from "components/issues";
+import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // ui
 import { CustomDatePicker } from "components/ui";
 // icons
@@ -160,6 +157,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     });
   };
 
+  const projectDetails = issueDetail ? getProjectById(issueDetail?.project_id) : null;
+
   const showFirstSection =
     fieldsToShow.includes("all") ||
     fieldsToShow.includes("state") ||
@@ -232,7 +231,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
             ) : null}
             <h4 className="text-lg font-medium text-custom-text-300">
-              {issueDetail && getProjectById(issueDetail.project_id)?.identifier}-{issueDetail?.sequence_id}
+              {projectDetails?.identifier}-{issueDetail?.sequence_id}
             </h4>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -280,87 +279,97 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="py-1">
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <div className="flex flex-wrap items-center py-2">
-                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                       <p>State</p>
                     </div>
-                    <div>
-                      <Controller
-                        control={control}
-                        name="state"
-                        render={({ field: { value } }) => (
-                          <SidebarStateSelect
+                    <Controller
+                      control={control}
+                      name="state"
+                      render={({ field: { value } }) => (
+                        <div className="h-5 sm:w-1/2">
+                          <StateDropdown
                             value={value}
-                            onChange={(val: string) => submitChanges({ state: val })}
+                            onChange={(val) => submitChanges({ state: val })}
+                            projectId={projectId?.toString() ?? ""}
                             disabled={!isAllowed || uneditable}
+                            buttonVariant="background-with-text"
                           />
-                        )}
-                      />
-                    </div>
+                        </div>
+                      )}
+                    />
                   </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
                   <div className="flex flex-wrap items-center py-2">
-                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Assignees</p>
                     </div>
-                    <div>
-                      <Controller
-                        control={control}
-                        name="assignees"
-                        render={({ field: { value } }) => (
-                          <SidebarAssigneeSelect
+                    <Controller
+                      control={control}
+                      name="assignees"
+                      render={({ field: { value } }) => (
+                        <div className="h-5 sm:w-1/2">
+                          <ProjectMemberDropdown
                             value={value}
-                            onChange={(val: string[]) => submitChanges({ assignees: val })}
+                            onChange={(val) => submitChanges({ assignees: val })}
                             disabled={!isAllowed || uneditable}
+                            projectId={projectId?.toString() ?? ""}
+                            placeholder="Assignees"
+                            multiple
+                            buttonVariant={value?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                            buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
                           />
-                        )}
-                      />
-                    </div>
+                        </div>
+                      )}
+                    />
                   </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                   <div className="flex flex-wrap items-center py-2">
-                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <Signal className="h-4 w-4 flex-shrink-0" />
                       <p>Priority</p>
                     </div>
-                    <div>
-                      <Controller
-                        control={control}
-                        name="priority"
-                        render={({ field: { value } }) => (
-                          <SidebarPrioritySelect
+                    <Controller
+                      control={control}
+                      name="priority"
+                      render={({ field: { value } }) => (
+                        <div className="h-5 sm:w-1/2">
+                          <PriorityDropdown
                             value={value}
                             onChange={(val) => submitChanges({ priority: val })}
                             disabled={!isAllowed || uneditable}
+                            buttonVariant="background-with-text"
                           />
-                        )}
-                      />
-                    </div>
+                        </div>
+                      )}
+                    />
                   </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
                   areEstimatesEnabledForCurrentProject && (
                     <div className="flex flex-wrap items-center py-2">
-                      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                         <Triangle className="h-4 w-4 flex-shrink-0 " />
                         <p>Estimate</p>
                       </div>
-                      <div className="sm:basis-1/2">
-                        <Controller
-                          control={control}
-                          name="estimate_point"
-                          render={({ field: { value } }) => (
-                            <SidebarEstimateSelect
+                      <Controller
+                        control={control}
+                        name="estimate_point"
+                        render={({ field: { value } }) => (
+                          <div className="h-5 sm:w-1/2">
+                            <EstimateDropdown
                               value={value}
-                              onChange={(val: number | null) => submitChanges({ estimate_point: val })}
+                              onChange={(val) => submitChanges({ estimate_point: val })}
+                              projectId={projectId?.toString() ?? ""}
                               disabled={!isAllowed || uneditable}
+                              buttonVariant="background-with-text"
                             />
-                          )}
-                        />
-                      </div>
+                          </div>
+                        )}
+                      />
                     </div>
                   )}
               </div>
@@ -529,7 +538,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             )}
             {showThirdSection && (
               <div className="py-1">
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
@@ -544,7 +553,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     </div>
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DiceIcon className="h-4 w-4 flex-shrink-0" />
