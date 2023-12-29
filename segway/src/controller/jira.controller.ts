@@ -9,7 +9,9 @@ import { MQSingleton } from "../mq/singleton";
 import AuthKeyMiddleware from "../middleware/authkey.middleware";
 // axios
 import axios from "axios";
-
+// logger
+import { logger } from "../utils/logger";
+// jira
 import { loadIssues, loadComments } from "../utils/paginator";
 import { EJiraPriority, EJiraStatus } from "../utils/constant";
 
@@ -309,7 +311,7 @@ export class JiraController {
 
       return;
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       const workspace_id = req.body.workspace_id;
       const project_id = req.body.project_id;
       const created_by = req.body.created_by;
