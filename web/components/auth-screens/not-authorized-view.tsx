@@ -18,7 +18,8 @@ type Props = {
 
 export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
   const { user } = useUser();
-  const { asPath: currentPath } = useRouter();
+  const { query } = useRouter();
+  const { next_path } = query;
 
   return (
     <DefaultLayout>
@@ -37,7 +38,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
           {user ? (
             <p>
               You have signed in as {user.email}. <br />
-              <Link href={`/?next=${currentPath}`}>
+              <Link href={`/?next_path=${next_path}`}>
                 <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
               with different account that has access to this page.
@@ -45,7 +46,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
           ) : (
             <p>
               You need to{" "}
-              <Link href={`/?next=${currentPath}`}>
+              <Link href={`/?next_path=${next_path}`}>
                 <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
               with an account that has access to this page.

@@ -31,7 +31,7 @@ export default function useUser({ redirectTo = "", redirectIfFound = false, opti
     ) {
       router.push(redirectTo);
       return;
-      // const nextLocation = router.asPath.split("?next=")[1];
+      // const nextLocation = router.asPath.split("?next_path=")[1];
       // if (nextLocation) {
       //   router.push(nextLocation as string);
       //   return;
