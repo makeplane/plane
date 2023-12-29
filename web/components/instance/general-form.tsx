@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IInstance, IInstanceAdmin } from "types/instance";
+import { IInstance, IInstanceAdmin } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";

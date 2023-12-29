@@ -8,7 +8,7 @@ import type {
   IProjectLite,
   IIssueFilterOptions,
   ILinkDetails,
-} from "types";
+} from "@plane/types";
 
 export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
 

@@ -14,7 +14,7 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TUnGroupedIssues,
-} from "types";
+} from "@plane/types";
 // constants
 import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";

@@ -15,8 +15,8 @@ import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "component
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWebhook } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IWebhook } from "@plane/types";
 
 const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   // states

@@ -15,7 +15,7 @@ import { EmptyState } from "components/common";
 // assets
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const CycleDetailPage: NextPageWithLayout = () => {
   // router

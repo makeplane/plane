@@ -1,5 +1,5 @@
 // types
-import { TWebhookEventTypes } from "types";
+import { TWebhookEventTypes } from "@plane/types";
 
 type Props = {
   value: string;

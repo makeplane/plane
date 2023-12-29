@@ -4,7 +4,7 @@ import { IssueService, IssueReactionService, IssueCommentService } from "service
 import { NotificationService } from "services/notification.service";
 // types
 import { IIssueRootStore } from "./root.store";
-import type { TIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
+import type { TIssue, IIssueActivity, IIssueLink, ILinkDetails } from "@plane/types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
 import { RootStore } from "store/root.store";

@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IIssueLabel, IState } from "types";
+import type { IIssueLabel, IState } from "@plane/types";
 // constants
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 

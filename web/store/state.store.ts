@@ -4,7 +4,7 @@ import set from "lodash/set";
 // store
 import { RootStore } from "./root.store";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 // services
 import { ProjectStateService } from "services/project";
 

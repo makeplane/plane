@@ -9,7 +9,7 @@ import { Button } from "@plane/ui";
 // helpers
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueFilterOptions } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {

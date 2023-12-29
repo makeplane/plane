@@ -7,7 +7,7 @@ import { WorkspaceService } from "services/workspace.service";
 // ui
 import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 // types
-import { IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "@plane/types";
 // fetch keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 

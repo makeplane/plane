@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
 // types
-import { TIssue, IIssueLabel } from "types";
+import { TIssue, IIssueLabel } from "@plane/types";
 
 type Props = {
   issueDetails: TIssue | undefined;

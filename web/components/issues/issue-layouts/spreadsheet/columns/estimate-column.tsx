@@ -3,7 +3,7 @@ import { IssuePropertyEstimates } from "../../properties";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issueId: string;

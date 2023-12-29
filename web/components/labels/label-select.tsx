@@ -6,7 +6,7 @@ import { Check, ChevronDown, Search } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 type Props = {
   value: string[];

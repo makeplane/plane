@@ -16,7 +16,7 @@ import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 

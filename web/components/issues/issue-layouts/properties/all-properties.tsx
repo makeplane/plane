@@ -8,7 +8,7 @@ import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { TIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
+import { TIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "@plane/types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssuePropertyEstimates } from "./estimates";
 import { IssuePropertyAssignee } from "./assignee";

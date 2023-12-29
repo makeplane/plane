@@ -4,7 +4,7 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 import { ViewService } from "services/view.service";
 import { RootStore } from "store/root.store";
 // types
-import { IProjectView } from "types";
+import { IProjectView } from "@plane/types";
 
 export interface IProjectViewStore {
   // observables

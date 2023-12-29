@@ -20,7 +20,7 @@ import {
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
+import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 

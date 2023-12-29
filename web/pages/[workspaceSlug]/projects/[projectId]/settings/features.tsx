@@ -10,7 +10,7 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingHeader } from "components/headers";
 import { ProjectFeaturesList } from "components/project";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const FeaturesSettingsPage: NextPageWithLayout = () => {
   const router = useRouter();

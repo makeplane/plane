@@ -103,7 +103,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
         );
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         postHogEventTracker(
           "MEMBER_ADDED",
           {

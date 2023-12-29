@@ -6,7 +6,7 @@ import { useIssues } from "hooks/store";
 import { BaseGanttRoot } from "./base-gantt-root";
 import { EIssuesStoreType } from "constants/issue";
 import { EIssueActions } from "../types";
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 export const ProjectViewGanttLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);

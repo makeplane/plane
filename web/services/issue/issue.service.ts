@@ -1,7 +1,14 @@
 // services
 import { APIService } from "services/api.service";
 // type
-import type { TIssue, IIssueActivity, IIssueDisplayProperties, ILinkDetails, TIssueLink, TIssueSubIssues } from "types";
+import type {
+  TIssue,
+  IIssueActivity,
+  IIssueDisplayProperties,
+  ILinkDetails,
+  TIssueLink,
+  TIssueSubIssues,
+} from "@plane/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 

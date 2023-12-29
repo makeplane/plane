@@ -2,7 +2,7 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import set from "lodash/set";
 // types
 import { RootStore } from "../root.store";
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 // services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";

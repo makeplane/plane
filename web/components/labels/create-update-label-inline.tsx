@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
 

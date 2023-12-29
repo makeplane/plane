@@ -6,7 +6,7 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "types";
+import type { IInboxIssue } from "@plane/types";
 import { useProject } from "hooks/store";
 
 type Props = {

@@ -7,7 +7,7 @@ import isYesterday from "date-fns/isYesterday";
 // services
 import { PageService } from "services/page.service";
 // types
-import { IPage, IRecentPages } from "types";
+import { IPage, IRecentPages } from "@plane/types";
 // store
 import { RootStore } from "./root.store";
 

@@ -7,7 +7,7 @@ import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 

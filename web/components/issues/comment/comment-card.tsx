@@ -14,7 +14,7 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import type { IIssueActivity } from "types";
+import type { IIssueActivity } from "@plane/types";
 
 // services
 const fileService = new FileService();

@@ -4,7 +4,7 @@ import indexOf from "lodash/indexOf";
 import reverse from "lodash/reverse";
 import values from "lodash/values";
 // types
-import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";

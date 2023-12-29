@@ -1,7 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IModule, TIssue, ILinkDetails, ModuleLink, TIssueMap } from "types";
+import type { IModule, TIssue, ILinkDetails, ModuleLink, TIssueMap } from "@plane/types";
 import { API_BASE_URL } from "helpers/common.helper";
 
 export class ModuleService extends APIService {

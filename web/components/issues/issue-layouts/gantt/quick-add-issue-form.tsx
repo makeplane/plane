@@ -11,7 +11,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 

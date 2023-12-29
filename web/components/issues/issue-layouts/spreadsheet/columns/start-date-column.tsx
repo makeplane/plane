@@ -5,7 +5,7 @@ import { ViewStartDateSelect } from "components/issues";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // types
-import { TIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issueId: string;

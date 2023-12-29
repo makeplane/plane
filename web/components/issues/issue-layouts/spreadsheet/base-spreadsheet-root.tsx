@@ -6,7 +6,7 @@ import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
-import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
+import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants

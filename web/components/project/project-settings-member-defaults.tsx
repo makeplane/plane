@@ -11,7 +11,7 @@ import { MemberSelect } from "components/project";
 // ui
 import { Loader } from "@plane/ui";
 // types
-import { IProject, IUserLite, IWorkspace } from "types";
+import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -79,7 +79,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

@@ -13,7 +13,7 @@ import { Button, LayersIcon } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
-import { IUser, TIssue } from "types";
+import { IUser, TIssue } from "@plane/types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // store hooks

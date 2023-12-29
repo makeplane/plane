@@ -37,7 +37,7 @@ import {
   renderShortMonthDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys

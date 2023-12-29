@@ -18,7 +18,7 @@ import { Input } from "@plane/ui";
 // icons
 import { Palette } from "lucide-react";
 // types
-import { IUserTheme } from "types";
+import { IUserTheme } from "@plane/types";
 
 type Props = {
   name: keyof IUserTheme;

@@ -7,7 +7,7 @@ import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "types";
+import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IWorkspaceIssues {
   // observable

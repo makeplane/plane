@@ -11,7 +11,7 @@ import { ExistingIssuesListModal } from "components/core";
 // services
 import { IssueService } from "services/issue";
 // types
-import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "types";
+import { BlockeIssueDetail, TIssue, ISearchIssueResponse } from "@plane/types";
 
 type Props = {
   issueId?: string;

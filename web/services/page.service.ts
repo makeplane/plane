@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import { IPage, IPageBlock, TIssue } from "types";
+import { IPage, IPageBlock, TIssue } from "@plane/types";
 
 export class PageService extends APIService {
   constructor() {
@@ -21,7 +21,7 @@ export class PageService extends APIService {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
-        console.log("error", error?.response?.data);
+        console.error("error", error?.response?.data);
         throw error?.response?.data;
       });
   }

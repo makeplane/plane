@@ -11,7 +11,7 @@ import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { TIssue, IUser } from "types";
+import { TIssue, IUser } from "@plane/types";
 // services
 import { FileService } from "services/file.service";
 // constants

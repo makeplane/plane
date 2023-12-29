@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSearchSelect } from "@plane/ui";
 // types
-import { IUser, IImporterService } from "types";
+import { IUser, IImporterService } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

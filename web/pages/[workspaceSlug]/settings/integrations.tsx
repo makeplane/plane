@@ -16,7 +16,7 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { IntegrationAndImportExportBanner } from "components/ui";
 import { Loader } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { APP_INTEGRATIONS } from "constants/fetch-keys";
 // constants

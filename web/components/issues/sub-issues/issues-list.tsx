@@ -2,7 +2,7 @@ import { useMemo } from "react";
 // components
 import { SubIssues } from "./issue";
 // types
-import { IUser, TIssue } from "types";
+import { IUser, TIssue } from "@plane/types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 // fetch keys

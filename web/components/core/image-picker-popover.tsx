@@ -118,7 +118,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

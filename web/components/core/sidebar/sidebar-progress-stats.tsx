@@ -19,7 +19,7 @@ import {
   TCompletionChartDistribution,
   TLabelsDistribution,
   TStateGroups,
-} from "types";
+} from "@plane/types";
 
 type Props = {
   distribution: {

@@ -15,7 +15,7 @@ import {
   FilterTargetDate,
 } from "components/issues";
 // types
-import { IIssueFilterOptions, IIssueLabel, IState } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 

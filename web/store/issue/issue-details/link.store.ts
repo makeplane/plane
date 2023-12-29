@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap } from "types";
+import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap } from "@plane/types";
 
 export interface IIssueLinkStoreActions {
   fetchLinks: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueLink[]>;

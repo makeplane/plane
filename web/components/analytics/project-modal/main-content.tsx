@@ -4,7 +4,7 @@ import { Tab } from "@headlessui/react";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // types
-import { ICycle, IModule, IProject } from "types";
+import { ICycle, IModule, IProject } from "@plane/types";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 

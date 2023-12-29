@@ -20,7 +20,7 @@ import { truncateText } from "helpers/string.helper";
 import { renderLongDateFormat } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
-import { IIssueAttachment } from "types";
+import { IIssueAttachment } from "@plane/types";
 
 // services
 const issueAttachmentService = new IssueAttachmentService();

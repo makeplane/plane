@@ -28,7 +28,7 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // types
-import type { IUser, TIssue, ISearchIssueResponse } from "types";
+import type { IUser, TIssue, ISearchIssueResponse } from "@plane/types";
 
 const aiService = new AIService();
 const fileService = new FileService();

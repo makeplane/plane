@@ -13,7 +13,7 @@ import { EmptyState } from "components/common";
 // images
 import emptyEstimate from "public/empty-state/estimate.svg";
 // types
-import { IEstimate } from "types";
+import { IEstimate } from "@plane/types";
 
 export const EstimatesList: React.FC = observer(() => {
   // states

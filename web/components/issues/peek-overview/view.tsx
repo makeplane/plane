@@ -17,7 +17,7 @@ import {
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
-import { TIssue, IIssueLink, ILinkDetails } from "types";
+import { TIssue, IIssueLink, ILinkDetails } from "@plane/types";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 interface IIssueView {

@@ -15,7 +15,7 @@ import { JiraImporterService } from "services/integrations";
 // fetch keys
 import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
 
-import { IJiraImporterForm, IJiraMetadata } from "types";
+import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
 // components
 import { ToggleSwitch, Spinner } from "@plane/ui";

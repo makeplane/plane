@@ -5,7 +5,7 @@ import { ILabelRootStore } from "store/label";
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
-import { GroupByColumnTypes, IGroupByColumn } from "types";
+import { GroupByColumnTypes, IGroupByColumn } from "@plane/types";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,

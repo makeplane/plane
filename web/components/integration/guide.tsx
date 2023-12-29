@@ -16,7 +16,7 @@ import { Button, Loader } from "@plane/ui";
 // icons
 import { RefreshCw } from "lucide-react";
 // types
-import { IImporterService } from "types";
+import { IImporterService } from "@plane/types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants

@@ -16,7 +16,7 @@ import { GptAssistantModal } from "components/core";
 import { Button, TextArea } from "@plane/ui";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // types
-import { IUser, IPageBlock } from "types";
+import { IUser, IPageBlock } from "@plane/types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 

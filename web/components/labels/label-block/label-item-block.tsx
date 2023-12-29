@@ -4,7 +4,7 @@ import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 //ui
 import { CustomMenu } from "@plane/ui";
 //types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 //hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 //components

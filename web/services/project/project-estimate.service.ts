@@ -1,7 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IEstimate, IEstimateFormData, IEstimatePoint } from "types";
+import type { IEstimate, IEstimateFormData, IEstimatePoint } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 

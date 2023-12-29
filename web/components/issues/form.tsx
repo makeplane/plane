@@ -29,7 +29,7 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // types
-import type { TIssue, ISearchIssueResponse } from "types";
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",

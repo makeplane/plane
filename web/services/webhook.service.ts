@@ -3,7 +3,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 export class WebhookService extends APIService {
   constructor() {

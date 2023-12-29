@@ -22,8 +22,8 @@ import { Avatar, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { IUser, TOnboardingSteps } from "types";
-import { NextPageWithLayout } from "types/app";
+import { IUser, TOnboardingSteps } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 
 // services
 const workspaceService = new WorkspaceService();

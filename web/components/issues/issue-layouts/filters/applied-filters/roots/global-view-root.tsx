@@ -5,7 +5,7 @@ import { useIssues, useLabel } from "hooks/store";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueFilterOptions } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const GlobalViewsAppliedFiltersRoot = observer(() => {

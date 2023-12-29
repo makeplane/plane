@@ -4,7 +4,7 @@ import DefaultLayout from "layouts/default-layout";
 // components
 import { SignInView } from "components/page-views";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const HomePage: NextPageWithLayout = () => <SignInView />;
 

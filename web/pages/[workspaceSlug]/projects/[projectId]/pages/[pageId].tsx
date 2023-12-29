@@ -28,8 +28,8 @@ import emptyPage from "public/empty-state/page.svg";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IPage, TIssue } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IPage, TIssue } from "@plane/types";
 // fetch-keys
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants

@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 // components
 import { ProjectViewForm } from "components/views";
 // types
-import { IProjectView } from "types";
+import { IProjectView } from "@plane/types";
 
 type Props = {
   data?: IProjectView | null;
@@ -33,9 +33,9 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const handleCreateView = async (payload: IProjectView) => {
     await createView(workspaceSlug, projectId, payload)
       .then(() => {
-        console.log("after calling store");
+        // console.log("after calling store");
         handleClose();
-        console.log("after closing");
+        // console.log("after closing");
         setToastAlert({
           type: "success",
           title: "Success!",

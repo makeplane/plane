@@ -9,7 +9,7 @@ import { CustomMenu } from "@plane/ui";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { TIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 import useToast from "hooks/use-toast";
 import { useState } from "react";
 import { TCreateModalStoreTypes } from "constants/issue";

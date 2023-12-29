@@ -7,7 +7,7 @@ import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { TIssuePriorities } from "types";
+import { TIssuePriorities } from "@plane/types";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
 

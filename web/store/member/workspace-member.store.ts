@@ -4,7 +4,7 @@ import { set } from "lodash";
 import { WorkspaceService } from "services/workspace.service";
 // types
 import { RootStore } from "store/root.store";
-import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "types";
+import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { IRouterStore } from "store/application/router.store";
