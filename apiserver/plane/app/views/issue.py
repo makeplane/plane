@@ -1410,7 +1410,7 @@ class IssueRelationViewSet(BaseViewSet):
         )
 
         blocked_by_issues = issue_relations.filter(relation_type="blocked_by", issue_id=issue_id)
-        duplicate_issues = issue_relations.filter(relation_type="duplicates", issue_id=issue_id)
+        duplicate_issues = issue_relations.filter(relation_type="duplicate", issue_id=issue_id)
         relates_to_issues = issue_relations.filter(relation_type="relates_to", issue_id=issue_id)
 
         blocking_issues_serialized = RelatedIssueSerializer(blocking_issues, many=True).data
