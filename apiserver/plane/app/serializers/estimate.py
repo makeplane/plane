@@ -4,6 +4,7 @@ from .base import BaseSerializer
 from plane.db.models import Estimate, EstimatePoint
 from plane.app.serializers import WorkspaceLiteSerializer, ProjectLiteSerializer
 
+from rest_framework import serializers
 
 class EstimateSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
@@ -19,6 +20,15 @@ class EstimateSerializer(BaseSerializer):
 
 
 class EstimatePointSerializer(BaseSerializer):
+
+    def validate(self, data):
+        if not data:
+            raise serializers.ValidationError("Estimate points are required")
+        value = data.get("value")
+        if value and len(value) > 20:
+            raise serializers.ValidationError("Value can't be more than 20 characters")
+        return data
+
     class Meta:
         model = EstimatePoint
         fields = "__all__"

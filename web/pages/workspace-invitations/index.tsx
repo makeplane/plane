@@ -52,6 +52,19 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
       .catch((err) => console.error(err));
   };
 
+  const handleReject = () => {
+    if (!invitationDetail) return;
+    workspaceService
+      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+        accepted: false,
+        email: invitationDetail.email,
+      })
+      .then(() => {
+        router.push("/");
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-center px-3">
       {invitationDetail ? (
@@ -77,13 +90,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
                   description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                 >
                   <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
-                  <EmptySpaceItem
-                    Icon={X}
-                    title="Ignore"
-                    action={() => {
-                      router.push("/");
-                    }}
-                  />
+                  <EmptySpaceItem Icon={X} title="Ignore" action={handleReject} />
                 </EmptySpace>
               )}
             </>

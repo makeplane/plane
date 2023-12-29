@@ -92,7 +92,9 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
             return (
               <button
                 key={label.id}
-                className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
+                className={`group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs ${
+                  isNotAllowed || uneditable ? "!cursor-not-allowed" : "hover:border-red-500/20 hover:bg-red-500/20"
+                }`}
                 onClick={() => {
                   const updatedLabels = labelList?.filter((l) => l !== labelId);
                   submitChanges({

@@ -121,8 +121,8 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
     def post(self, request, slug, project_id):
-        project = Project.objects.get(workspace__slug=slug, pk=project_id)
-        serializer = ModuleSerializer(data=request.data, context={"project": project})
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        serializer = ModuleSerializer(data=request.data, context={"project_id": project_id, "workspace_id": project.workspace_id})
         if serializer.is_valid():
             serializer.save()
             module = Module.objects.get(pk=serializer.data["id"])
@@ -132,7 +132,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
     
     def patch(self, request, slug, project_id, pk):
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
-        serializer = ModuleSerializer(module, data=request.data)
+        serializer = ModuleSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

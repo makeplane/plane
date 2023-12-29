@@ -31,6 +31,17 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
       : null
   );
 
+  const noLeadOption = {
+    value: "",
+    query: "No lead",
+    content: (
+      <div className="flex items-center gap-2">
+        <UserCircle2 className="h-4 w-4" />
+        No lead
+      </div>
+    ),
+  };
+
   const options = members?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
@@ -41,6 +52,8 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
       </div>
     ),
   }));
+
+  const leadOption = (options || []).concat(noLeadOption);
 
   const selectedOption = members?.find((m) => m.member.id === value)?.member;
 
@@ -69,7 +82,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
               </div>
             )
           }
-          options={options}
+          options={leadOption}
           maxHeight="md"
           onChange={onChange}
         />

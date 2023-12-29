@@ -88,7 +88,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                         </div>
                       </div>
                       <div className="min-w-0 flex-1 py-3">
-                        <div className="break-words text-xs text-custom-text-200">
+                        <div className="flex gap-1 break-words text-xs text-custom-text-200">
                           {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                             <span className="text-gray font-medium">Plane</span>
                           ) : activityItem.actor_detail.is_bot ? (
@@ -101,8 +101,8 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                                   : activityItem.actor_detail.display_name}
                               </span>
                             </Link>
-                          )}{" "}
-                          {message}{" "}
+                          )}
+                          {message}
                           <Tooltip
                             tooltipContent={`${renderLongDateFormat(activityItem.created_at)}, ${render24HourFormatTime(
                               activityItem.created_at

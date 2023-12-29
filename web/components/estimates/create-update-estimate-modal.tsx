@@ -130,6 +130,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     }
 
     if (
+      formData.value1.length > 20 ||
+      formData.value2.length > 20 ||
+      formData.value3.length > 20 ||
+      formData.value4.length > 20 ||
+      formData.value5.length > 20 ||
+      formData.value6.length > 20
+    ) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate point cannot have more than 20 characters.",
+      });
+      return;
+    }
+
+    if (
       checkDuplicates([
         formData.value1,
         formData.value2,
@@ -269,6 +285,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                                   <Controller
                                     control={control}
                                     name={`value${i + 1}` as keyof FormValues}
+                                    rules={{
+                                      maxLength: {
+                                        value: 20,
+                                        message: "Estimate point must at most be of 20 characters",
+                                      },
+                                    }}
                                     render={({ field: { value, onChange, ref } }) => (
                                       <Input
                                         ref={ref}
@@ -299,8 +321,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                            ? "Creating Estimate..."
-                            : "Create Estimate"}
+                          ? "Creating Estimate..."
+                          : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

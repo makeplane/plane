@@ -12,7 +12,7 @@ const workspaceService = new WorkspaceService();
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
   const router = useRouter();
-  const { next_url } = router.query;
+  const { next_path } = router.query;
 
   const [isRouteAccess, setIsRouteAccess] = useState(true);
   const {
@@ -28,6 +28,11 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     refreshInterval: 0,
     shouldRetryOnError: false,
   });
+
+  const isValidURL = (url: string): boolean => {
+    const disallowedSchemes = /^(https?|ftp):\/\//i;
+    return !disallowedSchemes.test(url);
+  };
 
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
@@ -84,8 +89,15 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
       if (!isLoading) {
         setIsRouteAccess(() => true);
         if (user) {
-          if (next_url) router.push(next_url.toString());
-          else handleUserRouteAuthentication();
+          if (next_path) {
+            if (isValidURL(next_path.toString())) {
+              router.push(next_path.toString());
+              return;
+            } else {
+              router.push("/");
+              return;
+            }
+          } else handleUserRouteAuthentication();
         } else {
           if (routeAuth === "sign-in") {
             setIsRouteAccess(() => false);
@@ -97,7 +109,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
         }
       }
     }
-  }, [user, isLoading, routeAuth, router, next_url]);
+  }, [user, isLoading, routeAuth, router, next_path]);
 
   return {
     isLoading: isRouteAccess,

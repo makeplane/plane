@@ -17,36 +17,54 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const [error, setError] = useState<any | null>(null);
   // router
   const router = useRouter();
-  const { next_url } = router.query;
+  const { next_path } = router.query;
   // mobx store
   const {
     user: { fetchCurrentUser, fetchCurrentUserSettings },
   } = useMobxStore();
 
+  const isValidURL = (url: string): boolean => {
+    const disallowedSchemes = /^(https?|ftp):\/\//i;
+    return !disallowedSchemes.test(url);
+  };
+
+  console.log("next_path", next_path);
+
   const handleSignInRedirection = useCallback(
     async (user: IUser) => {
-      // if the user is not onboarded, redirect them to the onboarding page
-      if (!user.is_onboarded) {
-        router.push("/onboarding");
-        return;
-      }
-      // if next_url is provided, redirect the user to that url
-      if (next_url) {
-        router.push(next_url.toString());
-        return;
-      }
+      try {
+        // if the user is not onboarded, redirect them to the onboarding page
+        if (!user.is_onboarded) {
+          router.push("/onboarding");
+          return;
+        }
+        // if next_path is provided, redirect the user to that url
+        if (next_path) {
+          if (isValidURL(next_path.toString())) {
+            router.push(next_path.toString());
+            return;
+          } else {
+            router.push("/");
+            return;
+          }
+        }
 
-      // if the user is onboarded, fetch their last workspace details
-      await fetchCurrentUserSettings()
-        .then((userSettings: IUserSettings) => {
-          const workspaceSlug =
-            userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-          if (workspaceSlug) router.push(`/${workspaceSlug}`);
-          else router.push("/profile");
-        })
-        .catch((err) => setError(err));
+        // Fetch the current user settings
+        const userSettings: IUserSettings = await fetchCurrentUserSettings();
+
+        // Extract workspace details
+        const workspaceSlug =
+          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+
+        // Redirect based on workspace details or to profile if not available
+        if (workspaceSlug) router.push(`/${workspaceSlug}`);
+        else router.push("/profile");
+      } catch (error) {
+        console.error("Error in handleSignInRedirection:", error);
+        setError(error);
+      }
     },
-    [fetchCurrentUserSettings, router, next_url]
+    [fetchCurrentUserSettings, router, next_path]
   );
 
   const updateUserInfo = useCallback(async () => {
