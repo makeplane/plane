@@ -274,7 +274,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
-  const cycleStatus = cycleDetails.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
   const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
