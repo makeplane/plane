@@ -1,11 +1,12 @@
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import * as schema from "./schema";
 // logger
-import { logger } from "../utils/logger"
+import { logger } from "../utils/logger";
 
 export class DatabaseSingleton {
   private static instance: DatabaseSingleton;
-  public db: PostgresJsDatabase | null = null;
+  public db: PostgresJsDatabase<typeof schema> | null = null;
 
   private constructor() {
     try {
