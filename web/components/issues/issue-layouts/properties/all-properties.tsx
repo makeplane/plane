@@ -120,14 +120,16 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* target/due date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <DateDropdown
-          value={issue?.target_date ?? null}
-          onChange={handleTargetDate}
-          icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-          placeholder="Due date"
-          buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-          disabled={isReadOnly}
-        />
+        <div className="h-5">
+          <DateDropdown
+            value={issue?.target_date ?? null}
+            onChange={handleTargetDate}
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            placeholder="Due date"
+            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
+            disabled={isReadOnly}
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* assignee */}

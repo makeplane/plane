@@ -42,11 +42,11 @@ export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
   title: string;
 }[] = [
-  { key: "none", title: "None" },
-  { key: "low", title: "Low" },
-  { key: "medium", title: "Medium" },
-  { key: "high", title: "High" },
   { key: "urgent", title: "Urgent" },
+  { key: "high", title: "High" },
+  { key: "medium", title: "Medium" },
+  { key: "low", title: "Low" },
+  { key: "none", title: "None" },
 ];
 
 export const issuePriorityByKey = (key: string) => ISSUE_PRIORITIES.find((item) => item.key === key) || null;

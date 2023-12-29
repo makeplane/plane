@@ -47,7 +47,7 @@ const BorderButton = (props: ButtonProps) => {
   return (
     <div
       className={cn(
-        "h-full flex items-center gap-1 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+        "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
         className
       )}
     >
@@ -63,7 +63,7 @@ const BackgroundButton = (props: ButtonProps) => {
 
   return (
     <div
-      className={cn("h-full flex items-center gap-1 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
+      className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
     >
       <Triangle className="h-3 w-3 flex-shrink-0" />
       {!hideText && <span className="flex-grow truncate">{estimatePoint !== null ? estimatePoint : "Estimate"}</span>}
@@ -78,7 +78,7 @@ const TransparentButton = (props: ButtonProps) => {
   return (
     <div
       className={cn(
-        "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+        "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
         className
       )}
     >

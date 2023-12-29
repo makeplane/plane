@@ -41,17 +41,17 @@ const BorderButton = (props: ButtonProps) => {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-red-500/20 text-red-900 border-red-500",
-    high: "bg-orange-500/20 text-orange-900 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-900 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-900 border-custom-primary-100",
+    urgent: "bg-red-500/20 text-red-950 border-red-500",
+    high: "bg-orange-500/20 text-orange-950 border-orange-500",
+    medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
+    low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
     none: "bg-custom-background-80 border-custom-border-300",
   };
 
   return (
     <div
       className={cn(
-        "h-full flex items-center gap-1 border-[0.5px] rounded text-xs px-2 py-0.5",
+        "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
         priorityClasses[priority],
         {
           // compact the icons if text is hidden
@@ -95,17 +95,17 @@ const BackgroundButton = (props: ButtonProps) => {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-red-500/20 text-red-900",
-    high: "bg-orange-500/20 text-orange-900",
-    medium: "bg-yellow-500/20 text-yellow-900",
-    low: "bg-blue-500/20 text-blue-900",
+    urgent: "bg-red-500/20 text-red-950",
+    high: "bg-orange-500/20 text-orange-950",
+    medium: "bg-yellow-500/20 text-yellow-950",
+    low: "bg-blue-500/20 text-blue-950",
     none: "bg-custom-background-80",
   };
 
   return (
     <div
       className={cn(
-        "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5",
+        "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
         priorityClasses[priority],
         {
           // compact the icons if text is hidden
@@ -149,17 +149,17 @@ const TransparentButton = (props: ButtonProps) => {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "text-red-900",
-    high: "text-orange-900",
-    medium: "text-yellow-900",
-    low: "text-blue-900",
+    urgent: "text-red-950",
+    high: "text-orange-950",
+    medium: "text-yellow-950",
+    low: "text-blue-950",
     none: "",
   };
 
   return (
     <div
       className={cn(
-        "h-full flex items-center gap-1 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+        "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
         priorityClasses[priority],
         {
           // compact the icons if text is hidden
@@ -229,29 +229,42 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     ],
   });
 
-  const options = ISSUE_PRIORITIES.map((priority) => ({
-    value: priority.key,
-    query: priority.key,
-    content: (
-      <div className="flex items-center gap-2">
-        <div
-          className={cn(
-            "grid place-items-center border-[0.5px] rounded-sm p-0.5 border-custom-border-100 flex-shrink-0",
-            {
+  const options = ISSUE_PRIORITIES.map((priority) => {
+    const priorityClasses = {
+      urgent: "bg-red-500/20 text-red-950 border-red-500",
+      high: "bg-orange-500/20 text-orange-950 border-orange-500",
+      medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
+      low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
+      none: "bg-custom-background-80 border-custom-border-300",
+    };
+
+    return {
+      value: priority.key,
+      query: priority.key,
+      content: (
+        <div className="flex items-center gap-2">
+          <div
+            className={cn("grid place-items-center border rounded p-0.5 flex-shrink-0", priorityClasses[priority.key], {
               "bg-red-500 border-red-500": priority.key === "urgent" && highlightUrgent,
-            }
-          )}
-        >
-          <PriorityIcon
-            priority={priority.key}
-            size={12}
-            className={cn({ "text-white": priority.key === "urgent" && highlightUrgent })}
-          />
+            })}
+          >
+            <PriorityIcon
+              priority={priority.key}
+              size={12}
+              className={cn({
+                "text-white": priority.key === "urgent" && highlightUrgent,
+                // centre align the icons if text is hidden
+                "translate-x-[0.0625rem]": priority.key === "high",
+                "translate-x-0.5": priority.key === "medium",
+                "translate-x-1": priority.key === "low",
+              })}
+            />
+          </div>
+          <span className="flex-grow truncate">{priority.title}</span>
         </div>
-        <span className="flex-grow truncate">{priority.title}</span>
-      </div>
-    ),
-  }));
+      ),
+    };
+  });
 
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
