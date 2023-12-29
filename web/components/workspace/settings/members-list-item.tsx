@@ -28,7 +28,8 @@ type Props = {
     display_name: string;
     role: TUserWorkspaceRole;
     status: boolean;
-    member: boolean;
+    is_member: boolean;
+    responded_at: string | null;
     accountCreated: boolean;
   };
 };
@@ -102,9 +103,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   };
 
   const handleRemove = async () => {
-    if (member.member) {
+    if (member.is_member) {
       const memberId = member.memberId;
-
       if (memberId === currentUser?.id) await handleLeaveWorkspace();
       else await handleRemoveMember();
     } else await handleRemoveInvitation();
@@ -154,7 +154,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
             </Link>
           )}
           <div>
-            {member.member ? (
+            {member.is_member ? (
               <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
                 <span className="text-sm font-medium">
                   {member.first_name} {member.last_name}
@@ -175,14 +175,19 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
           </div>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          {!member?.status && (
+          {!member?.status && !member.responded_at && (
             <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
               <p>Pending</p>
             </div>
           )}
-          {member?.status && !member?.accountCreated && (
+          {member?.status && !member.is_member && (
             <div className="flex items-center justify-center rounded bg-blue-500/20 px-2.5 py-1 text-center text-xs font-medium text-blue-500">
               <p>Account not created</p>
+            </div>
+          )}
+          {!member?.status && member.responded_at && (
+            <div className="flex items-center justify-center rounded bg-red-500/20 px-2.5 py-1 text-center text-xs font-medium text-red-500">
+              <p>Rejected</p>
             </div>
           )}
           <CustomSelect
