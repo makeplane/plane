@@ -1386,7 +1386,7 @@ class IssueRelationViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         issue_relations = (
-            IssueRelation.objects.filter(issue_id=issue_id)
+            IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
@@ -1397,32 +1397,29 @@ class IssueRelationViewSet(BaseViewSet):
             .distinct()
         )
 
-        blocking_issues = (
-            IssueRelation.objects.filter(related_issue=issue_id, relation_type="blocked_by")
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .order_by("-created_at")
-            .distinct()
-        )
-
+        blocking_issues = issue_relations.filter(relation_type="blocked_by", related_issue_id=issue_id)
         blocked_by_issues = issue_relations.filter(relation_type="blocked_by", issue_id=issue_id)
-        duplicate_issues = issue_relations.filter(relation_type="duplicate", issue_id=issue_id)
-        relates_to_issues = issue_relations.filter(relation_type="relates_to", issue_id=issue_id)
+        duplicate_issues = issue_relations.filter(issue_id=issue_id, relation_type="duplicate")
+        duplicate_issues_related = issue_relations.filter(related_issue_id=issue_id, relation_type="duplicate")
+        relates_to_issues = issue_relations.filter(issue_id=issue_id, relation_type="relates_to")
+        relates_to_issues_related = issue_relations.filter(related_issue_id=issue_id, relation_type="relates_to")
 
         blocking_issues_serialized = RelatedIssueSerializer(blocking_issues, many=True).data
         blocked_by_issues_serialized = IssueRelationSerializer(blocked_by_issues, many=True).data
         duplicate_issues_serialized = IssueRelationSerializer(duplicate_issues, many=True).data
+
+        # this gives the reverse relation for duplicate issues
+        duplicate_issues_related_serialized = RelatedIssueSerializer(duplicate_issues_related, many=True).data
         relates_to_issues_serialized = IssueRelationSerializer(relates_to_issues, many=True).data
+        
+        # this gives the reverse relation for related issues
+        relates_to_issues_related_serialized = RelatedIssueSerializer(relates_to_issues_related, many=True).data
 
         response_data = {
             'blocking': blocking_issues_serialized,
             'blocked_by': blocked_by_issues_serialized,
-            'duplicate': duplicate_issues_serialized,
-            'relates_to': relates_to_issues_serialized,
+            'duplicate': duplicate_issues_serialized + duplicate_issues_related_serialized,
+            'relates_to': relates_to_issues_serialized + relates_to_issues_related_serialized,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
