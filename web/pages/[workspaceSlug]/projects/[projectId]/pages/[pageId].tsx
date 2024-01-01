@@ -31,7 +31,7 @@ import { IssueService } from "services/issue";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { GptAssistantModal } from "components/core";
+import { GptAssistantPopover } from "components/core";
 import { Sparkle } from "lucide-react";
 import { observer } from "mobx-react-lite";
 
@@ -59,7 +59,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const { user } = useUser();
 
-  const { handleSubmit, setValue, watch, getValues, control } = useForm<IPage>({
+  const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -487,32 +487,32 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   )}
                 />
                 {projectId && envConfig?.has_openai_configured && (
-                  <>
-                    <button
-                      type="button"
-                      className="absolute right-[68px] top-2.5 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                      onClick={() => setGptModal((prevData) => !prevData)}
-                    >
-                      <Sparkle className="h-4 w-4" />
-                      AI
-                    </button>
-                    <div
-                      className={`absolute top-9 right-[68px] w-1/2 !max-h-[50%] z-20 flex  flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
-                        gptModalOpen ? "block" : "hidden"
-                      }`}
-                    >
-                      <GptAssistantModal
-                        isOpen={gptModalOpen}
-                        handleClose={() => {
-                          setGptModal(false);
-                        }}
-                        onResponse={(response) => {
-                          handleAiAssistance(response);
-                        }}
-                        projectId={projectId.toString()}
-                      />
-                    </div>
-                  </>
+                  <div className="absolute right-[68px] top-2.5">
+                    <GptAssistantPopover
+                      isOpen={gptModalOpen}
+                      projectId={projectId.toString()}
+                      handleClose={() => {
+                        setGptModal((prevData) => !prevData);
+                        // this is done so that the title do not reset after gpt popover closed
+                        reset(getValues());
+                      }}
+                      onResponse={(response) => {
+                        handleAiAssistance(response);
+                      }}
+                      placement="top-end"
+                      button={
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                          onClick={() => setGptModal((prevData) => !prevData)}
+                        >
+                          <Sparkle className="h-4 w-4" />
+                          AI
+                        </button>
+                      }
+                      className="!min-w-[38rem]"
+                    />
+                  </div>
                 )}
               </div>
             )}
