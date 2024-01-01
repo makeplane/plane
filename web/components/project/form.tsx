@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -42,6 +42,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     control,
     setValue,
     setError,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<IProject>({
     defaultValues: {
@@ -50,6 +51,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
+
+  useEffect(() => {
+    if (!project) return;
+    reset({
+      ...project,
+      emoji_and_icon: project.emoji ?? project.icon_prop,
+      workspace: (project.workspace as IWorkspace).id,
+    });
+  }, [project, reset]);
 
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
