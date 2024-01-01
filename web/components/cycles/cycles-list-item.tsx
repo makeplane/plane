@@ -13,15 +13,10 @@ import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarG
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
-import {
-  getDateRangeStatus,
-  findHowManyDaysLeft,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICycle } from "types";
+import { ICycle, TCycleGroups } from "types";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -50,7 +45,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // computed
-  const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+  const cycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");

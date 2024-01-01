@@ -1,7 +1,7 @@
 import { EditorContainer, EditorContentWrapper } from "@plane/editor-core";
 import { Editor } from "@tiptap/react";
 import { useState } from "react";
-import { DocumentDetails } from "../types/editor-types";
+import { DocumentDetails } from "src/types/editor-types";
 
 type IPageRenderer = {
   documentDetails: DocumentDetails;

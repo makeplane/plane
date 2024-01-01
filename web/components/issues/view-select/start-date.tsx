@@ -49,9 +49,9 @@ export const ViewStartDateSelect: React.FC<Props> = ({
           handleOnOpen={handleOnOpen}
           customInput={
             <div
-              className={`flex cursor-pointer items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
+              className={`flex items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
                 issue?.start_date ? "pr-6 text-custom-text-300" : "text-custom-text-400"
-              }`}
+              } ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               {issue?.start_date ? (
                 <>

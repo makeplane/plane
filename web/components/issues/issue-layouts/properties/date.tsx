@@ -61,6 +61,7 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
               ref={dropdownBtn}
               className="border-none outline-none"
               onClick={(e) => e.stopPropagation()}
+              disabled={disabled}
             >
               <Tooltip
                 tooltipHeading={dateOptionDetails.placeholder}
@@ -69,7 +70,7 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
                 <div
                   className={`flex h-5 w-full items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 outline-none duration-300 ${
                     disabled
-                      ? "pointer-events-none cursor-not-allowed text-custom-text-200"
+                      ? "cursor-not-allowed text-custom-text-200"
                       : "cursor-pointer hover:bg-custom-background-80"
                   }`}
                 >

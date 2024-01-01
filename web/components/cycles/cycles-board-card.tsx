@@ -10,15 +10,10 @@ import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } 
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
-import {
-  getDateRangeStatus,
-  findHowManyDaysLeft,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICycle } from "types";
+import { ICycle, TCycleGroups } from "types";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
@@ -45,7 +40,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // computed
-  const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+  const cycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");

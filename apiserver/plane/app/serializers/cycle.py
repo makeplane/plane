@@ -40,6 +40,7 @@ class CycleSerializer(BaseSerializer):
     started_estimates = serializers.IntegerField(read_only=True)
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    status = serializers.CharField(read_only=True)
 
     def validate(self, data):
         if (

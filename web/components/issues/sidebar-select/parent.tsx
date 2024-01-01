@@ -35,31 +35,34 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
         issueId={issueId as string}
         projectId={projectId as string}
       />
-
-      <button
-        type="button"
-        className={`flex items-center gap-2 rounded bg-custom-background-80 px-2.5 py-0.5 text-xs max-w-max" ${
+      <div
+        className={`flex items-center gap-2 rounded bg-custom-background-80 px-2.5 py-0.5 text-xs w-max max-w-max" ${
           disabled ? "cursor-not-allowed" : "cursor-pointer "
         }`}
-        onClick={() => {
-          if (issueDetails?.parent) {
-            onChange("");
-            setSelectedParentIssue(null);
-          } else {
-            setIsParentModalOpen(true);
-          }
-        }}
-        disabled={disabled}
       >
-        {selectedParentIssue && issueDetails?.parent ? (
-          `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-        ) : !selectedParentIssue && issueDetails?.parent ? (
-          `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
-        ) : (
-          <span className="text-custom-text-200">Select issue</span>
+        <button type="button" className="flex-shrink-0" onClick={() => setIsParentModalOpen(true)} disabled={disabled}>
+          {selectedParentIssue && issueDetails?.parent ? (
+            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+          ) : !selectedParentIssue && issueDetails?.parent ? (
+            `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
+          ) : (
+            <span className="text-custom-text-200">Select issue</span>
+          )}
+        </button>
+
+        {issueDetails?.parent && (
+          <button
+            type="button"
+            className="flex-shrink-0"
+            onClick={() => {
+              onChange("");
+              setSelectedParentIssue(null);
+            }}
+          >
+            <X className="h-2.5 w-2.5" />
+          </button>
         )}
-        {issueDetails?.parent && <X className="h-2.5 w-2.5" />}
-      </button>
+      </div>
     </>
   );
 };

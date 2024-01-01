@@ -1,15 +1,15 @@
 import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
 import { FC, useEffect, useState } from "react";
-import { BoldIcon } from "lucide-react";
 
-import { NodeSelector } from "./node-selector";
-import { LinkSelector } from "./link-selector";
+import { NodeSelector } from "src/ui/menus/bubble-menu/node-selector";
+import { LinkSelector } from "src/ui/menus/bubble-menu/link-selector";
 import {
   BoldItem,
   cn,
   CodeItem,
   isCellSelection,
   ItalicItem,
+  LucideIconType,
   StrikeThroughItem,
   UnderLineItem,
 } from "@plane/editor-core";
@@ -18,7 +18,7 @@ export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIconType;
 }
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
@@ -117,9 +117,9 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
             }}
           />
           <div className="flex">
-            {items.map((item, index) => (
+            {items.map((item) => (
               <button
-                key={index}
+                key={item.name}
                 type="button"
                 onClick={item.command}
                 className={cn(

@@ -1,6 +1,6 @@
 import { Editor, EditorContent } from "@tiptap/react";
 import { ReactNode } from "react";
-import { ImageResizer } from "../extensions/image/image-resize";
+import { ImageResizer } from "src/ui/extensions/image/image-resize";
 
 interface EditorContentProps {
   editor: Editor | null;

@@ -114,8 +114,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         display_name: item.email,
         role: item.role,
         status: item.accepted,
-        member: false,
-        accountCreated: item.accepted,
+        is_member: false,
+        responded_at: item.responded_at,
       })) || []),
       ...(this.workspaceMembers?.map((item) => ({
         id: item.id,
@@ -127,8 +127,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         display_name: item.member?.display_name,
         role: item.role,
         status: true,
-        member: true,
-        accountCreated: true,
+        is_member: true,
+        responded_at: "accepted",
       })) || []),
     ];
   }
