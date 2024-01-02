@@ -73,16 +73,18 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
 
       const date = new Date(year, month, dayNumber + 1);
 
-      currentWeekObject[renderFormattedPayloadDate(date)] = {
-        date,
-        year,
-        month,
-        day: dayNumber + 1,
-        week: weekNumber,
-        is_current_month: date.getMonth() === month,
-        is_current_week: getWeekNumberOfDate(date) === getWeekNumberOfDate(new Date()),
-        is_today: date.toDateString() === new Date().toDateString(),
-      };
+      const formattedDatePayload = renderFormattedPayloadDate(date);
+      if (formattedDatePayload)
+        currentWeekObject[formattedDatePayload] = {
+          date,
+          year,
+          month,
+          day: dayNumber + 1,
+          week: weekNumber,
+          is_current_month: date.getMonth() === month,
+          is_current_week: getWeekNumberOfDate(date) === getWeekNumberOfDate(new Date()),
+          is_today: date.toDateString() === new Date().toDateString(),
+        };
     }
 
     calendarData[`y-${year}`][`m-${month}`][`w-${weekNumber}`] = currentWeekObject;

@@ -48,7 +48,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
     const csvData = {
       Title: data.label,
       Description: data.description,
-      Expiry: data.expired_at ? renderFormattedDate(data.expired_at) : "Never expires",
+      Expiry: data.expired_at ? renderFormattedDate(data.expired_at)?.replace(",", " ") ?? "" : "Never expires",
       "Secret key": data.token ?? "",
     };
 

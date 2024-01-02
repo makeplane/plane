@@ -52,7 +52,9 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const [showAllIssues, setShowAllIssues] = useState(false);
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
-  const issueIdList = groupedIssueIds ? groupedIssueIds[renderFormattedPayloadDate(date.date)] : null;
+  const formattedDatePayload = renderFormattedPayloadDate(date.date);
+  if (!formattedDatePayload) return null;
+  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
   const totalIssues = issueIdList?.length ?? 0;
   return (
@@ -78,7 +80,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
 
         {/* content */}
         <div className="h-full w-full">
-          <Droppable droppableId={renderFormattedPayloadDate(date.date)} isDropDisabled={false}>
+          <Droppable droppableId={formattedDatePayload} isDropDisabled={false}>
             {(provided, snapshot) => (
               <div
                 className={`h-full w-full select-none overflow-y-auto ${
@@ -100,7 +102,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   <div className="px-2 py-1">
                     <CalendarQuickAddIssueForm
                       formKey="target_date"
-                      groupId={renderFormattedPayloadDate(date.date)}
+                      groupId={formattedDatePayload}
                       prePopulatedData={{
                         target_date: renderFormattedPayloadDate(date.date),
                       }}

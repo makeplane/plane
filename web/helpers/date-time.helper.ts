@@ -19,17 +19,17 @@ export const renderFormattedDate = (date: string | Date): string | null => {
 };
 
 /**
- * @returns {string | null} formatted date in the format of MMM dd
+ * @returns {string} formatted date in the format of MMM dd
  * @description Returns date in the formatted format
  * @param {string | Date} date
  * @example renderShortDateFormat("2024-01-01") // Jan 01
  */
-export const renderFormattedDateWithoutYear = (date: string | Date): string | null => {
-  if (!date) return null;
+export const renderFormattedDateWithoutYear = (date: string | Date): string => {
+  if (!date) return "";
   // Parse the date to check if it is valid
   const parsedDate = new Date(date);
   // Check if the parsed date is valid before formatting
-  if (!isValid(parsedDate)) return null; // Return null for invalid dates
+  if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in short format (MMM dd)
   const formattedDate = format(parsedDate, "MMM dd");
   return formattedDate;

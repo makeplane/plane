@@ -34,7 +34,7 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
     const date = new Date(year, month, 1);
 
     while (date.getMonth() === month && date < new Date()) {
-      dates.push(renderFormattedPayloadDate(new Date(date)));
+      dates.push(renderFormattedPayloadDate(new Date(date)) ?? "");
       date.setDate(date.getDate() + 1);
     }
 

@@ -10,8 +10,8 @@ export const getCurrentHookAsCSV = (
 ) => ({
   id: webhook?.id || "",
   url: webhook?.url || "",
-  created_at: renderFormattedPayloadDate(webhook?.created_at || ""),
-  updated_at: renderFormattedPayloadDate(webhook?.updated_at || ""),
+  created_at: renderFormattedPayloadDate(webhook?.created_at || "") ?? "",
+  updated_at: renderFormattedPayloadDate(webhook?.updated_at || "") ?? "",
   is_active: webhook?.is_active?.toString() || "",
   secret_key: secretKey || "",
   project: webhook?.project?.toString() || "",

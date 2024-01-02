@@ -63,8 +63,8 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
 
     // call the block update handler with the updated dates
     blockUpdateHandler(block.data, {
-      start_date: renderFormattedPayloadDate(updatedStartDate),
-      target_date: renderFormattedPayloadDate(updatedTargetDate),
+      start_date: renderFormattedPayloadDate(updatedStartDate) ?? undefined,
+      target_date: renderFormattedPayloadDate(updatedTargetDate) ?? undefined,
     });
   };
 
