@@ -59,16 +59,16 @@ export const renderFormattedPayloadDate = (date: Date | string): string | null =
  * @param {string | Date} date
  * @param {boolean} timeFormat (optional) // default 24 hour
  * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
- * @example renderFormattedTime("2024-01-01 13:00:00", "12hour") // 01:00 PM
+ * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
  */
-export const renderFormattedTime = (date: string | Date, timeFormat: "12hour" | "24hour" = "24hour"): string => {
+export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
   if (!date || date === "") return "";
   // Parse the date to check if it is valid
   const parsedDate = new Date(date);
   // Check if the parsed date is valid
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in 12 hour format if in12HourFormat is true
-  if (timeFormat === "12hour") {
+  if (timeFormat === "12-hour") {
     const formattedTime = format(parsedDate, "hh:mm a");
     return formattedTime;
   }

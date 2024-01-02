@@ -149,7 +149,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
               <Clock className="h-4 w-4" />
               <span>
-                Till {renderFormattedDate(notification.snoozed_till)}, {renderFormattedTime(notification.snoozed_till, '12hour')}
+                Till {renderFormattedDate(notification.snoozed_till)}, {renderFormattedTime(notification.snoozed_till, '12-hour')}
               </span>
             </p>
           ) : (
