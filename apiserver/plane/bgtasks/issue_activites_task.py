@@ -1343,43 +1343,44 @@ def delete_issue_relation_activity(
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
-    if current_instance is not None and requested_data.get("related_list") is None:
-        if current_instance.get("relation_type") == "blocked_by":
-            relation_type = "blocking"
-        else:
-            relation_type = current_instance.get("relation_type")
-        issue = Issue.objects.get(pk=current_instance.get("issue"))
-        issue_activities.append(
-            IssueActivity(
-                issue_id=current_instance.get("related_issue"),
-                actor_id=actor_id,
-                verb="deleted",
-                old_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                new_value="",
-                field=relation_type,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"deleted {relation_type} relation",
-                old_identifier=current_instance.get("issue"),
-                epoch=epoch,
-            )
+    issue = Issue.objects.get(pk=requested_data.get("related_issue"))
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="deleted",
+            old_value=f"{issue.project.identifier}-{issue.sequence_id}",
+            new_value="",
+            field=requested_data.get("relation_type"),
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"deleted {requested_data.get('relation_type')} relation",
+            old_identifier=requested_data.get("related_issue"),
+            epoch=epoch,
         )
-        issue = Issue.objects.get(pk=current_instance.get("related_issue"))
-        issue_activities.append(
-            IssueActivity(
-                issue_id=current_instance.get("issue"),
-                actor_id=actor_id,
-                verb="deleted",
-                old_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                new_value="",
-                field=f'{current_instance.get("relation_type")}',
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f'deleted {current_instance.get("relation_type")} relation',
-                old_identifier=current_instance.get("related_issue"),
-                epoch=epoch,
-            )
+    )
+    issue = Issue.objects.get(pk=issue_id)
+    issue_activities.append(
+        IssueActivity(
+            issue_id=requested_data.get("related_issue"),
+            actor_id=actor_id,
+            verb="deleted",
+            old_value=f"{issue.project.identifier}-{issue.sequence_id}",
+            new_value="",
+            field="blocking"
+            if requested_data.get("relation_type") == "blocked_by"
+            else (
+                "blocked_by"
+                if requested_data.get("relation_type") == "blocking"
+                else requested_data.get("relation_type")
+            ),
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f'deleted {requested_data.get("relation_type")} relation',
+            old_identifier=requested_data.get("related_issue"),
+            epoch=epoch,
         )
+    )
 
 def create_draft_issue_activity(
     requested_data,

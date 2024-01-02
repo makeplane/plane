@@ -1404,15 +1404,15 @@ class IssueRelationViewSet(BaseViewSet):
         relates_to_issues = issue_relations.filter(issue_id=issue_id, relation_type="relates_to")
         relates_to_issues_related = issue_relations.filter(related_issue_id=issue_id, relation_type="relates_to")
 
-        blocking_issues_serialized = RelatedIssueSerializer(blocking_issues, many=True).data
         blocked_by_issues_serialized = IssueRelationSerializer(blocked_by_issues, many=True).data
         duplicate_issues_serialized = IssueRelationSerializer(duplicate_issues, many=True).data
-
-        # this gives the reverse relation for duplicate issues
-        duplicate_issues_related_serialized = RelatedIssueSerializer(duplicate_issues_related, many=True).data
         relates_to_issues_serialized = IssueRelationSerializer(relates_to_issues, many=True).data
-        
-        # this gives the reverse relation for related issues
+
+        # revere relation for blocked by issues
+        blocking_issues_serialized = RelatedIssueSerializer(blocking_issues, many=True).data
+        # reverse relation for duplicate issues
+        duplicate_issues_related_serialized = RelatedIssueSerializer(duplicate_issues_related, many=True).data
+        # reverse relation for related issues
         relates_to_issues_related_serialized = RelatedIssueSerializer(relates_to_issues_related, many=True).data
 
         response_data = {
@@ -1487,7 +1487,7 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
-            requested_data=json.dumps({"related_list": None}),
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
