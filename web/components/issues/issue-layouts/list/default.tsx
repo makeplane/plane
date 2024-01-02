@@ -73,7 +73,9 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     if (groupByKey === null) return { state_id: defaultState?.id };
     else {
       if (groupByKey === "state") return { state: groupByKey === "state" ? value : defaultState?.id };
-      else return { state_id: defaultState?.id, [groupByKey]: value };
+      if (groupByKey === "labels") return { state_id: defaultState?.id, labels: [value] };
+      if (groupByKey === "assignees") return { state_id: defaultState?.id, assignees: [value] };
+      else return { state: groupByKey === "state" ? value : defaultState?.id, [groupByKey]: value };
     }
   };
 
