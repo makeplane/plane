@@ -11,7 +11,7 @@ import { IssueAttachmentDeleteModal } from "./delete-attachment-confirmation-mod
 import { getFileIcon } from "components/icons";
 // helper
 import { truncateText } from "helpers/string.helper";
-import { renderLongDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
 import { TIssueAttachmentsList } from "./attachments-list";
@@ -33,7 +33,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
 
   const attachment = attachmentId && getAttachmentById(attachmentId);
 
-  if (!attachment) return;
+  if (!attachment) return <></>;
 
   return (
     <>
@@ -59,7 +59,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
                 <Tooltip
                   tooltipContent={`${
                     getUserDetails(attachment.updated_by)?.display_name ?? ""
-                  } uploaded on ${renderLongDateFormat(attachment.updated_at)}`}
+                  } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
                 >
                   <span>
                     <AlertCircle className="h-3 w-3" />

@@ -86,6 +86,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
         await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
       },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateIssue, removeIssue, workspaceSlug]
   );
 

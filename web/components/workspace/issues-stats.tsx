@@ -1,7 +1,7 @@
 // components
 import { ActivityGraph } from "components/workspace";
 // ui
-import { Loader, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { Info } from "lucide-react";
 // types

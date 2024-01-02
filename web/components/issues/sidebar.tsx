@@ -31,7 +31,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { TIssue } from "@plane/types";
 // fetch-keys
-import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 

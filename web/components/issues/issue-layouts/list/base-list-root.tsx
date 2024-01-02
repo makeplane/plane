@@ -1,13 +1,8 @@
 import { List } from "./default";
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
-import { TIssue } from "@plane/types";
-import { Spinner } from "@plane/ui";
-import { IQuickActionProps } from "./list-view-types";
 import { observer } from "mobx-react-lite";
-import { IssuePeekOverview } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues, useUser } from "hooks/store";
+// types
+import { TIssue } from "@plane/types";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
@@ -15,7 +10,13 @@ import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { IDraftIssuesFilter, IDraftIssues } from "store/issue/draft";
 import { IArchivedIssuesFilter, IArchivedIssues } from "store/issue/archived";
+// components
+import { IQuickActionProps } from "./list-view-types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 import { TCreateModalStoreTypes } from "constants/issue";
+// hooks
+import { useIssues, useUser } from "hooks/store";
 
 enum EIssueActions {
   UPDATE = "update",
@@ -63,9 +64,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     addIssuesToView,
     canEditPropertiesBasedOnProject,
   } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
   // mobx store
   const {
     membership: { currentProjectRole },

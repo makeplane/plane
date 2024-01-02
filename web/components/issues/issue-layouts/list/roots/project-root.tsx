@@ -34,6 +34,7 @@ export const ListLayout: FC = observer(() => {
         await issues.removeIssue(workspaceSlug, projectId, issue.id);
       },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [issues]
   );
 

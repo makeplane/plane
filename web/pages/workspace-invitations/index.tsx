@@ -55,7 +55,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
   const handleReject = () => {
     if (!invitationDetail) return;
     workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+      .joinWorkspace(invitationDetail.workspace_detail.slug, invitationDetail.id, {
         accepted: false,
         email: invitationDetail.email,
       })

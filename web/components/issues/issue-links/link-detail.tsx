@@ -8,7 +8,7 @@ import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // types
 import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 
 export type TIssueLinkDetail = {
   linkId: string;
@@ -95,7 +95,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
 
         <div className="px-5">
           <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
-            Added {timeAgo(linkDetail.created_at)}
+            Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
             by{" "}
             {linkDetail.created_by_detail.is_bot
