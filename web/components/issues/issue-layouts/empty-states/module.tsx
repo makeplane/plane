@@ -1,17 +1,21 @@
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
+// hooks
+import { useApplication, useIssues, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
+import { ExistingIssuesListModal } from "components/core";
+// ui
 import { Button } from "@plane/ui";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
-import { ExistingIssuesListModal } from "components/core";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { ISearchIssueResponse } from "types";
-import useToast from "hooks/use-toast";
-import { useState } from "react";
+// types
+import { ISearchIssueResponse } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -23,14 +27,16 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, moduleId } = props;
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
-
+  // store hooks
+  const { issues } = useIssues(EIssuesStoreType.MODULE);
   const {
-    moduleIssues: moduleIssueStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole: userRole },
-  } = useMobxStore();
-
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole: userRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
@@ -38,16 +44,18 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await moduleIssueStore.addIssueToModule(workspaceSlug.toString(), moduleId.toString(), issueIds).catch(() =>
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Selected issues could not be added to the module. Please try again.",
-      })
-    );
+    await issues
+      .addIssueToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the module. Please try again.",
+        })
+      );
   };
 
-  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -67,7 +75,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("MODULE_EMPTY_STATE");
-              commandPaletteStore.toggleCreateIssueModal(true);
+              toggleCreateIssueModal(true);
             },
           }}
           secondaryButton={

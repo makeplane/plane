@@ -1,28 +1,23 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { useFormContext, Controller } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { Plus } from "lucide-react";
+// hooks
+import { useApplication, useProject } from "hooks/store";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // types
-import { IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "@plane/types";
 
 export const JiraGetImportDetail: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
-    project: projectStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
-
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { workspaceProjectIds, getProjectById } = useProject();
+  // form info
   const {
     control,
     formState: { errors },
@@ -170,20 +165,26 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 onChange={onChange}
                 label={
                   <span>
-                    {value && value !== "" ? (
-                      projects?.find((p) => p.id === value)?.name
+                    {value && value.trim() !== "" ? (
+                      getProjectById(value)?.name
                     ) : (
                       <span className="text-custom-text-200">Select a project</span>
                     )}
                   </span>
                 }
               >
-                {projects && projects.length > 0 ? (
-                  projects.map((project) => (
-                    <CustomSelect.Option key={project.id} value={project.id}>
-                      {project.name}
-                    </CustomSelect.Option>
-                  ))
+                {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
+                  workspaceProjectIds.map((projectId) => {
+                    const projectDetails = getProjectById(projectId);
+
+                    if (!projectDetails) return;
+
+                    return (
+                      <CustomSelect.Option key={projectId} value={projectId}>
+                        {projectDetails.name}
+                      </CustomSelect.Option>
+                    );
+                  })
                 ) : (
                   <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200">
                     <p>You don{"'"}t have any project. Please create a project first.</p>

@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // contexts
-import { IssueViewContextProvider } from "contexts/issue-view.context";
 import { ArchivedIssueLayoutRoot } from "components/issues";
 // ui
 import { ArchiveIcon } from "@plane/ui";
@@ -11,7 +10,7 @@ import { ProjectArchivedIssuesHeader } from "components/headers";
 // icons
 import { X } from "lucide-react";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectArchivedIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -37,11 +36,9 @@ const ProjectArchivedIssuesPage: NextPageWithLayout = () => {
 
 ProjectArchivedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <IssueViewContextProvider>
-      <AppLayout header={<ProjectArchivedIssuesHeader />} withProjectWrapper>
-        {page}
-      </AppLayout>
-    </IssueViewContextProvider>
+    <AppLayout header={<ProjectArchivedIssuesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 

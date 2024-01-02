@@ -6,8 +6,8 @@ import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
 import { Tab, Transition, Popover } from "@headlessui/react";
 import { Control, Controller } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useWorkspace } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // hooks
@@ -45,25 +45,24 @@ const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const { label, value, control, onChange, disabled = false } = props;
-
+  // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useState("");
   const [formData, setFormData] = useState({
     search: "",
   });
-
+  // refs
   const ref = useRef<HTMLDivElement>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
-    workspace: { currentWorkspace },
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -119,7 +118,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

@@ -7,6 +7,7 @@ from plane.app.views import (
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
     BulkImportModulesEndpoint,
+    ModuleUserPropertiesEndpoint
 )
 
 
@@ -44,7 +45,7 @@ urlpatterns = [
         name="project-module-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:issue_id>/",
         ModuleIssueViewSet.as_view(
             {
                 "get": "retrieve",
@@ -101,4 +102,9 @@ urlpatterns = [
         BulkImportModulesEndpoint.as_view(),
         name="bulk-modules-create",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
+        ModuleUserPropertiesEndpoint.as_view(),
+        name="cycle-user-filters",
+    )
 ]

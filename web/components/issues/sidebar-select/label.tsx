@@ -4,21 +4,18 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Plus, X } from "lucide-react";
 // hooks
+import { useLabel } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
-// icons
-import { Plus, X } from "lucide-react";
 // types
-import { IIssue, IIssueLabel } from "types";
+import { TIssue, IIssueLabel } from "@plane/types";
 
 type Props = {
-  issueDetails: IIssue | undefined;
-  projectId: string;
+  issueDetails: TIssue | undefined;
   labelList: string[];
   submitChanges: (formData: any) => void;
   isNotAllowed: boolean;
@@ -31,18 +28,18 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
-  const { issueDetails, projectId, labelList, submitChanges, isNotAllowed, uneditable } = props;
+  const { issueDetails, labelList, submitChanges, isNotAllowed, uneditable } = props;
   // states
   const [createLabelForm, setCreateLabelForm] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // toast
   const { setToastAlert } = useToast();
   // mobx store
   const {
-    projectLabel: { projectLabels, createLabel },
-  } = useMobxStore();
+    project: { projectLabels, createLabel },
+  } = useLabel();
   // form info
   const {
     handleSubmit,
@@ -61,7 +58,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
       .then((res) => {
         reset(defaultValues);
 
-        submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
+        submitChanges({ labels: [...(issueDetails?.label_ids ?? []), res.id] });
 
         setCreateLabelForm(false);
       })
@@ -92,7 +89,9 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
             return (
               <button
                 key={label.id}
-                className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
+                className={`group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs ${
+                  isNotAllowed || uneditable ? "!cursor-not-allowed" : "hover:border-red-500/20 hover:bg-red-500/20"
+                }`}
                 onClick={() => {
                   const updatedLabels = labelList?.filter((l) => l !== labelId);
                   submitChanges({
@@ -114,9 +113,9 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
         })}
         <IssueLabelSelect
           setIsOpen={setCreateLabelForm}
-          value={issueDetails?.labels ?? []}
+          value={issueDetails?.label_ids ?? []}
           onChange={(val: any) => submitChanges({ labels: val })}
-          projectId={issueDetails?.project_detail.id ?? ""}
+          projectId={issueDetails?.project_id ?? ""}
           label={
             <span
               className={`flex ${

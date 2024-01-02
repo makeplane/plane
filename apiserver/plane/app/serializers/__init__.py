@@ -17,6 +17,7 @@ from .workspace import (
     WorkspaceThemeSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
+    WorkspaceUserPropertiesSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -31,6 +32,7 @@ from .project import (
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
+    ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
@@ -39,6 +41,7 @@ from .cycle import (
     CycleIssueSerializer,
     CycleFavoriteSerializer,
     CycleWriteSerializer,
+    CycleUserPropertiesSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (
@@ -61,6 +64,8 @@ from .issue import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
+    IssueRelationLiteSerializer,
+
 )
 
 from .module import (
@@ -69,6 +74,7 @@ from .module import (
     ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
+    ModuleUserPropertiesSerializer,
 )
 
 from .api import APITokenSerializer, APITokenReadSerializer

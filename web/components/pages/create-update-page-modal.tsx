@@ -2,13 +2,12 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
+import { useApplication, usePage, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IPage } from "types";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IPage } from "@plane/types";
 
 type Props = {
   data?: IPage | null;
@@ -22,13 +21,13 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
-    page: { createPage, updatePage },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
+  const { createPage, updatePage } = usePage();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const onClose = () => {
@@ -56,7 +55,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -74,7 +73,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -100,7 +99,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -118,7 +117,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });

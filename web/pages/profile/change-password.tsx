@@ -2,8 +2,8 @@ import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // hooks
@@ -13,7 +13,7 @@ import { ProfileSettingsLayout } from "layouts/settings-layout";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 interface FormValues {
   old_password: string;
@@ -32,9 +32,7 @@ const userService = new UserService();
 const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const [isPageLoading, setIsPageLoading] = useState(true);
 
-  const {
-    user: { currentUser },
-  } = useMobxStore();
+  const { currentUser } = useUser();
 
   const router = useRouter();
 
@@ -90,7 +88,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   return (
     <form
       onSubmit={handleSubmit(handleChangePassword)}
-      className="mx-auto pt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
+      className="mx-auto mt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
     >
       <h3 className="text-xl font-medium">Change password</h3>
       <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">

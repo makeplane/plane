@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 // mobx store provider
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 
@@ -47,8 +47,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [posthogAPIKey, posthogHost]);
 
   useEffect(() => {
     // Track page views

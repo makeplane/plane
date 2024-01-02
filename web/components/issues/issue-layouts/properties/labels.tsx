@@ -1,16 +1,15 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
 import { usePopper } from "react-popper";
+import { Check, ChevronDown, Search, Tags } from "lucide-react";
+// hooks
+import { useApplication, useLabel } from "hooks/store";
 // components
 import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
-import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store/root";
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -44,18 +43,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
     placeholderText,
   } = props;
-
-  const {
-    workspace: workspaceStore,
-    projectLabel: { fetchProjectLabels, labels },
-  }: RootStore = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
-
+  // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const {
+    project: { fetchProjectLabels, projectLabels: storeLabels },
+  } = useLabel();
 
   const fetchLabels = () => {
     setIsLoading(true);
@@ -65,7 +65,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   if (!value) return null;
 
   let projectLabels: IIssueLabel[] = defaultOptions;
-  const storeLabels = projectId && labels ? labels[projectId] : [];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
   const options = projectLabels.map((label) => ({
@@ -107,7 +106,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             {projectLabels
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
-                <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name ?? ""}>
+                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
                   <div
                     key={label.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
@@ -128,7 +127,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ))}
           </>
         ) : (
-          <div className="flex h-full flex-shrink-0 cursor-pointer items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
+          <div
+            className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
+              disabled ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+          >
             <Tooltip
               position="top"
               tooltipHeading="Labels"
@@ -147,7 +150,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       ) : (
         <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
           <div
-            className={`h-full flex items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
               noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
             }`}
           >
@@ -179,10 +182,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            !storeLabels && fetchLabels();
-          }}
+          onClick={() => !storeLabels && fetchLabels()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -219,7 +219,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                       selected ? "text-custom-text-100" : "text-custom-text-200"
                     }`
                   }
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>

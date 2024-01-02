@@ -3,54 +3,61 @@ import React from "react";
 // components
 import { IssuePropertyLabels } from "../../properties";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useIssueDetail, useLabel } from "hooks/store";
 // types
-import { IIssue, IIssueLabel } from "types";
+import { TIssue, IIssueLabel } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, formData: Partial<IIssue>) => void;
+  issueId: string;
+  onChange: (issue: TIssue, formData: Partial<TIssue>) => void;
   labels: IIssueLabel[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };
 
 export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, labels, expandedIssues, disabled } = props;
+  const { issueId, onChange, labels, expandedIssues, disabled } = props;
+  // hooks
+  const { labelMap } = useLabel();
 
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+  const isExpanded = expandedIssues.indexOf(issueId) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  // const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
+
+  const { subIssues: subIssuesStore, issue } = useIssueDetail();
+
+  const issueDetail = issue.getIssueById(issueId);
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+
+  const defaultLabelOptions = issueDetail?.label_ids?.map((id) => labelMap[id]) || [];
 
   return (
     <>
-      <IssuePropertyLabels
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.labels}
-        defaultOptions={issue?.label_details ? issue.label_details : []}
-        onChange={(data) => {
-          onChange(issue, { labels: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { assignees: data });
-          }
-        }}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-        buttonClassName="px-2.5 h-full"
-        hideDropdownArrow
-        maxRender={1}
-        disabled={disabled}
-        placeholderText="Select labels"
-      />
+      {issueDetail && (
+        <IssuePropertyLabels
+          projectId={issueDetail.project_id ?? null}
+          value={issueDetail.label_ids}
+          defaultOptions={defaultLabelOptions}
+          onChange={(data) => {
+            onChange(issueDetail, { label_ids: data });
+          }}
+          className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
+          buttonClassName="px-2.5 h-full"
+          hideDropdownArrow
+          maxRender={1}
+          disabled={disabled}
+          placeholderText="Select labels"
+        />
+      )}
 
       {isExpanded &&
-        !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssueId: string) => (
           <div className={`h-11`}>
             <SpreadsheetLabelColumn
-              key={subIssue.id}
-              issue={subIssue}
+              key={subIssueId}
+              issueId={subIssueId}
               onChange={onChange}
               labels={labels}
               expandedIssues={expandedIssues}

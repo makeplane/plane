@@ -3,12 +3,12 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
+import { useApplication, useCycle } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CycleForm } from "components/cycles";
 // types
-import type { CycleDateCheckData, ICycle } from "types";
+import type { CycleDateCheckData, ICycle } from "@plane/types";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -23,21 +23,21 @@ const cycleService = new CycleService();
 
 export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
-  // store
-  const {
-    cycle: cycleStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
   // states
   const [activeProject, setActiveProject] = useState<string>(projectId);
-  // toast
+  // store hooks
+  const {
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { createCycle, updateCycleDetails } = useCycle();
+  // toast alert
   const { setToastAlert } = useToast();
 
-  const createCycle = async (payload: Partial<ICycle>) => {
+  const handleCreateCycle = async (payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
+
     const selectedProjectId = payload.project ?? projectId.toString();
-    await cycleStore
-      .createCycle(workspaceSlug, selectedProjectId, payload)
+    await createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
         setToastAlert({
           type: "success",
@@ -61,11 +61,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       });
   };
 
-  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
+
     const selectedProjectId = payload.project ?? projectId.toString();
-    await cycleStore
-      .patchCycle(workspaceSlug, selectedProjectId, cycleId, payload)
+    await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -116,8 +116,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     }
 
     if (isDateValid) {
-      if (data) await updateCycle(data.id, payload);
-      else await createCycle(payload);
+      if (data) await handleUpdateCycle(data.id, payload);
+      else await handleCreateCycle(payload);
       handleClose();
     } else
       setToastAlert({

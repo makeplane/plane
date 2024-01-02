@@ -2,8 +2,8 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { IntegrationService } from "services/integrations";
 // layouts
@@ -16,7 +16,7 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { IntegrationAndImportExportBanner } from "components/ui";
 import { Loader } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { APP_INTEGRATIONS } from "constants/fetch-keys";
 // constants
@@ -28,10 +28,10 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // mobx store
+  // store hooks
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 

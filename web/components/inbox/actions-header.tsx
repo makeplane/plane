@@ -3,10 +3,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
 import { Popover } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useUser, useInboxIssues } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -19,51 +17,51 @@ import {
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
-import type { TInboxStatus } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import type { TInboxStatus } from "@plane/types";
+import { EUserProjectRoles } from "constants/project";
 
 export const InboxActionsHeader = observer(() => {
+  // states
   const [date, setDate] = useState(new Date());
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
   const [acceptIssueModal, setAcceptIssueModal] = useState(false);
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
-
-  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
-
-  const user = userStore?.currentUser;
-  const userRole = userStore.currentProjectRole;
-  const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : null;
-
+  // store hooks
+  const { updateIssueStatus, getIssueById } = useInboxIssues();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  // toast
   const { setToastAlert } = useToast();
+  // derived values
+  const issue = getIssueById(inboxId as string, inboxIssueId as string);
 
   const markInboxStatus = async (data: TInboxStatus) => {
-    if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !issuesList) return;
+    if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !issue) return;
 
-    await inboxIssueDetailsStore
-      .updateIssueStatus(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        inboxId.toString(),
-        issuesList.find((inboxIssue: any) => inboxIssue.issue_inbox[0].id === inboxIssueId)?.issue_inbox[0].id!,
-        data
-      )
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Something went wrong while updating inbox status. Please try again.",
-        })
-      );
+    await updateIssueStatus(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      inboxId.toString(),
+      issue.issue_inbox[0].id!,
+      data
+    ).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Something went wrong while updating inbox status. Please try again.",
+      })
+    );
   };
 
-  const issue = issuesList?.find((issue) => issue.issue_inbox[0].id === inboxIssueId);
-  const currentIssueIndex = issuesList?.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId) ?? 0;
+  // const currentIssueIndex = issuesList?.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId) ?? 0;
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -72,7 +70,7 @@ export const InboxActionsHeader = observer(() => {
   }, [issue]);
 
   const issueStatus = issue?.issue_inbox[0].status;
-  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -127,7 +125,7 @@ export const InboxActionsHeader = observer(() => {
         </div>
         {inboxIssueId && (
           <div className="col-span-3 flex items-center justify-between gap-4 px-4">
-            <div className="flex items-center gap-x-2">
+            {/* <div className="flex items-center gap-x-2">
               <button
                 type="button"
                 className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
@@ -151,7 +149,7 @@ export const InboxActionsHeader = observer(() => {
               <div className="text-sm">
                 {currentIssueIndex + 1}/{issuesList?.length ?? 0}
               </div>
-            </div>
+            </div> */}
             <div className="flex flex-wrap items-center gap-3">
               {isAllowed && (issueStatus === 0 || issueStatus === -2) && (
                 <div className="flex-shrink-0">
@@ -228,7 +226,7 @@ export const InboxActionsHeader = observer(() => {
                   </Button>
                 </div>
               )}
-              {(isAllowed || user?.id === issue?.created_by) && (
+              {(isAllowed || currentUser?.id === issue?.created_by) && (
                 <div className="flex-shrink-0">
                   <Button
                     variant="neutral-primary"

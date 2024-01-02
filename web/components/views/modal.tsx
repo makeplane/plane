@@ -1,14 +1,14 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+import { debounce } from "lodash";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProjectView } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ProjectViewForm } from "components/views";
 // types
-import { IProjectView } from "types";
-import { debounce } from "lodash";
+import { IProjectView } from "@plane/types";
 
 type Props = {
   data?: IProjectView | null;
@@ -21,22 +21,21 @@ type Props = {
 
 export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
-  // store
-  const { projectViews: projectViewsStore } = useMobxStore();
-  // hooks
+  // store hooks
+  const { createView, updateView } = useProjectView();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
   };
 
-  const createView = async (payload: IProjectView) => {
-    await projectViewsStore
-      .createView(workspaceSlug, projectId, payload)
+  const handleCreateView = async (payload: IProjectView) => {
+    await createView(workspaceSlug, projectId, payload)
       .then(() => {
-        console.log("after calling store");
+        // console.log("after calling store");
         handleClose();
-        console.log("after closing");
+        // console.log("after closing");
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -52,9 +51,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
       );
   };
 
-  const updateView = async (payload: IProjectView) => {
-    await projectViewsStore
-      .updateView(workspaceSlug, projectId, data?.id as string, payload)
+  const handleUpdateView = async (payload: IProjectView) => {
+    await updateView(workspaceSlug, projectId, data?.id as string, payload)
       .then(() => handleClose())
       .catch((err) =>
         setToastAlert({
@@ -66,8 +64,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   };
 
   const handleFormSubmit = async (formData: IProjectView) => {
-    if (!data) await createView(formData);
-    else await updateView(formData);
+    if (!data) await handleCreateView(formData);
+    else await handleUpdateView(formData);
   };
 
   const debouncedFormSubmit = debounce(handleFormSubmit, 10, { leading: false, trailing: true });

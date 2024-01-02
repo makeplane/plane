@@ -1,7 +1,7 @@
 import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // ui
 import { DiscordIcon } from "@plane/ui";
 
@@ -14,7 +14,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
 
   const {
     commandPalette: { toggleShortcutModal },
-  } = useMobxStore();
+  } = useApplication();
 
   return (
     <Command.Group heading="Help">

@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // ui
 import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
@@ -11,24 +10,23 @@ import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    project: projectStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
   const canUserCreateModule =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">

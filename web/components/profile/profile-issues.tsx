@@ -8,8 +8,8 @@ import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanba
 import { ProfileIssuesAppliedFiltersRoot } from "components/issues";
 import { Spinner } from "@plane/ui";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { useIssues } from "hooks/store";
+import { EIssuesStoreType } from "constants/issue";
 
 interface IProfileIssuesPage {
   type: "assigned" | "subscribed" | "created";
@@ -25,16 +25,16 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   };
 
   const {
-    workspaceProfileIssues: { loader, getIssues, fetchIssues },
-    workspaceProfileIssuesFilter: { issueFilters, fetchFilters },
-  }: RootStore = useMobxStore();
+    issues: { loader, groupedIssueIds, fetchIssues },
+    issuesFilter: { issueFilters, fetchFilters },
+  } = useIssues(EIssuesStoreType.PROFILE);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,
     async () => {
       if (workspaceSlug && userId) {
-        await fetchFilters(workspaceSlug);
-        await fetchIssues(workspaceSlug, userId, getIssues ? "mutation" : "init-loader", undefined, type);
+        await fetchFilters(workspaceSlug, userId);
+        await fetchIssues(workspaceSlug, userId, groupedIssueIds ? "mutation" : "init-loader", undefined, type);
       }
     }
   );

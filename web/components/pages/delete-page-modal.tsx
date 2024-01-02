@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { AlertTriangle } from "lucide-react";
 // hooks
+import { usePage } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { AlertTriangle } from "lucide-react";
 // types
-import type { IPage } from "types";
+import type { IPage } from "@plane/types";
 
 type TConfirmPageDeletionProps = {
   data?: IPage | null;
@@ -21,16 +19,14 @@ type TConfirmPageDeletionProps = {
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
   const { data, isOpen, onClose } = props;
-
+  // states
   const [isDeleting, setIsDeleting] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const {
-    page: { deletePage },
-  } = useMobxStore();
-
+  // store hooks
+  const { deletePage } = usePage();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {

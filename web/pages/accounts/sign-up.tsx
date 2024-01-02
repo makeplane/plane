@@ -1,11 +1,13 @@
 import React, { useEffect, ReactElement } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 // next-themes
 import { useTheme } from "next-themes";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
@@ -15,7 +17,7 @@ import { EmailSignUpForm } from "components/account";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 type EmailPasswordFormValues = {
   email: string;
@@ -26,14 +28,17 @@ type EmailPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const SignUpPage: NextPageWithLayout = () => {
+const SignUpPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // next-themes
   const { setTheme } = useTheme();
-
-  const { mutateUser } = useUserAuth("sign-in");
+  // store hooks
+  const { currentUser, fetchCurrentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ routeAuth: "sign-in", user: currentUser, isLoading: currentUserLoader });
 
   const handleSignUp = async (formData: EmailPasswordFormValues) => {
     const payload = {
@@ -50,7 +55,7 @@ const SignUpPage: NextPageWithLayout = () => {
           message: "Account created successfully.",
         });
 
-        if (response) await mutateUser();
+        if (response) await fetchCurrentUser();
         router.push("/onboarding");
       })
       .catch((err) =>
@@ -84,7 +89,7 @@ const SignUpPage: NextPageWithLayout = () => {
       </div>
     </>
   );
-};
+});
 
 SignUpPage.getLayout = function getLayout(page: ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;

@@ -5,7 +5,7 @@ import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader } from "@plane/ui";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />

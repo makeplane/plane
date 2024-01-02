@@ -9,7 +9,7 @@ import type {
   ProjectPreferences,
   IProjectViewProps,
   TProjectIssuesSearchParams,
-} from "types";
+} from "@plane/types";
 
 export class ProjectService extends APIService {
   constructor() {

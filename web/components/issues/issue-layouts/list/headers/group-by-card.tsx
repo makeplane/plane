@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
@@ -10,18 +9,19 @@ import { CustomMenu } from "@plane/ui";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
-import { EProjectStore } from "store/command-palette.store";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 import useToast from "hooks/use-toast";
+import { useState } from "react";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  issuePayload: Partial<IIssue>;
+  issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  currentStore: TCreateModalStoreTypes;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard = observer(
@@ -29,9 +29,9 @@ export const HeaderGroupByCard = observer(
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
+    const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
@@ -45,14 +45,15 @@ export const HeaderGroupByCard = observer(
 
       const issues = data.map((i) => i.id);
 
-      addIssuesToView &&
-        addIssuesToView(issues)?.catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Selected issues could not be added to the cycle. Please try again.",
-          });
+      try {
+        addIssuesToView && addIssuesToView(issues);
+      } catch (error) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
         });
+      }
     };
 
     return (

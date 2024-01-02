@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { IssueReactionPreview, IssueReactionSelector } from "components/issues";
 // types
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 
 interface IIssueReaction {
   issueReactions: any;

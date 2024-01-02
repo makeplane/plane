@@ -30,8 +30,7 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
-    "@plane/ui": "*",
-    "@plane/editor-types": "*"
+    "@plane/ui": "*"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

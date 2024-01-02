@@ -3,10 +3,11 @@ import { observable, action, makeObservable, runInAction, computed, autorun } fr
 import { IssueService, IssueReactionService, IssueCommentService } from "services/issue";
 import { NotificationService } from "services/notification.service";
 // types
-import { RootStore } from "../root";
-import type { IIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
+import { IIssueRootStore } from "./root.store";
+import type { TIssue, IIssueActivity, IIssueLink, ILinkDetails } from "@plane/types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
+import { RootStore } from "store/root.store";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -14,7 +15,7 @@ export interface IIssueDetailStore {
 
   peekId: string | null;
   issues: {
-    [issueId: string]: IIssue;
+    [issueId: string]: TIssue;
   };
   issueReactions: {
     [issueId: string]: any;
@@ -34,18 +35,18 @@ export interface IIssueDetailStore {
   setPeekId: (issueId: string | null) => void;
 
   // computed
-  getIssue: IIssue | null;
+  getIssue: TIssue | null;
   getIssueReactions: any | null;
   getIssueActivity: IIssueActivity[] | null;
   getIssueCommentReactions: any | null;
   getIssueSubscription: any | null;
 
   // fetch issue details
-  fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   // deleting issue
   deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
-  fetchPeekIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  fetchPeekIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
 
   fetchIssueReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   createIssueReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<void>;
@@ -109,7 +110,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
   peekId: string | null = null;
   issues: {
-    [issueId: string]: IIssue;
+    [issueId: string]: TIssue;
   } = {};
   issueReactions: {
     [issueId: string]: any;
@@ -125,6 +126,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   } = {};
 
   // root store
+  issueRootStore;
   rootStore;
   // service
   issueService;
@@ -132,7 +134,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   issueCommentService;
   notificationService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_issueRootStore: IIssueRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // observable
       loader: observable.ref,
@@ -180,31 +182,33 @@ export class IssueDetailStore implements IIssueDetailStore {
       removeIssueSubscription: action,
     });
 
-    autorun(() => {
-      const projectId = this.rootStore?.project.projectId;
-      const peekId = this.peekId;
-
-      if (!projectId || !peekId) return;
-
-      const issue = this.rootStore.projectIssues.issues?.[projectId]?.[peekId];
-
-      if (issue && issue.id)
-        runInAction(() => {
-          this.issues = {
-            ...this.issues,
-            [issue.id]: {
-              ...this.issues[issue.id],
-              ...issue,
-            },
-          };
-        });
-    });
-
+    this.issueRootStore = _issueRootStore;
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
     this.issueReactionService = new IssueReactionService();
     this.issueCommentService = new IssueCommentService();
     this.notificationService = new NotificationService();
+
+    autorun(() => {
+      const projectId = this.rootStore?.app.router.projectId;
+      const peekId = this.peekId;
+
+      if (!projectId || !peekId) return;
+
+      // FIXME: uncomment and fix
+      // const issue = this.issueRootStore.projectIssues.issues?.[projectId]?.[peekId];
+
+      // if (issue && issue.id)
+      //   runInAction(() => {
+      //     this.issues = {
+      //       ...this.issues,
+      //       [issue.id]: {
+      //         ...this.issues[issue.id],
+      //         ...issue,
+      //       },
+      //     };
+      //   });
+    });
   }
 
   get getIssue() {
@@ -652,7 +656,7 @@ export class IssueDetailStore implements IIssueDetailStore {
           ...this.issues,
           [issueId]: {
             ...this.issues[issueId],
-            issue_link: this.issues[issueId].issue_link.map((link) => (link.id === linkId ? response : link)),
+            issue_link: this.issues[issueId].issue_link.map((link: any) => (link.id === linkId ? response : link)),
           },
         };
       });
@@ -678,7 +682,7 @@ export class IssueDetailStore implements IIssueDetailStore {
           ...this.issues,
           [issueId]: {
             ...this.issues[issueId],
-            issue_link: this.issues[issueId].issue_link.filter((link) => link.id !== linkId),
+            issue_link: this.issues[issueId].issue_link.filter((link: any) => link.id !== linkId),
           },
         };
       });

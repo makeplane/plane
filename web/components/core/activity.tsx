@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hook
-import useEstimateOption from "hooks/use-estimate-option";
+// store hooks
+import { useEstimate, useLabel } from "hooks/store";
 // icons
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
@@ -11,7 +10,6 @@ import {
   CopyPlus,
   Calendar,
   Link2Icon,
-  RocketIcon,
   Users2Icon,
   ArchiveIcon,
   PaperclipIcon,
@@ -23,11 +21,10 @@ import {
   UsersIcon,
 } from "lucide-react";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { IIssueActivity } from "types";
-import { useEffect } from "react";
+import { IIssueActivity } from "@plane/types";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
@@ -48,8 +45,8 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
         rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
       >
-        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-        <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}{" "}
+        <span className="font-normal">{activity.issue_detail?.name}</span>
       </a>
     </Tooltip>
   );
@@ -74,11 +71,10 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 };
 
 const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
+  // store hooks
   const {
-    workspace: { labels, fetchWorkspaceLabels },
-  } = useMobxStore();
-
-  const workspaceLabels = labels[workspaceSlug];
+    workspace: { workspaceLabels, fetchWorkspaceLabels },
+  } = useLabel();
 
   useEffect(() => {
     if (!workspaceLabels) fetchWorkspaceLabels(workspaceSlug);
@@ -95,16 +91,21 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
   );
 });
 
-const EstimatePoint = ({ point }: { point: string }) => {
-  const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
+const EstimatePoint = observer((props: { point: string }) => {
+  const { point } = props;
+  const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
   const currentPoint = Number(point) + 1;
+
+  const estimateValue = getEstimatePointValue(Number(point));
 
   return (
     <span className="font-medium text-custom-text-100">
-      {isEstimateActive ? estimateValue : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+      {areEstimatesEnabledForCurrentProject
+        ? estimateValue
+        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
     </span>
   );
-};
+});
 
 const activityDetails: {
   [key: string]: {
@@ -163,7 +164,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               attachment
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -239,7 +239,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -254,7 +253,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -269,7 +267,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -398,7 +395,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -420,7 +416,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -442,7 +437,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -469,7 +463,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -484,7 +477,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -499,7 +491,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -608,7 +599,7 @@ const activityDetails: {
           <>
             set the start date to{" "}
             <span className="font-medium text-custom-text-100">
-              {renderShortDateWithYearFormat(activity.new_value)}
+              {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
@@ -657,7 +648,7 @@ const activityDetails: {
           <>
             set the due date to{" "}
             <span className="font-medium text-custom-text-100">
-              {renderShortDateWithYearFormat(activity.new_value)}
+              {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>

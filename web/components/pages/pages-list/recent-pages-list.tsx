@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, usePage, useUser } from "hooks/store";
 // components
 import { PagesListView } from "components/pages/pages-list";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -13,19 +13,19 @@ import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const RecentPagesList: FC = observer(() => {
-  // store
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    commandPalette: commandPaletteStore,
-    page: { recentProjectPages },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { recentProjectPages } = usePage();
 
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!recentProjectPages) {
     return (
@@ -49,7 +49,7 @@ export const RecentPagesList: FC = observer(() => {
                 <h2 className="sticky top-0 z-[1] mb-2 bg-custom-background-100 text-xl font-semibold capitalize">
                   {replaceUnderscoreIfSnakeCase(key)}
                 </h2>
-                <PagesListView pages={recentProjectPages[key]} />
+                <PagesListView pageIds={recentProjectPages[key]} />
               </div>
             );
           })}
@@ -66,15 +66,11 @@ export const RecentPagesList: FC = observer(() => {
                 "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
               direction: "right",
             }}
-            primaryButton={
-              isEditingAllowed
-                ? {
-                    icon: <Plus className="h-4 w-4" />,
-                    text: "Create your first page",
-                    onClick: () => commandPaletteStore.toggleCreatePageModal(true),
-                  }
-                : null
-            }
+            primaryButton={{
+              icon: <Plus className="h-4 w-4" />,
+              text: "Create your first page",
+              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
+            }}
             disabled={!isEditingAllowed}
           />
         </>

@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useLabel, useMember, useProject, useUser } from "hooks/store";
 // icons
 import { Button, Spinner } from "@plane/ui";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -14,47 +14,46 @@ export interface IWorkspaceAuthWrapper {
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
+  const { membership } = useUser();
+  const { fetchProjects } = useProject();
   const {
-    user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
-    project: { fetchProjects },
+    workspace: { fetchWorkspaceMembers },
+  } = useMember();
+  const {
     workspace: { fetchWorkspaceLabels },
-    workspaceMember: { fetchWorkspaceMembers, fetchWorkspaceUserProjectsRole },
-  } = useMobxStore();
-
+  } = useLabel();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // fetching user workspace information
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
+    workspaceSlug ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
   );
   // fetching workspace projects
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace ? () => fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
   // fetch workspace labels
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
   // fetch workspace user projects role
   useSWR(
-    workspaceSlug && hasPermissionToCurrentWorkspace ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
-    workspaceSlug && hasPermissionToCurrentWorkspace
-      ? () => fetchWorkspaceUserProjectsRole(workspaceSlug.toString())
-      : null
+    workspaceSlug ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
+    workspaceSlug ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString()) : null
   );
 
   // while data is being loaded
-  if (!currentWorkspaceMemberInfo && hasPermissionToCurrentWorkspace === undefined) {
+  if (!membership.currentWorkspaceMemberInfo && membership.hasPermissionToCurrentWorkspace === undefined) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -64,7 +63,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   }
   // while user does not have access to view that workspace
-  if (hasPermissionToCurrentWorkspace !== undefined && hasPermissionToCurrentWorkspace === false) {
+  if (
+    membership.hasPermissionToCurrentWorkspace !== undefined &&
+    membership.hasPermissionToCurrentWorkspace === false
+  ) {
     return (
       <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
         <div className="grid h-full place-items-center p-4">

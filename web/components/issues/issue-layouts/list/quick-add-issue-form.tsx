@@ -4,13 +4,12 @@ import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // constants
-import { IIssue, IProject } from "types";
+import { TIssue, IProject } from "@plane/types";
 // types
 import { createIssuePayload } from "helpers/issue.helper";
 
@@ -44,31 +43,28 @@ const Inputs: FC<IInputProps> = (props) => {
 };
 
 interface IListQuickAddIssueForm {
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 }
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
 export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props) => {
   const { prePopulatedData, quickAddCallback, viewId } = props;
-
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { currentProjectDetails } = useProject();
 
   const ref = useRef<HTMLFormElement>(null);
 
@@ -85,24 +81,25 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
   }, [isOpen, reset]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !workspaceDetail || !projectDetail) return;
+  const onSubmitHandler = async (formData: TIssue) => {
+    if (isSubmitting || !currentWorkspace || !currentProjectDetails || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(currentWorkspace, currentProjectDetails, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
     try {
-      quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload }, viewId));
+      quickAddCallback &&
+        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId));
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -130,7 +127,12 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-3"
           >
-            <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail} />
+            <Inputs
+              formKey={"name"}
+              register={register}
+              setFocus={setFocus}
+              projectDetail={currentProjectDetails ?? null}
+            />
           </form>
           <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
         </div>

@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { observer } from "mobx-react-lite";
+// hooks
+import { useMention, useUser } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // icons
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import type { IIssueActivity } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import type { IIssueActivity } from "@plane/types";
 
 // services
 const fileService = new FileService();
@@ -28,22 +27,17 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCard: React.FC<Props> = ({
-  comment,
-  handleCommentDeletion,
-  onSubmit,
-  showAccessSpecifier = false,
-  workspaceSlug,
-}) => {
-  const { user } = useUser();
-
+export const CommentCard: React.FC<Props> = observer((props) => {
+  const { comment, handleCommentDeletion, onSubmit, showAccessSpecifier = false, workspaceSlug } = props;
+  // states
+  const [isEditing, setIsEditing] = useState(false);
+  // refs
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
-
-  const editorSuggestions = useEditorSuggestions();
-
-  const [isEditing, setIsEditing] = useState(false);
-
+  // store hooks
+  const { currentUser } = useUser();
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // form info
   const {
     formState: { isSubmitting },
     handleSubmit,
@@ -98,7 +92,7 @@ export const CommentCard: React.FC<Props> = ({
           <div className="text-xs">
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-custom-text-200">commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</p>
         </div>
         <div className="issue-comments-section p-0">
           <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
@@ -114,8 +108,8 @@ export const CommentCard: React.FC<Props> = ({
                 debouncedUpdatesEnabled={false}
                 customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
-                mentionSuggestions={editorSuggestions.mentionSuggestions}
-                mentionHighlights={editorSuggestions.mentionHighlights}
+                mentionSuggestions={mentionSuggestions}
+                mentionHighlights={mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -146,13 +140,13 @@ export const CommentCard: React.FC<Props> = ({
               ref={showEditorRef}
               value={comment.comment_html ?? ""}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={editorSuggestions.mentionHighlights}
+              mentionHighlights={mentionHighlights}
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>
         </div>
       </div>
-      {user?.id === comment.actor && (
+      {currentUser?.id === comment.actor && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
             <Pencil className="h-3 w-3" />
@@ -192,4 +186,4 @@ export const CommentCard: React.FC<Props> = ({
       )}
     </div>
   );
-};
+});

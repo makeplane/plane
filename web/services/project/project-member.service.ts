@@ -2,14 +2,14 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IProjectBulkAddFormData, IProjectMember, IProjectMemberInvitation } from "types";
+import type { IProjectBulkAddFormData, IProjectMember, IProjectMembership } from "@plane/types";
 
 export class ProjectMemberService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async fetchProjectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
+  async fetchProjectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMembership[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -17,7 +17,11 @@ export class ProjectMemberService extends APIService {
       });
   }
 
-  async bulkAddMembersToProject(workspaceSlug: string, projectId: string, data: IProjectBulkAddFormData): Promise<any> {
+  async bulkAddMembersToProject(
+    workspaceSlug: string,
+    projectId: string,
+    data: IProjectBulkAddFormData
+  ): Promise<IProjectMembership[]> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`, data)
       .then((response) => response?.data)
       .catch((error) => {

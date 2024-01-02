@@ -3,9 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProjectView, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
@@ -15,9 +14,9 @@ import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IProjectView } from "types";
+import { IProjectView } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   view: IProjectView;
@@ -25,30 +24,30 @@ type Props = {
 
 export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
-
+  // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
-    projectViews: projectViewsStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    projectViewsStore.addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    projectViewsStore.removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -65,7 +64,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
 
   const totalFilters = calculateTotalFilters(view.query_data ?? {});
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>

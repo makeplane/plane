@@ -94,7 +94,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "", true);
+                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "");
 
                   return (
                     <Draggable

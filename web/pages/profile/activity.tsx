@@ -15,9 +15,9 @@ import { ExternalLinkIcon, Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const userService = new UserService();
 
@@ -25,7 +25,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
-    <section className="mx-auto pt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+    <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
       <div className="flex items-center border-b border-custom-border-100 pb-3.5">
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
@@ -70,7 +70,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               : activityItem.actor_detail.display_name}
                           </div>
                           <p className="mt-0.5 text-xs text-custom-text-200">
-                            Commented {timeAgo(activityItem.created_at)}
+                            Commented {calculateTimeAgo(activityItem.created_at)}
                           </p>
                         </div>
                         <div className="issue-comments-section p-0">
@@ -165,7 +165,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               <div className="flex gap-1 truncate">
                                 {message}{" "}
                                 <span className="flex-shrink-0 whitespace-nowrap">
-                                  {timeAgo(activityItem.created_at)}
+                                  {calculateTimeAgo(activityItem.created_at)}
                                 </span>
                               </div>
                             </div>
@@ -180,7 +180,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
           </ul>
         </div>
       ) : (
-        <Loader className="space-y-5 mt-5">
+        <Loader className="space-y-5">
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />

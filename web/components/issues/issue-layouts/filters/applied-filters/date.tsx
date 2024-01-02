@@ -1,9 +1,8 @@
 import { observer } from "mobx-react-lite";
-
 // icons
 import { X } from "lucide-react";
 // helpers
-import { renderLongDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // constants
 import { DATE_FILTER_OPTIONS } from "constants/filters";
@@ -28,7 +27,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
       if (dateParts.length === 2) {
         const [date, time] = dateParts;
 
-        dateLabel = `${capitalizeFirstLetter(time)} ${renderLongDateFormat(date)}`;
+        dateLabel = `${capitalizeFirstLetter(time)} ${renderFormattedDate(date)}`;
       }
     }
 

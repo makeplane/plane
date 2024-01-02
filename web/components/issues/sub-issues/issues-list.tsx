@@ -1,36 +1,31 @@
-import { useEffect } from "react";
-import useSWR from "swr";
+import { useMemo } from "react";
 // components
 import { SubIssues } from "./issue";
 // types
-import { IUser, IIssue } from "types";
+import { IUser, TIssue } from "@plane/types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-// services
-import { IssueService } from "services/issue";
+
 // fetch keys
-import { SUB_ISSUES } from "constants/fetch-keys";
+import { useIssueDetail } from "hooks/store";
 
 export interface ISubIssuesRootList {
   workspaceSlug: string;
   projectId: string;
-  parentIssue: IIssue;
+  parentIssue: TIssue;
   spacingLeft?: number;
   user: IUser | undefined;
   editable: boolean;
-  removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
+  removeIssueFromSubIssues: (parentIssueId: string, issue: TIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
   handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",
     issueId: string,
-    issue?: IIssue | null
+    issue?: TIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
-  handleDeleteIssue: (issue: IIssue) => Promise<void>
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
 }
-
-const issueService = new IssueService();
 
 export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   workspaceSlug,
@@ -45,39 +40,35 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   copyText,
   handleIssueCrudOperation,
   handleUpdateIssue,
-  handleDeleteIssue
 }) => {
-  const { data: issues, isLoading } = useSWR(
-    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issueService.subIssues(workspaceSlug, projectId, parentIssue.id)
-      : null
-  );
+  const issueDetail = useIssueDetail();
+  issueDetail.subIssues.fetchSubIssues(workspaceSlug, projectId, parentIssue?.id);
 
-  useEffect(() => {
-    if (isLoading) {
-      handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
-    } else {
-      if (issuesLoader.sub_issues.includes(parentIssue?.id)) {
-        handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
-      }
-    }
-  }, [handleIssuesLoader, isLoading, issuesLoader.sub_issues, parentIssue?.id]);
+  const subIssues = issueDetail.subIssues.subIssuesByIssueId(parentIssue?.id);
+
+  const handleIssue = useMemo(
+    () => ({
+      fetchIssues: async (issueId: string) => issueDetail.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId),
+      updateIssue: async (issueId: string, data: Partial<TIssue>) =>
+        issueDetail.updateIssue(workspaceSlug, projectId, issueId, data),
+      removeIssue: (issueId: string) => issueDetail.removeIssue(workspaceSlug, projectId, issueId),
+    }),
+    [issueDetail, workspaceSlug, projectId]
+  );
 
   return (
     <>
       <div className="relative">
-        {issues &&
-          issues.sub_issues &&
-          issues.sub_issues.length > 0 &&
-          issues.sub_issues.map((issue: IIssue) => (
+        {subIssues &&
+          subIssues.length > 0 &&
+          subIssues.map((issueId: string) => (
             <SubIssues
-            handleDeleteIssue={handleDeleteIssue}
-              key={`${issue?.id}`}
+              key={`${issueId}`}
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               parentIssue={parentIssue}
-              issue={issue}
+              issueId={issueId}
+              handleIssue={handleIssue}
               spacingLeft={spacingLeft}
               user={user}
               editable={editable}

@@ -3,16 +3,14 @@ import { observer } from "mobx-react-lite";
 // components
 import { PagesListView } from "components/pages/pages-list";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { usePage } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 
 export const ArchivedPagesList: FC = observer(() => {
-  const {
-    page: { archivedProjectPages },
-  } = useMobxStore();
+  const { archivedProjectPageIds } = usePage();
 
-  if (!archivedProjectPages)
+  if (!archivedProjectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -21,5 +19,5 @@ export const ArchivedPagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={archivedProjectPages} />;
+  return <PagesListView pageIds={archivedProjectPageIds} />;
 });

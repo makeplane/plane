@@ -1,8 +1,16 @@
 import * as React from "react";
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from "@plane/editor-core";
-import { FixedMenu } from "./menus/fixed-menu";
-import { LiteTextEditorExtensions } from "./extensions";
-import { UploadImage, DeleteImage, IMentionSuggestion, RestoreImage } from "@plane/editor-types";
+import {
+  UploadImage,
+  DeleteImage,
+  IMentionSuggestion,
+  RestoreImage,
+  EditorContainer,
+  EditorContentWrapper,
+  getEditorClassNames,
+  useEditor,
+} from "@plane/editor-core";
+import { FixedMenu } from "src/ui/menus/fixed-menu";
+import { LiteTextEditorExtensions } from "src/ui/extensions";
 
 interface ILiteTextEditor {
   value: string;

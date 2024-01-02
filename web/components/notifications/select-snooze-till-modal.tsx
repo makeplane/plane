@@ -3,15 +3,15 @@ import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
-// date helper
-import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
+// constants
+import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect } from "@plane/ui";
 import { CustomDatePicker } from "components/ui";
 // types
-import type { IUserNotification } from "types";
+import type { IUserNotification } from "@plane/types";
 
 type SnoozeModalProps = {
   isOpen: boolean;
@@ -33,7 +33,7 @@ const defaultValues: FormValues = {
   period: "AM",
 };
 
-const timeStamps = getAllTimeIn30MinutesInterval();
+const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
 export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;

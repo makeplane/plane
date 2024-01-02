@@ -1,7 +1,7 @@
-import { UploadImage } from "@plane/editor-types";
 import { EditorProps } from "@tiptap/pm/view";
-import { findTableAncestor } from "../lib/utils";
-import { startImageUpload } from "./plugins/upload-image";
+import { findTableAncestor } from "src/lib/utils";
+import { UploadImage } from "src/types/upload-image";
+import { startImageUpload } from "src/ui/plugins/upload-image";
 
 export function CoreEditorProps(
   uploadFile: UploadImage,

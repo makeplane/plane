@@ -1,32 +1,36 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { ArrowLeft } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-// icons
-import { ArrowLeft } from "lucide-react";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-// types
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
-// helper
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
+// types
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 
 export const ProjectArchivedIssuesHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    archivedIssueFilters: archivedIssueFiltersStore,
-    projectState: projectStateStore,
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   // for archived issues list layout is the only option
   const activeLayout = "list";
@@ -34,39 +38,35 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const handleFiltersUpdate = (key: keyof IIssueFilterOptions, value: string | string[]) => {
     if (!workspaceSlug || !projectId) return;
 
-    const newValues = archivedIssueFiltersStore.userFilters?.[key] ?? [];
+    const newValues = issueFilters?.filters?.[key] ?? [];
 
     if (Array.isArray(value)) {
       value.forEach((val) => {
         if (!newValues.includes(val)) newValues.push(val);
       });
     } else {
-      if (archivedIssueFiltersStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+      if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
       else newValues.push(value);
     }
 
-    archivedIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: {
-        [key]: newValues,
-      },
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
+      [key]: newValues,
     });
   };
 
   const handleDisplayFiltersUpdate = (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
     if (!workspaceSlug || !projectId) return;
 
-    archivedIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        ...archivedIssueFiltersStore.userDisplayFilters,
-        ...updatedDisplayFilter,
-      },
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+      ...issueFilters?.displayFilters,
+      ...updatedDisplayFilter,
     });
   };
 
   const handleDisplayPropertiesUpdate = (property: Partial<IIssueDisplayProperties>) => {
     if (!workspaceSlug || !projectId) return;
 
-    archivedIssueFiltersStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
   };
 
   return (
@@ -113,20 +113,20 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
       <div className="flex items-center gap-2">
         <FiltersDropdown title="Filters" placement="bottom-end">
           <FilterSelection
-            filters={archivedIssueFiltersStore.userFilters}
+            filters={issueFilters?.filters || {}}
             handleFiltersUpdate={handleFiltersUpdate}
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.archived_issues[activeLayout] : undefined
             }
-            labels={projectLabels ?? undefined}
-            members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+            labels={projectLabels}
+            memberIds={projectMemberIds ?? undefined}
+            states={projectStates}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
           <DisplayFiltersSelection
-            displayFilters={archivedIssueFiltersStore.userDisplayFilters}
-            displayProperties={archivedIssueFiltersStore.userDisplayProperties}
+            displayFilters={issueFilters?.displayFilters || {}}
+            displayProperties={issueFilters?.displayProperties || {}}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
             layoutDisplayFiltersOptions={

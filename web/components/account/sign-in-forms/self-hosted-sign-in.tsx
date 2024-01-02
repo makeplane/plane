@@ -11,7 +11,7 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IPasswordSignInData } from "types/auth";
+import { IPasswordSignInData } from "@plane/types";
 
 type Props = {
   email: string;
@@ -97,7 +97,7 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@firstflight.com"
+                  placeholder="orville.wright@frstflt.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                 />
                 {value.length > 0 && (

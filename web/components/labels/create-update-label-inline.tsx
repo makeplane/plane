@@ -1,20 +1,18 @@
 import React, { forwardRef, useEffect } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
-// stores
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
+// hooks
+import { useLabel } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
-import useToast from "hooks/use-toast";
 
 type Props = {
   labelForm: boolean;
@@ -32,16 +30,16 @@ const defaultValues: Partial<IIssueLabel> = {
 export const CreateUpdateLabelInline = observer(
   forwardRef<HTMLFormElement, Props>(function CreateUpdateLabelInline(props, ref) {
     const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
-
     // router
     const router = useRouter();
     const { workspaceSlug, projectId } = router.query;
-
-    // store
-    const { projectLabel: projectLabelStore } = useMobxStore();
-
+    // store hooks
+    const {
+      project: { createLabel, updateLabel },
+    } = useLabel();
+    // toast alert
     const { setToastAlert } = useToast();
-
+    // form info
     const {
       handleSubmit,
       control,
@@ -63,8 +61,7 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
-      await projectLabelStore
-        .createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+      await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
         .then(() => {
           handleClose();
           reset(defaultValues);
@@ -82,8 +79,7 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
-      await projectLabelStore
-        .updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
+      await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
         .then(() => {
           reset(defaultValues);
           handleClose();

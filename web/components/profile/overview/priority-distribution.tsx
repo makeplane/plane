@@ -6,7 +6,7 @@ import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { IUserProfileData } from "types";
+import { IUserProfileData } from "@plane/types";
 
 type Props = {
   userProfile: IUserProfileData | undefined;

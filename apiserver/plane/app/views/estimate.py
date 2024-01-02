@@ -53,11 +53,11 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             )
 
         estimate_points = request.data.get("estimate_points", [])
-
-        if not len(estimate_points) or len(estimate_points) > 8:
+        
+        serializer = EstimatePointSerializer(data=request.data.get("estimate_points"), many=True)
+        if not serializer.is_valid():
             return Response(
-                {"error": "Estimate points are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
         estimate_serializer = EstimateSerializer(data=request.data.get("estimate"))

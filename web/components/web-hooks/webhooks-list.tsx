@@ -1,13 +1,12 @@
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useWebhook } from "hooks/store";
 // components
 import { WebhooksListItem } from "./webhooks-list-item";
 
 export const WebhooksList = observer(() => {
-  const {
-    webhook: { webhooks },
-  } = useMobxStore();
+  // store hooks
+  const { webhooks } = useWebhook();
 
   return (
     <div className="h-full w-full overflow-y-auto">

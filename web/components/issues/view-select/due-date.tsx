@@ -3,17 +3,12 @@ import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
 import { CalendarCheck } from "lucide-react";
 // helpers
-import {
-  findHowManyDaysLeft,
-  renderShortDate,
-  renderShortDateWithYearFormat,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
+  issue: TIssue;
   onChange: (date: string | null) => void;
   handleOnOpen?: () => void;
   handleOnClose?: () => void;
@@ -36,14 +31,10 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const today = new Date();
-  const endDate = new Date(issue.target_date ?? "");
-  const areYearsEqual = endDate.getFullYear() === today.getFullYear();
-
   return (
     <Tooltip
       tooltipHeading="Due date"
-      tooltipContent={issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"}
+      tooltipContent={issue.target_date ? renderFormattedDate(issue.target_date) ?? "N/A" : "N/A"}
       position={tooltipPosition}
     >
       <div
@@ -61,18 +52,14 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           className={`bg-transparent ${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}`}
           customInput={
             <div
-              className={`flex cursor-pointer items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
+              className={`flex items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
                 issue.target_date ? "pr-6 text-custom-text-300" : "text-custom-text-400"
-              }`}
+              } ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               {issue.target_date ? (
                 <>
                   <CalendarCheck className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>
-                    {areYearsEqual
-                      ? renderShortDate(issue.target_date ?? "", "_ _")
-                      : renderShortMonthDate(issue.target_date ?? "", "_ _")}
-                  </span>
+                  <span>{renderFormattedDate(issue.target_date) ?? "_ _"}</span>
                 </>
               ) : (
                 <>

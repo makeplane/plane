@@ -1,6 +1,6 @@
 import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
 // types
-import { TModuleStatus } from "types";
+import { TModuleStatus } from "@plane/types";
 
 export const MODULE_STATUS: {
   label: string;

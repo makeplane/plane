@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
+import { useApplication, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -17,20 +16,26 @@ import { CycleDeleteModal } from "components/cycles/delete-modal";
 import { CustomRangeDatePicker } from "components/ui";
 import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
 // icons
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, MoveRight } from "lucide-react";
+import {
+  ChevronDown,
+  LinkIcon,
+  Trash2,
+  UserCircle2,
+  AlertCircle,
+  ChevronRight,
+  CalendarCheck2,
+  CalendarClock,
+} from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import {
   findHowManyDaysLeft,
-  getDateRangeStatus,
   isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDate,
-  renderShortMonthDate,
+  renderFormattedPayloadDate,
+  renderFormattedDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle, IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { ICycle } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys
@@ -47,20 +52,21 @@ const cycleService = new CycleService();
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { cycleId, handleClose } = props;
-
+  // states
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
-
+  // store hooks
   const {
-    cycle: cycleDetailsStore,
-    cycleIssuesFilter: { issueFilters, updateFilters },
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getCycleById, updateCycleDetails } = useCycle();
 
-  const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
+  const cycleDetails = getCycleById(cycleId);
 
   const { setToastAlert } = useToast();
 
@@ -76,7 +82,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    cycleDetailsStore.patchCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
   };
 
   const handleCopyText = () => {
@@ -133,8 +139,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
         if (isDateValidForExistingCycle) {
           submitChanges({
-            start_date: renderDateFormat(`${watch("start_date")}`),
-            end_date: renderDateFormat(`${watch("end_date")}`),
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
           });
           setToastAlert({
             type: "success",
@@ -160,8 +166,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
       if (isDateValid) {
         submitChanges({
-          start_date: renderDateFormat(`${watch("start_date")}`),
-          end_date: renderDateFormat(`${watch("end_date")}`),
+          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
         });
         setToastAlert({
           type: "success",
@@ -201,8 +207,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
         if (isDateValidForExistingCycle) {
           submitChanges({
-            start_date: renderDateFormat(`${watch("start_date")}`),
-            end_date: renderDateFormat(`${watch("end_date")}`),
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
           });
           setToastAlert({
             type: "success",
@@ -228,8 +234,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
       if (isDateValid) {
         submitChanges({
-          start_date: renderDateFormat(`${watch("start_date")}`),
-          end_date: renderDateFormat(`${watch("end_date")}`),
+          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
         });
         setToastAlert({
           type: "success",
@@ -247,29 +253,27 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     }
   };
 
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+  // TODO: refactor this
+  // const handleFiltersUpdate = useCallback(
+  //   (key: keyof IIssueFilterOptions, value: string | string[]) => {
+  //     if (!workspaceSlug || !projectId) return;
+  //     const newValues = issueFilters?.filters?.[key] ?? [];
 
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
+  //     if (Array.isArray(value)) {
+  //       value.forEach((val) => {
+  //         if (!newValues.includes(val)) newValues.push(val);
+  //       });
+  //     } else {
+  //       if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+  //       else newValues.push(value);
+  //     }
 
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
-    },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
-  );
+  //     updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
+  //   },
+  //   [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
+  // );
 
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
+  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
   const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
@@ -296,9 +300,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const endDate = new Date(watch("end_date") ?? cycleDetails.end_date ?? "");
   const startDate = new Date(watch("start_date") ?? cycleDetails.start_date ?? "");
-
-  const areYearsEqual =
-    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
@@ -357,8 +358,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{cycleDetails.name}</h4>
+        <div className="flex flex-col gap-3 pt-2">
           <div className="flex items-center gap-5">
             {currentCycle && (
               <span
@@ -373,15 +373,37 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   : `${currentCycle.label}`}
               </span>
             )}
-            <div className="relative flex h-full w-52 items-center gap-2.5">
-              <Popover className="flex h-full items-center justify-center rounded-lg">
+          </div>
+          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{cycleDetails.name}</h4>
+        </div>
+
+        {cycleDetails.description && (
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+            {cycleDetails.description}
+          </span>
+        )}
+
+        <div className="flex flex-col gap-5 pb-6 pt-2.5">
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+              <CalendarClock className="h-4 w-4" />
+              <span className="text-base">Start Date</span>
+            </div>
+            <div className="relative flex w-1/2 items-center rounded-sm">
+              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 ${
+                  className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                     isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={isCompleted || !isEditingAllowed}
                 >
-                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
+                  <span
+                    className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
+                      watch("start_date") ? "" : "text-custom-text-400"
+                    }`}
+                  >
+                    {renderFormattedDate(startDate) ?? "No date selected"}
+                  </span>
                 </Popover.Button>
 
                 <Transition
@@ -393,7 +415,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute -right-5 top-10 z-20  transform overflow-hidden">
+                  <Popover.Panel className="absolute right-0 top-10 z-20  transform overflow-hidden">
                     <CustomRangeDatePicker
                       value={watch("start_date") ? watch("start_date") : cycleDetails?.start_date}
                       onChange={(val) => {
@@ -410,16 +432,30 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   </Popover.Panel>
                 </Transition>
               </Popover>
-              <MoveRight className="h-4 w-4 text-custom-text-300" />
-              <Popover className="flex h-full items-center justify-center rounded-lg">
+            </div>
+          </div>
+
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+              <CalendarCheck2 className="h-4 w-4" />
+              <span className="text-base">Target Date</span>
+            </div>
+            <div className="relative flex w-1/2 items-center rounded-sm">
+              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 ${
+                    className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                       isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={isCompleted || !isEditingAllowed}
                   >
-                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                    <span
+                      className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
+                        watch("end_date") ? "" : "text-custom-text-400"
+                      }`}
+                    >
+                      {renderFormattedDate(endDate) ?? "No date selected"}
+                    </span>
                   </Popover.Button>
 
                   <Transition
@@ -431,7 +467,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute -right-5 top-10 z-20 transform overflow-hidden">
+                    <Popover.Panel className="absolute right-0 top-10 z-20 transform overflow-hidden">
                       <CustomRangeDatePicker
                         value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
                         onChange={(val) => {
@@ -451,15 +487,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               </Popover>
             </div>
           </div>
-        </div>
 
-        {cycleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {cycleDetails.description}
-          </span>
-        )}
-
-        <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
               <UserCircle2 className="h-4 w-4" />
@@ -559,9 +587,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                               }}
                               totalIssues={cycleDetails.total_issues}
                               isPeekView={Boolean(peekCycle)}
-                              isCompleted={isCompleted}
-                              filters={issueFilters?.filters}
-                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}

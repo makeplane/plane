@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueDraftService } from "services/issue";
 // hooks
@@ -13,29 +10,29 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssue } from "types";
+import type { TIssue } from "@plane/types";
+import { useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue | null;
+  data: TIssue | null;
   onSubmit?: () => Promise<void> | void;
 };
 
 const issueDraftService = new IssueDraftService();
 
-export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
+export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, data, onSubmit } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const { user: userStore } = useMobxStore();
-  const user = userStore.currentUser;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
+  // hooks
+  const { getProjectById } = useProject();
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -47,12 +44,12 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
   };
 
   const handleDeletion = async () => {
-    if (!workspaceSlug || !data || !user) return;
+    if (!workspaceSlug || !data) return;
 
     setIsDeleteLoading(true);
 
     await issueDraftService
-      .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
+      .deleteDraftIssue(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
@@ -64,7 +61,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         handleClose();
         setToastAlert({
           title: "Error",
@@ -116,7 +113,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {data && getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the draft issue will be permanently removed. This action cannot
                       be undone.
@@ -138,4 +135,4 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
       </Dialog>
     </Transition.Root>
   );
-});
+};

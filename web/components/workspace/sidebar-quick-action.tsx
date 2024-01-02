@@ -1,17 +1,14 @@
-import React, { useState } from "react";
-
-// ui
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
+import { useApplication, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
-import { EProjectStore } from "store/command-palette.store";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssuesStoreType } from "constants/issue";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
@@ -20,9 +17,11 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const {
     theme: themeStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
 
@@ -62,7 +61,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               }`}
               onClick={() => {
                 setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
             >
               <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />

@@ -12,7 +12,7 @@ import { GanttInlineCreateIssueForm, IssueGanttSidebarBlock } from "components/i
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -22,9 +22,9 @@ type Props = {
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
 };
@@ -111,7 +111,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "", true);
+                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "");
 
                   return (
                     <Draggable

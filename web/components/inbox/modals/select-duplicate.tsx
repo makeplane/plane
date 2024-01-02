@@ -13,6 +13,7 @@ import { Button, LayersIcon } from "@plane/ui";
 import { Search } from "lucide-react";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { useProject, useProjectState } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +34,10 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  // hooks
+  const { getProjectStates } = useProjectState();
+  const { getProjectById } = useProject();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
@@ -139,12 +144,14 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                                   <span
                                     className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                     style={{
-                                      backgroundColor: issue.state_detail.color,
+                                      backgroundColor:
+                                        getProjectStates(issue?.project_id)?.find(
+                                          (state) => state?.id == issue?.state_id
+                                        )?.color || "",
                                     }}
                                   />
                                   <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                    {issues?.find((i) => i.id === issue.id)?.project_detail?.identifier}-
-                                    {issue.sequence_id}
+                                    {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                                   </span>
                                   <span className="text-custom-text-200">{issue.name}</span>
                                 </div>

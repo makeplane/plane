@@ -1,7 +1,5 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { UserService } from "services/user.service";
 // components
@@ -9,11 +7,10 @@ import { ActivityMessage } from "components/core";
 // ui
 import { ProfileEmptyState } from "components/ui";
 import { Loader } from "@plane/ui";
-import { Rocket } from "lucide-react";
 // image
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // fetch-keys
 import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
 
@@ -67,15 +64,14 @@ export const ProfileActivity = () => {
                             href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+                            className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
                           >
-                            Issue
-                            <Rocket className="h-3 w-3" />
+                            Issue.
                           </a>
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-custom-text-200">{timeAgo(activity.created_at)}</p>
+                    <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}

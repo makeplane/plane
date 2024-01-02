@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
-import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
+import { ModuleStatusSelect } from "components/modules";
+import { DateDropdown, ProjectDropdown, ProjectMemberDropdown } from "components/dropdowns";
 // ui
-import { DateSelect } from "components/ui";
 import { Button, Input, TextArea } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { IModule } from "types";
-import { IssueProjectSelect } from "components/issues/select";
+import { IModule } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>) => Promise<void>;
@@ -79,19 +80,24 @@ export const ModuleForm: React.FC<Props> = ({
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
         <div className="flex items-center gap-x-3">
-          <Controller
-            control={control}
-            name="project"
-            render={({ field: { value, onChange } }) => (
-              <IssueProjectSelect
-                value={value}
-                onChange={(val: string) => {
-                  onChange(val);
-                  setActiveProject(val);
-                }}
-              />
-            )}
-          />
+          {!status && (
+            <Controller
+              control={control}
+              name="project"
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectDropdown
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
+                    buttonVariant="border-with-text"
+                  />
+                </div>
+              )}
+            />
+          )}
           <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
         </div>
 
@@ -144,40 +150,65 @@ export const ModuleForm: React.FC<Props> = ({
               control={control}
               name="start_date"
               render={({ field: { value, onChange } }) => (
-                <DateSelect
-                  label="Start date"
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                  }}
-                  maxDate={maxDate ?? undefined}
-                />
+                <div className="h-7">
+                  <DateDropdown
+                    value={value}
+                    onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                    buttonVariant="border-with-text"
+                    placeholder="Start date"
+                    maxDate={maxDate ?? undefined}
+                  />
+                </div>
               )}
             />
             <Controller
               control={control}
               name="target_date"
               render={({ field: { value, onChange } }) => (
-                <DateSelect
-                  label="Target date"
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                  }}
-                  minDate={minDate ?? undefined}
-                />
+                <div className="h-7">
+                  <DateDropdown
+                    value={value}
+                    onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                    buttonVariant="border-with-text"
+                    placeholder="Target date"
+                    minDate={minDate ?? undefined}
+                  />
+                </div>
               )}
             />
             <ModuleStatusSelect control={control} error={errors.status} />
             <Controller
               control={control}
               name="lead"
-              render={({ field: { value, onChange } }) => <ModuleLeadSelect value={value} onChange={onChange} />}
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectMemberDropdown
+                    value={value}
+                    onChange={onChange}
+                    projectId={projectId}
+                    multiple={false}
+                    buttonVariant="border-with-text"
+                    placeholder="Lead"
+                  />
+                </div>
+              )}
             />
             <Controller
               control={control}
               name="members"
-              render={({ field: { value, onChange } }) => <ModuleMembersSelect value={value} onChange={onChange} />}
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectMemberDropdown
+                    value={value}
+                    onChange={onChange}
+                    projectId={projectId}
+                    multiple
+                    buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
+                    buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
+                    placeholder="Members"
+                  />
+                </div>
+              )}
             />
           </div>
         </div>
@@ -187,13 +218,7 @@ export const ModuleForm: React.FC<Props> = ({
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-          {status
-            ? isSubmitting
-              ? "Updating Module..."
-              : "Update Module"
-            : isSubmitting
-              ? "Creating Module..."
-              : "Create Module"}
+          {status ? (isSubmitting ? "Updating" : "Update module") : isSubmitting ? "Creating" : "Create module"}
         </Button>
       </div>
     </form>

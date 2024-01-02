@@ -3,7 +3,19 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import {
+  useApplication,
+  useCycle,
+  useEstimate,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+  useProjectView,
+  useUser,
+  useInbox,
+} from "hooks/store";
 // components
 import { Spinner } from "@plane/ui";
 import { JoinProject } from "components/auth-screens";
@@ -18,19 +30,25 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
+  const { fetchInboxesList, isInboxEnabled } = useInbox();
   const {
-    user: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToCurrentProject },
-    project: { fetchProjectDetails, workspaceProjects },
-    projectLabel: { fetchProjectLabels },
-    projectMember: { fetchProjectMembers },
-    projectState: { fetchProjectStates },
-    projectEstimates: { fetchProjectEstimates },
-    cycle: { fetchCycles },
-    module: { fetchModules },
-    projectViews: { fetchAllViews },
-    inbox: { fetchInboxesList, isInboxEnabled },
     commandPalette: { toggleCreateProjectModal },
-  } = useMobxStore();
+  } = useApplication();
+  const {
+    membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
+  } = useUser();
+  const { getProjectById, fetchProjectDetails } = useProject();
+  const { fetchAllCycles } = useCycle();
+  const { fetchModules } = useModule();
+  const { fetchViews } = useProjectView();
+  const {
+    project: { fetchProjectMembers },
+  } = useMember();
+  const { fetchProjectStates } = useProjectState();
+  const {
+    project: { fetchProjectLabels },
+  } = useLabel();
+  const { fetchProjectEstimates } = useEstimate();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -47,67 +65,43 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
   // fetching project labels
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project members
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project states
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project estimates
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchProjectEstimates(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project cycles
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchCycles(workspaceSlug.toString(), projectId.toString(), "all")
-      : null
+    workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project modules
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? `PROJECT_MODULES_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchModules(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchModules(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project views
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => fetchAllViews(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project inboxes if inbox is enabled
   useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject && isInboxEnabled
-      ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject && isInboxEnabled
+    workspaceSlug && projectId && isInboxEnabled ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId && isInboxEnabled
       ? () => fetchInboxesList(workspaceSlug.toString(), projectId.toString())
       : null,
     {
@@ -116,11 +110,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     }
   );
 
-  const projectsList = workspaceSlug ? workspaceProjects : null;
-  const projectExists = projectId ? projectsList?.find((project) => project.id === projectId.toString()) : null;
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
   // check if the project member apis is loading
-  if (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null)
+  if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -130,10 +123,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
+  if (projectExists && projectId && hasPermissionToProject[projectId.toString()] === false) return <JoinProject />;
 
   // check if the project info is not found.
-  if (!projectExists && projectId && hasPermissionToCurrentProject === false)
+  if (!projectExists && projectId && hasPermissionToProject[projectId.toString()] === false)
     return (
       <div className="container grid h-screen place-items-center bg-custom-background-100">
         <EmptyState

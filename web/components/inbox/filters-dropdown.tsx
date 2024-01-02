@@ -2,24 +2,24 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useInboxFilters } from "hooks/store";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
 import { PriorityIcon } from "@plane/ui";
 // types
-import { IInboxFilterOptions } from "types";
+import { IInboxFilterOptions } from "@plane/types";
 // constants
-import { PRIORITIES } from "constants/project";
 import { INBOX_STATUS } from "constants/inbox";
+import { ISSUE_PRIORITIES } from "constants/issue";
 
 export const FiltersDropdown: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxFilters: inboxFiltersStore } = useMobxStore();
+  const { inboxFilters, updateInboxFilters } = useInboxFilters();
 
-  const filters = inboxId ? inboxFiltersStore.inboxFilters[inboxId.toString()]?.filters : undefined;
+  const filters = inboxId ? inboxFilters[inboxId.toString()]?.filters : undefined;
 
   let filtersLength = 0;
   Object.keys(filters ?? {}).forEach((key) => {
@@ -41,11 +41,11 @@ export const FiltersDropdown: React.FC = observer(() => {
           const valueExists = currentValue.includes(option.value);
 
           if (valueExists)
-            inboxFiltersStore.updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
+            updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
               [option.key]: currentValue.filter((val) => val !== option.value),
             });
           else
-            inboxFiltersStore.updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
+            updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
               [option.key]: [...currentValue, option.value],
             });
         }}
@@ -55,20 +55,20 @@ export const FiltersDropdown: React.FC = observer(() => {
           {
             id: "priority",
             label: "Priority",
-            value: PRIORITIES,
+            value: ISSUE_PRIORITIES.map((p) => p.key),
             hasChildren: true,
-            children: PRIORITIES.map((priority) => ({
-              id: priority === null ? "null" : priority,
+            children: ISSUE_PRIORITIES.map((priority) => ({
+              id: priority.key,
               label: (
                 <div className="flex items-center gap-2 capitalize">
-                  <PriorityIcon priority={priority} /> {priority ?? "None"}
+                  <PriorityIcon priority={priority.key} /> {priority.title ?? "None"}
                 </div>
               ),
               value: {
                 key: "priority",
-                value: priority === null ? "null" : priority,
+                value: priority.key,
               },
-              selected: filters?.priority?.includes(priority === null ? "null" : priority),
+              selected: filters?.priority?.includes(priority.key),
             })),
           },
           {

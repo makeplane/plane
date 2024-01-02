@@ -25,9 +25,9 @@ import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // types
-import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
@@ -43,7 +43,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: TUserWorkspaceRole;
+  role: EUserWorkspaceRoles;
   role_active: boolean;
 };
 
@@ -70,16 +70,16 @@ const workspaceService = new WorkspaceService();
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const placeholderEmails = [
-  "charlie.taylor@frstflit.com",
-  "octave.chanute@frstflit.com",
-  "george.spratt@frstflit.com",
-  "frank.coffyn@frstflit.com",
-  "amos.root@frstflit.com",
-  "edward.deeds@frstflit.com",
-  "charles.m.manly@frstflit.com",
-  "glenn.curtiss@frstflit.com",
-  "thomas.selfridge@frstflit.com",
-  "albert.zahm@frstflit.com",
+  "charlie.taylor@frstflt.com",
+  "octave.chanute@frstflt.com",
+  "george.spratt@frstflt.com",
+  "frank.coffyn@frstflt.com",
+  "amos.root@frstflt.com",
+  "edward.deeds@frstflt.com",
+  "charles.m.manly@frstflt.com",
+  "glenn.curtiss@frstflt.com",
+  "thomas.selfridge@frstflt.com",
+  "albert.zahm@frstflt.com",
 ];
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   const {

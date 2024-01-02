@@ -1,9 +1,8 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject } from "hooks/store";
 // components
 import { SelectRepository, TFormValues, TIntegrationSteps } from "components/integration";
 // ui
@@ -11,7 +10,7 @@ import { Button, CustomSearchSelect, ToggleSwitch } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegration } from "types";
+import { IWorkspaceIntegration } from "@plane/types";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;
@@ -22,21 +21,18 @@ type Props = {
 
 export const GithubImportData: FC<Props> = observer((props) => {
   const { handleStepChange, integration, control, watch } = props;
+  // store hooks
+  const { workspaceProjectIds, getProjectById } = useProject();
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const options = workspaceProjectIds?.map((projectId) => {
+    const projectDetails = getProjectById(projectId);
 
-  const { project: projectStore } = useMobxStore();
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
-
-  const options = projects
-    ? projects.map((project) => ({
-        value: project.id,
-        query: project.name,
-        content: <p>{truncateText(project.name, 25)}</p>,
-      }))
-    : undefined;
+    return {
+      value: `${projectDetails?.id}`,
+      query: `${projectDetails?.name}`,
+      content: <p>{truncateText(projectDetails?.name ?? "", 25)}</p>,
+    };
+  });
 
   return (
     <div className="mt-6">
@@ -74,7 +70,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
             <p className="text-xs text-custom-text-200">Select the project to import the issues to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
-            {projects && (
+            {workspaceProjectIds && (
               <Controller
                 control={control}
                 name="project"
@@ -82,11 +78,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
                   <CustomSearchSelect
                     value={value}
                     label={
-                      value ? (
-                        projects.find((p) => p.id === value)?.name
-                      ) : (
-                        <span className="text-custom-text-200">Select Project</span>
-                      )
+                      value ? getProjectById(value)?.name : <span className="text-custom-text-200">Select Project</span>
                     }
                     onChange={onChange}
                     options={options}

@@ -5,7 +5,7 @@ import { WorkspaceService } from "services/workspace.service";
 // ui
 import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // types
-import { IGithubRepoCollaborator } from "types";
+import { IGithubRepoCollaborator } from "@plane/types";
 import { IUserDetails } from "./root";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";

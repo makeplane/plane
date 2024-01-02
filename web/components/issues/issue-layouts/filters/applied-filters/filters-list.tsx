@@ -1,5 +1,7 @@
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { X } from "lucide-react";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import {
   AppliedDateFilters,
@@ -10,22 +12,18 @@ import {
   AppliedStateFilters,
   AppliedStateGroupFilters,
 } from "components/issues";
-// icons
-import { X } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
   handleClearAllFilters: () => void;
   handleRemoveFilter: (key: keyof IIssueFilterOptions, value: string | null) => void;
   labels?: IIssueLabel[] | undefined;
-  members?: IUserLite[] | undefined;
-  projects?: IProject[] | undefined;
   states?: IState[] | undefined;
 };
 
@@ -33,17 +31,17 @@ const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, projects, states } = props;
-
+  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states } = props;
+  // store hooks
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
   if (!appliedFilters) return null;
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
-  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
@@ -63,7 +61,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  members={members}
                   values={value}
                 />
               )}
@@ -103,7 +100,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedProjectFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("project", val)}
-                  projects={projects}
                   values={value}
                 />
               )}

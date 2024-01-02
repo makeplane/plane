@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMember, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
@@ -13,39 +12,40 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
-// types
-import { IProjectMember, TUserProjectRole } from "types";
+import { ROLE } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
-  member: IProjectMember;
+  userId: string;
 };
 
 export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
-  const { member } = props;
+  const { userId } = props;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
+  // store hooks
   const {
-    user: { currentUser, currentProjectMemberInfo, currentProjectRole, leaveProject },
-    projectMember: { removeMemberFromProject, updateMember },
-    project: { fetchProjects },
-  } = useMobxStore();
-  // hooks
+    currentUser,
+    membership: { currentProjectRole, leaveProject },
+  } = useUser();
+  const { fetchProjects } = useProject();
+  const {
+    project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
+  } = useMember();
+  // toast alert
   const { setToastAlert } = useToast();
 
   // derived values
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  const memberDetails = member.member;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const userDetails = getProjectMemberDetails(userId);
 
   const handleRemove = async () => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !userDetails) return;
 
-    if (memberDetails.id === currentUser?.id) {
+    if (userDetails.member.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           await fetchProjects(workspaceSlug.toString());
@@ -60,55 +60,58 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           })
         );
     } else
-      await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), member.id).catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error",
-          message: err?.error || "Something went wrong. Please try again.",
-        })
+      await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member.id).catch(
+        (err) =>
+          setToastAlert({
+            type: "error",
+            title: "Error",
+            message: err?.error || "Something went wrong. Please try again.",
+          })
       );
   };
+
+  if (!userDetails) return null;
 
   return (
     <>
       <ConfirmProjectMemberRemove
         isOpen={removeMemberModal}
         onClose={() => setRemoveMemberModal(false)}
-        data={member.member}
+        data={userDetails.member}
         onSubmit={handleRemove}
       />
       <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
         <div className="flex items-center gap-x-4 gap-y-2">
-          {memberDetails.avatar && memberDetails.avatar !== "" ? (
-            <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
+          {userDetails.member.avatar && userDetails.member.avatar !== "" ? (
+            <Link href={`/${workspaceSlug}/profile/${userDetails.member.id}`}>
               <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
                 <img
-                  src={memberDetails.avatar}
-                  alt={memberDetails.display_name || memberDetails.email}
+                  src={userDetails.member.avatar}
+                  alt={userDetails.member.display_name || userDetails.member.email}
                   className="absolute left-0 top-0 h-full w-full rounded object-cover"
                 />
               </span>
             </Link>
           ) : (
-            <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
+            <Link href={`/${workspaceSlug}/profile/${userDetails.id}`}>
               <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
-                {(memberDetails.display_name ?? memberDetails.email ?? "?")[0]}
+                {(userDetails.member.display_name ?? userDetails.member.email ?? "?")[0]}
               </span>
             </Link>
           )}
 
           <div>
-            <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
+            <Link href={`/${workspaceSlug}/profile/${userDetails.member.id}`}>
               <span className="text-sm font-medium">
-                {memberDetails.first_name} {memberDetails.last_name}
+                {userDetails.member.first_name} {userDetails.member.last_name}
               </span>
             </Link>
             <div className="flex items-center">
-              <p className="text-xs text-custom-text-300">{memberDetails.display_name}</p>
+              <p className="text-xs text-custom-text-300">{userDetails.member.display_name}</p>
               {isAdmin && (
                 <>
                   <Dot height={16} width={16} className="text-custom-text-300" />
-                  <p className="text-xs text-custom-text-300">{memberDetails.email}</p>
+                  <p className="text-xs text-custom-text-300">{userDetails.member.email}</p>
                 </>
               )}
             </div>
@@ -121,23 +124,23 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
                   className={`flex items-center rounded text-xs font-medium ${
-                    memberDetails.id !== currentProjectMemberInfo?.id ? "" : "text-custom-sidebar-text-400"
+                    userDetails.member.id !== currentUser?.id ? "" : "text-custom-text-400"
                   }`}
                 >
-                  {ROLE[member.role as keyof typeof ROLE]}
+                  {ROLE[userDetails.role]}
                 </span>
-                {memberDetails.id !== currentProjectMemberInfo?.id && (
+                {userDetails.member.id !== currentUser?.id && (
                   <span className="grid place-items-center">
                     <ChevronDown className="h-3 w-3" />
                   </span>
                 )}
               </div>
             }
-            value={member.role}
-            onChange={(value: TUserProjectRole | undefined) => {
+            value={userDetails.role}
+            onChange={(value: EUserProjectRoles) => {
               if (!workspaceSlug || !projectId) return;
 
-              updateMember(workspaceSlug.toString(), projectId.toString(), member.id, {
+              updateMember(workspaceSlug.toString(), projectId.toString(), userDetails.member.id, {
                 role: value,
               }).catch((err) => {
                 const error = err.error;
@@ -151,10 +154,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               });
             }}
             disabled={
-              memberDetails.id === currentUser?.id ||
-              !member.member ||
-              !currentProjectRole ||
-              currentProjectRole < member.role
+              userDetails.member.id === currentUser?.id || !currentProjectRole || currentProjectRole < userDetails.role
             }
             placement="bottom-end"
           >
@@ -168,12 +168,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               );
             })}
           </CustomSelect>
-          {(isAdmin || memberDetails.id === currentProjectMemberInfo?.member.id) && (
-            <Tooltip
-              tooltipContent={
-                memberDetails.id === currentProjectMemberInfo?.member.id ? "Leave project" : "Remove member"
-              }
-            >
+          {(isAdmin || userDetails.member.id === currentUser?.id) && (
+            <Tooltip tooltipContent={userDetails.member.id === currentUser?.id ? "Leave project" : "Remove member"}>
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}

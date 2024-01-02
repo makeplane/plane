@@ -1,6 +1,6 @@
 import Image from "@tiptap/extension-image";
 
-const ReadOnlyImageExtension = Image.extend({
+export const ReadOnlyImageExtension = Image.extend({
   addAttributes() {
     return {
       ...this.parent?.(),
@@ -13,5 +13,3 @@ const ReadOnlyImageExtension = Image.extend({
     };
   },
 });
-
-export default ReadOnlyImageExtension;

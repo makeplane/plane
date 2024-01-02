@@ -20,19 +20,24 @@ import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { EXPORTERS_LIST } from "constants/workspace";
+import { observer } from "mobx-react-lite";
+import { useUser } from "hooks/store";
 
 // services
 const integrationService = new IntegrationService();
 
-const IntegrationGuide = () => {
+const IntegrationGuide = observer(() => {
+  // states
   const [refreshing, setRefreshing] = useState(false);
   const per_page = 10;
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { user } = useUserAuth();
+  // store hooks
+  const { currentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -153,7 +158,7 @@ const IntegrationGuide = () => {
             isOpen
             handleClose={() => handleCsvClose()}
             data={null}
-            user={user}
+            user={currentUser}
             provider={provider}
             mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
           />
@@ -161,6 +166,6 @@ const IntegrationGuide = () => {
       </div>
     </>
   );
-};
+});
 
 export default IntegrationGuide;

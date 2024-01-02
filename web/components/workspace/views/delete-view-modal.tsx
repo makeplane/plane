@@ -2,17 +2,14 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
+import { AlertTriangle } from "lucide-react";
+// store hooks
+import { useGlobalView } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { AlertTriangle } from "lucide-react";
 // types
-import { IWorkspaceView } from "types/workspace-views";
+import { IWorkspaceView } from "@plane/types";
 
 type Props = {
   data: IWorkspaceView;
@@ -22,14 +19,14 @@ type Props = {
 
 export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { globalViews: globalViewsStore } = useMobxStore();
-
+  // store hooks
+  const { deleteGlobalView } = useGlobalView();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -41,8 +38,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await globalViewsStore
-      .deleteGlobalView(workspaceSlug.toString(), data.id)
+    await deleteGlobalView(workspaceSlug.toString(), data.id)
       .catch(() =>
         setToastAlert({
           type: "error",
