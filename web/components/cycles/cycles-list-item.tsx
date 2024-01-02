@@ -44,7 +44,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // computed
-  const cycleStatus = cycle.status?.toLocaleLowerCase() as TCycleGroups;
+  const cycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");

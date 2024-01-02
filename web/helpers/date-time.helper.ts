@@ -57,18 +57,18 @@ export const renderFormattedPayloadDate = (date: Date | string): string | null =
  * @returns {string} formatted date in the format of hh:mm a or HH:mm
  * @description Returns date in 12 hour format if in12HourFormat is true else 24 hour format
  * @param {string | Date} date
- * @param {boolean} in12HourFormat
- * @example renderFormattedTime("2024-01-01", true) // 12:00 AM
- * @example renderFormattedTime("2024-01-01") // 00:00
+ * @param {boolean} timeFormat (optional) // default 24 hour
+ * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
+ * @example renderFormattedTime("2024-01-01 13:00:00", "12hour") // 01:00 PM
  */
-export const renderFormattedTime = (date: string | Date, in12HourFormat?: boolean): string => {
+export const renderFormattedTime = (date: string | Date, timeFormat: "12hour" | "24hour" = "24hour"): string => {
   if (!date || date === "") return "";
   // Parse the date to check if it is valid
   const parsedDate = new Date(date);
   // Check if the parsed date is valid
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in 12 hour format if in12HourFormat is true
-  if (in12HourFormat) {
+  if (timeFormat === "12hour") {
     const formattedTime = format(parsedDate, "hh:mm a");
     return formattedTime;
   }
@@ -86,7 +86,11 @@ export const renderFormattedTime = (date: string | Date, in12HourFormat?: boolea
  * @param {boolean} inclusive
  * @example checkIfStringIsDate("2021-01-01", "2021-01-08") // 8
  */
-export const findTotalDaysInRange = (startDate: Date | string, endDate: Date | string, inclusive: boolean = true): number => {
+export const findTotalDaysInRange = (
+  startDate: Date | string,
+  endDate: Date | string,
+  inclusive: boolean = true
+): number => {
   if (!startDate || !endDate) return 0;
   // Parse the dates to check if they are valid
   const parsedStartDate = new Date(startDate);
