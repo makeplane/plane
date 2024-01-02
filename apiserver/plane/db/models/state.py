@@ -24,6 +24,8 @@ class State(ProjectBaseModel):
         max_length=20,
     )
     default = models.BooleanField(default=False)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         """Return name of the state"""

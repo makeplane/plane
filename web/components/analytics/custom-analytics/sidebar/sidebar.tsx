@@ -14,7 +14,7 @@ import { Button, LayersIcon } from "@plane/ui";
 // icons
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // helpers
-import { renderShortDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 // fetch-keys
@@ -162,7 +162,51 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 : projectDetails?.created_at) ?? ""
             )}
           </div>
+<<<<<<< HEAD
         )}
+=======
+          {isProjectLevel && (
+            <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
+              <CalendarDays className="h-3.5 w-3.5" />
+              {renderFormattedDate(
+                (cycleId
+                  ? cycleDetails?.created_at
+                  : moduleId
+                    ? moduleDetails?.created_at
+                    : projectDetails?.created_at) ?? ""
+              )}
+            </div>
+          )}
+        </div>
+        <div className="h-full w-full overflow-hidden">
+          {fullScreen ? (
+            <>
+              {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
+                <CustomAnalyticsSidebarProjectsList
+                  projects={projects?.filter((p) => selectedProjects.includes(p.id)) ?? []}
+                />
+              )}
+              <CustomAnalyticsSidebarHeader />
+            </>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 justify-self-end">
+          <Button
+            variant="neutral-primary"
+            prependIcon={<RefreshCw className="h-3.5 w-3.5" />}
+            onClick={() => {
+              if (!workspaceSlug) return;
+
+              mutate(ANALYTICS(workspaceSlug.toString(), params));
+            }}
+          >
+            Refresh
+          </Button>
+          <Button variant="primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
+            Export as CSV
+          </Button>
+        </div>
+>>>>>>> 153934011306f6653284e1c3191661f579df7c80
       </div>
       <div className="h-full w-full overflow-hidden">
         {fullScreen ? (

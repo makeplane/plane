@@ -27,7 +27,7 @@ import { ViewIssueLabel } from "components/issues";
 // icons
 import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
 // helpers
-import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "@plane/types";
@@ -150,7 +150,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     cancelled: activeCycle.cancelled_issues,
   };
 
-  const cycleStatus = getDateRangeStatus(activeCycle.start_date, activeCycle.end_date);
+  const cycleStatus = activeCycle.status.toLocaleLowerCase();
 
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -283,12 +283,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               <div className="flex items-center justify-start gap-5 text-custom-text-200">
                 <div className="flex items-start gap-1">
                   <CalendarDays className="h-4 w-4" />
-                  <span>{renderShortDateWithYearFormat(startDate)}</span>
+                  <span>{renderFormattedDate(startDate)}</span>
                 </div>
                 <ArrowRight className="h-4 w-4 text-custom-text-200" />
                 <div className="flex items-start gap-1">
                   <Target className="h-4 w-4" />
-                  <span>{renderShortDateWithYearFormat(endDate)}</span>
+                  <span>{renderFormattedDate(endDate)}</span>
                 </div>
               </div>
 

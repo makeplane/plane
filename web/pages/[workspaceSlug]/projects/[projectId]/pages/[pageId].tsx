@@ -16,7 +16,7 @@ import { IssueService } from "services/issue";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { GptAssistantModal } from "components/core";
+import { GptAssistantPopover } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
 import { IssuePeekOverview } from "components/issues/peek-overview";
 import { EmptyState } from "components/common";
@@ -26,7 +26,7 @@ import { Spinner } from "@plane/ui";
 // assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IPage, TIssue } from "@plane/types";
@@ -66,7 +66,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const { setShowAlert } = useReloadConfirmations();
 
-  const { handleSubmit, setValue, watch, getValues, control } = useForm<IPage>({
+  const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -286,7 +286,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     mutatePageDetailsHelper(
       pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
       {
-        archived_at: renderDateFormat(new Date()),
+        archived_at: renderFormattedPayloadDate(new Date()),
       },
       ["description_html"],
       () =>
@@ -494,28 +494,32 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   )}
                 />
                 {projectId && envConfig?.has_openai_configured && (
-                  <>
-                    <button
-                      type="button"
-                      className="absolute right-[68px] top-2.5 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                      onClick={() => setGptModal((prevData) => !prevData)}
-                    >
-                      <Sparkle className="h-4 w-4" />
-                      AI
-                    </button>
-                    <GptAssistantModal
+                  <div className="absolute right-[68px] top-2.5">
+                    <GptAssistantPopover
                       isOpen={gptModalOpen}
+                      projectId={projectId.toString()}
                       handleClose={() => {
-                        setGptModal(false);
+                        setGptModal((prevData) => !prevData);
+                        // this is done so that the title do not reset after gpt popover closed
+                        reset(getValues());
                       }}
-                      inset="top-9 right-[68px] !w-1/2 !max-h-[50%]"
-                      content=""
                       onResponse={(response) => {
                         handleAiAssistance(response);
                       }}
-                      projectId={projectId.toString()}
+                      placement="top-end"
+                      button={
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                          onClick={() => setGptModal((prevData) => !prevData)}
+                        >
+                          <Sparkle className="h-4 w-4" />
+                          AI
+                        </button>
+                      }
+                      className="!min-w-[38rem]"
                     />
-                  </>
+                  </div>
                 )}
               </div>
             )}

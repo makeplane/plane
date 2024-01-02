@@ -9,11 +9,10 @@ import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { TIssue } from "@plane/types";
-// helpers
-import { createIssuePayload } from "helpers/issue.helper";
 
 type Props = {
   prePopulatedData?: Partial<TIssue>;
@@ -111,8 +110,8 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     const payload = createIssuePayload(workspaceDetail!, currentProjectDetails!, {
       ...(prePopulatedData ?? {}),
       ...formData,
-      start_date: renderDateFormat(new Date()),
-      target_date: renderDateFormat(new Date(new Date().getTime() + 24 * 60 * 60 * 1000)),
+      start_date: renderFormattedPayloadDate(new Date()),
+      target_date: renderFormattedPayloadDate(new Date(new Date().getTime() + 24 * 60 * 60 * 1000)),
     });
 
     try {

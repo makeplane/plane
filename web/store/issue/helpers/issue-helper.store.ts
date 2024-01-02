@@ -9,7 +9,7 @@ import { IIssueRootStore } from "../root.store";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -243,7 +243,7 @@ export class IssueHelperStore implements TIssueHelperStore {
       else return ["None"];
     else if (typeof value === "boolean") return [value ? "True" : "False"];
     else if (typeof value === "number") return [value.toString()];
-    else if (isDate) return [renderDateFormat(value) || "None"];
+    else if (isDate) return [renderFormattedPayloadDate(value) || "None"];
     else return [value || "None"];
   }
 }

@@ -12,7 +12,7 @@ import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IInboxIssue, TIssue } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
@@ -184,13 +184,12 @@ export const InboxMainContent: React.FC = observer(() => {
                   <Clock size={18} strokeWidth={2} />
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
-                      This issue was snoozed till{" "}
-                      {renderShortDateWithYearFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
+                      This issue was snoozed till {renderFormattedDate(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   ) : (
                     <p>
                       This issue has been snoozed till{" "}
-                      {renderShortDateWithYearFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
+                      {renderFormattedDate(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   )}
                 </>

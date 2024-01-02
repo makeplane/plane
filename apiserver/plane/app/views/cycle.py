@@ -11,6 +11,10 @@ from django.db.models import (
     Count,
     Prefetch,
     Sum,
+    Case,
+    When,
+    Value,
+    CharField,
 )
 from django.core import serializers
 from django.utils import timezone
@@ -157,6 +161,23 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                     ),
+                )
+            )
+            .annotate(
+                status=Case(
+                    When(
+                        Q(start_date__lte=timezone.now())
+                        & Q(end_date__gte=timezone.now()),
+                        then=Value("CURRENT"),
+                    ),
+                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
+                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
+                    When(
+                        Q(start_date__isnull=True) & Q(end_date__isnull=True),
+                        then=Value("DRAFT"),
+                    ),
+                    default=Value("DRAFT"),
+                    output_field=CharField(),
                 )
             )
             .prefetch_related(

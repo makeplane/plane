@@ -12,7 +12,7 @@ import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
@@ -113,7 +113,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const renderDate = moduleDetails.start_date || moduleDetails.target_date;
 
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+  // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
@@ -177,10 +177,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
 
             {renderDate && (
-              <span className="flex w-28 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                {" - "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
+                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
               </span>
             )}
 

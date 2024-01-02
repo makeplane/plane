@@ -12,7 +12,7 @@ import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
@@ -119,7 +119,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const isDateValid = moduleDetails.target_date || moduleDetails.start_date;
 
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+  // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
@@ -213,8 +213,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               {isDateValid ? (
                 <>
                   <span className="text-xs text-custom-text-300">
-                    {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                    {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
                   </span>
                 </>
               ) : (

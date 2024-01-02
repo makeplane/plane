@@ -11,16 +11,13 @@ import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } 
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
-import {
-  getDateRangeStatus,
-  findHowManyDaysLeft,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+//.types
+import { TCycleGroups } from "@plane/types";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -45,6 +42,37 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
   // toast alert
   const { setToastAlert } = useToast();
+  // computed
+  const cycleDetails = getCycleById(cycleId);
+
+  if (!cycleDetails) return null;
+
+  const cycleStatus = cycleDetails.status.toLocaleLowerCase();
+  const isCompleted = cycleStatus === "completed";
+  const endDate = new Date(cycleDetails.end_date ?? "");
+  const startDate = new Date(cycleDetails.start_date ?? "");
+  const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
+  const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
+
+  const cycleTotalIssues =
+    cycleDetails.backlog_issues +
+    cycleDetails.unstarted_issues +
+    cycleDetails.started_issues +
+    cycleDetails.completed_issues +
+    cycleDetails.cancelled_issues;
+
+  const completionPercentage = (cycleDetails.completed_issues / cycleTotalIssues) * 100;
+
+  const issueCount = cycleDetails
+    ? cycleTotalIssues === 0
+      ? "0 Issue"
+      : cycleTotalIssues === cycleDetails.completed_issues
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+    : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -110,40 +138,6 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     });
   };
 
-  const cycleDetails = getCycleById(cycleId);
-
-  if (!cycleDetails) return null;
-
-  // computed
-  const cycleStatus = getDateRangeStatus(cycleDetails.start_date, cycleDetails.end_date);
-  const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
-  const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
-
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
-
-  const cycleTotalIssues =
-    cycleDetails.backlog_issues +
-    cycleDetails.unstarted_issues +
-    cycleDetails.started_issues +
-    cycleDetails.completed_issues +
-    cycleDetails.cancelled_issues;
-
-  const completionPercentage = (cycleDetails.completed_issues / cycleTotalIssues) * 100;
-
-  const issueCount = cycleDetails
-    ? cycleTotalIssues === 0
-      ? "0 Issue"
-      : cycleTotalIssues === cycleDetails.completed_issues
-      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
-    : "0 Issue";
-
   return (
     <div>
       <CycleCreateUpdateModal
@@ -167,7 +161,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
               <span className="flex-shrink-0">
-                <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
+                <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />
               </span>
               <Tooltip tooltipContent={cycleDetails.name} position="top">
                 <span className="truncate text-base font-medium">{cycleDetails.name}</span>
@@ -236,8 +230,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
             <div className="flex items-center justify-between">
               {isDateValid ? (
                 <span className="text-xs text-custom-text-300">
-                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-                  {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                  {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
                 </span>
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>

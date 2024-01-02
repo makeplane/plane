@@ -17,8 +17,7 @@ import {
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
 import { Spinner } from "@plane/ui";
-// helpers
-import { getDateRangeStatus } from "helpers/date-time.helper";
+// constants
 import { EIssuesStoreType } from "constants/issue";
 
 export const CycleLayoutRoot: React.FC = observer(() => {
@@ -50,10 +49,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
+  const cycleStatus = cycleDetails?.status.toLocaleLowerCase() ?? "draft";
 
   return (
     <>

@@ -18,7 +18,7 @@ import { useMember, usePage, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { render24HourFormatTime, renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -208,19 +208,19 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
               <div className="flex items-center gap-2.5">
                 {pageDetails.archived_at ? (
                   <Tooltip
-                    tooltipContent={`Archived at ${render24HourFormatTime(
+                    tooltipContent={`Archived at ${renderFormattedTime(
                       pageDetails.archived_at
                     )} on ${renderFormattedDate(pageDetails.archived_at)}`}
                   >
-                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(pageDetails.archived_at)}</p>
+                    <p className="text-sm text-custom-text-200">{renderFormattedTime(pageDetails.archived_at)}</p>
                   </Tooltip>
                 ) : (
                   <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(
+                    tooltipContent={`Last updated at ${renderFormattedTime(
                       pageDetails.updated_at
                     )} on ${renderFormattedDate(pageDetails.updated_at)}`}
                   >
-                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(pageDetails.updated_at)}</p>
+                    <p className="text-sm text-custom-text-200">{renderFormattedTime(pageDetails.updated_at)}</p>
                   </Tooltip>
                 )}
                 {isEditingAllowed && (

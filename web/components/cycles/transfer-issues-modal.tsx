@@ -8,8 +8,7 @@ import { useCycle, useIssues } from "hooks/store";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
-// helpers
-import { getDateRangeStatus } from "helpers/date-time.helper";
+// constants
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
@@ -137,7 +136,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                               <div className="flex w-full justify-between">
                                 <span>{cycleDetails?.name}</span>
                                 <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
-                                  {getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)}
+                                  {cycleDetails.status.toLocaleLowerCase()}
                                 </span>
                               </div>
                             </button>

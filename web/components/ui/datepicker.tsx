@@ -2,7 +2,7 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 
 type Props = {
   renderAs?: "input" | "button";
@@ -45,7 +45,7 @@ export const CustomDatePicker: React.FC<Props> = ({
     selected={value ? new Date(value) : null}
     onChange={(val) => {
       if (!val) onChange(null);
-      else onChange(renderDateFormat(val));
+      else onChange(renderFormattedPayloadDate(val));
     }}
     onCalendarOpen={handleOnOpen}
     onCalendarClose={handleOnClose}

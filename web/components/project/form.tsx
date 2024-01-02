@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { useApplication, useProject, useWorkspace } from "hooks/store";
@@ -11,7 +11,7 @@ import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 import { IProject, IWorkspace } from "@plane/types";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 // services
@@ -42,6 +42,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     control,
     setValue,
     setError,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<IProject>({
     defaultValues: {
@@ -50,6 +51,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
+
+  useEffect(() => {
+    if (!project) return;
+    reset({
+      ...project,
+      emoji_and_icon: project.emoji ?? project.icon_prop,
+      workspace: (project.workspace as IWorkspace).id,
+    });
+  }, [project, reset]);
 
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -298,7 +308,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               {isSubmitting ? "Updating" : "Update project"}
             </Button>
             <span className="text-sm italic text-custom-sidebar-text-400">
-              Created on {renderShortDateWithYearFormat(project?.created_at)}
+              Created on {renderFormattedDate(project?.created_at)}
             </span>
           </>
         </div>

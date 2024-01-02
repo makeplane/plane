@@ -28,12 +28,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 // helpers
-import {
-  isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { isDateGreaterThanToday, renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -180,8 +175,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       }
 
       submitChanges({
-        start_date: renderDateFormat(`${watch("start_date")}`),
-        target_date: renderDateFormat(`${watch("target_date")}`),
+        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
       });
       setToastAlert({
         type: "success",
@@ -205,8 +200,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       }
 
       submitChanges({
-        start_date: renderDateFormat(`${watch("start_date")}`),
-        target_date: renderDateFormat(`${watch("target_date")}`),
+        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
       });
       setToastAlert({
         type: "success",
@@ -252,9 +247,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const startDate = new Date(watch("start_date") ?? moduleDetails.start_date ?? "");
   const endDate = new Date(watch("target_date") ?? moduleDetails.target_date ?? "");
-
-  const areYearsEqual =
-    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
@@ -378,9 +370,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                       watch("start_date") ? "" : "text-custom-text-400"
                     }`}
                   >
-                    {areYearsEqual
-                      ? renderShortDate(startDate, "No date selected")
-                      : renderShortMonthDate(startDate, "No date selected")}
+                    {renderFormattedDate(startDate) ?? "No date selected"}
                   </span>
                 </Popover.Button>
 
@@ -431,9 +421,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         watch("target_date") ? "" : "text-custom-text-400"
                       }`}
                     >
-                      {areYearsEqual
-                        ? renderShortDate(endDate, "No date selected")
-                        : renderShortMonthDate(endDate, "No date selected")}
+                      {renderFormattedDate(endDate) ?? "No date selected"}
                     </span>
                   </Popover.Button>
 

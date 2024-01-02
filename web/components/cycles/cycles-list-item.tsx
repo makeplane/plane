@@ -11,16 +11,13 @@ import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarG
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
-import {
-  getDateRangeStatus,
-  findHowManyDaysLeft,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+// types
+import { TCycleGroups } from "@plane/types";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -119,7 +116,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   if (!cycleDetails) return null;
 
   // computed
-  const cycleStatus = getDateRangeStatus(cycleDetails.start_date, cycleDetails.end_date);
+  const cycleStatus = cycleDetails.status.toLocaleLowerCase() as TCycleGroups;
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycleDetails.end_date ?? "");
   const startDate = new Date(cycleDetails.start_date ?? "");
@@ -135,7 +132,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
   const renderDate = cycleDetails.start_date || cycleDetails.end_date;
 
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+  // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const completionPercentage = (cycleDetails.completed_issues / cycleTotalIssues) * 100;
 
@@ -211,10 +208,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             </div>
 
             {renderDate && (
-              <span className="flex w-28 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                {" - "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
+                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
               </span>
             )}
 

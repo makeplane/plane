@@ -11,7 +11,7 @@ import useLocalStorage from "hooks/use-local-storage";
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
 // components
-import { GptAssistantModal } from "components/core";
+import { GptAssistantPopover } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
 import { IssueLabelSelect } from "components/issues/select";
 import { CreateStateModal } from "components/states";
@@ -374,7 +374,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
                 <div className="relative">
-                  <div className="flex justify-end">
+                  <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex rounded bg-custom-background-80">
                     {issueName && issueName !== "" && (
                       <button
                         type="button"
@@ -393,14 +393,32 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                         )}
                       </button>
                     )}
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                      onClick={() => setGptAssistantModal((prevData) => !prevData)}
-                    >
-                      <Sparkle className="h-4 w-4" />
-                      AI
-                    </button>
+                    {envConfig?.has_openai_configured && (
+                      <GptAssistantPopover
+                        isOpen={gptAssistantModal}
+                        projectId={projectId}
+                        handleClose={() => {
+                          setGptAssistantModal((prevData) => !prevData);
+                          // this is done so that the title do not reset after gpt popover closed
+                          reset(getValues());
+                        }}
+                        onResponse={(response) => {
+                          handleAiAssistance(response);
+                        }}
+                        button={
+                          <button
+                            type="button"
+                            className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                            onClick={() => setGptAssistantModal((prevData) => !prevData)}
+                          >
+                            <Sparkle className="h-4 w-4" />
+                            AI
+                          </button>
+                        }
+                        className=" !min-w-[38rem]"
+                        placement="top-end"
+                      />
+                    )}
                   </div>
                   <Controller
                     name="description_html"
@@ -427,23 +445,6 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       />
                     )}
                   />
-                  {envConfig?.has_openai_configured && (
-                    <GptAssistantModal
-                      isOpen={gptAssistantModal}
-                      handleClose={() => {
-                        setGptAssistantModal(false);
-                        // this is done so that the title do not reset after gpt popover closed
-                        reset(getValues());
-                      }}
-                      inset="top-2 left-0"
-                      content=""
-                      htmlContent={watch("description_html")}
-                      onResponse={(response) => {
-                        handleAiAssistance(response);
-                      }}
-                      projectId={projectId}
-                    />
-                  )}
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-2">

@@ -21,7 +21,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "@plane/types";
@@ -599,7 +599,7 @@ const activityDetails: {
           <>
             set the start date to{" "}
             <span className="font-medium text-custom-text-100">
-              {renderShortDateWithYearFormat(activity.new_value)}
+              {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
@@ -648,7 +648,7 @@ const activityDetails: {
           <>
             set the due date to{" "}
             <span className="font-medium text-custom-text-100">
-              {renderShortDateWithYearFormat(activity.new_value)}
+              {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>

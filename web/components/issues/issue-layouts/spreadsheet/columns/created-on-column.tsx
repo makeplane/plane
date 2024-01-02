@@ -1,9 +1,8 @@
 import React from "react";
-
 // hooks
 import { useIssueDetail } from "hooks/store";
 // helpers
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 
 type Props = {
@@ -23,10 +22,9 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issueId, expandedI
     <>
       {issueDetail && (
         <div className="flex h-11 w-full items-center justify-center text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80">
-          {renderLongDetailDateFormat(issueDetail.created_at)}
+          {renderFormattedDate(issueDetail.created_at)}
         </div>
       )}
-
       {isExpanded &&
         subIssues &&
         subIssues.length > 0 &&

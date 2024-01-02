@@ -6,6 +6,8 @@ import isThisWeek from "date-fns/isThisWeek";
 import isYesterday from "date-fns/isYesterday";
 // services
 import { PageService } from "services/page.service";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { IPage, IRecentPages } from "@plane/types";
 // store
@@ -345,6 +347,7 @@ export class PageStore implements IPageStore {
     await this.pageService.archivePage(workspaceSlug, projectId, pageId).then(() => {
       runInAction(() => {
         set(this.archivedPages, [pageId], this.pages[pageId]);
+        set(this.archivedPages, [pageId, "archived_at"], renderFormattedPayloadDate(new Date()));
         omit(this.pages, [pageId]);
       });
     });

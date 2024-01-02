@@ -27,8 +27,9 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { currentProjectDetails, fetchProjectDetails } = useProject();
   // api call to fetch project details
+  // TODO: removed this API if not necessary
   useSWR(
-    workspaceSlug && projectId ? "PROJECT_DETAILS" : null,
+    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
 
