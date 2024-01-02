@@ -1388,8 +1388,6 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relations = (
             IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
