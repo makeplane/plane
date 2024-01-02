@@ -1,15 +1,13 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { Copy, Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "types/instance";
+import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
-import { Copy, Eye, EyeOff } from "lucide-react";
 
 export interface IInstanceGithubConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -24,8 +22,8 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
   const { config } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
-  // store
-  const { instance: instanceStore } = useMobxStore();
+  // store hooks
+  const { instance: instanceStore } = useApplication();
   // toast
   const { setToastAlert } = useToast();
   // form data

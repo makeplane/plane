@@ -7,16 +7,17 @@ import { Loader, Tooltip } from "@plane/ui";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { IssueCommentCard } from "./comment-card";
 // helpers
-import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity, IUser } from "types";
+import { IIssueActivity, IUser } from "@plane/types";
+import { useIssueDetail } from "hooks/store";
 
 interface IIssueActivityCard {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   user: IUser | null;
-  issueActivity: IIssueActivity[] | null;
+  issueActivity: string[] | undefined;
   issueCommentUpdate: (comment: any) => void;
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
@@ -36,13 +37,16 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
     issueCommentReactionRemove,
   } = props;
 
+  const { activity } = useIssueDetail();
+
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
         {issueActivity ? (
           issueActivity.length > 0 &&
-          issueActivity.map((activityItem, index) => {
+          issueActivity.map((activityId, index) => {
             // determines what type of action is performed
+            const activityItem = activity.getActivityById(activityId) as IIssueActivity;
             const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
 
             if ("field" in activityItem && activityItem.field !== "updated_by") {
@@ -104,11 +108,11 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                           )}
                           {message}
                           <Tooltip
-                            tooltipContent={`${renderLongDateFormat(activityItem.created_at)}, ${render24HourFormatTime(
+                            tooltipContent={`${renderFormattedDate(activityItem.created_at)}, ${renderFormattedTime(
                               activityItem.created_at
                             )}`}
                           >
-                            <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
+                            <span className="whitespace-nowrap">{calculateTimeAgo(activityItem.created_at)}</span>
                           </Tooltip>
                         </div>
                       </div>

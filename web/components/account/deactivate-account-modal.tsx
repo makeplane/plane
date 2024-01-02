@@ -4,8 +4,8 @@ import { useTheme } from "next-themes";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
 import { mutate } from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // hooks
@@ -22,9 +22,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
   // states
   const [isDeactivating, setIsDeactivating] = useState(false);
 
-  const {
-    user: { deactivateAccount },
-  } = useMobxStore();
+  const { deactivateAccount } = useUser();
 
   const router = useRouter();
 

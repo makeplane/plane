@@ -1,33 +1,37 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-
+// hooks
+import { useIssueDetail, useProject } from "hooks/store";
 // components
 import { ParentIssuesListModal } from "components/issues";
 // icons
 import { X } from "lucide-react";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 
 type Props = {
   onChange: (value: string) => void;
-  issueDetails: IIssue | undefined;
-  projectId: string;
+  issueDetails: TIssue | undefined;
   disabled?: boolean;
 };
 
-export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, projectId, disabled = false }) => {
-  const [isParentModalOpen, setIsParentModalOpen] = useState(false);
+export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, disabled = false }) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 
+  const { isParentIssueModalOpen, toggleParentIssueModal } = useIssueDetail();
+
   const router = useRouter();
-  const { issueId } = router.query;
+  const { projectId, issueId } = router.query;
+
+  // hooks
+  const { getProjectById } = useProject();
 
   return (
     <>
       <ParentIssuesListModal
-        isOpen={isParentModalOpen}
-        handleClose={() => setIsParentModalOpen(false)}
+        isOpen={isParentIssueModalOpen}
+        handleClose={() => toggleParentIssueModal(false)}
         onChange={(issue) => {
           onChange(issue.id);
           setSelectedParentIssue(issue);
@@ -35,34 +39,29 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, p
         issueId={issueId as string}
         projectId={projectId as string}
       />
-      <div
+      <button
         className={`flex items-center gap-2 rounded bg-custom-background-80 px-2.5 py-0.5 text-xs w-max max-w-max" ${
           disabled ? "cursor-not-allowed" : "cursor-pointer "
         }`}
+        onClick={() => {
+          if (issueDetails?.parent_id) {
+            onChange("");
+            setSelectedParentIssue(null);
+          } else {
+            toggleParentIssueModal(true);
+          }
+        }}
+        disabled={disabled}
       >
-        <button type="button" className="flex-shrink-0" onClick={() => setIsParentModalOpen(true)} disabled={disabled}>
-          {selectedParentIssue && issueDetails?.parent ? (
-            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-          ) : !selectedParentIssue && issueDetails?.parent ? (
-            `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
-          ) : (
-            <span className="text-custom-text-200">Select issue</span>
-          )}
-        </button>
-
-        {issueDetails?.parent && (
-          <button
-            type="button"
-            className="flex-shrink-0"
-            onClick={() => {
-              onChange("");
-              setSelectedParentIssue(null);
-            }}
-          >
-            <X className="h-2.5 w-2.5" />
-          </button>
+        {selectedParentIssue && issueDetails?.parent_id ? (
+          `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+        ) : !selectedParentIssue && issueDetails?.parent_id ? (
+          `${getProjectById(issueDetails.parent_id)?.identifier}-${issueDetails.parent_detail?.sequence_id}`
+        ) : (
+          <span className="text-custom-text-200">Select issue</span>
         )}
-      </div>
+        {issueDetails?.parent_id && <X className="h-2.5 w-2.5" />}
+      </button>
     </>
   );
 };

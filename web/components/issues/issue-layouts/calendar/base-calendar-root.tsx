@@ -7,52 +7,42 @@ import { CalendarChart, IssuePeekOverview } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IIssue } from "types";
-import {
-  ICycleIssuesFilterStore,
-  ICycleIssuesStore,
-  IModuleIssuesFilterStore,
-  IModuleIssuesStore,
-  IProjectIssuesFilterStore,
-  IProjectIssuesStore,
-  IViewIssuesFilterStore,
-  IViewIssuesStore,
-} from "store/issues";
+import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
-import { IGroupedIssues } from "store/issues/types";
+import { handleDragDrop } from "./utils";
+import { useIssues } from "hooks/store";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 
 interface IBaseCalendarRoot {
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
-  handleDragDrop: (source: any, destination: any, issues: any, issueWithIds: any) => Promise<void>;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, handleDragDrop } = props;
+  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
 
   // hooks
   const { setToastAlert } = useToast();
+  const { issueMap } = useIssues();
 
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
-  const issues = issueStore.getIssues;
-  const groupedIssueIds = (issueStore.getIssuesIds ?? {}) as IGroupedIssues;
+  const groupedIssueIds = (issueStore.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const onDragEnd = async (result: DropResult) => {
     if (!result) return;
@@ -64,7 +54,15 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     if (result.destination.droppableId === result.source.droppableId) return;
 
     if (handleDragDrop) {
-      await handleDragDrop(result.source, result.destination, issues, groupedIssueIds).catch((err) => {
+      await handleDragDrop(
+        result.source,
+        result.destination,
+        workspaceSlug?.toString(),
+        projectId?.toString(),
+        issueStore,
+        issueMap,
+        groupedIssueIds
+      ).catch((err) => {
         setToastAlert({
           title: "Error",
           type: "error",
@@ -75,7 +73,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   };
 
   const handleIssues = useCallback(
-    async (date: string, issue: IIssue, action: EIssueActions) => {
+    async (date: string, issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         await issueActions[action]!(issue);
       }
@@ -89,7 +87,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         <DragDropContext onDragEnd={onDragEnd}>
           <CalendarChart
             issuesFilterStore={issuesFilterStore}
-            issues={issues}
+            issues={issueMap}
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
@@ -120,8 +118,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate, action: EIssueActions) =>
-            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, action)
+          handleIssue={async (issueToUpdate) =>
+            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as TIssue, EIssueActions.UPDATE)
           }
         />
       )}

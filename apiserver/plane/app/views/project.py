@@ -36,6 +36,7 @@ from plane.app.serializers import (
     ProjectFavoriteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
+    ProjectMemberRoleSerializer,
 )
 
 from plane.app.permissions import (
@@ -180,12 +181,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     projects, many=True
                 ).data,
             )
+        projects = ProjectListSerializer(projects, many=True, fields=fields if fields else None).data
+        return Response(projects, status=status.HTTP_200_OK)
 
-        return Response(
-            ProjectListSerializer(
-                projects, many=True, fields=fields if fields else None
-            ).data
-        )
 
     def create(self, request, slug):
         try:
@@ -713,13 +711,7 @@ class ProjectMemberViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, slug, project_id):
-        project_member = ProjectMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-            is_active=True,
-        )
-
+        # Get the list of project members for the project
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
@@ -727,10 +719,7 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         ).select_related("project", "member", "workspace")
 
-        if project_member.role > 10:
-            serializer = ProjectMemberAdminSerializer(project_members, many=True)
-        else:
-            serializer = ProjectMemberSerializer(project_members, many=True)
+        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk):
@@ -1010,18 +999,11 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
 
     def get(self, request):
         files = []
-        s3_client_params = {
-            "service_name": "s3",
-            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
-            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
-        }
-
-        # Use AWS_S3_ENDPOINT_URL if it is present in the settings
-        if hasattr(settings, "AWS_S3_ENDPOINT_URL") and settings.AWS_S3_ENDPOINT_URL:
-            s3_client_params["endpoint_url"] = settings.AWS_S3_ENDPOINT_URL
-
-        s3 = boto3.client(**s3_client_params)
-
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
         params = {
             "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",
@@ -1034,19 +1016,9 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
                 if not content["Key"].endswith(
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
-                    if (
-                        hasattr(settings, "AWS_S3_CUSTOM_DOMAIN")
-                        and settings.AWS_S3_CUSTOM_DOMAIN
-                        and hasattr(settings, "AWS_S3_URL_PROTOCOL")
-                        and settings.AWS_S3_URL_PROTOCOL
-                    ):
-                        files.append(
-                            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/{content['Key']}"
-                        )
-                    else:
-                        files.append(
-                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                        )
+                    files.append(
+                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                    )
 
         return Response(files, status=status.HTTP_200_OK)
 

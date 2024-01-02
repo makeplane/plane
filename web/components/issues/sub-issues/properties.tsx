@@ -3,17 +3,16 @@ import { mutate } from "swr";
 // services
 import { IssueService } from "services/issue";
 // components
-import { PrioritySelect } from "components/project";
+import { PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // types
-import { IIssue, IState } from "types";
+import { TIssue } from "@plane/types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-import { IssuePropertyAssignee, IssuePropertyState } from "../issue-layouts/properties";
 
 export interface IIssueProperty {
   workspaceSlug: string;
-  parentIssue: IIssue;
-  issue: IIssue;
+  parentIssue: TIssue;
+  issue: TIssue;
   editable: boolean;
 }
 
@@ -27,23 +26,22 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
     partialUpdateIssue({ priority: data });
   };
 
-  const handleStateChange = (data: IState) => {
+  const handleStateChange = (data: string) => {
     partialUpdateIssue({
-      state: data.id,
-      state_detail: data,
+      state_id: data,
     });
   };
 
   const handleAssigneeChange = (data: string[]) => {
-    partialUpdateIssue({ assignees: data });
+    partialUpdateIssue({ assignee_ids: data });
   };
 
-  const partialUpdateIssue = async (data: Partial<IIssue>) => {
+  const partialUpdateIssue = async (data: Partial<TIssue>) => {
     mutate(
       workspaceSlug && parentIssue ? SUB_ISSUES(parentIssue.id) : null,
       (elements: any) => {
         const _elements = { ...elements };
-        const _issues = _elements.sub_issues.map((element: IIssue) =>
+        const _issues = _elements.sub_issues.map((element: TIssue) =>
           element.id === issue.id ? { ...element, ...data } : element
         );
         _elements["sub_issues"] = [..._issues];
@@ -52,12 +50,12 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
       false
     );
 
-    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project, issue.id, data);
+    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project_id, issue.id, data);
 
     mutate(
       SUB_ISSUES(parentIssue.id),
       (elements: any) => {
-        const _elements = elements.sub_issues.map((element: IIssue) =>
+        const _elements = elements.sub_issues.map((element: TIssue) =>
           element.id === issue.id ? issueResponse : element
         );
         elements["sub_issues"] = _elements;
@@ -69,27 +67,35 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
 
   return (
     <div className="relative flex items-center gap-2">
-      <div className="flex-shrink-0">
-        <PrioritySelect value={issue.priority} onChange={handlePriorityChange} hideDropdownArrow disabled={!editable} />
-      </div>
-
-      <div className="flex-shrink-0">
-        <IssuePropertyState
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.state || null}
-          onChange={(data) => handleStateChange(data)}
+      <div className="h-5 flex-shrink-0">
+        <StateDropdown
+          value={issue?.state_id}
+          projectId={issue?.project_id}
+          onChange={handleStateChange}
           disabled={!editable}
-          hideDropdownArrow
+          buttonVariant="border-with-text"
         />
       </div>
 
-      <div className="flex-shrink-0">
-        <IssuePropertyAssignee
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.assignees || null}
-          hideDropdownArrow
-          onChange={(val) => handleAssigneeChange(val)}
+      <div className="h-5 flex-shrink-0">
+        <PriorityDropdown
+          value={issue.priority}
+          onChange={handlePriorityChange}
           disabled={!editable}
+          buttonVariant="border-without-text"
+          buttonClassName="border"
+        />
+      </div>
+
+      <div className="h-5 flex-shrink-0">
+        <ProjectMemberDropdown
+          projectId={issue?.project_id}
+          value={issue?.assignee_ids}
+          onChange={handleAssigneeChange}
+          disabled={!editable}
+          multiple
+          buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "border-without-text"}
+          buttonClassName={issue.assignee_ids.length > 0 ? "hover:bg-transparent px-0" : ""}
         />
       </div>
     </div>

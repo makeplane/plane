@@ -1,72 +1,62 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+import { Sparkle, X } from "lucide-react";
+// hooks
+import { useApplication, useEstimate, useMention } from "hooks/store";
+import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useLocalStorage from "hooks/use-local-storage";
 // components
 import { GptAssistantPopover } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
-import {
-  IssueAssigneeSelect,
-  IssueDateSelect,
-  IssueEstimateSelect,
-  IssueLabelSelect,
-  IssuePrioritySelect,
-  IssueProjectSelect,
-  IssueStateSelect,
-} from "components/issues/select";
+import { IssueLabelSelect } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
-// ui
-import {} from "components/ui";
-import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
-// icons
-import { Sparkle, X } from "lucide-react";
-// types
-import type { IUser, IIssue, ISearchIssueResponse } from "types";
-// components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  ProjectDropdown,
+  ProjectMemberDropdown,
+  StateDropdown,
+} from "components/dropdowns";
+// ui
+import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+// types
+import type { IUser, TIssue, ISearchIssueResponse } from "@plane/types";
 
 const aiService = new AIService();
 const fileService = new FileService();
 
-const defaultValues: Partial<IIssue> = {
-  project: "",
+const defaultValues: Partial<TIssue> = {
+  project_id: "",
   name: "",
-  description: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-      },
-    ],
-  },
   description_html: "<p></p>",
   estimate_point: null,
-  state: "",
-  parent: null,
+  state_id: "",
+  parent_id: null,
   priority: "none",
-  assignees: [],
-  labels: [],
-  start_date: null,
-  target_date: null,
+  assignee_ids: [],
+  label_ids: [],
+  start_date: undefined,
+  target_date: undefined,
 };
 
 interface IssueFormProps {
   handleFormSubmit: (
-    formData: Partial<IIssue>,
+    formData: Partial<TIssue>,
     action?: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue"
   ) => Promise<void>;
-  data?: Partial<IIssue> | null;
+  data?: Partial<TIssue> | null;
   isOpen: boolean;
-  prePopulatedData?: Partial<IIssue> | null;
+  prePopulatedData?: Partial<TIssue> | null;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
@@ -112,10 +102,12 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+  // store hooks
+  const { areEstimatesActiveForProject } = useEstimate();
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
   const { setToastAlert } = useToast();
-  const editorSuggestions = useEditorSuggestions();
   // refs
   const editorRef = useRef<any>(null);
   // router
@@ -123,8 +115,8 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -135,27 +127,26 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
     getValues,
     setValue,
     setFocus,
-  } = useForm<IIssue>({
+  } = useForm<TIssue>({
     defaultValues: prePopulatedData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
   const issueName = watch("name");
 
-  const payload: Partial<IIssue> = {
+  const payload: Partial<TIssue> = {
     name: watch("name"),
-    description: watch("description"),
     description_html: watch("description_html"),
-    state: watch("state"),
+    state_id: watch("state_id"),
     priority: watch("priority"),
-    assignees: watch("assignees"),
-    labels: watch("labels"),
+    assignee_ids: watch("assignee_ids"),
+    label_ids: watch("label_ids"),
     start_date: watch("start_date"),
     target_date: watch("target_date"),
-    project: watch("project"),
-    parent: watch("parent"),
-    cycle: watch("cycle"),
-    module: watch("module"),
+    project_id: watch("project_id"),
+    parent_id: watch("parent_id"),
+    cycle_id: watch("cycle_id"),
+    module_id: watch("module_id"),
   };
 
   useEffect(() => {
@@ -189,31 +180,24 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   // };
 
   const handleCreateUpdateIssue = async (
-    formData: Partial<IIssue>,
+    formData: Partial<TIssue>,
     action: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue" = "createDraft"
   ) => {
     await handleFormSubmit(
       {
         ...(data ?? {}),
         ...formData,
-        is_draft: action === "createDraft" || action === "updateDraft",
+        // is_draft: action === "createDraft" || action === "updateDraft",
       },
       action
     );
+    // TODO: check_with_backend
 
     setGptAssistantModal(false);
 
     reset({
       ...defaultValues,
-      project: projectId,
-      description: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-          },
-        ],
-      },
+      project_id: projectId,
       description_html: "<p></p>",
     });
     editorRef?.current?.clearEditor();
@@ -222,7 +206,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {});
+    // setValue("description", {});
     setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     editorRef.current?.setEditorValue(`${watch("description_html")}`);
   };
@@ -280,7 +264,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   useEffect(() => {
     reset({
       ...getValues(),
-      project: projectId,
+      project_id: projectId,
     });
   }, [getValues, projectId, reset]);
 
@@ -302,7 +286,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
-            onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
+            onSuccess={(response) => setValue("label_ids", [...watch("label_ids"), response.id])}
           />
         </>
       )}
@@ -316,14 +300,15 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
             {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && (
               <Controller
                 control={control}
-                name="project"
+                name="project_id"
                 render={({ field: { value, onChange } }) => (
-                  <IssueProjectSelect
+                  <ProjectDropdown
                     value={value}
-                    onChange={(val: string) => {
+                    onChange={(val) => {
                       onChange(val);
                       setActiveProject(val);
                     }}
+                    buttonVariant="background-with-text"
                   />
                 )}
               />
@@ -332,7 +317,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
               {status ? "Update" : "Create"} Issue
             </h3>
           </div>
-          {watch("parent") &&
+          {watch("parent_id") &&
             (fieldsToShow.includes("all") || fieldsToShow.includes("parent")) &&
             selectedParentIssue && (
               <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
@@ -350,7 +335,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
-                      setValue("parent", null);
+                      setValue("parent_id", null);
                       setSelectedParentIssue(null);
                     }}
                   />
@@ -454,10 +439,9 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                         customClassName="min-h-[150px]"
                         onChange={(description: Object, description_html: string) => {
                           onChange(description_html);
-                          setValue("description", description);
                         }}
-                        mentionHighlights={editorSuggestions.mentionHighlights}
-                        mentionSuggestions={editorSuggestions.mentionSuggestions}
+                        mentionHighlights={mentionHighlights}
+                        mentionSuggestions={mentionSuggestions}
                       />
                     )}
                   />
@@ -467,14 +451,16 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <Controller
                     control={control}
-                    name="state"
+                    name="state_id"
                     render={({ field: { value, onChange } }) => (
-                      <IssueStateSelect
-                        setIsOpen={setStateModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <StateDropdown
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                          buttonVariant="border-with-text"
+                        />
+                      </div>
                     )}
                   />
                 )}
@@ -483,80 +469,100 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     name="priority"
                     render={({ field: { value, onChange } }) => (
-                      <IssuePrioritySelect value={value} onChange={onChange} />
+                      <div className="h-7">
+                        <PriorityDropdown value={value} onChange={onChange} buttonVariant="background-with-text" />
+                      </div>
                     )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
                   <Controller
                     control={control}
-                    name="assignees"
+                    name="assignee_ids"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
+                      <div className="h-7">
+                        <ProjectMemberDropdown
+                          projectId={projectId}
+                          value={value}
+                          onChange={onChange}
+                          multiple
+                          buttonVariant="background-with-text"
+                        />
+                      </div>
                     )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
                   <Controller
                     control={control}
-                    name="labels"
+                    name="label_ids"
                     render={({ field: { value, onChange } }) => (
-                      <IssueLabelSelect
-                        setIsOpen={setLabelModal}
-                        value={value}
-                        onChange={onChange}
-                        projectId={projectId}
-                      />
+                      <div className="h-7">
+                        <IssueLabelSelect
+                          setIsOpen={setLabelModal}
+                          value={value}
+                          onChange={onChange}
+                          projectId={projectId}
+                        />
+                      </div>
                     )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
-                  <div>
-                    <Controller
-                      control={control}
-                      name="start_date"
-                      render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect
-                          label="Start date"
-                          maxDate={maxDate ?? undefined}
-                          onChange={onChange}
+                  <Controller
+                    control={control}
+                    name="start_date"
+                    render={({ field: { value, onChange } }) => (
+                      <div className="h-7">
+                        <DateDropdown
                           value={value}
+                          onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                          buttonVariant="border-with-text"
+                          placeholder="Start date"
+                          maxDate={maxDate ?? undefined}
                         />
-                      )}
-                    />
-                  </div>
+                      </div>
+                    )}
+                  />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
-                  <div>
-                    <Controller
-                      control={control}
-                      name="target_date"
-                      render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect
-                          label="Due date"
-                          minDate={minDate ?? undefined}
-                          onChange={onChange}
+                  <Controller
+                    control={control}
+                    name="target_date"
+                    render={({ field: { value, onChange } }) => (
+                      <div className="h-7">
+                        <DateDropdown
                           value={value}
+                          onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                          buttonVariant="border-with-text"
+                          placeholder="Due date"
+                          minDate={minDate ?? undefined}
                         />
-                      )}
-                    />
-                  </div>
+                      </div>
+                    )}
+                  />
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-                  <div>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
+                  areEstimatesActiveForProject(projectId) && (
                     <Controller
                       control={control}
                       name="estimate_point"
                       render={({ field: { value, onChange } }) => (
-                        <IssueEstimateSelect value={value} onChange={onChange} />
+                        <div className="h-7">
+                          <EstimateDropdown
+                            value={value}
+                            onChange={onChange}
+                            projectId={projectId}
+                            buttonVariant="background-with-text"
+                          />
+                        </div>
                       )}
                     />
-                  </div>
-                )}
+                  )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <Controller
                     control={control}
-                    name="parent"
+                    name="parent_id"
                     render={({ field: { onChange } }) => (
                       <ParentIssuesListModal
                         isOpen={parentIssueListModalOpen}
@@ -572,12 +578,12 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <CustomMenu ellipsis>
-                    {watch("parent") ? (
+                    {watch("parent_id") ? (
                       <>
                         <CustomMenu.MenuItem onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={() => setValue("parent", null)}>
+                        <CustomMenu.MenuItem onClick={() => setValue("parent_id", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </>

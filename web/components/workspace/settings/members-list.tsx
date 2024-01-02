@@ -2,10 +2,10 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useMember } from "hooks/store";
 // components
-import { WorkspaceMembersListItem } from "components/workspace";
+import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "components/workspace";
 // ui
 import { Loader } from "@plane/ui";
 
@@ -14,25 +14,23 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
-    workspaceMember: { workspaceMembersWithInvitations, fetchWorkspaceMemberInvitations },
-  } = useMobxStore();
+    workspace: {
+      fetchWorkspaceMemberInvitations,
+      workspaceMemberIds,
+      getSearchedWorkspaceMemberIds,
+      workspaceMemberInvitationIds,
+      getSearchedWorkspaceInvitationIds,
+    },
+  } = useMember();
   // fetching workspace invitations
   useSWR(
     workspaceSlug ? `WORKSPACE_INVITATIONS_${workspaceSlug.toString()}` : null,
     workspaceSlug ? () => fetchWorkspaceMemberInvitations(workspaceSlug.toString()) : null
   );
 
-  const searchedMembers = workspaceMembersWithInvitations?.filter((member: any) => {
-    const email = member.email?.toLowerCase();
-    const displayName = member.display_name.toLowerCase();
-    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
-
-    return `${email}${displayName}${fullName}`.includes(searchQuery.toLowerCase());
-  });
-
-  if (!workspaceMembersWithInvitations)
+  if (!workspaceMemberIds && !workspaceMemberInvitationIds)
     return (
       <Loader className="space-y-5">
         <Loader.Item height="40px" />
@@ -42,12 +40,21 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
       </Loader>
     );
 
+  // derived values
+  const searchedMemberIds = getSearchedWorkspaceMemberIds(searchQuery);
+  const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
+
   return (
     <div className="divide-y-[0.5px] divide-custom-border-100">
-      {workspaceMembersWithInvitations.length > 0
-        ? searchedMembers?.map((member) => <WorkspaceMembersListItem key={member.id} member={member} />)
+      {searchedInvitationsIds && searchedInvitationsIds.length > 0
+        ? searchedInvitationsIds?.map((invitationId) => (
+            <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+          ))
         : null}
-      {searchedMembers?.length === 0 && (
+      {searchedMemberIds && searchedMemberIds.length > 0
+        ? searchedMemberIds?.map((memberId) => <WorkspaceMembersListItem key={memberId} memberId={memberId} />)
+        : null}
+      {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
         <h4 className="mt-16 text-center text-sm text-custom-text-400">No matching members</h4>
       )}
     </div>

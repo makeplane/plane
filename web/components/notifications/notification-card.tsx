@@ -11,14 +11,12 @@ import { snoozeOptions } from "constants/notification";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 import {
-  formatDateDistance,
-  render12HourFormatTime,
-  renderLongDateFormat,
-  renderShortDate,
-  renderShortDateWithYearFormat,
+  calculateTimeAgo,
+  renderFormattedTime,
+  renderFormattedDate,
 } from "helpers/date-time.helper";
 // type
-import type { IUserNotification } from "types";
+import type { IUserNotification } from "@plane/types";
 
 type NotificationCardProps = {
   notification: IUserNotification;
@@ -102,8 +100,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             {notification.data.issue_activity.field === "comment"
               ? "commented"
               : notification.data.issue_activity.field === "None"
-                ? null
-                : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
+              ? null
+              : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
             {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
               ? "to"
               : ""}
@@ -112,7 +110,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               {notification.data.issue_activity.field !== "None" ? (
                 notification.data.issue_activity.field !== "comment" ? (
                   notification.data.issue_activity.field === "target_date" ? (
-                    renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
+                    renderFormattedDate(notification.data.issue_activity.new_value)
                   ) : notification.data.issue_activity.field === "attachment" ? (
                     "the issue"
                   ) : notification.data.issue_activity.field === "description" ? (
@@ -151,11 +149,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
               <Clock className="h-4 w-4" />
               <span>
-                Till {renderShortDate(notification.snoozed_till)}, {render12HourFormatTime(notification.snoozed_till)}
+                Till {renderFormattedDate(notification.snoozed_till)}, {renderFormattedTime(notification.snoozed_till, '12-hour')}
               </span>
             </p>
           ) : (
-            <p className="flex-shrink-0 text-custom-text-300">{formatDateDistance(notification.created_at)}</p>
+            <p className="flex-shrink-0 text-custom-text-300">{calculateTimeAgo(notification.created_at)}</p>
           )}
         </div>
       </div>
@@ -233,7 +231,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
 
                   markSnoozeNotification(notification.id, item.value).then(() => {
                     setToastAlert({
-                      title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
+                      title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
                       type: "success",
                     });
                   });

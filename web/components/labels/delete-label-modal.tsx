@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useLabel } from "hooks/store";
 // icons
 import { AlertTriangle } from "lucide-react";
 // hooks
@@ -12,7 +11,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssueLabel } from "types";
+import type { IIssueLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -22,17 +21,15 @@ type Props = {
 
 export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const { projectLabel: projectLabelStore } = useMobxStore();
-
+  // store hooks
+  const {
+    project: { deleteLabel },
+  } = useLabel();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
   // hooks
   const { setToastAlert } = useToast();
 
@@ -46,8 +43,7 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await projectLabelStore
-      .deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
+    await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         handleClose();
       })

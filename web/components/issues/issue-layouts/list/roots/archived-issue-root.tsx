@@ -1,46 +1,40 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import { ArchivedIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store/project";
 import { EIssueActions } from "../../types";
-import { EProjectStore } from "store/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { projectArchivedIssues: archivedIssueStore, projectArchivedIssuesFilter: archivedIssueFiltersStore } =
-    useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
 
-  const issueActions = {
-    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
-
-      await archivedIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
-    },
-  };
-
-  const getProjects = (projectStore: IProjectStore) => {
-    if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug.toString()] || null;
-  };
+        await issues.removeIssue(workspaceSlug, projectId, issue.id);
+      },
+    }),
+    [issues, workspaceSlug, projectId]
+  );
 
   return (
     <BaseListRoot
-      issueFilterStore={archivedIssueFiltersStore}
-      issueStore={archivedIssueStore}
+      issuesFilter={issuesFilter}
+      issues={issues}
       QuickActions={ArchivedIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
-      currentStore={EProjectStore.PROJECT}
+      currentStore={EIssuesStoreType.PROJECT}
     />
   );
 });

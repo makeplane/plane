@@ -1,20 +1,24 @@
 import React from "react";
 import { RefreshCw } from "lucide-react";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
+import { useProject } from "hooks/store";
 
 type Props = {
   isSubmitting: "submitting" | "submitted" | "saved";
-  issueDetail?: IIssue;
+  issueDetail?: TIssue;
 };
 
 export const IssueUpdateStatus: React.FC<Props> = (props) => {
   const { isSubmitting, issueDetail } = props;
+  // hooks
+  const { getProjectById } = useProject();
+
   return (
     <>
       {issueDetail && (
         <h4 className="mr-4 text-lg font-medium text-custom-text-300">
-          {issueDetail.project_detail?.identifier}-{issueDetail.sequence_id}
+          {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
         </h4>
       )}
       <div

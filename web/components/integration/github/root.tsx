@@ -26,7 +26,7 @@ import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
 // types
-import { IUser, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
+import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
@@ -79,15 +79,11 @@ const integrationWorkflowData = [
   },
 ];
 
-type Props = {
-  user: IUser | undefined;
-};
-
 // services
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC<Props> = () => {
+export const GithubImporterRoot: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });

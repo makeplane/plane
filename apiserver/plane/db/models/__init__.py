@@ -9,6 +9,8 @@ from .workspace import (
     WorkspaceMemberInvite,
     TeamMember,
     WorkspaceTheme,
+    WorkspaceUserProperties,
+    WorkspaceBaseModel,
 )
 
 from .project import (
@@ -48,11 +50,11 @@ from .social_connection import SocialLoginConnection
 
 from .state import State
 
-from .cycle import Cycle, CycleIssue, CycleFavorite
+from .cycle import Cycle, CycleIssue, CycleFavorite, CycleUserProperties
 
 from .view import GlobalView, IssueView, IssueViewFavorite
 
-from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
+from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite, ModuleUserProperties
 
 from .api import APIToken, APIActivityLog
 

@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
 
 from plane.db.models import (
@@ -13,10 +13,11 @@ from plane.db.models import (
     TeamMember,
     WorkspaceMemberInvite,
     WorkspaceTheme,
+    WorkspaceUserProperties,
 )
 
 
-class WorkSpaceSerializer(BaseSerializer):
+class WorkSpaceSerializer(DynamicBaseSerializer):
     owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
@@ -62,7 +63,7 @@ class WorkspaceLiteSerializer(BaseSerializer):
 
 
 
-class WorkSpaceMemberSerializer(BaseSerializer):
+class WorkSpaceMemberSerializer(DynamicBaseSerializer):
     member = UserLiteSerializer(read_only=True)
     workspace = WorkspaceLiteSerializer(read_only=True)
 
@@ -78,7 +79,7 @@ class WorkspaceMemberMeSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class WorkspaceMemberAdminSerializer(BaseSerializer):
+class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
     member = UserAdminLiteSerializer(read_only=True)
     workspace = WorkspaceLiteSerializer(read_only=True)
 
@@ -160,4 +161,14 @@ class WorkspaceThemeSerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "actor",
+        ]
+
+
+class WorkspaceUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceUserProperties
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "user",
         ]

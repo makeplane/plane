@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
+// hooks
+import { useMention } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // ui
@@ -10,9 +11,9 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 // components
 import { IssueCommentReaction } from "./comment-reaction";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import type { IIssueActivity, IUser } from "types";
+import type { IIssueActivity, IUser } from "@plane/types";
 
 // services
 const fileService = new FileService();
@@ -43,14 +44,14 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
     issueCommentReactionCreate,
     issueCommentReactionRemove,
   } = props;
-
+  // states
+  const [isEditing, setIsEditing] = useState(false);
+  // refs
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
-
-  const [isEditing, setIsEditing] = useState(false);
-
-  const editorSuggestions = useEditorSuggestions();
-
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // form info
   const {
     formState: { isSubmitting },
     handleSubmit,
@@ -106,7 +107,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
           <div className="text-xs">
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-custom-text-200">commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</p>
         </div>
 
         <div className="issue-comments-section p-0">
@@ -123,8 +124,8 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
                 debouncedUpdatesEnabled={false}
                 customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
-                mentionSuggestions={editorSuggestions.mentionSuggestions}
-                mentionHighlights={editorSuggestions.mentionHighlights}
+                mentionSuggestions={mentionSuggestions}
+                mentionHighlights={mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -157,7 +158,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
               ref={showEditorRef}
               value={comment.comment_html ?? ""}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={editorSuggestions.mentionHighlights}
+              mentionHighlights={mentionHighlights}
             />
 
             <div className="mt-1">

@@ -2,15 +2,13 @@ import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
+// store hooks
+import { useGlobalView } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { WorkspaceViewForm } from "components/workspace";
 // types
-import { IWorkspaceView } from "types/workspace-views";
+import { IWorkspaceView } from "@plane/types";
 
 type Props = {
   data?: IWorkspaceView;
@@ -21,19 +19,19 @@ type Props = {
 
 export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data, preLoadedData } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { globalViews: globalViewsStore } = useMobxStore();
-
+  // store hooks
+  const { createGlobalView, updateGlobalView } = useGlobalView();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
   };
 
-  const createView = async (payload: Partial<IWorkspaceView>) => {
+  const handleCreateView = async (payload: Partial<IWorkspaceView>) => {
     if (!workspaceSlug) return;
 
     const payloadData: Partial<IWorkspaceView> = {
@@ -43,8 +41,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
       },
     };
 
-    await globalViewsStore
-      .createGlobalView(workspaceSlug.toString(), payloadData)
+    await createGlobalView(workspaceSlug.toString(), payloadData)
       .then((res) => {
         setToastAlert({
           type: "success",
@@ -53,6 +50,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         });
 
         router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
+        handleClose();
       })
       .catch(() =>
         setToastAlert({
@@ -63,7 +61,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
       );
   };
 
-  const updateView = async (payload: Partial<IWorkspaceView>) => {
+  const handleUpdateView = async (payload: Partial<IWorkspaceView>) => {
     if (!workspaceSlug || !data) return;
 
     const payloadData: Partial<IWorkspaceView> = {
@@ -73,15 +71,15 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
       },
     };
 
-    await globalViewsStore
-      .updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
-      .then(() =>
+    await updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "View updated successfully.",
-        })
-      )
+        });
+        handleClose();
+      })
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -94,10 +92,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   const handleFormSubmit = async (formData: Partial<IWorkspaceView>) => {
     if (!workspaceSlug) return;
 
-    if (!data) await createView(formData);
-    else await updateView(formData);
-
-    handleClose();
+    if (!data) await handleCreateView(formData);
+    else await handleUpdateView(formData);
   };
 
   return (

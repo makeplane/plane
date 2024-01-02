@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import { LatestFeatureBlock } from "components/common";
@@ -38,8 +37,8 @@ export const SignInRoot = observer(() => {
   const { handleRedirection } = useSignInRedirection();
   // mobx store
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
 
   const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
 

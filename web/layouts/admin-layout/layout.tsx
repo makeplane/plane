@@ -1,13 +1,13 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useApplication } from "hooks/store";
 // layouts
 import { AdminAuthWrapper, UserAuthWrapper } from "layouts/auth-layout";
 // components
 import { InstanceAdminSidebar } from "./sidebar";
 import { InstanceAdminHeader } from "./header";
 import { InstanceSetupView } from "components/instance";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IInstanceAdminLayout {
   children: ReactNode;
@@ -15,10 +15,10 @@ export interface IInstanceAdminLayout {
 
 export const InstanceAdminLayout: FC<IInstanceAdminLayout> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
   const {
     instance: { instance },
-  } = useMobxStore();
+  } = useApplication();
 
   if (instance?.is_setup_done === false) return <InstanceSetupView />;
 

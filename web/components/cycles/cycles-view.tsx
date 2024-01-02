@@ -1,17 +1,16 @@
 import { FC } from "react";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle } from "hooks/store";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
 import { Loader } from "@plane/ui";
 // types
-import { TCycleLayout } from "types";
+import { TCycleLayout, TCycleView } from "@plane/types";
 
 export interface ICyclesView {
-  filter: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";
+  filter: TCycleView;
   layout: TCycleLayout;
   workspaceSlug: string;
   projectId: string;
@@ -20,31 +19,29 @@ export interface ICyclesView {
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { filter, layout, workspaceSlug, projectId, peekCycle } = props;
-
-  // store
-  const { cycle: cycleStore } = useMobxStore();
-
-  // api call to fetch cycles list
-  useSWR(
-    workspaceSlug && projectId && filter ? `CYCLES_LIST_${projectId}_${filter}` : null,
-    workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
-  );
+  // store hooks
+  const {
+    currentProjectCompletedCycleIds,
+    currentProjectDraftCycleIds,
+    currentProjectUpcomingCycleIds,
+    currentProjectCycleIds,
+  } = useCycle();
 
   const cyclesList =
     filter === "completed"
-      ? cycleStore.projectCompletedCycles
+      ? currentProjectCompletedCycleIds
       : filter === "draft"
-        ? cycleStore.projectDraftCycles
-        : filter === "upcoming"
-          ? cycleStore.projectUpcomingCycles
-          : cycleStore.projectCycles;
+      ? currentProjectDraftCycleIds
+      : filter === "upcoming"
+      ? currentProjectUpcomingCycleIds
+      : currentProjectCycleIds;
 
   return (
     <>
       {layout === "list" && (
         <>
           {cyclesList ? (
-            <CyclesList cycles={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
+            <CyclesList cycleIds={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
           ) : (
             <Loader className="space-y-4 p-8">
               <Loader.Item height="50px" />
@@ -59,7 +56,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
         <>
           {cyclesList ? (
             <CyclesBoard
-              cycles={cyclesList}
+              cycleIds={cyclesList}
               filter={filter}
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -78,7 +75,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
       {layout === "gantt" && (
         <>
           {cyclesList ? (
-            <CyclesListGanttChartView cycles={cyclesList} workspaceSlug={workspaceSlug} />
+            <CyclesListGanttChartView cycleIds={cyclesList} workspaceSlug={workspaceSlug} />
           ) : (
             <Loader className="space-y-4">
               <Loader.Item height="50px" />

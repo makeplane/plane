@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useModule } from "hooks/store";
 // components
 import { ModuleDetailsSidebar } from "./sidebar";
 
@@ -14,13 +12,13 @@ type Props = {
 };
 
 export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug }) => {
+  // router
   const router = useRouter();
   const { peekModule } = router.query;
-
+  // refs
   const ref = React.useRef(null);
-
-  const { module: moduleStore } = useMobxStore();
-  const { fetchModuleDetails } = moduleStore;
+  // store hooks
+  const { fetchModuleDetails } = useModule();
 
   const handleClose = () => {
     delete router.query.peekModule;

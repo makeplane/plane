@@ -11,7 +11,7 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IPasswordSignInData } from "types/auth";
+import { IPasswordSignInData } from "@plane/types";
 // constants
 import { ESignInSteps } from "components/account";
 

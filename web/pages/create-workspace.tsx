@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
@@ -14,16 +14,14 @@ import { CreateWorkspaceForm } from "components/workspace";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { IWorkspace } from "types";
-import { NextPageWithLayout } from "types/app";
+import { IWorkspace } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
-  // store
-  const {
-    user: { currentUser, updateCurrentUser },
-  } = useMobxStore();
+  // store hooks
+  const { currentUser, updateCurrentUser } = useUser();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",

@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -10,15 +10,15 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingHeader } from "components/headers";
 import { ProjectFeaturesList } from "components/project";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const FeaturesSettingsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
-    user: { fetchUserProjectInfo },
-  } = useMobxStore();
+    membership: { fetchUserProjectInfo },
+  } = useUser();
 
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}_${projectId}` : null,

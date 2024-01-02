@@ -2,16 +2,15 @@ import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
+import { useApplication, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 
@@ -43,19 +42,19 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
       default: "Create Workspace",
     },
   } = props;
-
+  // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-
+  // router
   const router = useRouter();
-
+  // store hooks
   const {
-    workspace: workspaceStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { createWorkspace } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
     control,
@@ -71,8 +70,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceStore
-            .createWorkspace(formData)
+          await createWorkspace(formData)
             .then(async (res) => {
               postHogEventTracker("WORKSPACE_CREATED", {
                 ...res,

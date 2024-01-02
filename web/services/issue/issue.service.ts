@@ -1,8 +1,14 @@
 // services
 import { APIService } from "services/api.service";
 // type
-import type { IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties, ILinkDetails, IIssueLink } from "types";
-import { IIssueResponse } from "store/issues/types";
+import type {
+  TIssue,
+  IIssueActivity,
+  IIssueDisplayProperties,
+  ILinkDetails,
+  TIssueLink,
+  TIssueSubIssues,
+} from "@plane/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -19,7 +25,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<IIssueResponse> {
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
       params: queries,
     })
@@ -33,7 +39,7 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     queries?: any
-  ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
+  ): Promise<TIssue[] | { [key: string]: TIssue[] }> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
       params: queries,
     })
@@ -43,7 +49,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> {
+  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -135,7 +141,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>): Promise<any> {
+  async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -159,7 +165,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string): Promise<ISubIssueResponse> {
+  async subIssues(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueSubIssues> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -172,7 +178,7 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     data: { sub_issue_ids: string[] }
-  ): Promise<any> {
+  ): Promise<TIssueSubIssues> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -180,11 +186,19 @@ export class IssueService extends APIService {
       });
   }
 
+  async fetchIssueLinks(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async createIssueLink(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: IIssueLink
+    data: Partial<TIssueLink>
   ): Promise<ILinkDetails> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`, data)
       .then((response) => response?.data)
@@ -198,7 +212,7 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     linkId: string,
-    data: IIssueLink
+    data: Partial<TIssueLink>
   ): Promise<ILinkDetails> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,

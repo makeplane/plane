@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle, useIssues } from "hooks/store";
 // components
 import {
   CycleAppliedFiltersRoot,
@@ -17,37 +17,38 @@ import {
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
 import { Spinner } from "@plane/ui";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 export const CycleLayoutRoot: React.FC = observer(() => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
-
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
+  // store hooks
   const {
-    cycle: cycleStore,
-    cycleIssues: { loader, getIssues, fetchIssues },
-    cycleIssuesFilter: { issueFilters, fetchFilters },
-  } = useMobxStore();
+    issues: { loader, groupedIssueIds, fetchIssues },
+    issuesFilter: { issueFilters, fetchFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const { getCycleById } = useCycle();
 
   useSWR(
     workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
     async () => {
       if (workspaceSlug && projectId && cycleId) {
-        await fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
-        await fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          getIssues ? "mutation" : "init-loader",
-          cycleId.toString()
-        );
+        await fetchFilters(workspaceSlug, projectId, cycleId);
+        await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader", cycleId);
       }
     }
   );
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
-  const cycleDetails = cycleId ? cycleStore.cycle_details[cycleId.toString()] : undefined;
+  const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase() ?? "draft";
 
   return (
@@ -58,18 +59,14 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
-        {loader === "init-loader" || !getIssues ? (
+        {loader === "init-loader" || !groupedIssueIds ? (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         ) : (
           <>
-            {Object.keys(getIssues ?? {}).length == 0 ? (
-              <CycleEmptyState
-                workspaceSlug={workspaceSlug?.toString()}
-                projectId={projectId?.toString()}
-                cycleId={cycleId?.toString()}
-              />
+            {Object.keys(groupedIssueIds ?? {}).length == 0 ? (
+              <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
             ) : (
               <div className="h-full w-full overflow-auto">
                 {activeLayout === "list" ? (

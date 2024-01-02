@@ -1,10 +1,11 @@
 import React, { useEffect, useState, ReactElement } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
-import { UserService } from "services/user.service";
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
@@ -17,8 +18,8 @@ import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane
 // icons
 import { ChevronDown, User2 } from "lucide-react";
 // types
-import type { IUser } from "types";
-import type { NextPageWithLayout } from "types/app";
+import type { IUser } from "@plane/types";
+import type { NextPageWithLayout } from "lib/types";
 // constants
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
@@ -35,13 +36,12 @@ const defaultValues: Partial<IUser> = {
 };
 
 const fileService = new FileService();
-const userService = new UserService();
 
-const ProfileSettingsPage: NextPageWithLayout = () => {
+const ProfileSettingsPage: NextPageWithLayout = observer(() => {
+  // states
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
-
   // form info
   const {
     handleSubmit,
@@ -50,9 +50,12 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
     control,
     formState: { errors, isSubmitting },
   } = useForm<IUser>({ defaultValues });
-
+  // toast alert
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUserAuth();
+  // store hooks
+  const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -79,14 +82,8 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
       user_timezone: formData.user_timezone,
     };
 
-    await userService
-      .updateUser(payload)
-      .then((res) => {
-        mutateUser((prevData: any) => {
-          if (!prevData) return prevData;
-
-          return { ...prevData, ...res };
-        }, false);
+    await updateCurrentUser(payload)
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -109,18 +106,13 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 
     fileService.deleteUserFile(url).then(() => {
       if (updateUser)
-        userService
-          .updateUser({ avatar: "" })
+        updateCurrentUser({ avatar: "" })
           .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
               message: "Profile picture removed successfully.",
             });
-            mutateUser((prevData: any) => {
-              if (!prevData) return prevData;
-              return { ...prevData, avatar: "" };
-            }, false);
             setIsRemoving(false);
           })
           .catch(() => {
@@ -168,7 +160,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
         )}
       />
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-      <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-16 px-8 pb-8 lg:w-3/5">
+      <div className="mx-auto mt-16 flex h-full w-full flex-col space-y-10 overflow-y-auto px-8 pb-8 lg:w-3/5">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex w-full flex-col gap-8">
             <div className="relative h-44 w-full">
@@ -431,7 +423,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
       </div>
     </>
   );
-};
+});
 
 ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;

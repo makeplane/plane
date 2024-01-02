@@ -1,9 +1,6 @@
-import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
   ListLayout,
@@ -15,37 +12,41 @@ import {
   ProjectEmptyState,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
+import { useIssues } from "hooks/store/use-issues";
+import { EIssuesStoreType } from "constants/issue";
+// hooks
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const {
-    projectIssues: { loader, getIssues, fetchIssues },
-    projectIssuesFilter: { issueFilters, fetchFilters },
-  } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
-    }
-  });
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug, projectId);
+        await issues?.fetchIssues(workspaceSlug, projectId, issues?.groupedIssueIds ? "mutation" : "init-loader");
+      }
+    },
+    { revalidateOnFocus: false, refreshInterval: 600000, revalidateOnMount: true }
+  );
 
-  const activeLayout = issueFilters?.displayFilters?.layout;
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {loader === "init-loader" || !getIssues ? (
+      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          {Object.keys(getIssues ?? {}).length == 0 ? (
+          {(issues?.groupedIssueIds ?? {}).length == 0 ? (
             <ProjectEmptyState />
           ) : (
             <div className="relative h-full w-full overflow-auto bg-custom-background-90">

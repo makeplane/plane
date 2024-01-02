@@ -1,15 +1,14 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useLabel, useMember } from "hooks/store";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // types
-import { IWorkspaceView } from "types";
+import { IWorkspaceView } from "@plane/types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -27,15 +26,13 @@ const defaultValues: Partial<IWorkspaceView> = {
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
-    workspace: workspaceStore,
-    project: projectStore,
-    workspaceMember: { workspaceMembers },
-  } = useMobxStore();
+    workspace: { workspaceLabels },
+  } = useLabel();
+  const {
+    workspace: { workspaceMemberIds },
+  } = useMember();
 
   const {
     formState: { errors, isSubmitting },
@@ -146,9 +143,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                       });
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                    labels={workspaceStore.workspaceLabels ?? undefined}
-                    members={workspaceMembers?.map((m) => m.member) ?? undefined}
-                    projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
+                    labels={workspaceLabels ?? undefined}
+                    memberIds={workspaceMemberIds ?? undefined}
                   />
                 </FiltersDropdown>
               )}
@@ -160,8 +156,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                 appliedFilters={selectedFilters}
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
-                labels={workspaceStore.workspaceLabels ?? undefined}
-                members={workspaceMembers?.map((m) => m.member) ?? undefined}
+                labels={workspaceLabels ?? undefined}
                 states={undefined}
               />
             </div>
@@ -178,8 +173,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+            ? "Creating View..."
+            : "Create View"}
         </Button>
       </div>
     </form>

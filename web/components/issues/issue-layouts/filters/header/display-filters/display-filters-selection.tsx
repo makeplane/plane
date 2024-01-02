@@ -11,7 +11,7 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
 type Props = {

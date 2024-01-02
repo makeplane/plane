@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { useApplication, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IState } from "types";
+import type { IState } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -22,20 +19,17 @@ type Props = {
 
 export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
-
+  // states
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  // store
+  // store hooks
   const {
-    projectState: projectStateStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
-  // states
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { deleteState } = useProjectState();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -48,8 +42,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await projectStateStore
-      .deleteState(workspaceSlug.toString(), data.project, data.id)
+    await deleteState(workspaceSlug.toString(), data.project, data.id)
       .then(() => {
         postHogEventTracker("STATE_DELETE", {
           state: "SUCCESS",

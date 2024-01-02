@@ -6,7 +6,7 @@ import { Button, Loader } from "@plane/ui";
 // icons
 import { ChevronDown, ChevronUp } from "lucide-react";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 
 export interface IDeleteProjectSection {
   projectDetails: IProject;

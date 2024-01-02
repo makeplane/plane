@@ -1,10 +1,12 @@
 import { Controller, useForm } from "react-hook-form";
+// components
+import { DateDropdown, ProjectDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-import { DateSelect } from "components/ui";
-import { IssueProjectSelect } from "components/issues/select";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
@@ -45,19 +47,22 @@ export const CycleForm: React.FC<Props> = (props) => {
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5">
         <div className="flex items-center gap-x-3">
-          <Controller
-            control={control}
-            name="project"
-            render={({ field: { value, onChange } }) => (
-              <IssueProjectSelect
-                value={value}
-                onChange={(val: string) => {
-                  onChange(val);
-                  setActiveProject(val);
-                }}
-              />
-            )}
-          />
+          {!status && (
+            <Controller
+              control={control}
+              name="project"
+              render={({ field: { value, onChange } }) => (
+                <ProjectDropdown
+                  value={value}
+                  onChange={(val) => {
+                    onChange(val);
+                    setActiveProject(val);
+                  }}
+                  buttonVariant="background-with-text"
+                />
+              )}
+            />
+          )}
           <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Cycle</h3>
         </div>
         <div className="space-y-3">
@@ -112,25 +117,33 @@ export const CycleForm: React.FC<Props> = (props) => {
                   control={control}
                   name="start_date"
                   render={({ field: { value, onChange } }) => (
-                    <DateSelect
-                      label="Start date"
+                    <div className="h-7">
+                      <DateDropdown
+                        value={value}
+                        onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                        buttonVariant="border-with-text"
+                        placeholder="Start date"
+                        maxDate={maxDate ?? undefined}
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+              <Controller
+                control={control}
+                name="end_date"
+                render={({ field: { value, onChange } }) => (
+                  <div className="h-7">
+                    <DateDropdown
                       value={value}
-                      onChange={(val) => onChange(val)}
-                      minDate={new Date()}
-                      maxDate={maxDate ?? undefined}
+                      onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                      buttonVariant="border-with-text"
+                      placeholder="End date"
+                      minDate={minDate}
                     />
-                  )}
-                />
-              </div>
-              <div>
-                <Controller
-                  control={control}
-                  name="end_date"
-                  render={({ field: { value, onChange } }) => (
-                    <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} minDate={minDate} />
-                  )}
-                />
-              </div>
+                  </div>
+                )}
+              />
             </div>
           </div>
         </div>

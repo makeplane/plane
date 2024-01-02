@@ -6,7 +6,7 @@ import {
   IWorkspaceIssueSearchResult,
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
-} from "types";
+} from "@plane/types";
 
 export const commandGroups: {
   [key: string]: {

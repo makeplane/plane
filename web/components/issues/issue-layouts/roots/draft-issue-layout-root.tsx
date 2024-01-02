@@ -3,25 +3,26 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
 import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
 import { Spinner } from "@plane/ui";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
+import { EIssuesStoreType } from "constants/issue";
 
 export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    projectDraftIssuesFilter: { issueFilters, fetchFilters },
-    projectDraftIssues: { loader, getIssues, fetchIssues },
-  } = useMobxStore();
+    issues: { loader, groupedIssueIds, fetchIssues },
+    issuesFilter: { issueFilters, fetchFilters },
+  } = useIssues(EIssuesStoreType.DRAFT);
 
   useSWR(workspaceSlug && projectId ? `DRAFT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
+      await fetchFilters(workspaceSlug, projectId);
+      await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader");
     }
   });
 

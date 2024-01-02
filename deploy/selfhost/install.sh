@@ -39,7 +39,7 @@ function download(){
     echo ""
     echo "Latest version is now available for you to use"
     echo ""
-    echo "In case of Upgrade, your new setting file is available as 'variables-upgrade.env'. Please compare and set the required values in '.env 'file."
+    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in '.env 'file."
     echo ""
 
 }

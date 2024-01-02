@@ -1,22 +1,16 @@
-import React, { useState, FC, useRef, useEffect } from "react";
+import { useState, FC, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-
-// icons
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { orderArrayBy } from "helpers/array.helper";
-// types
-import { IProject } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -30,27 +24,25 @@ export const ProjectSidebarList: FC = observer(() => {
 
   const {
     theme: { sidebarCollapsed },
-    project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const {
+    joinedProjectIds: joinedProjects,
+    favoriteProjectIds: favoriteProjects,
+    orderProjectsWithSortOrder,
+    updateProjectView,
+  } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
   // toast
   const { setToastAlert } = useToast();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-
-  const orderedJoinedProjects: IProject[] | undefined = joinedProjects
-    ? orderArrayBy(joinedProjects, "sort_order", "ascending")
-    : undefined;
-
-  const orderedFavProjects: IProject[] | undefined = favoriteProjects
-    ? orderArrayBy(favoriteProjects, "sort_order", "ascending")
-    : undefined;
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -125,7 +117,7 @@ export const ProjectSidebarList: FC = observer(() => {
           <Droppable droppableId="favorite-projects">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {orderedFavProjects && orderedFavProjects.length > 0 && (
+                {favoriteProjects && favoriteProjects.length > 0 && (
                   <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
@@ -166,21 +158,22 @@ export const ProjectSidebarList: FC = observer(() => {
                           leaveTo="transform scale-95 opacity-0"
                         >
                           <Disclosure.Panel as="div" className="space-y-2">
-                            {orderedFavProjects.map((project, index) => (
+                            {favoriteProjects.map((projectId, index) => (
                               <Draggable
-                                key={project.id}
-                                draggableId={project.id}
+                                key={projectId}
+                                draggableId={projectId}
                                 index={index}
-                                isDragDisabled={!project.is_member}
+                                // FIXME refactor the Draggable to a different component
+                                //isDragDisabled={!project.is_member}
                               >
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
                                     <ProjectSidebarListItem
-                                      key={project.id}
-                                      project={project}
+                                      key={projectId}
+                                      projectId={projectId}
                                       provided={provided}
                                       snapshot={snapshot}
-                                      handleCopyText={() => handleCopyText(project.id)}
+                                      handleCopyText={() => handleCopyText(projectId)}
                                       shortContextMenu
                                     />
                                   </div>
@@ -202,7 +195,7 @@ export const ProjectSidebarList: FC = observer(() => {
           <Droppable droppableId="joined-projects">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
+                {joinedProjects && joinedProjects.length > 0 && (
                   <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
@@ -242,16 +235,16 @@ export const ProjectSidebarList: FC = observer(() => {
                           leaveTo="transform scale-95 opacity-0"
                         >
                           <Disclosure.Panel as="div" className="space-y-2">
-                            {orderedJoinedProjects.map((project, index) => (
-                              <Draggable key={project.id} draggableId={project.id} index={index}>
+                            {joinedProjects.map((projectId, index) => (
+                              <Draggable key={projectId} draggableId={projectId} index={index}>
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
                                     <ProjectSidebarListItem
-                                      key={project.id}
-                                      project={project}
+                                      key={projectId}
+                                      projectId={projectId}
                                       provided={provided}
                                       snapshot={snapshot}
-                                      handleCopyText={() => handleCopyText(project.id)}
+                                      handleCopyText={() => handleCopyText(projectId)}
                                     />
                                   </div>
                                 )}

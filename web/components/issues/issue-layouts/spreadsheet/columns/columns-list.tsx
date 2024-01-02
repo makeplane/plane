@@ -1,9 +1,10 @@
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject } from "hooks/store";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "@plane/types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -11,9 +12,8 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   expandedIssues: string[];
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
-  issues: IIssue[] | undefined;
-  members?: IUserLite[] | undefined;
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
+  issues: TIssue[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
@@ -27,14 +27,11 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
     handleDisplayFilterUpdate,
     handleUpdateIssue,
     issues,
-    members,
     labels,
     states,
   } = props;
-
-  const {
-    project: { currentProjectDetails },
-  } = useMobxStore();
+  // store hooks
+  const { currentProjectDetails } = useProject();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
@@ -71,7 +68,6 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
           issues={issues}
-          members={members}
           property="assignee"
         />
       )}

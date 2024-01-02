@@ -4,6 +4,12 @@ import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "layou
 // components
 import { CommandPalette } from "components/command-palette";
 import { AppSidebar } from "./sidebar";
+import { observer } from "mobx-react-lite";
+
+//  FIXME: remove this later
+import { useIssues } from "hooks/store/use-issues";
+import { EIssuesStoreType } from "constants/issue";
+import useSWR from "swr";
 
 export interface IAppLayout {
   children: ReactNode;
@@ -11,8 +17,24 @@ export interface IAppLayout {
   withProjectWrapper?: boolean;
 }
 
-export const AppLayout: FC<IAppLayout> = (props) => {
+export const AppLayout: FC<IAppLayout> = observer((props) => {
   const { children, header, withProjectWrapper = false } = props;
+
+  const workspaceSlug = "plane-demo";
+  const projectId = "b16907a9-a55f-4f5b-b05e-7065a0869ba6";
+
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ARCHIVED_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug, projectId);
+        // await issues?.fetchIssues(workspaceSlug, projectId, issues?.groupedIssueIds ? "mutation" : "init-loader");
+      }
+    },
+    { revalidateOnFocus: false, refreshInterval: 600000, revalidateOnMount: true }
+  );
 
   return (
     <>
@@ -34,4 +56,4 @@ export const AppLayout: FC<IAppLayout> = (props) => {
       </UserAuthWrapper>
     </>
   );
-};
+});

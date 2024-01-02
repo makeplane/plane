@@ -1,8 +1,8 @@
 import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -17,22 +17,24 @@ import emptyAnalytics from "public/empty-state/empty_analytics.webp";
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  // store
+  // store hooks
   const {
-    project: { workspaceProjects },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { workspaceProjectIds } = useProject();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
-      {workspaceProjects && workspaceProjects.length > 0 ? (
+      {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
         <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">

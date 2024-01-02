@@ -1,60 +1,58 @@
 import React from "react";
-
-// components
-import { IssuePropertyState } from "../../properties";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useIssueDetail } from "hooks/store";
+// components
+import { StateDropdown } from "components/dropdowns";
 // types
-import { IIssue, IState } from "types";
+import { TIssue, IState } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
+  issueId: string;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   states: IState[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };
 
 export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, states, expandedIssues, disabled } = props;
+  const { issueId, onChange, states, expandedIssues, disabled } = props;
+  const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+  const issueDetail = issue.getIssueById(issueId);
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const isExpanded = expandedIssues.indexOf(issueId) > -1;
+
+  // const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_id, issue.id, isExpanded);
 
   return (
     <>
-      <IssuePropertyState
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.state}
-        defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
-        onChange={(data) => {
-          onChange(issue, { state: data.id, state_detail: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { state: data.id, state_detail: data });
-          }
-        }}
-        className="w-full !h-11 border-b-[0.5px] border-custom-border-200"
-        buttonClassName="!shadow-none !border-0 h-full w-full"
-        hideDropdownArrow
-        disabled={disabled}
-      />
+      {issueDetail && (
+        <div className="h-11 border-b-[0.5px] border-custom-border-200">
+          <StateDropdown
+            projectId={issueDetail.project_id}
+            value={issueDetail.state_id}
+            onChange={(data) => onChange(issueDetail, { state_id: data })}
+            disabled={disabled}
+            buttonVariant="transparent-with-text"
+            buttonClassName="rounded-none text-left"
+            buttonContainerClassName="w-full"
+          />
+        </div>
+      )}
 
       {isExpanded &&
-        !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue) => (
-          <div className="h-11">
-            <SpreadsheetStateColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              states={states}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
+        subIssues.map((subIssueId) => (
+          <SpreadsheetStateColumn
+            key={subIssueId}
+            issueId={subIssueId}
+            onChange={onChange}
+            states={states}
+            expandedIssues={expandedIssues}
+            disabled={disabled}
+          />
         ))}
     </>
   );

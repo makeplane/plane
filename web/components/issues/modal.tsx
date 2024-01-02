@@ -3,26 +3,25 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { IssueDraftService } from "services/issue";
 // hooks
+import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
+// services
+import { IssueDraftService } from "services/issue";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
-import type { IIssue } from "types";
+import type { TIssue } from "@plane/types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
-import { EProjectStore } from "store/command-palette.store";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IssuesModalProps {
-  data?: IIssue | null;
+  data?: TIssue | null;
   handleClose: () => void;
   isOpen: boolean;
-  prePopulateData?: Partial<IIssue>;
+  prePopulateData?: Partial<TIssue>;
   fieldsToShow?: (
     | "project"
     | "name"
@@ -39,9 +38,9 @@ export interface IssuesModalProps {
     | "module"
     | "cycle"
   )[];
-  onSubmit?: (data: Partial<IIssue>) => Promise<void>;
-  handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
-  currentStore?: EProjectStore;
+  onSubmit?: (data: Partial<TIssue>) => Promise<void>;
+  handleSubmit?: (data: Partial<TIssue>) => Promise<void>;
+  currentStore?: TCreateModalStoreTypes;
 }
 
 const issueDraftService = new IssueDraftService();
@@ -55,16 +54,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     fieldsToShow = ["all"],
     onSubmit,
     handleSubmit,
-    currentStore = EProjectStore.PROJECT,
+    currentStore = EIssuesStoreType.PROJECT,
   } = props;
-
   // states
   const [createMore, setCreateMore] = useState(false);
   const [formDirtyState, setFormDirtyState] = useState<any>(null);
   const [showConfirmDiscard, setShowConfirmDiscard] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
-  const [prePopulateData, setPreloadedData] = useState<Partial<IIssue>>({});
-
+  const [prePopulateData, setPreloadedData] = useState<Partial<TIssue>>({});
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query as {
     workspaceSlug: string;
@@ -72,54 +70,52 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     cycleId: string | undefined;
     moduleId: string | undefined;
   };
+  // store hooks
+
+  const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
+  const { issues: moduleIssues } = useIssues(EIssuesStoreType.MODULE);
+  const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
 
   const {
-    project: projectStore,
-    projectIssues: projectIssueStore,
-    viewIssues: projectViewIssueStore,
-    workspaceProfileIssues: profileIssueStore,
-    cycleIssues: cycleIssueStore,
-    moduleIssues: moduleIssueStore,
-    user: userStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-    cycle: { fetchCycleWithId },
-    module: { fetchModuleDetails },
-  } = useMobxStore();
-
-  const user = userStore.currentUser;
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const { workspaceProjectIds } = useProject();
+  const { fetchCycleDetails } = useCycle();
+  const { fetchModuleDetails } = useModule();
 
   const issueStores = {
-    [EProjectStore.PROJECT]: {
-      store: projectIssueStore,
+    [EIssuesStoreType.PROJECT]: {
+      store: projectIssues,
       dataIdToUpdate: activeProject,
       viewId: undefined,
     },
-    [EProjectStore.PROJECT_VIEW]: {
-      store: projectViewIssueStore,
+    [EIssuesStoreType.PROJECT_VIEW]: {
+      store: viewIssues,
       dataIdToUpdate: activeProject,
       viewId: undefined,
     },
-    [EProjectStore.PROFILE]: {
-      store: profileIssueStore,
-      dataIdToUpdate: user?.id || undefined,
+    [EIssuesStoreType.PROFILE]: {
+      store: profileIssues,
+      dataIdToUpdate: currentUser?.id || undefined,
       viewId: undefined,
     },
-    [EProjectStore.CYCLE]: {
-      store: cycleIssueStore,
+    [EIssuesStoreType.CYCLE]: {
+      store: cycleIssues,
       dataIdToUpdate: activeProject,
       viewId: cycleId,
     },
-    [EProjectStore.MODULE]: {
-      store: moduleIssueStore,
+    [EIssuesStoreType.MODULE]: {
+      store: moduleIssues,
       dataIdToUpdate: activeProject,
       viewId: moduleId,
     },
   };
 
   const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[currentStore];
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } = useLocalStorage<any>(
     "draftedIssue",
@@ -131,31 +127,31 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   useEffect(() => {
     setPreloadedData(prePopulateDataProps ?? {});
 
-    if (cycleId && !prePopulateDataProps?.cycle) {
+    if (cycleId && !prePopulateDataProps?.cycle_id) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        cycle: cycleId.toString(),
+        cycle_id: cycleId.toString(),
       }));
     }
-    if (moduleId && !prePopulateDataProps?.module) {
+    if (moduleId && !prePopulateDataProps?.module_id) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        module: moduleId.toString(),
+        module_id: moduleId.toString(),
       }));
     }
     if (
       (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
-      !prePopulateDataProps?.assignees
+      !prePopulateDataProps?.assignee_ids
     ) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
+        assignees: prePopulateDataProps?.assignee_ids ?? [currentUser?.id ?? ""],
       }));
     }
-  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);
+  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, currentUser?.id]);
 
   /**
    *
@@ -209,32 +205,32 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
-    if (data && data.project) {
-      setActiveProject(data.project);
+    if (data && data.project_id) {
+      setActiveProject(data.project_id);
       return;
     }
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (projects && projects.length > 0 && !activeProject)
-      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [data, projectId, projects, isOpen, activeProject]);
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+  }, [data, projectId, workspaceProjectIds, isOpen, activeProject]);
 
-  const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
+  const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, [issue.id]);
-    fetchCycleWithId(workspaceSlug, activeProject, cycleId);
+    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
+    fetchCycleDetails(workspaceSlug, activeProject, cycleId);
   };
 
-  const addIssueToModule = async (issue: IIssue, moduleId: string) => {
+  const addIssueToModule = async (issue: TIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, [issue.id]);
+    await moduleIssues.addIssueToModule(workspaceSlug, activeProject, moduleId, [issue.id]);
     fetchModuleDetails(workspaceSlug, activeProject, moduleId);
   };
 
-  const createIssue = async (payload: Partial<IIssue>) => {
+  const createIssue = async (payload: Partial<TIssue>) => {
     if (!workspaceSlug || !dataIdToUpdate) return;
 
     await currentIssueStore
@@ -247,8 +243,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         } else {
           currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
-          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res, payload.cycle);
-          if (payload.module && payload.module !== "") await addIssueToModule(res, payload.module);
+          if (payload.cycle_id && payload.cycle_id !== "") await addIssueToCycle(res, payload.cycle_id);
+          if (payload.module_id && payload.module_id !== "") await addIssueToModule(res, payload.module_id);
 
           setToastAlert({
             type: "success",
@@ -264,10 +260,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
             {
               isGrouping: true,
               groupType: "Workspace_metrics",
-              gorupId: currentWorkspace?.id!,
+              groupId: currentWorkspace?.id!,
             }
           );
-          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+          if (payload.parent_id && payload.parent_id !== "") mutate(SUB_ISSUES(payload.parent_id));
         }
       })
       .catch((err) => {
@@ -284,7 +280,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -293,9 +289,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const createDraftIssue = async () => {
-    if (!workspaceSlug || !activeProject || !user) return;
+    if (!workspaceSlug || !activeProject || !currentUser) return;
 
-    const payload: Partial<IIssue> = {
+    const payload: Partial<TIssue> = {
       ...formDirtyState,
     };
 
@@ -312,9 +308,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         setFormDirtyState(null);
         setShowConfirmDiscard(false);
 
-        if (payload.assignees?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE(workspaceSlug as string));
+        if (payload.assignee_ids?.some((assignee) => assignee === currentUser?.id))
+          mutate(USER_ISSUE(workspaceSlug as string));
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        if (payload.parent_id && payload.parent_id !== "") mutate(SUB_ISSUES(payload.parent_id));
       })
       .catch((err) => {
         setToastAlert({
@@ -325,7 +322,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       });
   };
 
-  const updateIssue = async (payload: Partial<IIssue>) => {
+  const updateIssue = async (payload: Partial<TIssue>) => {
     if (!workspaceSlug || !dataIdToUpdate || !data) return;
 
     await currentIssueStore
@@ -347,7 +344,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -365,18 +362,17 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IIssue>) => {
+  const handleFormSubmit = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !dataIdToUpdate || !currentStore) return;
 
-    const payload: Partial<IIssue> = {
+    const payload: Partial<TIssue> = {
       ...formData,
-      description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
 
@@ -386,7 +382,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (onSubmit) await onSubmit(payload);
   };
 
-  if (!projects || projects.length === 0) return null;
+  if (!workspaceProjectIds || workspaceProjectIds.length === 0) return null;
 
   return (
     <>

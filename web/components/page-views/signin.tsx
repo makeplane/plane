@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useUser } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import { SignInRoot } from "components/account";
@@ -15,11 +14,11 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 export type AuthType = "sign-in" | "sign-up";
 
 export const SignInView = observer(() => {
-  // store
+  // store hooks
   const {
-    user: { currentUser },
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
+  const { currentUser } = useUser();
   // sign in redirection hook
   const { isRedirecting, handleRedirection } = useSignInRedirection();
 

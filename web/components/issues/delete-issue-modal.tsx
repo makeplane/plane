@@ -6,25 +6,36 @@ import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import type { IIssue } from "types";
+import { useIssues } from "hooks/store/use-issues";
+import { TIssue } from "@plane/types";
+import { useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue;
+  dataId?: string | null | undefined;
+  data?: TIssue;
   onSubmit?: () => Promise<void>;
 };
 
 export const DeleteIssueModal: React.FC<Props> = (props) => {
-  const { data, isOpen, handleClose, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, onSubmit } = props;
+
+  const { issueMap } = useIssues();
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const { setToastAlert } = useToast();
+  // hooks
+  const { getProjectById } = useProject();
 
   useEffect(() => {
     setIsDeleteLoading(false);
   }, [isOpen]);
+
+  if (!dataId && !data) return null;
+
+  const issue = data ? data : issueMap[dataId!];
 
   const onClose = () => {
     setIsDeleteLoading(false);
@@ -93,7 +104,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(issue?.project_id)?.identifier}-{issue?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This action cannot be
                       undone.

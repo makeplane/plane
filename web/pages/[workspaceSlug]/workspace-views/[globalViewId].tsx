@@ -6,7 +6,7 @@ import { GlobalViewsHeader } from "components/workspace";
 import { AllIssueLayoutRoot } from "components/issues";
 import { GlobalIssuesHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const GlobalViewIssuesPage: NextPageWithLayout = () => (
   <div className="h-full overflow-hidden bg-custom-background-100">

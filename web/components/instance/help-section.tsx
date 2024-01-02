@@ -1,10 +1,10 @@
 import { FC, useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
 import Link from "next/link";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
+// hooks
+import { useApplication } from "hooks/store";
+// icons
 import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
 import packageJson from "package.json";
@@ -39,7 +39,7 @@ export const InstanceHelpSection: FC = () => {
   // store
   const {
     theme: { sidebarCollapsed, toggleSidebar },
-  } = useMobxStore();
+  } = useApplication();
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 

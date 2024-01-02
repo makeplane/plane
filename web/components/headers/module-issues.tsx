@@ -1,9 +1,17 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import {
+  useApplication,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -16,36 +24,65 @@ import { ArrowRight, Plus } from "lucide-react";
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+
+const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getModuleById } = useModule();
+  // derived values
+  const moduleDetail = getModuleById(moduleId);
+
+  if (!moduleDetail) return null;
+
+  return (
+    <CustomMenu.MenuItem
+      key={moduleDetail.id}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${moduleDetail.id}`)}
+    >
+      <div className="flex items-center gap-1.5">
+        <DiceIcon className="h-3 w-3" />
+        {truncateText(moduleDetail.name, 40)}
+      </div>
+    </CustomMenu.MenuItem>
+  );
+};
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     moduleId: string;
   };
-
+  // store hooks
   const {
-    module: moduleStore,
-    project: projectStore,
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    projectLabel: { projectLabels },
-    moduleIssuesFilter: { issueFilters, updateFilters },
-    user: { currentProjectRole },
-  } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.MODULE);
+  const { projectModuleIds, getModuleById } = useModule();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const {
+    project: { projectLabels },
+  } = useLabel();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
 
@@ -59,7 +96,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -78,7 +115,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -86,7 +123,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -94,16 +131,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
-  const modulesList = projectId ? moduleStore.modules[projectId.toString()] : undefined;
-  const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
-
+  // derived values
+  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -151,16 +187,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   width="auto"
                   placement="bottom-start"
                 >
-                  {modulesList?.map((module) => (
-                    <CustomMenu.MenuItem
-                      key={module.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <DiceIcon className="h-3 w-3" />
-                        {truncateText(module.name, 40)}
-                      </div>
-                    </CustomMenu.MenuItem>
+                  {projectModuleIds?.map((moduleId) => (
+                    <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
                   ))}
                 </CustomMenu>
               }
@@ -180,9 +208,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectLabels ?? undefined}
-              members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+              labels={projectLabels}
+              memberIds={projectMemberIds ?? undefined}
+              states={projectStates}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -205,7 +233,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("MODULE_PAGE_HEADER");
-                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.MODULE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
+import { useApplication, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -32,13 +31,11 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import {
   findHowManyDaysLeft,
   isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDate,
-  renderShortMonthDate,
+  renderFormattedPayloadDate,
+  renderFormattedDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle, IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { ICycle } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys
@@ -55,20 +52,21 @@ const cycleService = new CycleService();
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { cycleId, handleClose } = props;
-
+  // states
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
-
+  // store hooks
   const {
-    cycle: cycleDetailsStore,
-    cycleIssuesFilter: { issueFilters, updateFilters },
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getCycleById, updateCycleDetails } = useCycle();
 
-  const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
+  const cycleDetails = getCycleById(cycleId);
 
   const { setToastAlert } = useToast();
 
@@ -84,7 +82,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    cycleDetailsStore.patchCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
   };
 
   const handleCopyText = () => {
@@ -141,8 +139,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
         if (isDateValidForExistingCycle) {
           submitChanges({
-            start_date: renderDateFormat(`${watch("start_date")}`),
-            end_date: renderDateFormat(`${watch("end_date")}`),
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
           });
           setToastAlert({
             type: "success",
@@ -168,8 +166,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
       if (isDateValid) {
         submitChanges({
-          start_date: renderDateFormat(`${watch("start_date")}`),
-          end_date: renderDateFormat(`${watch("end_date")}`),
+          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
         });
         setToastAlert({
           type: "success",
@@ -209,8 +207,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
         if (isDateValidForExistingCycle) {
           submitChanges({
-            start_date: renderDateFormat(`${watch("start_date")}`),
-            end_date: renderDateFormat(`${watch("end_date")}`),
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
           });
           setToastAlert({
             type: "success",
@@ -236,8 +234,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
       if (isDateValid) {
         submitChanges({
-          start_date: renderDateFormat(`${watch("start_date")}`),
-          end_date: renderDateFormat(`${watch("end_date")}`),
+          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
         });
         setToastAlert({
           type: "success",
@@ -255,24 +253,25 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     }
   };
 
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+  // TODO: refactor this
+  // const handleFiltersUpdate = useCallback(
+  //   (key: keyof IIssueFilterOptions, value: string | string[]) => {
+  //     if (!workspaceSlug || !projectId) return;
+  //     const newValues = issueFilters?.filters?.[key] ?? [];
 
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
+  //     if (Array.isArray(value)) {
+  //       value.forEach((val) => {
+  //         if (!newValues.includes(val)) newValues.push(val);
+  //       });
+  //     } else {
+  //       if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+  //       else newValues.push(value);
+  //     }
 
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
-    },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
-  );
+  //     updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
+  //   },
+  //   [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
+  // );
 
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
@@ -301,9 +300,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const endDate = new Date(watch("end_date") ?? cycleDetails.end_date ?? "");
   const startDate = new Date(watch("start_date") ?? cycleDetails.start_date ?? "");
-
-  const areYearsEqual =
-    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
@@ -396,19 +392,17 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="relative flex w-1/2 items-center rounded-sm">
               <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
+                  className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                     isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={isCompleted || !isEditingAllowed}
                 >
                   <span
-                    className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
+                    className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
                       watch("start_date") ? "" : "text-custom-text-400"
                     }`}
                   >
-                    {areYearsEqual
-                      ? renderShortDate(startDate, "No date selected")
-                      : renderShortMonthDate(startDate, "No date selected")}
+                    {renderFormattedDate(startDate) ?? "No date selected"}
                   </span>
                 </Popover.Button>
 
@@ -450,19 +444,17 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
+                    className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                       isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={isCompleted || !isEditingAllowed}
                   >
                     <span
-                      className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
+                      className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
                         watch("end_date") ? "" : "text-custom-text-400"
                       }`}
                     >
-                      {areYearsEqual
-                        ? renderShortDate(endDate, "No date selected")
-                        : renderShortMonthDate(endDate, "No date selected")}
+                      {renderFormattedDate(endDate) ?? "No date selected"}
                     </span>
                   </Popover.Button>
 
@@ -595,9 +587,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                               }}
                               totalIssues={cycleDetails.total_issues}
                               isPeekView={Boolean(peekCycle)}
-                              isCompleted={isCompleted}
-                              filters={issueFilters?.filters}
-                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}

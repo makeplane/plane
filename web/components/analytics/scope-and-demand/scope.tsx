@@ -3,7 +3,7 @@ import { BarGraph, ProfileEmptyState } from "components/ui";
 // image
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // types
-import { IDefaultAnalyticsResponse } from "types";
+import { IDefaultAnalyticsResponse } from "@plane/types";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;

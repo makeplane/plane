@@ -25,9 +25,9 @@ import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // types
-import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
@@ -43,7 +43,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: TUserWorkspaceRole;
+  role: EUserWorkspaceRoles;
   role_active: boolean;
 };
 

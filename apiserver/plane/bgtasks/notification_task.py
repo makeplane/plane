@@ -291,6 +291,9 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                 sender = "in_app:issue_activities:assigned"
 
             for issue_activity in issue_activities_created:
+                # Do not send notification for description update
+                if issue_activity.get("field") == "description":
+                    continue;
                 issue_comment = issue_activity.get("issue_comment")
                 if issue_comment is not None:
                     issue_comment = IssueComment.objects.get(
@@ -341,7 +344,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             .order_by("-created_at")
             .first()
         )
-        
+
         actor = User.objects.get(pk=actor_id)
         
         for mention_id in comment_mentions:

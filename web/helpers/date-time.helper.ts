@@ -1,384 +1,83 @@
-import { format } from "date-fns";
+import { differenceInDays, format, formatDistanceToNow, isAfter, isValid, parseISO } from "date-fns";
 
-export const addDays = ({ date, days }: { date: Date; days: number }): Date => {
-  date.setDate(date.getDate() + days);
-  return date;
+// Format Date Helpers
+/**
+ * @returns {string | null} formatted date in the format of MMM dd, yyyy
+ * @description Returns date in the formatted format
+ * @param {Date | string} date
+ * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
+ */
+export const renderFormattedDate = (date: string | Date): string | null => {
+  if (!date) return null;
+  // Parse the date to check if it is valid
+  const parsedDate = new Date(date);
+  // Check if the parsed date is valid before formatting
+  if (!isValid(parsedDate)) return null; // Return null for invalid dates
+  // Format the date in format (MMM dd, yyyy)
+  const formattedDate = format(parsedDate, "MMM dd, yyyy");
+  return formattedDate;
 };
 
-export const renderDateFormat = (date: string | Date | null | undefined, dayFirst: boolean = false) => {
-  if (!date) return "N/A";
-
-  var d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return dayFirst ? [day, month, year].join("-") : [year, month, day].join("-");
+/**
+ * @returns {string} formatted date in the format of MMM dd
+ * @description Returns date in the formatted format
+ * @param {string | Date} date
+ * @example renderShortDateFormat("2024-01-01") // Jan 01
+ */
+export const renderFormattedDateWithoutYear = (date: string | Date): string => {
+  if (!date) return "";
+  // Parse the date to check if it is valid
+  const parsedDate = new Date(date);
+  // Check if the parsed date is valid before formatting
+  if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
+  // Format the date in short format (MMM dd)
+  const formattedDate = format(parsedDate, "MMM dd");
+  return formattedDate;
 };
 
-export const renderShortNumericDateFormat = (date: string | Date) =>
-  new Date(date).toLocaleDateString("en-UK", {
-    day: "numeric",
-    month: "short",
-  });
-
-export const renderLongDetailDateFormat = (date: string | Date) =>
-  new Date(date).toLocaleDateString("en-UK", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-export const findHowManyDaysLeft = (date: string | Date) => {
-  const today = new Date();
-  const eventDate = new Date(date);
-  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
-  return Math.ceil(timeDiff / (1000 * 3600 * 24));
+/**
+ * @returns {string | null} formatted date in the format of yyyy-mm-dd to be used in payload
+ * @description Returns date in the formatted format to be used in payload
+ * @param {Date | string} date
+ * @example renderFormattedPayloadDate("Jan 01, 20224") // "2024-01-01"
+ */
+export const renderFormattedPayloadDate = (date: Date | string): string | null => {
+  if (!date) return null;
+  // Parse the date to check if it is valid
+  const parsedDate = new Date(date);
+  // Check if the parsed date is valid before formatting
+  if (!isValid(parsedDate)) return null; // Return null for invalid dates
+  // Format the date in payload format (yyyy-mm-dd)
+  const formattedDate = format(parsedDate, "yyyy-MM-dd");
+  return formattedDate;
 };
 
-export const getDatesInRange = (startDate: string | Date, endDate: string | Date) => {
-  startDate = new Date(startDate);
-  endDate = new Date(endDate);
-
-  const date = new Date(startDate.getTime());
-  const dates = [];
-
-  while (date <= endDate) {
-    dates.push(new Date(date));
-    date.setDate(date.getDate() + 1);
-  }
-
-  return dates;
-};
-
-export const timeAgo = (time: any) => {
-  switch (typeof time) {
-    case "number":
-      break;
-    case "string":
-      time = +new Date(time);
-      break;
-    case "object":
-      if (time.constructor === Date) time = time.getTime();
-      break;
-    default:
-      time = +new Date();
-  }
-
-  var time_formats = [
-    [60, "seconds", 1], // 60
-    [120, "1 minute ago", "1 minute from now"], // 60*2
-    [3600, "minutes", 60], // 60*60, 60
-    [7200, "1 hour ago", "1 hour from now"], // 60*60*2
-    [86400, "hours", 3600], // 60*60*24, 60*60
-    [172800, "Yesterday", "Tomorrow"], // 60*60*24*2
-    [604800, "days", 86400], // 60*60*24*7, 60*60*24
-    [1209600, "Last week", "Next week"], // 60*60*24*7*4*2
-    [2419200, "weeks", 604800], // 60*60*24*7*4, 60*60*24*7
-    [4838400, "Last month", "Next month"], // 60*60*24*7*4*2
-    [29030400, "months", 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
-    [58060800, "Last year", "Next year"], // 60*60*24*7*4*12*2
-    [2903040000, "years", 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
-    [5806080000, "Last century", "Next century"], // 60*60*24*7*4*12*100*2
-    [58060800000, "centuries", 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
-  ];
-
-  var seconds = (+new Date() - time) / 1000,
-    token = "ago",
-    list_choice = 1;
-
-  if (seconds == 0) {
-    return "Just now";
-  }
-  if (seconds < 0) {
-    seconds = Math.abs(seconds);
-    token = "from now";
-    list_choice = 2;
-  }
-  var i = 0,
-    format: any[];
-  while ((format = time_formats[i++]))
-    if (seconds < format[0]) {
-      if (typeof format[2] == "string") return format[list_choice];
-      else return Math.floor(seconds / format[2]) + " " + format[1] + " " + token;
-    }
-  return time;
-};
-
-export const formatDateDistance = (date: string | Date) => {
-  const today = new Date();
-  const eventDate = new Date(date);
-  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
-  const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-  if (days < 1) {
-    const hours = Math.ceil(timeDiff / (1000 * 3600));
-    if (hours < 1) {
-      const minutes = Math.ceil(timeDiff / (1000 * 60));
-      if (minutes < 1) {
-        return "Just now";
-      } else {
-        return `${minutes}m`;
-      }
-    } else {
-      return `${hours}h`;
-    }
-  } else if (days < 7) {
-    return `${days}d`;
-  } else if (days < 30) {
-    return `${Math.floor(days / 7)}w`;
-  } else if (days < 365) {
-    return `${Math.floor(days / 30)}m`;
-  } else {
-    return `${Math.floor(days / 365)}y`;
-  }
-};
-
-export const formatLongDateDistance = (date: string | Date) => {
-  const today = new Date();
-  const eventDate = new Date(date);
-  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
-  const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-  if (days < 1) {
-    const hours = Math.ceil(timeDiff / (1000 * 3600));
-    if (hours < 1) {
-      const minutes = Math.ceil(timeDiff / (1000 * 60));
-      if (minutes < 1) {
-        return "Just now";
-      } else {
-        return `${minutes} minutes`;
-      }
-    } else {
-      return `${hours} hours`;
-    }
-  } else if (days < 7) {
-    if (days === 1) return `${days} day`;
-    return `${days} days`;
-  } else if (days < 30) {
-    if (Math.floor(days / 7) === 1) return `${Math.floor(days / 7)} week`;
-    return `${Math.floor(days / 7)} weeks`;
-  } else if (days < 365) {
-    if (Math.floor(days / 30) === 1) return `${Math.floor(days / 30)} month`;
-    return `${Math.floor(days / 30)} months`;
-  } else {
-    if (Math.floor(days / 365) === 1) return `${Math.floor(days / 365)} year`;
-    return `${Math.floor(days / 365)} years`;
-  }
-};
-
-export const renderShortDateWithYearFormat = (date: string | Date, placeholder?: string) => {
-  if (!date || date === "") return null;
-
-  date = new Date(date);
-
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-
-  return isNaN(date.getTime()) ? placeholder ?? "N/A" : ` ${month} ${day}, ${year}`;
-};
-
-export const renderShortDate = (date: string | Date, placeholder?: string) => {
-  if (!date || date === "") return null;
-
-  date = new Date(date);
-
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-
-  return isNaN(date.getTime()) ? placeholder ?? "N/A" : `${day} ${month}`;
-};
-
-export const renderShortMonthDate = (date: string | Date, placeholder?: string) => {
-  if (!date || date === "") return null;
-
-  date = new Date(date);
-
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-
-  return isNaN(date.getTime()) ? placeholder ?? "N/A" : `${month} ${year}`;
-};
-
-export const render12HourFormatTime = (date: string | Date): string => {
+// Format Time Helpers
+/**
+ * @returns {string} formatted date in the format of hh:mm a or HH:mm
+ * @description Returns date in 12 hour format if in12HourFormat is true else 24 hour format
+ * @param {string | Date} date
+ * @param {boolean} timeFormat (optional) // default 24 hour
+ * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
+ * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
+ */
+export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
   if (!date || date === "") return "";
-
-  date = new Date(date);
-
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  let period = "AM";
-
-  if (hours >= 12) {
-    period = "PM";
-
-    if (hours > 12) hours -= 12;
+  // Parse the date to check if it is valid
+  const parsedDate = new Date(date);
+  // Check if the parsed date is valid
+  if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
+  // Format the date in 12 hour format if in12HourFormat is true
+  if (timeFormat === "12-hour") {
+    const formattedTime = format(parsedDate, "hh:mm a");
+    return formattedTime;
   }
-
-  return hours + ":" + (minutes < 10 ? `0${minutes}` : minutes) + " " + period;
+  // Format the date in 24 hour format
+  const formattedTime = format(parsedDate, "HH:mm");
+  return formattedTime;
 };
 
-export const render24HourFormatTime = (date: string | Date): string => {
-  if (!date || date === "") return "";
-
-  date = new Date(date);
-
-  const hours = date.getHours();
-  let minutes: any = date.getMinutes();
-
-  // add leading zero to single digit minutes
-  if (minutes < 10) minutes = "0" + minutes;
-
-  return hours + ":" + minutes;
-};
-
-export const isDateRangeValid = (startDate: string, endDate: string) => new Date(startDate) < new Date(endDate);
-
-export const isDateGreaterThanToday = (dateStr: string) => {
-  const date = new Date(dateStr);
-  const today = new Date();
-  return date > today;
-};
-
-export const renderLongDateFormat = (dateString: string | Date) => {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const monthIndex = date.getMonth();
-  const monthName = monthNames[monthIndex];
-  const suffixes = ["st", "nd", "rd", "th"];
-  let suffix = "";
-  if (day === 1 || day === 21 || day === 31) {
-    suffix = suffixes[0];
-  } else if (day === 2 || day === 22) {
-    suffix = suffixes[1];
-  } else if (day === 3 || day === 23) {
-    suffix = suffixes[2];
-  } else {
-    suffix = suffixes[3];
-  }
-  return `${day}${suffix} ${monthName} ${year}`;
-};
-
-/**
- *
- * @returns {Array} Array of time objects with label and value as keys
- */
-
-export const getTimestampAfterCurrentTime = (): Array<{
-  label: string;
-  value: Date;
-}> => {
-  const current = new Date();
-  const time = [];
-  for (let i = 0; i < 24; i++) {
-    const newTime = new Date(current.getTime() + i * 60 * 60 * 1000);
-    time.push({
-      label: newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      value: newTime,
-    });
-  }
-  return time;
-};
-
-/**
- * @returns {Array} Array of date objects with label and value as keys
- * @description Returns an array of date objects starting from current date to 7 days after
- */
-
-export const getDatesAfterCurrentDate = (): Array<{
-  label: string;
-  value: Date;
-}> => {
-  const current = new Date();
-  const date = [];
-  for (let i = 0; i < 7; i++) {
-    const newDate = new Date(Math.round(current.getTime() / (30 * 60 * 1000)) * 30 * 60 * 1000);
-    date.push({
-      label: newDate.toLocaleDateString([], {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      value: newDate,
-    });
-  }
-  return date;
-};
-
-/**
- * @returns {boolean} true if date is valid
- * @description Returns true if date is valid
- * @param {string} date
- * @example checkIfStringIsDate("2021-01-01") // true
- * @example checkIfStringIsDate("2021-01-32") // false
- */
-
-export const checkIfStringIsDate = (date: string): boolean => new Date(date).toString() !== "Invalid Date";
-
-// return an array of dates starting from 12:00 to 23:30 with 30 minutes interval as dates
-export const getDatesWith30MinutesInterval = (): Array<Date> => {
-  const dates = [];
-  const current = new Date();
-  for (let i = 0; i < 24; i++) {
-    const newDate = new Date(current.getTime() + i * 60 * 60 * 1000);
-    dates.push(newDate);
-  }
-  return dates;
-};
-
-export const getAllTimeIn30MinutesInterval = (): Array<{
-  label: string;
-  value: string;
-}> => [
-  { label: "12:00", value: "12:00" },
-  { label: "12:30", value: "12:30" },
-  { label: "01:00", value: "01:00" },
-  { label: "01:30", value: "01:30" },
-  { label: "02:00", value: "02:00" },
-  { label: "02:30", value: "02:30" },
-  { label: "03:00", value: "03:00" },
-  { label: "03:30", value: "03:30" },
-  { label: "04:00", value: "04:00" },
-  { label: "04:30", value: "04:30" },
-  { label: "05:00", value: "05:00" },
-  { label: "05:30", value: "05:30" },
-  { label: "06:00", value: "06:00" },
-  { label: "06:30", value: "06:30" },
-  { label: "07:00", value: "07:00" },
-  { label: "07:30", value: "07:30" },
-  { label: "08:00", value: "08:00" },
-  { label: "08:30", value: "08:30" },
-  { label: "09:00", value: "09:00" },
-  { label: "09:30", value: "09:30" },
-  { label: "10:00", value: "10:00" },
-  { label: "10:30", value: "10:30" },
-  { label: "11:00", value: "11:00" },
-  { label: "11:30", value: "11:30" },
-];
-
+// Date Difference Helpers
 /**
  * @returns {number} total number of days in range
  * @description Returns total number of days in range
@@ -387,25 +86,73 @@ export const getAllTimeIn30MinutesInterval = (): Array<{
  * @param {boolean} inclusive
  * @example checkIfStringIsDate("2021-01-01", "2021-01-08") // 8
  */
-
-export const findTotalDaysInRange = (startDate: Date | string, endDate: Date | string, inclusive: boolean): number => {
+export const findTotalDaysInRange = (
+  startDate: Date | string,
+  endDate: Date | string,
+  inclusive: boolean = true
+): number => {
   if (!startDate || !endDate) return 0;
-
-  startDate = new Date(startDate);
-  endDate = new Date(endDate);
-
-  // find number of days between startDate and endDate
-  const diffInTime = endDate.getTime() - startDate.getTime();
-  const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
-
-  // if inclusive is true, add 1 to diffInDays
-  if (inclusive) return diffInDays + 1;
-
-  return diffInDays;
+  // Parse the dates to check if they are valid
+  const parsedStartDate = new Date(startDate);
+  const parsedEndDate = new Date(endDate);
+  // Check if the parsed dates are valid before calculating the difference
+  if (!isValid(parsedStartDate) || !isValid(parsedEndDate)) return 0; // Return 0 for invalid dates
+  // Calculate the difference in days
+  const diffInDays = differenceInDays(parsedEndDate, parsedStartDate);
+  // Return the difference in days based on inclusive flag
+  return inclusive ? diffInDays + 1 : diffInDays;
 };
 
-export const getUserTimeZoneFromWindow = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+/**
+ * @returns {number} number of days left from today
+ * @description Returns number of days left from today
+ * @param {string | Date} date
+ * @param {boolean} inclusive (optional) // default true
+ * @example findHowManyDaysLeft("2024-01-01") // 3
+ */
+export const findHowManyDaysLeft = (date: string | Date, inclusive: boolean = true): number => {
+  if (!date) return 0;
+  // Pass the date to findTotalDaysInRange function to find the total number of days in range from today
+  return findTotalDaysInRange(new Date(), date, inclusive);
+};
 
+// Time Difference Helpers
+/**
+ * @returns {string} formatted date in the form of amount of time passed since the event happened
+ * @description Returns time passed since the event happened
+ * @param {string | Date} time
+ * @example calculateTimeAgo("2023-01-01") // 1 year ago
+ */
+export const calculateTimeAgo = (time: string | number | Date | null): string => {
+  if (!time) return "";
+  // Parse the time to check if it is valid
+  const parsedTime = typeof time === "string" || typeof time === "number" ? parseISO(String(time)) : time;
+  if (!parsedTime) return ""; // Return empty string for invalid dates
+  // Format the time in the form of amount of time passed since the event happened
+  const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
+  return distance;
+};
+
+// Date Validation Helpers
+/**
+ * @returns {string} boolean value depending on whether the date is greater than today
+ * @description Returns boolean value depending on whether the date is greater than today
+ * @param {string} dateStr
+ * @example isDateGreaterThanToday("2024-01-01") // true
+ */
+export const isDateGreaterThanToday = (dateStr: string): boolean => {
+  // Return false if dateStr is not present
+  if (!dateStr) return false;
+  // Parse the date to check if it is valid
+  const date = parseISO(dateStr);
+  const today = new Date();
+  // Check if the parsed date is valid
+  if (!isValid(date)) return false; // Return false for invalid dates
+  // Return true if the date is greater than today
+  return isAfter(date, today);
+};
+
+// Week Related Helpers
 /**
  * @returns {number} week number of date
  * @description Returns week number of date
@@ -414,73 +161,11 @@ export const getUserTimeZoneFromWindow = () => Intl.DateTimeFormat().resolvedOpt
  */
 export const getWeekNumberOfDate = (date: Date): number => {
   const currentDate = new Date(date);
-
   // Adjust the starting day to Sunday (0) instead of Monday (1)
   const startDate = new Date(currentDate.getFullYear(), 0, 1);
-
   // Calculate the number of days between currentDate and startDate
   const days = Math.floor((currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
-
   // Adjust the calculation for weekNumber
   const weekNumber = Math.ceil((days + 1) / 7);
-
   return weekNumber;
-};
-
-/**
- * @returns {Date} first date of week
- * @description Returns week number of date
- * @param {Date} date
- * @example getFirstDateOfWeek(35, 2023) // 2023-08-27T00:00:00.000Z
- */
-export const getFirstDateOfWeek = (date: Date): Date => {
-  const year = date.getFullYear();
-  const weekNumber = getWeekNumberOfDate(date);
-
-  const januaryFirst: Date = new Date(year, 0, 1); // January is month 0
-  const daysToAdd: number = (weekNumber - 1) * 7; // Subtract 1 from the week number since weeks are 0-indexed
-  const firstDateOfWeek: Date = new Date(januaryFirst);
-  firstDateOfWeek.setDate(januaryFirst.getDate() + daysToAdd);
-
-  // Adjust the date to Sunday (week start)
-  const dayOfWeek: number = firstDateOfWeek.getDay();
-  firstDateOfWeek.setDate(firstDateOfWeek.getDate() - dayOfWeek); // Move back to Sunday
-
-  return firstDateOfWeek;
-};
-
-/**
- * @returns {string} formatted date in the format of MMM dd, yyyy
- * @description Returns date in the formatted format
- * @param {Date | string} date
- * @example renderFormattedDate("2023-01-01") // Jan 01, 2023
- */
-export const renderFormattedDate = (date: string | Date): string => {
-  if (!date) return "";
-
-  date = new Date(date);
-
-  const formattedDate = format(date, "MMM dd, yyyy");
-
-  return formattedDate;
-};
-
-/**
- * @returns {string | null} formatted date in the format of yyyy-mm-dd to be used in payload
- * @description Returns date in the formatted format to be used in payload
- * @param {Date | string} date
- * @example renderFormattedPayloadDate("2023-01-01") // "2023-01-01"
- */
-export const renderFormattedPayloadDate = (date: Date | string): string | null => {
-  if (!date) return null;
-
-  var d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return [year, month, day].join("-");
 };

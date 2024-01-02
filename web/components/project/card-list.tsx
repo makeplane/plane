@@ -1,7 +1,6 @@
-import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
@@ -10,26 +9,22 @@ import emptyProject from "public/empty-state/empty_project.webp";
 // icons
 import { NewEmptyState } from "components/common/new-empty-state";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
-export interface IProjectCardList {
-  workspaceSlug: string;
-}
-
-export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
-  const { workspaceSlug } = props;
-  // store
+export const ProjectCardList = observer(() => {
+  // store hooks
   const {
-    project: projectStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!projects) {
+  if (!workspaceProjectIds)
     return (
       <Loader className="grid grid-cols-3 gap-4">
         <Loader.Item height="100px" />
@@ -40,19 +35,22 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
         <Loader.Item height="100px" />
       </Loader>
     );
-  }
 
   return (
     <>
-      {projects.length > 0 ? (
+      {workspaceProjectIds.length > 0 ? (
         <div className="h-full w-full overflow-y-auto p-8">
-          {projectStore.searchedProjects.length == 0 ? (
+          {searchedProjects.length == 0 ? (
             <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
           ) : (
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-              {projectStore.searchedProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+              {searchedProjects.map((projectId) => {
+                const projectDetails = getProjectById(projectId);
+
+                if (!projectDetails) return;
+
+                return <ProjectCard key={projectDetails.id} project={projectDetails} />;
+              })}
             </div>
           )}
         </div>
@@ -66,17 +64,13 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
             direction: "right",
             description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  text: "Start your first project",
-                  onClick: () => {
-                    setTrackElement("PROJECTS_EMPTY_STATE");
-                    commandPaletteStore.toggleCreateProjectModal(true);
-                  },
-                }
-              : null
-          }
+          primaryButton={{
+            text: "Start your first project",
+            onClick: () => {
+              setTrackElement("PROJECTS_EMPTY_STATE");
+              commandPaletteStore.toggleCreateProjectModal(true);
+            },
+          }}
           disabled={!isEditingAllowed}
         />
       )}

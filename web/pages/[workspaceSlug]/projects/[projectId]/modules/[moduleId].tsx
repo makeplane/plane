@@ -1,9 +1,8 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useModule } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -16,14 +15,14 @@ import { EmptyState } from "components/common";
 // assets
 import emptyModule from "public/empty-state/module.svg";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ModuleIssuesPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
-  // store
-  const { module: moduleStore } = useMobxStore();
+  // store hooks
+  const { fetchModuleDetails } = useModule();
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -31,7 +30,7 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
   const { error } = useSWR(
     workspaceSlug && projectId && moduleId ? `CURRENT_MODULE_DETAILS_${moduleId.toString()}` : null,
     workspaceSlug && projectId && moduleId
-      ? () => moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
+      ? () => fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 

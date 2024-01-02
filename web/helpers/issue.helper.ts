@@ -3,33 +3,33 @@ import { v4 as uuidv4 } from "uuid";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import {
-  IIssue,
+  TIssue,
   TIssueGroupByOptions,
   TIssueLayouts,
   TIssueOrderByOptions,
   TIssueParams,
   IProject,
   IWorkspace,
-} from "types";
+} from "@plane/types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 type THandleIssuesMutation = (
-  formData: Partial<IIssue>,
+  formData: Partial<TIssue>,
   oldGroupTitle: string,
   selectedGroupBy: TIssueGroupByOptions,
   issueIndex: number,
   orderBy: TIssueOrderByOptions,
   prevData?:
     | {
-        [key: string]: IIssue[];
+        [key: string]: TIssue[];
       }
-    | IIssue[]
+    | TIssue[]
 ) =>
   | {
-      [key: string]: IIssue[];
+      [key: string]: TIssue[];
     }
-  | IIssue[]
+  | TIssue[]
   | undefined;
 
 export const handleIssuesMutation: THandleIssuesMutation = (
@@ -54,10 +54,10 @@ export const handleIssuesMutation: THandleIssuesMutation = (
   } else {
     const oldGroup = prevData[oldGroupTitle ?? ""] ?? [];
 
-    let newGroup: IIssue[] = [];
+    let newGroup: TIssue[] = [];
 
     if (selectedGroupBy === "priority") newGroup = prevData[formData.priority ?? ""] ?? [];
-    else if (selectedGroupBy === "state") newGroup = prevData[formData.state ?? ""] ?? [];
+    else if (selectedGroupBy === "state") newGroup = prevData[formData.state_id ?? ""] ?? [];
 
     const updatedIssue = {
       ...oldGroup[issueIndex],
@@ -73,7 +73,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
         ),
       };
 
-    const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state;
+    const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state_id;
 
     return {
       ...prevData,
@@ -132,8 +132,8 @@ export const handleIssueQueryParamsByLayout = (
 export const createIssuePayload: (
   workspaceDetail: IWorkspace,
   projectDetail: IProject,
-  formData: Partial<IIssue>
-) => IIssue = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<IIssue>) => {
+  formData: Partial<TIssue>
+) => TIssue = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<TIssue>) => {
   const payload = {
     archived_at: null,
     assignee_details: [],
@@ -183,17 +183,17 @@ export const createIssuePayload: (
     tempId: uuidv4(),
     // to be overridden by the form data
     ...formData,
-    assignees: Array.isArray(formData.assignees)
-      ? formData.assignees
-      : formData.assignees && formData.assignees !== "none" && formData.assignees !== null
-        ? [formData.assignees]
-        : [],
-    labels: Array.isArray(formData.labels)
-      ? formData.labels
-      : formData.labels && formData.labels !== "none" && formData.labels !== null
-        ? [formData.labels]
-        : [],
-  } as IIssue;
+    assignee_ids: Array.isArray(formData.assignee_ids)
+      ? formData.assignee_ids
+      : formData.assignee_ids && formData.assignee_ids !== "none" && formData.assignee_ids !== null
+      ? [formData.assignee_ids]
+      : [],
+    label_ids: Array.isArray(formData.label_ids)
+      ? formData.label_ids
+      : formData.label_ids && formData.label_ids !== "none" && formData.label_ids !== null
+      ? [formData.label_ids]
+      : [],
+  } as TIssue;
 
   return payload;
 };

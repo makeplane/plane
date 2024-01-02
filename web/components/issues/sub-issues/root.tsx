@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -12,20 +13,20 @@ import { SubIssuesRootList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
 // ui
 import { CustomMenu } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IUser, IIssue, ISearchIssueResponse } from "types";
+import { IUser, TIssue, ISearchIssueResponse } from "@plane/types";
 // services
 import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface ISubIssuesRoot {
-  parentIssue: IIssue;
+  parentIssue: TIssue;
   user: IUser | undefined;
 }
 
@@ -43,13 +44,14 @@ const issueService = new IssueService();
 
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
-
+  // store hooks
   const {
-    user: { currentProjectRole },
-    issue: { updateIssueStructure },
-    projectIssues: { updateIssue, removeIssue },
-  } = useMobxStore();
-
+    issues: { updateIssue, removeIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -79,8 +81,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const [issueCrudOperation, setIssueCrudOperation] = React.useState<{
     create: { toggle: boolean; issueId: string | null };
     existing: { toggle: boolean; issueId: string | null };
-    edit: { toggle: boolean; issueId: string | null; issue: IIssue | null };
-    delete: { toggle: boolean; issueId: string | null; issue: IIssue | null };
+    edit: { toggle: boolean; issueId: string | null; issue: TIssue | null };
+    delete: { toggle: boolean; issueId: string | null; issue: TIssue | null };
   }>({
     create: {
       toggle: false,
@@ -104,7 +106,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const handleIssueCrudOperation = (
     key: "create" | "existing" | "edit" | "delete",
     issueId: string | null,
-    issue: IIssue | null = null
+    issue: TIssue | null = null
   ) => {
     setIssueCrudOperation({
       ...issueCrudOperation,
@@ -127,10 +129,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     });
   };
 
-  const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
+  const removeIssueFromSubIssues = async (parentIssueId: string, issue: TIssue) => {
     if (!workspaceSlug || !projectId || !parentIssue || !issue?.id) return;
     issueService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null })
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent_id: null })
       .then(async () => {
         if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
         handleIssuesLoader({ key: "delete", issueId: issue?.id });
@@ -162,31 +164,15 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   };
 
   const handleUpdateIssue = useCallback(
-    (issue: IIssue, data: Partial<IIssue>) => {
+    (issue: TIssue, data: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId || !user) return;
 
-      const payload = {
-        ...issue,
-        ...data,
-      };
-
-      updateIssueStructure(null, null, payload);
       updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
+    [projectId, updateIssue, user, workspaceSlug]
   );
 
-  const handleDeleteIssue = useCallback(
-    async (issue: IIssue) => {
-      if (!workspaceSlug || !projectId || !user) return;
-
-      await removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
-      await mutate(SUB_ISSUES(parentIssue?.id));
-    },
-    [removeIssue, projectId, user, workspaceSlug, parentIssue?.id]
-  );
-
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
     if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
@@ -246,7 +232,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               {issuesLoader.visibility.includes(parentIssue?.id) && workspaceSlug && projectId && (
                 <div className="border border-b-0 border-custom-border-100">
                   <SubIssuesRootList
-                    handleDeleteIssue={handleDeleteIssue}
                     workspaceSlug={workspaceSlug.toString()}
                     projectId={projectId.toString()}
                     parentIssue={parentIssue}
@@ -336,7 +321,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
             <CreateUpdateIssueModal
               isOpen={issueCrudOperation?.create?.toggle}
               prePopulateData={{
-                parent: issueCrudOperation?.create?.issueId,
+                parent_id: issueCrudOperation?.create?.issueId,
               }}
               handleClose={() => {
                 mutateSubIssues(issueCrudOperation?.create?.issueId);

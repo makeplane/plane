@@ -1,4 +1,4 @@
-import { IIssueLabelTree } from "types";
+import { IIssueLabelTree } from "@plane/types";
 
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot

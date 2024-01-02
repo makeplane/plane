@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { FilterOption } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "types";
+import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
 // constants
 import { ISSUE_EXTRA_OPTIONS } from "constants/issue";
 

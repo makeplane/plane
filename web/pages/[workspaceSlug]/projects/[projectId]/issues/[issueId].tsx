@@ -15,31 +15,39 @@ import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types
-import { IIssue } from "types";
-import { NextPageWithLayout } from "types/app";
+import { TIssue } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
+import { observer } from "mobx-react-lite";
+import { useIssueDetail } from "hooks/store";
 
-const defaultValues: Partial<IIssue> = {
-  description: "",
+const defaultValues: Partial<TIssue> = {
+  // description: "",
   description_html: "",
   estimate_point: null,
   issue_cycle: null,
   issue_module: null,
   name: "",
   priority: "low",
-  start_date: null,
-  state: "",
-  target_date: null,
+  start_date: undefined,
+  state_id: "",
+  target_date: undefined,
 };
 
 // services
 const issueService = new IssueService();
 
-const IssueDetailsPage: NextPageWithLayout = () => {
+const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId: routeIssueId } = router.query;
+
+  const { issueId, fetchIssue } = useIssueDetail();
+  useEffect(() => {
+    if (!workspaceSlug || !projectId || !routeIssueId) return;
+    fetchIssue(workspaceSlug as string, projectId as string, routeIssueId as string);
+  }, [workspaceSlug, projectId, routeIssueId, fetchIssue]);
 
   const {
     data: issueDetails,
@@ -52,15 +60,15 @@ const IssueDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-  const { reset, control, watch } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<TIssue>({
     defaultValues,
   });
 
   const submitChanges = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate<IIssue>(
+      mutate<TIssue>(
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
           if (!prevData) return prevData;
@@ -73,7 +81,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
         false
       );
 
-      const payload: Partial<IIssue> = {
+      const payload: Partial<TIssue> = {
         ...formData,
       };
 
@@ -115,7 +123,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
           }}
         />
-      ) : issueDetails && projectId ? (
+      ) : issueDetails && projectId && issueId ? (
         <div className="flex h-full overflow-hidden">
           <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
@@ -147,7 +155,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 IssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (

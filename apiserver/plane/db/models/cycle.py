@@ -6,6 +6,47 @@ from django.conf import settings
 from . import ProjectBaseModel
 
 
+def get_default_filters():
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
+
+def get_default_display_filters():
+    return {
+        "group_by": None,
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
+    }
+
+def get_default_display_properties():
+    return {
+        "assignee": True,
+        "attachment_count": True,
+        "created_on": True,
+        "due_date": True,
+        "estimate": True,
+        "key": True,
+        "labels": True,
+        "link": True,
+        "priority": True,
+        "start_date": True,
+        "state": True,
+        "sub_issue_count": True,
+        "updated_on": True,
+    }
+
 class Cycle(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Cycle Name")
     description = models.TextField(verbose_name="Cycle Description", blank=True)
@@ -89,3 +130,28 @@ class CycleFavorite(ProjectBaseModel):
     def __str__(self):
         """Return user and the cycle"""
         return f"{self.user.email} <{self.cycle.name}>"
+
+
+class CycleUserProperties(ProjectBaseModel):
+    cycle = models.ForeignKey(
+        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_user_properties"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="cycle_user_properties",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(default=get_default_display_properties)
+
+
+    class Meta:
+        unique_together = ["cycle", "user"]
+        verbose_name = "Cycle User Property"
+        verbose_name_plural = "Cycle User Properties"
+        db_table = "cycle_user_properties"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.cycle.name} {self.user.email}"

@@ -1,55 +1,47 @@
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues, useModule } from "hooks/store";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
-import { useRouter } from "next/router";
-// types
+import { EIssuesStoreType } from "constants/issue";
 import { EIssueActions } from "../types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 export const ModuleGanttLayout: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { moduleId, workspaceSlug } = router.query;
-
-  const {
-    moduleIssues: moduleIssueStore,
-    moduleIssuesFilter: moduleIssueFilterStore,
-    module: { fetchModuleDetails },
-  } = useMobxStore();
+  const { workspaceSlug, moduleId } = router.query;
+  // store hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { fetchModuleDetails } = useModule();
 
   const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (issue: TIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await moduleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId.toString());
-      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
+      await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
+      fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId.toString());
     },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
+    [EIssueActions.DELETE]: async (issue: TIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      await moduleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, moduleId.toString());
-      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
+      await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
+      fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId.toString());
     },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
+    [EIssueActions.REMOVE]: async (issue: TIssue) => {
+      if (!workspaceSlug || !moduleId || !issue.id) return;
 
-      await moduleIssueStore.removeIssueFromModule(
-        workspaceSlug.toString(),
-        issue.project,
-        moduleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
-      fetchModuleDetails(workspaceSlug.toString(), issue.project, moduleId.toString());
+      await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
+      fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId.toString());
     },
   };
 
   return (
     <BaseGanttRoot
       issueActions={issueActions}
-      issueFiltersStore={moduleIssueFilterStore}
-      issueStore={moduleIssueStore}
+      issueFiltersStore={issuesFilter}
+      issueStore={issues}
       viewId={moduleId?.toString()}
     />
   );

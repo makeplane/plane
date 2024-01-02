@@ -1,12 +1,12 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// swr
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
@@ -14,19 +14,19 @@ import { Spinner } from "@plane/ui";
 // icons
 import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 
 // services
 const workspaceService = new WorkspaceService();
 
-const WorkspaceInvitationPage: NextPageWithLayout = () => {
+const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
-
   const { invitation_id, email, slug } = router.query;
-
-  const { user } = useUser();
+  // store hooks
+  const { currentUser } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
@@ -38,12 +38,12 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
   const handleAccept = () => {
     if (!invitationDetail) return;
     workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+      .joinWorkspace(invitationDetail.workspace_detail.slug, invitationDetail.id, {
         accepted: true,
         email: invitationDetail.email,
       })
       .then(() => {
-        if (email === user?.email) {
+        if (email === currentUser?.email) {
           router.push("/invitations");
         } else {
           router.push("/");
@@ -55,7 +55,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
   const handleReject = () => {
     if (!invitationDetail) return;
     workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+      .joinWorkspace(invitationDetail.workspace_detail.slug, invitationDetail.id, {
         accepted: false,
         email: invitationDetail.email,
       })
@@ -78,7 +78,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
               {invitationDetail.accepted ? (
                 <>
                   <EmptySpace
-                    title={`You are already a member of ${invitationDetail.workspace.name}`}
+                    title={`You are already a member of ${invitationDetail.workspace_detail.name}`}
                     description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                   >
                     <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" action={() => router.push("/")} />
@@ -86,7 +86,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
                 </>
               ) : (
                 <EmptySpace
-                  title={`You have been invited to ${invitationDetail.workspace.name}`}
+                  title={`You have been invited to ${invitationDetail.workspace_detail.name}`}
                   description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                 >
                   <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
@@ -102,7 +102,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
           description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
           link={{ text: "Or start from an empty project", href: "/" }}
         >
-          {!user ? (
+          {!currentUser ? (
             <EmptySpaceItem
               Icon={User2}
               title="Sign in to continue"
@@ -141,7 +141,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
       )}
     </div>
   );
-};
+});
 
 WorkspaceInvitationPage.getLayout = function getLayout(page: ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;

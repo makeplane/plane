@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject, useProjectState, useUser } from "hooks/store";
 // component
 import { SelectMonthModal } from "components/automation";
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
-import { IProject } from "types";
-// fetch keys
-import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { IProject } from "@plane/types";
+// constants
+import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -21,15 +20,16 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   const { handleChange } = props;
   // states
   const [monthModal, setmonthModal] = useState(false);
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
 
-  const { user: userStore, project: projectStore, projectState: projectStateStore } = useMobxStore();
-
-  const userRole = userStore.currentProjectRole;
-  const projectDetails = projectStore.currentProjectDetails;
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
-  const states = projectStateStore.projectStates;
 
-  const options = states
+  const options = projectStates
     ?.filter((state) => state.group === "cancelled")
     .map((state) => ({
       value: state.id,
@@ -44,17 +44,17 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
 
   const multipleOptions = (options ?? []).length > 1;
 
-  const defaultState = states?.find((s) => s.group === "cancelled")?.id || null;
+  const defaultState = projectStates?.find((s) => s.group === "cancelled")?.id || null;
 
-  const selectedOption = states?.find((s) => s.id === projectDetails?.default_state ?? defaultState);
-  const currentDefaultState = states?.find((s) => s.id === defaultState);
+  const selectedOption = projectStates?.find((s) => s.id === currentProjectDetails?.default_state ?? defaultState);
+  const currentDefaultState = projectStates?.find((s) => s.id === defaultState);
 
   const initialValues: Partial<IProject> = {
     close_in: 1,
     default_state: defaultState,
   };
 
-  const isAdmin = userRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <>
@@ -79,9 +79,9 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={projectDetails?.close_in !== 0}
+            value={currentProjectDetails?.close_in !== 0}
             onChange={() =>
-              projectDetails?.close_in === 0
+              currentProjectDetails?.close_in === 0
                 ? handleChange({ close_in: 1, default_state: defaultState })
                 : handleChange({ close_in: 0, default_state: null })
             }
@@ -90,16 +90,18 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
           />
         </div>
 
-        {projectDetails ? (
-          projectDetails.close_in !== 0 && (
+        {currentProjectDetails ? (
+          currentProjectDetails.close_in !== 0 && (
             <div className="ml-12">
               <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
                   <div className="w-1/2 text-sm font-medium">Auto-close issues that are inactive for</div>
                   <div className="w-1/2">
                     <CustomSelect
-                      value={projectDetails?.close_in}
-                      label={`${projectDetails?.close_in} ${projectDetails?.close_in === 1 ? "Month" : "Months"}`}
+                      value={currentProjectDetails?.close_in}
+                      label={`${currentProjectDetails?.close_in} ${
+                        currentProjectDetails?.close_in === 1 ? "Month" : "Months"
+                      }`}
                       onChange={(val: number) => {
                         handleChange({ close_in: val });
                       }}
@@ -118,7 +120,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                           className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
                           onClick={() => setmonthModal(true)}
                         >
-                          Customise Time Range
+                          Customize Time Range
                         </button>
                       </>
                     </CustomSelect>
@@ -129,7 +131,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                   <div className="w-1/2 text-sm font-medium">Auto-close Status</div>
                   <div className="w-1/2 ">
                     <CustomSearchSelect
-                      value={projectDetails?.default_state ?? defaultState}
+                      value={currentProjectDetails?.default_state ?? defaultState}
                       label={
                         <div className="flex items-center gap-2">
                           {selectedOption ? (

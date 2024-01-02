@@ -1,6 +1,6 @@
 import { APIService } from "services/api.service";
 // types
-import { IIssueActivity } from "types";
+import { IIssueActivity } from "@plane/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 

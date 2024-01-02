@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 // icons
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 import {
   Draggable,
   DraggableProvided,
@@ -55,12 +55,14 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
       },
       isVisible: true,
       text: "Edit label",
+      key: "edit_label",
     },
     {
       CustomIcon: Trash2,
       onClick: handleLabelDelete,
       isVisible: true,
       text: "Delete label",
+      key: "delete_label",
     },
   ];
 
