@@ -1428,6 +1428,12 @@ class IssueRelationViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
+        # If the current issue is duplicate of another issue then the current issue's state will be marked as duplicate
+        if relation_type == "duplicate":
+            issue = Issue.objects.get(pk=issue_id)
+            issue.state = State.objects.get(group="cancelled", workspace__slug=slug, project_id=project_id)
+            issue.save(update_fields=["state"])
+
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
@@ -1629,6 +1635,8 @@ class IssueDraftViewSet(BaseViewSet):
                 "default_assignee_id": project.default_assignee_id,
             },
         )
+        if serializer.initial_data.get("name") is not None:
+            serializer.initial_data["name"] = "UNTITLED ISSUE"
 
         if serializer.is_valid():
             serializer.save(is_draft=True)
