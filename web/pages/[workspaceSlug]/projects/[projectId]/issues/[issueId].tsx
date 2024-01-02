@@ -41,13 +41,13 @@ const issueService = new IssueService();
 const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId: routeIssueId } = router.query;
 
-  const issueDetail = useIssueDetail();
+  const { issueId, fetchIssue } = useIssueDetail();
   useEffect(() => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    issueDetail.fetchIssue(workspaceSlug as string, projectId as string, issueId as string);
-  }, [workspaceSlug, projectId, issueId, issueDetail]);
+    if (!workspaceSlug || !projectId || !routeIssueId) return;
+    fetchIssue(workspaceSlug as string, projectId as string, routeIssueId as string);
+  }, [workspaceSlug, projectId, routeIssueId, fetchIssue]);
 
   const {
     data: issueDetails,
@@ -123,7 +123,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
           }}
         />
-      ) : issueDetails && projectId ? (
+      ) : issueDetails && projectId && issueId ? (
         <div className="flex h-full overflow-hidden">
           <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />

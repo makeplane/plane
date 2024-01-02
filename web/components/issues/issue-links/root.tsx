@@ -56,7 +56,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       },
       update: async (linkId: string, data: Partial<TIssueLink>) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) return;
+          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToastAlert({
             message: "The link has been successfully updated",
@@ -74,7 +74,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       },
       remove: async (linkId: string) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) return;
+          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToastAlert({
             message: "The link has been successfully removed",

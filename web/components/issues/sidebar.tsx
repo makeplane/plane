@@ -455,6 +455,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 )}
               </div>
             )}
+
             {showThirdSection && (
               <div className="py-1">
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
@@ -490,6 +491,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             )}
           </div>
+
           {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
             <div className="flex flex-wrap items-start py-2">
               <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">

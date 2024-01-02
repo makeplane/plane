@@ -1,72 +1,42 @@
-import React from "react";
-
-import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
+import { FC, Fragment, Dispatch, SetStateAction, useState } from "react";
+import { AlertTriangle } from "lucide-react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { IssueAttachmentService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { AlertTriangle } from "lucide-react";
 // helper
 import { getFileName } from "helpers/attachment.helper";
 // types
-import type { IIssueAttachment } from "@plane/types";
-// fetch-keys
-import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import type { TIssueAttachment } from "@plane/types";
+import { TIssueAttachmentsList } from "./attachments-list";
 
-type Props = {
+type Props = TIssueAttachmentsList & {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: IIssueAttachment | null;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  data: TIssueAttachment;
 };
 
-// services
-const issueAttachmentService = new IssueAttachmentService();
-
-export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { setToastAlert } = useToast();
+export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
+  const { isOpen, setIsOpen, data, handleAttachmentOperations } = props;
+  // state
+  const [loader, setLoader] = useState(false);
 
   const handleClose = () => {
     setIsOpen(false);
+    setLoader(false);
   };
 
   const handleDeletion = async (assetId: string) => {
-    if (!workspaceSlug || !projectId || !data) return;
-
-    mutate<IIssueAttachment[]>(
-      ISSUE_ATTACHMENTS(issueId as string),
-      (prevData) => (prevData ?? [])?.filter((p) => p.id !== assetId),
-      false
-    );
-
-    await issueAttachmentService
-      .deleteIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, assetId as string)
-      .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "error!",
-          message: "Something went wrong please try again.",
-        });
-      });
+    setLoader(true);
+    handleAttachmentOperations.remove(assetId).finally(() => handleClose());
   };
 
   return (
     data && (
-      <Transition.Root show={isOpen} as={React.Fragment}>
+      <Transition.Root show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
-            as={React.Fragment}
+            as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -80,7 +50,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
           <div className="fixed inset-0 z-20 overflow-y-auto">
             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
               <Transition.Child
-                as={React.Fragment}
+                as={Fragment}
                 enter="ease-out duration-300"
                 enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -118,10 +88,10 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                       tabIndex={1}
                       onClick={() => {
                         handleDeletion(data.id);
-                        handleClose();
                       }}
+                      disabled={loader}
                     >
-                      Delete
+                      {loader ? "Deleting..." : "Delete"}
                     </Button>
                   </div>
                 </Dialog.Panel>

@@ -1,39 +1,29 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { mutate } from "swr";
 import { useDropzone } from "react-dropzone";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
-// services
-import { IssueAttachmentService } from "services/issue";
-// types
-import { IIssueAttachment } from "@plane/types";
-// fetch-keys
-import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // constants
 import { MAX_FILE_SIZE } from "constants/common";
+// types
+import { TAttachmentOperations } from "./root";
+
+type TAttachmentOperationsModal = Exclude<TAttachmentOperations, "remove">;
 
 type Props = {
   disabled?: boolean;
+  handleAttachmentOperations: TAttachmentOperationsModal;
 };
 
-const issueAttachmentService = new IssueAttachmentService();
-
 export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
-  const { disabled = false } = props;
-  // states
-  const [isLoading, setIsLoading] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { disabled = false, handleAttachmentOperations } = props;
   // store hooks
   const {
+    router: { workspaceSlug },
     config: { envConfig },
   } = useApplication();
+  // states
+  const [isLoading, setIsLoading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles[0] || !workspaceSlug) return;
@@ -48,31 +38,7 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
       })
     );
     setIsLoading(true);
-
-    issueAttachmentService
-      .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
-      .then((res) => {
-        mutate<IIssueAttachment[]>(
-          ISSUE_ATTACHMENTS(issueId as string),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
-        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "File added successfully.",
-        });
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-        setToastAlert({
-          type: "error",
-          title: "error!",
-          message: "Something went wrong. please check file type & size (max 5 MB)",
-        });
-      });
+    handleAttachmentOperations.create(formData).finally(() => setIsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
