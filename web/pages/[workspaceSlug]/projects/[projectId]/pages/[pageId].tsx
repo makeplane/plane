@@ -1,18 +1,24 @@
 import React, { useEffect, useRef, useState, ReactElement, useCallback } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR, { MutatorOptions } from "swr";
 import { Controller, useForm } from "react-hook-form";
+import { Sparkle } from "lucide-react";
+import debounce from "lodash/debounce";
+// hooks
+import { useApplication, useIssues, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
 import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
-// hooks
-import useUser from "hooks/use-user";
-import debounce from "lodash/debounce";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IssueService } from "services/issue";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { GptAssistantPopover } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
+import { IssuePeekOverview } from "components/issues/peek-overview";
 import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
@@ -22,18 +28,13 @@ import emptyPage from "public/empty-state/page.svg";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IPage, IIssue } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IPage, TIssue } from "@plane/types";
 // fetch-keys
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { IssuePeekOverview } from "components/issues/peek-overview";
-import { IssueService } from "services/issue";
-import useToast from "hooks/use-toast";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { GptAssistantPopover } from "components/core";
-import { Sparkle } from "lucide-react";
-import { observer } from "mobx-react-lite";
+// constants
+import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
@@ -41,23 +42,29 @@ const pageService = new PageService();
 const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
-  const {
-    projectIssues: { updateIssue },
-    appConfig: { envConfig },
-    user: { currentProjectRole },
-  } = useMobxStore();
-
-  const editorRef = useRef<any>(null);
-
+  // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [gptModalOpen, setGptModal] = useState(false);
-
-  const { setShowAlert } = useReloadConfirmations();
+  // refs
+  const editorRef = useRef<any>(null);
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
+  // store hooks
+  const {
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const {
+    config: { envConfig },
+  } = useApplication();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
 
-  const { user } = useUser();
+  const { setShowAlert } = useReloadConfirmations();
 
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
@@ -101,15 +108,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   );
 
-  const handleUpdateIssue = (issueId: string, data: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId || !user) return;
+  const handleUpdateIssue = (issueId: string, data: Partial<TIssue>) => {
+    if (!workspaceSlug || !projectId || !currentUser) return;
 
     updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
   };
 
   const fetchIssue = async (issueId: string) => {
     const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string);
-    return issue as IIssue;
+    return issue as TIssue;
   };
 
   const issueWidgetClickAction = (issueId: string) => {
@@ -376,15 +383,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const isPageReadOnly =
     pageDetails?.is_locked ||
     pageDetails?.archived_at ||
-    (currentProjectRole && [EUserWorkspaceRoles.VIEWER, EUserWorkspaceRoles.GUEST].includes(currentProjectRole));
+    (currentProjectRole && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(currentProjectRole));
 
-  const isCurrentUserOwner = pageDetails?.owned_by === user?.id;
+  const isCurrentUserOwner = pageDetails?.owned_by === currentUser?.id;
 
   const userCanDuplicate =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
-  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
   const userCanLock =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -521,7 +528,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               projectId={projectId as string}
               issueId={peekIssueId ? (peekIssueId as string) : ""}
               isArchived={false}
-              handleIssue={async (issueToUpdate, action) => {
+              handleIssue={(issueToUpdate) => {
                 if (peekIssueId && typeof peekIssueId === "string") {
                   handleUpdateIssue(peekIssueId, issueToUpdate);
                 }

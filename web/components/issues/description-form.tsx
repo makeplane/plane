@@ -7,10 +7,10 @@ import debounce from "lodash/debounce";
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 // services
 import { FileService } from "services/file.service";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { useMention } from "hooks/store";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -39,16 +39,16 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
-
-  const editorSuggestion = useEditorSuggestions();
-
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // form info
   const {
     handleSubmit,
     watch,
     reset,
     control,
     formState: { errors },
-  } = useForm<IIssue>({
+  } = useForm<TIssue>({
     defaultValues: {
       name: "",
       description_html: "",
@@ -72,7 +72,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   }, [issue.id]); // TODO: verify the exhaustive-deps warning
 
   const handleDescriptionFormSubmit = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
       await handleFormSubmit({
@@ -135,10 +135,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                   debouncedFormSave();
                 }}
                 required
-                className={`min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary ${
-                  !isAllowed ? "hover:cursor-not-allowed" : ""
-                }`}
-                hasError={Boolean(errors?.description)}
+                className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+                hasError={Boolean(errors?.name)}
                 role="textbox"
                 disabled={!isAllowed}
               />
@@ -172,9 +170,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
-              customClassName={
-                isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200 pointer-events-none"
-              }
+              customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
               noBorder={!isAllowed}
               onChange={(description: Object, description_html: string) => {
                 setShowAlert(true);
@@ -182,8 +178,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange(description_html);
                 debouncedFormSave();
               }}
-              mentionSuggestions={editorSuggestion.mentionSuggestions}
-              mentionHighlights={editorSuggestion.mentionHighlights}
+              mentionSuggestions={mentionSuggestions}
+              mentionHighlights={mentionHighlights}
             />
           )}
         />

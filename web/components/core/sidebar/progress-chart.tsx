@@ -5,7 +5,7 @@ import { LineGraph } from "components/ui";
 // helpers
 import { renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 //types
-import { TCompletionChartDistribution } from "types";
+import { TCompletionChartDistribution } from "@plane/types";
 
 type Props = {
   distribution: TCompletionChartDistribution;

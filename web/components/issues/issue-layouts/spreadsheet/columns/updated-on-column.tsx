@@ -1,36 +1,41 @@
 import React from "react";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+// import useSubIssue from "hooks/use-sub-issue";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { useIssueDetail } from "hooks/store";
 
 type Props = {
-  issue: IIssue;
+  issueId: string;
   expandedIssues: string[];
 };
 
 export const SpreadsheetUpdatedOnColumn: React.FC<Props> = (props) => {
-  const { issue, expandedIssues } = props;
+  const { issueId, expandedIssues } = props;
 
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+  const isExpanded = expandedIssues.indexOf(issueId) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  // const { subIssues, isLoading } = useSubIssue(issue.project_id, issue.id, isExpanded);
+  const { subIssues: subIssuesStore, issue } = useIssueDetail();
+
+  const issueDetail = issue.getIssueById(issueId);
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   return (
     <>
-      <div className="flex h-11 w-full items-center justify-center text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80">
-        {renderFormattedDate(issue.updated_at)}
-      </div>
+      {issueDetail && (
+        <div className="flex h-11 w-full items-center justify-center text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80">
+          {renderFormattedDate(issueDetail.updated_at)}
+        </div>
+      )}
 
       {isExpanded &&
-        !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssueId: string) => (
           <div className={`h-11`}>
-            <SpreadsheetUpdatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+            <SpreadsheetUpdatedOnColumn key={subIssueId} issueId={subIssueId} expandedIssues={expandedIssues} />
           </div>
         ))}
     </>

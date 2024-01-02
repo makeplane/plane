@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle, useModule, useProject } from "hooks/store";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -10,16 +10,15 @@ import { NETWORK_CHOICES } from "constants/project";
 
 export const CustomAnalyticsSidebarHeader = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { projectId, cycleId, moduleId } = router.query;
 
-  const { cycle: cycleStore, module: moduleStore, project: projectStore } = useMobxStore();
+  const { getProjectById } = useProject();
+  const { getCycleById } = useCycle();
+  const { getModuleById } = useModule();
 
-  const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
-  const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
 
   return (
     <>

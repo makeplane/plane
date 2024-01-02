@@ -15,7 +15,7 @@ import { Button, Input } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
-import { IUser, IImporterService } from "types";
+import { IUser, IImporterService } from "@plane/types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: IUser | undefined;
+  user: IUser | null;
 };
 
 // services

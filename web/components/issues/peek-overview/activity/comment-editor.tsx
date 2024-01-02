@@ -2,16 +2,16 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Globe2, Lock } from "lucide-react";
+// hooks
+import { useMention } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
-// hooks
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssueActivity } from "types";
+import type { IIssueActivity } from "@plane/types";
 
 const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",
@@ -47,14 +47,14 @@ const fileService = new FileService();
 
 export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   const { disabled = false, onSubmit, showAccessSpecifier = false } = props;
-
+  // refs
   const editorRef = React.useRef<any>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const editorSuggestions = useEditorSuggestions();
-
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -94,8 +94,8 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     customClassName="p-2 h-full"
                     editorContentCustomClassNames="min-h-[35px]"
                     debouncedUpdatesEnabled={false}
-                    mentionSuggestions={editorSuggestions.mentionSuggestions}
-                    mentionHighlights={editorSuggestions.mentionHighlights}
+                    mentionSuggestions={mentionSuggestions}
+                    mentionHighlights={mentionHighlights}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier

@@ -3,39 +3,34 @@ import { useRouter } from "next/router";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCalendarView } from "hooks/store";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // icons
 import { Check, ChevronUp } from "lucide-react";
 // types
-import { TCalendarLayouts } from "types";
+import { TCalendarLayouts } from "@plane/types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
-import { EFilterType } from "store/issues/types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store/issues";
+import { EIssueFilterType } from "constants/issue";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  viewId?: string;
 }
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore } = props;
+  const { issuesFilterStore, viewId } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { calendar: calendarStore } = useMobxStore();
+  const issueCalendarView = useCalendarView();
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -58,15 +53,17 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
       },
     });
 
-    calendarStore.updateCalendarPayload(
-      layout === "month" ? calendarStore.calendarFilters.activeMonthDate : calendarStore.calendarFilters.activeWeekDate
+    issueCalendarView.updateCalendarPayload(
+      layout === "month"
+        ? issueCalendarView.calendarFilters.activeMonthDate
+        : issueCalendarView.calendarFilters.activeWeekDate
     );
   };
 
@@ -75,12 +72,18 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
 
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
-      calendar: {
-        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-        show_weekends: !showWeekends,
+    issuesFilterStore.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.DISPLAY_FILTERS,
+      {
+        calendar: {
+          ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+          show_weekends: !showWeekends,
+        },
       },
-    });
+      viewId
+    );
   };
 
   return (

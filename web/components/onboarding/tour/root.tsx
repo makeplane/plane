@@ -1,14 +1,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { X } from "lucide-react";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // components
 import { TourSidebar } from "components/onboarding";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { X } from "lucide-react";
 // assets
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 import IssuesTour from "public/onboarding/issues.webp";
@@ -78,13 +77,12 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   const { onComplete } = props;
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
-
+  // store hooks
   const {
-    user: userStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  const user = userStore.currentUser;
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { currentUser } = useUser();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];
@@ -99,7 +97,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
-                Welcome to Plane, {user?.first_name} {user?.last_name}
+                Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
               <p className="mt-3 text-sm text-custom-text-200">
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get

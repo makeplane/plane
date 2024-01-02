@@ -3,32 +3,30 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
-import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { createIssuePayload } from "helpers/issue.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  prePopulatedData?: Partial<IIssue>;
-  onSuccess?: (data: IIssue) => Promise<void> | void;
+  prePopulatedData?: Partial<TIssue>;
+  onSuccess?: (data: TIssue) => Promise<void> | void;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -54,23 +52,20 @@ const Inputs = (props: any) => {
 
 export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { prePopulatedData, quickAddCallback, viewId } = props;
-
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  // store
-  const { workspace: workspaceStore } = useMobxStore();
-
-  const { projectDetails } = useProjectDetails();
-
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { currentProjectDetails } = useProject();
+  // form info
   const {
     reset,
     handleSubmit,
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   // ref
   const ref = useRef<HTMLFormElement>(null);
@@ -86,7 +81,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   // derived values
-  const workspaceDetail = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString()!);
+  const workspaceDetail = getWorkspaceBySlug(workspaceSlug?.toString()!);
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
@@ -96,7 +91,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
       setToastAlert({
         type: "error",
@@ -106,13 +101,13 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     });
   }, [errors, setToastAlert]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
+  const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
     // resetting the form so that user can add another issue quickly
     reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
 
-    const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+    const payload = createIssuePayload(workspaceDetail!, currentProjectDetails!, {
       ...(prePopulatedData ?? {}),
       ...formData,
       start_date: renderFormattedPayloadDate(new Date()),
@@ -121,7 +116,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
 
     try {
       if (quickAddCallback) {
-        await quickAddCallback(workspaceSlug, projectId, payload, viewId);
+        await quickAddCallback(workspaceSlug.toString(), projectId.toString(), payload, viewId);
       }
       setToastAlert({
         type: "success",
@@ -151,7 +146,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
           onSubmit={handleSubmit(onSubmitHandler)}
         >
           <div className="h-3 w-3 flex-shrink-0 rounded-full border border-custom-border-1000" />
-          <h4 className="text-xs text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+          <h4 className="text-xs text-custom-text-400">{currentProjectDetails?.identifier ?? "..."}</h4>
           <Inputs register={register} setFocus={setFocus} />
         </form>
       )}

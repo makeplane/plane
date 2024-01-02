@@ -10,26 +10,25 @@ import {
 } from "components/issues";
 import { Spinner, LayersIcon } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "@plane/types";
 import { EIssueActions } from "../types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  issues: IIssue[] | undefined;
-  members?: IUserLite[] | undefined;
+  issues: TIssue[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  quickActions: (issue: IIssue, customActionButton: any) => React.ReactNode; // TODO: replace any with type
-  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
+  quickActions: (issue: TIssue, customActionButton: any) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;
@@ -42,7 +41,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     displayFilters,
     handleDisplayFilterUpdate,
     issues,
-    members,
     labels,
     states,
     quickActions,
@@ -118,7 +116,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     issue ? (
                       <SpreadsheetIssuesColumn
                         key={`${issue?.id}_${index}`}
-                        issue={issue}
+                        issueId={issue.id}
                         expandedIssues={expandedIssues}
                         setExpandedIssues={setExpandedIssues}
                         properties={displayProperties}
@@ -138,7 +136,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
                 handleUpdateIssue={(issue, data) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}
                 issues={issues}
-                members={members}
                 labels={labels}
                 states={states}
               />
@@ -194,7 +191,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate: any, action: EIssueActions) => await handleIssues(issueToUpdate, action)}
+          handleIssue={async (issueToUpdate: any) => await handleIssues(issueToUpdate, EIssueActions.UPDATE)}
         />
       )}
     </div>

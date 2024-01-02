@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // components
 import { NotificationPopover } from "components/notifications";
+// ui
 import { Tooltip } from "@plane/ui";
-// icons
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -36,10 +36,11 @@ const workspaceLinks = (workspaceSlug: string) => [
 ];
 
 export const WorkspaceSidebarMenu = observer(() => {
+  // store hooks
+  const { theme: themeStore } = useApplication();
   const {
-    theme: themeStore,
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

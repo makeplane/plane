@@ -5,7 +5,7 @@ from plane.app.views import (
     IssueViewViewSet,
     GlobalViewViewSet,
     GlobalViewIssuesViewSet,
-    IssueViewFavoriteViewSet,   
+    IssueViewFavoriteViewSet, 
 )
 
 

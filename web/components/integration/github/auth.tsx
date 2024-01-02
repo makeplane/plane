@@ -1,11 +1,11 @@
+import { observer } from "mobx-react-lite";
 // hooks
+import { useApplication } from "hooks/store";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IWorkspaceIntegration } from "types";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IWorkspaceIntegration } from "@plane/types";
 
 type Props = {
   workspaceIntegration: false | IWorkspaceIntegration | undefined;
@@ -13,9 +13,10 @@ type Props = {
 };
 
 export const GithubAuth: React.FC<Props> = observer(({ workspaceIntegration, provider }) => {
+  // store hooks
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
   // hooks
   const { startAuth, isConnecting } = useIntegrationPopup({
     provider,

@@ -1,14 +1,12 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import useSWR from "swr";
-
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // icons
@@ -22,11 +20,12 @@ import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 // services
 const userService = new UserService();
 
-export const ProfileSidebar = () => {
+export const ProfileSidebar = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
-
-  const { user } = useUser();
+  // store hooks
+  const { currentUser } = useUser();
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
@@ -65,7 +64,7 @@ export const ProfileSidebar = () => {
       {userProjectsData ? (
         <>
           <div className="relative h-32">
-            {user?.id === userId && (
+            {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
                   <span className="grid place-items-center text-black">
@@ -256,4 +255,4 @@ export const ProfileSidebar = () => {
       )}
     </div>
   );
-};
+});

@@ -1,73 +1,49 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useMemo } from "react";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store/use-issues";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
+import { BaseKanBanRoot } from "../base-kanban-root";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
-import { BaseKanBanRoot } from "../base-kanban-root";
-import { EProjectStore } from "store/command-palette.store";
-import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IKanBanLayout {}
 
 export const KanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
 
-  const {
-    projectIssues: issueStore,
-    projectIssuesFilter: issuesFilterStore,
-    issueKanBanView: issueKanBanViewStore,
-    kanBanHelpers: kanBanHelperStore,
-  } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug) return;
 
-      await issueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug) return;
 
-      await issueStore.removeIssue(workspaceSlug, issue.project, issue.id);
-    },
-  };
-
-  const handleDragDrop = async (
-    source: any,
-    destination: any,
-    subGroupBy: string | null,
-    groupBy: string | null,
-    issues: IIssueResponse | undefined,
-    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
-  ) =>
-    await kanBanHelperStore.handleDragDrop(
-      source,
-      destination,
-      workspaceSlug,
-      projectId,
-      issueStore,
-      subGroupBy,
-      groupBy,
-      issues,
-      issueWithIds
-    );
+        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
+      },
+    }),
+    [issues, workspaceSlug]
+  );
 
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
-      issuesFilterStore={issuesFilterStore}
-      issueStore={issueStore}
-      kanbanViewStore={issueKanBanViewStore}
+      issues={issues}
+      issuesFilter={issuesFilter}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
-      currentStore={EProjectStore.PROJECT}
-      handleDragDrop={handleDragDrop}
+      currentStore={EIssuesStoreType.PROJECT}
     />
   );
 });

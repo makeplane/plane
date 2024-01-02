@@ -1,28 +1,33 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
-// icons
-import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
+// hooks
+import { useInboxIssues, useProject } from "hooks/store";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { IInboxIssue } from "types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
 type Props = {
-  issue: IInboxIssue;
   active: boolean;
+  issueId: string;
 };
 
 export const InboxIssueCard: React.FC<Props> = (props) => {
-  const { issue, active } = props;
-
+  const { active } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
+  // store hooks
+  const { getIssueById } = useInboxIssues();
+  const { getProjectById } = useProject();
+  // derived values
+  const issue = getIssueById(inboxId as string, props.issueId);
+  const issueStatus = issue?.issue_inbox[0].status;
 
-  const issueStatus = issue.issue_inbox[0].status;
+  if (!issue) return null;
 
   return (
     <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.issue_inbox[0].id}`}>
@@ -34,7 +39,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       >
         <div className="flex items-center gap-x-2">
           <p className="flex-shrink-0 text-xs text-custom-text-200">
-            {issue.project_detail?.identifier}-{issue.sequence_id}
+            {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
           </p>
           <h5 className="truncate text-sm">{issue.name}</h5>
         </div>
@@ -42,10 +47,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
           <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
             <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
           </Tooltip>
-          <Tooltip
-            tooltipHeading="Created on"
-            tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
-          >
+          <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}>
             <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
               <CalendarDays size={12} strokeWidth={1.5} />
               <span>{renderFormattedDate(issue.created_at ?? "")}</span>

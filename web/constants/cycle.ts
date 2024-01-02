@@ -1,6 +1,11 @@
 import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+// types
+import { TCycleLayout, TCycleView } from "@plane/types";
 
-export const CYCLE_TAB_LIST = [
+export const CYCLE_TAB_LIST: {
+  key: TCycleView;
+  name: string;
+}[] = [
   {
     key: "all",
     name: "All",
@@ -23,7 +28,11 @@ export const CYCLE_TAB_LIST = [
   },
 ];
 
-export const CYCLE_VIEW_LAYOUTS = [
+export const CYCLE_VIEW_LAYOUTS: {
+  key: TCycleLayout;
+  icon: any;
+  title: string;
+}[] = [
   {
     key: "list",
     icon: List,

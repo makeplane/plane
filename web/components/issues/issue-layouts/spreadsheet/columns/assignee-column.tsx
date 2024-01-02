@@ -1,60 +1,55 @@
 import React from "react";
-
-// components
-import { IssuePropertyAssignee } from "../../properties";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useIssueDetail } from "hooks/store";
+// components
+import { ProjectMemberDropdown } from "components/dropdowns";
 // types
-import { IIssue, IUserLite } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  members: IUserLite[] | undefined;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
+  issueId: string;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issueId, onChange, expandedIssues, disabled }) => {
+  const isExpanded = expandedIssues.indexOf(issueId) > -1;
 
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues: subIssuesStore, issue } = useIssueDetail();
+
+  const issueDetail = issue.getIssueById(issueId);
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   return (
     <>
-      <IssuePropertyAssignee
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.assignees}
-        defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
-        onChange={(data) => {
-          onChange(issue, { assignees: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { assignees: data });
-          }
-        }}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
-        noLabelBorder
-        hideDropdownArrow
-        disabled={disabled}
-        multiple
-      />
+      {issueDetail && (
+        <div className="h-11 border-b-[0.5px] border-custom-border-200">
+          <ProjectMemberDropdown
+            value={issueDetail?.assignee_ids ?? []}
+            onChange={(data) => onChange(issueDetail, { assignee_ids: data })}
+            projectId={issueDetail?.project_id}
+            disabled={disabled}
+            multiple
+            placeholder="Assignees"
+            buttonVariant={issueDetail.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+            buttonClassName="text-left"
+            buttonContainerClassName="w-full"
+          />
+        </div>
+      )}
 
       {isExpanded &&
-        !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue) => (
-          <div className={`h-11`}>
-            <SpreadsheetAssigneeColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              expandedIssues={expandedIssues}
-              members={members}
-              disabled={disabled}
-            />
-          </div>
+        subIssues.map((subIssueId) => (
+          <SpreadsheetAssigneeColumn
+            key={subIssueId}
+            issueId={subIssueId}
+            onChange={onChange}
+            expandedIssues={expandedIssues}
+            disabled={disabled}
+          />
         ))}
     </>
   );

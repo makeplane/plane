@@ -1,4 +1,7 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -6,17 +9,16 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingHeader } from "components/headers";
 import { EstimatesList } from "components/estimates";
 // types
-import { NextPageWithLayout } from "types/app";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { observer } from "mobx-react-lite";
+import { NextPageWithLayout } from "lib/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>

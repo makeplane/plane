@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer
 from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
@@ -14,6 +14,7 @@ from plane.db.models import (
     ModuleIssue,
     ModuleLink,
     ModuleFavorite,
+    ModuleUserProperties,
 )
 
 
@@ -159,7 +160,7 @@ class ModuleLinkSerializer(BaseSerializer):
         return ModuleLink.objects.create(**validated_data)
 
 
-class ModuleSerializer(BaseSerializer):
+class ModuleSerializer(DynamicBaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     lead_detail = UserLiteSerializer(read_only=True, source="lead")
     members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
@@ -195,4 +196,15 @@ class ModuleFavoriteSerializer(BaseSerializer):
             "workspace",
             "project",
             "user",
+        ]
+
+class ModuleUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = ModuleUserProperties
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "module",
+            "user"
         ]

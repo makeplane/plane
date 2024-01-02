@@ -1,22 +1,25 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import useSWR from "swr";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import useToast from "hooks/use-toast";
 // services
 import { IssueService } from "services/issue";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button, LayersIcon } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
-import { IUser, IIssue } from "types";
+import { IUser, TIssue } from "@plane/types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// store hooks
+import { useProject } from "hooks/store";
+// components
+import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -32,23 +35,17 @@ const issueService = new IssueService();
 
 export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
-  // states
-  const [query, setQuery] = useState("");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store hooks
-  const {
-    user: { hasPermissionToCurrentProject },
-  } = useMobxStore();
+  // hooks
+  const { getProjectById } = useProject();
+  // states
+  const [query, setQuery] = useState("");
   // fetching project issues.
   const { data: issues } = useSWR(
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? PROJECT_ISSUES_LIST(workspaceSlug.toString(), projectId.toString())
-      : null,
-    workspaceSlug && projectId && hasPermissionToCurrentProject
-      ? () => issueService.getIssues(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
+    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
   );
 
   const { setToastAlert } = useToast();
@@ -107,13 +104,15 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
       );
   };
 
-  const filteredIssues: IIssue[] =
+  const projectDetails = getProjectById(projectId as string);
+
+  const filteredIssues: TIssue[] =
     query === ""
       ? Object.values(issues ?? {})
       : Object.values(issues ?? {})?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
-            `${issue.project_detail.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
+            `${projectDetails?.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
         ) ?? [];
 
   return (
@@ -169,34 +168,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                           )}
                           <ul className="text-sm text-custom-text-200">
                             {filteredIssues.map((issue) => (
-                              <Combobox.Option
+                              <BulkDeleteIssuesModalItem
+                                issue={issue}
+                                identifier={projectDetails?.identifier}
+                                delete_issue_ids={watch("delete_issue_ids").includes(issue.id)}
                                 key={issue.id}
-                                as="div"
-                                value={issue.id}
-                                className={({ active }) =>
-                                  `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  }`
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={watch("delete_issue_ids").includes(issue.id)}
-                                    readOnly
-                                  />
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state_detail.color,
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0 text-xs">
-                                    {issue.project_detail.identifier}-{issue.sequence_id}
-                                  </span>
-                                  <span>{issue.name}</span>
-                                </div>
-                              </Combobox.Option>
+                              />
                             ))}
                           </ul>
                         </li>

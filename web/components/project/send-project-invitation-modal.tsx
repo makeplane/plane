@@ -4,28 +4,23 @@ import { observer } from "mobx-react-lite";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useMember, useUser, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
-// services
-import { ProjectMemberService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-// types
-import { IProjectMember, TUserProjectRole } from "types";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { ROLE } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   isOpen: boolean;
-  members: IProjectMember[];
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 };
 
 type member = {
-  role: TUserProjectRole;
+  role: EUserProjectRoles;
   member_id: string;
 };
 
@@ -42,24 +37,26 @@ const defaultValues: FormValues = {
   ],
 };
 
-// services
-const projectMemberService = new ProjectMemberService();
-
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, members, onClose, onSuccess } = props;
-
+  const { isOpen, onClose, onSuccess } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
-    user: { currentProjectRole },
-    workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const {
+    project: { projectMemberIds, bulkAddMembersToProject },
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+  } = useMember();
+  // form info
   const {
     formState: { errors, isSubmitting },
     reset,
@@ -72,8 +69,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     name: "members",
   });
 
-  const uninvitedPeople = workspaceMembers?.filter((person) => {
-    const isInvited = members?.find((member) => member.member.id === person.member.id);
+  const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
+    const isInvited = projectMemberIds?.find((u) => u === userId);
 
     return !isInvited;
   });
@@ -83,15 +80,14 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     const payload = { ...formData };
 
-    await projectMemberService
-      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
+    await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
       .then((res) => {
-        onSuccess();
+        if (onSuccess) onSuccess();
         onClose();
         setToastAlert({
           title: "Success",
           type: "success",
-          message: "Member added successfully",
+          message: "Members added successfully.",
         });
         postHogEventTracker(
           "MEMBER_ADDED",
@@ -102,12 +98,12 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         postHogEventTracker(
           "MEMBER_ADDED",
           {
@@ -116,7 +112,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -152,16 +148,23 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople?.map((person) => ({
-    value: person.member.id,
-    query: person.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={person.member?.display_name} src={person.member?.avatar} />
-        {person.member.display_name} ({person.member.first_name + " " + person.member.last_name})
-      </div>
-    ),
-  }));
+  const options = uninvitedPeople?.map((userId) => {
+    const memberDetails = getWorkspaceMemberDetails(userId);
+
+    return {
+      value: `${memberDetails?.member.id}`,
+      query: `${memberDetails?.member.first_name} ${
+        memberDetails?.member.last_name
+      } ${memberDetails?.member.display_name.toLowerCase()}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+          {memberDetails?.member.display_name} (
+          {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
+        </div>
+      ),
+    };
+  });
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -208,7 +211,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               name={`members.${index}.member_id`}
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
-                                const selectedMember = workspaceMembers?.find((p) => p.member.id === value)?.member;
+                                const selectedMember = getWorkspaceMemberDetails(value);
 
                                 return (
                                   <CustomSearchSelect
@@ -217,8 +220,11 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-2 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
                                         {value && value !== "" ? (
                                           <div className="flex items-center gap-2">
-                                            <Avatar name={selectedMember?.display_name} src={selectedMember?.avatar} />
-                                            {selectedMember?.display_name}
+                                            <Avatar
+                                              name={selectedMember?.member.display_name}
+                                              src={selectedMember?.member.avatar}
+                                            />
+                                            {selectedMember?.member.display_name}
                                           </div>
                                         ) : (
                                           <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
@@ -263,8 +269,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     width="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
-                                      if (parseInt(key) > (currentProjectRole ?? EUserWorkspaceRoles.GUEST))
-                                        return null;
+                                      if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>

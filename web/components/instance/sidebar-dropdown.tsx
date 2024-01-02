@@ -8,8 +8,8 @@ import { mutate } from "swr";
 import { Menu, Transition } from "@headlessui/react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -26,13 +26,14 @@ const PROFILE_LINKS = [
 ];
 
 export const InstanceSidebarDropdown = observer(() => {
+  // router
   const router = useRouter();
-  // store
+  // store hooks
   const {
     theme: { sidebarCollapsed },
-    workspace: { workspaceSlug },
-    user: { signOut, currentUser, currentUserSettings },
-  } = useMobxStore();
+    router: { workspaceSlug },
+  } = useApplication();
+  const { signOut, currentUser, currentUserSettings } = useUser();
   // hooks
   const { setToastAlert } = useToast();
   const { setTheme } = useTheme();

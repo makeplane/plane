@@ -1,4 +1,4 @@
-import { TStateGroups } from "types";
+import { TStateGroups } from "@plane/types";
 
 export const STATE_GROUP_COLORS: {
   [key in TStateGroups]: string;

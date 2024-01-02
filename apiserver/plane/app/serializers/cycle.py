@@ -7,7 +7,7 @@ from .user import UserLiteSerializer
 from .issue import IssueStateSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import Cycle, CycleIssue, CycleFavorite
+from plane.db.models import Cycle, CycleIssue, CycleFavorite, CycleUserProperties
 
 
 class CycleWriteSerializer(BaseSerializer):
@@ -104,5 +104,17 @@ class CycleFavoriteSerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "project",
+            "user",
+        ]
+
+
+class CycleUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = CycleUserProperties
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "cycle"
             "user",
         ]

@@ -1,5 +1,11 @@
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { TIssuePriorities } from "types";
+
+export enum EUserProjectRoles {
+  GUEST = 5,
+  VIEWER = 10,
+  MEMBER = 15,
+  ADMIN = 20,
+}
 
 export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: LucideIcon }[] = [
   {
@@ -23,8 +29,6 @@ export const GROUP_CHOICES = {
 };
 
 export const STATE_GROUP = ["Backlog", "Unstarted", "Started", "Completed", "Cancelled"];
-
-export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", "none"];
 
 export const MONTHS = [
   "January",
@@ -52,7 +56,6 @@ export const PROJECT_AUTOMATION_MONTHS = [
 ];
 
 export const STATE_GROUP_KEYS = ["backlog", "unstarted", "started", "completed", "cancelled"];
-
 
 export const PROJECT_UNSPLASH_COVERS = [
   "https://images.unsplash.com/photo-1531045535792-b515d59c3d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",

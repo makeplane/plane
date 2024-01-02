@@ -44,6 +44,8 @@ from plane.app.serializers import (
     IssueLiteSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
+    ProjectMemberRoleSerializer,
+    WorkspaceUserPropertiesSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
@@ -64,6 +66,7 @@ from plane.db.models import (
     WorkspaceMember,
     CycleIssue,
     IssueReaction,
+    WorkspaceUserProperties
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -71,10 +74,12 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
     WorkspaceViewerPermission,
     WorkspaceUserPermission,
+    ProjectLitePermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
+
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -173,6 +178,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
             WorkspaceMember.objects.filter(
                 workspace=OuterRef("id"),
@@ -208,9 +214,12 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
             .distinct()
         )
-
-        serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        workspaces = WorkSpaceSerializer(
+            self.filter_queryset(workspace),
+            fields=fields if fields else None,
+            many=True,
+        ).data
+        return Response(workspaces, status=status.HTTP_200_OK)
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
@@ -407,7 +416,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
                     # Delete the invitation
                     workspace_invite.delete()
-                
+
                 # Send event
                 workspace_invite_event.delay(
                     user=user.id if user is not None else None,
@@ -537,10 +546,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_members = self.get_queryset()
 
         if workspace_member.role > 10:
-            serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
+            serializer = WorkspaceMemberAdminSerializer(
+                workspace_members,
+                fields=("id", "member", "role"),
+                many=True,
+            )
         else:
             serializer = WorkSpaceMemberSerializer(
                 workspace_members,
+                fields=("id", "member", "role"),
                 many=True,
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -703,6 +717,43 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.is_active = False
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceProjectMemberEndpoint(BaseAPIView):
+    serializer_class = ProjectMemberRoleSerializer
+    model = ProjectMember
+
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        # Fetch all project IDs where the user is involved
+        project_ids = ProjectMember.objects.filter(
+            member=request.user,
+            member__is_bot=False,
+            is_active=True,
+        ).values_list('project_id', flat=True).distinct()
+
+        # Get all the project members in which the user is involved
+        project_members = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member__is_bot=False,
+            project_id__in=project_ids,
+            is_active=True,
+        ).select_related("project", "member", "workspace")
+        project_members = ProjectMemberRoleSerializer(project_members, many=True).data
+
+        project_members_dict = dict()
+
+        # Construct a dictionary with project_id as key and project_members as value
+        for project_member in project_members:
+            project_id = project_member.pop("project")
+            if str(project_id) not in project_members_dict:
+                project_members_dict[str(project_id)] = []
+            project_members_dict[str(project_id)].append(project_member)
+
+        return Response(project_members_dict, status=status.HTTP_200_OK)
 
 
 class TeamMemberViewSet(BaseViewSet):
@@ -1334,8 +1385,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         issues = IssueLiteSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
@@ -1349,3 +1399,30 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
             project__project_projectmember__member=request.user,
         ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
         return Response(labels, status=status.HTTP_200_OK)
+
+
+class WorkspaceUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def patch(self, request, slug):
+        workspace_properties = WorkspaceUserProperties.objects.get(
+            user=request.user,
+            workspace__slug=slug,
+        )
+        
+        workspace_properties.filters = request.data.get("filters", workspace_properties.filters)
+        workspace_properties.display_filters = request.data.get("display_filters", workspace_properties.display_filters)
+        workspace_properties.display_properties = request.data.get("display_properties", workspace_properties.display_properties)
+        workspace_properties.save()
+
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug):
+        workspace_properties, _ = WorkspaceUserProperties.objects.get_or_create(
+            user=request.user, workspace__slug=slug
+        )
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)

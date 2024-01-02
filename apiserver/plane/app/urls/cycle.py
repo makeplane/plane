@@ -7,6 +7,7 @@ from plane.app.views import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleUserPropertiesEndpoint,
 )
 
 
@@ -44,7 +45,7 @@ urlpatterns = [
         name="project-issue-cycle",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:issue_id>/",
         CycleIssueViewSet.as_view(
             {
                 "get": "retrieve",
@@ -84,4 +85,9 @@ urlpatterns = [
         TransferCycleIssueEndpoint.as_view(),
         name="transfer-issues",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/user-properties/",
+        CycleUserPropertiesEndpoint.as_view(),
+        name="cycle-user-filters",
+    )
 ]

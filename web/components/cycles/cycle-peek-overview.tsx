@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle } from "hooks/store";
 // components
 import { CycleDetailsSidebar } from "./sidebar";
 
@@ -14,14 +12,13 @@ type Props = {
 };
 
 export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug }) => {
+  // router
   const router = useRouter();
   const { peekCycle } = router.query;
-
+  // refs
   const ref = React.useRef(null);
-
-  const { cycle: cycleStore } = useMobxStore();
-
-  const { fetchCycleWithId } = cycleStore;
+  // store hooks
+  const { fetchCycleDetails } = useCycle();
 
   const handleClose = () => {
     delete router.query.peekCycle;
@@ -33,8 +30,8 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
 
   useEffect(() => {
     if (!peekCycle) return;
-    fetchCycleWithId(workspaceSlug, projectId, peekCycle.toString());
-  }, [fetchCycleWithId, peekCycle, projectId, workspaceSlug]);
+    fetchCycleDetails(workspaceSlug, projectId, peekCycle.toString());
+  }, [fetchCycleDetails, peekCycle, projectId, workspaceSlug]);
 
   return (
     <>

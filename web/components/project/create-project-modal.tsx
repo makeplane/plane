@@ -2,24 +2,22 @@ import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// icons
 import { X } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
-import { WorkspaceMemberSelect } from "components/workspace";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
+import { WorkspaceMemberDropdown } from "components/dropdowns";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
-// types
-import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
@@ -64,11 +62,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
   const {
-    project: projectStore,
-    workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // toast
@@ -95,11 +95,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     reValidateMode: "onChange",
   });
 
-  const { memberDetails } = useWorkspaceMyMembership();
-
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition onClose={onClose} />;
+  if (currentWorkspaceRole && isOpen)
+    if (currentWorkspaceRole <= EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
 
   const handleClose = () => {
     onClose();
@@ -110,7 +109,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -128,8 +127,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
 
     payload.project_lead = formData.project_lead_member;
 
-    return projectStore
-      .createProject(workspaceSlug.toString(), payload)
+    return createProject(workspaceSlug.toString(), payload)
       .then((res) => {
         const newPayload = {
           ...res,
@@ -138,7 +136,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         postHogEventTracker("PROJECT_CREATED", newPayload, {
           isGrouping: true,
           groupType: "Workspace_metrics",
-          gorupId: res.workspace,
+          groupId: res.workspace,
         });
         setToastAlert({
           type: "success",
@@ -165,7 +163,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             {
               isGrouping: true,
               groupType: "Workspace_metrics",
-              gorupId: currentWorkspace?.id!,
+              groupId: currentWorkspace?.id!,
             }
           );
         });
@@ -309,8 +307,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               message: "Identifier must at least be of 1 character",
                             },
                             maxLength: {
-                              value: 6,
-                              message: "Identifier must at most be of 6 characters",
+                              value: 12,
+                              message: "Identifier must at most be of 12 characters",
                             },
                           }}
                           render={({ field: { value, onChange } }) => (
@@ -350,20 +348,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="flex-shrink-0" tabIndex={4}>
-                        <Controller
-                          name="network"
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
+                      <Controller
+                        name="network"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <div className="flex-shrink-0" tabIndex={4}>
                             <CustomSelect
                               value={value}
                               onChange={onChange}
-                              buttonClassName="border-[0.5px] shadow-md !py-1.5 shadow-none"
                               label={
-                                <div className="flex items-center gap-2 text-custom-text-300">
+                                <div className="flex items-center gap-1">
                                   {currentNetwork ? (
                                     <>
-                                      <currentNetwork.icon className="h-[18px] w-[18px]" />
+                                      <currentNetwork.icon className="h-3 w-3" />
                                       {currentNetwork.label}
                                     </>
                                   ) : (
@@ -371,6 +368,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                                   )}
                                 </div>
                               }
+                              placement="bottom-start"
                               noChevron
                             >
                               {NETWORK_CHOICES.map((network) => (
@@ -384,25 +382,24 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                                 </CustomSelect.Option>
                               ))}
                             </CustomSelect>
-                          )}
-                        />
-                      </div>
-                      <div className="flex-shrink-0" tabIndex={5}>
-                        <Controller
-                          name="project_lead_member"
-                          control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <WorkspaceMemberSelect
-                              value={
-                                workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]
-                              }
+                          </div>
+                        )}
+                      />
+                      <Controller
+                        name="project_lead_member"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <div className="h-7 flex-shrink-0" tabIndex={5}>
+                            <WorkspaceMemberDropdown
+                              value={value}
                               onChange={onChange}
-                              options={workspaceMembers || []}
-                              placeholder="Select Lead"
+                              placeholder="Lead"
+                              multiple={false}
+                              buttonVariant="border-with-text"
                             />
-                          )}
-                        />
-                      </div>
+                          </div>
+                        )}
+                      />
                     </div>
                   </div>
 

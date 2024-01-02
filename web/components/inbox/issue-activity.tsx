@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
 // services
@@ -10,25 +10,26 @@ import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IIssue, IIssueActivity } from "types";
+import { TIssue, IIssueActivity } from "@plane/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
-type Props = { issueDetails: IIssue };
+type Props = { issueDetails: TIssue };
 
 // services
 const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
 export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store hooks
   const {
-    user: userStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
   const { setToastAlert } = useToast();
 
@@ -39,13 +40,11 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
       : null
   );
 
-  const user = userStore.currentUser;
-
   const handleCommentUpdate = async (commentId: string, data: Partial<any>) => {
-    if (!workspaceSlug || !projectId || !issueDetails.id || !user) return;
+    if (!workspaceSlug || !projectId || !issueDetails.id || !currentUser) return;
 
     await issueCommentService
-      .patchIssueComment(workspaceSlug as string, projectId as string, issueDetails.id as string, commentId, data)
+      .patchIssueComment(workspaceSlug.toString(), projectId.toString(), issueDetails.id, commentId, data)
       .then((res) => {
         mutateIssueActivity();
         postHogEventTracker(
@@ -57,19 +56,19 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetails.id || !user) return;
+    if (!workspaceSlug || !projectId || !issueDetails.id || !currentUser) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issueCommentService
-      .deleteIssueComment(workspaceSlug as string, projectId as string, issueDetails.id as string, commentId)
+      .deleteIssueComment(workspaceSlug.toString(), projectId.toString(), issueDetails.id, commentId)
       .then(() => {
         mutateIssueActivity();
         postHogEventTracker(
@@ -80,17 +79,17 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
   };
 
   const handleAddComment = async (formData: IIssueActivity) => {
-    if (!workspaceSlug || !issueDetails || !user) return;
+    if (!workspaceSlug || !issueDetails || !currentUser) return;
 
     await issueCommentService
-      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData)
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project_id, issueDetails.id, formData)
       .then((res) => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         postHogEventTracker(
@@ -102,7 +101,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })

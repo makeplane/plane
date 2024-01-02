@@ -4,14 +4,13 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangleIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
 
 type FormData = {
   projectName: string;
@@ -34,11 +33,13 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
-    user: { leaveProject },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { leaveProject },
+  } = useUser();
   // toast
   const { setToastAlert } = useToast();
 

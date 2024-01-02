@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 
 export interface IUserGreetingsView {
   user: IUser;

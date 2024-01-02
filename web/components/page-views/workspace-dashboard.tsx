@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
@@ -15,60 +15,57 @@ import { NewEmptyState } from "components/common/new-empty-state";
 import emptyProject from "public/empty-state/dashboard_empty_project.webp";
 
 export const WorkspaceDashboardView = observer(() => {
+  // states
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
-
+  // store hooks
   const {
-    user: userStore,
-    project: projectStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement, postHogEventTracker },
-  } = useMobxStore();
-
-  const user = userStore.currentUser;
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-  const workspaceDashboardInfo = userStore.dashboardInfo;
-  // states
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+    eventTracker: { setTrackElement, postHogEventTracker },
+  } = useApplication();
+  const {
+    currentUser,
+    dashboardInfo: workspaceDashboardInfo,
+    fetchUserDashboardInfo,
+    updateTourCompleted,
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { workspaceProjectIds } = useProject();
   // fetch user dashboard info
   useSWR(
     workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
-    workspaceSlug ? () => userStore.fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
+    workspaceSlug ? () => fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
   );
-  const isEditingAllowed = !!userStore.currentWorkspaceRole && userStore.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleTourCompleted = () => {
-    userStore
-      .updateTourCompleted()
+    updateTourCompleted()
       .then(() => {
         postHogEventTracker("USER_TOUR_COMPLETE", {
-          user_id: user?.id,
-          email: user?.email,
+          user_id: currentUser?.id,
+          email: currentUser?.email,
           state: "SUCCESS",
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
   return (
     <>
-      {/* {isProductUpdatesModalOpen && (
-        <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
-      )} */}
-      {user && !user.is_tour_completed && (
+      {currentUser && !currentUser.is_tour_completed && (
         <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
       <div className="space-y-8 p-8">
-        {user && <UserGreetingsView user={user} />}
+        {currentUser && <UserGreetingsView user={currentUser} />}
 
-        {projects ? (
-          projects.length > 0 ? (
+        {workspaceProjectIds ? (
+          workspaceProjectIds.length > 0 ? (
             <div className="flex flex-col gap-8">
               <IssuesStats data={workspaceDashboardInfo} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -92,17 +89,13 @@ export const WorkspaceDashboardView = observer(() => {
                 direction: "right",
                 description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
               }}
-              primaryButton={
-                isEditingAllowed
-                  ? {
-                      text: "Build your first project",
-                      onClick: () => {
-                        setTrackElement("DASHBOARD_PAGE");
-                        commandPaletteStore.toggleCreateProjectModal(true);
-                      },
-                    }
-                  : null
-              }
+              primaryButton={{
+                text: "Build your first project",
+                onClick: () => {
+                  setTrackElement("DASHBOARD_PAGE");
+                  commandPaletteStore.toggleCreateProjectModal(true);
+                },
+              }}
               disabled={!isEditingAllowed}
             />
           )

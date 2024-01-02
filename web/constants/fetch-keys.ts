@@ -1,5 +1,5 @@
 import { objToQueryParams } from "helpers/string.helper";
-import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
+import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {

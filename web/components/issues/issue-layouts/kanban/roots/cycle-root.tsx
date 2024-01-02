@@ -1,17 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues } from "hooks/store";
 // ui
 import { CycleIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EProjectStore } from "store/command-palette.store";
-import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface ICycleKanBanLayout {}
 
@@ -20,78 +19,42 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   // store
-  const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    cycleIssueKanBanView: cycleIssueKanBanViewStore,
-    kanBanHelpers: kanBanHelperStore,
-    cycle: { fetchCycleWithId },
-  } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, cycleId.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, cycleId.toString());
+      },
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.removeIssueFromCycle(
-        workspaceSlug.toString(),
-        issue.project,
-        cycleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
-    },
-  };
-
-  const handleDragDrop = async (
-    source: any,
-    destination: any,
-    subGroupBy: string | null,
-    groupBy: string | null,
-    issues: IIssueResponse | undefined,
-    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
-  ) => {
-    if (workspaceSlug && projectId && cycleId)
-      return await kanBanHelperStore.handleDragDrop(
-        source,
-        destination,
-        workspaceSlug.toString(),
-        projectId.toString(),
-        cycleIssueStore,
-        subGroupBy,
-        groupBy,
-        issues,
-        issueWithIds,
-        cycleId.toString()
-      );
-  };
+        await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, cycleId.toString(), issue.id);
+      },
+    }),
+    [issues, workspaceSlug, cycleId]
+  );
 
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
-      issueStore={cycleIssueStore}
-      issuesFilterStore={cycleIssueFilterStore}
-      kanbanViewStore={cycleIssueKanBanViewStore}
+      issues={issues}
+      issuesFilter={issuesFilter}
       showLoader={true}
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString() ?? ""}
-      currentStore={EProjectStore.CYCLE}
-      handleDragDrop={handleDragDrop}
-      addIssuesToView={(issues: string[]) =>
-        cycleIssueStore.addIssueToCycle(workspaceSlug?.toString() ?? "", cycleId?.toString() ?? "", issues)
-      }
+      currentStore={EIssuesStoreType.CYCLE}
+      addIssuesToView={(issueIds: string[]) => {
+        if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+        return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+      }}
     />
   );
 });

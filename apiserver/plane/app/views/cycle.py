@@ -14,7 +14,7 @@ from django.db.models import (
     Case,
     When,
     Value,
-    CharField
+    CharField,
 )
 from django.core import serializers
 from django.utils import timezone
@@ -33,8 +33,9 @@ from plane.app.serializers import (
     CycleFavoriteSerializer,
     IssueStateSerializer,
     CycleWriteSerializer,
+    CycleUserPropertiesSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
 from plane.db.models import (
     User,
     Cycle,
@@ -44,6 +45,7 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     Label,
+    CycleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -164,23 +166,18 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
-                        then=Value("CURRENT")
+                        Q(start_date__lte=timezone.now())
+                        & Q(end_date__gte=timezone.now()),
+                        then=Value("CURRENT"),
                     ),
-                    When(
-                        start_date__gt=timezone.now(),
-                        then=Value("UPCOMING")
-                    ),
-                    When(
-                        end_date__lt=timezone.now(),
-                        then=Value("COMPLETED")
-                    ),
+                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
+                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),
-                        then=Value("DRAFT")
+                        then=Value("DRAFT"),
                     ),
-                    default=Value("DRAFT"), 
-                    output_field=CharField(), 
+                    default=Value("DRAFT"),
+                    output_field=CharField(),
                 )
             )
             .prefetch_related(
@@ -202,6 +199,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
         queryset = queryset.order_by("-is_favorite", "-created_at")
 
@@ -307,44 +305,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
 
             return Response(data, status=status.HTTP_200_OK)
 
-        # Upcoming Cycles
-        if cycle_view == "upcoming":
-            queryset = queryset.filter(start_date__gt=timezone.now())
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Completed Cycles
-        if cycle_view == "completed":
-            queryset = queryset.filter(end_date__lt=timezone.now())
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Draft Cycles
-        if cycle_view == "draft":
-            queryset = queryset.filter(
-                end_date=None,
-                start_date=None,
-            )
-
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Incomplete Cycles
-        if cycle_view == "incomplete":
-            queryset = queryset.filter(
-                Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
-            )
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # If no matching view is found return all cycles
-        return Response(
-            CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-        )
+        cycles = CycleSerializer(queryset, many=True).data
+        return Response(cycles, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         if (
@@ -576,7 +538,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(bridge_id=F("issue_cycle__id"))
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
             .select_related("project")
@@ -600,12 +561,10 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
         )
-
-        issues = IssueStateSerializer(
+        serializer = IssueStateSerializer(
             issues, many=True, fields=fields if fields else None
-        ).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
@@ -698,11 +657,13 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def destroy(self, request, slug, project_id, cycle_id, pk):
+    def destroy(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+            issue_id=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            cycle_id=cycle_id,
         )
-        issue_id = cycle_issue.issue_id
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
@@ -712,7 +673,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 }
             ),
             actor_id=str(self.request.user.id),
-            issue_id=str(cycle_issue.issue_id),
+            issue_id=str(issue_id),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
@@ -834,3 +795,39 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
+
+
+class CycleUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def patch(self, request, slug, project_id, cycle_id):
+        cycle_properties = CycleUserProperties.objects.get(
+            user=request.user,
+            cycle_id=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+
+        cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
+        cycle_properties.display_filters = request.data.get(
+            "display_filters", cycle_properties.display_filters
+        )
+        cycle_properties.display_properties = request.data.get(
+            "display_properties", cycle_properties.display_properties
+        )
+        cycle_properties.save()
+
+        serializer = CycleUserPropertiesSerializer(cycle_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug, project_id, cycle_id):
+        cycle_properties, _ = CycleUserProperties.objects.get_or_create(
+            user=request.user,
+            project_id=project_id,
+            cycle_id=cycle_id,
+            workspace__slug=slug,
+        )
+        serializer = CycleUserPropertiesSerializer(cycle_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)

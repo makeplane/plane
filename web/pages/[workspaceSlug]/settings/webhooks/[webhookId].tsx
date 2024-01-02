@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser, useWebhook } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -15,8 +15,8 @@ import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "component
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWebhook } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IWebhook } from "@plane/types";
 
 const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -26,11 +26,16 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, webhookId } = router.query;
   // mobx store
   const {
-    webhook: { currentWebhook, fetchWebhookById, updateWebhook },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWebhook, clearSecretKey, fetchWebhookById, updateWebhook } = useWebhook();
   // toast
   const { setToastAlert } = useToast();
+
+  // TODO: fix this error
+  // useEffect(() => {
+  //   if (isCreated !== "true") clearSecretKey();
+  // }, [clearSecretKey, isCreated]);
 
   const isAdmin = currentWorkspaceRole === 20;
 

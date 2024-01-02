@@ -18,6 +18,8 @@ from plane.app.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
 )
 
 
@@ -91,6 +93,11 @@ urlpatterns = [
         "workspaces/<str:slug>/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),
         name="workspace-member",
+    ),
+    path(
+        "workspaces/<str:slug>/project-members/",
+        WorkspaceProjectMemberEndpoint.as_view(),
+        name="workspace-member-roles",
     ),
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
@@ -195,4 +202,9 @@ urlpatterns = [
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
     ),
+    path(
+        "workspaces/<str:slug>/user-properties/",
+        WorkspaceUserPropertiesEndpoint.as_view(),
+        name="workspace-user-filters",
+    )
 ]

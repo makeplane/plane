@@ -107,7 +107,6 @@ class InboxIssueViewSet(BaseViewSet):
                 project_id=project_id,
             )
             .filter(**filters)
-            .annotate(bridge_id=F("issue_inbox__id"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
@@ -204,9 +203,9 @@ class InboxIssueViewSet(BaseViewSet):
         serializer = IssueStateInboxSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def partial_update(self, request, slug, project_id, inbox_id, pk):
+    def partial_update(self, request, slug, project_id, inbox_id, issue_id):
         inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
         )
         # Get the project member
         project_member = ProjectMember.objects.get(
@@ -316,19 +315,16 @@ class InboxIssueViewSet(BaseViewSet):
                 InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK
             )
 
-    def retrieve(self, request, slug, project_id, inbox_id, pk):
-        inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
-        )
+    def retrieve(self, request, slug, project_id, inbox_id, issue_id):
         issue = Issue.objects.get(
-            pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
+            pk=issue_id, workspace__slug=slug, project_id=project_id
         )
         serializer = IssueStateInboxSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, slug, project_id, inbox_id, pk):
+    def destroy(self, request, slug, project_id, inbox_id, issue_id):
         inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
         )
         # Get the project member
         project_member = ProjectMember.objects.get(
@@ -350,7 +346,7 @@ class InboxIssueViewSet(BaseViewSet):
         if inbox_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
             Issue.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=inbox_issue.issue_id
+                workspace__slug=slug, project_id=project_id, pk=issue_id
             ).delete()
 
         inbox_issue.delete()

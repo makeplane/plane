@@ -3,14 +3,14 @@ import { observer } from "mobx-react-lite";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { Plus, X } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { IWorkspaceBulkInviteFormData, TUserWorkspaceRole } from "types";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +20,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: TUserWorkspaceRole;
+  role: EUserWorkspaceRoles;
 };
 
 type FormValues = {
@@ -40,8 +40,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   const { isOpen, onClose, onSubmit } = props;
   // mobx store
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
   // form info
   const {
     control,
@@ -208,7 +208,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                         Cancel
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-                        {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
+                        {isSubmitting ? "Sending invitation" : "Send invitation"}
                       </Button>
                     </div>
                   </div>

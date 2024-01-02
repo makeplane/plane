@@ -7,7 +7,7 @@ import { LayersIcon, Loader } from "@plane/ui";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import { IIssueLite } from "types";
+import { IIssueLite } from "@plane/types";
 
 type Props = {
   issues: IIssueLite[] | undefined;

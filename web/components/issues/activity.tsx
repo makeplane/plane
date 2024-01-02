@@ -11,7 +11,7 @@ import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity } from "types";
+import { IIssueActivity } from "@plane/types";
 import { History } from "lucide-react";
 
 type Props = {

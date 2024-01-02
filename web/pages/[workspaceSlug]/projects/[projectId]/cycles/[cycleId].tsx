@@ -1,9 +1,8 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useCycle } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -16,27 +15,26 @@ import { EmptyState } from "components/common";
 // assets
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const CycleDetailPage: NextPageWithLayout = () => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
-
-  const { cycle: cycleStore } = useMobxStore();
+  // store hooks
+  const { fetchCycleDetails } = useCycle();
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
   const { error } = useSWR(
-    workspaceSlug && projectId && cycleId ? `CURRENT_CYCLE_DETAILS_${cycleId.toString()}` : null,
+    workspaceSlug && projectId && cycleId ? `CYCLE_DETAILS_${cycleId.toString()}` : null,
     workspaceSlug && projectId && cycleId
-      ? () => cycleStore.fetchCycleWithId(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
+      ? () => fetchCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
-  const toggleSidebar = () => {
-    setValue(`${!isSidebarCollapsed}`);
-  };
+  const toggleSidebar = () => setValue(`${!isSidebarCollapsed}`);
 
   return (
     <>

@@ -12,7 +12,7 @@ import { CreateApiTokenForm, GeneratedTokenDetails } from "components/api-token"
 import { csvDownload } from "helpers/download.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IApiToken } from "types/api_token";
+import { IApiToken } from "@plane/types";
 // fetch-keys
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+// hooks
+import { useApplication } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 import { UserCog2 } from "lucide-react";
@@ -8,17 +10,16 @@ import { UserCog2 } from "lucide-react";
 import instanceSetupDone from "public/instance-setup-done.webp";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export const InstanceSetupDone = () => {
   // states
   const [isRedirecting, setIsRedirecting] = useState(false);
   // next-themes
   const { resolvedTheme } = useTheme();
-  // mobx store
+  // store hooks
   const {
     instance: { fetchInstanceInfo },
-  } = useMobxStore();
+  } = useApplication();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
 

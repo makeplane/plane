@@ -8,14 +8,14 @@ import {
   WorkspaceSidebarQuickAction,
 } from "components/workspace";
 import { ProjectSidebarList } from "components/project";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 
 export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
-  // store
-  const { theme: themStore } = useMobxStore();
+  // store hooks
+  const { theme: themStore } = useApplication();
 
   return (
     <div

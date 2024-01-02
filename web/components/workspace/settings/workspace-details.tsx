@@ -3,11 +3,10 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { FileService } from "services/file.service";
 // hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -17,7 +16,7 @@ import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 
@@ -36,14 +35,15 @@ export const WorkspaceDetails: FC = observer(() => {
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  // store
+  // store hooks
   const {
-    workspace: { currentWorkspace, updateWorkspace },
-    user: { currentWorkspaceRole },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
-  // hooks
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace, updateWorkspace } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {

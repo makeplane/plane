@@ -7,7 +7,7 @@ import { Button, Tooltip } from "@plane/ui";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IApiToken } from "types/api_token";
+import { IApiToken } from "@plane/types";
 
 type Props = {
   handleClose: () => void;

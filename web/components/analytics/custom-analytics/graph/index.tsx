@@ -9,7 +9,7 @@ import { BarGraph } from "components/ui";
 import { findStringWithMostCharacters } from "helpers/array.helper";
 import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 
 type Props = {
   analytics: IAnalyticsResponse;
@@ -101,8 +101,8 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                               ? generateDisplayName(datum.value, analytics, params, "x_axis")[0].toUpperCase()
                               : "?"
                             : datum.value && datum.value !== "None"
-                              ? `${datum.value}`.toUpperCase()[0]
-                              : "?"}
+                            ? `${datum.value}`.toUpperCase()[0]
+                            : "?"}
                         </text>
                       </g>
                     </Tooltip>

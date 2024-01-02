@@ -2,65 +2,50 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // hooks
+import { useModule, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
 import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
-// icons
-import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { IModule } from "types";
 // constants
 import { MODULE_STATUS } from "constants/module";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
-  module: IModule;
+  moduleId: string;
 };
 
 export const ModuleListItem: React.FC<Props> = observer((props) => {
-  const { module } = props;
-
+  const { moduleId } = props;
+  // states
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
-  const { module: moduleStore, user: userStore } = useMobxStore();
-
-  const { currentProjectRole } = userStore;
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
-
-  const endDate = new Date(module.target_date ?? "");
-  const startDate = new Date(module.start_date ?? "");
-
-  const renderDate = module.start_date || module.target_date;
-
-  const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
-
-  const completedModuleCheck = module.status === "completed";
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  // derived values
+  const moduleDetails = getModuleById(moduleId);
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    moduleStore.addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
+    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -74,7 +59,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    moduleStore.removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
+    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -86,7 +71,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -114,9 +99,27 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekModule: module.id },
+      query: { ...query, peekModule: moduleId },
     });
   };
+
+  if (!moduleDetails) return null;
+
+  const completionPercentage =
+    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
+
+  const endDate = new Date(moduleDetails.target_date ?? "");
+  const startDate = new Date(moduleDetails.start_date ?? "");
+
+  const renderDate = moduleDetails.start_date || moduleDetails.target_date;
+
+  // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+
+  const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
+
+  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+
+  const completedModuleCheck = moduleDetails.status === "completed";
 
   return (
     <>
@@ -124,13 +127,13 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         <CreateUpdateModuleModal
           isOpen={editModal}
           onClose={() => setEditModal(false)}
-          data={module}
+          data={moduleDetails}
           projectId={projectId.toString()}
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
-      <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
-      <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
+      <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
+      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project}/modules/${moduleDetails.id}`}>
         <div className="group flex h-16 w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
           <div className="flex w-full items-center gap-3 truncate">
             <div className="flex items-center gap-4 truncate">
@@ -149,8 +152,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   )}
                 </CircularProgressIndicator>
               </span>
-              <Tooltip tooltipContent={module.name} position="top">
-                <span className="truncate text-base font-medium">{module.name}</span>
+              <Tooltip tooltipContent={moduleDetails.name} position="top">
+                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
               </Tooltip>
             </div>
             <button onClick={openModuleOverview} className="z-10 hidden flex-shrink-0 group-hover:flex">
@@ -179,11 +182,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               </span>
             )}
 
-            <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
+            <Tooltip tooltipContent={`${moduleDetails.members_detail.length} Members`}>
               <div className="flex w-16 cursor-default items-center justify-center gap-1">
-                {module.members_detail.length > 0 ? (
+                {moduleDetails.members_detail.length > 0 ? (
                   <AvatarGroup showTooltip={false}>
-                    {module.members_detail.map((member) => (
+                    {moduleDetails.members_detail.map((member) => (
                       <Avatar key={member.id} name={member.display_name} src={member.avatar} />
                     ))}
                   </AvatarGroup>
@@ -196,7 +199,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </Tooltip>
 
             {isEditingAllowed &&
-              (module.is_favorite ? (
+              (moduleDetails.is_favorite ? (
                 <button type="button" onClick={handleRemoveFromFavorites} className="z-[1]">
                   <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
                 </button>

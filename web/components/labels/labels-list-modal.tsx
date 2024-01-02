@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-
+import { Search } from "lucide-react";
+// hooks
+import { useLabel } from "hooks/store";
 // icons
 import { LayerStackIcon } from "@plane/ui";
-import { Search } from "lucide-react";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -21,18 +19,15 @@ type Props = {
 
 export const LabelsListModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, parent } = props;
-
+  // states
+  const [query, setQuery] = useState("");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
+  // store hooks
   const {
-    projectLabel: { projectLabels, fetchProjectLabels, updateLabel },
-  } = useMobxStore();
-
-  // states
-  const [query, setQuery] = useState("");
+    project: { projectLabels, fetchProjectLabels, updateLabel },
+  } = useLabel();
 
   // api call to fetch project details
   useSWR(

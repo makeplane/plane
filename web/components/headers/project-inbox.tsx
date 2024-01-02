@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
@@ -12,13 +12,13 @@ import { CreateInboxIssueModal } from "components/inbox";
 import { renderEmoji } from "helpers/emoji.helper";
 
 export const ProjectInboxHeader: FC = observer(() => {
+  // states
+  const [createIssueModal, setCreateIssueModal] = useState(false);
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  const [createIssueModal, setCreateIssueModal] = useState(false);
-
-  const { project: projectStore } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
+  // store hooks
+  const { currentProjectDetails } = useProject();
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">

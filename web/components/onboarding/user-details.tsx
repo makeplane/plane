@@ -3,14 +3,14 @@ import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Camera, User2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser, useWorkspace } from "hooks/store";
 // components
 import { Button, Input } from "@plane/ui";
 import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
 import { UserImageUploadModal } from "components/core";
 // types
-import { IUser } from "types";
+import { IUser } from "@plane/types";
 // services
 import { FileService } from "services/file.service";
 // assets
@@ -42,13 +42,15 @@ const fileService = new FileService();
 
 export const UserDetails: React.FC<Props> = observer((props) => {
   const { user, setUserName } = props;
+  // states
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  const {
-    user: userStore,
-    workspace: { workspaces },
-  } = useMobxStore();
-  const workspaceName = workspaces ? workspaces[0]?.name : "New Workspace";
+  // store hooks
+  const { updateCurrentUser } = useUser();
+  const { workspaces } = useWorkspace();
+  // derived values
+  const workspaceName = workspaces ? Object.values(workspaces)?.[0]?.name : "New Workspace";
+  // form info
   const {
     getValues,
     handleSubmit,
@@ -74,7 +76,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
       },
     };
 
-    await userStore.updateCurrentUser(payload);
+    await updateCurrentUser(payload);
   };
   const handleDelete = (url: string | null | undefined) => {
     if (!url) return;

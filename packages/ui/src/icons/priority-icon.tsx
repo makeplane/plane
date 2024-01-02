@@ -1,13 +1,16 @@
 import * as React from "react";
-
-// icons
 import { AlertCircle, Ban, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 
-// types
-import { IPriorityIcon } from "./type";
+type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
 
-export const PriorityIcon: React.FC<IPriorityIcon> = ({ priority, className = "", transparentBg = false }) => {
-  if (!className || className === "") className = "h-4 w-4";
+interface IPriorityIcon {
+  className?: string;
+  priority: TIssuePriorities;
+  size?: number;
+}
+
+export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
+  const { priority, className = "", size = 14 } = props;
 
   // Convert to lowercase for string comparison
   const lowercasePriority = priority?.toLowerCase();
@@ -16,31 +19,17 @@ export const PriorityIcon: React.FC<IPriorityIcon> = ({ priority, className = ""
   const getPriorityIcon = (): React.ReactNode => {
     switch (lowercasePriority) {
       case "urgent":
-        return <AlertCircle className={`text-red-500 ${transparentBg ? "" : "p-0.5"} ${className}`} />;
+        return <AlertCircle size={size} className={`text-red-500 ${className}`} />;
       case "high":
-        return <SignalHigh className={`text-orange-500 ${transparentBg ? "" : "pl-1"} ${className}`} />;
+        return <SignalHigh size={size} strokeWidth={3} className={`text-orange-500 ${className}`} />;
       case "medium":
-        return <SignalMedium className={`text-yellow-500 ${transparentBg ? "" : "ml-1.5"} ${className}`} />;
+        return <SignalMedium size={size} strokeWidth={3} className={`text-yellow-500 ${className}`} />;
       case "low":
-        return <SignalLow className={`text-green-500 ${transparentBg ? "" : "ml-2"} ${className}`} />;
+        return <SignalLow size={size} strokeWidth={3} className={`text-custom-primary-100 ${className}`} />;
       default:
-        return <Ban className={`text-custom-text-200 ${transparentBg ? "" : "p-0.5"} ${className}`} />;
+        return <Ban size={size} className={`text-custom-text-200 ${className}`} />;
     }
   };
 
-  return (
-    <>
-      {transparentBg ? (
-        getPriorityIcon()
-      ) : (
-        <div
-          className={`grid h-5 w-5 place-items-center items-center rounded border ${
-            lowercasePriority === "urgent" ? "border-red-500/20 bg-red-500/20" : "border-custom-border-200"
-          }`}
-        >
-          {getPriorityIcon()}
-        </div>
-      )}
-    </>
-  );
+  return <>{getPriorityIcon()}</>;
 };

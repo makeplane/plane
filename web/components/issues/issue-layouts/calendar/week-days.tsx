@@ -5,33 +5,26 @@ import { CalendarDayTile } from "components/issues";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
-import { IIssue } from "types";
-import { IGroupedIssues, IIssueResponse } from "store/issues/types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store/issues";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
-  issues: IIssueResponse | undefined;
-  groupedIssueIds: IGroupedIssues;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issues: TIssueMap | undefined;
+  groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 

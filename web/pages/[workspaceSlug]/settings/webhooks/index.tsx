@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser, useWebhook, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -13,7 +13,7 @@ import { WebhooksList, WebhooksEmptyState, CreateWebhookModal } from "components
 // ui
 import { Button, Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const WebhooksListPage: NextPageWithLayout = observer(() => {
   // states
@@ -23,10 +23,10 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug } = router.query;
 
   const {
-    webhook: { fetchWebhooks, createWebhook, clearSecretKey, webhooks, webhookSecretKey },
-    workspace: { currentWorkspace },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { fetchWebhooks, webhooks, clearSecretKey, webhookSecretKey, createWebhook } = useWebhook();
+  const { currentWorkspace } = useWorkspace();
 
   const isAdmin = currentWorkspaceRole === 20;
 

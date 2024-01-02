@@ -4,7 +4,7 @@ import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 
 export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
   const router = useRouter();

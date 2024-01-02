@@ -4,7 +4,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IUserActivity } from "types";
+import { IUserActivity } from "@plane/types";
 // constants
 import { DAYS, MONTHS } from "constants/project";
 

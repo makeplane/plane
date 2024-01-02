@@ -1,18 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { PlusIcon } from "lucide-react";
 // hooks
+import { useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // types
-import { IIssue, IProject } from "types";
+import { TIssue } from "@plane/types";
 
 const Inputs = (props: any) => {
   const { register, setFocus, projectDetail } = props;
@@ -37,35 +36,34 @@ const Inputs = (props: any) => {
 };
 
 interface IKanBanQuickAddIssueForm {
-  formKey: keyof IIssue;
+  formKey: keyof TIssue;
   groupId?: string;
   subGroupId?: string | null;
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 }
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
   const { formKey, groupId, prePopulatedData, quickAddCallback, viewId } = props;
-
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { getProjectById } = useProject();
 
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
+  const workspaceDetail = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : null;
+  const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
 
   const ref = useRef<HTMLFormElement>(null);
 
@@ -82,14 +80,14 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
     setFocus,
     register,
     formState: { isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
   }, [isOpen, reset]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+  const onSubmitHandler = async (formData: TIssue) => {
+    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
@@ -101,8 +99,8 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
     try {
       quickAddCallback &&
         (await quickAddCallback(
-          workspaceSlug,
-          projectId,
+          workspaceSlug.toString(),
+          projectId.toString(),
           {
             ...payload,
           },

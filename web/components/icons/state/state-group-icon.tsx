@@ -7,7 +7,7 @@ import {
   StateGroupUnstartedIcon,
 } from "components/icons";
 // types
-import { TStateGroups } from "types";
+import { TStateGroups } from "@plane/types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 

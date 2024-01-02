@@ -1,11 +1,14 @@
 import { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+// hooks
+import { useApplication, useProject, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // types
-import { IProject, IWorkspace } from "types";
+import { IProject, IWorkspace } from "@plane/types";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -13,9 +16,6 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { NETWORK_CHOICES } from "constants/project";
 // services
 import { ProjectService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -27,15 +27,15 @@ const projectService = new ProjectService();
 
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
-  // toast
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
+  const { updateProject } = useProject();
+  // toast alert
   const { setToastAlert } = useToast();
-  // form data
+  // form info
   const {
     handleSubmit,
     watch,
@@ -70,11 +70,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     setValue("identifier", formattedValue);
   };
 
-  const updateProject = async (payload: Partial<IProject>) => {
+  const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
 
-    return projectStore
-      .updateProject(workspaceSlug.toString(), project.id, payload)
+    return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         postHogEventTracker(
           "PROJECT_UPDATED",
@@ -82,7 +81,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: res.workspace,
+            groupId: res.workspace,
           }
         );
         setToastAlert({
@@ -100,7 +99,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({
@@ -135,9 +134,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
         .then(async (res) => {
           if (res.exists) setError("identifier", { message: "Identifier already exists" });
-          else await updateProject(payload);
+          else await handleUpdateChange(payload);
         });
-    else await updateProject(payload);
+    else await handleUpdateChange(payload);
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
@@ -242,7 +241,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           />
         </div>
 
-        <div className="flex w-full items-baseline justify-between gap-10">
+        <div className="flex w-full items-center justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Identifier</h4>
             <Controller
@@ -256,8 +255,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   message: "Identifier must at least be of 1 character",
                 },
                 maxLength: {
-                  value: 6,
-                  message: "Identifier must at most be of 6 characters",
+                  value: 12,
+                  message: "Identifier must at most be of 5 characters",
                 },
               }}
               render={({ field: { value, ref } }) => (
@@ -275,7 +274,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
           </div>
 
           <div className="flex w-1/2 flex-col gap-1">
@@ -307,7 +305,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="flex items-center justify-between py-2">
           <>
             <Button variant="primary" type="submit" loading={isSubmitting} disabled={!isAdmin}>
-              {isSubmitting ? "Updating Project..." : "Update Project"}
+              {isSubmitting ? "Updating" : "Update project"}
             </Button>
             <span className="text-sm italic text-custom-sidebar-text-400">
               Created on {renderFormattedDate(project?.created_at)}

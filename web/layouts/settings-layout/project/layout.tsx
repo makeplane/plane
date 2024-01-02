@@ -1,12 +1,15 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import { ProjectSettingsSidebar } from "./sidebar";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { NotAuthorizedView } from "components/auth-screens";
-import { observer } from "mobx-react-lite";
+// ui
 import { Button, LayersIcon } from "@plane/ui";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 export interface IProjectSettingLayout {
   children: ReactNode;
@@ -14,15 +17,15 @@ export interface IProjectSettingLayout {
 
 export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
   const { children } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store hooks
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
-  const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserWorkspaceRoles.VIEWER;
+  const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER;
 
   return restrictViewSettings ? (
     <NotAuthorizedView

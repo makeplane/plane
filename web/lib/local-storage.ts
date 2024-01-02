@@ -1,21 +1,27 @@
-export const getLocalStorage = (key: string) => {
-  if (typeof window === undefined || typeof window === "undefined") return null;
-  try {
+import isEmpty from "lodash/isEmpty";
+
+export const storage = {
+  set: (key: string, value: object | string | boolean): void => {
+    if (typeof window === undefined || typeof window === "undefined" || !key || !value) return undefined;
+    const _value: string | undefined = value
+      ? ["string", "boolean"].includes(typeof value)
+        ? value.toString()
+        : isEmpty(value)
+        ? undefined
+        : JSON.stringify(value)
+      : undefined;
+    if (!_value) return undefined;
+    window.localStorage.setItem(key, _value);
+  },
+
+  get: (key: string): string | undefined => {
+    if (typeof window === undefined || typeof window === "undefined") return undefined;
     const item = window.localStorage.getItem(key);
-    return item ? item : null;
-  } catch (error) {
+    return item ? item : undefined;
+  },
+
+  remove: (key: string): void => {
+    if (typeof window === undefined || typeof window === "undefined" || !key) return undefined;
     window.localStorage.removeItem(key);
-    return null;
-  }
-};
-
-export const setLocalStorage = (key: string, value: any) => {
-  if (key && value) {
-    const _value = value ? (["string", "boolean"].includes(typeof value) ? value : JSON.stringify(value)) : null;
-    if (_value) window.localStorage.setItem(key, _value);
-  }
-};
-
-export const removeLocalStorage = (key: string) => {
-  if (key) window.localStorage.removeItem(key);
+  },
 };

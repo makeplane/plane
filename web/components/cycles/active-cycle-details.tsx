@@ -3,9 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useCycle, useIssues, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
@@ -31,7 +30,9 @@ import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } fro
 import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
+import { EIssuesStoreType } from "constants/issue";
+import { ACTIVE_CYCLE_ISSUES } from "store/issue/cycle";
 
 const stateGroups = [
   {
@@ -67,41 +68,53 @@ interface IActiveCycleDetails {
 }
 
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
+  // router
   const router = useRouter();
-
   const { workspaceSlug, projectId } = props;
 
-  const { cycle: cycleStore, commandPalette: commandPaletteStore } = useMobxStore();
-
+  const {
+    issues: { issues },
+    issueMap,
+  } = useIssues(EIssuesStoreType.CYCLE);
+  // store hooks
+  const {
+    commandPalette: { toggleCreateCycleModal },
+  } = useApplication();
+  const {
+    fetchActiveCycle,
+    currentProjectActiveCycleId,
+    getActiveCycleById,
+    addCycleToFavorites,
+    removeCycleFromFavorites,
+  } = useCycle();
+  const { getProjectStates } = useProjectState();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const { isLoading } = useSWR(
-    workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
-    workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
+    workspaceSlug && projectId ? `PROJECT_ACTIVE_CYCLE_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchActiveCycle(workspaceSlug, projectId) : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId]?.current || null;
-  const cycle = activeCycle ? activeCycle[0] : null;
-  const issues = (cycleStore?.active_cycle_issues as any) || null;
+  const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
+  const issueIds = issues?.[ACTIVE_CYCLE_ISSUES];
 
-  // const { data: issues } = useSWR(
-  //   workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
-  //   workspaceSlug && projectId && cycle?.id
+  // useSWR(
+  //   workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
+  //   workspaceSlug && projectId && cycleId
   //     ? () =>
-  //         cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
-  //           priority: "urgent,high",
-  //         })
+  //     fetchActiveCycleIssues(workspaceSlug, projectId, )
   //     : null
-  // ) as { data: IIssue[] | undefined };
+  // );
 
-  if (!cycle && isLoading)
+  if (!activeCycle && isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />
       </Loader>
     );
 
-  if (!cycle)
+  if (!activeCycle)
     return (
       <div className="grid h-full place-items-center text-center">
         <div className="space-y-2">
@@ -118,7 +131,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
           <button
             type="button"
             className="text-sm text-custom-primary-100 outline-none"
-            onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
+            onClick={() => toggleCreateCycleModal(true)}
           >
             Create a new cycle
           </button>
@@ -126,24 +139,24 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
       </div>
     );
 
-  const endDate = new Date(cycle.end_date ?? "");
-  const startDate = new Date(cycle.start_date ?? "");
+  const endDate = new Date(activeCycle.end_date ?? "");
+  const startDate = new Date(activeCycle.start_date ?? "");
 
   const groupedIssues: any = {
-    backlog: cycle.backlog_issues,
-    unstarted: cycle.unstarted_issues,
-    started: cycle.started_issues,
-    completed: cycle.completed_issues,
-    cancelled: cycle.cancelled_issues,
+    backlog: activeCycle.backlog_issues,
+    unstarted: activeCycle.unstarted_issues,
+    started: activeCycle.started_issues,
+    completed: activeCycle.completed_issues,
+    cancelled: activeCycle.cancelled_issues,
   };
 
-  const cycleStatus = cycle.status.toLocaleLowerCase();
+  const cycleStatus = activeCycle.status.toLocaleLowerCase();
 
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -156,7 +169,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -168,7 +181,10 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
     name: group.title,
-    value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
+    value:
+      activeCycle.total_issues > 0
+        ? ((activeCycle[group.key as keyof ICycle] as number) / activeCycle.total_issues) * 100
+        : 0,
     color: group.color,
   }));
 
@@ -196,8 +212,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       }`}
                     />
                   </span>
-                  <Tooltip tooltipContent={cycle.name} position="top-left">
-                    <h3 className="break-words text-lg font-semibold">{truncateText(cycle.name, 70)}</h3>
+                  <Tooltip tooltipContent={activeCycle.name} position="top-left">
+                    <h3 className="break-words text-lg font-semibold">{truncateText(activeCycle.name, 70)}</h3>
                   </Tooltip>
                 </span>
                 <span className="flex items-center gap-1 capitalize">
@@ -218,19 +234,19 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <RunningIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(activeCycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <AlarmClock className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(activeCycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        {cycle.total_issues - cycle.completed_issues > 0 && (
+                        {activeCycle.total_issues - activeCycle.completed_issues > 0 && (
                           <Tooltip
-                            tooltipContent={`${cycle.total_issues - cycle.completed_issues} more pending ${
-                              cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
+                            tooltipContent={`${activeCycle.total_issues - activeCycle.completed_issues} more pending ${
+                              activeCycle.total_issues - activeCycle.completed_issues === 1 ? "issue" : "issues"
                             }`}
                           >
                             <span>
@@ -244,7 +260,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       cycleStatus
                     )}
                   </span>
-                  {cycle.is_favorite ? (
+                  {activeCycle.is_favorite ? (
                     <button
                       onClick={(e) => {
                         handleRemoveFromFavorites(e);
@@ -278,26 +294,26 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
 
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5 text-custom-text-200">
-                  {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+                  {activeCycle.owned_by.avatar && activeCycle.owned_by.avatar !== "" ? (
                     <img
-                      src={cycle.owned_by.avatar}
+                      src={activeCycle.owned_by.avatar}
                       height={16}
                       width={16}
                       className="rounded-full"
-                      alt={cycle.owned_by.display_name}
+                      alt={activeCycle.owned_by.display_name}
                     />
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
-                      {cycle.owned_by.display_name.charAt(0)}
+                      {activeCycle.owned_by.display_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-custom-text-200">{cycle.owned_by.display_name}</span>
+                  <span className="text-custom-text-200">{activeCycle.owned_by.display_name}</span>
                 </div>
 
-                {cycle.assignees.length > 0 && (
+                {activeCycle.assignees.length > 0 && (
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <AvatarGroup>
-                      {cycle.assignees.map((assignee) => (
+                      {activeCycle.assignees.map((assignee) => (
                         <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
                       ))}
                     </AvatarGroup>
@@ -308,15 +324,15 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               <div className="flex items-center gap-4 text-custom-text-200">
                 <div className="flex gap-2">
                   <LayersIcon className="h-4 w-4 flex-shrink-0" />
-                  {cycle.total_issues} issues
+                  {activeCycle.total_issues} issues
                 </div>
                 <div className="flex items-center gap-2">
                   <StateGroupIcon stateGroup="completed" height="14px" width="14px" />
-                  {cycle.completed_issues} issues
+                  {activeCycle.completed_issues} issues
                 </div>
               </div>
 
-              <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+              <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${activeCycle.id}`}>
                 <span className="w-full rounded-md bg-custom-primary px-4 py-2 text-center text-sm font-medium text-white hover:bg-custom-primary/90">
                   View Cycle
                 </span>
@@ -347,14 +363,14 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       </div>
                     }
                     completed={groupedIssues[group]}
-                    total={cycle.total_issues}
+                    total={activeCycle.total_issues}
                   />
                 ))}
               </div>
             </div>
           </div>
           <div className="h-60 overflow-y-scroll border-custom-border-200">
-            <ActiveCycleProgressStats cycle={cycle} />
+            <ActiveCycleProgressStats cycle={activeCycle} />
           </div>
         </div>
       </div>
@@ -363,9 +379,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
           <div>
             <div className="text-custom-primary">High Priority Issues</div>
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
-              {issues ? (
-                issues.length > 0 ? (
-                  issues.map((issue: any) => (
+              {issueIds ? (
+                issueIds.length > 0 ? (
+                  issueIds.map((issue: any) => (
                     <div
                       key={issue.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
@@ -428,24 +444,33 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             </div>
           </div>
 
-          {issues && issues.length > 0 && (
+          {issueIds && issueIds.length > 0 && (
             <div className="flex items-center justify-between gap-2">
               <div className="h-1 w-full rounded-full bg-custom-background-80">
                 <div
                   className="h-1 rounded-full bg-green-600"
                   style={{
                     width:
-                      issues &&
+                      issueIds &&
                       `${
-                        (issues.filter((issue: any) => issue?.state_detail?.group === "completed")?.length /
-                          issues.length) *
+                        (issueIds.filter((issue: any) => issue?.state_detail?.group === "completed")?.length /
+                          issueIds.length) *
                           100 ?? 0
                       }%`,
                   }}
                 />
               </div>
               <div className="w-16 text-end text-xs text-custom-text-200">
-                {issues?.filter((issue: any) => issue?.state_detail?.group === "completed")?.length} of {issues?.length}
+                of{" "}
+                {
+                  issueIds?.filter(
+                    (issueId) =>
+                      getProjectStates(issueMap[issueId]?.project_id).find(
+                        (issue) => issue.id === issueMap[issueId]?.state_id
+                      )?.group === "completed"
+                  )?.length
+                }{" "}
+                of {issueIds?.length}
               </div>
             </div>
           )}
@@ -466,15 +491,18 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               <span>
                 <LayersIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
               </span>
-              <span>Pending Issues - {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}</span>
+              <span>
+                Pending Issues -{" "}
+                {activeCycle.total_issues - (activeCycle.completed_issues + activeCycle.cancelled_issues)}
+              </span>
             </div>
           </div>
           <div className="relative h-64">
             <ProgressChart
-              distribution={cycle.distribution?.completion_chart ?? {}}
-              startDate={cycle.start_date ?? ""}
-              endDate={cycle.end_date ?? ""}
-              totalIssues={cycle.total_issues}
+              distribution={activeCycle.distribution?.completion_chart ?? {}}
+              startDate={activeCycle.start_date ?? ""}
+              endDate={activeCycle.end_date ?? ""}
+              totalIssues={activeCycle.total_issues}
             />
           </div>
         </div>

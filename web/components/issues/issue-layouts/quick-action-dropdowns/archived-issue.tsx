@@ -40,12 +40,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
-      <CustomMenu
-        placement="bottom-start"
-        customButton={customActionButton}
-        ellipsis
-        menuButtonOnClick={(e) => e.stopPropagation()}
-      >
+      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

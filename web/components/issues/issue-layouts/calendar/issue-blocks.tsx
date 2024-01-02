@@ -8,16 +8,13 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
-import { IIssue } from "types";
-import { IIssueResponse } from "store/issues/types";
-import { useMobxStore } from "lib/mobx/store-provider";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { TIssue, TIssueMap } from "@plane/types";
+import { useProject, useProjectState } from "hooks/store";
 
 type Props = {
-  issues: IIssueResponse | undefined;
+  issues: TIssueMap | undefined;
   issueIdList: string[] | null;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   showAllIssues?: boolean;
 };
 
@@ -25,28 +22,21 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues, issueIdList, quickActions, showAllIssues = false } = props;
   // router
   const router = useRouter();
-
+  // hooks
+  const { getProjectById } = useProject();
+  const { getProjectStates } = useProjectState();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
-  // mobx store
-  const {
-    user: { currentProjectRole },
-  } = useMobxStore();
-
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: IIssue, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleIssuePeekOverview = (issue: TIssue) => {
     const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-      });
-    }
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
+    });
   };
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -63,8 +53,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     </div>
   );
 
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
   return (
     <>
       {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
@@ -72,14 +60,14 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
         const issue = issues?.[issueId];
         return (
-          <Draggable key={issue.id} draggableId={issue.id} index={index} isDragDisabled={!isEditable}>
+          <Draggable key={issue.id} draggableId={issue.id} index={index}>
             {(provided, snapshot) => (
               <div
                 className="relative cursor-pointer p-1 px-2"
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                onClick={(e) => handleIssuePeekOverview(issue, e)}
+                onClick={() => handleIssuePeekOverview(issue)}
               >
                 {issue?.tempId !== undefined && (
                   <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
@@ -96,11 +84,13 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     <span
                       className="h-full w-0.5 flex-shrink-0 rounded"
                       style={{
-                        backgroundColor: issue.state_detail.color,
+                        backgroundColor: getProjectStates(issue?.project_id).find(
+                          (state) => state?.id == issue?.state_id
+                        )?.color,
                       }}
                     />
                     <div className="flex-shrink-0 text-xs text-custom-text-300">
-                      {issue.project_detail.identifier}-{issue.sequence_id}
+                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                     </div>
                     <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
                       <div className="truncate text-xs">{issue.name}</div>

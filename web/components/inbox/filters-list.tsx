@@ -2,14 +2,15 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useInboxFilters } from "hooks/store";
+
 // icons
 import { X } from "lucide-react";
 import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IInboxFilterOptions, TIssuePriorities } from "types";
+import { IInboxFilterOptions, TIssuePriorities } from "@plane/types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
@@ -17,14 +18,14 @@ export const InboxFiltersList = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxFilters: inboxFiltersStore } = useMobxStore();
+  const { inboxFilters, updateInboxFilters } = useInboxFilters();
 
-  const filters = inboxId ? inboxFiltersStore.inboxFilters[inboxId.toString()]?.filters : undefined;
+  const filters = inboxId ? inboxFilters[inboxId.toString()]?.filters : undefined;
 
   const handleUpdateFilter = (filter: Partial<IInboxFilterOptions>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
-    inboxFiltersStore.updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), filter);
+    updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), filter);
   };
 
   const handleClearAllFilters = () => {
@@ -35,12 +36,7 @@ export const InboxFiltersList = observer(() => {
       newFilters[key as keyof IInboxFilterOptions] = null;
     });
 
-    inboxFiltersStore.updateInboxFilters(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      inboxId.toString(),
-      newFilters
-    );
+    updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), newFilters);
   };
 
   let filtersLength = 0;
@@ -77,12 +73,12 @@ export const InboxFiltersList = observer(() => {
                             priority === "urgent"
                               ? "bg-red-500/20 text-red-500"
                               : priority === "high"
-                                ? "bg-orange-500/20 text-orange-500"
-                                : priority === "medium"
-                                  ? "bg-yellow-500/20 text-yellow-500"
-                                  : priority === "low"
-                                    ? "bg-green-500/20 text-green-500"
-                                    : "bg-custom-background-90 text-custom-text-200"
+                              ? "bg-orange-500/20 text-orange-500"
+                              : priority === "medium"
+                              ? "bg-yellow-500/20 text-yellow-500"
+                              : priority === "low"
+                              ? "bg-green-500/20 text-green-500"
+                              : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
                           <span>

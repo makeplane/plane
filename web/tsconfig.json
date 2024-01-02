@@ -4,6 +4,7 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "esModuleInterop": true
   }
 }

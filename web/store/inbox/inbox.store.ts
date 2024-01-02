@@ -1,162 +1,108 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
-// types
-import { RootStore } from "../root";
+import { set } from "lodash";
 // services
 import { InboxService } from "services/inbox.service";
 // types
-import { IInbox } from "types";
+import { RootStore } from "store/root.store";
+import { IInbox } from "@plane/types";
 
 export interface IInboxStore {
-  // states
-  loader: boolean;
-  error: any | null;
-
   // observables
-  inboxId: string | null;
-
   inboxesList: {
     [projectId: string]: IInbox[];
   };
   inboxDetails: {
     [inboxId: string]: IInbox;
   };
-
-  // actions
-  setInboxId: (inboxId: string | null) => void;
-
-  getInboxId: (projectId: string) => string | null;
-
-  fetchInboxesList: (workspaceSlug: string, projectId: string) => Promise<IInbox[]>;
-  fetchInboxDetails: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInbox>;
-
   // computed
   isInboxEnabled: boolean;
+  // computed actions
+  getInboxId: (projectId: string) => string | null;
+  // fetch actions
+  fetchInboxesList: (workspaceSlug: string, projectId: string) => Promise<IInbox[]>;
+  fetchInboxDetails: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInbox>;
 }
 
 export class InboxStore implements IInboxStore {
-  // states
-  loader: boolean = false;
-  error: any | null = null;
-
   // observables
-  inboxId: string | null = null;
-
   inboxesList: {
     [projectId: string]: IInbox[];
   } = {};
   inboxDetails: {
     [inboxId: string]: IInbox;
   } = {};
-
   // root store
   rootStore;
-
   // services
   inboxService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // states
-      loader: observable.ref,
-      error: observable.ref,
-
       // observables
-      inboxId: observable.ref,
-
-      inboxesList: observable.ref,
-      inboxDetails: observable.ref,
-
-      // actions
-      setInboxId: action,
-
-      fetchInboxesList: action,
-      getInboxId: action,
-
+      inboxesList: observable,
+      inboxDetails: observable,
       // computed
       isInboxEnabled: computed,
+      // computed actions
+      getInboxId: action,
+      // actions
+      fetchInboxesList: action,
     });
 
+    // root store
     this.rootStore = _rootStore;
+    // services
     this.inboxService = new InboxService();
   }
 
+  /**
+   * Returns true if inbox is enabled for current project
+   */
   get isInboxEnabled() {
-    const projectId = this.rootStore.project.projectId;
-
+    const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return false;
-
-    const projectDetails = this.rootStore.project.project_details[projectId];
-
+    const projectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
     if (!projectDetails) return false;
-
     return projectDetails.inbox_view;
   }
 
+  /**
+   * Returns the inbox Id belongs to a specific project
+   */
   getInboxId = (projectId: string) => {
-    const projectDetails = this.rootStore.project.project_details[projectId];
-
+    const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
     if (!projectDetails || !projectDetails.inbox_view) return null;
-
     return this.inboxesList[projectId]?.[0]?.id ?? null;
   };
 
-  setInboxId = (inboxId: string | null) => {
-    runInAction(() => {
-      this.inboxId = inboxId;
+  /**
+   * Fetches the inboxes list belongs to a specific project
+   * @param workspaceSlug
+   * @param projectId
+   * @returns Promise<IInbox[]>
+   */
+  fetchInboxesList = async (workspaceSlug: string, projectId: string) => {
+    return await this.inboxService.getInboxes(workspaceSlug, projectId).then((inboxes) => {
+      runInAction(() => {
+        set(this.inboxesList, projectId, inboxes);
+      });
+      return inboxes;
     });
   };
 
-  fetchInboxesList = async (workspaceSlug: string, projectId: string) => {
-    try {
-      runInAction(() => {
-        this.loader = true;
-      });
-
-      const inboxesResponse = await this.inboxService.getInboxes(workspaceSlug, projectId);
-
-      runInAction(() => {
-        this.loader = false;
-        this.inboxesList = {
-          ...this.inboxesList,
-          [projectId]: inboxesResponse,
-        };
-      });
-
-      return inboxesResponse;
-    } catch (error) {
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
-
+  /**
+   * Fetches the inbox details belongs to a specific inbox
+   * @param workspaceSlug
+   * @param projectId
+   * @param inboxId
+   * @returns Promise<IInbox>
+   */
   fetchInboxDetails = async (workspaceSlug: string, projectId: string, inboxId: string) => {
-    try {
+    return await this.inboxService.getInboxById(workspaceSlug, projectId, inboxId).then((inboxDetailsResponse) => {
       runInAction(() => {
-        this.loader = true;
+        set(this.inboxDetails, inboxId, inboxDetailsResponse);
       });
-
-      const inboxDetailsResponse = await this.inboxService.getInboxById(workspaceSlug, projectId, inboxId);
-
-      runInAction(() => {
-        this.loader = false;
-        this.inboxDetails = {
-          ...this.inboxDetails,
-          [inboxId]: inboxDetailsResponse,
-        };
-      });
-
       return inboxDetailsResponse;
-    } catch (error) {
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      throw error;
-    }
+    });
   };
 }

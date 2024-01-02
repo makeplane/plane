@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssueDetail, useUser } from "hooks/store";
 // components
 import {
   DeleteArchivedIssueModal,
@@ -14,23 +14,22 @@ import {
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
 } from "components/issues";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueLink, ILinkDetails } from "types";
+import { TIssue, IIssueLink, ILinkDetails } from "@plane/types";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  issue: IIssue | null;
+  issue: TIssue | undefined;
   isLoading?: boolean;
   isArchived?: boolean;
   handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
   redirectToIssueDetail: () => void;
-  issueUpdate: (issue: Partial<IIssue>) => void;
+  issueUpdate: (issue: Partial<TIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   issueCommentCreate: (comment: any) => void;
@@ -97,24 +96,30 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     disableUserActions = false,
     showCommentAccessSpecifier = false,
   } = props;
-
-  const router = useRouter();
-  const { peekIssueId } = router.query;
-
-  const {
-    user: { currentUser },
-    issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
-  } = useMobxStore();
-
+  // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
+  // router
+  const router = useRouter();
+  const { peekIssueId } = router.query;
+  // store hooks
+  const {
+    fetchSubscriptions,
+    activity,
+    reaction,
+    subscription,
+    setIssueId,
+    isAnyModalOpen,
+    isDeleteIssueModalOpen,
+    toggleDeleteIssueModal,
+  } = useIssueDetail();
+  const { currentUser } = useUser();
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
-      setPeekId(issueId);
+      setIssueId(issueId);
       const { query } = router;
       router.push({
         pathname: router.pathname,
@@ -127,7 +132,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     const { query } = router;
 
     if (query.peekIssueId) {
-      setPeekId(null);
+      setIssueId(undefined);
 
       delete query.peekIssueId;
       delete query.peekProjectId;
@@ -144,25 +149,25 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       : null,
     async () => {
       if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await fetchIssueSubscription(workspaceSlug, projectId, issueId);
+        await fetchSubscriptions(workspaceSlug, projectId, issueId);
       }
     }
   );
 
-  const issueReactions = getIssueReactions || [];
-  const issueActivity = getIssueActivity;
-  const issueSubscription = getIssueSubscription || [];
+  const issueReactions = reaction.getReactionsByIssueId(issueId) || [];
+  const issueActivity = activity.getActivitiesByIssueId(issueId);
+  const issueSubscription = subscription.getSubscriptionByIssueId(issueId) || {};
 
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
-  useOutsideClickDetector(issuePeekOverviewRef, () => removeRoutePeekId());
+  useOutsideClickDetector(issuePeekOverviewRef, () => !isAnyModalOpen && removeRoutePeekId());
 
   return (
     <>
       {issue && !isArchived && (
         <DeleteIssueModal
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isDeleteIssueModalOpen}
+          handleClose={() => toggleDeleteIssueModal(false)}
           data={issue}
           onSubmit={handleDeleteIssue}
         />
@@ -170,8 +175,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       {issue && isArchived && (
         <DeleteArchivedIssueModal
           data={issue}
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isDeleteIssueModalOpen}
+          handleClose={() => toggleDeleteIssueModal(false)}
           onSubmit={handleDeleteIssue}
         />
       )}
@@ -242,7 +247,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
                   {issue?.created_by !== currentUser?.id &&
-                    !issue?.assignees.includes(currentUser?.id ?? "") &&
+                    !issue?.assignee_ids.includes(currentUser?.id ?? "") &&
                     !router.pathname.includes("[archivedIssueId]") && (
                       <Button
                         size="sm"
@@ -262,7 +267,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
                   {!disableUserActions && (
-                    <button onClick={() => setDeleteIssueModal(true)}>
+                    <button onClick={() => toggleDeleteIssueModal(true)}>
                       <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                     </button>
                   )}

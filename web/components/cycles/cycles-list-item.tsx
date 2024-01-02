@@ -1,9 +1,8 @@
 import { FC, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// stores
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -14,14 +13,14 @@ import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react
 // helpers
 import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
-// types
-import { ICycle, TCycleGroups } from "types";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+// types
+import { TCycleGroups } from "@plane/types";
 
 type TCyclesListItem = {
-  cycle: ICycle;
+  cycleId: string;
   handleEditCycle?: () => void;
   handleDeleteCycle?: () => void;
   handleAddToFavorites?: () => void;
@@ -31,50 +30,29 @@ type TCyclesListItem = {
 };
 
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
-  const { cycle, workspaceSlug, projectId } = props;
-  // store
-  const {
-    cycle: cycleStore,
-    trackEvent: { setTrackElement },
-    user: userStore,
-  } = useMobxStore();
-  // toast
-  const { setToastAlert } = useToast();
+  const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  // computed
-  const cycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
-  const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycle.end_date ?? "");
-  const startDate = new Date(cycle.start_date ?? "");
-
-  const { currentProjectRole } = userStore;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
+  // router
   const router = useRouter();
-
-  const cycleTotalIssues =
-    cycle.backlog_issues +
-    cycle.unstarted_issues +
-    cycle.started_issues +
-    cycle.completed_issues +
-    cycle.cancelled_issues;
-
-  const renderDate = cycle.start_date || cycle.end_date;
-
-  const completionPercentage = (cycle.completed_issues / cycleTotalIssues) * 100;
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
-
-  const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
+  // store hooks
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
+  // toast alert
+  const { setToastAlert } = useToast();
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -87,7 +65,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -100,7 +78,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -129,27 +107,56 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekCycle: cycle.id },
+      query: { ...query, peekCycle: cycleId },
     });
   };
+
+  const cycleDetails = getCycleById(cycleId);
+
+  if (!cycleDetails) return null;
+
+  // computed
+  const cycleStatus = cycleDetails.status.toLocaleLowerCase() as TCycleGroups;
+  const isCompleted = cycleStatus === "completed";
+  const endDate = new Date(cycleDetails.end_date ?? "");
+  const startDate = new Date(cycleDetails.start_date ?? "");
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
+  const cycleTotalIssues =
+    cycleDetails.backlog_issues +
+    cycleDetails.unstarted_issues +
+    cycleDetails.started_issues +
+    cycleDetails.completed_issues +
+    cycleDetails.cancelled_issues;
+
+  const renderDate = cycleDetails.start_date || cycleDetails.end_date;
+
+  // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+
+  const completionPercentage = (cycleDetails.completed_issues / cycleTotalIssues) * 100;
+
+  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+
+  const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
   return (
     <>
       <CycleCreateUpdateModal
-        data={cycle}
+        data={cycleDetails}
         isOpen={updateModal}
         handleClose={() => setUpdateModal(false)}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
       />
       <CycleDeleteModal
-        cycle={cycle}
+        cycle={cycleDetails}
         isOpen={deleteModal}
         handleClose={() => setDeleteModal(false)}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
       />
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
         <div className="group flex h-16 w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
           <div className="flex w-full items-center gap-3 truncate">
             <div className="flex items-center gap-4 truncate">
@@ -173,8 +180,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                 <span className="flex-shrink-0">
                   <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
                 </span>
-                <Tooltip tooltipContent={cycle.name} position="top">
-                  <span className="truncate text-base font-medium">{cycle.name}</span>
+                <Tooltip tooltipContent={cycleDetails.name} position="top">
+                  <span className="truncate text-base font-medium">{cycleDetails.name}</span>
                 </Tooltip>
               </div>
             </div>
@@ -194,7 +201,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   }}
                 >
                   {currentCycle.value === "current"
-                    ? `${findHowManyDaysLeft(cycle.end_date ?? new Date())} ${currentCycle.label}`
+                    ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
                     : `${currentCycle.label}`}
                 </span>
               )}
@@ -206,11 +213,11 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </span>
             )}
 
-            <Tooltip tooltipContent={`${cycle.assignees.length} Members`}>
+            <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
               <div className="flex w-16 cursor-default items-center justify-center gap-1">
-                {cycle.assignees.length > 0 ? (
+                {cycleDetails.assignees.length > 0 ? (
                   <AvatarGroup showTooltip={false}>
-                    {cycle.assignees.map((assignee) => (
+                    {cycleDetails.assignees.map((assignee) => (
                       <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
                     ))}
                   </AvatarGroup>
@@ -222,7 +229,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </div>
             </Tooltip>
             {isEditingAllowed &&
-              (cycle.is_favorite ? (
+              (cycleDetails.is_favorite ? (
                 <button type="button" onClick={handleRemoveFromFavorites}>
                   <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
                 </button>

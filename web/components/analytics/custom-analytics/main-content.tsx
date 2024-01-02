@@ -8,7 +8,7 @@ import { Button, Loader } from "@plane/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 

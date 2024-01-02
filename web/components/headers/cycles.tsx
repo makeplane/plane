@@ -2,29 +2,30 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    user: { currentProjectRole },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+    commandPalette: { toggleCreateCycleModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const canUserCreateCycle =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -63,7 +64,7 @@ export const CyclesHeader: FC = observer(() => {
             prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("CYCLES_PAGE_HEADER");
-              commandPaletteStore.toggleCreateCycleModal(true);
+              toggleCreateCycleModal(true);
             }}
           >
             Add Cycle

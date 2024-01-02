@@ -52,6 +52,7 @@ from plane.app.serializers import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
+    IssueRelationLiteSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -129,22 +130,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-        ).distinct()
-
-    @method_decorator(gzip_page)
-    def list(self, request, slug, project_id):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        filters = issue_filters(request.query_params, "GET")
-
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
-
-        order_by_param = request.GET.get("order_by", "-created_at")
-
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(module_id=F("issue_module__module_id"))
             .annotate(
@@ -159,7 +144,26 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
+        ).distinct()
+
+    @method_decorator(gzip_page)
+    def list(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -217,9 +221,10 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        issues = IssueSerializer(
+            issue_queryset, many=True, fields=self.fields, expand=self.expand
+        ).data
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -256,7 +261,10 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         ).get(workspace__slug=slug, project_id=project_id, pk=pk)
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(
+            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
+        )
 
     def partial_update(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
@@ -590,16 +598,19 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         ProjectLitePermission,
     ]
 
-    def post(self, request, slug, project_id):
-        issue_property, created = IssueProperty.objects.get_or_create(
+    def patch(self, request, slug, project_id):
+        issue_property = IssueProperty.objects.get(
             user=request.user,
             project_id=project_id,
         )
 
-        if not created:
-            issue_property.properties = request.data.get("properties", {})
-            issue_property.save()
-        issue_property.properties = request.data.get("properties", {})
+        issue_property.filters = request.data.get("filters", issue_property.filters)
+        issue_property.display_filters = request.data.get(
+            "display_filters", issue_property.display_filters
+        )
+        issue_property.display_properties = request.data.get(
+            "display_properties", issue_property.display_properties
+        )
         issue_property.save()
         serializer = IssuePropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -708,6 +719,13 @@ class SubIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
@@ -728,7 +746,7 @@ class SubIssuesEndpoint(BaseAPIView):
             item["state_group"]: item["state_count"] for item in state_distribution
         }
 
-        serializer = IssueLiteSerializer(
+        serializer = IssueSerializer(
             sub_issues,
             many=True,
         )
@@ -775,7 +793,7 @@ class SubIssuesEndpoint(BaseAPIView):
         ]
 
         return Response(
-            IssueFlatSerializer(updated_sub_issues, many=True).data,
+            IssueSerializer(updated_sub_issues, many=True).data,
             status=status.HTTP_200_OK,
         )
 
@@ -1062,9 +1080,10 @@ class IssueArchiveViewSet(BaseViewSet):
             else issue_queryset.filter(parent__isnull=True)
         )
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
+        return Response(issues, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1365,23 +1384,62 @@ class IssueRelationViewSet(BaseViewSet):
             .distinct()
         )
 
+    def list(self, request, slug, project_id, issue_id):
+        issue_relations = (
+            IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("issue")
+            .order_by("-created_at")
+            .distinct()
+        )
+
+        blocking_issues = issue_relations.filter(relation_type="blocked_by", related_issue_id=issue_id)
+        blocked_by_issues = issue_relations.filter(relation_type="blocked_by", issue_id=issue_id)
+        duplicate_issues = issue_relations.filter(issue_id=issue_id, relation_type="duplicate")
+        duplicate_issues_related = issue_relations.filter(related_issue_id=issue_id, relation_type="duplicate")
+        relates_to_issues = issue_relations.filter(issue_id=issue_id, relation_type="relates_to")
+        relates_to_issues_related = issue_relations.filter(related_issue_id=issue_id, relation_type="relates_to")
+
+        blocked_by_issues_serialized = IssueRelationSerializer(blocked_by_issues, many=True).data
+        duplicate_issues_serialized = IssueRelationSerializer(duplicate_issues, many=True).data
+        relates_to_issues_serialized = IssueRelationSerializer(relates_to_issues, many=True).data
+
+        # revere relation for blocked by issues
+        blocking_issues_serialized = RelatedIssueSerializer(blocking_issues, many=True).data
+        # reverse relation for duplicate issues
+        duplicate_issues_related_serialized = RelatedIssueSerializer(duplicate_issues_related, many=True).data
+        # reverse relation for related issues
+        relates_to_issues_related_serialized = RelatedIssueSerializer(relates_to_issues_related, many=True).data
+
+        response_data = {
+            'blocking': blocking_issues_serialized,
+            'blocked_by': blocked_by_issues_serialized,
+            'duplicate': duplicate_issues_serialized + duplicate_issues_related_serialized,
+            'relates_to': relates_to_issues_serialized + relates_to_issues_related_serialized,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
     def create(self, request, slug, project_id, issue_id):
-        related_list = request.data.get("related_list", [])
-        relation = request.data.get("relation", None)
+        relation_type = request.data.get("relation_type", None)
+        issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=related_issue["issue"],
-                    related_issue_id=related_issue["related_issue"],
-                    relation_type=related_issue["relation_type"],
+                    issue_id=issue if relation_type == "blocking" else issue_id,
+                    related_issue_id=issue_id if relation_type == "blocking" else issue,
+                    relation_type="blocked_by" if relation_type == "blocking" else relation_type,
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
                     updated_by=request.user,
                 )
-                for related_issue in related_list
+                for issue in issues
             ],
             batch_size=10,
             ignore_conflicts=True,
@@ -1397,7 +1455,7 @@ class IssueRelationViewSet(BaseViewSet):
             epoch=int(timezone.now().timestamp()),
         )
 
-        if relation == "blocking":
+        if relation_type == "blocking":
             return Response(
                 RelatedIssueSerializer(issue_relation, many=True).data,
                 status=status.HTTP_201_CREATED,
@@ -1408,10 +1466,18 @@ class IssueRelationViewSet(BaseViewSet):
                 status=status.HTTP_201_CREATED,
             )
 
-    def destroy(self, request, slug, project_id, issue_id, pk):
-        issue_relation = IssueRelation.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
-        )
+    def remove_relation(self, request, slug, project_id, issue_id):
+        relation_type = request.data.get("relation_type", None)
+        related_issue = request.data.get("related_issue", None)
+
+        if relation_type == "blocking":
+            issue_relation = IssueRelation.objects.get(
+                workspace__slug=slug, project_id=project_id, issue_id=related_issue, related_issue_id=issue_id
+            )
+        else:
+            issue_relation = IssueRelation.objects.get(
+                workspace__slug=slug, project_id=project_id, issue_id=issue_id, related_issue_id=related_issue
+            )
         current_instance = json.dumps(
             IssueRelationSerializer(issue_relation).data,
             cls=DjangoJSONEncoder,
@@ -1419,7 +1485,7 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
-            requested_data=json.dumps({"related_list": None}),
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
@@ -1547,9 +1613,10 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)

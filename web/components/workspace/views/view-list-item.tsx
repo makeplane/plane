@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Pencil, Trash2 } from "lucide-react";
+// store hooks
+import { useGlobalView } from "hooks/store";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
@@ -10,19 +12,23 @@ import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
-// types
-import { IWorkspaceView } from "types/workspace-views";
 
-type Props = { view: IWorkspaceView };
+type Props = { viewId: string };
 
 export const GlobalViewListItem: React.FC<Props> = observer((props) => {
-  const { view } = props;
-
+  const { viewId } = props;
+  // states
   const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const { getViewDetailsById } = useGlobalView();
+  // derived data
+  const view = getViewDetailsById(viewId);
+
+  if (!view) return null;
 
   const totalFilters = calculateTotalFilters(view.query_data.filters ?? {});
 

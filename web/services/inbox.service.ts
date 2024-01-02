@@ -2,7 +2,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IInboxIssue, IInbox, TInboxStatus, IInboxQueryParams } from "types";
+import type { IInboxIssue, IInbox, TInboxStatus, IInboxQueryParams } from "@plane/types";
 
 export class InboxService extends APIService {
   constructor() {

@@ -1,14 +1,15 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useLabel, useProjectState, useUser } from "hooks/store";
+import { useIssues } from "hooks/store/use-issues";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
-// types
-import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+// types
+import { IIssueFilterOptions } from "@plane/types";
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -17,18 +18,20 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     workspaceSlug: string;
     projectId: string;
   };
-  // mobx stores
+  // store hooks
   const {
-    projectLabel: { projectLabels },
-    projectState: projectStateStore,
-    projectMember: { projectMembers },
-    projectIssuesFilter: { issueFilters, updateFilters },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    project: { projectLabels },
+  } = useLabel();
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectStates } = useProjectState();
   // derived values
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const userFilters = issueFilters?.filters;
-
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
   Object.entries(userFilters ?? {}).forEach(([key, value]) => {
@@ -40,7 +43,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!workspaceSlug || !projectId) return;
     if (!value) {
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
         [key]: null,
       });
       return;
@@ -49,7 +52,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
       [key]: newValues,
     });
   };
@@ -60,7 +63,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { ...newFilters });
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, { ...newFilters });
   };
 
   // return if no filters are applied
@@ -73,8 +76,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
-        members={projectMembers?.map((m) => m.member)}
-        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStates}
       />
       {isEditingAllowed && (
         <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />

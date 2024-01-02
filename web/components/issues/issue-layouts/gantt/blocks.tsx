@@ -4,28 +4,29 @@ import { Tooltip, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
+import { useProject, useProjectState } from "hooks/store";
 
-export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
+export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
   const router = useRouter();
+  // hooks
+  const { getProjectStates } = useProjectState();
 
-  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleIssuePeekOverview = () => {
     const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${data?.workspace_detail.slug}/projects/${data?.project_detail.id}/issues/${data?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project },
-      });
-    }
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project_id },
+    });
   };
 
   return (
     <div
       className="relative flex h-full w-full cursor-pointer items-center rounded"
-      style={{ backgroundColor: data?.state_detail?.color }}
+      style={{
+        backgroundColor: getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id)?.color,
+      }}
       onClick={handleIssuePeekOverview}
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
@@ -47,23 +48,31 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
 };
 
 // rendering issues on gantt sidebar
-export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
+export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
   const router = useRouter();
+  // hooks
+  const { getProjectStates } = useProjectState();
+  const { getProjectById } = useProject();
 
   const handleIssuePeekOverview = () => {
     const { query } = router;
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project },
+      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project_id },
     });
   };
 
+  const currentStateDetails =
+    getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id) || undefined;
+
   return (
     <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
-      <StateGroupIcon stateGroup={data?.state_detail?.group} color={data?.state_detail?.color} />
+      {currentStateDetails != undefined && (
+        <StateGroupIcon stateGroup={currentStateDetails?.group} color={currentStateDetails?.color} />
+      )}
       <div className="flex-shrink-0 text-xs text-custom-text-300">
-        {data?.project_detail?.identifier} {data?.sequence_id}
+        {getProjectById(data?.project_id)?.identifier} {data?.sequence_id}
       </div>
       <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
         <span className="flex-grow truncate text-sm font-medium">{data?.name}</span>

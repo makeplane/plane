@@ -7,7 +7,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import { IApiToken } from "types/api_token";
+import { IApiToken } from "@plane/types";
 
 type Props = {
   token: IApiToken;

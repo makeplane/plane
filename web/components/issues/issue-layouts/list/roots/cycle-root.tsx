@@ -1,65 +1,58 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues } from "hooks/store";
 // components
 import { CycleIssueQuickActions } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store/project";
 import { EIssueActions } from "../../types";
-import { EProjectStore } from "store/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface ICycleListLayout {}
 
 export const CycleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
+  const { workspaceSlug, projectId, cycleId } = router.query;
   // store
-  const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    cycle: { fetchCycleWithId },
-  } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, cycleId.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-    [EIssueActions.REMOVE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, cycleId.toString());
+      },
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-  };
-  const getProjects = (projectStore: IProjectStore) => {
-    if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug] || null;
-  };
+        await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, cycleId.toString(), issue.id);
+      },
+    }),
+    [issues, workspaceSlug, cycleId]
+  );
 
   return (
     <BaseListRoot
-      issueFilterStore={cycleIssueFilterStore}
-      issueStore={cycleIssueStore}
+      issuesFilter={issuesFilter}
+      issues={issues}
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
-      getProjects={getProjects}
-      viewId={cycleId}
-      currentStore={EProjectStore.CYCLE}
-      addIssuesToView={(issues: string[]) => cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, issues)}
+      viewId={cycleId?.toString()}
+      currentStore={EIssuesStoreType.CYCLE}
+      addIssuesToView={(issueIds: string[]) => {
+        if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+        return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+      }}
     />
   );
 });

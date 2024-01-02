@@ -2,12 +2,12 @@ import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
-
 // services
 import { IntegrationService } from "services/integrations";
 // hooks
+import { useApplication, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
@@ -17,11 +17,9 @@ import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
 import { CheckCircle } from "lucide-react";
 // types
-import { IAppIntegration, IWorkspaceIntegration } from "types";
+import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // fetch-keys
 import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   integration: IAppIntegration;
@@ -44,19 +42,22 @@ const integrationDetails: { [key: string]: any } = {
 const integrationService = new IntegrationService();
 
 export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
-  const {
-    appConfig: { envConfig },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
-
-  const isUserAdmin = currentWorkspaceRole === 20;
-
+  // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store hooks
+  const {
+    config: { envConfig },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
+
+  const isUserAdmin = currentWorkspaceRole === 20;
 
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,

@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "types";
+import type { IInboxIssue } from "@plane/types";
+import { useInboxIssues } from "hooks/store/use-inbox-issues";
 
 type Props = {
   data: IInboxIssue;
@@ -21,16 +20,18 @@ type Props = {
 };
 
 export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
+  // states
   const [isDeleting, setIsDeleting] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
-
+  // store hooks
+  const { deleteIssue } = useInboxIssues();
   const {
-    inboxIssueDetails: inboxIssueDetailsStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
+  const { getProjectById } = useProject();
 
   const { setToastAlert } = useToast();
 
@@ -44,8 +45,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
 
     setIsDeleting(true);
 
-    inboxIssueDetailsStore
-      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
+    deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -60,7 +60,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
         // remove inboxIssueId from the url
@@ -84,7 +84,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
@@ -131,7 +131,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? The issue will only be deleted from the inbox and this action cannot be undone.
                     </p>

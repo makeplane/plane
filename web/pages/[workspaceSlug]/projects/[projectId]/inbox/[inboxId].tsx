@@ -2,25 +2,25 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useInboxFilters } from "hooks/store/";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { InboxActionsHeader, InboxMainContent, InboxIssuesListSidebar } from "components/inbox";
 import { ProjectInboxHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxFilters: inboxFiltersStore } = useMobxStore();
+  const { fetchInboxFilters } = useInboxFilters();
 
   useSWR(
     workspaceSlug && projectId && inboxId ? `INBOX_FILTERS_${inboxId.toString()}` : null,
     workspaceSlug && projectId && inboxId
-      ? () => inboxFiltersStore.fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
+      ? () => fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
       : null
   );
 

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProjectState, useUser, useInboxIssues } from "hooks/store";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction, IssueUpdateStatus } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
@@ -14,33 +14,33 @@ import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IInboxIssue, IIssue } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { IInboxIssue, TIssue } from "@plane/types";
+import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
-  assignees: [],
+  assignee_ids: [],
   priority: "low",
   target_date: new Date().toString(),
-  labels: [],
+  label_ids: [],
 };
 
 export const InboxMainContent: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
-
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  // store hooks
+  const { currentInboxIssueIds: currentInboxIssues, fetchIssueDetails, getIssueById, updateIssue } = useInboxIssues();
   const {
-    inboxIssues: inboxIssuesStore,
-    inboxIssueDetails: inboxIssueDetailsStore,
-    user: { currentUser, currentProjectRole },
-    projectState: { states },
-  } = useMobxStore();
-
-  const { reset, control, watch } = useForm<IIssue>({
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectStates } = useProjectState();
+  // form info
+  const { reset, control, watch } = useForm<TIssue>({
     defaultValues,
   });
 
@@ -48,26 +48,19 @@ export const InboxMainContent: React.FC = observer(() => {
     workspaceSlug && projectId && inboxId && inboxIssueId ? `INBOX_ISSUE_DETAILS_${inboxIssueId.toString()}` : null,
     workspaceSlug && projectId && inboxId && inboxIssueId
       ? () =>
-          inboxIssueDetailsStore.fetchIssueDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            inboxId.toString(),
-            inboxIssueId.toString()
-          )
+          fetchIssueDetails(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), inboxIssueId.toString())
       : null
   );
 
-  const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
-  const issueDetails = inboxIssueId ? inboxIssueDetailsStore.issueDetails[inboxIssueId.toString()] : undefined;
-  const currentIssueState = projectId
-    ? states[projectId.toString()]?.find((s) => s.id === issueDetails?.state)
-    : undefined;
+  const issuesList = currentInboxIssues;
+  const issueDetails = inboxIssueId ? getIssueById(inboxId as string, inboxIssueId.toString()) : undefined;
+  const currentIssueState = projectStates?.find((s) => s.id === issueDetails?.state_id);
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
       if (!workspaceSlug || !projectId || !inboxIssueId || !inboxId || !issueDetails) return;
 
-      await inboxIssueDetailsStore.updateIssue(
+      await updateIssue(
         workspaceSlug.toString(),
         projectId.toString(),
         inboxId.toString(),
@@ -75,60 +68,60 @@ export const InboxMainContent: React.FC = observer(() => {
         formData
       );
     },
-    [workspaceSlug, inboxIssueId, projectId, inboxId, issueDetails, inboxIssueDetailsStore]
+    [workspaceSlug, inboxIssueId, projectId, inboxId, issueDetails, updateIssue]
   );
 
-  const onKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!issuesList || !inboxIssueId) return;
+  // const onKeyDown = useCallback(
+  //   (e: KeyboardEvent) => {
+  //     if (!issuesList || !inboxIssueId) return;
 
-      const currentIssueIndex = issuesList.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId);
+  //     const currentIssueIndex = issuesList.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId);
 
-      switch (e.key) {
-        case "ArrowUp":
-          Router.push({
-            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-            query: {
-              inboxIssueId:
-                currentIssueIndex === 0
-                  ? issuesList[issuesList.length - 1].issue_inbox[0].id
-                  : issuesList[currentIssueIndex - 1].issue_inbox[0].id,
-            },
-          });
-          break;
-        case "ArrowDown":
-          Router.push({
-            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-            query: {
-              inboxIssueId:
-                currentIssueIndex === issuesList.length - 1
-                  ? issuesList[0].issue_inbox[0].id
-                  : issuesList[currentIssueIndex + 1].issue_inbox[0].id,
-            },
-          });
-          break;
-        default:
-          break;
-      }
-    },
-    [workspaceSlug, projectId, inboxIssueId, inboxId, issuesList]
-  );
+  //     switch (e.key) {
+  //       case "ArrowUp":
+  //         Router.push({
+  //           pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+  //           query: {
+  //             inboxIssueId:
+  //               currentIssueIndex === 0
+  //                 ? issuesList[issuesList.length - 1].issue_inbox[0].id
+  //                 : issuesList[currentIssueIndex - 1].issue_inbox[0].id,
+  //           },
+  //         });
+  //         break;
+  //       case "ArrowDown":
+  //         Router.push({
+  //           pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+  //           query: {
+  //             inboxIssueId:
+  //               currentIssueIndex === issuesList.length - 1
+  //                 ? issuesList[0].issue_inbox[0].id
+  //                 : issuesList[currentIssueIndex + 1].issue_inbox[0].id,
+  //           },
+  //         });
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   },
+  //   [workspaceSlug, projectId, inboxIssueId, inboxId, issuesList]
+  // );
 
-  useEffect(() => {
-    document.addEventListener("keydown", onKeyDown);
+  // useEffect(() => {
+  //   document.addEventListener("keydown", onKeyDown);
 
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [onKeyDown]);
+  //   return () => {
+  //     document.removeEventListener("keydown", onKeyDown);
+  //   };
+  // }, [onKeyDown]);
 
   useEffect(() => {
     if (!issueDetails || !inboxIssueId) return;
 
     reset({
       ...issueDetails,
-      assignees: issueDetails.assignees ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels: issueDetails.labels ?? issueDetails.labels,
+      assignee_ids: issueDetails.assignee_ids ?? issueDetails.assignee_ids,
+      label_ids: issueDetails.label_ids ?? issueDetails.label_ids,
     });
   }, [issueDetails, reset, inboxIssueId]);
 
@@ -152,7 +145,7 @@ export const InboxMainContent: React.FC = observer(() => {
       </div>
     );
 
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -191,8 +184,7 @@ export const InboxMainContent: React.FC = observer(() => {
                   <Clock size={18} strokeWidth={2} />
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
-                      This issue was snoozed till{" "}
-                      {renderFormattedDate(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
+                      This issue was snoozed till {renderFormattedDate(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   ) : (
                     <p>

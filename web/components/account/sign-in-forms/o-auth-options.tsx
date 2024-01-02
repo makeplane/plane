@@ -1,9 +1,8 @@
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { GitHubSignInButton, GoogleSignInButton } from "components/account";
@@ -21,8 +20,8 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
   // mobx store
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {

@@ -16,7 +16,7 @@ import {
   renderFormattedDate,
 } from "helpers/date-time.helper";
 // type
-import type { IUserNotification } from "types";
+import type { IUserNotification } from "@plane/types";
 
 type NotificationCardProps = {
   notification: IUserNotification;
@@ -100,8 +100,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             {notification.data.issue_activity.field === "comment"
               ? "commented"
               : notification.data.issue_activity.field === "None"
-                ? null
-                : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
+              ? null
+              : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
             {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
               ? "to"
               : ""}

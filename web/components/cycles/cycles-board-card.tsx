@@ -2,6 +2,7 @@ import { FC, MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 // hooks
+import { useApplication, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -12,62 +13,65 @@ import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
 import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
-// types
-import { ICycle, TCycleGroups } from "types";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+//.types
+import { TCycleGroups } from "@plane/types";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycleId: string;
 }
 
 export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
-  const { cycle, workspaceSlug, projectId } = props;
-  // store
-  const {
-    cycle: cycleStore,
-    trackEvent: { setTrackElement },
-    user: userStore,
-  } = useMobxStore();
-  // toast
-  const { setToastAlert } = useToast();
+  const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  // computed
-  const cycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
-  const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycle.end_date ?? "");
-  const startDate = new Date(cycle.start_date ?? "");
-  const isDateValid = cycle.start_date || cycle.end_date;
-
-  const { currentProjectRole } = userStore;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
+  // router
   const router = useRouter();
+  // store
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
+  // toast alert
+  const { setToastAlert } = useToast();
+  // computed
+  const cycleDetails = getCycleById(cycleId);
+
+  if (!cycleDetails) return null;
+
+  const cycleStatus = cycleDetails.status.toLocaleLowerCase();
+  const isCompleted = cycleStatus === "completed";
+  const endDate = new Date(cycleDetails.end_date ?? "");
+  const startDate = new Date(cycleDetails.start_date ?? "");
+  const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
   const cycleTotalIssues =
-    cycle.backlog_issues +
-    cycle.unstarted_issues +
-    cycle.started_issues +
-    cycle.completed_issues +
-    cycle.cancelled_issues;
+    cycleDetails.backlog_issues +
+    cycleDetails.unstarted_issues +
+    cycleDetails.started_issues +
+    cycleDetails.completed_issues +
+    cycleDetails.cancelled_issues;
 
-  const completionPercentage = (cycle.completed_issues / cycleTotalIssues) * 100;
+  const completionPercentage = (cycleDetails.completed_issues / cycleTotalIssues) * 100;
 
-  const issueCount = cycle
+  const issueCount = cycleDetails
     ? cycleTotalIssues === 0
       ? "0 Issue"
-      : cycleTotalIssues === cycle.completed_issues
+      : cycleTotalIssues === cycleDetails.completed_issues
       ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-      : `${cycle.completed_issues}/${cycleTotalIssues} Issues`
+      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
@@ -75,7 +79,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.stopPropagation();
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -88,7 +92,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -101,7 +105,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -130,14 +134,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
 
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekCycle: cycle.id },
+      query: { ...query, peekCycle: cycleId },
     });
   };
 
   return (
     <div>
       <CycleCreateUpdateModal
-        data={cycle}
+        data={cycleDetails}
         isOpen={updateModal}
         handleClose={() => setUpdateModal(false)}
         workspaceSlug={workspaceSlug}
@@ -145,22 +149,22 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       />
 
       <CycleDeleteModal
-        cycle={cycle}
+        cycle={cycleDetails}
         isOpen={deleteModal}
         handleClose={() => setDeleteModal(false)}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
       />
 
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
         <div className="flex h-44 w-full min-w-[250px] flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
               <span className="flex-shrink-0">
-                <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
+                <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />
               </span>
-              <Tooltip tooltipContent={cycle.name} position="top">
-                <span className="truncate text-base font-medium">{cycle.name}</span>
+              <Tooltip tooltipContent={cycleDetails.name} position="top">
+                <span className="truncate text-base font-medium">{cycleDetails.name}</span>
               </Tooltip>
             </div>
             <div className="flex items-center gap-2">
@@ -173,7 +177,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                   }}
                 >
                   {currentCycle.value === "current"
-                    ? `${findHowManyDaysLeft(cycle.end_date ?? new Date())} ${currentCycle.label}`
+                    ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
                     : `${currentCycle.label}`}
                 </span>
               )}
@@ -189,11 +193,11 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
-              {cycle.assignees.length > 0 && (
-                <Tooltip tooltipContent={`${cycle.assignees.length} Members`}>
+              {cycleDetails.assignees.length > 0 && (
+                <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
-                      {cycle.assignees.map((assignee) => (
+                      {cycleDetails.assignees.map((assignee) => (
                         <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
                       ))}
                     </AvatarGroup>
@@ -233,7 +237,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
               )}
               <div className="z-10 flex items-center gap-1.5">
                 {isEditingAllowed &&
-                  (cycle.is_favorite ? (
+                  (cycleDetails.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>
                       <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
                     </button>

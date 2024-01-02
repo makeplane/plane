@@ -5,10 +5,10 @@ import { CalendarCheck } from "lucide-react";
 // helpers
 import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
+  issue: TIssue;
   onChange: (date: string | null) => void;
   handleOnOpen?: () => void;
   handleOnClose?: () => void;

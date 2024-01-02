@@ -235,7 +235,7 @@ urlpatterns = [
     ## End Comment Reactions
     ## IssueProperty
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
         IssueUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
@@ -275,16 +275,17 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/",
         IssueRelationViewSet.as_view(
             {
+                "get": "list",
                 "post": "create",
             }
         ),
         name="issue-relation",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/remove-relation/",
         IssueRelationViewSet.as_view(
             {
-                "delete": "destroy",
+                "post": "remove_relation",
             }
         ),
         name="issue-relation",

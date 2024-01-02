@@ -27,7 +27,12 @@ from plane.app.serializers import (
     IssueLiteSerializer,
     IssueViewFavoriteSerializer,
 )
-from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission
+from plane.app.permissions import (
+    WorkspaceEntityPermission,
+    ProjectEntityPermission,
+    WorkspaceViewerPermission,
+    ProjectLitePermission,
+)
 from plane.db.models import (
     Workspace,
     GlobalView,
@@ -43,8 +48,8 @@ from plane.utils.grouper import group_results
 
 
 class GlobalViewViewSet(BaseViewSet):
-    serializer_class = GlobalViewSerializer
-    model = GlobalView
+    serializer_class = IssueViewSerializer
+    model = IssueView
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -58,6 +63,7 @@ class GlobalViewViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__isnull=True)
             .select_related("workspace")
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
@@ -179,12 +185,10 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(
-            issue_dict,
-            status=status.HTTP_200_OK,
+        serializer = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
         )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):
@@ -216,6 +220,14 @@ class IssueViewViewSet(BaseViewSet):
             .order_by("-is_favorite", "name")
             .distinct()
         )
+
+    def list(self, request, slug, project_id):
+        queryset = self.get_queryset()
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        views = IssueViewSerializer(
+            queryset, many=True, fields=fields if fields else None
+        ).data
+        return Response(views, status=status.HTTP_200_OK)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):

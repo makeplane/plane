@@ -9,14 +9,15 @@ import { IssueCommentCard } from "./comment-card";
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity, IUser } from "types";
+import { IIssueActivity, IUser } from "@plane/types";
+import { useIssueDetail } from "hooks/store";
 
 interface IIssueActivityCard {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   user: IUser | null;
-  issueActivity: IIssueActivity[] | null;
+  issueActivity: string[] | undefined;
   issueCommentUpdate: (comment: any) => void;
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
@@ -36,13 +37,16 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
     issueCommentReactionRemove,
   } = props;
 
+  const { activity } = useIssueDetail();
+
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
         {issueActivity ? (
           issueActivity.length > 0 &&
-          issueActivity.map((activityItem, index) => {
+          issueActivity.map((activityId, index) => {
             // determines what type of action is performed
+            const activityItem = activity.getActivityById(activityId) as IIssueActivity;
             const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
 
             if ("field" in activityItem && activityItem.field !== "updated_by") {

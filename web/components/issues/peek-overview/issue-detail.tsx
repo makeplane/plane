@@ -3,30 +3,28 @@ import { Controller, useForm } from "react-hook-form";
 import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMention, useProject, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
 import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { IIssue, IUser } from "types";
+import { TIssue, IUser } from "@plane/types";
 // services
 import { FileService } from "services/file.service";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 const fileService = new FileService();
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
-  issue: IIssue;
+  issue: TIssue;
   issueReactions: any;
   user: IUser | null;
-  issueUpdate: (issue: Partial<IIssue>) => void;
+  issueUpdate: (issue: Partial<TIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   isSubmitting: "submitting" | "submitted" | "saved";
@@ -45,23 +43,26 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     isSubmitting,
     setIsSubmitting,
   } = props;
-  // store
-  const { user: userStore } = useMobxStore();
-  const { currentProjectRole } = userStore;
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
-  // hooks
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  const { getProjectById } = useProject();
+  // derived values
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  // toast alert
   const { setShowAlert } = useReloadConfirmations();
-  const editorSuggestions = useEditorSuggestions();
-
+  // form info
   const {
     handleSubmit,
     watch,
     reset,
     control,
     formState: { errors },
-  } = useForm<IIssue>({
+  } = useForm<TIssue>({
     defaultValues: {
       name: issue.name,
       description_html: issue.description_html,
@@ -69,7 +70,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   });
 
   const handleDescriptionFormSubmit = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
       await issueUpdate({
@@ -127,10 +128,12 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     });
   }, [issue, reset]);
 
+  const projectDetails = getProjectById(issue?.project_id);
+
   return (
     <>
       <span className="text-base font-medium text-custom-text-400">
-        {issue?.project_detail?.identifier}-{issue?.sequence_id}
+        {projectDetails?.identifier}-{issue?.sequence_id}
       </span>
 
       <div className="relative">
@@ -153,12 +156,10 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
                   debouncedFormSave();
                 }}
                 required={true}
-                className={`min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  !p-0 text-xl outline-none ring-0 focus:!px-3 focus:!py-2 focus:ring-1 focus:ring-custom-primary ${
-                  !isAllowed ? "hover:cursor-not-allowed" : ""
-                }`}
-                hasError={Boolean(errors?.description)}
+                className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  !p-0 text-xl outline-none ring-0 focus:!px-3 focus:!py-2 focus:ring-1 focus:ring-custom-primary"
+                hasError={Boolean(errors?.name)}
                 role="textbox"
-                disabled={!isAllowed}
+                disabled={!true}
               />
             )}
           />
@@ -190,9 +191,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
-              customClassName={
-                isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200 pointer-events-none"
-              }
+              customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
               noBorder={!isAllowed}
               onChange={(description: Object, description_html: string) => {
                 setShowAlert(true);
@@ -200,8 +199,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
                 onChange(description_html);
                 debouncedFormSave();
               }}
-              mentionSuggestions={editorSuggestions.mentionSuggestions}
-              mentionHighlights={editorSuggestions.mentionHighlights}
+              mentionSuggestions={mentionSuggestions}
+              mentionHighlights={mentionHighlights}
             />
           )}
         />

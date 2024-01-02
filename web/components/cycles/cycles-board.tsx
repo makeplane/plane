@@ -1,14 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // components
 import { CyclePeekOverview, CyclesBoardCard } from "components/cycles";
-// types
-import { ICycle } from "types";
 
 export interface ICyclesBoard {
-  cycles: ICycle[];
+  cycleIds: string[];
   filter: string;
   workspaceSlug: string;
   projectId: string;
@@ -16,13 +14,13 @@ export interface ICyclesBoard {
 }
 
 export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
-  const { cycles, filter, workspaceSlug, projectId, peekCycle } = props;
-
-  const { commandPalette: commandPaletteStore } = useMobxStore();
+  const { cycleIds, filter, workspaceSlug, projectId, peekCycle } = props;
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
 
   return (
     <>
-      {cycles.length > 0 ? (
+      {cycleIds?.length > 0 ? (
         <div className="h-full w-full">
           <div className="flex h-full w-full justify-between">
             <div
@@ -32,8 +30,8 @@ export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
                   : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
               } auto-rows-max transition-all `}
             >
-              {cycles.map((cycle) => (
-                <CyclesBoardCard key={cycle.id} workspaceSlug={workspaceSlug} projectId={projectId} cycle={cycle} />
+              {cycleIds.map((cycleId) => (
+                <CyclesBoardCard key={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
               ))}
             </div>
             <CyclePeekOverview

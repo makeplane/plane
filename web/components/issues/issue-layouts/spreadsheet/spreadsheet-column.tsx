@@ -27,7 +27,7 @@ import {
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, IUserLite, TIssueOrderByOptions } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, TIssueOrderByOptions } from "@plane/types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
@@ -36,10 +36,9 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   expandedIssues: string[];
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
-  issues: IIssue[] | undefined;
+  handleUpdateIssue: (issue: TIssue, data: Partial<TIssue>) => void;
+  issues: TIssue[] | undefined;
   property: string;
-  members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
@@ -53,7 +52,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
     handleUpdateIssue,
     issues,
     property,
-    members,
     labels,
     states,
   } = props;
@@ -161,71 +159,70 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
 
       <div className="h-full w-full min-w-[8rem]">
         {issues?.map((issue) => {
-          const disableUserActions = !canEditProperties(issue.project);
+          const disableUserActions = !canEditProperties(issue.project_id);
           return (
             <div key={`${property}-${issue.id}`} className={`h-fit ${disableUserActions ? "" : "cursor-pointer"}`}>
               {property === "state" ? (
                 <SpreadsheetStateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  issueId={issue.id}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                   states={states}
                 />
               ) : property === "priority" ? (
                 <SpreadsheetPriorityColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  issueId={issue.id}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "estimate" ? (
                 <SpreadsheetEstimateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  issueId={issue.id}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "assignee" ? (
                 <SpreadsheetAssigneeColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
-                  members={members}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  issueId={issue.id}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "labels" ? (
                 <SpreadsheetLabelColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
+                  issueId={issue.id}
                   labels={labels}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "start_date" ? (
                 <SpreadsheetStartDateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  issueId={issue.id}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "due_date" ? (
                 <SpreadsheetDueDateColumn
                   disabled={disableUserActions}
                   expandedIssues={expandedIssues}
-                  issue={issue}
-                  onChange={(issue: IIssue, data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  issueId={issue.id}
+                  onChange={(issue: TIssue, data: Partial<TIssue>) => handleUpdateIssue(issue, data)}
                 />
               ) : property === "created_on" ? (
-                <SpreadsheetCreatedOnColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetCreatedOnColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "updated_on" ? (
-                <SpreadsheetUpdatedOnColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetUpdatedOnColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "link" ? (
-                <SpreadsheetLinkColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetLinkColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "attachment_count" ? (
-                <SpreadsheetAttachmentColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetAttachmentColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : property === "sub_issue_count" ? (
-                <SpreadsheetSubIssueColumn expandedIssues={expandedIssues} issue={issue} />
+                <SpreadsheetSubIssueColumn expandedIssues={expandedIssues} issueId={issue.id} />
               ) : null}
             </div>
           );

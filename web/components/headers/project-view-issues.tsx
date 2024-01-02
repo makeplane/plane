@@ -2,8 +2,17 @@ import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import {
+  useApplication,
+  useIssues,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useProjectView,
+  useUser,
+} from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
@@ -12,39 +21,46 @@ import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     viewId: string;
   };
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    projectViews: projectViewsStore,
-    viewIssuesFilter: { issueFilters, updateFilters },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectViewIds, getViewById } = useProjectView();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectLabels },
+  } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
@@ -63,7 +79,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, viewId);
     },
     [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
   );
@@ -71,7 +87,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
@@ -79,16 +95,15 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, viewId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
-  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
+  const viewDetails = viewId ? getViewById(viewId.toString()) : null;
 
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -133,17 +148,23 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 className="ml-1.5"
                 placement="bottom-start"
               >
-                {viewsList?.map((view) => (
-                  <CustomMenu.MenuItem
-                    key={view.id}
-                    onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <PhotoFilterIcon height={12} width={12} />
-                      {truncateText(view.name, 40)}
-                    </div>
-                  </CustomMenu.MenuItem>
-                ))}
+                {projectViewIds?.map((viewId) => {
+                  const view = getViewById(viewId);
+
+                  if (!view) return;
+
+                  return (
+                    <CustomMenu.MenuItem
+                      key={viewId}
+                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${viewId}`)}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <PhotoFilterIcon height={12} width={12} />
+                        {truncateText(view.name, 40)}
+                      </div>
+                    </CustomMenu.MenuItem>
+                  );
+                })}
               </CustomMenu>
             }
           />
@@ -163,9 +184,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
-            labels={projectLabels ?? undefined}
-            members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+            labels={projectLabels}
+            memberIds={projectMemberIds ?? undefined}
+            states={projectStates}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
@@ -183,7 +204,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"
             prependIcon={<Plus />}

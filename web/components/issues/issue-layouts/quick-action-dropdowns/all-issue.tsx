@@ -9,9 +9,9 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EProjectStore } from "store/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, customActionButton } = props;
@@ -21,7 +21,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
 
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<IIssue | null>(null);
+  const [issueToEdit, setIssueToEdit] = useState<TIssue | null>(null);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const { setToastAlert } = useToast();
@@ -56,14 +56,9 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
         }}
-        currentStore={EProjectStore.PROJECT}
+        currentStore={EIssuesStoreType.PROJECT}
       />
-      <CustomMenu
-        placement="bottom-start"
-        customButton={customActionButton}
-        ellipsis
-        menuButtonOnClick={(e) => e.stopPropagation()}
-      >
+      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();
