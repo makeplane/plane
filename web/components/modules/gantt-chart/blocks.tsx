@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
-
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 // helpers
-import { renderShortDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 // constants
@@ -25,7 +24,7 @@ export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
           <div className="space-y-1">
             <h5>{data?.name}</h5>
             <div>
-              {renderShortDate(data?.start_date ?? "")} to {renderShortDate(data?.target_date ?? "")}
+              {renderFormattedDate(data?.start_date ?? "")} to {renderFormattedDate(data?.target_date ?? "")}
             </div>
           </div>
         }

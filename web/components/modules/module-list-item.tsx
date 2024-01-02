@@ -14,7 +14,7 @@ import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } f
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 // constants
@@ -48,8 +48,6 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const startDate = new Date(module.start_date ?? "");
 
   const renderDate = module.start_date || module.target_date;
-
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
@@ -176,10 +174,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
 
             {renderDate && (
-              <span className="flex w-28 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                {" - "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
+                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
               </span>
             )}
 

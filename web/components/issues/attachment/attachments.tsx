@@ -15,7 +15,7 @@ import { ProjectMemberService } from "services/project";
 import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
-import { renderLongDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
 import { IIssueAttachment } from "types";
@@ -77,7 +77,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
                     <Tooltip
                       tooltipContent={`${
                         people?.find((person) => person.member.id === file.updated_by)?.member.display_name ?? ""
-                      } uploaded on ${renderLongDateFormat(file.updated_at)}`}
+                      } uploaded on ${renderFormattedDate(file.updated_at)}`}
                     >
                       <span>
                         <AlertCircle className="h-3 w-3" />

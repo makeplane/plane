@@ -1,12 +1,11 @@
 import React from "react";
-
 import { Popover, Transition } from "@headlessui/react";
 // react-datepicker
 import DatePicker from "react-datepicker";
 // icons
 import { CalendarDays, X } from "lucide-react";
-// import "react-datepicker/dist/react-datepicker.css";
-import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+// helpers
+import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 
 type Props = {
   value: string | null;
@@ -25,7 +24,7 @@ export const DateSelect: React.FC<Props> = ({ value, onChange, label, minDate, m
           {value ? (
             <>
               <CalendarDays className="h-3 w-3 flex-shrink-0" />
-              <span>{renderShortDateWithYearFormat(value)}</span>
+              <span>{renderFormattedDate(value)}</span>
               <button onClick={() => onChange(null)}>
                 <X className="h-3 w-3" />
               </button>
@@ -52,7 +51,7 @@ export const DateSelect: React.FC<Props> = ({ value, onChange, label, minDate, m
               selected={value ? new Date(value) : null}
               onChange={(val) => {
                 if (!val) onChange("");
-                else onChange(renderDateFormat(val));
+                else onChange(renderFormattedPayloadDate(val));
 
                 if (closeOnSelect) close();
               }}

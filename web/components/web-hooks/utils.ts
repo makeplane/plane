@@ -1,4 +1,6 @@
-import { renderDateFormat } from "helpers/date-time.helper";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+// types
 import { IWebhook, IWorkspace } from "types";
 
 export const getCurrentHookAsCSV = (
@@ -8,8 +10,8 @@ export const getCurrentHookAsCSV = (
 ) => ({
   id: webhook?.id || "",
   url: webhook?.url || "",
-  created_at: renderDateFormat(webhook?.created_at),
-  updated_at: renderDateFormat(webhook?.updated_at),
+  created_at: renderFormattedPayloadDate(webhook?.created_at || "") ?? "",
+  updated_at: renderFormattedPayloadDate(webhook?.updated_at || "") ?? "",
   is_active: webhook?.is_active?.toString() || "",
   secret_key: secretKey || "",
   project: webhook?.project?.toString() || "",

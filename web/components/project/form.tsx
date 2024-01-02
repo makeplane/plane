@@ -8,7 +8,7 @@ import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 import { IProject, IWorkspace } from "types";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 // services
@@ -310,7 +310,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               {isSubmitting ? "Updating Project..." : "Update Project"}
             </Button>
             <span className="text-sm italic text-custom-sidebar-text-400">
-              Created on {renderShortDateWithYearFormat(project?.created_at)}
+              Created on {renderFormattedDate(project?.created_at)}
             </span>
           </>
         </div>

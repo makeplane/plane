@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IUserActivity } from "types";
 // constants
@@ -35,7 +34,7 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
     const date = new Date(year, month, 1);
 
     while (date.getMonth() === month && date < new Date()) {
-      dates.push(renderDateFormat(new Date(date)));
+      dates.push(renderFormattedPayloadDate(new Date(date)) ?? "");
       date.setDate(date.getDate() + 1);
     }
 
@@ -102,7 +101,7 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
                   key={`${date}-${index}`}
                   tooltipContent={`${
                     isActive ? isActive.activity_count : 0
-                  } activities on ${renderShortDateWithYearFormat(date)}`}
+                  } activities on ${renderFormattedDate(date)}`}
                 >
                   <div
                     className={`${date === "" ? "pointer-events-none opacity-0" : ""} h-4 w-4 rounded ${

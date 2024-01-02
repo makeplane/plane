@@ -27,12 +27,7 @@ import {
   Trash2,
 } from "lucide-react";
 // helpers
-import {
-  isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { isDateGreaterThanToday, renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "types";
@@ -187,8 +182,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       }
 
       submitChanges({
-        start_date: renderDateFormat(`${watch("start_date")}`),
-        target_date: renderDateFormat(`${watch("target_date")}`),
+        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
       });
       setToastAlert({
         type: "success",
@@ -212,8 +207,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       }
 
       submitChanges({
-        start_date: renderDateFormat(`${watch("start_date")}`),
-        target_date: renderDateFormat(`${watch("target_date")}`),
+        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
       });
       setToastAlert({
         type: "success",
@@ -284,9 +279,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const startDate = new Date(watch("start_date") ?? moduleDetails.start_date ?? "");
   const endDate = new Date(watch("target_date") ?? moduleDetails.target_date ?? "");
-
-  const areYearsEqual =
-    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
@@ -400,19 +392,17 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="relative flex w-1/2 items-center rounded-sm">
               <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
+                  className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                     isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={!isEditingAllowed}
                 >
                   <span
-                    className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
+                    className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
                       watch("start_date") ? "" : "text-custom-text-400"
                     }`}
                   >
-                    {areYearsEqual
-                      ? renderShortDate(startDate, "No date selected")
-                      : renderShortMonthDate(startDate, "No date selected")}
+                    {renderFormattedDate(startDate) ?? "No date selected"}
                   </span>
                 </Popover.Button>
 
@@ -453,19 +443,17 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 w-full rounded-sm cursor-pointer hover:bg-custom-background-80 ${
+                    className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                       isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={!isEditingAllowed}
                   >
                     <span
-                      className={`group flex w-full items-center justify-between gap-2 py-1 px-1.5 text-sm ${
+                      className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
                         watch("target_date") ? "" : "text-custom-text-400"
                       }`}
                     >
-                      {areYearsEqual
-                        ? renderShortDate(endDate, "No date selected")
-                        : renderShortMonthDate(endDate, "No date selected")}
+                      {renderFormattedDate(endDate) ?? "No date selected"}
                     </span>
                   </Popover.Button>
 

@@ -2,7 +2,7 @@ import { useState, FC } from "react";
 // ui
 import { Button } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IExportData } from "types";
 
@@ -50,7 +50,7 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
           </span>
         </h4>
         <div className="mt-2 flex items-center gap-2 text-xs text-custom-text-200">
-          <span>{renderShortDateWithYearFormat(service.created_at)}</span>|
+          <span>{renderFormattedDate(service.created_at)}</span>|
           <span>Exported by {service?.initiated_by_detail?.display_name}</span>
         </div>
       </div>

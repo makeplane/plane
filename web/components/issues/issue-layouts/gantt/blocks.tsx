@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 // ui
 import { Tooltip, StateGroupIcon } from "@plane/ui";
 // helpers
-import { renderShortDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -34,15 +34,13 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
           <div className="space-y-1">
             <h5>{data?.name}</h5>
             <div>
-              {renderShortDate(data?.start_date ?? "")} to {renderShortDate(data?.target_date ?? "")}
+              {renderFormattedDate(data?.start_date ?? "")} to {renderFormattedDate(data?.target_date ?? "")}
             </div>
           </div>
         }
         position="top-left"
       >
-        <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
-          <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
-        </Tooltip>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
       </Tooltip>
     </div>
   );

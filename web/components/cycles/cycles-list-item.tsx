@@ -1,7 +1,6 @@
 import { FC, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 // stores
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -13,7 +12,7 @@ import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarG
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICycle, TCycleGroups } from "types";
@@ -63,8 +62,6 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     cycle.cancelled_issues;
 
   const renderDate = cycle.start_date || cycle.end_date;
-
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const completionPercentage = (cycle.completed_issues / cycleTotalIssues) * 100;
 
@@ -204,10 +201,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             </div>
 
             {renderDate && (
-              <span className="flex w-28 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                {" - "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
+                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
               </span>
             )}
 

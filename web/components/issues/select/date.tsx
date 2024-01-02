@@ -4,8 +4,8 @@ import { Popover, Transition } from "@headlessui/react";
 import { CalendarDays, X } from "lucide-react";
 // react-datepicker
 import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
-import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+// helpers
+import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 
 type Props = {
   label: string;
@@ -35,7 +35,7 @@ export const IssueDateSelect: FC<Props> = ({ label, maxDate, minDate, onChange, 
               {value ? (
                 <>
                   <CalendarDays className="h-3 w-3 flex-shrink-0" />
-                  <span>{renderShortDateWithYearFormat(value)}</span>
+                  <span>{renderFormattedDate(value)}</span>
                   <button onClick={() => onChange(null)}>
                     <X className="h-3 w-3 flex-shrink-0" />
                   </button>
@@ -69,7 +69,7 @@ export const IssueDateSelect: FC<Props> = ({ label, maxDate, minDate, onChange, 
                   selected={value ? new Date(value) : null}
                   onChange={(val) => {
                     if (!val) onChange("");
-                    else onChange(renderDateFormat(val));
+                    else onChange(renderFormattedPayloadDate(val));
 
                     close();
                   }}

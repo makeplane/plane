@@ -10,7 +10,7 @@ import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } 
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICycle, TCycleGroups } from "types";
@@ -52,8 +52,6 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const router = useRouter();
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
-
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const cycleTotalIssues =
     cycle.backlog_issues +
@@ -228,8 +226,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
             <div className="flex items-center justify-between">
               {isDateValid ? (
                 <span className="text-xs text-custom-text-300">
-                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-                  {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                  {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
                 </span>
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>

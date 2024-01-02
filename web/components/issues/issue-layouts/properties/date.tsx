@@ -12,7 +12,7 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // helpers
-import { renderDateFormat, renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 
 export interface IIssuePropertyDate {
   value: string | null;
@@ -105,7 +105,7 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
                     onChange={(val, e) => {
                       e?.stopPropagation();
                       if (onChange && val) {
-                        onChange(renderDateFormat(val));
+                        onChange(renderFormattedPayloadDate(val));
                         close();
                       }
                     }}

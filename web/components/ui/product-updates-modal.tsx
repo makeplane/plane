@@ -1,7 +1,5 @@
 import React from "react";
-
 import useSWR from "swr";
-
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -12,7 +10,7 @@ import { Loader } from "@plane/ui";
 // icons
 import { X } from "lucide-react";
 // helpers
-import { renderLongDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 
 type Props = {
   isOpen: boolean;
@@ -68,7 +66,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             <span className="flex items-center rounded-full border border-custom-border-200 bg-custom-background-90 px-3 py-1.5 text-xs">
                               {item.tag_name}
                             </span>
-                            <span>{renderLongDateFormat(item.published_at)}</span>
+                            <span>{renderFormattedDate(item.published_at)}</span>
                             {index === 0 && (
                               <span className="flex items-center rounded-full border border-custom-border-200 bg-custom-primary px-3 py-1.5 text-xs text-white">
                                 New

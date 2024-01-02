@@ -4,7 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // components
 import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
 import { IIssue } from "types";
@@ -52,7 +52,9 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const [showAllIssues, setShowAllIssues] = useState(false);
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
-  const issueIdList = groupedIssueIds ? groupedIssueIds[renderDateFormat(date.date)] : null;
+  const formattedDatePayload = renderFormattedPayloadDate(date.date);
+  if (!formattedDatePayload) return null;
+  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
   const totalIssues = issueIdList?.length ?? 0;
   return (
@@ -78,7 +80,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
 
         {/* content */}
         <div className="h-full w-full">
-          <Droppable droppableId={renderDateFormat(date.date)} isDropDisabled={false}>
+          <Droppable droppableId={formattedDatePayload} isDropDisabled={false}>
             {(provided, snapshot) => (
               <div
                 className={`h-full w-full select-none overflow-y-auto ${
@@ -100,9 +102,9 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   <div className="px-2 py-1">
                     <CalendarQuickAddIssueForm
                       formKey="target_date"
-                      groupId={renderDateFormat(date.date)}
+                      groupId={formattedDatePayload}
                       prePopulatedData={{
-                        target_date: renderDateFormat(date.date),
+                        target_date: renderFormattedPayloadDate(date.date),
                       }}
                       quickAddCallback={quickAddCallback}
                       viewId={viewId}

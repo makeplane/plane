@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
-
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
-import { renderShortDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
@@ -35,7 +34,7 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
           <div className="space-y-1">
             <h5>{data?.name}</h5>
             <div>
-              {renderShortDate(data?.start_date ?? "")} to {renderShortDate(data?.end_date ?? "")}
+              {renderFormattedDate(data?.start_date ?? "")} to {renderFormattedDate(data?.end_date ?? "")}
             </div>
           </div>
         }
