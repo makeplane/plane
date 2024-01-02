@@ -37,35 +37,37 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="group relative flex w-full items-center overflow-x-scroll border-b border-custom-border-200 px-4 py-2">
-        {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
-          <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
-            <span
-              className={`min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                isTabSelected(tab.key)
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-              }`}
-            >
-              {tab.label}
-            </span>
-          </Link>
-        ))}
+      <div className="group relative flex border-b border-custom-border-200">
+        <div className="flex w-full items-center overflow-x-auto px-4">
+          {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
+            <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
+              <span
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+                  isTabSelected(tab.key)
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+                }`}
+              >
+                {tab.label}
+              </span>
+            </Link>
+          ))}
 
-        {globalViewsStore.globalViewsList?.map((view) => (
-          <Link key={view.id} href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-            <span
-              id={`global-view-${view.id}`}
-              className={`flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                view.id === globalViewId
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-              }`}
-            >
-              {view.name}
-            </span>
-          </Link>
-        ))}
+          {globalViewsStore.globalViewsList?.map((view) => (
+            <Link key={view.id} href={`/${workspaceSlug}/workspace-views/${view.id}`}>
+              <span
+                id={`global-view-${view.id}`}
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+                  view.id === globalViewId
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+                }`}
+              >
+                {view.name}
+              </span>
+            </Link>
+          ))}
+        </div>
 
         {isAuthorizedUser && (
           <button
