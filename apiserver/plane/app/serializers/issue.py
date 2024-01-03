@@ -69,26 +69,56 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
-    state_detail = StateSerializer(read_only=True, source="state")
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    # ids
+    project_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    state_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    module_id = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    assignees = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
-        write_only=True,
-        required=False,
-    )
+    # Many to many
+    label_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="labels")
+    assignee_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="assignees")
 
-    labels = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
-        write_only=True,
-        required=False,
-    )
+    # Count items
+    sub_issues_count = serializers.IntegerField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
+
+    # is_subscribed
+    is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Issue
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "state_id",
+            "description_html",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "module_id",
+            "label_ids",
+            "assignee_ids",
+            "sub_issues_count",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "attachment_count",
+            "link_count",
+            "is_subscribed",
+            "is_draft",
+            "archived_at",
+        ]
         read_only_fields = [
             "workspace",
             "project",
@@ -579,128 +609,6 @@ class IssueSerializer(DynamicBaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['assignees'] = [str(assignee.id) for assignee in instance.assignees.all()]
-        data['labels'] = [str(label.id) for label in instance.labels.all()]
-        return data
-
-    def validate(self, data):
-        if (
-            data.get("start_date", None) is not None
-            and data.get("target_date", None) is not None
-            and data.get("start_date", None) > data.get("target_date", None)
-        ):
-            raise serializers.ValidationError("Start date cannot exceed target date")
-        return data
-
-    def create(self, validated_data):
-        assignees = validated_data.pop("assignees", None)
-        labels = validated_data.pop("labels", None)
-
-        project_id = self.context["project_id"]
-        workspace_id = self.context["workspace_id"]
-        default_assignee_id = self.context["default_assignee_id"]
-
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
-
-        # Issue Audit Users
-        created_by_id = issue.created_by_id
-        updated_by_id = issue.updated_by_id
-
-        if assignees is not None and len(assignees):
-            IssueAssignee.objects.bulk_create(
-                [
-                    IssueAssignee(
-                        assignee=user,
-                        issue=issue,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for user in assignees
-                ],
-                batch_size=10,
-            )
-        else:
-            # Then assign it to default assignee
-            if default_assignee_id is not None:
-                IssueAssignee.objects.create(
-                    assignee_id=default_assignee_id,
-                    issue=issue,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    created_by_id=created_by_id,
-                    updated_by_id=updated_by_id,
-                )
-
-        if labels is not None and len(labels):
-            IssueLabel.objects.bulk_create(
-                [
-                    IssueLabel(
-                        label=label,
-                        issue=issue,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
-
-        return issue
-
-    def update(self, instance, validated_data):
-        assignees = validated_data.pop("assignees", None)
-        labels = validated_data.pop("labels", None)
-
-        # Related models
-        project_id = instance.project_id
-        workspace_id = instance.workspace_id
-        created_by_id = instance.created_by_id
-        updated_by_id = instance.updated_by_id
-
-        if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
-            IssueAssignee.objects.bulk_create(
-                [
-                    IssueAssignee(
-                        assignee=user,
-                        issue=instance,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for user in assignees
-                ],
-                batch_size=10,
-            )
-
-        if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
-            IssueLabel.objects.bulk_create(
-                [
-                    IssueLabel(
-                        label=label,
-                        issue=instance,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
-
-        # Time updation occues even when other related models are updated
-        instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):

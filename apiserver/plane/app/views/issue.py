@@ -38,6 +38,7 @@ from plane.app.serializers import (
     IssueCommentSerializer,
     IssuePropertySerializer,
     IssueSerializer,
+    IssueCreateSerializer,
     LabelSerializer,
     IssueFlatSerializer,
     IssueLinkSerializer,
@@ -223,7 +224,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
-        serializer = IssueSerializer(
+        serializer = IssueCreateSerializer(
             data=request.data,
             context={
                 "project_id": project_id,
@@ -266,7 +267,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -1615,7 +1616,7 @@ class IssueDraftViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
-        serializer = IssueSerializer(
+        serializer = IssueCreateSerializer(
             data=request.data,
             context={
                 "project_id": project_id,
