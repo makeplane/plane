@@ -1,7 +1,11 @@
 import { EditorContainer, EditorContentWrapper } from "@plane/editor-core";
-import { Editor } from "@tiptap/react";
-import { useState } from "react";
+import { Node } from "@tiptap/pm/model";
+import { EditorView } from "@tiptap/pm/view";
+import { Editor, ReactRenderer } from "@tiptap/react";
+import { useCallback, useState } from "react";
 import { DocumentDetails } from "src/types/editor-types";
+import tippy from "tippy.js";
+import { LinkPreview } from "./link-preview";
 
 type IPageRenderer = {
   documentDetails: DocumentDetails;
@@ -36,6 +40,51 @@ export const PageRenderer = (props: IPageRenderer) => {
     debouncedUpdatePageTitle(title);
   };
 
+  const handleLinkHover = useCallback(
+    (event: React.MouseEvent) => {
+      if (!editor) return;
+      const target = event.target as HTMLElement;
+      const view = editor.view as EditorView;
+
+      if (!target || !view) return;
+      const pos = view.posAtDOM(target, 0);
+      if (!pos || pos < 0) return;
+
+      const node = view.state.doc.nodeAt(pos) as Node;
+      if (!node || !node.isAtom) return;
+
+      // we need to check if any of the marks are links
+      const marks = node.marks;
+
+      if (!marks) return;
+
+      const linkMark = marks.find((mark) => mark.type.name === "link");
+
+      if (!linkMark) return;
+
+      const href = linkMark.attrs.href;
+      const component = new ReactRenderer(LinkPreview, {
+        props: {
+          url: href,
+          editor: editor,
+          from: pos,
+          to: pos + node.nodeSize,
+        },
+        editor,
+      });
+
+      tippy(target, {
+        content: component.element,
+        interactive: true,
+        appendTo: () => document.querySelector("#editor-container") as HTMLElement,
+        arrow: true,
+        animation: "fade",
+        placement: "bottom-start",
+      });
+    },
+    [editor]
+  );
+
   return (
     <div className="w-full pb-64 pl-7 pt-5">
       {!readonly ? (
@@ -52,7 +101,7 @@ export const PageRenderer = (props: IPageRenderer) => {
           disabled
         />
       )}
-      <div className="flex h-full w-full flex-col pr-5">
+      <div className="flex h-full w-full flex-col pr-5" onMouseOver={handleLinkHover}>
         <EditorContainer editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
         </EditorContainer>
