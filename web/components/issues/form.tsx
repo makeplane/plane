@@ -39,7 +39,7 @@ const defaultValues: Partial<TIssue> = {
   description_html: "<p></p>",
   estimate_point: null,
   state_id: "",
-  parent_id: null,
+  parent_id: undefined,
   priority: "none",
   assignee_ids: [],
   label_ids: [],
