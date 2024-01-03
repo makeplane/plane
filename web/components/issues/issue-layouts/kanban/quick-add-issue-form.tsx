@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useProject, useWorkspace } from "hooks/store";
+import { useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -59,10 +59,8 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { getWorkspaceBySlug } = useWorkspace();
   const { getProjectById } = useProject();
 
-  const workspaceDetail = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : null;
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
 
   const ref = useRef<HTMLFormElement>(null);
@@ -87,11 +85,11 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
   }, [isOpen, reset]);
 
   const onSubmitHandler = async (formData: TIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
