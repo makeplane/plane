@@ -9,6 +9,8 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { EIssueActions } from "../types";
+// hooks
+import { useProjectState } from "hooks/store";
 //components
 import { KanBanQuickAddIssueForm, KanbanIssueBlocksList } from ".";
 
@@ -56,6 +58,19 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     viewId,
   } = props;
 
+  const projectState = useProjectState();
+
+  const prePopulateQuickAddData = (groupByKey: string | null, groupId: string) => {
+    const defaultState = projectState.projectStates?.find((state) => state.default);
+    if (groupByKey === null) return { state_id: defaultState?.id };
+    else {
+      if (groupByKey === "state") return { state: groupId };
+      if (groupByKey === "labels") return { state: defaultState?.id, labels: [groupId] };
+      if (groupByKey === "assignees") return { state: defaultState?.id, assignees: [groupId] };
+      else return { [groupByKey]: groupId };
+    }
+  };
+
   return (
     <div className={`${verticalPosition ? `min-h-[150px] w-[0px] overflow-hidden` : `w-full transition-all`}`}>
       <Droppable droppableId={`${groupId}__${sub_group_id}`}>
@@ -93,7 +108,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
             groupId={groupId}
             subGroupId={sub_group_id}
             prePopulatedData={{
-              ...(group_by && { [group_by]: groupId }),
+              ...(group_by && prePopulateQuickAddData(group_by, groupId)),
               ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
             }}
             quickAddCallback={quickAddCallback}
