@@ -149,11 +149,11 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // };
 
   const onSubmitHandler = async (formData: TIssue) => {
-    if (isSubmitting || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !currentWorkspace || !currentProjectDetails) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(projectId.toString(), {
+    const payload = createIssuePayload(currentProjectDetails.id, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
