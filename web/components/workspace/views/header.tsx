@@ -26,7 +26,7 @@ const ViewTab = observer((props: { viewId: string }) => {
     <Link key={viewId} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
       <span
         id={`global-view-${viewId}`}
-        className={`flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+        className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
           viewId === globalViewId
             ? "border-custom-primary-100 text-custom-primary-100"
             : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
@@ -60,24 +60,26 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="group relative flex w-full items-center overflow-x-scroll border-b border-custom-border-200 px-4">
-        {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
-          <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
-            <span
-              className={`min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                isTabSelected(tab.key)
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-              }`}
-            >
-              {tab.label}
-            </span>
-          </Link>
-        ))}
+      <div className="group relative flex border-b border-custom-border-200">
+        <div className="flex w-full items-center overflow-x-auto px-4">
+          {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
+            <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
+              <span
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+                  isTabSelected(tab.key)
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+                }`}
+              >
+                {tab.label}
+              </span>
+            </Link>
+          ))}
 
-        {currentWorkspaceViews?.map((viewId) => (
-          <ViewTab key={viewId} viewId={viewId} />
-        ))}
+          {currentWorkspaceViews?.map((viewId) => (
+            <ViewTab key={viewId} viewId={viewId} />
+          ))}
+        </div>
 
         <button
           type="button"
