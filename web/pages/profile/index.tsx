@@ -62,16 +62,6 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   }, [myProfile, reset]);
 
   const onSubmit = async (formData: IUser) => {
-    if (formData.first_name === "" || formData.last_name === "") {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "First and last names are required.",
-      });
-
-      return;
-    }
-
     const payload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -160,7 +150,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
         )}
       />
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-      <div className="mx-auto mt-16 flex h-full w-full flex-col space-y-10 overflow-y-auto px-8 pb-8 lg:w-3/5">
+      <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-16 px-8 pb-8 lg:w-3/5">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex w-full flex-col gap-8">
             <div className="relative h-44 w-full">
@@ -218,19 +208,24 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
               </div>
 
               {/* <Link href={`/profile/${myProfile.id}`}>
-                <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
-                  <ExternalLink className="h-4 w-4" />
-                  Activity Overview
-                </span>
-              </Link> */}
+              <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
+                <ExternalLink className="h-4 w-4" />
+                Activity Overview
+              </span>
+            </Link> */}
             </div>
 
             <div className="grid grid-cols-1 gap-6 px-8 lg:grid-cols-2 2xl:grid-cols-3">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">First name</h4>
+                <h4 className="text-sm">
+                  First name <span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   control={control}
                   name="first_name"
+                  rules={{
+                    required: "First name is required.",
+                  }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
                       id="first_name"
@@ -241,10 +236,11 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className="w-full rounded-md"
+                      className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
                     />
                   )}
                 />
+                {errors.first_name && <span className="text-xs text-red-500">Please enter first name</span>}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -270,10 +266,15 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Email</h4>
+                <h4 className="text-sm">
+                  Email<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   control={control}
                   name="email"
+                  rules={{
+                    required: "Email is required.",
+                  }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
                       id="email"
@@ -284,7 +285,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className="w-full rounded-md"
+                      className={`w-full rounded-md ${errors.email ? "border-red-500" : ""}`}
                       disabled
                     />
                   )}
@@ -292,17 +293,19 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Role</h4>
+                <h4 className="text-sm">
+                  Role<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   name="role"
                   control={control}
-                  rules={{ required: "This field is required" }}
+                  rules={{ required: "Role is required." }}
                   render={({ field: { value, onChange } }) => (
                     <CustomSelect
                       value={value}
                       onChange={onChange}
                       label={value ? value.toString() : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : "border-none"}
+                      buttonClassName={errors.role ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       width="w-full"
                       input
@@ -319,7 +322,9 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Display name</h4>
+                <h4 className="text-sm">
+                  Display name<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   control={control}
                   name="display_name"
@@ -349,19 +354,22 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       ref={ref}
                       hasError={Boolean(errors.display_name)}
                       placeholder="Enter your display name"
-                      className="w-full"
+                      className={`w-full ${errors.display_name ? "border-red-500" : ""}`}
                     />
                   )}
                 />
+                {errors.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Timezone</h4>
+                <h4 className="text-sm">
+                  Timezone<span className="text-red-500">*</span>
+                </h4>
 
                 <Controller
                   name="user_timezone"
                   control={control}
-                  rules={{ required: "This field is required" }}
+                  rules={{ required: "Time zone is required" }}
                   render={({ field: { value, onChange } }) => (
                     <CustomSearchSelect
                       value={value}
@@ -369,13 +377,13 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       options={timeZoneOptions}
                       onChange={onChange}
                       optionsClassName="w-full"
-                      buttonClassName="border-none"
+                      buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       input
                     />
                   )}
                 />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
+                {errors.role && <span className="text-xs text-red-500">Please select a time zone</span>}
               </div>
 
               <div className="flex items-center justify-between py-2">
