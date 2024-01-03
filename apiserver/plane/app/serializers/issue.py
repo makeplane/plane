@@ -75,8 +75,20 @@ class IssueCreateSerializer(BaseSerializer):
     project_id = serializers.PrimaryKeyRelatedField(read_only=True)
     state_id = serializers.PrimaryKeyRelatedField(source='state', queryset=State.objects.all(),  required=False)
     parent_id = serializers.PrimaryKeyRelatedField(source='parent', queryset=Issue.objects.all() ,required=False)
-    # cycle_id = serializers.PrimaryKeyRelatedField(queryset=Cycle.objects.all(), required=False)
-    # module_id = serializers.PrimaryKeyRelatedField( queryset=Module.objects.all(), required=False)
+
+    label_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
+        write_only=True,
+        required=False,
+    )
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
+
+    # cycle_id = serializers.PrimaryKeyRelatedField(queryset=CycleIssue.objects.all(), required=False)
+    # module_id = serializers.PrimaryKeyRelatedField( queryset=ModuleIssue.objects.all(), required=False)
 
     # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -102,6 +114,8 @@ class IssueCreateSerializer(BaseSerializer):
             "sequence_id",
             "project_id",
             "parent_id",
+            "label_ids",
+            "assignee_ids",
             # "cycle_id",
             # "module_id",
             "sub_issues_count",
@@ -143,7 +157,9 @@ class IssueCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
+        print(validated_data,"validated_data")
         labels = validated_data.pop("label_ids", None)
+        print(labels,"labels")
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -183,6 +199,7 @@ class IssueCreateSerializer(BaseSerializer):
                 )
 
         if labels is not None and len(labels):
+            print("lanel")
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
