@@ -30,6 +30,8 @@ from plane.db.models import (
     CommentReaction,
     IssueVote,
     IssueRelation,
+    State,
+    Project,
 )
 
 
@@ -71,14 +73,10 @@ class IssueProjectLiteSerializer(BaseSerializer):
 class IssueCreateSerializer(BaseSerializer):
     # ids
     project_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    state_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    module_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    # Many to many
-    label_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="labels")
-    assignee_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="assignees")
+    state_id = serializers.PrimaryKeyRelatedField(source='state', queryset=State.objects.all(),  required=False)
+    parent_id = serializers.PrimaryKeyRelatedField(source='parent', queryset=Issue.objects.all() ,required=False)
+    # cycle_id = serializers.PrimaryKeyRelatedField(queryset=Cycle.objects.all(), required=False)
+    # module_id = serializers.PrimaryKeyRelatedField( queryset=Module.objects.all(), required=False)
 
     # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -104,10 +102,8 @@ class IssueCreateSerializer(BaseSerializer):
             "sequence_id",
             "project_id",
             "parent_id",
-            "cycle_id",
-            "module_id",
-            "label_ids",
-            "assignee_ids",
+            # "cycle_id",
+            # "module_id",
             "sub_issues_count",
             "created_at",
             "updated_at",
@@ -130,8 +126,10 @@ class IssueCreateSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['assignees'] = [str(assignee.id) for assignee in instance.assignees.all()]
-        data['labels'] = [str(label.id) for label in instance.labels.all()]
+        assignee_ids = self.initial_data.get('assignee_ids')
+        data['assignee_ids'] = assignee_ids if assignee_ids else []
+        label_ids = self.initial_data.get('label_ids')
+        data['label_ids'] = label_ids if label_ids else []
         return data
 
     def validate(self, data):
@@ -144,8 +142,8 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def create(self, validated_data):
-        assignees = validated_data.pop("assignees", None)
-        labels = validated_data.pop("labels", None)
+        assignees = validated_data.pop("assignee_ids", None)
+        labels = validated_data.pop("label_ids", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -203,8 +201,8 @@ class IssueCreateSerializer(BaseSerializer):
         return issue
 
     def update(self, instance, validated_data):
-        assignees = validated_data.pop("assignees", None)
-        labels = validated_data.pop("labels", None)
+        assignees = validated_data.pop("assignee_ids", None)
+        labels = validated_data.pop("labels_ids", None)
 
         # Related models
         project_id = instance.project_id
