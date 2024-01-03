@@ -21,7 +21,6 @@ export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   group_by: string | null;
-  is_list?: boolean;
   handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -45,7 +44,6 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     issueIds,
     issuesMap,
     group_by,
-    is_list = false,
     handleIssues,
     quickActions,
     displayProperties,
@@ -84,6 +82,8 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     if (!showEmptyGroup && issuesCount <= 0) return false;
     return true;
   };
+
+  const is_list = group_by === null ? true : false;
 
   return (
     <div className="relative h-full w-full">

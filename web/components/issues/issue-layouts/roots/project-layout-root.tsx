@@ -40,14 +40,16 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
+      {issues?.loader === "init-loader" ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          {(issues?.groupedIssueIds ?? {}).length == 0 ? (
-            <ProjectEmptyState />
+          {!issues?.groupedIssueIds ? (
+            <div className="relative h-full w-full overflow-y-auto">
+              <ProjectEmptyState />
+            </div>
           ) : (
             <div className="relative h-full w-full overflow-auto bg-custom-background-90">
               {activeLayout === "list" ? (
