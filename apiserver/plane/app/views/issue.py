@@ -85,9 +85,14 @@ from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
+    def get_serializer_class(self):
+        return (
+            IssueCreateSerializer
+            if self.action in ["create", "update", "partial_update"]
+            else IssueSerializer
+        )
 
     model = Issue
-    serializer_class = IssueSerializer
     webhook_event = "issue"
     permission_classes = [
         ProjectEntityPermission,
