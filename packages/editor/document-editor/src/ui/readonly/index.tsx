@@ -109,7 +109,7 @@ const DocumentReadOnlyEditor = ({
         <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-full">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             updatePageTitle={() => Promise.resolve()}
             readonly={true}
