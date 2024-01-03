@@ -20,7 +20,6 @@ class ConfigurationEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
-
         # Get all the configuration
         (
             GOOGLE_CLIENT_ID,
@@ -90,8 +89,12 @@ class ConfigurationEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
-        data["google_client_id"] = GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != "\"\"" else None
-        data["github_client_id"] = GITHUB_CLIENT_ID if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != "\"\"" else None
+        data["google_client_id"] = (
+            GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != '""' else None
+        )
+        data["github_client_id"] = (
+            GITHUB_CLIENT_ID if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != '""' else None
+        )
         data["github_app_name"] = GITHUB_APP_NAME
         data["magic_login"] = (
             bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
@@ -114,7 +117,9 @@ class ConfigurationEndpoint(BaseAPIView):
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
-        # is self managed
-        data["is_self_managed"] = bool(int(os.environ.get("IS_SELF_MANAGED", "1")))
+        # is smtp configured
+        data["is_smtp_configured"] = not (
+            bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
+        )
 
         return Response(data, status=status.HTTP_200_OK)
