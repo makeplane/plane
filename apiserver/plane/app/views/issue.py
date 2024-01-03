@@ -1630,13 +1630,12 @@ class IssueDraftViewSet(BaseViewSet):
         serializer = IssueCreateSerializer(
             data=request.data,
             context={
+                "issue_type": "draft-issue",
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
             },
         )
-        if serializer.initial_data.get("name") is not None:
-            serializer.initial_data["name"] = "UNTITLED ISSUE"
 
         if serializer.is_valid():
             serializer.save(is_draft=True)

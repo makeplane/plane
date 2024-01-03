@@ -98,6 +98,12 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def to_internal_value(self, data):
+        issue_type = self.context.get("issue_type") if self.context is not None else None
+        if data and issue_type == "draft-issue" and not data.get('name'):
+            data['name'] = 'UNTITLED ISSUE'
+        return super().to_internal_value(data)
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['assignees'] = [str(assignee.id) for assignee in instance.assignees.all()]
