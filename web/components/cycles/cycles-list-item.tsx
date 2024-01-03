@@ -116,7 +116,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   if (!cycleDetails) return null;
 
   // computed
-  const cycleStatus = cycleDetails.status.toLocaleLowerCase() as TCycleGroups;
+  // TODO: change this logic once backend fix the response
+  const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycleDetails.end_date ?? "");
   const startDate = new Date(cycleDetails.start_date ?? "");

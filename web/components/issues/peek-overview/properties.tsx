@@ -6,11 +6,17 @@ import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from
 import { useIssueDetail, useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import { SidebarCycleSelect, SidebarLabelSelect, SidebarModuleSelect, SidebarParentSelect } from "components/issues";
+import {
+  IssueLinkRoot,
+  SidebarCycleSelect,
+  SidebarLabelSelect,
+  SidebarModuleSelect,
+  SidebarParentSelect,
+} from "components/issues";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
-import { LinkModal, LinksList } from "components/core";
+import { LinkModal } from "components/core";
 // types
 import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "@plane/types";
 // constants
@@ -38,6 +44,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const uneditable = currentProjectRole ? [5, 10].includes(currentProjectRole) : false;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleState = (_state: string) => {
     issueUpdate({ ...issue, state_id: _state });
@@ -296,19 +305,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              {issue?.issue_link && issue.issue_link.length > 0 ? (
-                <LinksList
-                  links={issue.issue_link}
-                  handleDeleteLink={issueLinkDelete}
-                  handleEditLink={handleEditLink}
-                  userAuth={{
-                    isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                    isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                    isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                    isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                  }}
-                />
-              ) : null}
+              <IssueLinkRoot uneditable={uneditable} isAllowed={isAllowed} />
             </div>
           </div>
         </div>

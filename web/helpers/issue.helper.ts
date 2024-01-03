@@ -123,46 +123,13 @@ export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) 
   projectId: string,
   formData: Partial<TIssue>
 ) => {
-  const payload = {
+  const payload: TIssue = {
     id: uuidv4(),
-    name: "",
-    state_id: "",
-    description_html: "",
-    sort_order: 0,
-    completed_at: new Date(),
-    estimate_point: null,
-    priority: "none",
-    start_date: null,
-    target_date: null,
-    sequence_id: 0,
     project_id: projectId,
-    parent_id: null,
-    cycle_id: null,
-    module_id: null,
-    sub_issues_count: "",
-    created_at: "",
-    updated_at: "",
-    created_by: "",
-    updated_by: "",
-    attachment_count: 0,
-    link_count: 0,
-    is_subscribed: "",
-    archived_at: null,
-    is_draft: false,
     // tempId is used for optimistic updates. It is not a part of the API response.
     tempId: uuidv4(),
     // to be overridden by the form data
     ...formData,
-    assignee_ids: Array.isArray(formData.assignee_ids)
-      ? formData.assignee_ids
-      : formData.assignee_ids && formData.assignee_ids !== "none" && formData.assignee_ids !== null
-      ? [formData.assignee_ids]
-      : [],
-    label_ids: Array.isArray(formData.label_ids)
-      ? formData.label_ids
-      : formData.label_ids && formData.label_ids !== "none" && formData.label_ids !== null
-      ? [formData.label_ids]
-      : [],
   } as TIssue;
 
   return payload;

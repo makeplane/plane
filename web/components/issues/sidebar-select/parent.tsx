@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
+import { useIssueDetail, useIssues, useProject } from "hooks/store";
 // components
 import { ParentIssuesListModal } from "components/issues";
 // icons
@@ -26,6 +26,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
 
   // hooks
   const { getProjectById } = useProject();
+  const { issueMap } = useIssues();
 
   return (
     <>
@@ -56,7 +57,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
         {selectedParentIssue && issueDetails?.parent_id ? (
           `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
         ) : !selectedParentIssue && issueDetails?.parent_id ? (
-          `${getProjectById(issueDetails.parent_id)?.identifier}-${issueDetails.parent_detail?.sequence_id}`
+          `${getProjectById(issueDetails.parent_id)?.identifier}-${issueMap[issueDetails.parent_id]?.sequence_id}`
         ) : (
           <span className="text-custom-text-200">Select issue</span>
         )}
