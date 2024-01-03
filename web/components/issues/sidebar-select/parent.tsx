@@ -26,6 +26,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
 
   // hooks
   const { getProjectById } = useProject();
+  const { getIssueById } = useIssue();
 
   return (
     <>
@@ -56,7 +57,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
         {selectedParentIssue && issueDetails?.parent_id ? (
           `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
         ) : !selectedParentIssue && issueDetails?.parent_id ? (
-          `${getProjectById(issueDetails.parent_id)?.identifier}-${issueDetails.parent_detail?.sequence_id}`
+          `${getProjectById(issueDetails.parent_id)?.identifier}-${getIssueById(issueDetails.parent_id)?.sequence_id}`
         ) : (
           <span className="text-custom-text-200">Select issue</span>
         )}
@@ -65,3 +66,6 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
     </>
   );
 };
+function useIssue(): { getIssueById: any } {
+  throw new Error("Function not implemented.");
+}

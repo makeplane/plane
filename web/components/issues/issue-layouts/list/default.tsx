@@ -67,13 +67,14 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   if (!list) return null;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
+    console.log("groupByKey", groupByKey, "value", value);
     const defaultState = projectState.projectStates?.find((state) => state.default);
     if (groupByKey === null) return { state_id: defaultState?.id };
     else {
-      if (groupByKey === "state") return { state: groupByKey === "state" ? value : defaultState?.id };
-      if (groupByKey === "labels") return { state_id: defaultState?.id, labels: [value] };
-      if (groupByKey === "assignees") return { state_id: defaultState?.id, assignees: [value] };
-      else return { state: groupByKey === "state" ? value : defaultState?.id, [groupByKey]: value };
+      if (groupByKey === "state") return { state_id: value };
+      else if (groupByKey === "labels") return { state_id: defaultState?.id, label_ids: [value] };
+      else if (groupByKey === "assignees") return { state_id: defaultState?.id, assignee_ids: [value] };
+      else return { state_id: defaultState?.id, [groupByKey]: value };
     }
   };
 

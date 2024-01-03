@@ -296,7 +296,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              {issue?.issue_link && issue.issue_link.length > 0 ? (
+              {/* TODO: -MOBX- replace this with the issue Link root component */}
+              {/* {issue?.issue_link && issue.issue_link.length > 0 ? (
                 <LinksList
                   links={issue.issue_link}
                   handleDeleteLink={issueLinkDelete}
@@ -308,7 +309,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                   }}
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
         </div>

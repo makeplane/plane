@@ -26,8 +26,8 @@ const defaultValues: Partial<TIssue> = {
   // description: "",
   description_html: "",
   estimate_point: null,
-  issue_cycle: null,
-  issue_module: null,
+  cycle_id: null,
+  module_id: null,
   name: "",
   priority: "low",
   start_date: undefined,
@@ -85,8 +85,8 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
         ...formData,
       };
 
-      delete payload.related_issues;
-      delete payload.issue_relations;
+      // delete payload.related_issues;
+      // delete payload.issue_relations;
 
       await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
