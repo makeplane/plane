@@ -88,7 +88,11 @@ export abstract class APIService {
     });
   }
 
-  request(config = {}) {
-    return axios(config);
+  request(config: any) {
+    return axios({
+      method: "get",
+      url: config,
+      headers: this.getAccessToken() ? this.getHeaders() : {}
+    });
   }
 }

@@ -27,7 +27,6 @@ from plane.app.serializers import (
     GithubRepositorySyncSerializer,
     GithubCommentSyncSerializer,
 )
-from plane.utils.integrations.github import get_github_repos
 from plane.app.permissions import ProjectBasePermission, ProjectEntityPermission
 
 

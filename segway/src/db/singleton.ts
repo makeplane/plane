@@ -16,7 +16,7 @@ export class DatabaseSingleton {
       }
 
       const queryClient = postgres(process.env.DATABASE_URL);
-      this.db = drizzle(queryClient);
+      this.db = drizzle(queryClient, { schema });
       logger.info("🛢️ Connected to Database")
     } catch (error) {
       logger.error("Failed to initialize database connection:", error);

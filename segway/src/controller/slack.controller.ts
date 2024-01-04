@@ -41,6 +41,7 @@ export class SlackController {
 
   @Post("trigger/ui/create-issue/")
   async triggerCreateIssueModal(req: Request, res: Response) {
+    console.log(req.body.team_id)
     const slackService = new SlackService();
     const projectService = new ProjectService();
 
@@ -60,6 +61,7 @@ export class SlackController {
     await slackService.openModal(
       req.body.trigger_id,
       CreateIssueModalViewProjects(projectPlainTextOption),
+      req.body.team_id,
     );
     res.sendStatus(200);
   }

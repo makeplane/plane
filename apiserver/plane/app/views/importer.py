@@ -190,6 +190,29 @@ class ImportServiceEndpoint(BaseAPIView):
         if config and service == "github":
             config.update({"installation_id": installation_id})
 
+            # Request segway for the required information
+            if settings.SEGWAY_BASE_URL:
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-api-key": settings.SEGWAY_KEY,
+                }
+                res = requests.post(
+                    f"{settings.SEGWAY_BASE_URL}/api/{service}",
+                    data=json.dumps(
+                        {
+                            "owner": metadata.get("owner"),
+                            "repo": metadata.get("name"),
+                            "installationId": installation_id,
+                        }
+                    ),
+                    headers=headers,
+                )
+                if "error" in res.json():
+                    return Response(res.json(), status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    data["total_issues"] = res.json()["issue_count"]
+
+
         # Get the api token -- # deprecated
         api_token = APIToken.objects.filter(
             user=request.user, workspace=workspace

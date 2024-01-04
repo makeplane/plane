@@ -38,12 +38,12 @@ export class SlackService {
     }
   }
 
-  async getConfig(): Promise<{ slackConfig: TSlackConfig } | void> {
+  async getConfig(team_id: string): Promise<{ slackConfig: TSlackConfig } | void> {
     const db = DatabaseSingleton.getInstance().db;
     const integration = await this.getIntegration();
 
     if (db && integration) {
-      const slackConfig = await db
+      const slackConfig: any = await db
         .select({
           slackConfig: workspaceIntegrations.config,
         })
@@ -52,8 +52,11 @@ export class SlackService {
           sql`${workspaceIntegrations.integrationId} = ${integration.integrationId}`,
         );
 
-      if (slackConfig.length > 0) {
-        return slackConfig[0] as { slackConfig: TSlackConfig };
+
+      const configs = slackConfig.filter((c:any) => c.slackConfig.team_id === team_id)
+
+      if (configs.length > 0) {
+        return configs[0] as { slackConfig: TSlackConfig };
       }
     }
   }
@@ -96,25 +99,30 @@ export class SlackService {
     }
   }
 
-  async openModal(triggerId: string, modal: any) {
-    const slackConfig = await this.getConfig();
+  async openModal(triggerId: string, modal: any, team_id: string) {
+    const slackConfig = await this.getConfig(team_id);
     if (!slackConfig) {
       return;
     }
+
+    console.log(slackConfig)
     const slackAccessToken = slackConfig.slackConfig.access_token;
 
     try {
-      return await fetch("https://slack.com/api/views.open", {
+      const resp = await fetch("https://slack.com/api/views.push", {
         method: "POST",
         body: JSON.stringify({
           trigger_id: triggerId,
           view: modal,
         }),
         headers: {
-          "content-type": "application/json",
+          "Content-Type": "application/json",
           authorization: `Bearer ${slackAccessToken}`,
         },
       });
+
+      const data = await resp.json()
+      console.log(data)
     } catch (error) {
       logger.error(error);
     }

@@ -15,6 +15,7 @@
     "@overnightjs/core": "^1.7.6",
     "@sentry/node": "^7.73.0",
     "@sentry/tracing": "^7.73.0",
+    "@slack/web-api": "^6.11.1",
     "amqplib": "^0.10.3",
     "axios": "^1.6.2",
     "cors": "^2.8.5",
