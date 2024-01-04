@@ -18,6 +18,12 @@ import { IIssueRelationStore, IssueRelationStore, IIssueRelationStoreActions } f
 
 import { TIssue, IIssueActivity, TIssueLink, TIssueRelationTypes } from "@plane/types";
 
+export type TPeekIssue = {
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+};
+
 export interface IIssueDetail
   extends IIssueStoreActions,
     IIssueReactionStoreActions,
@@ -30,14 +36,14 @@ export interface IIssueDetail
     IIssueAttachmentStoreActions,
     IIssueRelationStoreActions {
   // observables
-  issueId: string | undefined;
+  peekIssue: TPeekIssue | undefined;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   // computed
   isAnyModalOpen: boolean;
   // actions
-  setIssueId: (issueId: string | undefined) => void;
+  setPeekIssue: (peekIssue: TPeekIssue | undefined) => void;
   toggleIssueLinkModal: (value: boolean) => void;
   toggleParentIssueModal: (value: boolean) => void;
   toggleDeleteIssueModal: (value: boolean) => void;
@@ -57,7 +63,7 @@ export interface IIssueDetail
 
 export class IssueDetail implements IIssueDetail {
   // observables
-  issueId: string | undefined = undefined;
+  peekIssue: TPeekIssue | undefined = undefined;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
@@ -77,14 +83,14 @@ export class IssueDetail implements IIssueDetail {
   constructor(rootStore: IIssueRootStore) {
     makeObservable(this, {
       // observables
-      issueId: observable.ref,
+      peekIssue: observable,
       isIssueLinkModalOpen: observable.ref,
       isParentIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
-      setIssueId: action,
+      setPeekIssue: action,
       toggleIssueLinkModal: action,
       toggleParentIssueModal: action,
       toggleDeleteIssueModal: action,
@@ -110,16 +116,14 @@ export class IssueDetail implements IIssueDetail {
   }
 
   // actions
-  setIssueId = (issueId: string | undefined) => (this.issueId = issueId);
+  setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
   toggleParentIssueModal = (value: boolean) => (this.isParentIssueModalOpen = value);
   toggleDeleteIssueModal = (value: boolean) => (this.isDeleteIssueModalOpen = value);
 
   // issue
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    this.issueId = issueId;
-    return this.issue.fetchIssue(workspaceSlug, projectId, issueId);
-  };
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.issue.fetchIssue(workspaceSlug, projectId, issueId);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

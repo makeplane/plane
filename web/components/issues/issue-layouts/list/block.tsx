@@ -25,14 +25,18 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     router: { workspaceSlug, projectId },
   } = useApplication();
   const { getProjectById } = useProject();
-  const { fetchIssue } = useIssueDetail();
+  const { setPeekIssue } = useIssueDetail();
 
   const updateIssue = (issueToUpdate: TIssue) => {
     handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
-  const handleIssuePeekOverview = () =>
-    workspaceSlug && projectId && issueId && fetchIssue(workspaceSlug, projectId, issueId);
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
 
@@ -57,7 +61,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         <ControlLink
           href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
           target="_blank"
-          onClick={handleIssuePeekOverview}
+          onClick={() => handleIssuePeekOverview(issue)}
           className="w-full line-clamp-1 cursor-pointer text-sm font-medium text-custom-text-100"
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
