@@ -1,5 +1,4 @@
-import React from "react";
-import Link from "next/link";
+import * as React from "react";
 
 export type TControlLinkDefaultProps = {
   href: string;
@@ -25,8 +24,8 @@ export const ControlLink: React.FC<TControlLink> = (props) => {
   };
 
   return (
-    <Link href={href} target={target} onClick={_onClick} {...rest}>
+    <a href={href} target={target} onClick={_onClick} {...rest}>
       {children}
-    </Link>
+    </a>
   );
 };
