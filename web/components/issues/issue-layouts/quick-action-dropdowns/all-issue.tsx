@@ -11,19 +11,17 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EIssuesStoreType } from "constants/issue";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, customActionButton } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<TIssue | null>(null);
+  const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
@@ -36,6 +34,12 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
     );
   };
 
+  const duplicateIssuePayload = {
+    ...issue,
+    name: `${issue.name} (copy)`,
+  };
+  delete duplicateIssuePayload.id;
+
   return (
     <>
       <DeleteIssueModal
@@ -46,17 +50,14 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}
-        handleClose={() => {
+        onClose={() => {
           setCreateUpdateIssueModal(false);
-          setIssueToEdit(null);
+          setIssueToEdit(undefined);
         }}
-        // pre-populate date only if not editing
-        prePopulateData={!issueToEdit && createUpdateIssueModal ? { ...issue, name: `${issue.name} (copy)` } : {}}
-        data={issueToEdit}
+        data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
-        currentStore={EIssuesStoreType.PROJECT}
       />
       <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
