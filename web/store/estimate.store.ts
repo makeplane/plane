@@ -14,7 +14,7 @@ export interface IEstimateStore {
   projectEstimates: IEstimate[] | null;
   activeEstimateDetails: IEstimate | null;
   // computed actions
-  areEstimatesActiveForProject: (projectId: string) => boolean;
+  areEstimatesEnabledForProject: (projectId: string) => boolean;
   getEstimatePointValue: (estimateKey: number | null) => string;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
   getProjectActiveEstimateDetails: (projectId: string) => IEstimate | null;
@@ -48,7 +48,7 @@ export class EstimateStore implements IEstimateStore {
       projectEstimates: computed,
       activeEstimateDetails: computed,
       // computed actions
-      areEstimatesActiveForProject: action,
+      areEstimatesEnabledForProject: action,
       getProjectEstimateById: action,
       getEstimatePointValue: action,
       getProjectActiveEstimateDetails: action,
@@ -96,7 +96,7 @@ export class EstimateStore implements IEstimateStore {
    * @description returns true if estimates are enabled for a project using project id
    * @param projectId
    */
-  areEstimatesActiveForProject = (projectId: string) => {
+  areEstimatesEnabledForProject = (projectId: string) => {
     const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
     if (!projectDetails) return false;
     return Boolean(projectDetails.estimate) ?? false;
