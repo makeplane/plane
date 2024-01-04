@@ -1,4 +1,4 @@
-import { FC, ReactNode, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -43,7 +43,6 @@ interface IIssueView {
   issueLinkUpdate: (formData: IIssueLink, linkId: string) => Promise<ILinkDetails>;
   issueLinkDelete: (linkId: string) => Promise<void>;
   handleDeleteIssue: () => Promise<void>;
-  children: ReactNode;
   disableUserActions?: boolean;
   showCommentAccessSpecifier?: boolean;
 }
@@ -92,7 +91,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueLinkUpdate,
     issueLinkDelete,
     handleDeleteIssue,
-    children,
     disableUserActions = false,
     showCommentAccessSpecifier = false,
   } = props;
@@ -116,17 +114,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     toggleDeleteIssueModal,
   } = useIssueDetail();
   const { currentUser } = useUser();
-
-  const updateRoutePeekId = () => {
-    if (issueId != peekIssueId) {
-      setIssueId(issueId);
-      const { query } = router;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issueId, peekProjectId: projectId },
-      });
-    }
-  };
 
   const removeRoutePeekId = () => {
     const { query } = router;
@@ -172,6 +159,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
+
       {issue && isArchived && (
         <DeleteArchivedIssueModal
           data={issue}
@@ -180,14 +168,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
-      <div className="w-full truncate !text-base">
-        {children && (
-          <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-            {children}
-          </div>
-        )}
 
-        {issueId === peekIssueId && (
+      <div className="w-full truncate !text-base">
+        {issueId && (
           <div
             ref={issuePeekOverviewRef}
             className={`fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300 
