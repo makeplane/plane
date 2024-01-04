@@ -110,12 +110,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
+            Issue.issue_objects
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("project")
@@ -143,6 +138,11 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            ).annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
         ).distinct()
 
@@ -156,13 +156,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
-            ).filter(**filters)
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -250,24 +244,13 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
-            issue = self.get_queryset().annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
-            ).filter(pk=serializer.data["id"]).first()
+            issue = self.get_queryset().filter(pk=serializer.data["id"]).first()
             serializer = IssueSerializer(issue)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = Issue.issue_objects.annotate(
-            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        ).get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = self.get_queryset().filter(pk=pk).first()
         return Response(
             IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
             status=status.HTTP_200_OK,
@@ -291,7 +274,8 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            issue = self.get_queryset().filter(pk=pk).first()
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, pk=None):
@@ -726,13 +710,6 @@ class SubIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
@@ -1023,13 +1000,6 @@ class IssueArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
         )
 
         # Priority Ordering
@@ -1176,16 +1146,6 @@ class IssueSubscriberViewSet(BaseViewSet):
                 workspace__slug=slug,
                 project_id=project_id,
                 is_active=True,
-            )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        issue_id=issue_id,
-                        subscriber=OuterRef("member"),
-                    )
-                )
             )
             .select_related("member")
         )
@@ -1568,13 +1528,6 @@ class IssueDraftViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
             )
         )
 

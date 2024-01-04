@@ -72,10 +72,8 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
     # ids
-    project_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    state_id = serializers.PrimaryKeyRelatedField(source='state', queryset=State.objects.all(), required=False, allow_null=True)
+    state_id = serializers.PrimaryKeyRelatedField(source="state", queryset=State.objects.all(), required=False)
     parent_id = serializers.PrimaryKeyRelatedField(source='parent', queryset=Issue.objects.all(), required=False, allow_null=True)
-
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
@@ -87,48 +85,9 @@ class IssueCreateSerializer(BaseSerializer):
         required=False,
     )
 
-    cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    module_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    # Count items
-    sub_issues_count = serializers.IntegerField(read_only=True)
-    attachment_count = serializers.IntegerField(read_only=True)
-    link_count = serializers.IntegerField(read_only=True)
-
-    # is_subscribed
-    is_subscribed = serializers.BooleanField(read_only=True)
-
     class Meta:
         model = Issue
-        fields = [
-            "id",
-            "name",
-            "state_id",
-            "description_html",
-            "sort_order",
-            "completed_at",
-            "estimate_point",
-            "priority",
-            "start_date",
-            "target_date",
-            "sequence_id",
-            "project_id",
-            "parent_id",
-            "label_ids",
-            "assignee_ids",
-            "cycle_id",
-            "module_id",
-            "sub_issues_count",
-            "created_at",
-            "updated_at",
-            "created_by",
-            "updated_by",
-            "attachment_count",
-            "link_count",
-            "is_subscribed",
-            "is_draft",
-            "archived_at",
-        ]
+        fields = "__all__"
         read_only_fields = [
             "workspace",
             "project",
