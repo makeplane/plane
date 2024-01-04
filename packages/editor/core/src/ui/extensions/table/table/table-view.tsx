@@ -1,5 +1,5 @@
 import { h } from "jsx-dom-cjs";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { Decoration, NodeView } from "@tiptap/pm/view";
 import tippy, { Instance, Props } from "tippy.js";
 
@@ -7,6 +7,12 @@ import { Editor } from "@tiptap/core";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 
 import { icons } from "src/ui/extensions/table/table/icons";
+
+type ToolboxItem = {
+  label: string;
+  icon: string;
+  action: (args: any) => void;
+};
 
 export function updateColumns(
   node: ProseMirrorNode,
@@ -75,7 +81,7 @@ const defaultTippyOptions: Partial<Props> = {
   placement: "right",
 };
 
-function setCellsBackgroundColor(editor: Editor, backgroundColor) {
+function setCellsBackgroundColor(editor: Editor, backgroundColor: string) {
   return editor
     .chain()
     .focus()
@@ -88,7 +94,7 @@ function setCellsBackgroundColor(editor: Editor, backgroundColor) {
     .run();
 }
 
-const columnsToolboxItems = [
+const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Add Column Before",
     icon: icons.insertLeftTableIcon,
@@ -109,7 +115,7 @@ const columnsToolboxItems = [
     }: {
       editor: Editor;
       triggerButton: HTMLElement;
-      controlsContainer;
+      controlsContainer: Element;
     }) => {
       createColorPickerToolbox({
         triggerButton,
@@ -127,7 +133,7 @@ const columnsToolboxItems = [
   },
 ];
 
-const rowsToolboxItems = [
+const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Add Row Above",
     icon: icons.insertTopTableIcon,
@@ -172,11 +178,12 @@ function createToolbox({
   tippyOptions,
   onClickItem,
 }: {
-  triggerButton: HTMLElement;
-  items: { icon: string; label: string }[];
+  triggerButton: Element | null;
+  items: ToolboxItem[];
   tippyOptions: any;
-  onClickItem: any;
+  onClickItem: (item: ToolboxItem) => void;
 }): Instance<Props> {
+  // @ts-expect-error
   const toolbox = tippy(triggerButton, {
     content: h(
       "div",
@@ -278,14 +285,14 @@ export class TableView implements NodeView {
   decorations: Decoration[];
   editor: Editor;
   getPos: () => number;
-  hoveredCell;
+  hoveredCell: ResolvedPos | null = null;
   map: TableMap;
   root: HTMLElement;
-  table: HTMLElement;
-  colgroup: HTMLElement;
+  table: HTMLTableElement;
+  colgroup: HTMLTableColElement;
   tbody: HTMLElement;
-  rowsControl?: HTMLElement;
-  columnsControl?: HTMLElement;
+  rowsControl?: HTMLElement | null;
+  columnsControl?: HTMLElement | null;
   columnsToolbox?: Instance<Props>;
   rowsToolbox?: Instance<Props>;
   controls?: HTMLElement;
@@ -398,13 +405,13 @@ export class TableView implements NodeView {
     this.render();
   }
 
-  update(node: ProseMirrorNode, decorations) {
+  update(node: ProseMirrorNode, decorations: readonly Decoration[]) {
     if (node.type !== this.node.type) {
       return false;
     }
 
     this.node = node;
-    this.decorations = decorations;
+    this.decorations = [...decorations];
     this.map = TableMap.get(this.node);
 
     if (this.editor.isEditable) {
@@ -430,19 +437,16 @@ export class TableView implements NodeView {
   }
 
   updateControls() {
-    const { hoveredTable: table, hoveredCell: cell } = Object.values(this.decorations).reduce(
-      (acc, curr) => {
-        if (curr.spec.hoveredCell !== undefined) {
-          acc["hoveredCell"] = curr.spec.hoveredCell;
-        }
+    const { hoveredTable: table, hoveredCell: cell } = Object.values(this.decorations).reduce((acc, curr) => {
+      if (curr.spec.hoveredCell !== undefined) {
+        acc["hoveredCell"] = curr.spec.hoveredCell;
+      }
 
-        if (curr.spec.hoveredTable !== undefined) {
-          acc["hoveredTable"] = curr.spec.hoveredTable;
-        }
-        return acc;
-      },
-      {} as Record<string, HTMLElement>
-    ) as any;
+      if (curr.spec.hoveredTable !== undefined) {
+        acc["hoveredTable"] = curr.spec.hoveredTable;
+      }
+      return acc;
+    }, {} as Record<string, HTMLElement>) as any;
 
     if (table === undefined || cell === undefined) {
       return this.root.classList.add("controls--disabled");
@@ -453,14 +457,21 @@ export class TableView implements NodeView {
 
     const cellDom = this.editor.view.nodeDOM(cell.pos) as HTMLElement;
 
+    if (!this.table) {
+      return;
+    }
+
     const tableRect = this.table.getBoundingClientRect();
     const cellRect = cellDom.getBoundingClientRect();
 
-    this.columnsControl.style.left = `${cellRect.left - tableRect.left - this.table.parentElement!.scrollLeft}px`;
-    this.columnsControl.style.width = `${cellRect.width}px`;
-
-    this.rowsControl.style.top = `${cellRect.top - tableRect.top}px`;
-    this.rowsControl.style.height = `${cellRect.height}px`;
+    if (this.columnsControl) {
+      this.columnsControl.style.left = `${cellRect.left - tableRect.left - this.table.parentElement!.scrollLeft}px`;
+      this.columnsControl.style.width = `${cellRect.width}px`;
+    }
+    if (this.rowsControl) {
+      this.rowsControl.style.top = `${cellRect.top - tableRect.top}px`;
+      this.rowsControl.style.height = `${cellRect.height}px`;
+    }
   }
 
   selectColumn() {
@@ -471,10 +482,7 @@ export class TableView implements NodeView {
     const headCellPos = this.map.map[colIndex + this.map.width * (this.map.height - 1)] + (this.getPos() + 1);
 
     const cellSelection = CellSelection.create(this.editor.view.state.doc, anchorCellPos, headCellPos);
-    this.editor.view.dispatch(
-      // @ts-ignore
-      this.editor.state.tr.setSelection(cellSelection)
-    );
+    this.editor.view.dispatch(this.editor.state.tr.setSelection(cellSelection));
   }
 
   selectRow() {
@@ -485,9 +493,6 @@ export class TableView implements NodeView {
     const headCellPos = this.map.map[anchorCellIndex + (this.map.width - 1)] + (this.getPos() + 1);
 
     const cellSelection = CellSelection.create(this.editor.state.doc, anchorCellPos, headCellPos);
-    this.editor.view.dispatch(
-      // @ts-ignore
-      this.editor.view.state.tr.setSelection(cellSelection)
-    );
+    this.editor.view.dispatch(this.editor.view.state.tr.setSelection(cellSelection));
   }
 }
