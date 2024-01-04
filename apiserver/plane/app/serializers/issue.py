@@ -72,7 +72,7 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
     # ids
-    state_id = serializers.PrimaryKeyRelatedField(source="state", queryset=State.objects.all(), required=False)
+    state_id = serializers.PrimaryKeyRelatedField(source="state", queryset=State.objects.all(), required=False, allow_null=True)
     parent_id = serializers.PrimaryKeyRelatedField(source='parent', queryset=Issue.objects.all(), required=False, allow_null=True)
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
