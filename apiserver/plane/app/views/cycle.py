@@ -665,8 +665,10 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         )
 
         # Return all Cycle Issues
+        issues = self.get_queryset().values_list("issue_id", flat=True)
+
         return Response(
-            CycleIssueSerializer(self.get_queryset(), many=True).data,
+            IssueSerializer(Issue.objects.filter(pk__in=issues), many=True).data,
             status=status.HTTP_200_OK,
         )
 

@@ -457,8 +457,10 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             epoch=int(timezone.now().timestamp()),
         )
 
+        issues = self.get_queryset().values_list("issue_id", flat=True)
+
         return Response(
-            ModuleIssueSerializer(self.get_queryset(), many=True).data,
+            IssueSerializer(Issue.objects.filter(pk__in=issues), many=True).data,
             status=status.HTTP_200_OK,
         )
 
