@@ -60,15 +60,27 @@ export const KanbanGroup = (props: IKanbanGroup) => {
 
   const projectState = useProjectState();
 
-  const prePopulateQuickAddData = (groupByKey: string | null, groupId: string) => {
+  const prePopulateQuickAddData = (groupByKey: string | null, value: string) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    if (groupByKey === null) return { state_id: defaultState?.id };
-    else {
-      if (groupByKey === "state") return { state: groupId };
-      if (groupByKey === "labels") return { state: defaultState?.id, labels: [groupId] };
-      if (groupByKey === "assignees") return { state: defaultState?.id, assignees: [groupId] };
-      else return { [groupByKey]: groupId };
+    let preloadedData: object = { state_id: defaultState?.id };
+
+    if (groupByKey) {
+      if (groupByKey === "state") {
+        preloadedData = { ...preloadedData, state_id: value };
+      } else if (groupByKey === "priority") {
+        preloadedData = { ...preloadedData, priority: value };
+      } else if (groupByKey === "labels" && value != "None") {
+        preloadedData = { ...preloadedData, label_ids: [value] };
+      } else if (groupByKey === "assignees" && value != "None") {
+        preloadedData = { ...preloadedData, assignee_ids: [value] };
+      } else if (groupByKey === "created_by") {
+        preloadedData = { ...preloadedData };
+      } else {
+        preloadedData = { ...preloadedData, [groupByKey]: value };
+      }
     }
+
+    return preloadedData;
   };
 
   return (

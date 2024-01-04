@@ -111,7 +111,7 @@ const getLabelsColumns = (projectLabel: ILabelRootStore) => {
     Icon: (
       <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
     ),
-    payload: { label_ids: [label.id] },
+    payload: label?.id === "None" ? {} : { label_ids: [label.id] },
   }));
 };
 
@@ -123,7 +123,7 @@ const getAssigneeColumns = (member: IMemberRootStore) => {
 
   if (!projectMemberIds) return;
 
-  const assigneeColumns = projectMemberIds.map((memberId) => {
+  const assigneeColumns: any = projectMemberIds.map((memberId) => {
     const member = getUserDetails(memberId);
     return {
       id: memberId,
@@ -133,7 +133,7 @@ const getAssigneeColumns = (member: IMemberRootStore) => {
     };
   });
 
-  assigneeColumns.push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: { assignee_ids: [""] } });
+  assigneeColumns.push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: {} });
 
   return assigneeColumns;
 };

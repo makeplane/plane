@@ -1,8 +1,6 @@
 import { ReactElement } from "react";
 import { KeyedMutator } from "swr";
 import type {
-  IState,
-  IUser,
   ICycle,
   IModule,
   IUserLite,
@@ -12,6 +10,7 @@ import type {
   Properties,
   IIssueDisplayFilterOptions,
   IIssueReaction,
+  TIssue,
 } from "@plane/types";
 
 export interface IIssueCycle {

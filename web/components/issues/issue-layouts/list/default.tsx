@@ -67,15 +67,28 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   if (!list) return null;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
-    console.log("groupByKey", groupByKey, "value", value);
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    if (groupByKey === null) return { state_id: defaultState?.id };
-    else {
-      if (groupByKey === "state") return { state_id: value };
-      else if (groupByKey === "labels") return { state_id: defaultState?.id, label_ids: [value] };
-      else if (groupByKey === "assignees") return { state_id: defaultState?.id, assignee_ids: [value] };
-      else return { state_id: defaultState?.id, [groupByKey]: value };
+    let preloadedData: object = { state_id: defaultState?.id };
+
+    if (groupByKey === null) {
+      preloadedData = { ...preloadedData };
+    } else {
+      if (groupByKey === "state") {
+        preloadedData = { ...preloadedData, state_id: value };
+      } else if (groupByKey === "priority") {
+        preloadedData = { ...preloadedData, priority: value };
+      } else if (groupByKey === "labels" && value != "None") {
+        preloadedData = { ...preloadedData, label_ids: [value] };
+      } else if (groupByKey === "assignees" && value != "None") {
+        preloadedData = { ...preloadedData, assignee_ids: [value] };
+      } else if (groupByKey === "created_by") {
+        preloadedData = { ...preloadedData };
+      } else {
+        preloadedData = { ...preloadedData, [groupByKey]: value };
+      }
     }
+
+    return preloadedData;
   };
 
   const validateEmptyIssueGroups = (issues: TIssue[]) => {

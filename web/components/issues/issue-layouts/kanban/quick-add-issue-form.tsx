@@ -141,33 +141,6 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
         </div>
       )}
-
-      {/* {isOpen && (
-        <form
-          ref={ref}
-          onSubmit={handleSubmit(onSubmitHandler)}
-          className="flex flex-col border-[0.5px] border-custom-border-100 justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px] mb-3 mx-1.5 rounded bg-custom-background-300 shadow-custom-shadow-sm"
-        >
-          <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
-        </form>
-      )}
-
-      {isOpen && (
-        <p className="text-xs ml-3 italic mb-2 text-custom-text-200">
-          Press {"'"}Enter{"'"} to add another issue
-        </p>
-      )}
-
-      {!isOpen && (
-        <button
-          type="button"
-          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-3 rounded-md"
-          onClick={() => setIsOpen(true)}
-        >
-          <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-        </button>
-      )} */}
     </div>
   );
 });
