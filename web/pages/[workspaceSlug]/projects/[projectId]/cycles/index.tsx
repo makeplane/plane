@@ -59,7 +59,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   if (!workspaceSlug || !projectId) return null;
 
   return (
-    <>
+    <div>
       <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
@@ -194,7 +194,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
           </Tab.Panels>
         </Tab.Group>
       )}
-    </>
+    </div>
   );
 });
 
