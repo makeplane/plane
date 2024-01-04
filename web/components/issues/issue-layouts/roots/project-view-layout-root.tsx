@@ -29,12 +29,15 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     issuesFilter: { issueFilters, fetchFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
-  useSWR(workspaceSlug && projectId && viewId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId && viewId) {
-      await fetchFilters(workspaceSlug, projectId, viewId);
-      await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader");
+  useSWR(
+    workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId && viewId) {
+        await fetchFilters(workspaceSlug, projectId, viewId);
+        await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader");
+      }
     }
-  });
+  );
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 

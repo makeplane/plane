@@ -1,7 +1,5 @@
-import { FC, ReactNode, useRef, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 // hooks
 import { useIssueDetail, useUser } from "hooks/store";
@@ -43,7 +41,6 @@ interface IIssueView {
   issueLinkUpdate: (formData: IIssueLink, linkId: string) => Promise<ILinkDetails>;
   issueLinkDelete: (linkId: string) => Promise<void>;
   handleDeleteIssue: () => Promise<void>;
-  children: ReactNode;
   disableUserActions?: boolean;
   showCommentAccessSpecifier?: boolean;
 }
@@ -92,7 +89,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueLinkUpdate,
     issueLinkDelete,
     handleDeleteIssue,
-    children,
     disableUserActions = false,
     showCommentAccessSpecifier = false,
   } = props;
@@ -101,58 +97,19 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
-  // router
-  const router = useRouter();
-  const { peekIssueId } = router.query;
   // store hooks
   const {
-    fetchSubscriptions,
     activity,
     reaction,
     subscription,
-    setIssueId,
+    setPeekIssue,
     isAnyModalOpen,
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
   } = useIssueDetail();
   const { currentUser } = useUser();
 
-  const updateRoutePeekId = () => {
-    if (issueId != peekIssueId) {
-      setIssueId(issueId);
-      const { query } = router;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issueId, peekProjectId: projectId },
-      });
-    }
-  };
-
-  const removeRoutePeekId = () => {
-    const { query } = router;
-
-    if (query.peekIssueId) {
-      setIssueId(undefined);
-
-      delete query.peekIssueId;
-      delete query.peekProjectId;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
-    }
-  };
-
-  useSWR(
-    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_PEEK_OVERVIEW_SUBSCRIPTION_${workspaceSlug}_${projectId}_${peekIssueId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await fetchSubscriptions(workspaceSlug, projectId, issueId);
-      }
-    }
-  );
+  const removeRoutePeekId = () => setPeekIssue(undefined);
 
   const issueReactions = reaction.getReactionsByIssueId(issueId) || [];
   const issueActivity = activity.getActivitiesByIssueId(issueId);
@@ -172,6 +129,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
+
       {issue && isArchived && (
         <DeleteArchivedIssueModal
           data={issue}
@@ -180,14 +138,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
-      <div className="w-full truncate !text-base">
-        {children && (
-          <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-            {children}
-          </div>
-        )}
 
-        {issueId === peekIssueId && (
+      <div className="w-full truncate !text-base">
+        {issueId && (
           <div
             ref={issuePeekOverviewRef}
             className={`fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300 
@@ -248,7 +201,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <div className="flex items-center gap-4">
                   {issue?.created_by !== currentUser?.id &&
                     !issue?.assignee_ids.includes(currentUser?.id ?? "") &&
-                    !router.pathname.includes("[archivedIssueId]") && (
+                    !issue?.archived_at && (
                       <Button
                         size="sm"
                         prependIcon={<Bell className="h-3 w-3" />}

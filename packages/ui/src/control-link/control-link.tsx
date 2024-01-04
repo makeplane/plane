@@ -1,19 +1,14 @@
-import React from "react";
-import Link from "next/link";
+import * as React from "react";
 
-export type TControlLinkDefaultProps = {
+export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
   onClick: () => void;
   children: React.ReactNode;
   target?: string;
 };
 
-export type TControlLink = TControlLinkDefaultProps & {
-  rest?: any;
-};
-
 export const ControlLink: React.FC<TControlLink> = (props) => {
-  const { href, onClick, children, target = "_self", rest } = props;
+  const { href, onClick, children, target = "_self", ...rest } = props;
   const LEFT_CLICK_EVENT_CODE = 0;
 
   const _onClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -25,8 +20,8 @@ export const ControlLink: React.FC<TControlLink> = (props) => {
   };
 
   return (
-    <Link href={href} target={target} onClick={_onClick} {...rest}>
+    <a href={href} target={target} onClick={_onClick} {...rest}>
       {children}
-    </Link>
+    </a>
   );
 };

@@ -62,7 +62,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
 
   // computed
   get issueAttachments() {
-    const issueId = this.rootIssueDetailStore.issueId;
+    const issueId = this.rootIssueDetailStore.peekIssue?.issueId;
     if (!issueId) return undefined;
     return this.attachments[issueId] ?? undefined;
   }

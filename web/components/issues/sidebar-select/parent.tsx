@@ -9,6 +9,7 @@ import { ParentIssuesListModal } from "components/issues";
 import { X } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
+import { observer } from "mobx-react-lite";
 
 type Props = {
   onChange: (value: string) => void;
@@ -16,7 +17,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, disabled = false }) => {
+export const SidebarParentSelect: React.FC<Props> = observer(({ onChange, issueDetails, disabled = false }) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 
   const { isParentIssueModalOpen, toggleParentIssueModal } = useIssueDetail();
@@ -65,4 +66,4 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
       </button>
     </>
   );
-};
+});
