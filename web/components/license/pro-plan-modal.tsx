@@ -42,15 +42,15 @@ export const ProPlanModal: FC<ProPlanModalProps> = (props) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const handleProPlaneMonthRedirection = () => {
-    if (process.env.PRO_PLAN_MONTHLY_REDIRECT_URL) {
-      window.open(process.env.PRO_PLAN_MONTHLY_REDIRECT_URL, "_blank");
+    if (process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL) {
+      window.open(process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL, "_blank");
       captureEvent("pro_plan_modal_month_redirection");
     }
   };
 
   const handleProPlanYearlyRedirection = () => {
-    if (process.env.PRO_PLAN_YEARLY_REDIRECT_URL) {
-      window.open(process.env.PRO_PLAN_YEARLY_REDIRECT_URL, "_blank");
+    if (process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL) {
+      window.open(process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL, "_blank");
       captureEvent("pro_plan_modal_yearly_redirection");
     }
   };
