@@ -324,6 +324,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     project_id=project_id,
                     owned_by=request.user,
                 )
+                cycle = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                serializer = CycleSerializer(cycle)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
