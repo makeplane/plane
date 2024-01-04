@@ -83,6 +83,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     return preloadedData;
   };
 
+  const isGroupByCreatedBy = group_by === "created_by";
+
   return (
     <div className={`${verticalPosition ? `min-h-[150px] w-[0px] overflow-hidden` : `w-full transition-all`}`}>
       <Droppable droppableId={`${groupId}__${sub_group_id}`}>
@@ -114,7 +116,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       </Droppable>
 
       <div className="sticky bottom-0 z-[0] w-full flex-shrink-0 bg-custom-background-90 py-1">
-        {enableQuickIssueCreate && !disableIssueCreation && (
+        {enableQuickIssueCreate && !disableIssueCreation && !isGroupByCreatedBy && (
           <KanBanQuickAddIssueForm
             formKey="name"
             groupId={groupId}

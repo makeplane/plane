@@ -99,6 +99,8 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 
   const is_list = group_by === null ? true : false;
 
+  const isGroupByCreatedBy = group_by === "created_by";
+
   return (
     <div className="relative h-full w-full">
       {list &&
@@ -113,7 +115,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     title={_list.name || ""}
                     count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
                     issuePayload={_list.payload}
-                    disableIssueCreation={disableIssueCreation}
+                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     currentStore={currentStore}
                     addIssuesToView={addIssuesToView}
                   />
@@ -130,7 +132,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   />
                 )}
 
-                {enableIssueQuickAdd && !disableIssueCreation && (
+                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && (
                   <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
