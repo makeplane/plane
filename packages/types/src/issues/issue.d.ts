@@ -1,3 +1,5 @@
+import { TIssuePriorities } from "../issues";
+
 // new issue structure types
 export type TIssue = {
   id: string;
