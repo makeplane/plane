@@ -144,13 +144,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
         ).distinct()
 
     @method_decorator(gzip_page)
@@ -163,7 +156,13 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = self.get_queryset().annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            ).filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -251,6 +250,14 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
+            issue = self.get_queryset().annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            ).filter(pk=serializer.data["id"]).first()
+            serializer = IssueSerializer(issue)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
