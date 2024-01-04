@@ -53,7 +53,7 @@ export class IssueReactionStore implements IIssueReactionStore {
 
   // computed
   get issueReactions() {
-    const issueId = this.rootIssueDetailStore.issueId;
+    const issueId = this.rootIssueDetailStore.peekIssue?.issueId;
     if (!issueId) return undefined;
     return this.reactions[issueId] ?? undefined;
   }

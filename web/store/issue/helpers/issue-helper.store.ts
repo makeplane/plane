@@ -76,7 +76,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         const state_group =
           this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
         groupArray = [state_group];
-      } else groupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]), isCalendarIssues);
+      } else {
+        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : [];
+      }
 
       for (const group of groupArray) {
         if (group && _issues[group]) _issues[group].push(_issue.id);
@@ -116,8 +119,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
-        subGroupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]));
-        groupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]));
+        const subGroupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]);
+        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : [];
+        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : [];
       }
 
       for (const subGroup of subGroupArray) {
