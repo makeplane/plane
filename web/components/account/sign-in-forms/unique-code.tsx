@@ -25,6 +25,7 @@ type Props = {
   submitButtonLabel?: string;
   showTermsAndConditions?: boolean;
   updateUserOnboardingStatus: (value: boolean) => void;
+  handleEmailClear: () => void;
 };
 
 type TUniqueCodeFormValues = {
@@ -50,6 +51,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
     submitButtonLabel = "Continue",
     showTermsAndConditions = false,
     updateUserOnboardingStatus,
+    handleEmailClear,
   } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
@@ -183,11 +185,12 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@frstflt.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+                  disabled
                 />
                 {value.length > 0 && (
                   <XCircle
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => onChange("")}
+                    onClick={handleEmailClear}
                   />
                 )}
               </div>

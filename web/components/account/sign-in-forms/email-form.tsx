@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
+import { observer } from "mobx-react-lite";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useApplication } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
@@ -25,11 +27,13 @@ type TEmailFormValues = {
 
 const authService = new AuthService();
 
-export const EmailForm: React.FC<Props> = (props) => {
+export const EmailForm: React.FC<Props> = observer((props) => {
   const { handleStepChange, updateEmail } = props;
-
+  // hooks
   const { setToastAlert } = useToast();
-
+  const {
+    config: { envConfig },
+  } = useApplication();
   const {
     control,
     formState: { errors, isSubmitting, isValid },
@@ -54,9 +58,11 @@ export const EmailForm: React.FC<Props> = (props) => {
     await authService
       .emailCheck(payload)
       .then((res) => {
-        // if the password has been autoset, send the user to magic sign-in
-        if (res.is_password_autoset) handleStepChange(ESignInSteps.UNIQUE_CODE);
-        // if the password has not been autoset, send them to password sign-in
+        // if the password has been auto set, send the user to magic sign-in
+        if (res.is_password_autoset && envConfig?.is_smtp_configured) {
+          handleStepChange(ESignInSteps.UNIQUE_CODE);
+        }
+        // if the password has not been auto set, send them to password sign-in
         else handleStepChange(ESignInSteps.PASSWORD);
       })
       .catch((err) =>
@@ -119,4 +125,4 @@ export const EmailForm: React.FC<Props> = (props) => {
       </form>
     </>
   );
-};
+});
