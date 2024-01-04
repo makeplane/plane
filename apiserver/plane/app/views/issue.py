@@ -1016,6 +1016,13 @@ class IssueArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
         )
 
         # Priority Ordering
@@ -1080,7 +1087,7 @@ class IssueArchiveViewSet(BaseViewSet):
             else issue_queryset.filter(parent__isnull=True)
         )
 
-        issues = IssueLiteSerializer(
+        issues = IssueSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
         return Response(issues, status=status.HTTP_200_OK)
@@ -1555,6 +1562,13 @@ class IssueDraftViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
         )
 
         # Priority Ordering
@@ -1613,7 +1627,7 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(
+        issues = IssueSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
         return Response(issues, status=status.HTTP_200_OK)

@@ -31,6 +31,7 @@ from plane.app.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
     CycleFavoriteSerializer,
+    IssueSerializer,
     IssueStateSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
@@ -46,6 +47,7 @@ from plane.db.models import (
     IssueAttachment,
     Label,
     CycleUserProperties,
+    IssueSubscriber,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -548,6 +550,8 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             .prefetch_related("labels")
             .order_by(order_by)
             .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -560,8 +564,15 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
         )
-        serializer = IssueStateSerializer(
+        serializer = IssueSerializer(
             issues, many=True, fields=fields if fields else None
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
