@@ -17,17 +17,14 @@
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
     "JITSU_TRACKER_ACCESS_KEY",
-    "JITSU_TRACKER_HOST"
+    "JITSU_TRACKER_HOST",
+    "PRO_PLAN_MONTHLY_REDIRECT_URL",
+    "PRO_PLAN_YEARLY_REDIRECT_URL"
   ],
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
     "web#develop": {
       "cache": false,
@@ -89,9 +86,7 @@
       ]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {
