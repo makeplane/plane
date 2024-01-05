@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
+import { useGlobalView, useIssues, useUser } from "hooks/store";
 // components
 import { GlobalViewsAppliedFiltersRoot } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
@@ -37,9 +37,6 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
-  const {
-    workspace: { workspaceLabels },
-  } = useLabel();
   // derived values
   const currentIssueView = type ?? globalViewId;
 
@@ -134,7 +131,6 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                     handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
                   />
                 )}
-                labels={workspaceLabels || undefined}
                 handleIssues={handleIssues}
                 canEditProperties={canEditProperties}
                 viewId={currentIssueView}

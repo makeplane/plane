@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
@@ -40,10 +40,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    project: { projectLabels },
-  } = useLabel();
-  const { projectStates } = useProjectState();
   // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
   // user role validation
@@ -105,8 +101,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
           }
         />
       )}
-      labels={projectLabels ?? []}
-      states={projectStates}
       handleIssues={handleIssues}
       canEditProperties={canEditProperties}
       quickAddCallback={issueStore.quickAddIssue}
