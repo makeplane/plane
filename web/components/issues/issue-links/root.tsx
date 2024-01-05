@@ -27,7 +27,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
-  const { issueId, createLink, updateLink, removeLink } = useIssueDetail();
+  const { peekIssue, createLink, updateLink, removeLink } = useIssueDetail();
   // state
   const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
   const toggleIssueLinkModal = (modalToggle: boolean) => setIsIssueLinkModalOpen(modalToggle);
@@ -38,8 +38,8 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
     () => ({
       create: async (data: Partial<TIssueLink>) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          await createLink(workspaceSlug, projectId, issueId, data);
+          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
+          await createLink(workspaceSlug, projectId, peekIssue?.issueId, data);
           setToastAlert({
             message: "The link has been successfully created",
             type: "success",
@@ -56,8 +56,8 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       },
       update: async (linkId: string, data: Partial<TIssueLink>) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          await updateLink(workspaceSlug, projectId, issueId, linkId, data);
+          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
+          await updateLink(workspaceSlug, projectId, peekIssue?.issueId, linkId, data);
           setToastAlert({
             message: "The link has been successfully updated",
             type: "success",
@@ -74,8 +74,8 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       },
       remove: async (linkId: string) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          await removeLink(workspaceSlug, projectId, issueId, linkId);
+          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
+          await removeLink(workspaceSlug, projectId, peekIssue?.issueId, linkId);
           setToastAlert({
             message: "The link has been successfully removed",
             type: "success",
@@ -91,7 +91,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink, setToastAlert]
+    [workspaceSlug, projectId, peekIssue, createLink, updateLink, removeLink, setToastAlert]
   );
 
   return (

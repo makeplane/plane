@@ -320,10 +320,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
           {isEditable && issueCrudOperation?.create?.toggle && (
             <CreateUpdateIssueModal
               isOpen={issueCrudOperation?.create?.toggle}
-              prePopulateData={{
+              data={{
                 parent_id: issueCrudOperation?.create?.issueId,
               }}
-              handleClose={() => {
+              onClose={() => {
                 mutateSubIssues(issueCrudOperation?.create?.issueId);
                 handleIssueCrudOperation("create", null);
               }}
@@ -342,11 +342,11 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
             <>
               <CreateUpdateIssueModal
                 isOpen={issueCrudOperation?.edit?.toggle}
-                handleClose={() => {
+                onClose={() => {
                   mutateSubIssues(issueCrudOperation?.edit?.issueId);
                   handleIssueCrudOperation("edit", null, null);
                 }}
-                data={issueCrudOperation?.edit?.issue}
+                data={issueCrudOperation?.edit?.issue ?? undefined}
               />
             </>
           )}

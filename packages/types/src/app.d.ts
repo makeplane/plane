@@ -1,5 +1,3 @@
-
-
 export interface IAppConfig {
   email_password_login: boolean;
   file_size_limit: number;
@@ -12,5 +10,5 @@ export interface IAppConfig {
   posthog_host: string | null;
   has_openai_configured: boolean;
   has_unsplash_configured: boolean;
-  is_self_managed: boolean;
+  is_smtp_configured: boolean;
 }

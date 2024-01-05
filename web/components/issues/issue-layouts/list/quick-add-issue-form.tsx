@@ -62,9 +62,10 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store hooks
-  const { currentWorkspace } = useWorkspace();
-  const { currentProjectDetails } = useProject();
+  // hooks
+  const { getProjectById } = useProject();
+
+  const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 
   const ref = useRef<HTMLFormElement>(null);
 
@@ -88,11 +89,11 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   }, [isOpen, reset]);
 
   const onSubmitHandler = async (formData: TIssue) => {
-    if (isSubmitting || !currentWorkspace || !currentProjectDetails || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(currentWorkspace, currentProjectDetails, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
@@ -127,12 +128,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-3"
           >
-            <Inputs
-              formKey={"name"}
-              register={register}
-              setFocus={setFocus}
-              projectDetail={currentProjectDetails ?? null}
-            />
+            <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail ?? null} />
           </form>
           <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
         </div>

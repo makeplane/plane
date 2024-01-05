@@ -46,7 +46,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
     if (!issueId) return undefined;
     const currentUserId = this.rootIssueDetail.rootIssueStore.currentUserId;
     if (!currentUserId) return undefined;
-    return this.subscriptionMap[issueId][currentUserId] ?? undefined;
+    return this.subscriptionMap[issueId]?.[currentUserId] ?? undefined;
   };
 
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) => {
