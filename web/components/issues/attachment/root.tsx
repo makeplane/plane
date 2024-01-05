@@ -22,15 +22,15 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
-  const { issueId, createAttachment, removeAttachment } = useIssueDetail();
+  const { peekIssue, createAttachment, removeAttachment } = useIssueDetail();
   const { setToastAlert } = useToast();
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
     () => ({
       create: async (data: FormData) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          await createAttachment(workspaceSlug, projectId, issueId, data);
+          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
+          await createAttachment(workspaceSlug, projectId, peekIssue?.issueId, data);
           setToastAlert({
             message: "The attachment has been successfully uploaded",
             type: "success",
@@ -46,8 +46,8 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
       },
       remove: async (attachmentId: string) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
+          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
+          await removeAttachment(workspaceSlug, projectId, peekIssue?.issueId, attachmentId);
           setToastAlert({
             message: "The attachment has been successfully removed",
             type: "success",
@@ -62,7 +62,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment, setToastAlert]
+    [workspaceSlug, projectId, peekIssue, createAttachment, removeAttachment, setToastAlert]
   );
 
   return (

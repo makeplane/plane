@@ -110,11 +110,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   }, [errors, setToastAlert]);
 
   const onSubmitHandler = async (formData: TIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });

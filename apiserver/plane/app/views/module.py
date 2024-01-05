@@ -20,7 +20,7 @@ from plane.app.serializers import (
     ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
-    IssueStateSerializer,
+    IssueSerializer,
     ModuleUserPropertiesSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
@@ -33,6 +33,7 @@ from plane.db.models import (
     ModuleFavorite,
     IssueLink,
     IssueAttachment,
+    IssueSubscriber,
     ModuleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -353,6 +354,8 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             .prefetch_related("labels")
             .order_by(order_by)
             .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -365,8 +368,15 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
         )
-        serializer = IssueStateSerializer(
+        serializer = IssueSerializer(
             issues, many=True, fields=fields if fields else None
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -447,8 +457,10 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             epoch=int(timezone.now().timestamp()),
         )
 
+        issues = self.get_queryset().values_list("issue_id", flat=True)
+
         return Response(
-            ModuleIssueSerializer(self.get_queryset(), many=True).data,
+            IssueSerializer(Issue.objects.filter(pk__in=issues), many=True).data,
             status=status.HTTP_200_OK,
         )
 

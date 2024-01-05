@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useIssues, useUser } from "hooks/store";
 // components
-import { IssueGanttBlock, IssuePeekOverview } from "components/issues";
+import { IssueGanttBlock } from "components/issues";
 import {
   GanttChartRoot,
   IBlockUpdateData,
@@ -32,10 +32,10 @@ interface IBaseGanttRoot {
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueStore, viewId, issueActions } = props;
+  const { issueFiltersStore, issueStore, viewId } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug } = router.query;
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -57,14 +57,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     await issueStore.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, payload, viewId);
   };
 
-  const handleIssues = useCallback(
-    async (issue: TIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        await issueActions[action]!(issue);
-      }
-    },
-    [issueActions]
-  );
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
@@ -92,16 +84,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
         />
       </div>
-      {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate, action) => {
-            await handleIssues(issueToUpdate as TIssue, action);
-          }}
-        />
-      )}
     </>
   );
 });

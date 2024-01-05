@@ -2,15 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import {
-  TIssue,
-  TIssueGroupByOptions,
-  TIssueLayouts,
-  TIssueOrderByOptions,
-  TIssueParams,
-  IProject,
-  IWorkspace,
-} from "@plane/types";
+import { TIssue, TIssueGroupByOptions, TIssueLayouts, TIssueOrderByOptions, TIssueParams } from "@plane/types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -123,76 +115,21 @@ export const handleIssueQueryParamsByLayout = (
  *
  * @description create a full issue payload with some default values. This function also parse the form field
  * like assignees, labels, etc. and add them to the payload
- * @param workspaceDetail workspace detail to be added in the issue payload
- * @param projectDetail project detail to be added in the issue payload
+ * @param projectId project id to be added in the issue payload
  * @param formData partial issue data from the form. This will override the default values
  * @returns full issue payload with some default values
  */
-
-export const createIssuePayload: (
-  workspaceDetail: IWorkspace,
-  projectDetail: IProject,
+export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) => TIssue = (
+  projectId: string,
   formData: Partial<TIssue>
-) => TIssue = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<TIssue>) => {
-  const payload = {
-    archived_at: null,
-    assignee_details: [],
-    attachment_count: 0,
-    attachments: [],
-    issue_relations: [],
-    related_issues: [],
-    bridge_id: null,
-    completed_at: new Date(),
-    created_at: "",
-    created_by: "",
-    cycle: null,
-    cycle_id: null,
-    cycle_detail: null,
-    description: {},
-    description_html: "",
-    description_stripped: "",
-    estimate_point: null,
-    issue_cycle: null,
-    issue_link: [],
-    issue_module: null,
-    label_details: [],
-    is_draft: false,
-    links_list: [],
-    link_count: 0,
-    module: null,
-    module_id: null,
-    name: "",
-    parent: null,
-    parent_detail: null,
-    priority: "none",
-    project: projectDetail.id,
-    project_detail: projectDetail,
-    sequence_id: 0,
-    sort_order: 0,
-    sprints: null,
-    start_date: null,
-    state: projectDetail.default_state,
-    state_detail: {} as any,
-    sub_issues_count: 0,
-    target_date: null,
-    updated_at: "",
-    updated_by: "",
-    workspace: workspaceDetail.id,
-    workspace_detail: workspaceDetail,
+) => {
+  const payload: TIssue = {
     id: uuidv4(),
+    project_id: projectId,
+    // tempId is used for optimistic updates. It is not a part of the API response.
     tempId: uuidv4(),
     // to be overridden by the form data
     ...formData,
-    assignee_ids: Array.isArray(formData.assignee_ids)
-      ? formData.assignee_ids
-      : formData.assignee_ids && formData.assignee_ids !== "none" && formData.assignee_ids !== null
-      ? [formData.assignee_ids]
-      : [],
-    label_ids: Array.isArray(formData.label_ids)
-      ? formData.label_ids
-      : formData.label_ids && formData.label_ids !== "none" && formData.label_ids !== null
-      ? [formData.label_ids]
-      : [],
   } as TIssue;
 
   return payload;

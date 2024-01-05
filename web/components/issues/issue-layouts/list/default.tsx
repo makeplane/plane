@@ -21,7 +21,6 @@ export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   group_by: string | null;
-  is_list?: boolean;
   handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -45,7 +44,6 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     issueIds,
     issuesMap,
     group_by,
-    is_list = false,
     handleIssues,
     quickActions,
     displayProperties,
@@ -70,11 +68,27 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    if (groupByKey === null) return { state_id: defaultState?.id };
-    else {
-      if (groupByKey === "state") return { state: groupByKey === "state" ? value : defaultState?.id };
-      else return { state_id: defaultState?.id, [groupByKey]: value };
+    let preloadedData: object = { state_id: defaultState?.id };
+
+    if (groupByKey === null) {
+      preloadedData = { ...preloadedData };
+    } else {
+      if (groupByKey === "state") {
+        preloadedData = { ...preloadedData, state_id: value };
+      } else if (groupByKey === "priority") {
+        preloadedData = { ...preloadedData, priority: value };
+      } else if (groupByKey === "labels" && value != "None") {
+        preloadedData = { ...preloadedData, label_ids: [value] };
+      } else if (groupByKey === "assignees" && value != "None") {
+        preloadedData = { ...preloadedData, assignee_ids: [value] };
+      } else if (groupByKey === "created_by") {
+        preloadedData = { ...preloadedData };
+      } else {
+        preloadedData = { ...preloadedData, [groupByKey]: value };
+      }
     }
+
+    return preloadedData;
   };
 
   const validateEmptyIssueGroups = (issues: TIssue[]) => {
@@ -82,6 +96,10 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     if (!showEmptyGroup && issuesCount <= 0) return false;
     return true;
   };
+
+  const is_list = group_by === null ? true : false;
+
+  const isGroupByCreatedBy = group_by === "created_by";
 
   return (
     <div className="relative h-full w-full">
@@ -97,7 +115,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     title={_list.name || ""}
                     count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
                     issuePayload={_list.payload}
-                    disableIssueCreation={disableIssueCreation}
+                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     currentStore={currentStore}
                     addIssuesToView={addIssuesToView}
                   />
@@ -114,7 +132,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   />
                 )}
 
-                {enableIssueQuickAdd && !disableIssueCreation && (
+                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && (
                   <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}

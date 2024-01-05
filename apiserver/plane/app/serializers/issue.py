@@ -30,6 +30,8 @@ from plane.db.models import (
     CommentReaction,
     IssueVote,
     IssueRelation,
+    State,
+    Project,
 )
 
 
@@ -69,19 +71,16 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
-    state_detail = StateSerializer(read_only=True, source="state")
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-
-    assignees = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+    # ids
+    state_id = serializers.PrimaryKeyRelatedField(source="state", queryset=State.objects.all(), required=False, allow_null=True)
+    parent_id = serializers.PrimaryKeyRelatedField(source='parent', queryset=Issue.objects.all(), required=False, allow_null=True)
+    label_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
         required=False,
     )
-
-    labels = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
     )
@@ -100,8 +99,10 @@ class IssueCreateSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['assignees'] = [str(assignee.id) for assignee in instance.assignees.all()]
-        data['labels'] = [str(label.id) for label in instance.labels.all()]
+        assignee_ids = self.initial_data.get('assignee_ids')
+        data['assignee_ids'] = assignee_ids if assignee_ids else []
+        label_ids = self.initial_data.get('label_ids')
+        data['label_ids'] = label_ids if label_ids else []
         return data
 
     def validate(self, data):
@@ -114,8 +115,8 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def create(self, validated_data):
-        assignees = validated_data.pop("assignees", None)
-        labels = validated_data.pop("labels", None)
+        assignees = validated_data.pop("assignee_ids", None)
+        labels = validated_data.pop("label_ids", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -173,8 +174,8 @@ class IssueCreateSerializer(BaseSerializer):
         return issue
 
     def update(self, instance, validated_data):
-        assignees = validated_data.pop("assignees", None)
-        labels = validated_data.pop("labels", None)
+        assignees = validated_data.pop("assignee_ids", None)
+        labels = validated_data.pop("labels_ids", None)
 
         # Related models
         project_id = instance.project_id
@@ -544,7 +545,7 @@ class IssueSerializer(DynamicBaseSerializer):
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
 
-    # is
+    # is_subscribed
     is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta:

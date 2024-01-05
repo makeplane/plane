@@ -81,17 +81,17 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
   });
 
   // derived values
-  const issueModule = issueDetail?.issue_module;
-  const selectedModule = issueModule?.module ? getModuleById(issueModule?.module) : null;
+  const issueModule = (issueDetail && issueDetail?.module_id && getModuleById(issueDetail.module_id)) || undefined;
+
   const disableSelect = disabled || isUpdating;
 
   return (
     <div className="flex items-center gap-1">
       <CustomSearchSelect
-        value={issueModule?.module_detail.id}
+        value={issueDetail?.module_id}
         onChange={(value: any) => {
-          value === issueModule?.module_detail.id
-            ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
+          value === issueDetail?.module_id
+            ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueDetail?.module_id ?? "")
             : handleModuleChange
             ? handleModuleChange(value)
             : handleModuleStoreChange(value);
@@ -99,7 +99,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
         options={options}
         customButton={
           <div>
-            <Tooltip position="left" tooltipContent={`${selectedModule?.name ?? "No module"}`}>
+            <Tooltip position="left" tooltipContent={`${issueModule?.name ?? "No module"}`}>
               <button
                 type="button"
                 className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
@@ -112,7 +112,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
                   }`}
                 >
                   <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
-                  <span className="truncate">{selectedModule?.name ?? "No module"}</span>
+                  <span className="truncate">{issueModule?.name ?? "No module"}</span>
                 </span>
               </button>
             </Tooltip>
