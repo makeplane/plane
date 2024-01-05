@@ -54,16 +54,18 @@ const ProjectIntegrationsPage: NextPageWithLayout = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            title="You haven't configured integrations"
-            description="Configure GitHub and other integrations to sync your project issues."
-            image={emptyIntegration}
-            primaryButton={{
-              text: "Configure now",
-              onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
-            }}
-            disabled={!isAdmin}
-          />
+          <div className="w-full py-8">
+            <EmptyState
+              title="You haven't configured integrations"
+              description="Configure GitHub and other integrations to sync your project issues."
+              image={emptyIntegration}
+              primaryButton={{
+                text: "Configure now",
+                onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
+              }}
+              disabled={!isAdmin}
+            />
+          </div>
         )
       ) : (
         <Loader className="space-y-5">
