@@ -92,6 +92,9 @@ class IssueView(WorkspaceBaseModel):
         default=1, choices=((0, "Private"), (1, "Public"))
     )
     sort_order = models.FloatField(default=65535)
+    cycle = models.ForeignKey("db.Cycle", on_delete=models.CASCADE, related_name="views")
+    module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="views")
+    layouts = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Issue View"
