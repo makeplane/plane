@@ -12,6 +12,11 @@
   display: none;
 }
 
+.ProseMirror code::before,
+.ProseMirror code::after {
+  display: none;
+}
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
