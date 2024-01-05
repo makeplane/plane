@@ -126,6 +126,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     else payload.emoji = formData.emoji_and_icon;
 
     payload.project_lead = formData.project_lead_member;
+    // Upper case identifier
+    payload.identifier = payload.identifier.toUpperCase();
 
     return createProject(workspaceSlug.toString(), payload)
       .then((res) => {
@@ -176,14 +178,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       return;
     }
     if (e.target.value === "") setValue("identifier", "");
-    else
-      setValue(
-        "identifier",
-        e.target.value
-          .replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "")
-          .toUpperCase()
-          .substring(0, 5)
-      );
+    else setValue("identifier", e.target.value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "").substring(0, 5));
     onChange(e);
   };
 
@@ -191,7 +186,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     const { value } = e.target;
     const alphanumericValue = value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
     setIsChangeInIdentifierRequired(false);
-    onChange(alphanumericValue.toUpperCase());
+    onChange(alphanumericValue);
   };
 
   return (
@@ -301,7 +296,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             required: "Identifier is required",
                             // allow only alphanumeric & non-latin characters
                             validate: (value) =>
-                              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
+                              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) ||
+                              "Only Alphanumeric & Non-latin characters are allowed.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -321,7 +317,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="w-full text-xs focus:border-blue-400"
+                              className="w-full text-xs focus:border-blue-400 uppercase"
                             />
                           )}
                         />
