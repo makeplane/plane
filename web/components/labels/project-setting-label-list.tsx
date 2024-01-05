@@ -98,7 +98,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
       </div>
       <div className="w-full">
         {showLabelForm && (
-          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2">
+          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2 my-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}
@@ -112,7 +112,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           </div>
         )}
         {projectLabels ? (
-          projectLabels.length === 0 ? (
+          projectLabels.length === 0 && !showLabelForm ? (
             <EmptyState
               title="No labels yet"
               description="Create labels to help organize and filter issues in you project"
@@ -203,25 +203,14 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
             )
           )
         ) : (
-          <Loader className="space-y-5">
-            <Loader.Item height="42px" />
-            <Loader.Item height="42px" />
-            <Loader.Item height="42px" />
-            <Loader.Item height="42px" />
-          </Loader>
-        )}
-
-        {/* empty state */}
-        {projectLabels && projectLabels.length === 0 && (
-          <EmptyState
-            title="No labels yet"
-            description="Create labels to help organize and filter issues in your project."
-            image={emptyLabel}
-            primaryButton={{
-              text: "Add label",
-              onClick: () => newLabel(),
-            }}
-          />
+          !showLabelForm && (
+            <Loader className="space-y-5">
+              <Loader.Item height="42px" />
+              <Loader.Item height="42px" />
+              <Loader.Item height="42px" />
+              <Loader.Item height="42px" />
+            </Loader>
+          )
         )}
       </div>
     </>
