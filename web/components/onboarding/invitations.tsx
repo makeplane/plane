@@ -86,7 +86,7 @@ export const Invitations: React.FC<Props> = (props) => {
             invitations.length > 0 &&
             invitations.map((invitation) => {
               const isSelected = invitationsRespond.includes(invitation.id);
-              const invitedWorkspace = workspaces[invitation.workspace];
+              const invitedWorkspace = workspaces[invitation.workspace.id];
               return (
                 <div
                   key={invitation.id}
