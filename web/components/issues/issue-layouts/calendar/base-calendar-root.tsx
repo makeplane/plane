@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // components
-import { CalendarChart, IssuePeekOverview } from "components/issues";
+import { CalendarChart } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -34,7 +34,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   // hooks
   const { setToastAlert } = useToast();
@@ -113,16 +113,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           />
         </DragDropContext>
       </div>
-      {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) =>
-            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as TIssue, EIssueActions.UPDATE)
-          }
-        />
-      )}
     </>
   );
 });

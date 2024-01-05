@@ -1,8 +1,6 @@
 import { ReactElement } from "react";
 import { KeyedMutator } from "swr";
 import type {
-  IState,
-  IUser,
   ICycle,
   IModule,
   IUserLite,
@@ -12,6 +10,7 @@ import type {
   Properties,
   IIssueDisplayFilterOptions,
   IIssueReaction,
+  TIssue,
 } from "@plane/types";
 
 export interface IIssueCycle {
@@ -76,59 +75,6 @@ export interface IssueRelation {
   relation_type: IssueRelationType;
   related_issue: string;
   relation: "blocking" | null;
-}
-
-export interface IIssue {
-  archived_at: string;
-  assignees: string[];
-  assignee_details: IUser[];
-  attachment_count: number;
-  attachments: any[];
-  issue_relations: IssueRelation[];
-  issue_reactions: IIssueReaction[];
-  related_issues: IssueRelation[];
-  bridge_id?: string | null;
-  completed_at: Date;
-  created_at: string;
-  created_by: string;
-  cycle: string | null;
-  cycle_id: string | null;
-  cycle_detail: ICycle | null;
-  description: any;
-  description_html: any;
-  description_stripped: any;
-  estimate_point: number | null;
-  id: string;
-  // tempId is used for optimistic updates. It is not a part of the API response.
-  tempId?: string;
-  issue_cycle: IIssueCycle | null;
-  issue_link: ILinkDetails[];
-  issue_module: IIssueModule | null;
-  labels: string[];
-  label_details: any[];
-  is_draft: boolean;
-  links_list: IIssueLink[];
-  link_count: number;
-  module: string | null;
-  module_id: string | null;
-  name: string;
-  parent: string | null;
-  parent_detail: IIssueParent | null;
-  priority: TIssuePriorities;
-  project: string;
-  project_detail: IProjectLite;
-  sequence_id: number;
-  sort_order: number;
-  sprints: string | null;
-  start_date: string | null;
-  state: string;
-  state_detail: IState;
-  sub_issues_count: number;
-  target_date: string | null;
-  updated_at: string;
-  updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
 }
 
 export interface ISubIssuesState {
@@ -283,62 +229,3 @@ export interface IGroupByColumn {
 export interface IIssueMap {
   [key: string]: TIssue;
 }
-
-// new issue structure types
-export type TIssue = {
-  id: string;
-  name: string;
-  state_id: string;
-  description_html: string;
-  sort_order: number;
-  completed_at: string | null;
-  estimate_point: number | null;
-  priority: TIssuePriorities;
-  start_date: string | null;
-  target_date: string | null;
-  sequence_id: number;
-  project_id: string;
-  parent_id: string | null;
-  cycle_id: string | null;
-  module_id: string | null;
-  label_ids: string[];
-  assignee_ids: string[];
-  sub_issues_count: number;
-  created_at: string;
-  updated_at: string;
-  created_by: string;
-  updated_by: string;
-  attachment_count: number;
-  link_count: number;
-  is_subscribed: boolean;
-  archived_at: boolean;
-  is_draft: boolean;
-  // tempId is used for optimistic updates. It is not a part of the API response.
-  tempId?: string;
-  // issue details
-  related_issues: any;
-  issue_reactions: any;
-  issue_relations: any;
-  issue_cycle: any;
-  issue_module: any;
-  parent_detail: any;
-  issue_link: any;
-};
-
-export type TIssueMap = {
-  [issue_id: string]: TIssue;
-};
-
-export type TLoader = "init-loader" | "mutation" | undefined;
-
-export type TGroupedIssues = {
-  [group_id: string]: string[];
-};
-
-export type TSubGroupedIssues = {
-  [sub_grouped_id: string]: {
-    [group_id: string]: string[];
-  };
-};
-
-export type TUnGroupedIssues = string[];
