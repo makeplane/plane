@@ -43,7 +43,7 @@ export const NewEmptyState: React.FC<Props> = ({
   return (
     <div className="flex items-center justify-center overflow-y-auto">
       <div className=" flex h-full w-full flex-col items-center justify-center ">
-        <div className="m-5 flex max-w-6xl flex-col gap-5 rounded-xl border border-custom-border-200 px-10 py-7 shadow-sm md:m-16">
+        <div className="m-5 flex max-w-6xl flex-col gap-5 rounded-xl border border-custom-border-200 px-10 py-7 shadow-sm md:m-8">
           <h3 className="text-2xl font-semibold">{title}</h3>
           {description && <p className=" text-lg">{description}</p>}
           <div className="relative w-full max-w-6xl">

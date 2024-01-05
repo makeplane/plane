@@ -102,7 +102,7 @@ export const EstimatesList: React.FC = observer(() => {
             ))}
           </section>
         ) : (
-          <div className="h-full w-full overflow-y-auto">
+          <div className="w-full py-8">
             <EmptyState
               title="No estimates yet"
               description="Estimates help you communicate the complexity of an issue."

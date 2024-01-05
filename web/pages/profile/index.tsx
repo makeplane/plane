@@ -218,7 +218,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             <div className="grid grid-cols-1 gap-6 px-8 lg:grid-cols-2 2xl:grid-cols-3">
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
-                  First name <span className="text-red-500">*</span>
+                  First name<span className="text-red-500">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -275,17 +275,16 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                   rules={{
                     required: "Email is required.",
                   }}
-                  render={({ field: { value, onChange, ref } }) => (
+                  render={({ field: { value, ref } }) => (
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={value}
-                      onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full rounded-md ${errors.email ? "border-red-500" : ""}`}
+                      className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${errors.email ? "border-red-500" : ""}`}
                       disabled
                     />
                   )}
