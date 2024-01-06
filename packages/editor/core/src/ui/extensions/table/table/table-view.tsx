@@ -1,5 +1,6 @@
 import { h } from "jsx-dom-cjs";
 import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
+// import { setCellAttr } from "prosemirror-tables";
 import { Decoration, NodeView } from "@tiptap/pm/view";
 import tippy, { Instance, Props } from "tippy.js";
 
@@ -82,19 +83,30 @@ const defaultTippyOptions: Partial<Props> = {
 };
 
 function setCellsBackgroundColor(editor: Editor, backgroundColor: string) {
-  return editor
-    .chain()
-    .focus()
-    .updateAttributes("tableCell", {
-      background: backgroundColor,
-    })
-    .updateAttributes("tableHeader", {
-      background: backgroundColor,
-    })
-    .run();
+  const curr_color = editor.getAttributes("tableCell").background;
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("setCellsBackgroundColor curr_color: %s", curr_color); // __AUTO_GENERATED_PRINT_VAR_END__
+  return (
+    editor
+      .chain()
+      .focus()
+      // .setCellAttribute("backgroundColor", backgroundColor)
+      .updateAttributes("tableCell", {
+        background: backgroundColor,
+      })
+      .updateAttributes("tableHeader", {
+        background: backgroundColor,
+      })
+      .run()
+  );
 }
 
 const columnsToolboxItems: ToolboxItem[] = [
+  {
+    label: "Toggle Column Header",
+    icon: icons.insertBottomTableIcon,
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().toggleHeaderColumn().run(),
+  },
   {
     label: "Add Column Before",
     icon: icons.insertLeftTableIcon,
@@ -134,6 +146,11 @@ const columnsToolboxItems: ToolboxItem[] = [
 ];
 
 const rowsToolboxItems: ToolboxItem[] = [
+  {
+    label: "Toggle Row Header",
+    icon: icons.insertBottomTableIcon,
+    action: ({ editor }: { editor: Editor }) => editor.chain().focus().toggleHeaderRow().run(),
+  },
   {
     label: "Add Row Above",
     icon: icons.insertTopTableIcon,

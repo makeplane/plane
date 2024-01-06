@@ -107,7 +107,7 @@ export const Table = Node.create({
   addCommands() {
     return {
       insertTable:
-        ({ rows = 3, cols = 3, withHeaderRow = true } = {}) =>
+        ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
         ({ tr, dispatch, editor }) => {
           const node = createTable(editor.schema, rows, cols, withHeaderRow);
 

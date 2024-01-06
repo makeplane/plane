@@ -9,8 +9,8 @@
   border-collapse: collapse;
   table-layout: fixed;
   margin: 0;
-  margin-bottom: 3rem;
-  border: 1px solid rgba(var(--color-border-200));
+  margin-bottom: 1rem;
+  border: 2px solid rgba(var(--color-border-200));
   width: 100%;
 }
 
@@ -118,9 +118,7 @@
   background-size: 1.25rem;
   background-repeat: no-repeat;
   background-position: center;
-  transition:
-    transform ease-out 100ms,
-    background-color ease-out 100ms;
+  transition: transform ease-out 100ms, background-color ease-out 100ms;
   outline: none;
   box-shadow: #000 0px 2px 4px;
   cursor: pointer;
@@ -133,13 +131,12 @@
   background-size: 1.25rem;
   background-repeat: no-repeat;
   background-position: center;
-  transition:
-    transform ease-out 100ms,
-    background-color ease-out 100ms;
+  transition: transform ease-out 100ms, background-color ease-out 100ms;
   outline: none;
   box-shadow: #000 0px 2px 4px;
   cursor: pointer;
 }
+
 .tableWrapper .tableControls .tableToolbox,
 .tableWrapper .tableControls .tableColorPickerToolbox {
   border: 1px solid rgba(var(--color-border-300));

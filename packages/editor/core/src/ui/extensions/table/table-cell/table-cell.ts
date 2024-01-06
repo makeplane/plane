@@ -13,7 +13,7 @@ export const TableCell = Node.create<TableCellOptions>({
     };
   },
 
-  content: "paragraph+",
+  content: "block+",
 
   addAttributes() {
     return {
