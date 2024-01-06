@@ -15,7 +15,7 @@ import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
+import { DeleteIssueModal } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
@@ -69,7 +69,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -275,15 +275,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           />
         </DragDropContext>
       </div>
-
-      {/* {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as TIssue, EIssueActions.UPDATE)}
-        />
-      )} */}
     </>
   );
 });

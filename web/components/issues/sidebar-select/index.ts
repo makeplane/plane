@@ -1,4 +1,4 @@
-export * from "./relation";
+export * from "../issue-detail/relation";
 export * from "./cycle";
 export * from "./label";
 export * from "./module";

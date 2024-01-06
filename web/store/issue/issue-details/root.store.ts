@@ -142,8 +142,13 @@ export class IssueDetail implements IIssueDetail {
     this.reaction.fetchReactions(workspaceSlug, projectId, issueId);
   createReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) =>
     this.reaction.createReaction(workspaceSlug, projectId, issueId, reaction);
-  removeReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) =>
-    this.reaction.removeReaction(workspaceSlug, projectId, issueId, reaction);
+  removeReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    reaction: string,
+    userId: string
+  ) => this.reaction.removeReaction(workspaceSlug, projectId, issueId, reaction, userId);
 
   // activity
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string) =>

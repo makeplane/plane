@@ -22,12 +22,18 @@ interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  issue: TIssue | undefined;
+
   isLoading?: boolean;
   isArchived?: boolean;
+
+  issue: TIssue | undefined;
+
   handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
   redirectToIssueDetail: () => void;
+
   issueUpdate: (issue: Partial<TIssue>) => void;
+  issueDelete: () => Promise<void>;
+
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   issueCommentCreate: (comment: any) => void;
@@ -37,10 +43,7 @@ interface IIssueView {
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
   issueSubscriptionCreate: () => void;
   issueSubscriptionRemove: () => void;
-  issueLinkCreate: (formData: IIssueLink) => Promise<ILinkDetails>;
-  issueLinkUpdate: (formData: IIssueLink, linkId: string) => Promise<ILinkDetails>;
-  issueLinkDelete: (linkId: string) => Promise<void>;
-  handleDeleteIssue: () => Promise<void>;
+
   disableUserActions?: boolean;
   showCommentAccessSpecifier?: boolean;
 }
@@ -75,6 +78,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     isArchived,
     handleCopyText,
     redirectToIssueDetail,
+
     issueUpdate,
     issueReactionCreate,
     issueReactionRemove,
@@ -85,10 +89,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentReactionRemove,
     issueSubscriptionCreate,
     issueSubscriptionRemove,
-    issueLinkCreate,
-    issueLinkUpdate,
-    issueLinkDelete,
-    handleDeleteIssue,
+
+    issueDelete,
     disableUserActions = false,
     showCommentAccessSpecifier = false,
   } = props;
@@ -109,7 +111,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   } = useIssueDetail();
   const { currentUser } = useUser();
 
-  const removeRoutePeekId = () => setPeekIssue(undefined);
+  const removeRoutePeekId = () => {
+    setPeekIssue(undefined);
+  };
 
   const issueReactions = reaction.getReactionsByIssueId(issueId) || [];
   const issueActivity = activity.getActivitiesByIssueId(issueId);
@@ -126,7 +130,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => toggleDeleteIssueModal(false)}
           data={issue}
-          onSubmit={handleDeleteIssue}
+          onSubmit={issueDelete}
         />
       )}
 
@@ -135,7 +139,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           data={issue}
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => toggleDeleteIssueModal(false)}
-          onSubmit={handleDeleteIssue}
+          onSubmit={issueDelete}
         />
       )}
 
@@ -257,9 +261,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <PeekOverviewProperties
                           issue={issue}
                           issueUpdate={issueUpdate}
-                          issueLinkCreate={issueLinkCreate}
-                          issueLinkUpdate={issueLinkUpdate}
-                          issueLinkDelete={issueLinkDelete}
                           disableUserActions={disableUserActions}
                         />
 
@@ -316,9 +317,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <PeekOverviewProperties
                             issue={issue}
                             issueUpdate={issueUpdate}
-                            issueLinkCreate={issueLinkCreate}
-                            issueLinkUpdate={issueLinkUpdate}
-                            issueLinkDelete={issueLinkDelete}
                             disableUserActions={disableUserActions}
                           />
                         </div>

@@ -5,7 +5,7 @@ import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
 import { Bell, CalendarDays, LinkIcon, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useIssues, useProject, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useIssues, useProject, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 // services
@@ -30,16 +30,19 @@ import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserG
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { TIssue } from "@plane/types";
+import type { TIssueOperations } from "./root";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
-  control: any;
-  submitChanges: (formData: any) => void;
-  issueDetail: TIssue | undefined;
-  watch: UseFormWatch<TIssue>;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  issueOperations: TIssueOperations;
+  is_archived: boolean;
+  is_editable: boolean;
   fieldsToShow?: (
     | "state"
     | "assignee"
@@ -60,16 +63,20 @@ type Props = {
     | "duplicate"
     | "relates_to"
   )[];
-  uneditable?: boolean;
 };
 
-const issueService = new IssueService();
-const moduleService = new ModuleService();
-
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { control, submitChanges, issueDetail, watch: watchIssue, fieldsToShow = ["all"], uneditable = false } = props;
-  // states
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    issueOperations,
+    is_archived,
+    is_editable,
+    fieldsToShow = ["all"],
+  } = props;
+  // router
+  const router = useRouter();
   // store hooks
   const { getProjectById } = useProject();
   const {
@@ -81,53 +88,19 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useUser();
   const { projectStates } = useProjectState();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
-
-  const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
-    currentUser,
-    workspaceSlug,
-    projectId,
-    issueId
-  );
-
   const { setToastAlert } = useToast();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  // states
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const handleCycleChange = useCallback(
-    (cycleId: string) => {
-      if (!workspaceSlug || !projectId || !issueDetail || !currentUser) return;
-
-      issueService
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId, {
-          issues: [issueDetail.id],
-        })
-        .then(() => {
-          mutate(ISSUE_DETAILS(issueId as string));
-        });
-    },
-    [workspaceSlug, projectId, issueId, issueDetail, currentUser]
-  );
-
-  const handleModuleChange = useCallback(
-    (moduleId: string) => {
-      if (!workspaceSlug || !projectId || !issueDetail || !currentUser) return;
-
-      moduleService
-        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId, {
-          issues: [issueDetail.id],
-        })
-        .then(() => {
-          mutate(ISSUE_DETAILS(issueId as string));
-        });
-    },
-    [workspaceSlug, projectId, issueId, issueDetail, currentUser]
-  );
+  const issue = getIssueById(issueId);
+  if (!issue) return <></>;
 
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -136,7 +109,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     });
   };
 
-  const projectDetails = issueDetail ? getProjectById(issueDetail?.project_id) : null;
+  const projectDetails = issue ? getProjectById(issue.project_id) : null;
 
   const showFirstSection =
     fieldsToShow.includes("all") ||
@@ -166,17 +139,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const currentIssueState = projectStates?.find((s) => s.id === issueDetail?.state_id);
+  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
   return (
     <>
-      {workspaceSlug && projectId && issueDetail && (
+      {workspaceSlug && projectId && issue && (
         <DeleteIssueModal
           handleClose={() => setDeleteIssueModal(false)}
           isOpen={deleteIssueModal}
-          data={issueDetail}
+          data={issue}
           onSubmit={async () => {
-            await removeIssue(workspaceSlug.toString(), projectId.toString(), issueDetail.id);
+            await issueOperations.remove(workspaceSlug, projectId, issueId);
             router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
           }}
         />
@@ -201,7 +174,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex flex-wrap items-center gap-2">
             {issueDetail?.created_by !== currentUser?.id &&
               !issueDetail?.assignee_ids.includes(currentUser?.id ?? "") &&
-              !router.pathname.includes("[archivedIssueId]") &&
+              !is_archived &&
               (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
                 <Button
                   size="sm"
@@ -238,10 +211,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="h-full w-full overflow-y-auto px-5">
-          <div className={`divide-y-2 divide-custom-border-200 ${uneditable ? "opacity-60" : ""}`}>
+          <div className={`divide-y-2 divide-custom-border-200 ${is_editable ? "opacity-60" : ""}`}>
             {showFirstSection && (
               <div className="py-1">
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
@@ -256,15 +229,16 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             value={value}
                             onChange={(val) => submitChanges({ state: val })}
                             projectId={projectId?.toString() ?? ""}
-                            disabled={!isAllowed || uneditable}
+                            disabled={!isAllowed || is_editable}
                             buttonVariant="background-with-text"
                           />
                         </div>
                       )}
                     />
                   </div>
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
+                )} */}
+
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
@@ -278,7 +252,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <ProjectMemberDropdown
                             value={value}
                             onChange={(val) => submitChanges({ assignees: val })}
-                            disabled={!isAllowed || uneditable}
+                            disabled={!isAllowed || is_editable}
                             projectId={projectId?.toString() ?? ""}
                             placeholder="Assignees"
                             multiple
@@ -289,8 +263,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       )}
                     />
                   </div>
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
+                )} */}
+
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <Signal className="h-4 w-4 flex-shrink-0" />
@@ -304,15 +279,16 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <PriorityDropdown
                             value={value}
                             onChange={(val) => submitChanges({ priority: val })}
-                            disabled={!isAllowed || uneditable}
+                            disabled={!isAllowed || is_editable}
                             buttonVariant="background-with-text"
                           />
                         </div>
                       )}
                     />
                   </div>
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
+                )} */}
+
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
                   areEstimatesEnabledForCurrentProject && (
                     <div className="flex flex-wrap items-center py-2">
                       <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
@@ -328,19 +304,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                               value={value}
                               onChange={(val) => submitChanges({ estimate_point: val })}
                               projectId={projectId?.toString() ?? ""}
-                              disabled={!isAllowed || uneditable}
+                              disabled={!isAllowed || is_editable}
                               buttonVariant="background-with-text"
                             />
                           </div>
                         )}
                       />
                     </div>
-                  )}
+                  )} */}
               </div>
             )}
+
             {showSecondSection && (
               <div className="py-1">
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
@@ -357,47 +334,55 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                               onChange(val);
                             }}
                             issueDetails={issueDetail}
-                            disabled={!isAllowed || uneditable}
+                            disabled={!isAllowed || is_editable}
                           />
                         )}
                       />
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
                   <SidebarIssueRelationSelect
-                    issueId={issueId as string}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    issueId={issueId}
                     relationKey="blocking"
-                    disabled={!isAllowed || uneditable}
+                    disabled={!isAllowed || is_editable}
                   />
                 )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
                   <SidebarIssueRelationSelect
-                    issueId={issueId as string}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    issueId={issueId}
                     relationKey="blocked_by"
-                    disabled={!isAllowed || uneditable}
+                    disabled={!isAllowed || is_editable}
                   />
                 )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
                   <SidebarIssueRelationSelect
-                    issueId={issueId as string}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    issueId={issueId}
                     relationKey="duplicate"
-                    disabled={!isAllowed || uneditable}
+                    disabled={!isAllowed || is_editable}
                   />
                 )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
                   <SidebarIssueRelationSelect
-                    issueId={issueId as string}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    issueId={issueId}
                     relationKey="relates_to"
-                    disabled={!isAllowed || uneditable}
+                    disabled={!isAllowed || is_editable}
                   />
                 )}
 
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <CalendarDays className="h-4 w-4 flex-shrink-0" />
@@ -418,14 +403,15 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             }
                             className="border-none bg-custom-background-80"
                             maxDate={maxDate ?? undefined}
-                            disabled={!isAllowed || uneditable}
+                            disabled={!isAllowed || is_editable}
                           />
                         )}
                       />
                     </div>
                   </div>
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
+                )} */}
+
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <CalendarDays className="h-4 w-4 flex-shrink-0" />
@@ -446,19 +432,19 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             }
                             className="border-none bg-custom-background-80"
                             minDate={minDate ?? undefined}
-                            disabled={!isAllowed || uneditable}
+                            disabled={!isAllowed || is_editable}
                           />
                         )}
                       />
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             )}
 
             {showThirdSection && (
               <div className="py-1">
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
@@ -468,12 +454,13 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
                         handleCycleChange={handleCycleChange}
-                        disabled={!isAllowed || uneditable}
+                        disabled={!isAllowed || is_editable}
                       />
                     </div>
                   </div>
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
+                )} */}
+
+                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DiceIcon className="h-4 w-4 flex-shrink-0" />
@@ -483,16 +470,16 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
                         handleModuleChange={handleModuleChange}
-                        disabled={!isAllowed || uneditable}
+                        disabled={!isAllowed || is_editable}
                       />
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             )}
           </div>
 
-          {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
+          {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
             <div className="flex flex-wrap items-start py-2">
               <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                 <Tag className="h-4 w-4 flex-shrink-0" />
@@ -504,14 +491,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   labelList={issueDetail?.label_ids ?? []}
                   submitChanges={submitChanges}
                   isNotAllowed={!isAllowed}
-                  uneditable={uneditable || !isAllowed}
+                  is_editable={is_editable || !isAllowed}
                 />
               </div>
             </div>
-          )}
+          )} */}
 
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <IssueLinkRoot uneditable={uneditable} isAllowed={isAllowed} />
+            <IssueLinkRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              is_editable={is_editable}
+              is_archived={is_archived}
+            />
           )}
         </div>
       </div>

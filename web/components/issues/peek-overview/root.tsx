@@ -10,7 +10,7 @@ import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { TIssue, IIssueLink } from "@plane/types";
+import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
@@ -45,9 +45,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     removeReaction,
     createSubscription,
     removeSubscription,
-    createLink,
-    updateLink,
-    removeLink,
     issue: { getIssueById, fetchIssue },
     fetchActivities,
   } = useIssueDetail();
@@ -62,8 +59,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       });
     }
   }, [peekIssue, fetchIssue]);
-
-  if (!peekIssue) return <></>;
+  if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
   const issue = getIssueById(peekIssue.issueId) || undefined;
 
@@ -123,48 +119,34 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const issueSubscriptionRemove = () =>
     removeSubscription(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
 
-  const issueLinkCreate = (formData: IIssueLink) =>
-    createLink(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, formData);
-  const issueLinkUpdate = (formData: IIssueLink, linkId: string) =>
-    updateLink(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, linkId, formData);
-  const issueLinkDelete = (linkId: string) =>
-    removeLink(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, linkId);
-
   const userRole = currentProjectRole ?? EUserProjectRoles.GUEST;
   const isLoading = !issue || loader ? true : false;
 
   return (
     <Fragment>
-      {isLoading ? (
-        <></> // TODO: show the spinner
-      ) : (
-        <IssueView
-          workspaceSlug={peekIssue.workspaceSlug}
-          projectId={peekIssue.projectId}
-          issueId={peekIssue.issueId}
-          issue={issue}
-          isLoading={isLoading}
-          isArchived={isArchived}
-          handleCopyText={handleCopyText}
-          redirectToIssueDetail={redirectToIssueDetail}
-          issueUpdate={issueUpdate}
-          issueReactionCreate={issueReactionCreate}
-          issueReactionRemove={issueReactionRemove}
-          issueCommentCreate={issueCommentCreate}
-          issueCommentUpdate={issueCommentUpdate}
-          issueCommentRemove={issueCommentRemove}
-          issueCommentReactionCreate={issueCommentReactionCreate}
-          issueCommentReactionRemove={issueCommentReactionRemove}
-          issueSubscriptionCreate={issueSubscriptionCreate}
-          issueSubscriptionRemove={issueSubscriptionRemove}
-          issueLinkCreate={issueLinkCreate}
-          issueLinkUpdate={issueLinkUpdate}
-          issueLinkDelete={issueLinkDelete}
-          handleDeleteIssue={issueDelete}
-          disableUserActions={[5, 10].includes(userRole)}
-          showCommentAccessSpecifier={currentProjectDetails?.is_deployed}
-        />
-      )}
+      <IssueView
+        workspaceSlug={peekIssue.workspaceSlug}
+        projectId={peekIssue.projectId}
+        issueId={peekIssue.issueId}
+        isLoading={isLoading}
+        isArchived={isArchived}
+        issue={issue}
+        handleCopyText={handleCopyText}
+        redirectToIssueDetail={redirectToIssueDetail}
+        issueUpdate={issueUpdate}
+        issueDelete={issueDelete}
+        issueReactionCreate={issueReactionCreate}
+        issueReactionRemove={issueReactionRemove}
+        issueCommentCreate={issueCommentCreate}
+        issueCommentUpdate={issueCommentUpdate}
+        issueCommentRemove={issueCommentRemove}
+        issueCommentReactionCreate={issueCommentReactionCreate}
+        issueCommentReactionRemove={issueCommentReactionRemove}
+        issueSubscriptionCreate={issueSubscriptionCreate}
+        issueSubscriptionRemove={issueSubscriptionRemove}
+        disableUserActions={[5, 10].includes(userRole)}
+        showCommentAccessSpecifier={currentProjectDetails?.is_deployed}
+      />
     </Fragment>
   );
 });

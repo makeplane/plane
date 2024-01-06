@@ -134,10 +134,10 @@ export class IssueLinkStore implements IIssueLinkStore {
     try {
       const response = await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
 
-      const reactionIndex = this.links[issueId].findIndex((_comment) => _comment === linkId);
-      if (reactionIndex >= 0)
+      const linkIndex = this.links[issueId].findIndex((_comment) => _comment === linkId);
+      if (linkIndex >= 0)
         runInAction(() => {
-          this.links[issueId].splice(reactionIndex, 1);
+          this.links[issueId].splice(linkIndex, 1);
           delete this.linkMap[linkId];
         });
 

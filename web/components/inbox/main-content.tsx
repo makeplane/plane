@@ -7,7 +7,13 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle 
 // hooks
 import { useProjectState, useUser, useInboxIssues } from "hooks/store";
 // components
-import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction, IssueUpdateStatus } from "components/issues";
+import {
+  IssueDescriptionForm,
+  // FIXME: have to replace this once the issue details page is ready --issue-detail--
+  // IssueDetailsSidebar,
+  IssueReaction,
+  IssueUpdateStatus,
+} from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
@@ -252,13 +258,14 @@ export const InboxMainContent: React.FC = observer(() => {
           </div>
 
           <div className="basis-1/3 space-y-5 border-custom-border-200 py-5">
-            <IssueDetailsSidebar
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
               fieldsToShow={["assignee", "priority", "estimate", "dueDate", "label", "state"]}
-            />
+            /> */}
           </div>
         </div>
       ) : (
