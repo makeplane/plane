@@ -172,7 +172,7 @@ export class EstimateStore implements IEstimateStore {
   updateEstimate = async (workspaceSlug: string, projectId: string, estimateId: string, data: IEstimateFormData) =>
     await this.estimateService.patchEstimate(workspaceSlug, projectId, estimateId, data).then((response) => {
       const updatedEstimates = (this.estimates?.[projectId] ?? []).map((estimate) =>
-        estimate.id === estimateId ? { ...estimate, ...data.estimate } : estimate
+        estimate.id === estimateId ? { ...estimate, ...data.estimate, points: [...data.estimate_points] } : estimate
       );
       runInAction(() => {
         set(this.estimates, projectId, updatedEstimates);
