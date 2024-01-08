@@ -250,7 +250,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           >
             <PriorityIcon
               priority={priority.key}
-              size={12}
+              size={14}
               className={cn({
                 "text-white": priority.key === "urgent" && highlightUrgent,
                 // centre align the icons if text is hidden
