@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseAPIView, BaseViewSet
+from . import BaseAPIView
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -74,7 +74,7 @@ def dashboard_assigned_issues(request, slug):
         workspace__slug=slug, assignees__in=[request.user]
     ).order_by("created_at")
 
-    # # Priority Ordering
+    # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
     assigned_issues = assigned_issues.annotate(
         priority_order=Case(
@@ -83,37 +83,48 @@ def dashboard_assigned_issues(request, slug):
         )
     ).order_by("priority_order")
 
-    upcoming_issues = assigned_issues.filter(start_date__gt=timezone.now())[:5]
-    upcoming_issues_count = assigned_issues.filter(
-        start_date__gt=timezone.now()
-    ).count()
+    # Get counts for different issue categories
+    issue_counts = assigned_issues.aggregate(
+        upcoming_issues_count=Count(
+            Case(
+                When(start_date__gt=timezone.now(), then=1),
+                output_field=CharField(),
+            )
+        ),
+        overdue_issues_count=Count(
+            Case(
+                When(
+                    target_date__lt=timezone.now(),
+                    state__group__in=["backlog", "unstarted", "started"],
+                    then=1,
+                ),
+                output_field=CharField(),
+            )
+        ),
+        completed_issues_count=Count(
+            Case(
+                When(state__group__in=["completed"], then=1),
+                output_field=CharField(),
+            )
+        ),
+    )
 
+    # Fetch issues directly based on specific criteria
+    upcoming_issues = assigned_issues.filter(start_date__gt=timezone.now())[:5]
     overdue_issues = assigned_issues.filter(
         target_date__lt=timezone.now(),
         state__group__in=["backlog", "unstarted", "started"],
     )[:5]
-    overdue_issues_count = assigned_issues.filter(
-        target_date__lt=timezone.now(),
-        state__group__in=["backlog", "unstarted", "started"],
-    ).count()
-
     completed_issues = assigned_issues.filter(state__group__in=["completed"])[:5]
-    completed_issues_count = assigned_issues.filter(
-        state__group__in=["completed"]
-    ).count()
 
     return Response(
         {
-            "upcoming_issues": DashBoardIssueSerializer(
-                upcoming_issues, many=True
-            ).data,
+            "upcoming_issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
             "overdue_issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
-            "completed_issues": DashBoardIssueSerializer(
-                completed_issues, many=True
-            ).data,
-            "upcoming_issues_count": upcoming_issues_count,
-            "overdue_issues_count": overdue_issues_count,
-            "completed_issues_count": completed_issues_count,
+            "completed_issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+            "upcoming_issues_count": issue_counts["upcoming_issues_count"],
+            "overdue_issues_count": issue_counts["overdue_issues_count"],
+            "completed_issues_count": issue_counts["completed_issues_count"],
         },
         status=status.HTTP_200_OK,
     )
@@ -125,7 +136,7 @@ def dashboard_created_issues(request, slug):
         workspace__slug=slug, created_by=request.user
     ).order_by("created_at")
 
-    # # Priority Ordering
+    # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
     created_issues = created_issues.annotate(
         priority_order=Case(
@@ -134,35 +145,48 @@ def dashboard_created_issues(request, slug):
         )
     ).order_by("priority_order")
 
-    upcoming_issues = created_issues.filter(start_date__gt=timezone.now())[:5]
-    upcoming_issues_count = created_issues.filter(start_date__gt=timezone.now()).count()
+    # Get counts for different issue categories
+    issue_counts = created_issues.aggregate(
+        upcoming_issues_count=Count(
+            Case(
+                When(start_date__gt=timezone.now(), then=1),
+                output_field=CharField(),
+            )
+        ),
+        overdue_issues_count=Count(
+            Case(
+                When(
+                    target_date__lt=timezone.now(),
+                    state__group__in=["backlog", "unstarted", "started"],
+                    then=1,
+                ),
+                output_field=CharField(),
+            )
+        ),
+        completed_issues_count=Count(
+            Case(
+                When(state__group__in=["completed"], then=1),
+                output_field=CharField(),
+            )
+        ),
+    )
 
+    # Fetch issues directly based on specific criteria
+    upcoming_issues = created_issues.filter(start_date__gt=timezone.now())[:5]
     overdue_issues = created_issues.filter(
         target_date__lt=timezone.now(),
         state__group__in=["backlog", "unstarted", "started"],
     )[:5]
-    overdue_issues_count = created_issues.filter(
-        target_date__lt=timezone.now(),
-        state__group__in=["backlog", "unstarted", "started"],
-    ).count()
-
     completed_issues = created_issues.filter(state__group__in=["completed"])[:5]
-    completed_issues_count = created_issues.filter(
-        state__group__in=["completed"]
-    ).count()
 
     return Response(
         {
-            "upcoming_issues": DashBoardIssueSerializer(
-                upcoming_issues, many=True
-            ).data,
+            "upcoming_issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
             "overdue_issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
-            "completed_issues": DashBoardIssueSerializer(
-                completed_issues, many=True
-            ).data,
-            "upcoming_issues_count": upcoming_issues_count,
-            "overdue_issues_count": overdue_issues_count,
-            "completed_issues_count": completed_issues_count,
+            "completed_issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+            "upcoming_issues_count": issue_counts["upcoming_issues_count"],
+            "overdue_issues_count": issue_counts["overdue_issues_count"],
+            "completed_issues_count": issue_counts["completed_issues_count"],
         },
         status=status.HTTP_200_OK,
     )
@@ -265,7 +289,6 @@ class DashboardEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, slug, pk):
-        # dashboard = Dashboard.objects.get(pk=pk, )
         serializer = DashboardSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -284,9 +307,7 @@ class DashboardEndpoint(BaseAPIView):
             dashboard_type = request.GET.get("dashboard_type", None)
             if dashboard_type == "home":
                 dashboard, created = Dashboard.objects.get_or_create(
-                    type=dashboard_type,
-                    owned_by=request.user,
-                    is_default=True
+                    type=dashboard_type, owned_by=request.user, is_default=True
                 )
 
                 if created:
@@ -313,17 +334,32 @@ class DashboardEndpoint(BaseAPIView):
                                 )
                             )
 
-                    DashboardWidget.objects.bulk_create(updated_dashboard_widgets, batch_size=100)
+                    DashboardWidget.objects.bulk_create(
+                        updated_dashboard_widgets, batch_size=100
+                    )
 
+                widgets = Widget.objects.annotate(
+                    is_visible=Exists(
+                        DashboardWidget.objects.filter(
+                            widget_id=OuterRef("pk"),
+                            dashboard_id=dashboard.id,
+                            is_visible=True,
+                        )
+                    )
+                )
                 return Response(
-                    DashboardSerializer(dashboard).data, status=status.HTTP_200_OK
+                    {
+                        "dashboard": DashboardSerializer(dashboard).data,
+                        "widgets": WidgetSerializer(widgets, many=True).data,
+                    },
+                    status=status.HTTP_200_OK,
                 )
             return Response(
                 {"error": "Please specify a valid dashboard type"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        widget_type = request.GET.get("widget_type", "overview_stats")
+        widget_key = request.GET.get("widget_key", "overview_stats")
 
         WIDGETS_MAPPER = {
             "overview_stats": dashboard_overview_stats,
@@ -336,7 +372,7 @@ class DashboardEndpoint(BaseAPIView):
             "recent_collaborators": dashboard_recent_collaborators,
         }
 
-        func = WIDGETS_MAPPER.get(widget_type)
+        func = WIDGETS_MAPPER.get(widget_key)
         if func is not None:
             response = func(
                 request=request,
@@ -352,18 +388,6 @@ class DashboardEndpoint(BaseAPIView):
 
 
 class WidgetsEndpoint(BaseAPIView):
-    def get(self, request, dashboard_id):
-        # get all the widgets for the dashboard
-        widgets = Widget.objects.annotate(
-            is_visible=Exists(
-                DashboardWidget.objects.filter(
-                    widget_id=OuterRef("pk"), dashboard_id=dashboard_id, is_visible=True
-                )
-            )
-        )
-        return Response(
-            WidgetSerializer(widgets, many=True).data, status=status.HTTP_200_OK
-        )
 
     def patch(self, request, dashboard_id, widget_id):
         dashboard_widget = DashboardWidget.objects.filter(

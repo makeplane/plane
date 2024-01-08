@@ -16,11 +16,6 @@ urlpatterns = [
         name="dashboard",
     ),
     path(
-        "dashboard/<uuid:dashboard_id>/widgets/",
-        WidgetsEndpoint.as_view(),
-        name="widgets",
-    ),
-        path(
         "dashboard/<uuid:dashboard_id>/widgets/<uuid:widget_id>/",
         WidgetsEndpoint.as_view(),
         name="widgets",
