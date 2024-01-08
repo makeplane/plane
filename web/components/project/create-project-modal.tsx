@@ -338,7 +338,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               onChange={onChange}
                               className="!h-24 text-sm focus:border-blue-400"
                               hasError={Boolean(errors?.description)}
-                              tabIndex={3}  
+                              tabIndex={3}
                             />
                           )}
                         />
