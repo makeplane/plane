@@ -139,7 +139,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
               variant="danger"
               onClick={() => {
                 if (!isUserAdmin) return;
-                handleRemoveIntegration;
+                handleRemoveIntegration();
               }}
               disabled={!isUserAdmin}
               loading={deletingIntegration}
