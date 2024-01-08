@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon, GithubIcon } from "@plane/ui";
+import { DiscordIcon, GithubIcon, Button } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 // components
@@ -74,12 +74,13 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
         }`}
       >
         {!isCollapsed && (
-          <div
-            className="w-1/2 cursor-pointer rounded-md bg-green-500/10 px-2.5 py-1.5 text-center text-sm font-medium text-green-500 outline-none"
+          <Button
+            variant="outline-primary"
+            className="w-1/2 cursor-pointer rounded-2xl px-2.5 py-1.5 text-center text-sm font-medium outline-none"
             onClick={handleProPlanModalOpen}
           >
-            Plan Pro
-          </div>
+            Plane Pro
+          </Button>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
           <button
