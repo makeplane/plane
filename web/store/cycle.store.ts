@@ -168,7 +168,7 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
-    const activeCycle = Object.keys(this.activeCycleIdMap ?? []).find(
+    const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
       (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
     );
     return activeCycle || null;
