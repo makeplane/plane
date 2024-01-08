@@ -27,6 +27,7 @@ from plane.db.models import (
     Widget,
     DashboardWidget,
     Dashboard,
+    Project,
 )
 from plane.app.serializers import (
     IssueActivitySerializer,
@@ -236,18 +237,28 @@ def dashboard_recent_activity(request, slug):
 
 
 def dashboard_recent_projects(request, slug):
-    top_5_project_ids = (
+    project_ids = (
         IssueActivity.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             actor=request.user,
         )
-        .values('project_id')
+        .values_list('id', flat=True)
         .annotate(latest_activity=Max('updated_at'))
         .order_by('-latest_activity')[:5]
     )
 
-    project_ids = [activity['project_id'] for activity in top_5_project_ids]
+    # If fewer than 5 projects are found, add additional projects where the user is a member
+    if len(project_ids) < 5:
+        remaining_projects_count = 5 - len(project_ids)
+        remaining_projects = Project.objects.filter(
+            project_projectmember__member=request.user,
+            workspace__slug=slug,
+        ).exclude(id__in=project_ids).values_list('id', flat=True)[:remaining_projects_count]
+
+        project_ids.extend(remaining_projects)
+    
+    project_ids = [project['id'] for project in project_ids]
 
     return Response(
         {"project_ids": project_ids},
@@ -257,19 +268,29 @@ def dashboard_recent_projects(request, slug):
 
 
 def dashboard_recent_collaborators(request, slug):
-    recent_collaborators = Issue.issue_objects.filter(
-        workspace__slug=slug,
-        created_by=request.user,
-    ).order_by("-updated_at")[:5]
 
-    return Response(
-        {
-            "recent_collaborators": DashBoardIssueSerializer(
-                recent_collaborators, many=True
-            ).data,
-        },
-        status=status.HTTP_200_OK,
-    )
+    # Fetch all project IDs where the user belongs to
+    user_projects = Project.objects.filter(
+        project_projectmember__member=request.user,
+        workspace__slug=slug,
+    ).values_list('id', flat=True)
+
+    # Fetch all users who have performed an activity in the projects where the user exists
+    users_with_activities = (
+        IssueActivity.objects.filter(
+            workspace__slug=slug,
+            project_id__in=user_projects,
+        ).values('actor').exclude(actor=request.user) 
+        .annotate(num_activities=Count('actor'))
+        .order_by('-num_activities')
+    )[:9]
+
+    user_ids = [activity['actor'] for activity in users_with_activities]
+    user_ids.insert(0, request.user.id)
+
+    # for the users get the count of all the issues that have state group of 
+
+    return Response(user_ids, status=status.HTTP_200_OK)
 
 
 class DashboardEndpoint(BaseAPIView):
