@@ -384,9 +384,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               {issueIds ? (
                 issueIds.length > 0 ? (
                   issueIds.map((issue: any) => (
-                    <div
+                    <Link
                       key={issue.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
+                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                       className="flex cursor-pointer flex-wrap items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
                     >
                       <div className="flex flex-col gap-1">
@@ -429,7 +429,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                           )}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))
                 ) : (
                   <div className="grid place-items-center text-center text-sm text-custom-text-200">
