@@ -12,8 +12,8 @@ def search_issues(query, queryset):
     fields = ["name", "sequence_id"]
     q = Q()
     for field in fields:
-        if field == "sequence_id":
-            sequences = re.findall(r"\d+\.\d+|\d+", query)
+        if field == "sequence_id" and len(query) <= 20:
+            sequences = re.findall(r"[A-Za-z0-9]{1,12}-\d+", query)
             for sequence_id in sequences:
                 q |= Q(**{"sequence_id": sequence_id})
         else:
