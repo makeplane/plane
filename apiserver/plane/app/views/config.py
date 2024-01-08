@@ -202,11 +202,6 @@ class MobileConfigurationEndpoint(BaseAPIView):
             else None
         )
         data["google_ios_client_id"] = (
-            GOOGLE_IOS_CLIENT_ID
-            if GOOGLE_IOS_CLIENT_ID and GOOGLE_IOS_CLIENT_ID != '""'
-            else None
-        )
-        data["reversed_google_ios_client_id"] = (
             (GOOGLE_IOS_CLIENT_ID)[::-1] if GOOGLE_IOS_CLIENT_ID is not None else None
         )
         # Posthog
