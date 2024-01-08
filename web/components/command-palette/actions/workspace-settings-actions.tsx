@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { Command } from "cmdk";
 // icons
 import { SettingIcon } from "components/icons";
+import Link from "next/link";
 
 type Props = {
   closePalette: () => void;
@@ -13,48 +14,55 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const redirect = (path: string) => {
-    closePalette();
-    router.push(path);
-  };
-
   return (
     <>
-      <Command.Item onSelect={() => redirect(`/${workspaceSlug}/settings`)} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
-          <SettingIcon className="h-4 w-4 text-custom-text-200" />
-          General
-        </div>
+      <Command.Item onSelect={closePalette} className="focus:outline-none">
+        <Link href={`/${workspaceSlug}/settings`}>
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            General
+          </div>
+        </Link>
       </Command.Item>
-      <Command.Item onSelect={() => redirect(`/${workspaceSlug}/settings/members`)} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
-          <SettingIcon className="h-4 w-4 text-custom-text-200" />
-          Members
-        </div>
+      <Command.Item onSelect={closePalette} className="focus:outline-none">
+        <Link href={`/${workspaceSlug}/settings/members`}>
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            Members
+          </div>
+        </Link>
       </Command.Item>
-      <Command.Item onSelect={() => redirect(`/${workspaceSlug}/settings/billing`)} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
-          <SettingIcon className="h-4 w-4 text-custom-text-200" />
-          Billing and Plans
-        </div>
+      <Command.Item onSelect={closePalette} className="focus:outline-none">
+        <Link href={`/${workspaceSlug}/settings/billing`}>
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            Billing and Plans
+          </div>
+        </Link>
       </Command.Item>
-      <Command.Item onSelect={() => redirect(`/${workspaceSlug}/settings/integrations`)} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
-          <SettingIcon className="h-4 w-4 text-custom-text-200" />
-          Integrations
-        </div>
+      <Command.Item onSelect={closePalette} className="focus:outline-none">
+        <Link href={`/${workspaceSlug}/settings/integrations`}>
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            Integrations
+          </div>
+        </Link>
       </Command.Item>
-      <Command.Item onSelect={() => redirect(`/${workspaceSlug}/settings/imports`)} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
-          <SettingIcon className="h-4 w-4 text-custom-text-200" />
-          Import
-        </div>
+      <Command.Item onSelect={closePalette} className="focus:outline-none">
+        <Link href={`/${workspaceSlug}/settings/imports`}>
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            Import
+          </div>
+        </Link>
       </Command.Item>
-      <Command.Item onSelect={() => redirect(`/${workspaceSlug}/settings/exports`)} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
-          <SettingIcon className="h-4 w-4 text-custom-text-200" />
-          Export
-        </div>
+      <Command.Item onSelect={closePalette} className="focus:outline-none">
+        <Link href={`/${workspaceSlug}/settings/exports`}>
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            Export
+          </div>
+        </Link>
       </Command.Item>
     </>
   );

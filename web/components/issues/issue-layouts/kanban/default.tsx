@@ -89,7 +89,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           const verticalPosition = verticalAlignPosition(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col ${!verticalPosition ? `w-[340px]` : ``} group`}>
+            <div
+              className={`relative flex flex-shrink-0 flex-col ${!verticalPosition ? `w-[340px]` : ``} group`}
+              key={_list.id}
+            >
               {sub_group_by === null && (
                 <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
                   <HeaderGroupByCard

@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
+import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
@@ -10,17 +11,14 @@ import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { snoozeOptions } from "constants/notification";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
-import {
-  calculateTimeAgo,
-  renderFormattedTime,
-  renderFormattedDate,
-} from "helpers/date-time.helper";
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // type
 import type { IUserNotification } from "@plane/types";
 
 type NotificationCardProps = {
   notification: IUserNotification;
   isSnoozedTabOpen: boolean;
+  closePopover: () => void;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
   markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
   markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
@@ -32,6 +30,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
     notification,
     isSnoozedTabOpen,
+    closePopover,
     markNotificationReadStatus,
     markNotificationReadStatusToggle,
     markNotificationArchivedStatus,
@@ -47,15 +46,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
   return (
-    <div
+    <Link
       onClick={() => {
         markNotificationReadStatus(notification.id);
-        router.push(
-          `/${workspaceSlug}/projects/${notification.project}/${
-            notification.data.issue_activity.field === "archived_at" ? "archived-issues" : "issues"
-          }/${notification.data.issue.id}`
-        );
+        closePopover();
       }}
+      href={`/${workspaceSlug}/projects/${notification.project}/${
+        notification.data.issue_activity.field === "archived_at" ? "archived-issues" : "issues"
+      }/${notification.data.issue.id}`}
       className={`group relative flex w-full cursor-pointer items-center gap-4 p-3 pl-6 ${
         notification.read_at === null ? "bg-custom-primary-70/5" : "hover:bg-custom-background-200"
       }`}
@@ -149,7 +147,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
               <Clock className="h-4 w-4" />
               <span>
-                Till {renderFormattedDate(notification.snoozed_till)}, {renderFormattedTime(notification.snoozed_till, '12-hour')}
+                Till {renderFormattedDate(notification.snoozed_till)},{" "}
+                {renderFormattedTime(notification.snoozed_till, "12-hour")}
               </span>
             </p>
           ) : (
@@ -195,6 +194,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
+
                 item.onClick();
               }}
               key={item.id}
@@ -204,7 +205,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             </button>
           </Tooltip>
         ))}
-
         <Tooltip tooltipContent="Snooze">
           <CustomMenu
             className="flex items-center"
@@ -223,6 +223,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 key={item.label}
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
 
                   if (!item.value) {
                     setSelectedNotificationForSnooze(notification.id);
@@ -243,6 +244,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </CustomMenu>
         </Tooltip>
       </div>
-    </div>
+    </Link>
   );
 };
