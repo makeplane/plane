@@ -11,6 +11,7 @@ from django.db.models import (
     F,
     Exists,
     OuterRef,
+    Max,
 )
 
 # Third Party imports
@@ -235,33 +236,24 @@ def dashboard_recent_activity(request, slug):
 
 
 def dashboard_recent_projects(request, slug):
-    # first get all the projects in which the user is part of
-    projects = ProjectMember.objects.filter(
-        member=request.user,
-        is_active=True,
-    ).values_list("project_id", flat=True)
-
-    # now order the projects by the last activity change
-    recent_projects = (
+    top_5_project_ids = (
         IssueActivity.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
-            project_id__in=projects,
             actor=request.user,
         )
-        .select_related("project")
-        .order_by("updated_at")[:5]
+        .values('project_id')
+        .annotate(latest_activity=Max('updated_at'))
+        .order_by('-latest_activity')[:5]
     )
 
-    # just return all the project ids
+    project_ids = [activity['project_id'] for activity in top_5_project_ids]
+
     return Response(
-        {
-            "recent_projects": DashBoardIssueSerializer(
-                recent_projects, many=True
-            ).data,
-        },
+        {"project_ids": project_ids},
         status=status.HTTP_200_OK,
     )
+
 
 
 def dashboard_recent_collaborators(request, slug):
