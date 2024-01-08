@@ -4,21 +4,22 @@ from sentry_sdk import capture_exception
 
 from urllib.parse import urlparse
 
-def is_allowed_hostname(hostname, allowed_list):
+def is_allowed_hostname(hostname):
+    allowed_lists = ["atl-paas.net", "atlassian.com", "atlassian.net", "jira.com"]
     # Extract the base domain from the hostname
     parsed_uri = urlparse(f"https://{hostname}")  # Add scheme for urlparse to work properly
     domain = parsed_uri.netloc.split(":")[0]  # Removes port number if included
     base_domain = ".".join(domain.split(".")[-2:])  # Extract base domain
 
     # Check if the base domain is in the allowed list
-    return base_domain in allowed_list
+    return base_domain in allowed_lists
 
 
 def jira_project_issue_summary(email, api_token, project_key, hostname):
     try:
-        allowed_lists = ["atl-paas.net", "atlassian.com", "atlassian.net", "jira.com"]
+        
 
-        if not is_allowed_hostname(hostname, allowed_lists):
+        if not is_allowed_hostname(hostname):
             print("Errored Hostname")
             return {"error": "Invalid or unauthorized hostname"}
 
