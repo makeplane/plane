@@ -83,3 +83,5 @@ from .notification import Notification
 from .exporter import ExporterHistory
 
 from .webhook import Webhook, WebhookLog
+
+from .dashboard import Dashboard, DashboardWidget, Widget

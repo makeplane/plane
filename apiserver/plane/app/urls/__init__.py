@@ -3,6 +3,7 @@ from .asset import urlpatterns as asset_urls
 from .authentication import urlpatterns as authentication_urls
 from .config import urlpatterns as configuration_urls
 from .cycle import urlpatterns as cycle_urls
+from .dashboard import urlpatterns as dashboard_urls
 from .estimate import urlpatterns as estimate_urls
 from .external import urlpatterns as external_urls
 from .importer import urlpatterns as importer_urls
@@ -28,6 +29,7 @@ urlpatterns = [
     *authentication_urls,
     *configuration_urls,
     *cycle_urls,
+    *dashboard_urls,
     *estimate_urls,
     *external_urls,
     *importer_urls,

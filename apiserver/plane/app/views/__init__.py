@@ -172,3 +172,8 @@ from .webhook import (
     WebhookLogsEndpoint,
     WebhookSecretRegenerateEndpoint,
 )
+
+from .dashboard import (
+    DashboardEndpoint,
+    WidgetsEndpoint
+)
