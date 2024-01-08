@@ -289,7 +289,7 @@ def dashboard_recent_projects(request, slug):
     project_ids = [activity["project_id"] for activity in project_ids]
 
     return Response(
-        {"project_ids": project_ids},
+        project_ids,
         status=status.HTTP_200_OK,
     )
 
@@ -317,10 +317,6 @@ def dashboard_recent_collaborators(request, slug):
     user_ids.insert(0, request.user.id)
 
     # for the users get the count of all the issues that have state group of unstarted, started
-
-    
-
-
 
     return Response(user_ids, status=status.HTTP_200_OK)
 
