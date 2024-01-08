@@ -139,7 +139,6 @@ class MobileConfigurationEndpoint(BaseAPIView):
             EMAIL_HOST_PASSWORD,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
-            SLACK_CLIENT_ID,
             POSTHOG_API_KEY,
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
@@ -175,10 +174,6 @@ class MobileConfigurationEndpoint(BaseAPIView):
                     "default": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
                 },
                 {
-                    "key": "SLACK_CLIENT_ID",
-                    "default": os.environ.get("SLACK_CLIENT_ID", "1"),
-                },
-                {
                     "key": "POSTHOG_API_KEY",
                     "default": os.environ.get("POSTHOG_API_KEY", "1"),
                 },
@@ -211,7 +206,7 @@ class MobileConfigurationEndpoint(BaseAPIView):
             if GOOGLE_IOS_CLIENT_ID and GOOGLE_IOS_CLIENT_ID != '""'
             else None
         )
-        data["mobile_reversed_google_ios_client_id"] = (
+        data["reversed_google_ios_client_id"] = (
             (GOOGLE_IOS_CLIENT_ID)[::-1] if GOOGLE_IOS_CLIENT_ID is not None else None
         )
         # Posthog
@@ -223,8 +218,6 @@ class MobileConfigurationEndpoint(BaseAPIView):
         ) and ENABLE_MAGIC_LINK_LOGIN == "1"
 
         data["email_password_login"] = ENABLE_EMAIL_PASSWORD == "1"
-        # Slack client
-        data["slack_client_id"] = SLACK_CLIENT_ID
 
         # Posthog
         data["posthog_api_key"] = POSTHOG_API_KEY
