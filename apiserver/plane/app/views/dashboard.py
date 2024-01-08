@@ -89,7 +89,11 @@ def dashboard_assigned_issues(request, slug):
     issue_counts = assigned_issues.aggregate(
         upcoming_issues_count=Count(
             Case(
-                When(start_date__gt=timezone.now(), then=1),
+                When(
+                    start_date__gt=timezone.now(),
+                    state__group__in=["backlog", "unstarted", "started"],
+                    then=1,
+                ),
                 output_field=CharField(),
             )
         ),
@@ -158,7 +162,11 @@ def dashboard_created_issues(request, slug):
     issue_counts = created_issues.aggregate(
         upcoming_issues_count=Count(
             Case(
-                When(start_date__gt=timezone.now(), then=1),
+                When(
+                    start_date__gt=timezone.now(),
+                    state__group__in=["backlog", "unstarted", "started"],
+                    then=1,
+                ),
                 output_field=CharField(),
             )
         ),
@@ -283,10 +291,12 @@ def dashboard_recent_projects(request, slug):
         )
         .values("project_id")
         .annotate(latest_activity=Max("updated_at"))
-        .order_by("-latest_activity")[:5]
+        .order_by("-latest_activity")[:4]
     )
 
     project_ids = [activity["project_id"] for activity in project_ids]
+
+    # TODO fetch the projects if the activities are not performed by the user but the part of the project and the projects length in less than 4
 
     return Response(
         project_ids,
@@ -313,12 +323,37 @@ def dashboard_recent_collaborators(request, slug):
         .order_by("-num_activities")
     )[:7]
 
-    user_ids = [activity["actor"] for activity in users_with_activities]
-    user_ids.insert(0, request.user.id)
+    # Get the count of active issues for each user in users_with_activities
+    users_with_active_issues = []
+    for user_activity in users_with_activities:
+        user_id = user_activity["actor"]
+        active_issue_count = Issue.objects.filter(
+            assignees__in=[user_id],
+            state__group__in=["backlog", "unstarted", "started"],
+        ).count()
+        users_with_active_issues.append(
+            {"user_id": user_id, "active_issue_count": active_issue_count}
+        )
 
-    # for the users get the count of all the issues that have state group of unstarted, started
+    # Insert the logged-in user's ID and their active issue count at the beginning
+    active_issue_count = Issue.objects.filter(
+        assignees__in=[request.user],
+        state__group__in=["unstarted", "started"],
+    ).count()
+    users_with_active_issues.insert(
+        0, {"user_id": request.user.id, "active_issue_count": active_issue_count}
+    )
 
-    return Response(user_ids, status=status.HTTP_200_OK)
+    return Response(users_with_active_issues,
+        status=status.HTTP_200_OK
+    )
+
+    # user_ids = [activity["actor"] for activity in users_with_activities]
+    # user_ids.insert(0, request.user.id)
+
+    # # for the users get the count of all the issues that have state group of unstarted, started
+
+    # return Response(user_ids, status=status.HTTP_200_OK)
 
 
 class DashboardEndpoint(BaseAPIView):
