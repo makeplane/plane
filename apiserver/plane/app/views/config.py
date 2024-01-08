@@ -123,3 +123,30 @@ class ConfigurationEndpoint(BaseAPIView):
         )
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class MobileConfigurationEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        data = {}
+        # Authentication
+        data["google_client_id"] = os.environ.get("GOOGLE_CLIENT_ID", None),
+        data["google_server_client_id"] = os.environ.get("GOOGLE_SERVER_CLIENT_ID", None)
+        data["google_ios_client_id"] = os.environ.get("GOOGLE_IOS_CLIENT_ID", None)
+        data["mobile_reversed_google_ios_client_id"] = (
+            (os.environ.get("GOOGLE_IOS_CLIENT_ID", None)[::-1])
+            if os.environ.get("GOOGLE_IOS_CLIENT_ID", None) is not None
+            else None
+        )
+        data["posthog_api_key"] = os.environ.get("POSTHOG_API_KEY", "1")
+        data["posthog_host"] = os.environ.get("POSTHOG_HOST", "1"),
+        data["magic_login"] = (
+            bool(os.environ.get("EMAIL_HOST_USER", None)) and bool(os.environ.get("EMAIL_HOST_PASSWORD", None))
+        ) and os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1") == "1"
+        data["email_password_login"] = os.environ.get("ENABLE_EMAIL_PASSWORD", "1")
+
+        return Response(data, status=status.HTTP_200_OK)
+
