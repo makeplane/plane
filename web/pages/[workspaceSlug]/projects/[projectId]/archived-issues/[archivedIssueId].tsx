@@ -30,8 +30,8 @@ const defaultValues: Partial<TIssue> = {
   state_id: "",
   priority: "low",
   target_date: new Date().toString(),
-  issue_cycle: null,
-  issue_module: null,
+  cycle_id: null,
+  module_id: null,
 };
 
 // services

@@ -6,11 +6,17 @@ import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from
 import { useIssueDetail, useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import { SidebarCycleSelect, SidebarLabelSelect, SidebarModuleSelect, SidebarParentSelect } from "components/issues";
+import {
+  IssueLinkRoot,
+  SidebarCycleSelect,
+  SidebarLabelSelect,
+  SidebarModuleSelect,
+  SidebarParentSelect,
+} from "components/issues";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
-import { LinkModal, LinksList } from "components/core";
+import { LinkModal } from "components/core";
 // types
 import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "@plane/types";
 // constants
@@ -38,6 +44,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const uneditable = currentProjectRole ? [5, 10].includes(currentProjectRole) : false;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleState = (_state: string) => {
     issueUpdate({ ...issue, state_id: _state });
@@ -274,42 +283,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <span className="border-t border-custom-border-200" />
 
         <div className="flex w-full flex-col gap-5 pt-5">
-          <div className="flex w-full flex-col gap-2">
-            <div className="flex w-80 items-center gap-2">
-              <div className="flex w-40 items-center gap-2 text-sm">
-                <Link2 className="h-4 w-4 flex-shrink-0" />
-                <p>Links</p>
-              </div>
-              <div>
-                {!disableUserActions && (
-                  <button
-                    type="button"
-                    className={`flex ${
-                      disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-                    } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
-                    onClick={() => toggleIssueLinkModal(true)}
-                    disabled={false}
-                  >
-                    <Plus className="h-3 w-3" /> New
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              {issue?.issue_link && issue.issue_link.length > 0 ? (
-                <LinksList
-                  links={issue.issue_link}
-                  handleDeleteLink={issueLinkDelete}
-                  handleEditLink={handleEditLink}
-                  userAuth={{
-                    isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                    isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                    isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                    isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                  }}
-                />
-              ) : null}
-            </div>
+          <div className="flex flex-col gap-3">
+            <IssueLinkRoot uneditable={uneditable} isAllowed={isAllowed} />
           </div>
         </div>
       </div>

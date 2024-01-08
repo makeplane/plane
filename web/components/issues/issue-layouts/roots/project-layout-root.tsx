@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
@@ -10,21 +10,24 @@ import {
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
   ProjectEmptyState,
+  IssuePeekOverview,
 } from "components/issues";
+// ui
 import { Spinner } from "@plane/ui";
-import { useIssues } from "hooks/store/use-issues";
-import { EIssuesStoreType } from "constants/issue";
 // hooks
+import { useApplication, useIssues } from "hooks/store";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
-export const ProjectLayoutRoot: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+export const ProjectLayoutRoot: FC = observer(() => {
+  // hooks
+  const {
+    router: { workspaceSlug, projectId },
+  } = useApplication();
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug, projectId);
@@ -40,28 +43,35 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
+      {issues?.loader === "init-loader" ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          {(issues?.groupedIssueIds ?? {}).length == 0 ? (
-            <ProjectEmptyState />
-          ) : (
-            <div className="relative h-full w-full overflow-auto bg-custom-background-90">
-              {activeLayout === "list" ? (
-                <ListLayout />
-              ) : activeLayout === "kanban" ? (
-                <KanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <CalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <GanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <ProjectSpreadsheetLayout />
-              ) : null}
+          {!issues?.groupedIssueIds ? (
+            <div className="relative h-full w-full overflow-y-auto">
+              <ProjectEmptyState />
             </div>
+          ) : (
+            <>
+              <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+                {activeLayout === "list" ? (
+                  <ListLayout />
+                ) : activeLayout === "kanban" ? (
+                  <KanBanLayout />
+                ) : activeLayout === "calendar" ? (
+                  <CalendarLayout />
+                ) : activeLayout === "gantt_chart" ? (
+                  <GanttLayout />
+                ) : activeLayout === "spreadsheet" ? (
+                  <ProjectSpreadsheetLayout />
+                ) : null}
+              </div>
+
+              {/* peek overview */}
+              <IssuePeekOverview />
+            </>
           )}
         </>
       )}

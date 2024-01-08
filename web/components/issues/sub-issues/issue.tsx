@@ -1,10 +1,8 @@
-import { useRouter } from "next/router";
 import React from "react";
 import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // components
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
-import { IssuePeekOverview } from "components/issues";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // types
@@ -42,7 +40,6 @@ export const SubIssues: React.FC<ISubIssues> = ({
   projectId,
   parentIssue,
   issueId,
-  handleIssue,
   spacingLeft = 0,
   user,
   editable,
@@ -53,9 +50,6 @@ export const SubIssues: React.FC<ISubIssues> = ({
   handleIssueCrudOperation,
   handleUpdateIssue,
 }) => {
-  const router = useRouter();
-  const { peekProjectId, peekIssueId } = router.query;
-
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -68,25 +62,8 @@ export const SubIssues: React.FC<ISubIssues> = ({
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
     undefined;
 
-  const handleIssuePeekOverview = () => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
-    });
-  };
-
   return (
     <>
-      {workspaceSlug && peekProjectId && peekIssueId && peekIssueId === issue?.id && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
-        />
-      )}
       <div>
         {issue && (
           <div
@@ -116,7 +93,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
               )}
             </div>
 
-            <div className="flex w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
+            <div className="flex w-full cursor-pointer items-center gap-2">
               <div
                 className="h-[6px] w-[6px] flex-shrink-0 rounded-full"
                 style={{

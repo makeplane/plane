@@ -1,7 +1,13 @@
-import { TIssue } from "./issues";
+import { TIssue } from "./issues/base";
 import type { IProjectLite } from "./projects";
 
-export interface IInboxIssue extends TIssue {
+export type TInboxIssueExtended = {
+  completed_at: string | null;
+  start_date: string | null;
+  target_date: string | null;
+};
+
+export interface IInboxIssue extends TIssue, TInboxIssueExtended {
   issue_inbox: {
     duplicate_to: string | null;
     id: string;
@@ -48,7 +54,12 @@ interface StatusDuplicate {
   duplicate_to: string;
 }
 
-export type TInboxStatus = StatusReject | StatusSnoozed | StatusAccepted | StatusDuplicate | StatePending;
+export type TInboxStatus =
+  | StatusReject
+  | StatusSnoozed
+  | StatusAccepted
+  | StatusDuplicate
+  | StatePending;
 
 export interface IInboxFilterOptions {
   priority?: string[] | null;

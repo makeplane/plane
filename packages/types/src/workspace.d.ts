@@ -1,5 +1,10 @@
 import { EUserWorkspaceRoles } from "constants/workspace";
-import type { IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "@plane/types";
+import type {
+  IProjectMember,
+  IUser,
+  IUserLite,
+  IWorkspaceViewProps,
+} from "@plane/types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -32,8 +37,7 @@ export interface IWorkspaceMemberInvitation {
   responded_at: Date;
   role: EUserWorkspaceRoles;
   token: string;
-  workspace: string;
-  workspace_detail: {
+  workspace: {
     id: string;
     logo: string;
     name: string;

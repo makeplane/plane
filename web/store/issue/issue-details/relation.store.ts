@@ -68,7 +68,7 @@ export class IssueRelationStore implements IIssueRelationStore {
 
   // computed
   get issueRelations() {
-    const issueId = this.rootIssueDetailStore.issueId;
+    const issueId = this.rootIssueDetailStore.peekIssue?.issueId;
     if (!issueId) return undefined;
     return this.relationMap?.[issueId] ?? undefined;
   }

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
@@ -55,6 +56,10 @@ const Inputs = (props: any) => {
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails } = useProject();
@@ -148,7 +153,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(currentWorkspace, currentProjectDetails, {
+    const payload = createIssuePayload(currentProjectDetails.id, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });

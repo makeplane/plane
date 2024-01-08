@@ -14,10 +14,9 @@ import {
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
   IUserProjectsRole,
-  TIssueMap,
   TIssue,
+  IWorkspaceView,
 } from "@plane/types";
-import { IWorkspaceView } from "@plane/types";
 
 export class WorkspaceService extends APIService {
   constructor() {

@@ -99,6 +99,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             response = super().handle_exception(exc)
             return response
         except Exception as e:
+            print(e) if settings.DEBUG else print("Server Error")
             if isinstance(e, IntegrityError):
                 return Response(
                     {"error": "The payload is not valid"},
@@ -124,8 +125,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                     {"error": f"key {e} does not exist"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            
-            print(e) if settings.DEBUG else print("Server Error")
+
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

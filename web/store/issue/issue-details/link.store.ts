@@ -60,7 +60,7 @@ export class IssueLinkStore implements IIssueLinkStore {
 
   // computed
   get issueLinks() {
-    const issueId = this.rootIssueDetailStore.issueId;
+    const issueId = this.rootIssueDetailStore.peekIssue?.issueId;
     if (!issueId) return undefined;
     return this.links[issueId] ?? undefined;
   }
