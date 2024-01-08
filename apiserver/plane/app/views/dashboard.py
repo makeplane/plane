@@ -112,7 +112,10 @@ def dashboard_assigned_issues(request, slug):
     )
 
     # Fetch issues directly based on specific criteria
-    upcoming_issues = assigned_issues.filter(start_date__gt=timezone.now())[:5]
+    upcoming_issues = assigned_issues.filter(
+        state__group__in=["backlog", "unstarted", "started"],
+        start_date__gt=timezone.now(),
+    )[:5]
     overdue_issues = assigned_issues.filter(
         target_date__lt=timezone.now(),
         state__group__in=["backlog", "unstarted", "started"],
@@ -121,9 +124,13 @@ def dashboard_assigned_issues(request, slug):
 
     return Response(
         {
-            "upcoming_issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
+            "upcoming_issues": DashBoardIssueSerializer(
+                upcoming_issues, many=True
+            ).data,
             "overdue_issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
-            "completed_issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+            "completed_issues": DashBoardIssueSerializer(
+                completed_issues, many=True
+            ).data,
             "upcoming_issues_count": issue_counts["upcoming_issues_count"],
             "overdue_issues_count": issue_counts["overdue_issues_count"],
             "completed_issues_count": issue_counts["completed_issues_count"],
@@ -174,7 +181,10 @@ def dashboard_created_issues(request, slug):
     )
 
     # Fetch issues directly based on specific criteria
-    upcoming_issues = created_issues.filter(start_date__gt=timezone.now())[:5]
+    upcoming_issues = created_issues.filter(
+        state__group__in=["backlog", "unstarted", "started"],
+        start_date__gt=timezone.now(),
+    )[:5]
     overdue_issues = created_issues.filter(
         target_date__lt=timezone.now(),
         state__group__in=["backlog", "unstarted", "started"],
@@ -183,9 +193,13 @@ def dashboard_created_issues(request, slug):
 
     return Response(
         {
-            "upcoming_issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
+            "upcoming_issues": DashBoardIssueSerializer(
+                upcoming_issues, many=True
+            ).data,
             "overdue_issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
-            "completed_issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+            "completed_issues": DashBoardIssueSerializer(
+                completed_issues, many=True
+            ).data,
             "upcoming_issues_count": issue_counts["upcoming_issues_count"],
             "overdue_issues_count": issue_counts["overdue_issues_count"],
             "completed_issues_count": issue_counts["completed_issues_count"],
@@ -195,6 +209,7 @@ def dashboard_created_issues(request, slug):
 
 
 def dashboard_issues_by_state_groups(request, slug):
+    state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
@@ -203,10 +218,25 @@ def dashboard_issues_by_state_groups(request, slug):
         .values("state__group")
         .annotate(count=Count("id"))
     )
+    issues_by_state_groups = issues_by_state_groups.annotate(
+        state_order=Case(
+            *[
+                When(state__group=state_group, then=Value(i))
+                for i, state_group in enumerate(state_order)
+            ],
+            default=Value(len(state_order)),
+            output_field=CharField(),
+        )
+    ).order_by("state_order")
+
+    # Select only the necessary fields for the final output
+    issues_by_state_groups = issues_by_state_groups.values("state__group", "count")
     return Response(issues_by_state_groups, status=status.HTTP_200_OK)
 
 
 def dashboard_issues_by_priority(request, slug):
+    priority_order = ["urgent", "high", "medium", "low", "none"]
+
     issues_by_priority = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
@@ -215,6 +245,14 @@ def dashboard_issues_by_priority(request, slug):
         .values("priority")
         .annotate(count=Count("id"))
     )
+    issues_by_priority = issues_by_priority.annotate(
+        priority_order=Case(
+            *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+            output_field=CharField(),
+        )
+    ).order_by("priority_order")
+    # Select only the necessary fields for the final output
+    issues_by_priority = issues_by_priority.values("priority", "count")
 
     return Response(issues_by_priority, status=status.HTTP_200_OK)
 
@@ -243,22 +281,12 @@ def dashboard_recent_projects(request, slug):
             project__project_projectmember__member=request.user,
             actor=request.user,
         )
-        .values_list('id', flat=True)
-        .annotate(latest_activity=Max('updated_at'))
-        .order_by('-latest_activity')[:5]
+        .values("project_id")
+        .annotate(latest_activity=Max("updated_at"))
+        .order_by("-latest_activity")[:5]
     )
 
-    # If fewer than 5 projects are found, add additional projects where the user is a member
-    if len(project_ids) < 5:
-        remaining_projects_count = 5 - len(project_ids)
-        remaining_projects = Project.objects.filter(
-            project_projectmember__member=request.user,
-            workspace__slug=slug,
-        ).exclude(id__in=project_ids).values_list('id', flat=True)[:remaining_projects_count]
-
-        project_ids.extend(remaining_projects)
-    
-    project_ids = [project['id'] for project in project_ids]
+    project_ids = [activity["project_id"] for activity in project_ids]
 
     return Response(
         {"project_ids": project_ids},
@@ -266,29 +294,33 @@ def dashboard_recent_projects(request, slug):
     )
 
 
-
 def dashboard_recent_collaborators(request, slug):
-
     # Fetch all project IDs where the user belongs to
     user_projects = Project.objects.filter(
         project_projectmember__member=request.user,
         workspace__slug=slug,
-    ).values_list('id', flat=True)
+    ).values_list("id", flat=True)
 
     # Fetch all users who have performed an activity in the projects where the user exists
     users_with_activities = (
         IssueActivity.objects.filter(
             workspace__slug=slug,
             project_id__in=user_projects,
-        ).values('actor').exclude(actor=request.user) 
-        .annotate(num_activities=Count('actor'))
-        .order_by('-num_activities')
-    )[:9]
+        )
+        .values("actor")
+        .exclude(actor=request.user)
+        .annotate(num_activities=Count("actor"))
+        .order_by("-num_activities")
+    )[:7]
 
-    user_ids = [activity['actor'] for activity in users_with_activities]
+    user_ids = [activity["actor"] for activity in users_with_activities]
     user_ids.insert(0, request.user.id)
 
-    # for the users get the count of all the issues that have state group of 
+    # for the users get the count of all the issues that have state group of unstarted, started
+
+    
+
+
 
     return Response(user_ids, status=status.HTTP_200_OK)
 
@@ -401,7 +433,6 @@ class DashboardEndpoint(BaseAPIView):
 
 
 class WidgetsEndpoint(BaseAPIView):
-
     def patch(self, request, dashboard_id, widget_id):
         dashboard_widget = DashboardWidget.objects.filter(
             widget_id=widget_id,
