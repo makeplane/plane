@@ -33,6 +33,7 @@ import { truncateText } from "helpers/string.helper";
 import { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 import { ACTIVE_CYCLE_ISSUES } from "store/issue/cycle";
+import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 const stateGroups = [
   {
@@ -73,7 +74,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const { workspaceSlug, projectId } = props;
 
   const {
-    issues: { issues },
+    issues: { issues, fetchActiveCycleIssues },
     issueMap,
   } = useIssues(EIssuesStoreType.CYCLE);
   // store hooks
@@ -99,13 +100,14 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
   const issueIds = issues?.[ACTIVE_CYCLE_ISSUES];
 
-  // useSWR(
-  //   workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
-  //   workspaceSlug && projectId && cycleId
-  //     ? () =>
-  //     fetchActiveCycleIssues(workspaceSlug, projectId, )
-  //     : null
-  // );
+  useSWR(
+    workspaceSlug && projectId && currentProjectActiveCycleId
+      ? CYCLE_ISSUES_WITH_PARAMS(currentProjectActiveCycleId, { priority: "urgent,high" })
+      : null,
+    workspaceSlug && projectId && currentProjectActiveCycleId
+      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, currentProjectActiveCycleId)
+      : null
+  );
 
   if (!activeCycle && isLoading)
     return (
