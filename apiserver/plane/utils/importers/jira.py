@@ -1,4 +1,5 @@
 import requests
+import re
 from requests.auth import HTTPBasicAuth
 from sentry_sdk import capture_exception
 from urllib.parse import urlparse, urljoin
@@ -12,6 +13,21 @@ def is_allowed_hostname(hostname):
     return base_domain in allowed_domains
 
 
+def is_valid_project_key(project_key):
+    if project_key:
+        project_key = project_key.strip().upper()
+        # Adjust the regular expression as needed based on your specific requirements.
+        if len(project_key) > 10:
+            return False
+        # Check the validity of the key as well
+        pattern = re.compile(r'^[A-Z0-9]{1,10}$')
+        return pattern.match(project_key) is not None
+    else:
+        False
+
+def generate_valid_project_key(project_key):
+    return project_key.strip().upper()
+
 def generate_url(hostname, path):
     if not is_allowed_hostname(hostname):
         raise ValueError("Invalid or unauthorized hostname")
@@ -21,12 +37,18 @@ def generate_url(hostname, path):
 def jira_project_issue_summary(email, api_token, project_key, hostname):
     try:
         if not is_allowed_hostname(hostname):
-            print("Errored Hostname")
             return {"error": "Invalid or unauthorized hostname"}
+
+        if not is_valid_project_key(project_key):
+            return {"error": "Invalid project key"}
 
         auth = HTTPBasicAuth(email, api_token)
         headers = {"Accept": "application/json"}
+        
+        # make the project key upper case
+        project_key = generate_valid_project_key(project_key)
 
+        # issues
         issue_url = generate_url(
             hostname,
             f"/rest/api/3/search?jql=project={project_key} AND issuetype!=Epic",
@@ -35,6 +57,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
             "GET", issue_url, headers=headers, auth=auth
         ).json()["total"]
 
+        # modules
         module_url = generate_url(
             hostname, f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic"
         )
@@ -42,6 +65,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
             "GET", module_url, headers=headers, auth=auth
         ).json()["total"]
 
+        # status
         status_url = generate_url(
             hostname, f"/rest/api/3/project/${project_key}/statuses"
         )
@@ -49,6 +73,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
             "GET", status_url, headers=headers, auth=auth
         ).json()
 
+        # labels
         labels_url = generate_url(
             hostname, f"/rest/api/3/label/?jql=project={project_key}"
         )
@@ -56,6 +81,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
             "GET", labels_url, headers=headers, auth=auth
         ).json()["total"]
 
+        # users
         users_url = generate_url(
             hostname, f"/rest/api/3/users/search?jql=project={project_key}"
         )
