@@ -1,4 +1,6 @@
 import { linearGradientDef } from "@nivo/core";
+// types
+import { TStateGroups } from "@plane/types";
 
 export const PRIORITY_GRAPH_GRADIENTS = [
   linearGradientDef(
@@ -90,3 +92,13 @@ export const STATE_GROUP_GRAPH_GRADIENTS = [
     { offset: 100, color: "#FF7679" },
   ]),
 ];
+
+export const STATE_GROUP_GRAPH_COLORS: {
+  [stateGroup in TStateGroups]: string;
+} = {
+  backlog: "#CDCED6",
+  unstarted: "#80838D",
+  started: "#FFC53D",
+  completed: "#3E9B4F",
+  cancelled: "#E5484D",
+};

@@ -25,8 +25,6 @@ export const DashboardWidgets: React.FC<any> = observer((props) => {
   const doesWidgetExist = (widgetKey: TWidgetKeys) =>
     Boolean(homeDashboardWidgets?.find((widget) => widget.key === widgetKey));
 
-  console.log("homeDashboardId", homeDashboardId);
-
   if (!workspaceSlug || !homeDashboardId) return null;
 
   return (

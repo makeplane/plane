@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useDashboard } from "hooks/store";
@@ -7,10 +8,9 @@ import { useDashboard } from "hooks/store";
 import { PieGraph } from "components/ui";
 import { IssuesByStateGroupWidgetLoader } from "components/dashboard/widgets";
 // types
-import { IIssuesByStateGroupsWidgetResponse } from "@plane/types";
+import { IIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
-import { STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
+import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 
 type Props = {
   dashboardId: string;
@@ -21,6 +21,10 @@ const WIDGET_KEY = "issues_by_state_groups";
 
 export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  // states
+  const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups>("started");
+  // router
+  const router = useRouter();
   // store hooks
   const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
   const widgetStats = getWidgetStats<IIssuesByStateGroupsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
@@ -36,10 +40,42 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
 
   const totalCount = widgetStats?.reduce((acc, item) => acc + item?.count, 0);
   const chartData = widgetStats?.map((item) => ({
+    color: STATE_GROUP_GRAPH_COLORS[item?.state__group as keyof typeof STATE_GROUP_GRAPH_COLORS],
     id: item?.state__group,
     label: item?.state__group,
     value: (item?.count / totalCount) * 100,
   }));
+
+  const CenteredMetric = ({ dataWithArc, centerX, centerY }: any) => {
+    const data = dataWithArc.find((datum: any) => datum.id === activeStateGroup);
+    const percentage = chartData?.find((item) => item.id === activeStateGroup)?.value.toFixed(0);
+
+    return (
+      <g>
+        <text
+          x={centerX}
+          y={centerY - 8}
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="text-3xl font-semibold"
+          style={{
+            fill: data.color,
+          }}
+        >
+          {percentage}%
+        </text>
+        <text
+          x={centerX}
+          y={centerY + 20}
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="text-sm font-medium fill-custom-text-300 capitalize"
+        >
+          {data.id}
+        </text>
+      </g>
+    );
+  };
 
   return (
     <Link
@@ -50,14 +86,15 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
         <h4 className="text-lg font-semibold text-custom-text-300">State of assigned issues</h4>
       </div>
       <div className="flex items-center pl-20 md:pl-11 lg:pl-20 pr-11 mt-4">
-        <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-4 w-full">
-          <div className="w-full">
+        <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-8 w-full">
+          <div className="w-full flex justify-center">
             <PieGraph
               data={chartData}
-              height="200px"
-              width="200px"
+              height="220px"
+              width="220px"
               innerRadius={0.6}
               cornerRadius={5}
+              colors={(datum) => datum.data.color}
               padAngle={1}
               enableArcLinkLabels={false}
               enableArcLabels={false}
@@ -102,10 +139,13 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
                   id: "gradientCanceled",
                 },
               ]}
-              onClick={(datum) => {
-                // TODO: add update filters logic
-                console.log("datum", datum);
+              onClick={(datum, e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push(`/${workspaceSlug}/workspace-views/assigned/?state_group=${datum.id}`);
               }}
+              onMouseEnter={(datum) => setActiveStateGroup(datum.id as TStateGroups)}
+              layers={["arcs", CenteredMetric]}
             />
           </div>
           <div className="justify-self-end space-y-6 w-min whitespace-nowrap">
@@ -115,7 +155,7 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
                   <div
                     className="h-3 w-3 rounded-full"
                     style={{
-                      backgroundColor: STATE_GROUP_COLORS[item.id as keyof typeof STATE_GROUP_COLORS],
+                      backgroundColor: item.color,
                     }}
                   />
                   <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>

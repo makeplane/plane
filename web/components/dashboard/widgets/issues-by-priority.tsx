@@ -189,6 +189,7 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
             layers={[CustomBarsLayer]}
           />
           <div className="flex items-center gap-1 w-full mt-2 text-sm font-semibold text-custom-text-300">
+            {/* TODO: add priority icon */}
             {chartData.map((item) => (
               <p
                 key={item.priority}
