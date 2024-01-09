@@ -8,9 +8,11 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon, GithubIcon } from "@plane/ui";
+import { DiscordIcon, GithubIcon, Button } from "@plane/ui";
 // assets
 import packageJson from "package.json";
+// components
+import { ProPlanModal } from "components/license";
 
 const helpOptions = [
   {
@@ -41,10 +43,13 @@ export interface WorkspaceHelpSectionProps {
 }
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
+  // states
+  const [isProPlanModalOpen, setIsProPlanModalOpen] = useState(false);
   // store
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     commandPalette: { toggleShortcutModal },
+    trackEvent: { captureEvent },
   } = useMobxStore();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
@@ -55,17 +60,27 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
   const isCollapsed = sidebarCollapsed || false;
 
+  const handleProPlanModalOpen = () => {
+    setIsProPlanModalOpen(true);
+    captureEvent("pro_plan_modal_opened");
+  };
+
   return (
     <>
+      <ProPlanModal isOpen={isProPlanModalOpen} handleClose={() => setIsProPlanModalOpen(false)} />
       <div
         className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
         {!isCollapsed && (
-          <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2.5 py-1.5 text-center text-sm font-medium text-green-500 outline-none">
-            Free Plan
-          </div>
+          <Button
+            variant="outline-primary"
+            className="w-1/2 cursor-pointer rounded-2xl px-2.5 py-1.5 text-center text-sm font-medium outline-none"
+            onClick={handleProPlanModalOpen}
+          >
+            Plane Pro
+          </Button>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
           <button
