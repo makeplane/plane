@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 // hooks
 import {
   useApplication,
@@ -41,14 +42,11 @@ const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   if (!cycle) return null;
 
   return (
-    <CustomMenu.MenuItem
-      key={cycle.id}
-      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
-    >
-      <div className="flex items-center gap-1.5">
+    <CustomMenu.MenuItem key={cycle.id}>
+      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`} className="flex items-center gap-1.5">
         <ContrastIcon className="h-3 w-3" />
         {truncateText(cycle.name, 40)}
-      </div>
+      </Link>
     </CustomMenu.MenuItem>
   );
 };

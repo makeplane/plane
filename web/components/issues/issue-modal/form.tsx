@@ -98,6 +98,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     reValidateMode: "onChange",
   });
 
+  console.log("areEstimatesEnabledForProject", areEstimatesEnabledForProject);
+
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {

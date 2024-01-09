@@ -165,7 +165,7 @@ from .notification import (
 
 from .exporter import ExportIssuesEndpoint
 
-from .config import ConfigurationEndpoint
+from .config import ConfigurationEndpoint, MobileConfigurationEndpoint
 
 from .webhook import (
     WebhookEndpoint,

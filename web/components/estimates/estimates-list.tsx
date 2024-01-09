@@ -14,6 +14,8 @@ import { EmptyState } from "components/common";
 import emptyEstimate from "public/empty-state/estimate.svg";
 // types
 import { IEstimate } from "@plane/types";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -31,7 +33,11 @@ export const EstimatesList: React.FC = observer(() => {
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
-    setEstimateToUpdate(estimate);
+    // Order the points array by key before updating the estimate to update state
+    setEstimateToUpdate({
+      ...estimate,
+      points: orderArrayBy(estimate.points, "key"),
+    });
   };
 
   const disableEstimates = () => {

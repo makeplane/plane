@@ -14,7 +14,7 @@ import { CycleService } from "services/cycle.service";
 export interface ICycleStore {
   // observables
   cycleMap: Record<string, ICycle>;
-  activeCycleMap: Record<string, ICycle>; // TODO: Merge these two into single map
+  activeCycleIdMap: Record<string, boolean>;
   // computed
   currentProjectCycleIds: string[] | null;
   currentProjectCompletedCycleIds: string[] | null;
@@ -49,7 +49,7 @@ export interface ICycleStore {
 export class CycleStore implements ICycleStore {
   // observables
   cycleMap: Record<string, ICycle> = {};
-  activeCycleMap: Record<string, ICycle> = {};
+  activeCycleIdMap: Record<string, boolean> = {};
   // root store
   rootStore;
   // services
@@ -61,7 +61,7 @@ export class CycleStore implements ICycleStore {
     makeObservable(this, {
       // observables
       cycleMap: observable,
-      activeCycleMap: observable,
+      activeCycleIdMap: observable,
       // computed
       currentProjectCycleIds: computed,
       currentProjectCompletedCycleIds: computed,
@@ -168,8 +168,8 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
-    const activeCycle = Object.keys(this.activeCycleMap ?? {}).find(
-      (cycleId) => this.activeCycleMap?.[cycleId]?.project === projectId
+    const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
+      (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
     );
     return activeCycle || null;
   }
@@ -186,7 +186,8 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    * @returns
    */
-  getActiveCycleById = (cycleId: string): ICycle | null => this.activeCycleMap?.[cycleId] ?? null;
+  getActiveCycleById = (cycleId: string): ICycle | null =>
+    this.activeCycleIdMap?.[cycleId] && this.cycleMap?.[cycleId] ? this.cycleMap?.[cycleId] : null;
 
   /**
    * @description returns list of cycle ids of the project id passed as argument
@@ -235,7 +236,8 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current").then((response) => {
       runInAction(() => {
         response.forEach((cycle) => {
-          set(this.activeCycleMap, [cycle.id], cycle);
+          set(this.activeCycleIdMap, [cycle.id], true);
+          set(this.cycleMap, [cycle.id], cycle);
         });
       });
       return response;
@@ -252,7 +254,6 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
-        set(this.activeCycleMap, [response.id], { ...this.activeCycleMap?.[response.id], ...response });
       });
       return response;
     });
@@ -268,7 +269,6 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], response);
-        set(this.activeCycleMap, [response.id], response);
       });
       return response;
     });
@@ -285,7 +285,6 @@ export class CycleStore implements ICycleStore {
     try {
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
-        set(this.activeCycleMap, [cycleId], { ...this.activeCycleMap?.[cycleId], ...data });
       });
       const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
       return response;
@@ -307,7 +306,7 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
         delete this.cycleMap[cycleId];
-        delete this.activeCycleMap[cycleId];
+        delete this.activeCycleIdMap[cycleId];
       });
     });
 
@@ -324,7 +323,6 @@ export class CycleStore implements ICycleStore {
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
       // updating through api.
       const response = await this.cycleService.addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId });
@@ -332,7 +330,6 @@ export class CycleStore implements ICycleStore {
     } catch (error) {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
       throw error;
     }
@@ -351,14 +348,12 @@ export class CycleStore implements ICycleStore {
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
       const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
       throw error;
     }

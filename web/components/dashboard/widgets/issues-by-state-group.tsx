@@ -34,7 +34,6 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
   console.log("allWidgetStats", allWidgetStats);
-  console.log("widgetStats", widgetStats);
 
   if (!widgetStats) return <IssuesByStateGroupWidgetLoader />;
 
@@ -47,8 +46,8 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
   }));
 
   const CenteredMetric = ({ dataWithArc, centerX, centerY }: any) => {
-    const data = dataWithArc.find((datum: any) => datum.id === activeStateGroup);
-    const percentage = chartData?.find((item) => item.id === activeStateGroup)?.value.toFixed(0);
+    const data = dataWithArc?.find((datum: any) => datum?.id === activeStateGroup);
+    const percentage = chartData?.find((item) => item.id === activeStateGroup)?.value?.toFixed(0);
 
     return (
       <g>
@@ -59,7 +58,7 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
           dominantBaseline="central"
           className="text-3xl font-semibold"
           style={{
-            fill: data.color,
+            fill: data?.color,
           }}
         >
           {percentage}%
@@ -71,7 +70,7 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
           dominantBaseline="central"
           className="text-sm font-medium fill-custom-text-300 capitalize"
         >
-          {data.id}
+          {data?.id}
         </text>
       </g>
     );
