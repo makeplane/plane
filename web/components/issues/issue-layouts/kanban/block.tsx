@@ -61,14 +61,15 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
         </div>
       </WithDisplayPropertiesHOC>
+
       <ControlLink
         href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
         target="_blank"
         onClick={() => handleIssuePeekOverview(issue)}
-        className="w-full line-clamp-1 cursor-pointer text-sm font-medium text-custom-text-100"
+        className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
       >
         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-          <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+          <span>{issue.name}</span>
         </Tooltip>
       </ControlLink>
 
