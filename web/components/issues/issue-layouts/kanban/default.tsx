@@ -84,21 +84,25 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className="relative flex h-full w-full gap-3">
+    <div className={`relative w-full flex gap-3 overflow-hidden ${sub_group_by ? "h-full" : "h-full"}`}>
       {list &&
         list.length > 0 &&
         list.map((_list: IGroupByColumn) => {
-          const isGroupByVisible = visibilityGroupBy(_list);
+          const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col ${!isGroupByVisible ? `w-[340px]` : ``} group`}>
+            <div
+              className={`relative flex flex-shrink-0 flex-col h-full group ${
+                groupByVisibilityToggle ? `` : `w-[340px]`
+              }`}
+            >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     column_id={_list.id}
-                    icon={_list.Icon}
+                    icon={_list.icon}
                     title={_list.name}
                     count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
                     issuePayload={_list.payload}
@@ -110,24 +114,27 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   />
                 </div>
               )}
-              <KanbanGroup
-                groupId={_list.id}
-                issuesMap={issuesMap}
-                issueIds={issueIds}
-                displayProperties={displayProperties}
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                sub_group_id={sub_group_id}
-                isDragDisabled={isDragDisabled}
-                handleIssues={handleIssues}
-                quickActions={quickActions}
-                enableQuickIssueCreate={enableQuickIssueCreate}
-                quickAddCallback={quickAddCallback}
-                viewId={viewId}
-                disableIssueCreation={disableIssueCreation}
-                canEditProperties={canEditProperties}
-                verticalPosition={isGroupByVisible}
-              />
+
+              {!groupByVisibilityToggle && (
+                <KanbanGroup
+                  groupId={_list.id}
+                  issuesMap={issuesMap}
+                  issueIds={issueIds}
+                  displayProperties={displayProperties}
+                  sub_group_by={sub_group_by}
+                  group_by={group_by}
+                  sub_group_id={sub_group_id}
+                  isDragDisabled={isDragDisabled}
+                  handleIssues={handleIssues}
+                  quickActions={quickActions}
+                  enableQuickIssueCreate={enableQuickIssueCreate}
+                  quickAddCallback={quickAddCallback}
+                  viewId={viewId}
+                  disableIssueCreation={disableIssueCreation}
+                  canEditProperties={canEditProperties}
+                  groupByVisibilityToggle={groupByVisibilityToggle}
+                />
+              )}
             </div>
           );
         })}
@@ -185,27 +192,25 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const issueKanBanView = useKanbanView();
 
   return (
-    <div className="relative h-full w-full">
-      <GroupByKanBan
-        issuesMap={issuesMap}
-        issueIds={issueIds}
-        displayProperties={displayProperties}
-        group_by={group_by}
-        sub_group_by={sub_group_by}
-        sub_group_id={sub_group_id}
-        isDragDisabled={!issueKanBanView?.canUserDragDrop}
-        handleIssues={handleIssues}
-        quickActions={quickActions}
-        kanbanFilters={kanbanFilters}
-        handleKanbanFilters={handleKanbanFilters}
-        enableQuickIssueCreate={enableQuickIssueCreate}
-        quickAddCallback={quickAddCallback}
-        viewId={viewId}
-        disableIssueCreation={disableIssueCreation}
-        currentStore={currentStore}
-        addIssuesToView={addIssuesToView}
-        canEditProperties={canEditProperties}
-      />
-    </div>
+    <GroupByKanBan
+      issuesMap={issuesMap}
+      issueIds={issueIds}
+      displayProperties={displayProperties}
+      group_by={group_by}
+      sub_group_by={sub_group_by}
+      sub_group_id={sub_group_id}
+      isDragDisabled={!issueKanBanView?.canUserDragDrop}
+      handleIssues={handleIssues}
+      quickActions={quickActions}
+      kanbanFilters={kanbanFilters}
+      handleKanbanFilters={handleKanbanFilters}
+      enableQuickIssueCreate={enableQuickIssueCreate}
+      quickAddCallback={quickAddCallback}
+      viewId={viewId}
+      disableIssueCreation={disableIssueCreation}
+      currentStore={currentStore}
+      addIssuesToView={addIssuesToView}
+      canEditProperties={canEditProperties}
+    />
   );
 });

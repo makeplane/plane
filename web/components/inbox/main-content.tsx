@@ -11,7 +11,7 @@ import {
   IssueDescriptionForm,
   // FIXME: have to replace this once the issue details page is ready --issue-detail--
   // IssueDetailsSidebar,
-  IssueReaction,
+  // IssueReaction,
   IssueUpdateStatus,
 } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";

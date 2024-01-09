@@ -19,7 +19,6 @@ import { DeleteIssueModal } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { IssueKanBanViewStore } from "store/issue/issue_kanban_view.store";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
@@ -236,8 +235,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         </div>
       )}
 
-      <div className={`relative h-max min-h-full w-max min-w-full bg-custom-background-90 px-3`}>
+      <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          {/* drag and delete component */}
           <div
             className={`fixed left-1/2 -translate-x-1/2 ${
               isDragStarted ? "z-40" : ""
