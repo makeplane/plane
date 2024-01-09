@@ -111,6 +111,7 @@ const DocumentReadOnlyEditor = ({
         </div>
         <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
+            onActionCompleteHandler={onActionCompleteHandler}
             updatePageTitle={() => Promise.resolve()}
             readonly={true}
             editor={editor}
