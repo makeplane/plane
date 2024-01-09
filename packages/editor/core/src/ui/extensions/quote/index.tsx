@@ -13,6 +13,7 @@ export const CustomQuoteExtension = Blockquote.extend({
         if (parent.type.name !== "blockquote") {
           return false;
         }
+
         if ($from.pos !== $to.pos) return false;
         // if ($head.parentOffset < $head.parent.content.size) return false;
 
