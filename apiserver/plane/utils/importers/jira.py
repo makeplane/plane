@@ -17,7 +17,7 @@ def is_valid_project_key(project_key):
     if project_key:
         project_key = project_key.strip().upper()
         # Adjust the regular expression as needed based on your specific requirements.
-        if len(project_key) > 10:
+        if len(project_key) > 30:
             return False
         # Check the validity of the key as well
         pattern = re.compile(r'^[A-Z0-9]{1,10}$')
