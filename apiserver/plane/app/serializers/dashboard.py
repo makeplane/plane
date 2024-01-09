@@ -37,6 +37,7 @@ class DashBoardIssueSerializer(BaseSerializer):
 
 class WidgetSerializer(BaseSerializer):
     is_visible = serializers.BooleanField(read_only=True)
+    widget_filters = serializers.JSONField(read_only=True)
 
     class Meta:
         model = Widget
@@ -44,4 +45,5 @@ class WidgetSerializer(BaseSerializer):
             "id",
             "key",
             "is_visible",
+            "widget_filters"
         ]

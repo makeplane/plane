@@ -12,6 +12,8 @@ from django.db.models import (
     Exists,
     OuterRef,
     Max,
+    Subquery,
+    JSONField,
 )
 
 # Third Party imports
@@ -35,7 +37,7 @@ from plane.app.serializers import (
     DashboardSerializer,
     WidgetSerializer,
 )
-
+from plane.utils.issue_filters import issue_filters
 
 def dashboard_overview_stats(request, slug):
     assigned_issues = Issue.issue_objects.filter(
@@ -71,10 +73,11 @@ def dashboard_overview_stats(request, slug):
 
 
 def dashboard_assigned_issues(request, slug):
+    filters = issue_filters(request.query_params, "GET")
     # get all the assigned issues
     assigned_issues = Issue.issue_objects.filter(
         workspace__slug=slug, assignees__in=[request.user]
-    ).order_by("created_at")
+    ).filter(**filters).order_by("created_at")
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -90,7 +93,7 @@ def dashboard_assigned_issues(request, slug):
         upcoming_issues_count=Count(
             Case(
                 When(
-                    start_date__gt=timezone.now(),
+                    target_date__gte=timezone.now(),
                     state__group__in=["backlog", "unstarted", "started"],
                     then=1,
                 ),
@@ -118,7 +121,7 @@ def dashboard_assigned_issues(request, slug):
     # Fetch issues directly based on specific criteria
     upcoming_issues = assigned_issues.filter(
         state__group__in=["backlog", "unstarted", "started"],
-        start_date__gt=timezone.now(),
+        target_date__gte=timezone.now(),
     )[:5]
     overdue_issues = assigned_issues.filter(
         target_date__lt=timezone.now(),
@@ -144,10 +147,11 @@ def dashboard_assigned_issues(request, slug):
 
 
 def dashboard_created_issues(request, slug):
+    filters = issue_filters(request.query_params, "GET")
     # get all the created issues
     created_issues = Issue.issue_objects.filter(
         workspace__slug=slug, created_by=request.user
-    ).order_by("created_at")
+    ).filters(**filters).order_by("created_at")
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -163,7 +167,7 @@ def dashboard_created_issues(request, slug):
         upcoming_issues_count=Count(
             Case(
                 When(
-                    start_date__gt=timezone.now(),
+                    target_date__gte=timezone.now(),
                     state__group__in=["backlog", "unstarted", "started"],
                     then=1,
                 ),
@@ -191,7 +195,7 @@ def dashboard_created_issues(request, slug):
     # Fetch issues directly based on specific criteria
     upcoming_issues = created_issues.filter(
         state__group__in=["backlog", "unstarted", "started"],
-        start_date__gt=timezone.now(),
+        target_date__gte=timezone.now(),
     )[:5]
     overdue_issues = created_issues.filter(
         target_date__lt=timezone.now(),
@@ -217,52 +221,54 @@ def dashboard_created_issues(request, slug):
 
 
 def dashboard_issues_by_state_groups(request, slug):
+    filters = issue_filters(request.query_params, "GET")
     state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
             created_by=request.user,
-        )
+        ).filter(**filters)
         .values("state__group")
         .annotate(count=Count("id"))
     )
-    issues_by_state_groups = issues_by_state_groups.annotate(
-        state_order=Case(
-            *[
-                When(state__group=state_group, then=Value(i))
-                for i, state_group in enumerate(state_order)
-            ],
-            default=Value(len(state_order)),
-            output_field=CharField(),
-        )
-    ).order_by("state_order")
 
-    # Select only the necessary fields for the final output
-    issues_by_state_groups = issues_by_state_groups.values("state__group", "count")
-    return Response(issues_by_state_groups, status=status.HTTP_200_OK)
+    # default state 
+    all_groups = {state: 0 for state in state_order}
+
+    # Update counts for existing groups
+    for entry in issues_by_state_groups:
+        all_groups[entry['state__group']] = entry['count']
+
+    # Prepare output including all groups with their counts
+    output_data = [{'state': group, 'count': count} for group, count in all_groups.items()]
+
+    return Response(output_data, status=status.HTTP_200_OK)
 
 
 def dashboard_issues_by_priority(request, slug):
+    filters = issue_filters(request.query_params, "GET")
     priority_order = ["urgent", "high", "medium", "low", "none"]
 
     issues_by_priority = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
             created_by=request.user,
-        )
+        ).filter(**filters)
         .values("priority")
         .annotate(count=Count("id"))
     )
-    issues_by_priority = issues_by_priority.annotate(
-        priority_order=Case(
-            *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
-            output_field=CharField(),
-        )
-    ).order_by("priority_order")
-    # Select only the necessary fields for the final output
-    issues_by_priority = issues_by_priority.values("priority", "count")
 
-    return Response(issues_by_priority, status=status.HTTP_200_OK)
+    # default priority 
+    all_groups = {priority: 0 for priority in priority_order}
+
+    # Update counts for existing groups
+    for entry in issues_by_priority:
+        all_groups[entry['priority']] = entry['count']
+
+    # Prepare output including all groups with their counts
+    output_data = [{'priority': group, 'count': count} for group, count in all_groups.items()]
+
+    return Response(output_data, status=status.HTTP_200_OK)
 
 
 def dashboard_recent_activity(request, slug):
@@ -274,7 +280,7 @@ def dashboard_recent_activity(request, slug):
             actor=request.user,
         )
         .select_related("actor", "workspace", "issue", "project")
-        .order_by("updated_at")[:10]
+        .order_by("updated_at")[:8]
     )
 
     return Response(
@@ -344,16 +350,7 @@ def dashboard_recent_collaborators(request, slug):
         0, {"user_id": request.user.id, "active_issue_count": active_issue_count}
     )
 
-    return Response(users_with_active_issues,
-        status=status.HTTP_200_OK
-    )
-
-    # user_ids = [activity["actor"] for activity in users_with_activities]
-    # user_ids.insert(0, request.user.id)
-
-    # # for the users get the count of all the issues that have state group of unstarted, started
-
-    # return Response(user_ids, status=status.HTTP_200_OK)
+    return Response(users_with_active_issues, status=status.HTTP_200_OK)
 
 
 class DashboardEndpoint(BaseAPIView):
@@ -414,12 +411,33 @@ class DashboardEndpoint(BaseAPIView):
                         updated_dashboard_widgets, batch_size=100
                     )
 
-                widgets = Widget.objects.annotate(
-                    is_visible=Exists(
-                        DashboardWidget.objects.filter(
-                            widget_id=OuterRef("pk"),
-                            dashboard_id=dashboard.id,
-                            is_visible=True,
+                widgets = (
+                    Widget.objects.annotate(
+                        is_visible=Exists(
+                            DashboardWidget.objects.filter(
+                                widget_id=OuterRef("pk"),
+                                dashboard_id=dashboard.id,
+                                is_visible=True,
+                            )
+                        )
+                    )
+                    .annotate(
+                        dashboard_filters=Subquery(
+                            DashboardWidget.objects.filter(
+                                widget_id=OuterRef("pk"),
+                                dashboard_id=dashboard.id,
+                                filters__isnull=False,
+                            ).values("filters")[:1]
+                        )
+                    )
+                    .annotate(
+                        widget_filters=Case(
+                            When(
+                                dashboard_filters__isnull=False,
+                                then=F("dashboard_filters"),
+                            ),
+                            default=F("filters"),
+                            output_field=JSONField(),
                         )
                     )
                 )
