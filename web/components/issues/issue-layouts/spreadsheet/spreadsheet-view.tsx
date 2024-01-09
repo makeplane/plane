@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
-import { IssuePeekOverview, SpreadsheetQuickAddIssueForm } from "components/issues";
 import { Spinner } from "@plane/ui";
+import {  SpreadsheetQuickAddIssueForm } from "components/issues";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -49,9 +48,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const [isScrolled, setIsScrolled] = useState(false);
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const { currentProjectDetails } = useProject();
 
@@ -83,10 +79,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative flex h-full w-full overflow-x-auto whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
-      <div className="flex h-full w-full flex-col">
+      <div className="h-full w-full">
         <table
           ref={containerRef}
-          className="horizontal-scroll-enable flex divide-x-[0.5px] divide-custom-border-200 overflow-y-auto"
+          className="horizontal-scroll-enable divide-x-[0.5px] divide-custom-border-200 overflow-y-auto"
         >
           <SpreadsheetHeader
             displayProperties={displayProperties}
@@ -94,18 +90,20 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             handleDisplayFilterUpdate={handleDisplayFilterUpdate}
             isEstimateEnabled={isEstimateEnabled}
           />
-          {issues.map(({ id }) => (
-            <SpreadsheetIssueRow
-              key={id}
-              issueId={id}
-              displayProperties={displayProperties}
-              quickActions={quickActions}
-              canEditProperties={canEditProperties}
-              nestingLevel={0}
-              isEstimateEnabled={isEstimateEnabled}
-              handleIssues={handleIssues}
-            />
-          ))}
+          <tbody>
+            {issues.map(({ id }) => (
+              <SpreadsheetIssueRow
+                key={id}
+                issueId={id}
+                displayProperties={displayProperties}
+                quickActions={quickActions}
+                canEditProperties={canEditProperties}
+                nestingLevel={0}
+                isEstimateEnabled={isEstimateEnabled}
+                handleIssues={handleIssues}
+              />
+            ))}
+          </tbody>
         </table>
 
         <div className="border-t border-custom-border-100">
@@ -116,14 +114,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-      {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate: any) => await handleIssues(issueToUpdate, EIssueActions.UPDATE)}
-        />
-      )}
     </div>
   );
 });

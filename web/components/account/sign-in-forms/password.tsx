@@ -6,6 +6,7 @@ import { XCircle } from "lucide-react";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useApplication } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
@@ -14,12 +15,14 @@ import { checkEmailValidity } from "helpers/string.helper";
 import { IPasswordSignInData } from "@plane/types";
 // constants
 import { ESignInSteps } from "components/account";
+import { observer } from "mobx-react-lite";
 
 type Props = {
   email: string;
   updateEmail: (email: string) => void;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
+  handleEmailClear: () => void;
 };
 
 type TPasswordFormValues = {
@@ -34,13 +37,16 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const PasswordForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
+export const PasswordForm: React.FC<Props> = observer((props) => {
+  const { email, updateEmail, handleStepChange, handleSignInRedirection, handleEmailClear } = props;
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
+  const {
+    config: { envConfig },
+  } = useApplication();
   // form info
   const {
     control,
@@ -157,11 +163,12 @@ export const PasswordForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@frstflt.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+                  disabled
                 />
                 {value.length > 0 && (
                   <XCircle
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => onChange("")}
+                    onClick={handleEmailClear}
                   />
                 )}
               </div>
@@ -199,26 +206,28 @@ export const PasswordForm: React.FC<Props> = (props) => {
             </button>
           </div>
         </div>
-        <div className="grid gap-2.5 sm:grid-cols-2">
-          <Button
-            type="button"
-            onClick={handleSendUniqueCode}
-            variant="primary"
-            className="w-full"
-            size="xl"
-            loading={isSendingUniqueCode}
-          >
-            {isSendingUniqueCode ? "Sending code" : "Use unique code"}
-          </Button>
+        <div className="flex gap-4">
+          {envConfig && envConfig.is_smtp_configured && (
+            <Button
+              type="button"
+              onClick={handleSendUniqueCode}
+              variant="outline-primary"
+              className="w-full"
+              size="xl"
+              loading={isSendingUniqueCode}
+            >
+              {isSendingUniqueCode ? "Sending code" : "Use unique code"}
+            </Button>
+          )}
           <Button
             type="submit"
-            variant="outline-primary"
+            variant="primary"
             className="w-full"
             size="xl"
             disabled={!isValid}
             loading={isSubmitting}
           >
-            Go to workspace
+            Continue
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
@@ -230,4 +239,4 @@ export const PasswordForm: React.FC<Props> = (props) => {
       </form>
     </>
   );
-};
+});

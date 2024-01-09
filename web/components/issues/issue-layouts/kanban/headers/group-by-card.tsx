@@ -2,9 +2,8 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
-import { CreateUpdateIssueModal } from "components/issues/modal";
-import { CreateUpdateDraftIssueModal } from "components/issues/draft-issue-modal";
 import { ExistingIssuesListModal } from "components/core";
+import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
@@ -85,12 +84,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           fieldsToShow={["all"]}
         />
       ) : (
-        <CreateUpdateIssueModal
-          isOpen={isOpen}
-          handleClose={() => setIsOpen(false)}
-          prePopulateData={issuePayload}
-          currentStore={currentStore}
-        />
+        <CreateUpdateIssueModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
       )}
       {renderExistingIssueModal && (
         <ExistingIssuesListModal

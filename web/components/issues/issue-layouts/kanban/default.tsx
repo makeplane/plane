@@ -79,6 +79,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   const verticalAlignPosition = (_list: IGroupByColumn) => kanBanToggle?.groupByHeaderMinMax.includes(_list.id);
 
+  const isGroupByCreatedBy = group_by === "created_by";
+
   return (
     <div className="relative flex h-full w-full gap-3">
       {list &&
@@ -100,7 +102,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     kanBanToggle={kanBanToggle}
                     handleKanBanToggle={handleKanBanToggle}
                     issuePayload={_list.payload}
-                    disableIssueCreation={disableIssueCreation}
+                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     currentStore={currentStore}
                     addIssuesToView={addIssuesToView}
                   />

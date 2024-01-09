@@ -104,14 +104,11 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
-    // resetting the form so that user can add another issue quickly
-    reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
+    reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail!, currentProjectDetails!, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
-      start_date: renderFormattedPayloadDate(new Date()),
-      target_date: renderFormattedPayloadDate(new Date(new Date().getTime() + 24 * 60 * 60 * 1000)),
     });
 
     try {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // hooks
-import { useIssues } from "hooks/store";
+import { useCycle, useIssues } from "hooks/store";
 // services
 import { CycleService } from "services/cycle.service";
 // ui
@@ -32,6 +32,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
   const {
     issues: { removeIssueFromCycle, addIssueToCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
+  const { getCycleById } = useCycle();
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -87,17 +88,17 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
     ),
   }));
 
-  const issueCycle = issueDetail?.issue_cycle;
+  const issueCycle = (issueDetail && issueDetail.cycle_id && getCycleById(issueDetail.cycle_id)) || undefined;
 
   const disableSelect = disabled || isUpdating;
 
   return (
     <div className="flex items-center gap-1">
       <CustomSearchSelect
-        value={issueCycle?.cycle_detail.id}
+        value={issueDetail?.cycle_id}
         onChange={(value: any) => {
-          value === issueCycle?.cycle_detail.id
-            ? handleRemoveIssueFromCycle(issueCycle?.cycle ?? "")
+          value === issueDetail?.cycle_id
+            ? handleRemoveIssueFromCycle(issueDetail?.cycle_id ?? "")
             : handleCycleChange
             ? handleCycleChange(value)
             : handleCycleStoreChange(value);
@@ -105,7 +106,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
         options={options}
         customButton={
           <div>
-            <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}>
+            <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle?.name : "No cycle"}`}>
               <button
                 type="button"
                 className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
@@ -118,7 +119,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
                   }`}
                 >
                   <span className="flex-shrink-0">{issueCycle && <ContrastIcon className="h-3.5 w-3.5" />}</span>
-                  <span className="truncate">{issueCycle ? issueCycle.cycle_detail.name : "No cycle"}</span>
+                  <span className="truncate">{issueCycle ? issueCycle?.name : "No cycle"}</span>
                 </span>
               </button>
             </Tooltip>

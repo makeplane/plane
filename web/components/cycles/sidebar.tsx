@@ -539,7 +539,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         <div className="flex items-center gap-1">
                           <AlertCircle height={14} width={14} className="text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
-                            Invalid date. Please enter valid date.
+                            {cycleDetails?.start_date && cycleDetails?.end_date
+                              ? "This cycle isn't active yet."
+                              : "Invalid date. Please enter valid date."}
                           </span>
                         </div>
                       )}

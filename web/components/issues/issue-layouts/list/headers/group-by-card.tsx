@@ -2,8 +2,7 @@ import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
 // components
-import { CreateUpdateDraftIssueModal } from "components/issues/draft-issue-modal";
-import { CreateUpdateIssueModal } from "components/issues/modal";
+import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
 import { ExistingIssuesListModal } from "components/core";
 import { CustomMenu } from "@plane/ui";
 // mobx
@@ -102,12 +101,7 @@ export const HeaderGroupByCard = observer(
               fieldsToShow={["all"]}
             />
           ) : (
-            <CreateUpdateIssueModal
-              isOpen={isOpen}
-              handleClose={() => setIsOpen(false)}
-              currentStore={currentStore}
-              prePopulateData={issuePayload}
-            />
+            <CreateUpdateIssueModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
           )}
 
           {renderExistingIssueModal && (

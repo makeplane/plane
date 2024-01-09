@@ -49,7 +49,7 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
         id: project.id,
         name: project.name,
         Icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
-        payload: { project: project.id },
+        payload: { project_id: project.id },
       };
     }) as any;
 };
@@ -66,7 +66,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
         <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
       </div>
     ),
-    payload: { state: state.id },
+    payload: { state_id: state.id },
   })) as any;
 };
 
@@ -111,7 +111,7 @@ const getLabelsColumns = (projectLabel: ILabelRootStore) => {
     Icon: (
       <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
     ),
-    payload: { labels: [label.id] },
+    payload: label?.id === "None" ? {} : { label_ids: [label.id] },
   }));
 };
 
@@ -123,17 +123,17 @@ const getAssigneeColumns = (member: IMemberRootStore) => {
 
   if (!projectMemberIds) return;
 
-  const assigneeColumns = projectMemberIds.map((memberId) => {
+  const assigneeColumns: any = projectMemberIds.map((memberId) => {
     const member = getUserDetails(memberId);
     return {
       id: memberId,
       name: member?.display_name || "",
       Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-      payload: { assignees: [memberId] },
+      payload: { assignee_ids: [memberId] },
     };
   });
 
-  assigneeColumns.push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: { assignees: [""] } });
+  assigneeColumns.push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: {} });
 
   return assigneeColumns;
 };
@@ -152,7 +152,7 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
       id: memberId,
       name: member?.display_name || "",
       Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-      payload: { assignees: [memberId] },
+      payload: {},
     };
   });
 };
