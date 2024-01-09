@@ -151,7 +151,7 @@ def dashboard_created_issues(request, slug):
     # get all the created issues
     created_issues = Issue.issue_objects.filter(
         workspace__slug=slug, created_by=request.user
-    ).filters(**filters).order_by("created_at")
+    ).filter(**filters).order_by("created_at")
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
