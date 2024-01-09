@@ -76,7 +76,6 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
   console.log("allWidgetStats", allWidgetStats);
-  console.log("widgetStats", widgetStats);
 
   if (!widgetStats) return <IssuesByPriorityWidgetLoader />;
 

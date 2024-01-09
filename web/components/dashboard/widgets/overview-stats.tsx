@@ -51,7 +51,6 @@ export const OverviewStatsWidget: React.FC<Props> = observer((props) => {
   ];
 
   console.log("allWidgetStats", allWidgetStats);
-  console.log("widgetStats", widgetStats);
 
   useEffect(() => {
     if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);

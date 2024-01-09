@@ -66,7 +66,6 @@ export const RecentCollaboratorsWidget: React.FC<Props> = observer((props) => {
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
   console.log("allWidgetStats", allWidgetStats);
-  console.log("widgetStats", widgetStats);
 
   if (!widgetStats) return <AssignedIssuesWidgetLoader />;
 

@@ -1,6 +1,7 @@
 export * from "./issue-panels";
 export * from "./loaders";
 export * from "./assigned-issues";
+export * from "./created-issues";
 export * from "./issues-by-priority";
 export * from "./issues-by-state-group";
 export * from "./overview-stats";

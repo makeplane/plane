@@ -4,6 +4,7 @@ import { useApplication, useDashboard } from "hooks/store";
 // components
 import {
   AssignedIssuesWidget,
+  CreatedIssuesWidget,
   IssuesByPriorityWidget,
   IssuesByStateGroupWidget,
   OverviewStatsWidget,
@@ -37,8 +38,8 @@ export const DashboardWidgets: React.FC<any> = observer((props) => {
       {doesWidgetExist("assigned_issues") && (
         <AssignedIssuesWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
       )}
-      {doesWidgetExist("assigned_issues") && (
-        <AssignedIssuesWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
+      {doesWidgetExist("created_issues") && (
+        <CreatedIssuesWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
       )}
       {doesWidgetExist("issues_by_state_groups") && (
         <IssuesByStateGroupWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />

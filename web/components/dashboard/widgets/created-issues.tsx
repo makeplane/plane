@@ -5,39 +5,24 @@ import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";
 // components
-import { AssignedIssuesList, AssignedIssuesWidgetLoader } from "components/dashboard/widgets";
+import { AssignedIssuesWidgetLoader, CreatedIssuesList, TABS_LIST } from "components/dashboard/widgets";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { IAssignedIssuesWidgetResponse } from "@plane/types";
-
-export const TABS_LIST = [
-  {
-    key: "upcoming",
-    label: "Upcoming",
-  },
-  {
-    key: "overdue",
-    label: "Overdue",
-  },
-  {
-    key: "completed",
-    label: "Completed",
-  },
-];
+import { ICreatedIssuesWidgetResponse } from "@plane/types";
 
 type Props = {
   dashboardId: string;
   workspaceSlug: string;
 };
 
-const WIDGET_KEY = "assigned_issues";
+const WIDGET_KEY = "created_issues";
 
-export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
+export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = getWidgetStats<IAssignedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = getWidgetStats<ICreatedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   useEffect(() => {
     if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);
@@ -52,7 +37,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
       <Link href={redirectionLink} className="flex items-center justify-between gap-2 px-7 py-6">
-        <h4 className="text-lg font-semibold text-custom-text-300">All issues assigned</h4>
+        <h4 className="text-lg font-semibold text-custom-text-300">All issues created</h4>
       </Link>
       <Tab.Group as="div">
         <div className="px-6">
@@ -78,7 +63,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
         </div>
         <Tab.Panels as="div" className="mt-7 pb-3">
           <Tab.Panel>
-            <AssignedIssuesList
+            <CreatedIssuesList
               issues={widgetStats.upcoming_issues}
               totalIssues={widgetStats.upcoming_issues_count}
               type="upcoming"
@@ -86,7 +71,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
             />
           </Tab.Panel>
           <Tab.Panel>
-            <AssignedIssuesList
+            <CreatedIssuesList
               issues={widgetStats.overdue_issues}
               totalIssues={widgetStats.overdue_issues_count}
               type="overdue"
@@ -94,7 +79,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
             />
           </Tab.Panel>
           <Tab.Panel>
-            <AssignedIssuesList
+            <CreatedIssuesList
               issues={widgetStats.completed_issues}
               totalIssues={widgetStats.completed_issues_count}
               type="completed"
