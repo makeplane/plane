@@ -5,31 +5,53 @@ import useSWR from "swr";
 // mobx store
 import { useIssues } from "hooks/store";
 // components
-import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot } from "components/issues";
+import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, ProjectEmptyState } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
+// ui
+import { Spinner } from "@plane/ui";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 
-  const {
-    issues: { groupedIssueIds, fetchIssues },
-    issuesFilter: { fetchFilters },
-  } = useIssues(EIssuesStoreType.ARCHIVED);
-
-  useSWR(workspaceSlug && projectId ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug, projectId);
-      await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader");
+  useSWR(
+    workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
     }
-  });
+  );
 
+  if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ArchivedIssueAppliedFiltersRoot />
-      <div className="h-full w-full overflow-auto">
-        <ArchivedIssueListLayout />
-      </div>
+
+      {issues?.loader === "init-loader" ? (
+        <div className="flex h-full w-full items-center justify-center">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          {!issues?.groupedIssueIds ? (
+            // TODO: Replace this with project view empty state
+            <ProjectEmptyState />
+          ) : (
+            <div className="relative h-full w-full overflow-auto">
+              <ArchivedIssueListLayout />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 });

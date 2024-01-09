@@ -21,36 +21,37 @@ import { Spinner } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";
 
 export const CycleLayoutRoot: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, cycleId } = router.query;
+  // store hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { getCycleById } = useCycle();
+  // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
-  // store hooks
-  const {
-    issues: { loader, groupedIssueIds, fetchIssues },
-    issuesFilter: { issueFilters, fetchFilters },
-  } = useIssues(EIssuesStoreType.CYCLE);
-  const { getCycleById } = useCycle();
-
   useSWR(
-    workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
+    workspaceSlug && projectId && cycleId
+      ? `CYCLE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${cycleId.toString()}`
+      : null,
     async () => {
       if (workspaceSlug && projectId && cycleId) {
-        await fetchFilters(workspaceSlug, projectId, cycleId);
-        await fetchIssues(workspaceSlug, projectId, groupedIssueIds ? "mutation" : "init-loader", cycleId);
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader",
+          cycleId.toString()
+        );
       }
     }
   );
 
-  const activeLayout = issueFilters?.displayFilters?.layout;
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
-  const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase() ?? "draft";
 
+  if (!workspaceSlug || !projectId || !cycleId) return <></>;
   return (
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
@@ -59,14 +60,18 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
-        {loader === "init-loader" || !groupedIssueIds ? (
+        {issues?.loader === "init-loader" ? (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         ) : (
           <>
-            {Object.keys(groupedIssueIds ?? {}).length == 0 ? (
-              <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+            {!issues?.groupedIssueIds ? (
+              <CycleEmptyState
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={projectId.toString()}
+                cycleId={cycleId.toString()}
+              />
             ) : (
               <div className="h-full w-full overflow-auto">
                 {activeLayout === "list" ? (

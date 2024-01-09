@@ -49,6 +49,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   // state
   const [currentIssue, setCurrentIssue] = useState<TIssue>();
 
+  console.log("subIssuesByIssueId", subIssuesByIssueId(issueId));
+
   const copyText = (text: string) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${text}`).then(() => {
@@ -104,10 +106,9 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   );
 
   const [issueCrudOperation, setIssueCrudOperation] = React.useState<{
+    // type: "create" | "edit";
     create: { toggle: boolean; issueId: string | null };
     existing: { toggle: boolean; issueId: string | null };
-    edit: { toggle: boolean; issueId: string | null; issue: TIssue | null };
-    delete: { toggle: boolean; issueId: string | null; issue: TIssue | null };
   }>({
     create: {
       toggle: false,
@@ -117,20 +118,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
       toggle: false,
       issueId: null,
     },
-    edit: {
-      toggle: false,
-      issueId: null, // parent issue id for mutation
-      issue: null,
-    },
-    delete: {
-      toggle: false,
-      issueId: null, // parent issue id for mutation
-      issue: null,
-    },
   });
 
   const handleIssueCrudOperation = (
-    key: "create" | "existing" | "edit" | "delete",
+    key: "create" | "existing",
     issueId: string | null,
     issue: TIssue | null = null
   ) => {

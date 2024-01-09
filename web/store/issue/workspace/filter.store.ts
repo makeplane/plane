@@ -1,4 +1,4 @@
-import { computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 // base class
@@ -11,9 +11,9 @@ import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
+  TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
-  IIssueFiltersResponse,
 } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
@@ -33,7 +33,7 @@ export interface IWorkspaceIssuesFilter {
     workspaceSlug: string,
     projectId: string | undefined,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
     viewId?: string | undefined
   ) => Promise<void>;
 }
@@ -54,6 +54,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      // actions
+      fetchFilters: action,
+      updateFilters: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -93,19 +96,35 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
     try {
-      let _filters: IIssueFiltersResponse;
-      if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
-        _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-      else _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
+      let filters: IIssueFilterOptions;
+      let displayFilters: IIssueDisplayFilterOptions;
+      let displayProperties: IIssueDisplayProperties;
+      let kanbanFilters: TIssueKanbanFilters = {
+        group_by: [],
+        sub_group_by: [],
+      };
 
-      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
-      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
-      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+      const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
+      filters = this.computedFilters(_filters?.filters);
+      displayFilters = this.computedDisplayFilters(_filters?.displayFilters);
+      displayProperties = this.computedDisplayProperties(_filters?.displayProperties);
+      kanbanFilters = {
+        group_by: _filters?.kanbanFilters?.group_by || [],
+        sub_group_by: _filters?.kanbanFilters?.sub_group_by || [],
+      };
+
+      if (!["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
+        const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
+        filters = this.computedFilters(_filters?.filters);
+        displayFilters = this.computedDisplayFilters(_filters?.display_filters);
+        displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+      }
 
       runInAction(() => {
         set(this.filters, [viewId, "filters"], filters);
         set(this.filters, [viewId, "displayFilters"], displayFilters);
         set(this.filters, [viewId, "displayProperties"], displayProperties);
+        set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
       });
     } catch (error) {
       throw error;
@@ -116,7 +135,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     workspaceSlug: string,
     projectId: string | undefined,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
     viewId: string | undefined = undefined
   ) => {
     try {
@@ -128,6 +147,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
         filters: this.filters[viewId].filters as IIssueFilterOptions,
         displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
+        kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
@@ -141,8 +161,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, viewId, "mutation");
-
+          this.rootIssueStore.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               filters: _filters.filters,
@@ -215,6 +234,28 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             await this.issueFilterService.updateView(workspaceSlug, viewId, {
               display_properties: _filters.displayProperties,
             });
+          break;
+
+        case EIssueFilterType.KANBAN_FILTERS:
+          const updatedKanbanFilters = filters as TIssueKanbanFilters;
+          _filters.kanbanFilters = { ..._filters.kanbanFilters, ...updatedKanbanFilters };
+
+          const currentUserId = this.rootIssueStore.currentUserId;
+          if (currentUserId)
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, undefined, viewId, {
+              kanban_filters: _filters.kanbanFilters,
+            });
+
+          runInAction(() => {
+            Object.keys(updatedKanbanFilters).forEach((_key) => {
+              set(
+                this.filters,
+                [viewId, "kanbanFilters", _key],
+                updatedKanbanFilters[_key as keyof TIssueKanbanFilters]
+              );
+            });
+          });
+
           break;
         default:
           break;
