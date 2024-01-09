@@ -28,9 +28,11 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.26.4",
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@plane/ui": "*",
+    "@radix-ui/react-icons": "^1.3.0",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-placeholder": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
