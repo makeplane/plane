@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 // hooks
 import { useUser } from "hooks/store";
 // components
@@ -31,14 +32,12 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
     <NotAuthorizedView
       type="project"
       actionButton={
-        <Button
-          variant="primary"
-          size="md"
-          prependIcon={<LayersIcon />}
-          onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues`)}
-        >
-          Go to issues
-        </Button>
+        //TODO: Create a new component called Button Link to handle such scenarios
+        <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
+          <Button variant="primary" size="md" prependIcon={<LayersIcon />}>
+            Go to issues
+          </Button>
+        </Link>
       }
     />
   ) : (

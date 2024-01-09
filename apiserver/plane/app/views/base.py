@@ -113,16 +113,15 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[0]
                 return Response(
-                    {"error": f"{model_name} does not exist."},
+                    {"error": f"The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 capture_exception(e)
                 return Response(
-                    {"error": f"key {e} does not exist"},
+                    {"error": f"The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -216,14 +215,13 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[0]
                 return Response(
-                    {"error": f"{model_name} does not exist."},
+                    {"error": f"The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
             
             if isinstance(e, KeyError):
-                return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": f"The required key does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
             if settings.DEBUG:
                 print(e)
