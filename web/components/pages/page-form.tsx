@@ -59,6 +59,7 @@ export const PageForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
                   className="w-full resize-none text-lg"
+                  tabIndex={1}
                 />
               )}
             />
@@ -72,7 +73,7 @@ export const PageForm: React.FC<Props> = (props) => {
           render={({ field: { value, onChange } }) => (
             <div className="flex items-center gap-2">
               <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
-                {PAGE_ACCESS_SPECIFIERS.map((access) => (
+                {PAGE_ACCESS_SPECIFIERS.map((access, index) => (
                   <Tooltip key={access.key} tooltipContent={access.label}>
                     <button
                       type="button"
@@ -80,6 +81,7 @@ export const PageForm: React.FC<Props> = (props) => {
                       className={`grid aspect-square place-items-center rounded-sm p-1 hover:bg-custom-background-90 ${
                         value === access.key ? "bg-custom-background-90" : ""
                       }`}
+                      tabIndex={2 + index}
                     >
                       <access.icon
                         className={`h-3.5 w-3.5 ${
@@ -98,10 +100,10 @@ export const PageForm: React.FC<Props> = (props) => {
           )}
         />
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
             {data ? (isSubmitting ? "Updating..." : "Update page") : isSubmitting ? "Creating..." : "Create Page"}
           </Button>
         </div>

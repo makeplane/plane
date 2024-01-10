@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Popover } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 // import "react-datepicker/dist/react-datepicker.css";
+// hooks
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
@@ -25,6 +28,7 @@ type Props = {
   placement?: Placement;
   value: Date | string | null;
   closeOnSelect?: boolean;
+  tabIndex?: number;
 };
 
 type ButtonProps = {
@@ -124,7 +128,11 @@ export const DateDropdown: React.FC<Props> = (props) => {
     placement,
     value,
     closeOnSelect = true,
+    tabIndex,
   } = props;
+  const [isOpen, setIsOpen] = useState(false);
+  // refs
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -143,8 +151,16 @@ export const DateDropdown: React.FC<Props> = (props) => {
 
   const isDateSelected = value !== null && value !== undefined && value.toString().trim() !== "";
 
+  const openDropdown = () => {
+    setIsOpen(true);
+    if (referenceElement) referenceElement.focus();
+  };
+  const closeDropdown = () => setIsOpen(false);
+  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+  useOutsideClickDetector(dropdownRef, closeDropdown);
+
   return (
-    <Popover className="h-full flex-shrink-0">
+    <Popover ref={dropdownRef} tabIndex={tabIndex} className="h-full flex-shrink-0" onKeyDown={handleKeyDown}>
       {({ close }) => (
         <>
           <Popover.Button as={React.Fragment}>
@@ -159,6 +175,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
                 },
                 buttonContainerClassName
               )}
+              onClick={openDropdown}
             >
               {buttonVariant === "border-with-text" ? (
                 <BorderButton
@@ -220,22 +237,24 @@ export const DateDropdown: React.FC<Props> = (props) => {
               ) : null}
             </button>
           </Popover.Button>
-          <Popover.Panel className="fixed z-10">
-            <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
-              <DatePicker
-                selected={value ? new Date(value) : null}
-                onChange={(val) => {
-                  onChange(val);
-                  if (closeOnSelect) close();
-                }}
-                dateFormat="dd-MM-yyyy"
-                minDate={minDate}
-                maxDate={maxDate}
-                calendarClassName="shadow-custom-shadow-rg rounded"
-                inline
-              />
-            </div>
-          </Popover.Panel>
+          {isOpen && (
+            <Popover.Panel className="fixed z-10" static>
+              <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+                <DatePicker
+                  selected={value ? new Date(value) : null}
+                  onChange={(val) => {
+                    onChange(val);
+                    if (closeOnSelect) close();
+                  }}
+                  dateFormat="dd-MM-yyyy"
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  calendarClassName="shadow-custom-shadow-rg rounded"
+                  inline
+                />
+              </div>
+            </Popover.Panel>
+          )}
         </>
       )}
     </Popover>
