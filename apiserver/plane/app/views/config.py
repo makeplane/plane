@@ -118,7 +118,7 @@ class ConfigurationEndpoint(BaseAPIView):
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
         # is smtp configured
-        data["is_smtp_configured"] = not (
+        data["is_smtp_configured"] = (
             bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
         )
 
