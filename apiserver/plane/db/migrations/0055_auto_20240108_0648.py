@@ -8,10 +8,32 @@ def widgets(apps, schema_editor):
     updated_widgets = []
     widgets_list = [
         {"key": "overview_stats", "filters": {}},
-        {"key": "assigned_issues", "filters":{}},
-        {"key": "created_issues", "filters": {}},
-        {"key": "issues_by_state_groups", "filters": {}},
-        {"key": "issues_by_priority", "filters": {}},
+        {
+            "key": "assigned_issues",
+            "filters": {
+                "duration": "this_week",
+                "tab": "upcoming",
+            },
+        },
+        {
+            "key": "created_issues",
+            "filters": {
+                "duration": "this_week",
+                "tab": "upcoming",
+            },
+        },
+        {
+            "key": "issues_by_state_groups",
+            "filters": {
+                "duration": "this_week",
+            },
+        },
+        {
+            "key": "issues_by_priority",
+            "filters": {
+                "duration": "this_week",
+            },
+        },
         {"key": "recent_activity", "filters": {}},
         {"key": "recent_projects", "filters": {}},
         {"key": "recent_collaborators", "filters": {}},
@@ -42,7 +64,7 @@ def dashboard(apps, schema_editor):
             )
         )
     Dashboard.objects.bulk_create(updated_dashboard, batch_size=2000)
- 
+
 
 def dashboard_widgets(apps, schema_editor):
     Widget = apps.get_model("db", "Widget")

@@ -39,6 +39,7 @@ from plane.app.serializers import (
 )
 from plane.utils.issue_filters import issue_filters
 
+
 def dashboard_overview_stats(request, slug):
     assigned_issues = Issue.issue_objects.filter(
         workspace__slug=slug, assignees__in=[request.user]
@@ -74,10 +75,14 @@ def dashboard_overview_stats(request, slug):
 
 def dashboard_assigned_issues(request, slug):
     filters = issue_filters(request.query_params, "GET")
+    issue_type = request.GET.get("issue_type", None)
+
     # get all the assigned issues
-    assigned_issues = Issue.issue_objects.filter(
-        workspace__slug=slug, assignees__in=[request.user]
-    ).filter(**filters).order_by("created_at")
+    assigned_issues = (
+        Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
+        .filter(**filters)
+        .order_by("created_at")
+    )
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -88,70 +93,69 @@ def dashboard_assigned_issues(request, slug):
         )
     ).order_by("priority_order")
 
-    # Get counts for different issue categories
-    issue_counts = assigned_issues.aggregate(
-        upcoming_issues_count=Count(
-            Case(
-                When(
-                    target_date__gte=timezone.now(),
-                    state__group__in=["backlog", "unstarted", "started"],
-                    then=1,
-                ),
-                output_field=CharField(),
-            )
-        ),
-        overdue_issues_count=Count(
-            Case(
-                When(
-                    target_date__lt=timezone.now(),
-                    state__group__in=["backlog", "unstarted", "started"],
-                    then=1,
-                ),
-                output_field=CharField(),
-            )
-        ),
-        completed_issues_count=Count(
-            Case(
-                When(state__group__in=["completed"], then=1),
-                output_field=CharField(),
-            )
-        ),
-    )
+    if issue_type == "completed":
+        completed_issues_count = assigned_issues.filter(
+            state__group__in=["completed"]
+        ).count()
+        completed_issues = assigned_issues.filter(state__group__in=["completed"])[:5]
+        return Response(
+            {
+                "issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+                "count": completed_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
-    # Fetch issues directly based on specific criteria
-    upcoming_issues = assigned_issues.filter(
-        state__group__in=["backlog", "unstarted", "started"],
-        target_date__gte=timezone.now(),
-    )[:5]
-    overdue_issues = assigned_issues.filter(
-        target_date__lt=timezone.now(),
-        state__group__in=["backlog", "unstarted", "started"],
-    )[:5]
-    completed_issues = assigned_issues.filter(state__group__in=["completed"])[:5]
+    if issue_type == "overdue":
+        overdue_issues_count = assigned_issues.filter(
+            target_date__lt=timezone.now(),
+            state__group__in=["backlog", "unstarted", "started"],
+        ).count()
+        overdue_issues = assigned_issues.filter(
+            target_date__lt=timezone.now(),
+            state__group__in=["backlog", "unstarted", "started"],
+        )[:5]
+        return Response(
+            {
+                "issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
+                "count": overdue_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    if issue_type == "upcoming":
+        upcoming_issues_count = assigned_issues.filter(
+            state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now(),
+        ).count()
+        upcoming_issues = assigned_issues.filter(
+            state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now(),
+        )[:5]
+        return Response(
+            {
+                "issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
+                "count": upcoming_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     return Response(
-        {
-            "upcoming_issues": DashBoardIssueSerializer(
-                upcoming_issues, many=True
-            ).data,
-            "overdue_issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
-            "completed_issues": DashBoardIssueSerializer(
-                completed_issues, many=True
-            ).data,
-            "upcoming_issues_count": issue_counts["upcoming_issues_count"],
-            "overdue_issues_count": issue_counts["overdue_issues_count"],
-            "completed_issues_count": issue_counts["completed_issues_count"],
-        },
-        status=status.HTTP_200_OK,
+        {"error": "Please specify a valid issue type"},
+        status=status.HTTP_400_BAD_REQUEST,
     )
 
 
 def dashboard_created_issues(request, slug):
     filters = issue_filters(request.query_params, "GET")
-    # get all the created issues
-    created_issues = Issue.issue_objects.filter(
-        workspace__slug=slug, created_by=request.user
-    ).filter(**filters).order_by("created_at")
+    issue_type = request.GET.get("issue_type", None)
+
+    # get all the assigned issues
+    created_issues = (
+        Issue.issue_objects.filter(workspace__slug=slug, created_by=request.user)
+        .filter(**filters)
+        .order_by("created_at")
+    )
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -162,61 +166,56 @@ def dashboard_created_issues(request, slug):
         )
     ).order_by("priority_order")
 
-    # Get counts for different issue categories
-    issue_counts = created_issues.aggregate(
-        upcoming_issues_count=Count(
-            Case(
-                When(
-                    target_date__gte=timezone.now(),
-                    state__group__in=["backlog", "unstarted", "started"],
-                    then=1,
-                ),
-                output_field=CharField(),
-            )
-        ),
-        overdue_issues_count=Count(
-            Case(
-                When(
-                    target_date__lt=timezone.now(),
-                    state__group__in=["backlog", "unstarted", "started"],
-                    then=1,
-                ),
-                output_field=CharField(),
-            )
-        ),
-        completed_issues_count=Count(
-            Case(
-                When(state__group__in=["completed"], then=1),
-                output_field=CharField(),
-            )
-        ),
-    )
+    if issue_type == "completed":
+        completed_issues_count = created_issues.filter(
+            state__group__in=["completed"]
+        ).count()
+        completed_issues = created_issues.filter(state__group__in=["completed"])[:5]
+        return Response(
+            {
+                "issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+                "count": completed_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
-    # Fetch issues directly based on specific criteria
-    upcoming_issues = created_issues.filter(
-        state__group__in=["backlog", "unstarted", "started"],
-        target_date__gte=timezone.now(),
-    )[:5]
-    overdue_issues = created_issues.filter(
-        target_date__lt=timezone.now(),
-        state__group__in=["backlog", "unstarted", "started"],
-    )[:5]
-    completed_issues = created_issues.filter(state__group__in=["completed"])[:5]
+    if issue_type == "overdue":
+        overdue_issues_count = created_issues.filter(
+            target_date__lt=timezone.now(),
+            state__group__in=["backlog", "unstarted", "started"],
+        ).count()
+        overdue_issues = created_issues.filter(
+            target_date__lt=timezone.now(),
+            state__group__in=["backlog", "unstarted", "started"],
+        )[:5]
+        return Response(
+            {
+                "issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
+                "count": overdue_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    if issue_type == "upcoming":
+        upcoming_issues_count = created_issues.filter(
+            state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now(),
+        ).count()
+        upcoming_issues = created_issues.filter(
+            state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now(),
+        )[:5]
+        return Response(
+            {
+                "issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
+                "count": upcoming_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     return Response(
-        {
-            "upcoming_issues": DashBoardIssueSerializer(
-                upcoming_issues, many=True
-            ).data,
-            "overdue_issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
-            "completed_issues": DashBoardIssueSerializer(
-                completed_issues, many=True
-            ).data,
-            "upcoming_issues_count": issue_counts["upcoming_issues_count"],
-            "overdue_issues_count": issue_counts["overdue_issues_count"],
-            "completed_issues_count": issue_counts["completed_issues_count"],
-        },
-        status=status.HTTP_200_OK,
+        {"error": "Please specify a valid issue type"},
+        status=status.HTTP_400_BAD_REQUEST,
     )
 
 
@@ -226,21 +225,24 @@ def dashboard_issues_by_state_groups(request, slug):
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
-            created_by=request.user,
-        ).filter(**filters)
+            assignees__in=[request.user],
+        )
+        .filter(**filters)
         .values("state__group")
         .annotate(count=Count("id"))
     )
 
-    # default state 
+    # default state
     all_groups = {state: 0 for state in state_order}
 
     # Update counts for existing groups
     for entry in issues_by_state_groups:
-        all_groups[entry['state__group']] = entry['count']
+        all_groups[entry["state__group"]] = entry["count"]
 
     # Prepare output including all groups with their counts
-    output_data = [{'state': group, 'count': count} for group, count in all_groups.items()]
+    output_data = [
+        {"state": group, "count": count} for group, count in all_groups.items()
+    ]
 
     return Response(output_data, status=status.HTTP_200_OK)
 
@@ -252,21 +254,24 @@ def dashboard_issues_by_priority(request, slug):
     issues_by_priority = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
-            created_by=request.user,
-        ).filter(**filters)
+            assignees__in=[request.user],
+        )
+        .filter(**filters)
         .values("priority")
         .annotate(count=Count("id"))
     )
 
-    # default priority 
+    # default priority
     all_groups = {priority: 0 for priority in priority_order}
 
     # Update counts for existing groups
     for entry in issues_by_priority:
-        all_groups[entry['priority']] = entry['count']
+        all_groups[entry["priority"]] = entry["count"]
 
     # Prepare output including all groups with their counts
-    output_data = [{'priority': group, 'count': count} for group, count in all_groups.items()]
+    output_data = [
+        {"priority": group, "count": count} for group, count in all_groups.items()
+    ]
 
     return Response(output_data, status=status.HTTP_200_OK)
 
@@ -304,6 +309,8 @@ def dashboard_recent_projects(request, slug):
 
     # TODO fetch the projects if the activities are not performed by the user but the part of the project and the projects length in less than 4
 
+    # ProjectMember.objects.filter()
+
     return Response(
         project_ids,
         status=status.HTTP_200_OK,
@@ -335,7 +342,7 @@ def dashboard_recent_collaborators(request, slug):
         user_id = user_activity["actor"]
         active_issue_count = Issue.objects.filter(
             assignees__in=[user_id],
-            state__group__in=["backlog", "unstarted", "started"],
+            state__group__in=["unstarted", "started"],
         ).count()
         users_with_active_issues.append(
             {"user_id": user_id, "active_issue_count": active_issue_count}
@@ -427,7 +434,7 @@ class DashboardEndpoint(BaseAPIView):
                                 widget_id=OuterRef("pk"),
                                 dashboard_id=dashboard.id,
                                 filters__isnull=False,
-                            ).values("filters")[:1]
+                            ).exclude(filters={}).values("filters")[:1]
                         )
                     )
                     .annotate(
