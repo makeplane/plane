@@ -10,6 +10,7 @@ from plane.app.views import (
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
     OauthEndpoint,
+    OIDCEndpoint,
     EmailCheckEndpoint,
     ## End Authentication
     # Auth Extended
@@ -27,6 +28,7 @@ urlpatterns = [
     #  Social Auth
     path("email-check/", EmailCheckEndpoint.as_view(), name="email"),
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
+    path("oidc-auth/", OIDCEndpoint.as_view(), name="oidc"),
     # Auth
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),

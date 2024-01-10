@@ -4,6 +4,10 @@ export interface IAppConfig {
   google_client_id: string | null;
   github_app_name: string | null;
   github_client_id: string | null;
+  oidc_auto: boolean;
+  oidc_client_id: string | null;
+  oidc_url_authorize: string | null;
+  oidc_url_endsession: string | null;
   magic_login: boolean;
   slack_client_id: string | null;
   posthog_api_key: string | null;
