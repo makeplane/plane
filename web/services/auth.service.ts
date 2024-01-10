@@ -119,7 +119,7 @@ export class AuthService extends APIService {
   }
 
   async instanceAdminSignIn(data: IPasswordSignInData): Promise<ILoginTokenResponse> {
-    return await this.post("/api/licenses/instances/admins/sign-in/", data, { headers: {} })
+    return await this.post("/api/instances/admins/sign-in/", data, { headers: {} })
       .then((response) => {
         if (response?.status === 200) {
           this.setAccessToken(response?.data?.access_token);
