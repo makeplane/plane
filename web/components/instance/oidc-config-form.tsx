@@ -262,7 +262,7 @@ export const InstanceOidcConfigForm: FC<IInstanceOidcConfigForm> = (props) => {
           <ToggleSwitch
             value={Boolean(parseInt(oidcAuto))}
             onChange={() => {
-              Boolean(parseInt(oidcAuto)) === true ? updateConfig("OIDC_AUTO", "0") : updateConfig("OIDC_AUTO", "1");
+              Boolean(parseInt(oidcAuto)) ? updateConfig("OIDC_AUTO", "0") : updateConfig("OIDC_AUTO", "1");
             }}
             size="sm"
             disabled={isSubmittingAuto}

@@ -27,7 +27,7 @@ export const OidcSignInButton: FC<OidcSignInButtonProps> = (props) => {
     query: { code },
   } = useRouter();
   // states
-  const [loginCallBackURL, setSignInCallBackURL] = useState(undefined);
+  const [loginCallBackURL, setSignInCallBackURL] = useState<null | string>(null);
   const [oidcCode, setOidcCode] = useState<null | string>(null);
   const [initialSignInError, setInitialSignInError] = useState<boolean>(false);
   // theme
@@ -71,7 +71,7 @@ export const OidcSignInButton: FC<OidcSignInButtonProps> = (props) => {
 
   useEffect(() => {
     const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    setSignInCallBackURL(`${origin}/` as any);
+    setSignInCallBackURL(`${origin}/`);
   }, []);
 
   return (

@@ -132,7 +132,11 @@ class ConfigurationEndpoint(BaseAPIView):
         )
         data["github_app_name"] = GITHUB_APP_NAME
         data["oidc_auto"] = (
-            bool(OIDC_CLIENT_ID) and bool(OIDC_CLIENT_SECRET) and bool(OIDC_URL_AUTHORIZATION) and bool(OIDC_URL_TOKEN) and bool(OIDC_URL_USERINFO)
+            bool(OIDC_CLIENT_ID) and 
+            bool(OIDC_CLIENT_SECRET) and 
+            bool(OIDC_URL_AUTHORIZATION) and 
+            bool(OIDC_URL_TOKEN) and 
+            bool(OIDC_URL_USERINFO)
         ) and OIDC_AUTO == "1"
         data["oidc_client_id"] = (
             OIDC_CLIENT_ID if OIDC_CLIENT_ID and OIDC_CLIENT_ID != '""' else None

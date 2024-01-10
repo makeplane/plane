@@ -9,6 +9,7 @@ from django.conf import settings
 from plane.license.models import InstanceConfiguration
 from plane.app.views.oidc import get_endpoint_information
 
+
 class Command(BaseCommand):
     help = "Configure instance variables"
 
@@ -162,7 +163,12 @@ class Command(BaseCommand):
         # Autodiscovery of Settings for OIDC based on the OIDC_ISSUER
         for item in config_keys:
             if item.get("key") == "OIDC_ISSUER" and item.get("value"):
-                (OIDC_URL_AUTHORIZATION, OIDC_URL_TOKEN, OIDC_URL_USERINFO, OIDC_URL_ENDSESSION) = get_endpoint_information(item.get("value"))
+                (
+                    OIDC_URL_AUTHORIZATION, 
+                    OIDC_URL_TOKEN, 
+                    OIDC_URL_USERINFO, 
+                    OIDC_URL_ENDSESSION
+                ) = get_endpoint_information(item.get("value"))
                 issuerIndex = config_keys.index(item)
                 config_keys[issuerIndex + 3]["value"] = OIDC_URL_AUTHORIZATION
                 config_keys[issuerIndex + 4]["value"] = OIDC_URL_TOKEN

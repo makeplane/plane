@@ -6,13 +6,10 @@ import os
 
 # Django imports
 from django.utils import timezone
-from django.conf import settings
 
 # Third Party modules
 from rest_framework.response import Response
-from rest_framework import exceptions
 from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from sentry_sdk import capture_exception
@@ -31,13 +28,16 @@ from .base import BaseAPIView
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 
+
 def get_endpoint_information(issuer: str):
-    # Make a GET request to the url issuer/.well-known/openid-configuration
-    # Get the properties of authorization_endpoint, token_endpoint, userinfo_endpoint, end_session_endpoint
-    # Return them in a tuple
-    # If any of the endpoints are not present, raise an exception
-    # If the response is not a JSON, raise an exception
-    # If the response is not a valid JSON, raise an exception
+    """Make a GET request to the url issuer/.well-known/openid-configuration
+    Get the properties of authorization_endpoint, token_endpoint, 
+    userinfo_endpoint and end_session_endpoint.
+    Return them in a tuple.
+    If any of the endpoints are not present, raise an exception.
+    If the response is not a JSON, raise an exception.
+    If the response is not a valid JSON, raise an exception.
+    """
 
     if not issuer:
         raise ValueError("The issuer has to be supplied!")
@@ -68,6 +68,7 @@ def get_endpoint_information(issuer: str):
         end_session_endpoint,
     )
 
+
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     return (
@@ -78,8 +79,8 @@ def get_tokens_for_user(user):
 
 def get_access_token(request_token: str, client_id: str) -> str:
     """Obtain the request token from OIDC Provider.
-    Given the client id, client secret and request issued out by the OIDC Provider, this method
-    should give back an access token
+    Given the client id, client secret and request issued out by the OIDC Provider, 
+    this method should give back an access token
     Parameters
     ----------
     CLIENT_ID: str
@@ -101,7 +102,7 @@ def get_access_token(request_token: str, client_id: str) -> str:
     if not request_token:
         raise ValueError("The request token has to be supplied!")
 
-    (ACCESS_TOKEN_URL, CLIENT_SECRET,) = get_configuration_value(
+    (ACCESS_TOKEN_URL, CLIENT_SECRET, WEB_URL) = get_configuration_value(
         [
             {
                 "key": "OIDC_URL_TOKEN",
@@ -111,6 +112,10 @@ def get_access_token(request_token: str, client_id: str) -> str:
                 "key": "OIDC_CLIENT_SECRET",
                 "default": os.environ.get("OIDC_CLIENT_SECRET", None),
             },
+            {
+                "key": "WEB_URL",
+                "default": os.environ.get("WEB_URL", None),
+            }
         ]
     )
 
@@ -118,12 +123,12 @@ def get_access_token(request_token: str, client_id: str) -> str:
     data = {
         "grant_type": "authorization_code",
         "code": request_token,
-        "redirect_uri": "http://localhost:8090/",
+        "redirect_uri": WEB_URL,
     }
     basic_auth = b64encode(f"{client_id}:{CLIENT_SECRET}".encode('utf-8')).decode("ascii")
     headers = {
-        "accept": "application/json", 
-        "content-type": "application/x-www-form-urlencoded", 
+        "accept": "application/json",
+        "content-type": "application/x-www-form-urlencoded",
         "Authorization": "Basic " + basic_auth,
     }
 
@@ -194,7 +199,7 @@ class OIDCEndpoint(BaseAPIView):
             if not id_token:
                 return Response(
                     {
-                        "error": "Something went wrong. Please try again later or contact the support team. No ID Token found."
+                        "error": "Something went wrong. Please try again later or contact the support team."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -212,7 +217,7 @@ class OIDCEndpoint(BaseAPIView):
             if email == None:
                 return Response(
                     {
-                        "error": "Something went wrong. Please try again later or contact the support team. No email found."
+                        "error": "Something went wrong. Please try again later or contact the support team."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -225,12 +230,12 @@ class OIDCEndpoint(BaseAPIView):
             else:
                 return Response(
                     {
-                        "error": "Something went wrong. Please try again later or contact the support team. No valid email found. Existing User."
+                        "error": "Something went wrong. Please try again later or contact the support team."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            ## Login Case
+            # Login Case
 
             if not user.is_active:
                 return Response(
@@ -248,7 +253,8 @@ class OIDCEndpoint(BaseAPIView):
             user.is_email_verified = email_verified
             user.save()
 
-            # Check if user has any accepted invites for workspace and add them to workspace
+            # Check if user has any accepted invites for workspace 
+            # and add them to workspace
             workspace_member_invites = WorkspaceMemberInvite.objects.filter(
                 email=user.email, accepted=True
             )
@@ -336,7 +342,7 @@ class OIDCEndpoint(BaseAPIView):
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            ## Signup Case
+            # Signup Case
             (ENABLE_SIGNUP,) = get_configuration_value(
                 [
                     {
@@ -368,7 +374,7 @@ class OIDCEndpoint(BaseAPIView):
             else:
                 return Response(
                     {
-                        "error": "Something went wrong. Please try again later or contact the support team. E-Mail not valid. New User."
+                        "error": "Something went wrong. Please try again later or contact the support team."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -482,7 +488,7 @@ class OIDCEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {
-                    "error": "Something went wrong. Please try again later or contact the support team." + str(e)
+                    "error": "Something went wrong. Please try again later or contact the support team."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

@@ -96,7 +96,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async oidcAuth(data: any) {
+  oidcAuth(data: { credential: string, clientId: string }) {
     return this.post("/api/oidc-auth/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
