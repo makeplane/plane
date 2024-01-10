@@ -71,6 +71,7 @@ export const CoreEditorExtensions = (
   CustomKeymap,
   ListKeymap,
   TiptapLink.configure({
+    autolink: false,
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
     HTMLAttributes: {
