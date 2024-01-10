@@ -222,7 +222,7 @@ export type GroupByColumnTypes =
 export interface IGroupByColumn {
   id: string;
   name: string;
-  Icon: ReactElement | undefined;
+  icon: ReactElement | undefined;
   payload: Partial<TIssue>;
 }
 

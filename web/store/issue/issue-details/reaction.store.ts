@@ -1,27 +1,38 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import find from "lodash/find";
+import pull from "lodash/pull";
 // services
 import { IssueReactionService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
 import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
+// helpers
+import { groupReactions } from "helpers/emoji.helper";
 
 export interface IIssueReactionStoreActions {
   // actions
   fetchReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueReaction[]>;
   createReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
-  removeReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
+  removeReaction: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    reaction: string,
+    userId: string
+  ) => Promise<any>;
 }
 
 export interface IIssueReactionStore extends IIssueReactionStoreActions {
   // observables
   reactions: TIssueReactionIdMap;
   reactionMap: TIssueReactionMap;
-  // computed
-  issueReactions: string[] | undefined;
   // helper methods
-  getReactionsByIssueId: (issueId: string) => string[] | undefined;
+  getReactionsByIssueId: (issueId: string) => { [reaction_id: string]: string[] } | undefined;
   getReactionById: (reactionId: string) => TIssueReaction | undefined;
+  reactionsByUser: (issueId: string, userId: string) => TIssueReaction[];
 }
 
 export class IssueReactionStore implements IIssueReactionStore {
@@ -38,8 +49,6 @@ export class IssueReactionStore implements IIssueReactionStore {
       // observables
       reactions: observable,
       reactionMap: observable,
-      // computed
-      issueReactions: computed,
       // actions
       fetchReactions: action,
       createReaction: action,
@@ -49,13 +58,6 @@ export class IssueReactionStore implements IIssueReactionStore {
     this.rootIssueDetailStore = rootStore;
     // services
     this.issueReactionService = new IssueReactionService();
-  }
-
-  // computed
-  get issueReactions() {
-    const issueId = this.rootIssueDetailStore.peekIssue?.issueId;
-    if (!issueId) return undefined;
-    return this.reactions[issueId] ?? undefined;
   }
 
   // helper methods
@@ -69,13 +71,38 @@ export class IssueReactionStore implements IIssueReactionStore {
     return this.reactionMap[reactionId] ?? undefined;
   };
 
+  reactionsByUser = (issueId: string, userId: string) => {
+    if (!issueId || !userId) return [];
+
+    const reactions = this.getReactionsByIssueId(issueId);
+    if (!reactions) return [];
+
+    const _userReactions: TIssueReaction[] = [];
+    Object.keys(reactions).forEach((reaction) => {
+      reactions[reaction].map((reactionId) => {
+        const currentReaction = this.getReactionById(reactionId);
+        if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+      });
+    });
+
+    return _userReactions;
+  };
+
   // actions
   fetchReactions = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const response = await this.issueReactionService.listIssueReactions(workspaceSlug, projectId, issueId);
+      const groupedReactions = groupReactions(response || [], "reaction");
+
+      const issueReactionIdsMap: { [reaction: string]: string[] } = {};
+
+      Object.keys(groupedReactions).map((reactionId) => {
+        const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+        issueReactionIdsMap[reactionId] = reactionIds;
+      });
 
       runInAction(() => {
-        this.reactions[issueId] = response.map((reaction) => reaction.id);
+        set(this.reactions, issueId, issueReactionIdsMap);
         response.forEach((reaction) => set(this.reactionMap, reaction.id, reaction));
       });
 
@@ -92,7 +119,10 @@ export class IssueReactionStore implements IIssueReactionStore {
       });
 
       runInAction(() => {
-        this.reactions[issueId].push(response.id);
+        update(this.reactions, [issueId, reaction], (reactionId) => {
+          if (!reactionId) return [response.id];
+          return concat(reactionId, response.id);
+        });
         set(this.reactionMap, response.id, response);
       });
 
@@ -102,21 +132,28 @@ export class IssueReactionStore implements IIssueReactionStore {
     }
   };
 
-  removeReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => {
+  removeReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    reaction: string,
+    userId: string
+  ) => {
     try {
-      const reactionIndex = this.reactions[issueId].findIndex((_reaction) => _reaction === reaction);
-      if (reactionIndex >= 0)
+      const userReactions = this.reactionsByUser(issueId, userId);
+      const currentReaction = find(userReactions, { actor: userId, reaction: reaction });
+
+      if (currentReaction && currentReaction.id) {
         runInAction(() => {
-          this.reactions[issueId].splice(reactionIndex, 1);
+          pull(this.reactions[issueId][reaction], currentReaction.id);
           delete this.reactionMap[reaction];
         });
+      }
 
       const response = await this.issueReactionService.deleteIssueReaction(workspaceSlug, projectId, issueId, reaction);
 
       return response;
     } catch (error) {
-      // TODO: Replace with fetch issue details
-      // this.fetchReactions(workspaceSlug, projectId, issueId);
       throw error;
     }
   };

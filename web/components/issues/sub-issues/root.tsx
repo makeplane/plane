@@ -1,10 +1,8 @@
-import React, { useCallback } from "react";
-import { useRouter } from "next/router";
+import React, { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-import useSWR, { mutate } from "swr";
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
 // hooks
-import { useIssues, useUser } from "hooks/store";
+import { useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
@@ -26,63 +24,91 @@ import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
 export interface ISubIssuesRoot {
-  parentIssue: TIssue;
-  user: IUser | undefined;
-}
-
-export interface ISubIssuesRootLoaders {
-  visibility: string[];
-  delete: string[];
-  sub_issues: string[];
-}
-export interface ISubIssuesRootLoadersHandler {
-  key: "visibility" | "delete" | "sub_issues";
+  workspaceSlug: string;
+  projectId: string;
   issueId: string;
+  currentUser: IUser;
+  is_archived: boolean;
+  is_editable: boolean;
 }
-
-const issueService = new IssueService();
 
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
-  const { parentIssue, user } = props;
+  const { workspaceSlug, projectId, issueId, currentUser, is_archived, is_editable } = props;
   // store hooks
-  const {
-    issues: { updateIssue, removeIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     membership: { currentProjectRole },
   } = useUser();
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
   const { setToastAlert } = useToast();
+  const {
+    subIssues: { subIssuesByIssueId, subIssuesStateDistribution },
+    updateIssue,
+    removeIssue,
+    fetchSubIssues,
+    createSubIssues,
+  } = useIssueDetail();
+  // state
+  const [currentIssue, setCurrentIssue] = useState<TIssue>();
 
-  const { data: issues, isLoading } = useSWR(
-    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issueService.subIssues(workspaceSlug.toString(), projectId.toString(), parentIssue.id)
-      : null
-  );
+  console.log("subIssuesByIssueId", subIssuesByIssueId(issueId));
 
-  const [issuesLoader, setIssuesLoader] = React.useState<ISubIssuesRootLoaders>({
-    visibility: [parentIssue?.id],
-    delete: [],
-    sub_issues: [],
-  });
-  const handleIssuesLoader = ({ key, issueId }: ISubIssuesRootLoadersHandler) => {
-    setIssuesLoader((previousData: ISubIssuesRootLoaders) => ({
-      ...previousData,
-      [key]: previousData[key].includes(issueId)
-        ? previousData[key].filter((i: string) => i !== issueId)
-        : [...previousData[key], issueId],
-    }));
+  const copyText = (text: string) => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${text}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
   };
 
+  const subIssueOperations = useMemo(
+    () => ({
+      fetchSubIssues: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await fetchSubIssues(workspaceSlug, projectId, issueId);
+        } catch (error) {}
+      },
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+        try {
+          await updateIssue(workspaceSlug, projectId, issueId, data);
+          setToastAlert({
+            title: "Issue updated successfully",
+            type: "success",
+            message: "Issue updated successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Issue update failed",
+            type: "error",
+            message: "Issue update failed",
+          });
+        }
+      },
+      addSubIssue: async () => {
+        try {
+        } catch (error) {}
+      },
+      removeSubIssue: async () => {
+        try {
+        } catch (error) {}
+      },
+      updateIssue: async () => {
+        try {
+        } catch (error) {}
+      },
+      deleteIssue: async () => {
+        try {
+        } catch (error) {}
+      },
+    }),
+    []
+  );
+
   const [issueCrudOperation, setIssueCrudOperation] = React.useState<{
+    // type: "create" | "edit";
     create: { toggle: boolean; issueId: string | null };
     existing: { toggle: boolean; issueId: string | null };
-    edit: { toggle: boolean; issueId: string | null; issue: TIssue | null };
-    delete: { toggle: boolean; issueId: string | null; issue: TIssue | null };
   }>({
     create: {
       toggle: false,
@@ -92,19 +118,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
       toggle: false,
       issueId: null,
     },
-    edit: {
-      toggle: false,
-      issueId: null, // parent issue id for mutation
-      issue: null,
-    },
-    delete: {
-      toggle: false,
-      issueId: null, // parent issue id for mutation
-      issue: null,
-    },
   });
+
   const handleIssueCrudOperation = (
-    key: "create" | "existing" | "edit" | "delete",
+    key: "create" | "existing",
     issueId: string | null,
     issue: TIssue | null = null
   ) => {
@@ -118,75 +135,14 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     });
   };
 
-  const addAsSubIssueFromExistingIssues = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId || !parentIssue || issueCrudOperation?.existing?.issueId === null) return;
-    const issueId = issueCrudOperation?.existing?.issueId;
-    const payload = {
-      sub_issue_ids: data.map((i) => i.id),
-    };
-    await issueService.addSubIssues(workspaceSlug.toString(), projectId.toString(), issueId, payload).finally(() => {
-      if (issueId) mutate(SUB_ISSUES(issueId));
-    });
-  };
-
-  const removeIssueFromSubIssues = async (parentIssueId: string, issue: TIssue) => {
-    if (!workspaceSlug || !projectId || !parentIssue || !issue?.id) return;
-    issueService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent_id: null })
-      .then(async () => {
-        if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
-        handleIssuesLoader({ key: "delete", issueId: issue?.id });
-        setToastAlert({
-          type: "success",
-          title: `Issue removed!`,
-          message: `Issue removed successfully.`,
-        });
-      })
-      .catch(() => {
-        handleIssuesLoader({ key: "delete", issueId: issue?.id });
-        setToastAlert({
-          type: "warning",
-          title: `Error!`,
-          message: `Error, Please try again later.`,
-        });
-      });
-  };
-
-  const copyText = (text: string) => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${text}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
-  const handleUpdateIssue = useCallback(
-    (issue: TIssue, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId || !user) return;
-
-      updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
-    },
-    [projectId, updateIssue, user, workspaceSlug]
-  );
-
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
-  const mutateSubIssues = (parentIssueId: string | null) => {
-    if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
-  };
-
   return (
     <div className="h-full w-full space-y-2">
-      {!issues && isLoading ? (
+      {/* {!issues && isLoading ? (
         <div className="py-3 text-center text-sm  font-medium text-custom-text-300">Loading...</div>
       ) : (
         <>
           {issues && issues?.sub_issues && issues?.sub_issues?.length > 0 ? (
             <>
-              {/* header */}
               <div className="relative flex items-center gap-4 text-xs">
                 <div
                   className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
@@ -210,7 +166,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                   />
                 </div>
 
-                {isEditable && issuesLoader.visibility.includes(parentIssue?.id) && (
+                {is_editable && issuesLoader.visibility.includes(parentIssue?.id) && (
                   <div className="ml-auto flex flex-shrink-0 select-none items-center gap-2">
                     <div
                       className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
@@ -228,7 +184,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                 )}
               </div>
 
-              {/* issues */}
+
               {issuesLoader.visibility.includes(parentIssue?.id) && workspaceSlug && projectId && (
                 <div className="border border-b-0 border-custom-border-100">
                   <SubIssuesRootList
@@ -236,7 +192,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                     projectId={projectId.toString()}
                     parentIssue={parentIssue}
                     user={undefined}
-                    editable={isEditable}
+                    editable={is_editable}
                     removeIssueFromSubIssues={removeIssueFromSubIssues}
                     issuesLoader={issuesLoader}
                     handleIssuesLoader={handleIssuesLoader}
@@ -262,7 +218,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                 >
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      mutateSubIssues(parentIssue?.id);
                       handleIssueCrudOperation("create", parentIssue?.id);
                     }}
                   >
@@ -270,7 +225,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      mutateSubIssues(parentIssue?.id);
                       handleIssueCrudOperation("existing", parentIssue?.id);
                     }}
                   >
@@ -280,7 +234,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               </div>
             </>
           ) : (
-            isEditable && (
+            is_editable && (
               <div className="flex items-center justify-between">
                 <div className="py-2 text-xs italic text-custom-text-300">No Sub-Issues yet</div>
                 <div>
@@ -298,7 +252,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                   >
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        mutateSubIssues(parentIssue?.id);
                         handleIssueCrudOperation("create", parentIssue?.id);
                       }}
                     >
@@ -306,7 +259,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        mutateSubIssues(parentIssue?.id);
                         handleIssueCrudOperation("existing", parentIssue?.id);
                       }}
                     >
@@ -317,19 +269,20 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               </div>
             )
           )}
-          {isEditable && issueCrudOperation?.create?.toggle && (
+
+          {is_editable && issueCrudOperation?.create?.toggle && (
             <CreateUpdateIssueModal
               isOpen={issueCrudOperation?.create?.toggle}
               data={{
                 parent_id: issueCrudOperation?.create?.issueId,
               }}
               onClose={() => {
-                mutateSubIssues(issueCrudOperation?.create?.issueId);
                 handleIssueCrudOperation("create", null);
               }}
             />
           )}
-          {isEditable && issueCrudOperation?.existing?.toggle && issueCrudOperation?.existing?.issueId && (
+
+          {is_editable && issueCrudOperation?.existing?.toggle && issueCrudOperation?.existing?.issueId && (
             <ExistingIssuesListModal
               isOpen={issueCrudOperation?.existing?.toggle}
               handleClose={() => handleIssueCrudOperation("existing", null)}
@@ -338,19 +291,20 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               workspaceLevelToggle
             />
           )}
-          {isEditable && issueCrudOperation?.edit?.toggle && issueCrudOperation?.edit?.issueId && (
+
+          {is_editable && issueCrudOperation?.edit?.toggle && issueCrudOperation?.edit?.issueId && (
             <>
               <CreateUpdateIssueModal
                 isOpen={issueCrudOperation?.edit?.toggle}
                 onClose={() => {
-                  mutateSubIssues(issueCrudOperation?.edit?.issueId);
                   handleIssueCrudOperation("edit", null, null);
                 }}
                 data={issueCrudOperation?.edit?.issue ?? undefined}
               />
             </>
           )}
-          {isEditable &&
+
+          {is_editable &&
             workspaceSlug &&
             projectId &&
             issueCrudOperation?.delete?.issueId &&
@@ -358,7 +312,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               <DeleteIssueModal
                 isOpen={issueCrudOperation?.delete?.toggle}
                 handleClose={() => {
-                  mutateSubIssues(issueCrudOperation?.delete?.issueId);
                   handleIssueCrudOperation("delete", null, null);
                 }}
                 data={issueCrudOperation?.delete?.issue}
@@ -372,7 +325,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
               />
             )}
         </>
-      )}
+      )} */}
     </div>
   );
 });

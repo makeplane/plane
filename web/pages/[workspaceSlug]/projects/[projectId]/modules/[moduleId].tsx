@@ -38,6 +38,7 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
 
+  if (!workspaceSlug || !projectId || !moduleId) return <></>;
   return (
     <>
       {error ? (

@@ -120,13 +120,13 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
   };
 
   return (
-    <div>
+    <>
       {isOpen ? (
-        <div className="shadow-custom-shadow-sm">
+        <div className="shadow-custom-shadow-sm m-1.5 rounded overflow-hidden">
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-3"
+            className="flex w-full items-center gap-x-3 bg-custom-background-100 p-3"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetail={projectDetail} />
           </form>
@@ -141,6 +141,6 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
         </div>
       )}
-    </div>
+    </>
   );
 });
