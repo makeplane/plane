@@ -1,4 +1,4 @@
-import { CopyIcon, GlobeIcon, LinkBreak1Icon, Pencil1Icon } from "@radix-ui/react-icons";
+import { Copy, GlobeIcon, Link2Off, PencilIcon } from "lucide-react";
 import { LinkViewProps } from "./link-view";
 
 export const LinkPreview = ({
@@ -32,18 +32,18 @@ export const LinkPreview = ({
 
   return (
     <div className="absolute left-0 top-0 max-w-max">
-      <div className="shadow-md rounded p-2 flex gap-3 bg-custom-background-90 border-custom-border-100 border-2 text-custom-text-300 text-xs">
-        <GlobeIcon className="inline-block" />
+      <div className="shadow-md items-center rounded p-2 flex gap-3 bg-custom-background-90 border-custom-border-100 border-2 text-custom-text-300 text-xs">
+        <GlobeIcon size={14} className="inline-block" />
         <p>{url.length > 40 ? url.slice(0, 40) + "..." : url}</p>
         <div className="flex gap-2">
           <button onClick={copyLinkToClipboard} className="cursor-pointer">
-            <CopyIcon className="inline-block" />
+            <Copy size={14} className="inline-block" />
           </button>
           <button onClick={() => switchView("LinkEditView")} className="cursor-pointer">
-            <Pencil1Icon className="inline-block" />
+            <PencilIcon size={14} className="inline-block" />
           </button>
           <button onClick={removeLink} className="cursor-pointer">
-            <LinkBreak1Icon className="inline-block" />
+            <Link2Off size={14} className="inline-block" />
           </button>
         </div>
       </div>

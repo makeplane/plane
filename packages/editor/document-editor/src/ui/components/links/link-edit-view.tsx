@@ -1,6 +1,6 @@
 import { isValidHttpUrl } from "@plane/editor-core";
-import { LinkBreak1Icon } from "@radix-ui/react-icons";
 import { Node } from "@tiptap/pm/model";
+import { Link2Off } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { LinkViewProps } from "./link-view";
 
@@ -50,11 +50,11 @@ export const LinkEditView = ({
   const isValidUrl = (urlString: string) => {
     var urlPattern = new RegExp(
       "^(https?:\\/\\/)?" + // validate protocol
-      "([\\w-]+\\.)+[\\w-]{2,}" + // validate domain name
-      "|((\\d{1,3}\\.){3}\\d{1,3})" + // validate IP (v4) address
-      "(\\:\\d+)?(\\/[-\\w.%]+)*" + // validate port and path
-      "(\\?[;&\\w.%=-]*)?" + // validate query string
-      "(\\#[-\\w]*)?$", // validate fragment locator
+        "([\\w-]+\\.)+[\\w-]{2,}" + // validate domain name
+        "|((\\d{1,3}\\.){3}\\d{1,3})" + // validate IP (v4) address
+        "(\\:\\d+)?(\\/[-\\w.%]+)*" + // validate port and path
+        "(\\?[;&\\w.%=-]*)?" + // validate query string
+        "(\\#[-\\w]*)?$", // validate fragment locator
       "i"
     );
     const regexTest = urlPattern.test(urlString);
@@ -138,7 +138,7 @@ export const LinkEditView = ({
       />
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
       <div className="flex text-sm text-custom-text-800 gap-2 items-center">
-        <LinkBreak1Icon className="inline-block" />
+        <Link2Off size={14} className="inline-block" />
         <button onClick={() => removeLink()} className="cursor-pointer">
           Remove Link
         </button>
