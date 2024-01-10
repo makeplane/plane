@@ -23,6 +23,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   noBorder?: boolean;
   verticalEllipsis?: boolean;
   menuButtonOnClick?: (...args: any) => void;
+  portalElement?: Element | null
 }
 
 export interface ICustomSelectProps extends IDropdownProps {

@@ -2,20 +2,25 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { Spinner } from "@plane/ui";
-import {  SpreadsheetQuickAddIssueForm } from "components/issues";
+import { SpreadsheetQuickAddIssueForm } from "components/issues";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueActions } from "../types";
 import { useProject } from "hooks/store";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 import { SpreadsheetIssueRow } from "./issue-row";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issues: TIssue[] | undefined;
-  quickActions: (issue: TIssue, customActionButton: any) => React.ReactNode;
+  quickActions: (
+    issue: TIssue,
+    customActionButton?: React.ReactElement,
+    portalElement?: HTMLDivElement | null
+  ) => React.ReactNode;
   handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
@@ -48,6 +53,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const [isScrolled, setIsScrolled] = useState(false);
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
+  const portalRef = useRef<HTMLDivElement | null>(null);
 
   const { currentProjectDetails } = useProject();
 
@@ -78,17 +84,16 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <div className="relative flex h-full w-full overflow-x-auto whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
-      <div className="h-full w-full">
-        <table
-          ref={containerRef}
-          className="horizontal-scroll-enable divide-x-[0.5px] divide-custom-border-200 overflow-y-auto"
-        >
+    <div className="relative flex flex-col h-full w-full overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+      <div ref={portalRef} className="spreadsheet-menu-portal" />
+      <div ref={containerRef} className="horizontal-scroll-enable h-full w-full">
+        <table className="divide-x-[0.5px] divide-custom-border-200 overflow-y-auto">
           <SpreadsheetHeader
             displayProperties={displayProperties}
             displayFilters={displayFilters}
             handleDisplayFilterUpdate={handleDisplayFilterUpdate}
             isEstimateEnabled={isEstimateEnabled}
+            isScrolled={isScrolled}
           />
           <tbody>
             {issues.map(({ id }) => (
@@ -101,17 +106,18 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 nestingLevel={0}
                 isEstimateEnabled={isEstimateEnabled}
                 handleIssues={handleIssues}
+                portalElement={portalRef.current}
+                isScrolled={isScrolled}
               />
             ))}
           </tbody>
         </table>
-
-        <div className="border-t border-custom-border-100">
-          <div className="z-5 sticky bottom-0 left-0 mb-3">
-            {enableQuickCreateIssue && !disableIssueCreation && (
-              <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
-            )}
-          </div>
+      </div>
+      <div className="border-t border-custom-border-100">
+        <div className="z-5 sticky bottom-0 left-0 mb-3">
+          {enableQuickCreateIssue && !disableIssueCreation && (
+            <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
+          )}
         </div>
       </div>
     </div>

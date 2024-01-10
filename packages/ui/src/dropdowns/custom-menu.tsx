@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import ReactDOM from "react-dom";
 // react-poppper
 import { usePopper } from "react-popper";
 // headless ui
@@ -26,6 +26,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     optionsClassName = "",
     verticalEllipsis = false,
     width = "auto",
+    portalElement,
     menuButtonOnClick,
   } = props;
 
@@ -35,6 +36,33 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
   });
+
+  let menuItems = 
+    (<Menu.Items className="fixed z-10">
+      <div
+        className={`my-1 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-custom-shadow-rg focus:outline-none ${
+          maxHeight === "lg"
+            ? "max-h-60"
+            : maxHeight === "md"
+              ? "max-h-48"
+              : maxHeight === "rg"
+                ? "max-h-36"
+                : maxHeight === "sm"
+                  ? "max-h-28"
+                  : ""
+        } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+      >
+        {children}
+      </div>
+    </Menu.Items>);
+
+    if(portalElement) {
+      menuItems = ReactDOM.createPortal(menuItems, portalElement)
+    }
+
   return (
     <Menu as="div" className={`relative w-min text-left ${className}`}>
       {({ open }) => (
@@ -86,26 +114,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               )}
             </>
           )}
-          <Menu.Items className="fixed z-10">
-            <div
-              className={`my-1 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-custom-shadow-rg focus:outline-none ${
-                maxHeight === "lg"
-                  ? "max-h-60"
-                  : maxHeight === "md"
-                    ? "max-h-48"
-                    : maxHeight === "rg"
-                      ? "max-h-36"
-                      : maxHeight === "sm"
-                        ? "max-h-28"
-                        : ""
-              } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              {children}
-            </div>
-          </Menu.Items>
+          {menuItems}
         </>
       )}
     </Menu>

@@ -8,22 +8,40 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 import { EIssueActions } from "../types";
+import { observer } from "mobx-react-lite";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
   isEstimateEnabled: boolean;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (
+    issue: TIssue,
+    customActionButton?: React.ReactElement,
+    portalElement?: HTMLDivElement | null
+  ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  portalElement: HTMLDivElement | null;
   nestingLevel: number;
   issueId: string;
+  isScrolled: boolean;
 }
 
-export const SpreadsheetIssueRow = (props: Props) => {
-  const { displayProperties, issueId, isEstimateEnabled, nestingLevel, handleIssues, quickActions, canEditProperties } =
-    props;
+export const SpreadsheetIssueRow = observer((props: Props) => {
+  const {
+    displayProperties,
+    issueId,
+    isEstimateEnabled,
+    nestingLevel,
+    portalElement,
+    handleIssues,
+    quickActions,
+    canEditProperties,
+    isScrolled,
+  } = props;
   // router
   const router = useRouter();
+
+  const { workspaceSlug } = router.query;
 
   const { getProjectById } = useProject();
   // states
@@ -51,7 +69,11 @@ export const SpreadsheetIssueRow = (props: Props) => {
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
   const handleToggleExpand = () => {
-    setExpanded((prevState) => !prevState);
+    setExpanded((prevState) => {
+      if (!prevState && workspaceSlug && issueDetail)
+        subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
+      return !prevState;
+    });
   };
 
   const customActionButton = (
@@ -72,25 +94,28 @@ export const SpreadsheetIssueRow = (props: Props) => {
 
   return (
     <>
-      <tr className="h-11 text-sm font-medium bg-custom-background-100">
-        <td className="group sticky left-0 z-[2] w-[28rem] flex w-full items-center border border-l-0 border-custom-border-100 ">
+      <tr>
+        <td
+          className="sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-custom-border-100 before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-custom-border-100"
+          style={{
+            boxShadow: isScrolled ? "8px 22px 22px 10px rgba(0, 0, 0, 0.05)" : "",
+          }}
+        >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <div
               className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
               style={issueDetail.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
             >
               <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
-                <span
-                  className={`flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ${
-                    isMenuActive ? "!opacity-0" : ""
-                  } `}
-                >
-                  {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
-                </span>
+                {!isMenuActive && (
+                  <span className={`flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 `}>
+                    {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
+                  </span>
+                )}
 
                 {canEditProperties(issueDetail.project_id) && (
                   <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
-                    {quickActions(issueDetail, customActionButton)}
+                    {quickActions(issueDetail, customActionButton, portalElement)}
                   </div>
                 )}
               </div>
@@ -129,7 +154,7 @@ export const SpreadsheetIssueRow = (props: Props) => {
               displayPropertyKey={property}
               shouldRenderProperty={shouldRenderProperty}
             >
-              <td className="h-full w-full min-w-[8rem]">
+              <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100">
                 <Column
                   issue={issueDetail}
                   onChange={(issue: TIssue, data: Partial<TIssue>) =>
@@ -156,8 +181,10 @@ export const SpreadsheetIssueRow = (props: Props) => {
             nestingLevel={nestingLevel + 1}
             isEstimateEnabled={isEstimateEnabled}
             handleIssues={handleIssues}
+            portalElement={portalElement}
+            isScrolled={isScrolled}
           />
         ))}
     </>
   );
-};
+});

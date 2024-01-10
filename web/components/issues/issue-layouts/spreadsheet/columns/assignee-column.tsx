@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 // components
 import { ProjectMemberDropdown } from "components/dropdowns";
 // types
@@ -10,7 +11,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = (props: Props) => {
+export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled } = props;
 
   return (
@@ -22,10 +23,12 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = (props: Props) => {
         disabled={disabled}
         multiple
         placeholder="Assignees"
-        buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+        buttonVariant={
+          issue?.assignee_ids && issue.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"
+        }
         buttonClassName="text-left"
         buttonContainerClassName="w-full"
       />
     </div>
   );
-};
+});

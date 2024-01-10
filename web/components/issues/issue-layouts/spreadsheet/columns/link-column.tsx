@@ -1,13 +1,13 @@
 import React from "react";
-// hooks
-import { TIssue } from "@plane/types";
+import { observer } from "mobx-react-lite";
 // types
+import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
 };
 
-export const SpreadsheetLinkColumn: React.FC<Props> = (props: Props) => {
+export const SpreadsheetLinkColumn: React.FC<Props> = observer((props: Props) => {
   const { issue } = props;
 
   return (
@@ -15,4 +15,4 @@ export const SpreadsheetLinkColumn: React.FC<Props> = (props: Props) => {
       {issue?.link_count} {issue?.link_count === 1 ? "link" : "links"}
     </div>
   );
-};
+});

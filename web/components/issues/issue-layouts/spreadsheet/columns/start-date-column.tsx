@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 // components
 import { DateDropdown } from "components/dropdowns";
 // helpers
@@ -12,7 +13,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetStartDateColumn: React.FC<Props> = (props: Props) => {
+export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled } = props;
 
   return (
@@ -28,4 +29,4 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = (props: Props) => {
       />
     </div>
   );
-};
+});

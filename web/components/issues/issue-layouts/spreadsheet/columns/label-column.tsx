@@ -1,5 +1,5 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
 import { IssuePropertyLabels } from "../../properties";
 // hooks
@@ -13,7 +13,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = (props: Props) => {
+export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled } = props;
   // hooks
   const { labelMap } = useLabel();
@@ -36,4 +36,4 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props: Props) => {
       placeholderText="Select labels"
     />
   );
-};
+});

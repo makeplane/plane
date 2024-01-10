@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 // components
 import { StateDropdown } from "components/dropdowns";
 // types
@@ -10,7 +11,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
+export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
   const { issue, onChange, disabled } = props;
 
   return (
@@ -26,4 +27,4 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+});

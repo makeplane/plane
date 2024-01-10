@@ -1,5 +1,6 @@
 // components
 import { EstimateDropdown } from "components/dropdowns";
+import { observer } from "mobx-react-lite";
 // types
 import { TIssue } from "@plane/types";
 
@@ -9,7 +10,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetEstimateColumn: React.FC<Props> = (props: Props) => {
+export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled } = props;
 
   return (
@@ -25,4 +26,4 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props: Props) => {
       />
     </div>
   );
-};
+});

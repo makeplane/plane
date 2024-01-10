@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 // hooks
 import { TIssue } from "@plane/types";
 
@@ -6,7 +7,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SpreadsheetSubIssueColumn: React.FC<Props> = (props: Props) => {
+export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props) => {
   const { issue } = props;
 
   return (
@@ -14,4 +15,4 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = (props: Props) => {
       {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
     </div>
   );
-};
+});
