@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import merge from "lodash/merge";
 // mobx store
 import { StoreContext } from "contexts/store-context";
 // types
@@ -14,112 +15,102 @@ import { TIssueMap } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
-export interface IStoreIssues {
-  [EIssuesStoreType.GLOBAL]: {
-    issueMap: TIssueMap;
+type defaultIssueStore = {
+  issueMap: TIssueMap;
+};
+
+export type TStoreIssues = {
+  [EIssuesStoreType.GLOBAL]: defaultIssueStore & {
     issues: IWorkspaceIssues;
     issuesFilter: IWorkspaceIssuesFilter;
   };
-  [EIssuesStoreType.PROFILE]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.PROFILE]: defaultIssueStore & {
     issues: IProfileIssues;
     issuesFilter: IProfileIssuesFilter;
   };
-  [EIssuesStoreType.PROJECT]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.PROJECT]: defaultIssueStore & {
     issues: IProjectIssues;
     issuesFilter: IProjectIssuesFilter;
   };
-  [EIssuesStoreType.CYCLE]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.CYCLE]: defaultIssueStore & {
     issues: ICycleIssues;
     issuesFilter: ICycleIssuesFilter;
   };
-  [EIssuesStoreType.MODULE]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.MODULE]: defaultIssueStore & {
     issues: IModuleIssues;
     issuesFilter: IModuleIssuesFilter;
   };
-  [EIssuesStoreType.PROJECT_VIEW]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.PROJECT_VIEW]: defaultIssueStore & {
     issues: IProjectViewIssues;
     issuesFilter: IProjectViewIssuesFilter;
   };
-  [EIssuesStoreType.ARCHIVED]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.ARCHIVED]: defaultIssueStore & {
     issues: IArchivedIssues;
     issuesFilter: IArchivedIssuesFilter;
   };
-  [EIssuesStoreType.DRAFT]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.DRAFT]: defaultIssueStore & {
     issues: IDraftIssues;
     issuesFilter: IDraftIssuesFilter;
   };
-  [EIssuesStoreType.DEFAULT]: {
-    issueMap: TIssueMap;
+  [EIssuesStoreType.DEFAULT]: defaultIssueStore & {
     issues: undefined;
     issuesFilter: undefined;
   };
-}
+};
 
-export const useIssues = <T extends EIssuesStoreType>(storeType?: T): IStoreIssues[T] => {
+export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssues[T] => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useIssues must be used within StoreProvider");
 
+  const defaultStore: defaultIssueStore = {
+    issueMap: context.issue.issues.issuesMap,
+  };
+
   switch (storeType) {
     case EIssuesStoreType.GLOBAL:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.workspaceIssues,
         issuesFilter: context.issue.workspaceIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.PROFILE:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.profileIssues,
         issuesFilter: context.issue.profileIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.PROJECT:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.projectIssues,
         issuesFilter: context.issue.projectIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.CYCLE:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.cycleIssues,
         issuesFilter: context.issue.cycleIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.MODULE:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.moduleIssues,
         issuesFilter: context.issue.moduleIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.PROJECT_VIEW:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.projectViewIssues,
         issuesFilter: context.issue.projectViewIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.ARCHIVED:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.archivedIssues,
         issuesFilter: context.issue.archivedIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     case EIssuesStoreType.DRAFT:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: context.issue.draftIssues,
         issuesFilter: context.issue.draftIssuesFilter,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
     default:
-      return {
-        issueMap: context.issue.issues.issuesMap,
+      return merge(defaultStore, {
         issues: undefined,
         issuesFilter: undefined,
-      } as IStoreIssues[T];
+      }) as TStoreIssues[T];
   }
 };

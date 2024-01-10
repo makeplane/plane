@@ -1,5 +1,8 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -250,8 +253,13 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
       runInAction(() => {
-        this.issues[moduleId].push(...issueIds);
+        update(this.issues, moduleId, (moduleIssueIds) => {
+          if (!moduleIssueIds) return issueIds;
+          else return concat(moduleIssueIds, issueIds);
+        });
       });
+
+      issueIds.map((issueId) => this.rootStore.issues.updateIssue(issueId, { module_id: moduleId }));
 
       const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
         issues: issueIds,
@@ -265,13 +273,13 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
     try {
-      const response = await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+      runInAction(() => {
+        pull(this.issues[moduleId], issueId);
+      });
 
-      const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[moduleId].splice(issueIndex, 1);
-        });
+      this.rootStore.issues.updateIssue(issueId, { module_id: null });
+
+      const response = await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
 
       return response;
     } catch (error) {

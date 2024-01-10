@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useUser } from "hooks/store";
 import useCommentReaction from "hooks/use-comment-reaction";
 // ui
-import { ReactionSelector } from "components/core";
+// import { ReactionSelector } from "components/core";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 // types
@@ -47,7 +47,8 @@ export const CommentReaction: FC<Props> = observer((props) => {
 
   return (
     <div className="mt-2 flex items-center gap-1.5">
-      {!readonly && (
+      {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+      {/* {!readonly && (
         <ReactionSelector
           size="md"
           position="top"
@@ -58,7 +59,7 @@ export const CommentReaction: FC<Props> = observer((props) => {
           }
           onSelect={handleReactionClick}
         />
-      )}
+      )} */}
 
       {Object.keys(groupedReactions || {}).map(
         (reaction) =>

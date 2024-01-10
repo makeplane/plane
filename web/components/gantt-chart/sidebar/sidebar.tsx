@@ -7,7 +7,7 @@ import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { GanttInlineCreateIssueForm, IssueGanttSidebarBlock } from "components/issues";
+import { GanttQuickAddIssueForm, IssueGanttSidebarBlock } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
@@ -169,7 +169,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
               {droppableProvided.placeholder}
             </>
             {enableQuickIssueCreate && !disableIssueCreation && (
-              <GanttInlineCreateIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
+              <GanttQuickAddIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
             )}
           </div>
         )}

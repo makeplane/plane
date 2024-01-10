@@ -4,12 +4,13 @@ import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
 import { MoreHorizontal } from "lucide-react";
 // components
-import { Tooltip } from "@plane/ui";
+import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// ui
 // types
 import { TIssue, TIssueMap } from "@plane/types";
-import { useProject, useProjectState } from "hooks/store";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 type Props = {
   issues: TIssueMap | undefined;
@@ -23,21 +24,23 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // hooks
+  const {
+    router: { workspaceSlug, projectId },
+  } = useApplication();
   const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
+  const { setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: TIssue) => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
-    });
-  };
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -67,45 +70,53 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                onClick={() => handleIssuePeekOverview(issue)}
               >
-                {issue?.tempId !== undefined && (
-                  <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-                )}
-
-                <div
-                  className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-100 px-1 py-1.5 shadow-custom-shadow-2xs ${
-                    snapshot.isDragging
-                      ? "bg-custom-background-90 shadow-custom-shadow-rg"
-                      : "bg-custom-background-100 hover:bg-custom-background-90"
-                  }`}
+                <ControlLink
+                  href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+                  target="_blank"
+                  onClick={() => handleIssuePeekOverview(issue)}
+                  className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
                 >
-                  <div className="flex h-full items-center gap-1.5">
-                    <span
-                      className="h-full w-0.5 flex-shrink-0 rounded"
-                      style={{
-                        backgroundColor: getProjectStates(issue?.project_id).find(
-                          (state) => state?.id == issue?.state_id
-                        )?.color,
-                      }}
-                    />
-                    <div className="flex-shrink-0 text-xs text-custom-text-300">
-                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                  <>
+                    {issue?.tempId !== undefined && (
+                      <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+                    )}
+
+                    <div
+                      className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-100 px-1 py-1.5 shadow-custom-shadow-2xs ${
+                        snapshot.isDragging
+                          ? "bg-custom-background-90 shadow-custom-shadow-rg"
+                          : "bg-custom-background-100 hover:bg-custom-background-90"
+                      }`}
+                    >
+                      <div className="flex h-full items-center gap-1.5">
+                        <span
+                          className="h-full w-0.5 flex-shrink-0 rounded"
+                          style={{
+                            backgroundColor: getProjectStates(issue?.project_id).find(
+                              (state) => state?.id == issue?.state_id
+                            )?.color,
+                          }}
+                        />
+                        <div className="flex-shrink-0 text-xs text-custom-text-300">
+                          {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                        </div>
+                        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                          <div className="truncate text-xs">{issue.name}</div>
+                        </Tooltip>
+                      </div>
+                      <div
+                        className={`hidden h-5 w-5 group-hover/calendar-block:block ${isMenuActive ? "!block" : ""}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
+                        {quickActions(issue, customActionButton)}
+                      </div>
                     </div>
-                    <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                      <div className="truncate text-xs">{issue.name}</div>
-                    </Tooltip>
-                  </div>
-                  <div
-                    className={`hidden h-5 w-5 group-hover/calendar-block:block ${isMenuActive ? "!block" : ""}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    {quickActions(issue, customActionButton)}
-                  </div>
-                </div>
+                  </>
+                </ControlLink>
               </div>
             )}
           </Draggable>

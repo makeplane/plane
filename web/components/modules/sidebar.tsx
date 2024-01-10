@@ -76,7 +76,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
