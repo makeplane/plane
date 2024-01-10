@@ -11,6 +11,7 @@ export type MemberDropdownProps = {
   dropdownArrow?: boolean;
   placeholder?: string;
   placement?: Placement;
+  tabIndex?: number;
 } & (
   | {
       multiple: false;
