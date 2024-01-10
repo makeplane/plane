@@ -93,16 +93,15 @@ export class PageStore {
 
   /**
    * Add Page to users favorites list
-   * @param workspaceSlug
-   * @param projectId
-   * @param pageId
    */
-  addToFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  addToFavorites = async () => {
+    if (!this.workspace || !this.project || !this.id)
+      throw new Error("PageStore.addToFavorites: workspace, project, or id is undefined");
     try {
       runInAction(() => {
         this.is_favorite = true;
       });
-      await this.pageService.addPageToFavorites(workspaceSlug, projectId, pageId);
+      await this.pageService.addPageToFavorites(this.workspace, this.project, this.id);
     } catch (error) {
       this.is_favorite = false;
       throw error;
@@ -111,14 +110,13 @@ export class PageStore {
 
   /**
    * Remove page from the users favorites list
-   * @param workspaceSlug
-   * @param projectId
-   * @param pageId
    */
-  removeFromFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  removeFromFavorites = async () => {
+    if (!this.workspace || !this.project || !this.id)
+      throw new Error("PageStore.addToFavorites: workspace, project, or id is undefined");
     try {
       this.is_favorite = false;
-      await this.pageService.removePageFromFavorites(workspaceSlug, projectId, pageId);
+      await this.pageService.removePageFromFavorites(this.workspace, this.project, this.id);
     } catch (error) {
       this.is_favorite = true;
       throw error;
@@ -127,17 +125,16 @@ export class PageStore {
 
   /**
    * make a page public
-   * @param workspaceSlug
-   * @param projectId
-   * @param pageId
    * @returns
    */
-  makePublic = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  makePublic = async () => {
+    if (!this.workspace || !this.project || !this.id)
+      throw new Error("PageStore.addToFavorites: workspace, project, or id is undefined");
     try {
       runInAction(() => {
         this.access = 0;
       });
-      await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
+      await this.pageService.patchPage(this.workspace, this.project, this.id, { access: 0 });
     } catch (error) {
       runInAction(() => {
         this.access = 1;
@@ -148,17 +145,16 @@ export class PageStore {
 
   /**
    * Make a page private
-   * @param workspaceSlug
-   * @param projectId
-   * @param pageId
    * @returns
    */
-  makePrivate = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  makePrivate = async () => {
+    if (!this.workspace || !this.project || !this.id)
+      throw new Error("PageStore.addToFavorites: workspace, project, or id is undefined");
     try {
       runInAction(() => {
         this.access = 1;
       });
-      await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
+      await this.pageService.patchPage(this.workspace, this.project, this.id, { access: 1 });
     } catch (error) {
       runInAction(() => {
         this.access = 0;
