@@ -85,7 +85,7 @@ from .inbox import Inbox, InboxIssue
 
 from .analytic import AnalyticView
 
-from .notification import Notification, NotificationPreference
+from .notification import Notification, NotificationPreference, EmailNotificationLog
 
 from .exporter import ExporterHistory
 

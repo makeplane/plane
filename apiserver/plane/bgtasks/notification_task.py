@@ -13,6 +13,8 @@ from plane.db.models import (
     Notification,
     IssueComment,
     IssueActivity,
+    NotificationPreference,
+    EmailNotificationLog,
 )
 
 # Third Party imports
@@ -37,9 +39,7 @@ def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
         )
 
     IssueMention.objects.bulk_create(aggregated_issue_mentions, batch_size=100)
-    IssueMention.objects.filter(
-        issue=issue, mention__in=removed_mention
-    ).delete()
+    IssueMention.objects.filter(issue=issue, mention__in=removed_mention).delete()
 
 
 def get_new_mentions(requested_instance, current_instance):
@@ -95,9 +95,7 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
                 project_id=project_id,
             ).exists()
             and not IssueAssignee.objects.filter(
-                project_id=project_id,
-                issue_id=issue_id,
-                assignee_id=mention_id,
+                project_id=project_id, issue_id=issue_id, assignee_id=mention_id
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
@@ -125,9 +123,7 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all(
-            "mention-component", attrs={"target": "users"}
-        )
+        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
 
         mentions = [mention_tag["id"] for mention_tag in mention_tags]
 
@@ -141,9 +137,7 @@ def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all(
-            "mention-component", attrs={"target": "users"}
-        )
+        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["id"])
         return list(set(mentions))
@@ -165,14 +159,8 @@ def get_new_comment_mentions(new_value, old_value):
     return new_mentions
 
 
-def createMentionNotification(
-    project,
-    notification_comment,
-    issue,
-    actor_id,
-    mention_id,
-    issue_id,
-    activity,
+def create_mention_notification(
+    project, notification_comment, issue, actor_id, mention_id, issue_id, activity
 ):
     return Notification(
         workspace=project.workspace,
@@ -238,6 +226,7 @@ def notifications(
     ]:
         # Create Notifications
         bulk_notifications = []
+        bulk_email_logs = []
 
         """
         Mention Tasks
@@ -247,12 +236,10 @@ def notifications(
 
         # Get new mentions from the newer instance
         new_mentions = get_new_mentions(
-            requested_instance=requested_data,
-            current_instance=current_instance,
+            requested_instance=requested_data, current_instance=current_instance
         )
         removed_mention = get_removed_mentions(
-            requested_instance=requested_data,
-            current_instance=current_instance,
+            requested_instance=requested_data, current_instance=current_instance
         )
 
         comment_mentions = []
@@ -261,9 +248,7 @@ def notifications(
         # Get New Subscribers from the mentions of the newer instance
         requested_mentions = extract_mentions(issue_instance=requested_data)
         mention_subscribers = extract_mentions_as_subscribers(
-            project_id=project_id,
-            issue_id=issue_id,
-            mentions=requested_mentions,
+            project_id=project_id, issue_id=issue_id, mentions=requested_mentions
         )
 
         for issue_activity in issue_activities_created:
@@ -273,21 +258,17 @@ def notifications(
             if issue_comment is not None:
                 # TODO: Maybe save the comment mentions, so that in future, we can filter out the issues based on comment mentions as well.
 
-                all_comment_mentions = (
-                    all_comment_mentions
-                    + extract_comment_mentions(issue_comment_new_value)
+                all_comment_mentions = all_comment_mentions + extract_comment_mentions(
+                    issue_comment_new_value
                 )
 
                 new_comment_mentions = get_new_comment_mentions(
-                    old_value=issue_comment_old_value,
-                    new_value=issue_comment_new_value,
+                    old_value=issue_comment_old_value, new_value=issue_comment_new_value
                 )
                 comment_mentions = comment_mentions + new_comment_mentions
 
         comment_mention_subscribers = extract_mentions_as_subscribers(
-            project_id=project_id,
-            issue_id=issue_id,
-            mentions=all_comment_mentions,
+            project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
         )
         """
         We will not send subscription activity notification to the below mentioned user sets
@@ -297,21 +278,15 @@ def notifications(
         """
 
         issue_assignees = list(
-            IssueAssignee.objects.filter(
-                project_id=project_id, issue_id=issue_id
-            )
+            IssueAssignee.objects.filter(project_id=project_id, issue_id=issue_id)
             .exclude(assignee_id__in=list(new_mentions + comment_mentions))
             .values_list("assignee", flat=True)
         )
 
         issue_subscribers = list(
-            IssueSubscriber.objects.filter(
-                project_id=project_id, issue_id=issue_id
-            )
+            IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id)
             .exclude(
-                subscriber_id__in=list(
-                    new_mentions + comment_mentions + [actor_id]
-                )
+                subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
             )
             .values_list("subscriber", flat=True)
         )
@@ -346,13 +321,13 @@ def notifications(
 
         for subscriber in issue_subscribers:
             if subscriber in issue_subscribers:
+                trigger = "subscribed"
                 sender = "in_app:issue_activities:subscribed"
-            if (
-                issue.created_by_id is not None
-                and subscriber == issue.created_by_id
-            ):
+            if issue.created_by_id is not None and subscriber == issue.created_by_id:
+                trigger = "created"
                 sender = "in_app:issue_activities:created"
             if subscriber in issue_assignees:
+                trigger = "assigned"
                 sender = "in_app:issue_activities:assigned"
 
             for issue_activity in issue_activities_created:
@@ -367,6 +342,19 @@ def notifications(
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                     )
+
+                preference = NotificationPreference.objects.filter(
+                    user=subscriber,
+                    workspace_id=project.workspace_id,
+                    project_id=project_id,
+                ).values("created", "assigned", "subscribed").first()
+
+                if issue_activity.get("field") == "state":
+                    preference = preference.get(trigger).get("state") 
+                elif issue_activity.get("field") == "comment":
+                    preference = preference.get(trigger).get("comment") 
+                else:
+                    preference = preference.get(trigger).get("property_change")
 
                 bulk_notifications.append(
                     Notification(
@@ -409,6 +397,15 @@ def notifications(
                     )
                 )
 
+                if preference:
+                    bulk_email_logs(
+                        EmailNotificationLog(
+                            user_id=subscriber,
+                            
+                        )
+                    )
+
+
         # Add Mentioned as Issue Subscribers
         IssueSubscriber.objects.bulk_create(
             mention_subscribers + comment_mention_subscribers, batch_size=100
@@ -425,7 +422,7 @@ def notifications(
         for mention_id in comment_mentions:
             if mention_id != actor_id:
                 for issue_activity in issue_activities_created:
-                    notification = createMentionNotification(
+                    notification = create_mention_notification(
                         project=project,
                         issue=issue,
                         notification_comment=f"{actor.display_name} has mentioned you in a comment in issue {issue.name}",
@@ -477,7 +474,7 @@ def notifications(
                     )
                 else:
                     for issue_activity in issue_activities_created:
-                        notification = createMentionNotification(
+                        notification = create_mention_notification(
                             project=project,
                             issue=issue,
                             notification_comment=f"You have been mentioned in the issue {issue.name}",

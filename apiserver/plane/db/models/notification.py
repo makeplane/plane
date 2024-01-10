@@ -67,8 +67,8 @@ def get_default_preference():
     }
 
 
-class NotificationPreference(ProjectBaseModel):
-    created_by = models.JSONField(default=get_default_preference)
+class UserNotificationPreference(BaseModel):
+    created = models.JSONField(default=get_default_preference)
     assigned = models.JSONField(default=get_default_preference)
     subscribed = models.JSONField(default=get_default_preference)
     user = models.ForeignKey(
@@ -82,9 +82,24 @@ class NotificationPreference(ProjectBaseModel):
 
         verbose_name = "Notification Preference"
         verbose_name_plural = "Notification Preferences"
-        db_table = "notification_preferences"
+        db_table = "user_notification_preferences"
         ordering = ("-created_at",)
 
     def __str__(self):
         """Return name of the notifications"""
         return f"{self.user.email} <{self.workspace.name}>"
+
+
+class EmailNotificationLog(ProjectBaseModel):
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications")
+    triggered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="triggered_by_notifications")
+    sent_at = models.DateTimeField(null=True)
+    entity = models.CharField(max_length=200)
+    old_value = models.CharField(max_length=300, blank=True, null=True)
+    new_value = models.CharField(max_length=300, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Email Notification Log"
+        verbose_name_plural = "Email Notification Logs"
+        db_table = "email_notification_logs"
+        ordering = ("-created_at",)
