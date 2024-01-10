@@ -23,9 +23,10 @@ export interface IIssueSubIssuesStoreActions {
   updateSubIssue: (
     workspaceSlug: string,
     projectId: string,
+    parentIssueId: string,
     issueId: string,
     data: { oldParentId: string; newParentId: string }
-  ) => Promise<void>;
+  ) => any;
   removeSubIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -139,7 +140,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       const oldIssueParentId = data.oldParentId;
       const newIssueParentId = data.newParentId;
 
-      const issue = this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId);
+      // const issue = this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId);
 
       // runInAction(() => {
       //   Object.keys(subIssuesStateDistribution).forEach((key) => {
@@ -149,7 +150,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       //   set(this.subIssuesStateDistribution, issueId, data);
       // });
 
-      return;
+      return {} as any;
     } catch (error) {
       throw error;
     }

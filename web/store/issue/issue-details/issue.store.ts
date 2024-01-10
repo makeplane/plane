@@ -50,7 +50,7 @@ export class IssueStore implements IIssueStore {
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const query = {
-        expand: "state,created_by,assignees,labels,parent",
+        expand: "state,assignees,labels,parent",
       };
       const issue = (await this.issueService.retrieve(workspaceSlug, projectId, issueId, query)) as any;
       if (!issue) throw new Error("Issue not found");

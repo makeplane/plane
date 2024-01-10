@@ -1,40 +1,32 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { mutate } from "swr";
-import { Controller, UseFormWatch } from "react-hook-form";
-import { Bell, CalendarDays, LinkIcon, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
+import { CalendarDays, LinkIcon, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail, useIssues, useProject, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
-import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
-// services
-import { IssueService } from "services/issue";
-import { ModuleService } from "services/module.service";
 // components
 import {
   DeleteIssueModal,
-  SidebarIssueRelationSelect,
-  SidebarCycleSelect,
-  SidebarModuleSelect,
-  SidebarParentSelect,
-  SidebarLabelSelect,
   IssueLinkRoot,
+  IssueRelationSelect,
+  IssueCycleSelect,
+  IssueModuleSelect,
+  IssueParentSelect,
+  IssueLabel,
 } from "components/issues";
+import { IssueSubscription } from "./subscription";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // ui
 import { CustomDatePicker } from "components/ui";
 // icons
-import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { TIssue } from "@plane/types";
 import type { TIssueOperations } from "./root";
 // fetch-keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   workspaceSlug: string;
@@ -77,11 +69,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = props;
   // router
   const router = useRouter();
+  const { inboxIssueId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
-  const {
-    issues: { removeIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -128,13 +118,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const showThirdSection =
     fieldsToShow.includes("all") || fieldsToShow.includes("cycle") || fieldsToShow.includes("module");
 
-  const startDate = watchIssue("start_date");
-  const targetDate = watchIssue("target_date");
-
-  const minDate = startDate ? new Date(startDate) : null;
+  const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = targetDate ? new Date(targetDate) : null;
+  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -168,28 +155,22 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
             ) : null}
             <h4 className="text-lg font-medium text-custom-text-300">
-              {projectDetails?.identifier}-{issueDetail?.sequence_id}
+              {projectDetails?.identifier}-{issue?.sequence_id}
             </h4>
           </div>
+
           <div className="flex flex-wrap items-center gap-2">
-            {issueDetail?.created_by !== currentUser?.id &&
-              !issueDetail?.assignee_ids.includes(currentUser?.id ?? "") &&
-              !is_archived &&
-              (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
-                <Button
-                  size="sm"
-                  prependIcon={<Bell className="h-3 w-3" />}
-                  variant="outline-primary"
-                  className="hover:!bg-custom-primary-100/20"
-                  onClick={() => {
-                    if (subscribed) handleUnsubscribe();
-                    else handleSubscribe();
-                  }}
-                >
-                  {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
-                </Button>
-              )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
+            {currentUser && !is_archived && (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
+              <IssueSubscription
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                currentUserId={currentUser?.id}
+                disabled={!isAllowed || !is_editable}
+              />
+            )}
+
+            {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
                 className="rounded-md border border-custom-border-200 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
@@ -197,8 +178,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               >
                 <LinkIcon className="h-3.5 w-3.5" />
               </button>
-            )}
-            {isAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
+            )} */}
+
+            {/* {isAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
@@ -206,7 +188,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
-            )}
+            )} */}
           </div>
         </div>
 
@@ -214,288 +196,254 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           <div className={`divide-y-2 divide-custom-border-200 ${is_editable ? "opacity-60" : ""}`}>
             {showFirstSection && (
               <div className="py-1">
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                       <p>State</p>
                     </div>
-                    <Controller
-                      control={control}
-                      name="state"
-                      render={({ field: { value } }) => (
-                        <div className="h-5 sm:w-1/2">
-                          <StateDropdown
-                            value={value}
-                            onChange={(val) => submitChanges({ state: val })}
-                            projectId={projectId?.toString() ?? ""}
-                            disabled={!isAllowed || is_editable}
-                            buttonVariant="background-with-text"
-                          />
-                        </div>
-                      )}
-                    />
-                  </div>
-                )} */}
 
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
+                    <div className="h-5 sm:w-1/2">
+                      <StateDropdown
+                        value={issue?.state_id ?? undefined}
+                        onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                        projectId={projectId?.toString() ?? ""}
+                        disabled={!isAllowed || !is_editable}
+                        buttonVariant="background-with-text"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Assignees</p>
                     </div>
-                    <Controller
-                      control={control}
-                      name="assignees"
-                      render={({ field: { value } }) => (
-                        <div className="h-5 sm:w-1/2">
-                          <ProjectMemberDropdown
-                            value={value}
-                            onChange={(val) => submitChanges({ assignees: val })}
-                            disabled={!isAllowed || is_editable}
-                            projectId={projectId?.toString() ?? ""}
-                            placeholder="Assignees"
-                            multiple
-                            buttonVariant={value?.length > 0 ? "transparent-without-text" : "background-with-text"}
-                            buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
-                          />
-                        </div>
-                      )}
-                    />
-                  </div>
-                )} */}
 
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
+                    <div className="h-5 sm:w-1/2">
+                      <ProjectMemberDropdown
+                        value={issue?.assignee_ids ?? undefined}
+                        onChange={(val) =>
+                          issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })
+                        }
+                        disabled={!isAllowed || !is_editable}
+                        projectId={projectId?.toString() ?? ""}
+                        placeholder="Assignees"
+                        multiple
+                        buttonVariant={
+                          issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"
+                        }
+                        buttonClassName={issue?.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <Signal className="h-4 w-4 flex-shrink-0" />
                       <p>Priority</p>
                     </div>
-                    <Controller
-                      control={control}
-                      name="priority"
-                      render={({ field: { value } }) => (
-                        <div className="h-5 sm:w-1/2">
-                          <PriorityDropdown
-                            value={value}
-                            onChange={(val) => submitChanges({ priority: val })}
-                            disabled={!isAllowed || is_editable}
-                            buttonVariant="background-with-text"
-                          />
-                        </div>
-                      )}
-                    />
-                  </div>
-                )} */}
 
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
+                    <div className="h-5 sm:w-1/2">
+                      <PriorityDropdown
+                        value={issue?.priority || undefined}
+                        onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                        disabled={!isAllowed || !is_editable}
+                        buttonVariant="background-with-text"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
                   areEstimatesEnabledForCurrentProject && (
                     <div className="flex flex-wrap items-center py-2">
                       <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                         <Triangle className="h-4 w-4 flex-shrink-0 " />
                         <p>Estimate</p>
                       </div>
-                      <Controller
-                        control={control}
-                        name="estimate_point"
-                        render={({ field: { value } }) => (
-                          <div className="h-5 sm:w-1/2">
-                            <EstimateDropdown
-                              value={value}
-                              onChange={(val) => submitChanges({ estimate_point: val })}
-                              projectId={projectId?.toString() ?? ""}
-                              disabled={!isAllowed || is_editable}
-                              buttonVariant="background-with-text"
-                            />
-                          </div>
-                        )}
-                      />
+
+                      <div className="h-5 sm:w-1/2">
+                        <EstimateDropdown
+                          value={issue?.estimate_point || null}
+                          onChange={(val) =>
+                            issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
+                          }
+                          projectId={projectId}
+                          disabled={!isAllowed || !is_editable}
+                          buttonVariant="background-with-text"
+                        />
+                      </div>
                     </div>
-                  )} */}
+                  )}
               </div>
             )}
 
             {showSecondSection && (
               <div className="py-1">
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
                       <p>Parent</p>
                     </div>
                     <div className="sm:basis-1/2">
-                      <Controller
-                        control={control}
-                        name="parent"
-                        render={({ field: { onChange } }) => (
-                          <SidebarParentSelect
-                            onChange={(val: string) => {
-                              submitChanges({ parent: val });
-                              onChange(val);
-                            }}
-                            issueDetails={issueDetail}
-                            disabled={!isAllowed || is_editable}
-                          />
-                        )}
+                      <IssueParentSelect
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        issueOperations={issueOperations}
+                        disabled={!isAllowed || !is_editable}
                       />
                     </div>
                   </div>
-                )} */}
+                )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
-                  <SidebarIssueRelationSelect
+                  <IssueRelationSelect
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     issueId={issueId}
                     relationKey="blocking"
-                    disabled={!isAllowed || is_editable}
+                    disabled={!isAllowed || !is_editable}
                   />
                 )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
-                  <SidebarIssueRelationSelect
+                  <IssueRelationSelect
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     issueId={issueId}
                     relationKey="blocked_by"
-                    disabled={!isAllowed || is_editable}
+                    disabled={!isAllowed || !is_editable}
                   />
                 )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
-                  <SidebarIssueRelationSelect
+                  <IssueRelationSelect
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     issueId={issueId}
                     relationKey="duplicate"
-                    disabled={!isAllowed || is_editable}
+                    disabled={!isAllowed || !is_editable}
                   />
                 )}
 
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
-                  <SidebarIssueRelationSelect
+                  <IssueRelationSelect
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     issueId={issueId}
                     relationKey="relates_to"
-                    disabled={!isAllowed || is_editable}
+                    disabled={!isAllowed || !is_editable}
                   />
                 )}
 
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Start date</p>
                     </div>
                     <div className="sm:basis-1/2">
-                      <Controller
-                        control={control}
-                        name="start_date"
-                        render={({ field: { value } }) => (
-                          <CustomDatePicker
-                            placeholder="Start date"
-                            value={value}
-                            onChange={(val) =>
-                              submitChanges({
-                                start_date: val,
-                              })
-                            }
-                            className="border-none bg-custom-background-80"
-                            maxDate={maxDate ?? undefined}
-                            disabled={!isAllowed || is_editable}
-                          />
-                        )}
+                      <CustomDatePicker
+                        placeholder="Start date"
+                        value={issue.start_date || undefined}
+                        onChange={(val) =>
+                          issueOperations.update(workspaceSlug, projectId, issueId, { start_date: val })
+                        }
+                        className="border-none bg-custom-background-80"
+                        maxDate={maxDate ?? undefined}
+                        disabled={!isAllowed || !is_editable}
                       />
                     </div>
                   </div>
-                )} */}
+                )}
 
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Due date</p>
                     </div>
                     <div className="sm:basis-1/2">
-                      <Controller
-                        control={control}
-                        name="target_date"
-                        render={({ field: { value } }) => (
-                          <CustomDatePicker
-                            placeholder="Due date"
-                            value={value}
-                            onChange={(val) =>
-                              submitChanges({
-                                target_date: val,
-                              })
-                            }
-                            className="border-none bg-custom-background-80"
-                            minDate={minDate ?? undefined}
-                            disabled={!isAllowed || is_editable}
-                          />
-                        )}
+                      <CustomDatePicker
+                        placeholder="Due date"
+                        value={issue.target_date || undefined}
+                        onChange={(val) =>
+                          issueOperations.update(workspaceSlug, projectId, issueId, { target_date: val })
+                        }
+                        className="border-none bg-custom-background-80"
+                        minDate={minDate ?? undefined}
+                        disabled={!isAllowed || !is_editable}
                       />
                     </div>
                   </div>
-                )} */}
+                )}
               </div>
             )}
 
             {showThirdSection && (
               <div className="py-1">
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Cycle</p>
                     </div>
                     <div className="space-y-1">
-                      <SidebarCycleSelect
-                        issueDetail={issueDetail}
-                        handleCycleChange={handleCycleChange}
-                        disabled={!isAllowed || is_editable}
+                      <IssueCycleSelect
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        issueOperations={issueOperations}
+                        disabled={!isAllowed || !is_editable}
                       />
                     </div>
                   </div>
-                )} */}
+                )}
 
-                {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <DiceIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Module</p>
                     </div>
                     <div className="space-y-1">
-                      <SidebarModuleSelect
-                        issueDetail={issueDetail}
-                        handleModuleChange={handleModuleChange}
-                        disabled={!isAllowed || is_editable}
+                      <IssueModuleSelect
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        issueOperations={issueOperations}
+                        disabled={!isAllowed || !is_editable}
                       />
                     </div>
                   </div>
-                )} */}
+                )}
               </div>
             )}
           </div>
 
-          {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
+          {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
             <div className="flex flex-wrap items-start py-2">
               <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <p>Label</p>
               </div>
               <div className="space-y-1 sm:w-1/2">
-                <SidebarLabelSelect
-                  issueDetails={issueDetail}
-                  labelList={issueDetail?.label_ids ?? []}
-                  submitChanges={submitChanges}
-                  isNotAllowed={!isAllowed}
-                  is_editable={is_editable || !isAllowed}
+                <IssueLabel
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  disabled={!isAllowed || !is_editable}
                 />
               </div>
             </div>
-          )} */}
+          )}
 
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
             <IssueLinkRoot

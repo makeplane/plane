@@ -46,6 +46,8 @@ interface IIssueView {
 
   disableUserActions?: boolean;
   showCommentAccessSpecifier?: boolean;
+
+  issueOperations: any;
 }
 
 type TPeekModes = "side-peek" | "modal" | "full-screen";
@@ -93,6 +95,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueDelete,
     disableUserActions = false,
     showCommentAccessSpecifier = false,
+
+    issueOperations,
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
@@ -262,6 +266,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issue={issue}
                           issueUpdate={issueUpdate}
                           disableUserActions={disableUserActions}
+                          issueOperations={issueOperations}
                         />
 
                         <IssueActivity
@@ -318,6 +323,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             issue={issue}
                             issueUpdate={issueUpdate}
                             disableUserActions={disableUserActions}
+                            issueOperations={issueOperations}
                           />
                         </div>
                       </div>

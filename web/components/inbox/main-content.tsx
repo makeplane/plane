@@ -232,7 +232,9 @@ export const InboxMainContent: React.FC = observer(() => {
               )}
               <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issueDetails} />
             </div>
-            <div>
+
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* <div>
               <IssueDescriptionForm
                 setIsSubmitting={(value) => setIsSubmitting(value)}
                 isSubmitting={isSubmitting}
@@ -245,15 +247,16 @@ export const InboxMainContent: React.FC = observer(() => {
                 handleFormSubmit={submitChanges}
                 isAllowed={isAllowed || currentUser?.id === issueDetails.created_by}
               />
-            </div>
+            </div> */}
 
-            {workspaceSlug && projectId && (
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* {workspaceSlug && projectId && (
               <IssueReaction
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 issueId={issueDetails.id}
               />
-            )}
+            )} */}
             <InboxIssueActivity issueDetails={issueDetails} />
           </div>
 

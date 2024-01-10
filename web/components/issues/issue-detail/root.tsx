@@ -16,6 +16,10 @@ import { TIssue } from "@plane/types";
 export type TIssueOperations = {
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
 };
 
 export type TIssueDetailRoot = {
@@ -35,6 +39,10 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
     issue: { getIssueById },
     updateIssue,
     removeIssue,
+    addIssueToCycle,
+    removeIssueFromCycle,
+    addIssueToModule,
+    removeIssueFromModule,
   } = useIssueDetail();
   const { setToastAlert } = useToast();
 
@@ -72,8 +80,80 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           });
         }
       },
+      addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
+        try {
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          setToastAlert({
+            title: "Cycle added to issue successfully",
+            type: "success",
+            message: "Issue added to issue successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Cycle add to issue failed",
+            type: "error",
+            message: "Cycle add to issue failed",
+          });
+        }
+      },
+      removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+        try {
+          await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          setToastAlert({
+            title: "Cycle removed from issue successfully",
+            type: "success",
+            message: "Cycle removed from issue successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Cycle remove from issue failed",
+            type: "error",
+            message: "Cycle remove from issue failed",
+          });
+        }
+      },
+      addIssueToModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
+        try {
+          await addIssueToModule(workspaceSlug, projectId, moduleId, issueIds);
+          setToastAlert({
+            title: "Module added to issue successfully",
+            type: "success",
+            message: "Module added to issue successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Module add to issue failed",
+            type: "error",
+            message: "Module add to issue failed",
+          });
+        }
+      },
+      removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
+        try {
+          await removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+          setToastAlert({
+            title: "Module removed from issue successfully",
+            type: "success",
+            message: "Module removed from issue successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Module remove from issue failed",
+            type: "error",
+            message: "Module remove from issue failed",
+          });
+        }
+      },
     }),
-    [updateIssue, removeIssue, setToastAlert]
+    [
+      updateIssue,
+      removeIssue,
+      addIssueToCycle,
+      removeIssueFromCycle,
+      addIssueToModule,
+      removeIssueFromModule,
+      setToastAlert,
+    ]
   );
 
   const issue = getIssueById(issueId);
@@ -103,14 +183,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             />
           </div>
           <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
-            {/* <IssueDetailsSidebar
+            <IssueDetailsSidebar
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={is_editable}
-            /> */}
+              is_editable={true}
+            />
           </div>
         </div>
       )}
