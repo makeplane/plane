@@ -10,7 +10,7 @@ env:
   SOURCE_BRANCH_NAME: ${{github.event.pull_request.base.ref}}
 
 jobs:
-  create_pr:
+  sync_changes:
     # Only run the job when a PR is merged
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
