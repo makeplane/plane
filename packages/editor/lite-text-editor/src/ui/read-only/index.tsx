@@ -1,7 +1,7 @@
 import * as React from "react";
 import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 
-export type ILiteReadOnlyEditor = {
+export type ILiteTextReadOnlyEditor = {
   value: string;
   editorContentCustomClassNames?: string;
   noBorder?: boolean;
@@ -10,7 +10,7 @@ export type ILiteReadOnlyEditor = {
   mentionHighlights: string[];
 };
 
-export interface LiteTextEditorReadOnlyProps extends ILiteReadOnlyEditor {
+export interface LiteTextReadOnlyEditorProps extends ILiteTextReadOnlyEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -19,7 +19,7 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const LiteReadOnlyEditor = ({
+const LiteTextReadOnlyEditor = ({
   editorContentCustomClassNames,
   noBorder,
   borderOnFocus,
@@ -27,7 +27,7 @@ const LiteReadOnlyEditor = ({
   value,
   forwardedRef,
   mentionHighlights,
-}: LiteTextEditorReadOnlyProps) => {
+}: LiteTextReadOnlyEditorProps) => {
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
@@ -51,10 +51,10 @@ const LiteReadOnlyEditor = ({
   );
 };
 
-const LiteReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ILiteReadOnlyEditor>((props, ref) => (
-  <LiteReadOnlyEditor {...props} forwardedRef={ref} />
+const LiteTextReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ILiteTextReadOnlyEditor>((props, ref) => (
+  <LiteTextReadOnlyEditor {...props} forwardedRef={ref} />
 ));
 
-LiteReadOnlyEditorWithRef.displayName = "LiteReadOnlyEditorWithRef";
+LiteTextReadOnlyEditorWithRef.displayName = "LiteTextReadOnlyEditorWithRef";
 
-export { LiteReadOnlyEditor, LiteReadOnlyEditorWithRef };
+export { LiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef };

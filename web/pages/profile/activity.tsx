@@ -7,7 +7,7 @@ import { UserService } from "services/user.service";
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
+import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
@@ -74,11 +74,11 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                           </p>
                         </div>
                         <div className="issue-comments-section p-0">
-                          <RichReadOnlyEditor
-                            value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
+                          <RichTextReadOnlyEditor
                             customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
                             noBorder
                             borderOnFocus={false}
+                            value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
                           />
                         </div>
                       </div>
