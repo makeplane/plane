@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { X, CopyPlus } from "lucide-react";
 // hooks
@@ -37,17 +36,16 @@ const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
   },
 };
 
-type Props = {
+type TIssueRelationSelect = {
+  workspaceSlug: string;
+  projectId: string;
   issueId: string;
   relationKey: TIssueRelationTypes;
   disabled?: boolean;
 };
 
-export const SidebarIssueRelationSelect: React.FC<Props> = observer((props) => {
-  const { issueId, relationKey, disabled = false } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((props) => {
+  const { workspaceSlug, projectId, issueId, relationKey, disabled = false } = props;
   // hooks
   const { currentUser } = useUser();
   const { getProjectById } = useProject();

@@ -8,6 +8,7 @@ import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
 // types
 import { TIssue } from "@plane/types";
+import { TIssueOperations } from "./issue-detail";
 // services
 import { FileService } from "services/file.service";
 import { useMention } from "hooks/store";
@@ -18,14 +19,16 @@ export interface IssueDescriptionFormValues {
 }
 
 export interface IssueDetailsProps {
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
   issue: {
     name: string;
     description_html: string;
     id: string;
     project_id?: string;
   };
-  workspaceSlug: string;
-  handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
+  issueOperations: TIssueOperations;
   isAllowed: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
@@ -34,7 +37,7 @@ export interface IssueDetailsProps {
 const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleFormSubmit, workspaceSlug, isAllowed, isSubmitting, setIsSubmitting } = props;
+  const { workspaceSlug, projectId, issueId, issue, issueOperations, isAllowed, isSubmitting, setIsSubmitting } = props;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -75,12 +78,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
-      await handleFormSubmit({
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
         name: formData.name ?? "",
         description_html: formData.description_html ?? "<p></p>",
       });
     },
-    [handleFormSubmit]
+    [workspaceSlug, projectId, issueId, issueOperations]
   );
 
   useEffect(() => {

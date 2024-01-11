@@ -42,7 +42,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
   const onClose = () => {
     handleModal(false);
     const timeout = setTimeout(() => {
-      reset(defaultValues);
+      reset(preloadedData ? preloadedData : defaultValues);
       clearTimeout(timeout);
     }, 500);
   };

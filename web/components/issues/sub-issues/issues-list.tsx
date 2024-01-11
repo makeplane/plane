@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { SubIssues } from "./issue";
 // types
 import { IUser, TIssue } from "@plane/types";
-import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 // fetch keys
 import { useIssueDetail } from "hooks/store";
@@ -16,8 +16,8 @@ export interface ISubIssuesRootList {
   user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: TIssue) => void;
-  issuesLoader: ISubIssuesRootLoaders;
-  handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
+  issuesLoader: any; // FIXME: replace ISubIssuesRootLoaders with any
+  handleIssuesLoader: ({ key, issueId }: any) => void; // FIXME: replace ISubIssuesRootLoadersHandler with any
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",
