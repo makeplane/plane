@@ -55,6 +55,7 @@ jobs:
     # needs: [branch_build_setup]
     env:
       FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ github.ref_name }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
