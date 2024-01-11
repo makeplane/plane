@@ -13,7 +13,7 @@ import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, customActionButton } = props;
+  const { issue, handleDelete, handleUpdate, customActionButton, portalElement } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -59,11 +59,15 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
+        ellipsis
+      >
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             handleCopyIssueLink();
           }}
         >
@@ -74,8 +78,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setIssueToEdit(issue);
             setCreateUpdateIssueModal(true);
           }}
@@ -87,8 +89,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -99,8 +99,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setDeleteIssueModal(true);
           }}
         >
