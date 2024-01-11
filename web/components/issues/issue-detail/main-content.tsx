@@ -103,13 +103,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       </div>
 
       {/* issue attachments */}
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        is_archived={is_archived}
-        is_editable={is_editable}
-      />
+      <IssueAttachmentRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
 
       {/* <div className="space-y-5 pt-3">
         <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>

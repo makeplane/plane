@@ -13,11 +13,14 @@ import { getFileIcon } from "components/icons";
 import { truncateText } from "helpers/string.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
-// type
-import { TIssueAttachmentsList } from "./attachments-list";
+// types
+import { TAttachmentOperations } from "./root";
 
-export type TIssueAttachmentsDetail = TIssueAttachmentsList & {
+type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+
+type TIssueAttachmentsDetail = {
   attachmentId: string;
+  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
 export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {

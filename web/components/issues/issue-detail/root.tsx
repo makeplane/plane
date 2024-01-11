@@ -14,6 +14,7 @@ import useToast from "hooks/use-toast";
 import { TIssue } from "@plane/types";
 
 export type TIssueOperations = {
+  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
@@ -37,6 +38,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
   // hooks
   const {
     issue: { getIssueById },
+    fetchIssue,
     updateIssue,
     removeIssue,
     addIssueToCycle,
@@ -48,6 +50,13 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await fetchIssue(workspaceSlug, projectId, issueId);
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
+      },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
@@ -146,6 +155,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
     }),
     [
+      fetchIssue,
       updateIssue,
       removeIssue,
       addIssueToCycle,

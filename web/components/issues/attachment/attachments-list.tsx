@@ -7,18 +7,23 @@ import { IssueAttachmentsDetail } from "./attachment-detail";
 // types
 import { TAttachmentOperations } from "./root";
 
-export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
 
-export type TIssueAttachmentsList = {
+type TIssueAttachmentsList = {
+  issueId: string;
   handleAttachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
 export const IssueAttachmentsList: FC<TIssueAttachmentsList> = observer((props) => {
-  const { handleAttachmentOperations } = props;
+  const { issueId, handleAttachmentOperations } = props;
   // store hooks
   const {
-    attachment: { issueAttachments },
+    attachment: { getAttachmentsByIssueId },
   } = useIssueDetail();
+
+  const issueAttachments = getAttachmentsByIssueId(issueId);
+
+  if (!issueAttachments) return <></>;
 
   return (
     <>

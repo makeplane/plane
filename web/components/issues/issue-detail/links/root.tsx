@@ -19,13 +19,12 @@ export type TIssueLinkRoot = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  is_editable: boolean;
-  is_archived: boolean;
+  disabled?: boolean;
 };
 
 export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
   // props
-  const { workspaceSlug, projectId, issueId, is_editable, is_archived } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { toggleIssueLinkModal: toggleIssueLinkModalStore, createLink, updateLink, removeLink } = useIssueDetail();
   // state
@@ -108,17 +107,17 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         linkOperations={handleLinkOperations}
       />
 
-      <div className={`py-1 text-xs ${is_archived ? "opacity-60" : ""}`}>
+      <div className={`py-1 text-xs ${disabled ? "opacity-60" : ""}`}>
         <div className="flex items-center justify-between gap-2">
           <h4>Links</h4>
-          {is_editable && (
+          {!disabled && (
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
-                is_archived ? "cursor-not-allowed" : "cursor-pointer"
+                disabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               onClick={() => toggleIssueLinkModal(true)}
-              disabled={is_archived}
+              disabled={disabled}
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -126,7 +125,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         </div>
 
         <div>
-          <IssueLinkList linkOperations={handleLinkOperations} />
+          <IssueLinkList issueId={issueId} linkOperations={handleLinkOperations} />
         </div>
       </div>
     </>

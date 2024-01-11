@@ -446,13 +446,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           )}
 
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <IssueLinkRoot
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              is_editable={is_editable}
-              is_archived={is_archived}
-            />
+            <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
         </div>
       </div>
