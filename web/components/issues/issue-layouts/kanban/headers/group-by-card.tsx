@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { TIssue, ISearchIssueResponse } from "@plane/types";
+import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
 import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
@@ -21,8 +21,8 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  kanBanToggle: any;
-  handleKanBanToggle: any;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   currentStore?: TCreateModalStoreTypes;
@@ -36,14 +36,14 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     icon,
     title,
     count,
-    kanBanToggle,
-    handleKanBanToggle,
+    kanbanFilters,
+    handleKanbanFilters,
     issuePayload,
     disableIssueCreation,
     currentStore,
     addIssuesToView,
   } = props;
-  const verticalAlignPosition = kanBanToggle?.groupByHeaderMinMax.includes(column_id);
+  const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
@@ -117,7 +117,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         {sub_group_by === null && (
           <div
             className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-            onClick={() => handleKanBanToggle("groupByHeaderMinMax", column_id)}
+            onClick={() => handleKanbanFilters("group_by", column_id)}
           >
             {verticalAlignPosition ? (
               <Maximize2 width={14} strokeWidth={2} />

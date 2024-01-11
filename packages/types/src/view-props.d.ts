@@ -1,4 +1,9 @@
-export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+export type TIssueLayouts =
+  | "list"
+  | "kanban"
+  | "calendar"
+  | "spreadsheet"
+  | "gantt_chart";
 
 export type TIssueGroupByOptions =
   | "state"
@@ -108,10 +113,16 @@ export interface IIssueDisplayProperties {
   updated_on?: boolean;
 }
 
+export type TIssueKanbanFilters = {
+  group_by: string[];
+  sub_group_by: string[];
+};
+
 export interface IIssueFilters {
   filters: IIssueFilterOptions | undefined;
   displayFilters: IIssueDisplayFilterOptions | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
+  kanbanFilters: TIssueKanbanFilters | undefined;
 }
 
 export interface IIssueFiltersResponse {

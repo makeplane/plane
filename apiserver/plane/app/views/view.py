@@ -24,7 +24,7 @@ from . import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     GlobalViewSerializer,
     IssueViewSerializer,
-    IssueLiteSerializer,
+    IssueSerializer,
     IssueViewFavoriteSerializer,
 )
 from plane.app.permissions import (
@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueReaction,
     IssueLink,
     IssueAttachment,
+    IssueSubscriber,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.grouper import group_results
@@ -127,6 +128,19 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        subscriber=self.request.user, issue_id=OuterRef("id")
+                    )
+                )
+            )
         )
 
         # Priority Ordering
@@ -185,7 +199,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        serializer = IssueLiteSerializer(
+        serializer = IssueSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         )
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -59,6 +59,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     setActiveProject(val);
                   }}
                   buttonVariant="background-with-text"
+                  tabIndex={7}
                 />
               )}
             />
@@ -89,6 +90,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     inputSize="md"
                     onChange={onChange}
                     hasError={Boolean(errors?.name)}
+                    tabIndex={1}
                   />
                 )}
               />
@@ -106,6 +108,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     hasError={Boolean(errors?.description)}
                     value={value}
                     onChange={onChange}
+                    tabIndex={2}
                   />
                 )}
               />
@@ -124,6 +127,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                         buttonVariant="border-with-text"
                         placeholder="Start date"
                         maxDate={maxDate ?? undefined}
+                        tabIndex={3}
                       />
                     </div>
                   )}
@@ -140,6 +144,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                       buttonVariant="border-with-text"
                       placeholder="End date"
                       minDate={minDate}
+                      tabIndex={4}
                     />
                   </div>
                 )}
@@ -149,10 +154,10 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={5}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={6}>
           {data ? (isSubmitting ? "Updating" : "Update cycle") : isSubmitting ? "Creating" : "Create cycle"}
         </Button>
       </div>

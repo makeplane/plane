@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 // hooks
 import {
   useApplication,
@@ -154,14 +155,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                   if (!view) return;
 
                   return (
-                    <CustomMenu.MenuItem
-                      key={viewId}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${viewId}`)}
-                    >
-                      <div className="flex items-center gap-1.5">
+                    <CustomMenu.MenuItem key={viewId}>
+                      <Link
+                        href={`/${workspaceSlug}/projects/${projectId}/views/${viewId}`}
+                        className="flex items-center gap-1.5"
+                      >
                         <PhotoFilterIcon height={12} width={12} />
                         {truncateText(view.name, 40)}
-                      </div>
+                      </Link>
                     </CustomMenu.MenuItem>
                   );
                 })}

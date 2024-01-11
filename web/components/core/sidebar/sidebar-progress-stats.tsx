@@ -126,7 +126,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
         <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
-          {distribution.assignees.length > 0 ? (
+          {distribution?.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (

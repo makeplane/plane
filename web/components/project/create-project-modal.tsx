@@ -126,6 +126,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     else payload.emoji = formData.emoji_and_icon;
 
     payload.project_lead = formData.project_lead_member;
+    // Upper case identifier
+    payload.identifier = payload.identifier.toUpperCase();
 
     return createProject(workspaceSlug.toString(), payload)
       .then((res) => {
@@ -176,14 +178,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       return;
     }
     if (e.target.value === "") setValue("identifier", "");
-    else
-      setValue(
-        "identifier",
-        e.target.value
-          .replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "")
-          .toUpperCase()
-          .substring(0, 5)
-      );
+    else setValue("identifier", e.target.value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "").substring(0, 5));
     onChange(e);
   };
 
@@ -191,7 +186,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     const { value } = e.target;
     const alphanumericValue = value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
     setIsChangeInIdentifierRequired(false);
-    onChange(alphanumericValue.toUpperCase());
+    onChange(alphanumericValue);
   };
 
   return (
@@ -231,7 +226,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   )}
 
                   <div className="absolute right-2 top-2 p-2">
-                    <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose}>
+                    <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={8}>
                       <X className="h-5 w-5 text-white" />
                     </button>
                   </div>
@@ -243,6 +238,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       }}
                       control={control}
                       value={watch("cover_image")}
+                      tabIndex={9}
                     />
                   </div>
                   <div className="absolute -bottom-[22px] left-3">
@@ -258,6 +254,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           }
                           onChange={onChange}
                           value={value}
+                          tabIndex={10}
                         />
                       )}
                     />
@@ -283,11 +280,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               name="name"
                               type="text"
                               value={value}
-                              tabIndex={1}
                               onChange={handleNameChange(onChange)}
                               hasError={Boolean(errors.name)}
                               placeholder="Project Title"
                               className="w-full focus:border-blue-400"
+                              tabIndex={1}
                             />
                           )}
                         />
@@ -301,7 +298,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             required: "Identifier is required",
                             // allow only alphanumeric & non-latin characters
                             validate: (value) =>
-                              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
+                              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) ||
+                              "Only Alphanumeric & Non-latin characters are allowed.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -317,11 +315,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               name="identifier"
                               type="text"
                               value={value}
-                              tabIndex={2}
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="w-full text-xs focus:border-blue-400"
+                              className="w-full text-xs focus:border-blue-400 uppercase"
+                              tabIndex={2}
                             />
                           )}
                         />
@@ -336,11 +334,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               id="description"
                               name="description"
                               value={value}
-                              tabIndex={3}
                               placeholder="Description..."
                               onChange={onChange}
                               className="!h-24 text-sm focus:border-blue-400"
                               hasError={Boolean(errors?.description)}
+                              tabIndex={3}
                             />
                           )}
                         />
@@ -370,6 +368,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               }
                               placement="bottom-start"
                               noChevron
+                              tabIndex={4}
                             >
                               {NETWORK_CHOICES.map((network) => (
                                 <CustomSelect.Option
@@ -396,6 +395,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               placeholder="Lead"
                               multiple={false}
                               buttonVariant="border-with-text"
+                              tabIndex={5}
                             />
                           </div>
                         )}

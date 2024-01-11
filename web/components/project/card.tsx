@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import Link from "next/link";
 // hooks
 import { useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -74,7 +75,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     });
   };
 
-  const projectMembersIds = project.members.map((member) => member.member_id);
+  const projectMembersIds = project.members?.map((member) => member.member_id);
 
   return (
     <>
@@ -178,7 +179,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               }
               position="top"
             >
-              {projectMembersIds.length > 0 ? (
+              {projectMembersIds && projectMembersIds.length > 0 ? (
                 <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
@@ -195,17 +196,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               )}
             </Tooltip>
             {(isOwner || isMember) && (
-              <button
+              <Link
                 className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
                 onClick={(e) => {
-                  e.preventDefault();
                   e.stopPropagation();
-
-                  router.push(`/${workspaceSlug}/projects/${project.id}/settings`);
                 }}
+                href={`/${workspaceSlug}/projects/${project.id}/settings`}
               >
                 <Pencil className="h-3.5 w-3.5" />
-              </button>
+              </Link>
             )}
 
             {!project.is_member ? (

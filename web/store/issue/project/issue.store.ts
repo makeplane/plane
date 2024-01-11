@@ -134,8 +134,6 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
-      if (!issueId || !this.issues[projectId]) return;
-
       this.rootStore.issues.updateIssue(issueId, data);
 
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
@@ -148,8 +146,6 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      if (!issueId || !this.issues[projectId]) return;
-
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);

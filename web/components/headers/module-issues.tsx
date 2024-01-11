@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 // hooks
 import {
   useApplication,
@@ -41,14 +42,14 @@ const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   if (!moduleDetail) return null;
 
   return (
-    <CustomMenu.MenuItem
-      key={moduleDetail.id}
-      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${moduleDetail.id}`)}
-    >
-      <div className="flex items-center gap-1.5">
+    <CustomMenu.MenuItem key={moduleDetail.id}>
+      <Link
+        href={`/${workspaceSlug}/projects/${projectId}/modules/${moduleDetail.id}`}
+        className="flex items-center gap-1.5"
+      >
         <DiceIcon className="h-3 w-3" />
         {truncateText(moduleDetail.name, 40)}
-      </div>
+      </Link>
     </CustomMenu.MenuItem>
   );
 };

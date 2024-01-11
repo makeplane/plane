@@ -1,13 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
-import {
-  IssuePeekOverview,
-  SpreadsheetColumnsList,
-  SpreadsheetIssuesColumn,
-  SpreadsheetQuickAddIssueForm,
-} from "components/issues";
+import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetQuickAddIssueForm } from "components/issues";
 import { Spinner, LayersIcon } from "@plane/ui";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState } from "@plane/types";
@@ -56,9 +50,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const [isScrolled, setIsScrolled] = useState(false);
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const handleScroll = () => {
     if (!containerRef.current) return;
@@ -186,14 +177,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             ))} */}
         </div>
       </div>
-      {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate: any) => await handleIssues(issueToUpdate, EIssueActions.UPDATE)}
-        />
-      )}
     </div>
   );
 });

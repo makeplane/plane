@@ -32,7 +32,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issueId, onChange, 
             disabled={disabled}
             multiple
             placeholder="Assignees"
-            buttonVariant={issueDetail.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+            buttonVariant={issueDetail.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
             buttonClassName="text-left"
             buttonContainerClassName="w-full"
           />

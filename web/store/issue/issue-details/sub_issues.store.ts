@@ -20,6 +20,19 @@ export interface IIssueSubIssuesStoreActions {
     issueId: string,
     data: string[]
   ) => Promise<TIssueSubIssues>;
+  updateSubIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    parentIssueId: string,
+    issueId: string,
+    data: { oldParentId: string; newParentId: string }
+  ) => any;
+  removeSubIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    parentIssueId: string,
+    issueIds: string[]
+  ) => Promise<TIssueSubIssues>;
 }
 
 export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
@@ -48,6 +61,8 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       // actions
       fetchSubIssues: action,
       createSubIssues: action,
+      updateSubIssue: action,
+      removeSubIssue: action,
     });
     // root store
     this.rootIssueDetailStore = rootStore;
@@ -93,6 +108,55 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   };
 
   createSubIssues = async (workspaceSlug: string, projectId: string, issueId: string, data: string[]) => {
+    try {
+      const response = await this.issueService.addSubIssues(workspaceSlug, projectId, issueId, { sub_issue_ids: data });
+      const subIssuesStateDistribution = response?.state_distribution;
+      const subIssues = response.sub_issues as TIssue[];
+
+      this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
+
+      runInAction(() => {
+        Object.keys(subIssuesStateDistribution).forEach((key) => {
+          const stateGroup = key as keyof TSubIssuesStateDistribution;
+          set(this.subIssuesStateDistribution, [issueId, key], subIssuesStateDistribution[stateGroup]);
+        });
+        set(this.subIssuesStateDistribution, issueId, data);
+      });
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateSubIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentIssueId: string,
+    issueId: string,
+    data: { oldParentId: string; newParentId: string }
+  ) => {
+    try {
+      const oldIssueParentId = data.oldParentId;
+      const newIssueParentId = data.newParentId;
+
+      // const issue = this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId);
+
+      // runInAction(() => {
+      //   Object.keys(subIssuesStateDistribution).forEach((key) => {
+      //     const stateGroup = key as keyof TSubIssuesStateDistribution;
+      //     set(this.subIssuesStateDistribution, [issueId, key], subIssuesStateDistribution[stateGroup]);
+      //   });
+      //   set(this.subIssuesStateDistribution, issueId, data);
+      // });
+
+      return {} as any;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  removeSubIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: string[]) => {
     try {
       const response = await this.issueService.addSubIssues(workspaceSlug, projectId, issueId, { sub_issue_ids: data });
       const subIssuesStateDistribution = response?.state_distribution;

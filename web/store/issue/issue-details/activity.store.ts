@@ -49,7 +49,7 @@ export class IssueActivityStore implements IIssueActivityStore {
 
   // computed
   get issueActivities() {
-    const issueId = this.rootIssueDetailStore.issueId;
+    const issueId = this.rootIssueDetailStore.peekIssue?.issueId;
     if (!issueId) return undefined;
     return this.activities[issueId] ?? undefined;
   }

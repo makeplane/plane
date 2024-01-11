@@ -76,7 +76,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -550,7 +550,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         <div className="flex items-center gap-1">
                           <AlertCircle height={14} width={14} className="text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
-                            Invalid date. Please enter valid date.
+                            {moduleDetails?.start_date && moduleDetails?.target_date
+                              ? "This module isn't active yet."
+                              : "Invalid date. Please enter valid date."}
                           </span>
                         </div>
                       )}
