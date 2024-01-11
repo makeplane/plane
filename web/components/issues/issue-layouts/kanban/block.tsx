@@ -5,12 +5,11 @@ import { observer } from "mobx-react-lite";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueProperties } from "../properties/all-properties";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, ControlLink } from "@plane/ui";
 // types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
-import { useRouter } from "next/router";
-import { useProject } from "hooks/store";
+import { useApplication, useIssueDetail, useProject } from "hooks/store";
 
 interface IssueBlockProps {
   issueId: string;
@@ -34,24 +33,23 @@ interface IssueDetailsBlockProps {
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
   const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
-
-  const router = useRouter();
-
   // hooks
   const { getProjectById } = useProject();
+  const {
+    router: { workspaceSlug, projectId },
+  } = useApplication();
+  const { setPeekIssue } = useIssueDetail();
 
   const updateIssue = (issueToUpdate: TIssue) => {
     if (issueToUpdate) handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
-  const handleIssuePeekOverview = () => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
-    });
-  };
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   return (
     <>
@@ -63,11 +61,18 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
         </div>
       </WithDisplayPropertiesHOC>
-      <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-        <div className="line-clamp-2 text-sm font-medium text-custom-text-100" onClick={handleIssuePeekOverview}>
-          {issue.name}
-        </div>
-      </Tooltip>
+
+      <ControlLink
+        href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+        target="_blank"
+        onClick={() => handleIssuePeekOverview(issue)}
+        className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+      >
+        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <span>{issue.name}</span>
+        </Tooltip>
+      </ControlLink>
+
       <IssueProperties
         className="flex flex-wrap items-center gap-2 whitespace-nowrap"
         issue={issue}

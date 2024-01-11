@@ -36,6 +36,7 @@ export enum EIssueFilterType {
   FILTERS = "filters",
   DISPLAY_FILTERS = "display_filters",
   DISPLAY_PROPERTIES = "display_properties",
+  KANBAN_FILTERS = "kanban_filters",
 }
 
 export const ISSUE_PRIORITIES: {

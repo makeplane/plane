@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
@@ -15,23 +16,27 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 // hooks
-import { useApplication, useIssues } from "hooks/store";
+import { useIssues } from "hooks/store";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectLayoutRoot: FC = observer(() => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
   // hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  useSWR(
+  const {} = useSWR(
     workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
     async () => {
       if (workspaceSlug && projectId) {
-        await issuesFilter?.fetchFilters(workspaceSlug, projectId);
-        await issues?.fetchIssues(workspaceSlug, projectId, issues?.groupedIssueIds ? "mutation" : "init-loader");
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
       }
     },
     { revalidateOnFocus: false, refreshInterval: 600000, revalidateOnMount: true }
@@ -39,6 +44,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
+  if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
@@ -56,6 +62,13 @@ export const ProjectLayoutRoot: FC = observer(() => {
           ) : (
             <>
               <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+                {/* mutation loader */}
+                {issues?.loader === "mutation" && (
+                  <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+                    <Spinner className="w-4 h-4" />
+                  </div>
+                )}
+
                 {activeLayout === "list" ? (
                   <ListLayout />
                 ) : activeLayout === "kanban" ? (

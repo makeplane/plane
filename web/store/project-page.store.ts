@@ -61,7 +61,7 @@ export class ProjectPageStore implements IProjectPageStore {
   fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) =>
     await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
-        this.projectArchivedPages[projectId] = response?.map((page) => new PageStore(page));
+        this.projectArchivedPages[projectId] = response?.map((page) => new PageStore(page as any));
       });
       return response;
     });
@@ -75,7 +75,7 @@ export class ProjectPageStore implements IProjectPageStore {
   createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
     const response = await this.pageService.createPage(workspaceSlug, projectId, data);
     runInAction(() => {
-      this.projectPages[projectId] = [...this.projectPages[projectId], new PageStore(response)];
+      this.projectPages[projectId] = [...this.projectPages[projectId], new PageStore(response as any)];
     });
     return response;
   };
@@ -93,7 +93,7 @@ export class ProjectPageStore implements IProjectPageStore {
       this.projectPages = set(
         this.projectPages,
         [projectId],
-        this.projectPages[projectId].filter((page) => page.id !== pageId)
+        this.projectPages[projectId].filter((page: any) => page.id !== pageId)
       );
     });
     return response;
@@ -111,7 +111,7 @@ export class ProjectPageStore implements IProjectPageStore {
       set(
         this.projectPages,
         [projectId],
-        this.projectPages[projectId].filter((page) => page.id !== pageId)
+        this.projectPages[projectId].filter((page: any) => page.id !== pageId)
       );
       this.projectArchivedPages = set(this.projectArchivedPages, [projectId], this.projectArchivedPages[projectId]);
     });
@@ -130,7 +130,7 @@ export class ProjectPageStore implements IProjectPageStore {
         set(
           this.projectArchivedPages,
           [projectId],
-          this.projectArchivedPages[projectId].filter((page) => page.id !== pageId)
+          this.projectArchivedPages[projectId].filter((page: any) => page.id !== pageId)
         );
         set(this.projectPages, [projectId], [...this.projectPages[projectId]]);
       });

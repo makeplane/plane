@@ -1,45 +1,35 @@
-import { FC, useState } from "react";
+import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
+import { CalendarDays, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
 import { useIssueDetail, useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import {
-  IssueLinkRoot,
-  SidebarCycleSelect,
-  SidebarLabelSelect,
-  SidebarModuleSelect,
-  SidebarParentSelect,
-} from "components/issues";
+import { IssueLinkRoot, IssueCycleSelect, IssueModuleSelect, IssueParentSelect, IssueLabel } from "components/issues";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
-import { LinkModal } from "components/core";
 // types
-import { TIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "@plane/types";
+import { TIssue, TIssuePriorities } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
 interface IPeekOverviewProperties {
   issue: TIssue;
   issueUpdate: (issue: Partial<TIssue>) => void;
-  issueLinkCreate: (data: IIssueLink) => Promise<ILinkDetails>;
-  issueLinkUpdate: (data: IIssueLink, linkId: string) => Promise<ILinkDetails>;
-  issueLinkDelete: (linkId: string) => Promise<void>;
   disableUserActions: boolean;
+  issueOperations: any;
 }
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { issue, issueUpdate, issueLinkCreate, issueLinkUpdate, issueLinkDelete, disableUserActions } = props;
-  // states
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
+  const { issue, issueUpdate, disableUserActions, issueOperations } = props;
+
   // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { fetchIssue, isIssueLinkModalOpen, toggleIssueLinkModal } = useIssueDetail();
+  const { currentUser } = useUser();
   const { getProjectById } = useProject();
   // router
   const router = useRouter();
@@ -66,23 +56,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleTargetDate = (_targetDate: string | null) => {
     issueUpdate({ ...issue, target_date: _targetDate || undefined });
   };
-  const handleParent = (_parent: string) => {
-    issueUpdate({ ...issue, parent_id: _parent });
-  };
-  const handleLabels = (formData: Partial<TIssue>) => {
-    issueUpdate({ ...issue, ...formData });
-  };
-
-  const handleCycleOrModuleChange = async () => {
-    if (!workspaceSlug || !projectId) return;
-
-    await fetchIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
-  };
-
-  const handleEditLink = (link: ILinkDetails) => {
-    setSelectedLinkToUpdate(link);
-    toggleIssueLinkModal(true);
-  };
 
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
@@ -95,17 +68,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   return (
     <>
-      <LinkModal
-        isOpen={isIssueLinkModalOpen}
-        handleClose={() => {
-          toggleIssueLinkModal(false);
-          setSelectedLinkToUpdate(null);
-        }}
-        data={selectedLinkToUpdate}
-        status={selectedLinkToUpdate ? true : false}
-        createIssueLink={issueLinkCreate}
-        updateIssueLink={issueLinkUpdate}
-      />
       <div className="flex flex-col">
         <div className="flex w-full flex-col gap-5 py-5">
           {/* state */}
@@ -223,7 +185,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Parent</p>
             </div>
             <div>
-              <SidebarParentSelect onChange={handleParent} issueDetails={issue} disabled={disableUserActions} />
+              <IssueParentSelect
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
+                projectId={projectId?.toString() ?? ""}
+                issueId={issue?.id}
+                issueOperations={issueOperations}
+                disabled={disableUserActions}
+              />
             </div>
           </div>
         </div>
@@ -238,10 +206,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 <p>Cycle</p>
               </div>
               <div>
-                <SidebarCycleSelect
-                  issueDetail={issue}
+                <IssueCycleSelect
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
+                  projectId={projectId?.toString() ?? ""}
+                  issueId={issue?.id}
+                  issueOperations={issueOperations}
                   disabled={disableUserActions}
-                  handleIssueUpdate={handleCycleOrModuleChange}
                 />
               </div>
             </div>
@@ -254,10 +224,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 <p>Module</p>
               </div>
               <div>
-                <SidebarModuleSelect
-                  issueDetail={issue}
+                <IssueModuleSelect
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
+                  projectId={projectId?.toString() ?? ""}
+                  issueId={issue?.id}
+                  issueOperations={issueOperations}
                   disabled={disableUserActions}
-                  handleIssueUpdate={handleCycleOrModuleChange}
                 />
               </div>
             </div>
@@ -269,12 +241,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Label</p>
             </div>
             <div className="flex w-full flex-col gap-3">
-              <SidebarLabelSelect
-                issueDetails={issue}
-                labelList={issue.label_ids}
-                submitChanges={handleLabels}
-                isNotAllowed={disableUserActions}
-                uneditable={disableUserActions}
+              <IssueLabel
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
+                projectId={projectId?.toString() ?? ""}
+                issueId={issue?.id}
+                disabled={uneditable}
               />
             </div>
           </div>
@@ -282,10 +253,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <span className="border-t border-custom-border-200" />
 
-        <div className="flex w-full flex-col gap-5 pt-5">
-          <div className="flex flex-col gap-3">
-            <IssueLinkRoot uneditable={uneditable} isAllowed={isAllowed} />
-          </div>
+        <div className="w-full pt-3">
+          <IssueLinkRoot
+            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            projectId={projectId?.toString() ?? ""}
+            issueId={issue?.id}
+            is_editable={uneditable}
+            is_archived={isAllowed}
+          />
         </div>
       </div>
     </>

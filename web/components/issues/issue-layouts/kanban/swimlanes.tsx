@@ -13,6 +13,7 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TUnGroupedIssues,
+  TIssueKanbanFilters,
 } from "@plane/types";
 // constants
 import { EIssueActions } from "../types";
@@ -25,16 +26,16 @@ interface ISubGroupSwimlaneHeader {
   sub_group_by: string | null;
   group_by: string | null;
   list: IGroupByColumn[];
-  kanBanToggle: any;
-  handleKanBanToggle: any;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   issueIds,
   sub_group_by,
   group_by,
   list,
-  kanBanToggle,
-  handleKanBanToggle,
+  kanbanFilters,
+  handleKanbanFilters,
 }) => (
   <div className="relative flex h-max min-h-full w-full items-center">
     {list &&
@@ -45,11 +46,11 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
             sub_group_by={sub_group_by}
             group_by={group_by}
             column_id={_list.id}
-            icon={_list.Icon}
+            icon={_list.icon}
             title={_list.name}
             count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
+            kanbanFilters={kanbanFilters}
+            handleKanbanFilters={handleKanbanFilters}
             issuePayload={_list.payload}
           />
         </div>
@@ -64,8 +65,8 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   displayProperties: IIssueDisplayProperties | undefined;
   handleIssues: (issue: TIssue, action: EIssueActions) => void;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  kanBanToggle: any;
-  handleKanBanToggle: any;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
   currentStore?: TCreateModalStoreTypes;
@@ -90,8 +91,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     handleIssues,
     quickActions,
     displayProperties,
-    kanBanToggle,
-    handleKanBanToggle,
+    kanbanFilters,
+    handleKanbanFilters,
     showEmptyGroup,
     enableQuickIssueCreate,
     canEditProperties,
@@ -123,13 +124,14 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   icon={_list.Icon}
                   title={_list.name || ""}
                   count={calculateIssueCount(_list.id)}
-                  kanBanToggle={kanBanToggle}
-                  handleKanBanToggle={handleKanBanToggle}
+                  kanbanFilters={kanbanFilters}
+                  handleKanbanFilters={handleKanbanFilters}
                 />
               </div>
               <div className="w-full border-b border-dashed border-custom-border-400" />
             </div>
-            {!kanBanToggle?.subgroupByIssuesVisibility.includes(_list.id) && (
+
+            {!kanbanFilters?.sub_group_by.includes(_list.id) && (
               <div className="relative">
                 <KanBan
                   issuesMap={issuesMap}
@@ -140,8 +142,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   sub_group_id={_list.id}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
-                  kanBanToggle={kanBanToggle}
-                  handleKanBanToggle={handleKanBanToggle}
+                  kanbanFilters={kanbanFilters}
+                  handleKanbanFilters={handleKanbanFilters}
                   showEmptyGroup={showEmptyGroup}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   canEditProperties={canEditProperties}
@@ -165,8 +167,8 @@ export interface IKanBanSwimLanes {
   group_by: string | null;
   handleIssues: (issue: TIssue, action: EIssueActions) => void;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  kanBanToggle: any;
-  handleKanBanToggle: any;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
@@ -192,8 +194,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     group_by,
     handleIssues,
     quickActions,
-    kanBanToggle,
-    handleKanBanToggle,
+    kanbanFilters,
+    handleKanbanFilters,
     showEmptyGroup,
     isDragStarted,
     disableIssueCreation,
@@ -227,8 +229,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issueIds={issueIds}
           group_by={group_by}
           sub_group_by={sub_group_by}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
+          kanbanFilters={kanbanFilters}
+          handleKanbanFilters={handleKanbanFilters}
           list={groupByList}
         />
       </div>
@@ -243,8 +245,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           sub_group_by={sub_group_by}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
+          kanbanFilters={kanbanFilters}
+          handleKanbanFilters={handleKanbanFilters}
           showEmptyGroup={showEmptyGroup}
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}

@@ -1,3 +1,6 @@
+# ******************************************
+# STAGE 1: Build the project
+# ******************************************
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
 # Set working directory
@@ -8,6 +11,10 @@ COPY . .
 
 RUN turbo prune --scope=web --docker
 
+
+# ******************************************
+# STAGE 2: Install dependencies & build the project
+# ******************************************
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
 
@@ -31,6 +38,11 @@ ENV NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
 
 RUN yarn turbo run build --filter=web
 
+
+# ******************************************
+# STAGE 3: Copy the project and start it
+# ******************************************
+
 FROM node:18-alpine AS runner
 WORKDIR /app
 
@@ -46,6 +58,7 @@ COPY --from=installer /app/web/package.json .
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/web/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/web/.next ./web/.next
+COPY --from=installer --chown=captain:plane /app/web/public ./web/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ARG NEXT_PUBLIC_DEPLOY_URL=""

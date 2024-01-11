@@ -93,6 +93,7 @@ export const ModuleForm: React.FC<Props> = ({
                       setActiveProject(val);
                     }}
                     buttonVariant="border-with-text"
+                    tabIndex={10}
                   />
                 </div>
               )}
@@ -124,6 +125,7 @@ export const ModuleForm: React.FC<Props> = ({
                   hasError={Boolean(errors.name)}
                   placeholder="Module Title"
                   className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                  tabIndex={1}
                 />
               )}
             />
@@ -141,6 +143,7 @@ export const ModuleForm: React.FC<Props> = ({
                   placeholder="Description..."
                   className="h-24 w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
+                  tabIndex={2}
                 />
               )}
             />
@@ -157,6 +160,7 @@ export const ModuleForm: React.FC<Props> = ({
                     buttonVariant="border-with-text"
                     placeholder="Start date"
                     maxDate={maxDate ?? undefined}
+                    tabIndex={3}
                   />
                 </div>
               )}
@@ -172,11 +176,12 @@ export const ModuleForm: React.FC<Props> = ({
                     buttonVariant="border-with-text"
                     placeholder="Target date"
                     minDate={minDate ?? undefined}
+                    tabIndex={4}
                   />
                 </div>
               )}
             />
-            <ModuleStatusSelect control={control} error={errors.status} />
+            <ModuleStatusSelect control={control} error={errors.status} tabIndex={5} />
             <Controller
               control={control}
               name="lead"
@@ -189,6 +194,7 @@ export const ModuleForm: React.FC<Props> = ({
                     multiple={false}
                     buttonVariant="border-with-text"
                     placeholder="Lead"
+                    tabIndex={6}
                   />
                 </div>
               )}
@@ -206,6 +212,7 @@ export const ModuleForm: React.FC<Props> = ({
                     buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
                     placeholder="Members"
+                    tabIndex={7}
                   />
                 </div>
               )}
@@ -214,10 +221,10 @@ export const ModuleForm: React.FC<Props> = ({
         </div>
       </div>
       <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={8}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={9}>
           {status ? (isSubmitting ? "Updating" : "Update module") : isSubmitting ? "Creating" : "Create module"}
         </Button>
       </div>
