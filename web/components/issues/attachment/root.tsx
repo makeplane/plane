@@ -74,7 +74,11 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
           disabled={disabled}
           handleAttachmentOperations={handleAttachmentOperations}
         />
-        <IssueAttachmentsList issueId={issueId} handleAttachmentOperations={handleAttachmentOperations} />
+        <IssueAttachmentsList
+          issueId={issueId}
+          disabled={disabled}
+          handleAttachmentOperations={handleAttachmentOperations}
+        />
       </div>
     </div>
   );

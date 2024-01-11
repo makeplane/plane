@@ -83,7 +83,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         projectId={projectId}
         issueId={issueId}
         labelOperations={labelOperations}
-        disabled={false}
+        disabled={disabled}
       />
 
       <LabelCreate
