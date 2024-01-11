@@ -6,12 +6,16 @@ import { usePage } from "hooks/store";
 import { PagesListView } from "components/pages/pages-list";
 // ui
 import { Loader } from "@plane/ui";
+import { useRouter } from "next/router";
+import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 
 export const AllPagesList: FC = observer(() => {
+  const router = useRouter();
+  const { projectId } = router.query;
   // store
-  const { projectPageIds } = usePage();
+  const pageStores = useProjectSpecificPages(projectId as string);
 
-  if (!projectPageIds)
+  if (!pageStores)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -19,6 +23,5 @@ export const AllPagesList: FC = observer(() => {
         <Loader.Item height="40px" />
       </Loader>
     );
-
-  return <PagesListView pageIds={projectPageIds} />;
+  return <PagesListView />;
 });

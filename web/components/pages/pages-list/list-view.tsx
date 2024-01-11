@@ -13,14 +13,16 @@ import { Loader } from "@plane/ui";
 import emptyPage from "public/empty-state/empty_page.png";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
+import { IPageStore } from "store/page.store";
 
-type IPagesListView = {
-  pageIds: string[];
-};
+// type IPagesListView = {
+//   pageIds: string[];
+// };
 
-export const PagesListView: FC<IPagesListView> = observer((props) => {
-  const { pageIds } = props;
+export const PagesListView: FC = observer(() => {
   // store hooks
+
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
@@ -31,21 +33,18 @@ export const PagesListView: FC<IPagesListView> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const pageStores = useProjectSpecificPages(projectId as string);
+
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
-      {pageIds && workspaceSlug && projectId ? (
+      {pageStores && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
-          {pageIds.length > 0 ? (
+          {pageStores.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pageIds.map((pageId) => (
-                <PagesListItem
-                  key={pageId}
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  pageId={pageId}
-                />
+              {pageStores.map((pageStore: IPageStore, index: number) => (
+                <PagesListItem key={index} pageStore={pageStore} />
               ))}
             </ul>
           ) : (
