@@ -5,8 +5,8 @@ on:
     branches:
       - multi-platform-build
 
-env:
-  TARGET_BRANCH: ${{ github.ref_name }}
+# env:
+#   TARGET_BRANCH: ${{ github.ref_name }}
 
 jobs:
   # branch_build_setup:
