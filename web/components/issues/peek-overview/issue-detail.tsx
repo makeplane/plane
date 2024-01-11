@@ -1,23 +1,18 @@
+import debounce from "lodash/debounce";
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import debounce from "lodash/debounce";
-// packages
-import { RichTextEditor } from "@plane/rich-text-editor";
 // hooks
-import { useMention, useProject, useUser } from "hooks/store";
+import { useProject, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
+import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
 import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { TIssue, IUser } from "@plane/types";
-// services
-import { FileService } from "services/file.service";
+import { IUser, TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
-
-const fileService = new FileService();
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -49,7 +44,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   const { getProjectById } = useProject();
   // derived values
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -181,11 +175,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           name="description_html"
           control={control}
           render={({ field: { onChange } }) => (
-            <RichTextEditor
-              cancelUploadImage={fileService.cancelUpload}
-              uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-              deleteFile={fileService.deleteImage}
-              restoreFile={fileService.restoreImage}
+            <RichTextEditorWrapper
+              workspaceSlug={workspaceSlug}
               value={localIssueDescription.description_html}
               rerenderOnPropsChange={localIssueDescription}
               setShouldShowAlert={setShowAlert}
@@ -199,8 +190,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
                 onChange(description_html);
                 debouncedFormSave();
               }}
-              mentionSuggestions={mentionSuggestions}
-              mentionHighlights={mentionHighlights}
             />
           )}
         />

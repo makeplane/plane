@@ -1,21 +1,16 @@
-import React, { FC, useState, useRef } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
-// editor
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { FC, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useEstimate, useMention, useProject } from "hooks/store";
+import { useApplication, useEstimate, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
 // components
+import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
 import { GptAssistantPopover } from "components/core";
-import { ParentIssuesListModal } from "components/issues";
-import { IssueLabelSelect } from "components/issues/select";
-import { CreateLabelModal } from "components/labels";
 import {
   CycleDropdown,
   DateDropdown,
@@ -26,12 +21,15 @@ import {
   ProjectMemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
+import { ParentIssuesListModal } from "components/issues";
+import { IssueLabelSelect } from "components/issues/select";
+import { CreateLabelModal } from "components/labels";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -59,7 +57,6 @@ export interface IssueFormProps {
 
 // services
 const aiService = new AIService();
-const fileService = new FileService();
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { data, onChange, onClose, onSubmit, projectId } = props;
@@ -81,7 +78,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -326,11 +322,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   name="description_html"
                   control={control}
                   render={({ field: { value, onChange } }) => (
-                    <RichTextEditorWithRef
-                      cancelUploadImage={fileService.cancelUpload}
-                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                      deleteFile={fileService.deleteImage}
-                      restoreFile={fileService.restoreImage}
+                    <RichTextEditorWrapper
+                      workspaceSlug={workspaceSlug as string}
                       ref={editorRef}
                       debouncedUpdatesEnabled={false}
                       value={
@@ -343,9 +336,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         onChange(description_html);
                         handleFormChange();
                       }}
-                      mentionHighlights={mentionHighlights}
-                      mentionSuggestions={mentionSuggestions}
-                      // tabIndex={2}
                     />
                   )}
                 />

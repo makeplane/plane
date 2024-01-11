@@ -5,13 +5,10 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { RichTextEditor } from "@plane/rich-text-editor";
+import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
-// services
-import { FileService } from "services/file.service";
-import { useMention } from "hooks/store";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -34,16 +31,12 @@ export interface IssueDetailsProps {
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
-const fileService = new FileService();
-
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations, isAllowed, isSubmitting, setIsSubmitting } = props;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
-  // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     handleSubmit,
@@ -157,17 +150,16 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           </div>
         )}
       </div>
-      <span>{errors.name ? errors.name.message : null}</span>
+      <span>
+        <>{errors.name ? errors.name.message : null}</>
+      </span>
       <div className="relative">
         <Controller
           name="description_html"
           control={control}
           render={({ field: { onChange } }) => (
-            <RichTextEditor
-              cancelUploadImage={fileService.cancelUpload}
-              uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-              deleteFile={fileService.deleteImage}
-              restoreFile={fileService.restoreImage}
+            <RichTextEditorWrapper
+              workspaceSlug={workspaceSlug}
               value={localIssueDescription.description_html}
               rerenderOnPropsChange={localIssueDescription}
               setShouldShowAlert={setShowAlert}
@@ -181,8 +173,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange(description_html);
                 debouncedFormSave();
               }}
-              mentionSuggestions={mentionSuggestions}
-              mentionHighlights={mentionHighlights}
             />
           )}
         />
