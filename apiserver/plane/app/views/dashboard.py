@@ -14,7 +14,9 @@ from django.db.models import (
     Max,
     Subquery,
     JSONField,
+    Prefetch,
 )
+from django.contrib.postgres.aggregates import ArrayAgg
 
 # Third Party imports
 from rest_framework.response import Response
@@ -30,6 +32,7 @@ from plane.db.models import (
     DashboardWidget,
     Dashboard,
     Project,
+    IssueRelation,
 )
 from plane.app.serializers import (
     IssueActivitySerializer,
@@ -155,6 +158,17 @@ def dashboard_created_issues(request, slug):
         Issue.issue_objects.filter(workspace__slug=slug, created_by=request.user)
         .filter(**filters)
         .order_by("created_at")
+        .annotate(assignee=ArrayAgg("assignees", filter=~Q(assignees=None)))
+        .values(
+            "id",
+            "name",
+            "priority",
+            "project",
+            "workspace",
+            "target_date",
+            "sequence_id",
+            "assignee",
+        )
     )
 
     # Priority Ordering
@@ -173,7 +187,7 @@ def dashboard_created_issues(request, slug):
         completed_issues = created_issues.filter(state__group__in=["completed"])[:5]
         return Response(
             {
-                "issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+                "issues": completed_issues,
                 "count": completed_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -190,7 +204,7 @@ def dashboard_created_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
+                "issues": overdue_issues,
                 "count": overdue_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -207,7 +221,7 @@ def dashboard_created_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
+                "issues": upcoming_issues,
                 "count": upcoming_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -305,11 +319,27 @@ def dashboard_recent_projects(request, slug):
         .order_by("-latest_activity")[:4]
     )
 
+    # Use Count aggregation to get the number of recent projects
+    recent_project_count = project_ids.count()
+
+    # Extract project IDs from the recent projects
     project_ids = [activity["project_id"] for activity in project_ids]
 
-    # TODO fetch the projects if the activities are not performed by the user but the part of the project and the projects length in less than 4
+    # Fetch additional projects only if needed
+    if recent_project_count < 4:
+        additional_projects = (
+            Project.objects.filter(
+                project_projectmember__member=request.user,
+                workspace__slug=slug
+            )
+            .exclude(id__in=project_ids)
+        )
 
-    # ProjectMember.objects.filter()
+        # Apply slicing to limit the number of additional projects to 4 - recent_project_count
+        additional_projects = additional_projects[:4 - recent_project_count]
+
+        # Append additional project IDs to the existing list
+        project_ids += list(additional_projects.values_list("id", flat=True))
 
     return Response(
         project_ids,
@@ -434,7 +464,9 @@ class DashboardEndpoint(BaseAPIView):
                                 widget_id=OuterRef("pk"),
                                 dashboard_id=dashboard.id,
                                 filters__isnull=False,
-                            ).exclude(filters={}).values("filters")[:1]
+                            )
+                            .exclude(filters={})
+                            .values("filters")[:1]
                         )
                     )
                     .annotate(
