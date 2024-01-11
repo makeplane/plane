@@ -3,9 +3,10 @@ import { useContext } from "react";
 import { StoreContext } from "contexts/store-context";
 // types
 import { IPageStore } from "store/page.store";
+import { IProjectPageStore } from "store/project-page.store";
 
-export const useProjectSpecificPages = (projectId: string): IPageStore[] => {
+export const useProjectSpecificPages = (projectId: string): IProjectPageStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("usePage must be used within StoreProvider");
-  return context.projectPages.projectPages[projectId];
+  return context.projectPages;
 };

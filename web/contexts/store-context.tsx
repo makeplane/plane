@@ -1,3 +1,4 @@
+import makeInspectable from "mobx-devtools-mst";
 import { createContext } from "react";
 // mobx store
 import { RootStore } from "store/root.store";
@@ -8,6 +9,7 @@ export const StoreContext = createContext<RootStore>(rootStore);
 
 const initializeStore = () => {
   const _rootStore = rootStore ?? new RootStore();
+  makeInspectable(_rootStore);
   if (typeof window === "undefined") return _rootStore;
   if (!rootStore) rootStore = _rootStore;
   return _rootStore;

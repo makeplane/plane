@@ -1,5 +1,4 @@
 import { useState, Fragment, ReactElement } from "react";
-import { useMobxStore } from "lib/mobx/store-provider";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { Tab } from "@headlessui/react";
@@ -49,7 +48,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // store
   const { currentUser, currentUserLoader } = useUser();
 
-  const { projectPages, projectArchivedPages, fetchProjectPages, fetchArchivedProjectPages } = useProjectPages();
+  const { fetchProjectPages, fetchArchivedProjectPages } = useProjectPages();
   // hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
   // local storage
