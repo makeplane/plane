@@ -29,9 +29,9 @@ export const DashboardWidgets: React.FC<any> = observer((props) => {
   if (!workspaceSlug || !homeDashboardId) return null;
 
   return (
-    <div className="grid md:grid-cols-2 gap-7">
+    <div className="grid lg:grid-cols-2 gap-7">
       {doesWidgetExist("overview_stats") && (
-        <div className="md:col-span-2">
+        <div className="lg:col-span-2">
           <OverviewStatsWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
         </div>
       )}
@@ -54,7 +54,7 @@ export const DashboardWidgets: React.FC<any> = observer((props) => {
         <RecentProjectsWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
       )}
       {doesWidgetExist("recent_collaborators") && (
-        <div className="md:col-span-2">
+        <div className="lg:col-span-2">
           <RecentCollaboratorsWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
         </div>
       )}

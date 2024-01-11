@@ -1,3 +1,6 @@
+import Link from "next/link";
+// hooks
+import { useIssueDetail } from "hooks/store";
 // components
 import {
   CreatedCompletedIssueListItem,
@@ -5,21 +8,36 @@ import {
   CreatedUpcomingIssueListItem,
 } from "components/dashboard";
 // ui
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
-import { IWidgetIssue } from "@plane/types";
+import { TIssuesListTypes, TWidgetIssue } from "@plane/types";
 
 type Props = {
-  issues: IWidgetIssue[];
+  issues: TWidgetIssue[];
+  isLoading?: boolean;
   totalIssues: number;
-  type: "upcoming" | "overdue" | "completed";
+  type: TIssuesListTypes;
   workspaceSlug: string;
 };
 
 export const CreatedIssuesList: React.FC<Props> = (props) => {
-  const { issues, totalIssues, type, workspaceSlug } = props;
+  const { issues, isLoading = false, totalIssues, type, workspaceSlug } = props;
+  // store hooks
+  const { setPeekIssue } = useIssueDetail();
+
+  const handleIssuePeekOverview = (issue: TWidgetIssue) =>
+    setPeekIssue({ workspaceSlug, projectId: issue.project, issueId: issue.id });
+
+  const today = renderFormattedPayloadDate(new Date());
+  const filterParams =
+    type === "upcoming"
+      ? `?target_date=${today};after`
+      : type === "overdue"
+      ? `?target_date=${today};before`
+      : "?state_group=completed";
 
   return (
     <>
@@ -40,22 +58,52 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
           <h6 className="text-center">Assigned to</h6>
         </div>
         <div className="px-4 mt-2">
-          {issues.map((issue) => {
-            if (type === "upcoming")
-              return <CreatedUpcomingIssueListItem key={issue.id} issue={issue} workspaceSlug={workspaceSlug} />;
-            if (type === "overdue")
-              return <CreatedOverdueIssueListItem key={issue.id} issue={issue} workspaceSlug={workspaceSlug} />;
-            if (type === "completed")
-              return <CreatedCompletedIssueListItem key={issue.id} issue={issue} workspaceSlug={workspaceSlug} />;
-          })}
+          {isLoading ? (
+            <Loader className="mx-3 space-y-4">
+              <Loader.Item height="25px" />
+              <Loader.Item height="25px" />
+              <Loader.Item height="25px" />
+              <Loader.Item height="25px" />
+            </Loader>
+          ) : (
+            issues.map((issue) => {
+              if (type === "upcoming")
+                return (
+                  <CreatedUpcomingIssueListItem
+                    key={issue.id}
+                    issue={issue}
+                    workspaceSlug={workspaceSlug}
+                    onClick={handleIssuePeekOverview}
+                  />
+                );
+              if (type === "overdue")
+                return (
+                  <CreatedOverdueIssueListItem
+                    key={issue.id}
+                    issue={issue}
+                    workspaceSlug={workspaceSlug}
+                    onClick={handleIssuePeekOverview}
+                  />
+                );
+              if (type === "completed")
+                return (
+                  <CreatedCompletedIssueListItem
+                    key={issue.id}
+                    issue={issue}
+                    workspaceSlug={workspaceSlug}
+                    onClick={handleIssuePeekOverview}
+                  />
+                );
+            })
+          )}
         </div>
       </div>
       {totalIssues > issues.length && (
-        <div className="mt-6 text-center">
+        <Link href={`/${workspaceSlug}/workspace-views/created/${filterParams}`} className="block mt-6 text-center">
           <Button type="button" variant="accent-primary" className="py-1 px-2 text-xs">
             View all issues
           </Button>
-        </div>
+        </Link>
       )}
     </>
   );

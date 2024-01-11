@@ -5,9 +5,12 @@ import { observer } from "mobx-react-lite";
 import { useDashboard } from "hooks/store";
 // components
 import { MarimekkoGraph } from "components/ui";
-import { IssuesByPriorityWidgetLoader } from "components/dashboard/widgets";
+import { WidgetLoader } from "components/dashboard/widgets";
+import { DurationFilterDropdown } from "./dropdowns";
+// ui
+import { PriorityIcon } from "@plane/ui";
 // types
-import { IIssuesByPriorityWidgetResponse } from "@plane/types";
+import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
 
@@ -15,7 +18,7 @@ const TEXT_COLORS = {
   urgent: "#F4A9AA",
   high: "#AB4800",
   medium: "#AB6400",
-  low: "#C1D0FF",
+  low: "#1F2D5C",
   none: "#60646C",
 };
 
@@ -34,9 +37,9 @@ const CustomBar = (props: any) => {
         {/* Actual Bar */}
         <rect
           x={0}
-          y={isMouseOver ? -11 : 0}
+          y={isMouseOver ? -6 : 0}
           width={bar?.width}
-          height={isMouseOver ? bar?.height + 11 : bar?.height}
+          height={isMouseOver ? bar?.height + 6 : bar?.height}
           fill={bar?.fill}
           stroke={bar?.borderColor}
           strokeWidth={bar?.borderWidth}
@@ -68,27 +71,45 @@ const WIDGET_KEY = "issues_by_priority";
 export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = getWidgetStats<IIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const {
+    fetchWidgetStats,
+    widgetStats: allWidgetStats,
+    getWidgetDetails,
+    updateDashboardWidgetFilters,
+  } = useDashboard();
+  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TIssuesByPriorityWidgetResponse[];
+
+  const handleUpdateFilters = (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
+    if (!widgetDetails) return;
+
+    updateDashboardWidgetFilters(workspaceSlug, dashboardId, widgetDetails.id, {
+      widgetKey: WIDGET_KEY,
+      filters,
+    });
+  };
 
   useEffect(() => {
-    if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);
+    if (!widgetStats)
+      fetchWidgetStats(workspaceSlug, dashboardId, {
+        widget_key: WIDGET_KEY,
+      });
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
-  console.log("allWidgetStats", allWidgetStats);
-
-  if (!widgetStats) return <IssuesByPriorityWidgetLoader />;
+  if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   const totalCount = widgetStats.reduce((acc, item) => acc + item?.count, 0);
-  const chartData = widgetStats.map((item) => ({
-    priority: item?.priority,
-    percentage: (item?.count / totalCount) * 100,
-    urgent: item?.priority === "urgent" ? 1 : 0,
-    high: item?.priority === "high" ? 1 : 0,
-    medium: item?.priority === "medium" ? 1 : 0,
-    low: item?.priority === "low" ? 1 : 0,
-    none: item?.priority === "none" ? 1 : 0,
-  }));
+  const chartData = widgetStats
+    .filter((i) => i.count !== 0)
+    .map((item) => ({
+      priority: item?.priority,
+      percentage: (item?.count / totalCount) * 100,
+      urgent: item?.priority === "urgent" ? 1 : 0,
+      high: item?.priority === "high" ? 1 : 0,
+      medium: item?.priority === "medium" ? 1 : 0,
+      low: item?.priority === "low" ? 1 : 0,
+      none: item?.priority === "none" ? 1 : 0,
+    }));
 
   const CustomBarsLayer = (props: any) => {
     const { bars } = props;
@@ -109,8 +130,16 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
       href={`/${workspaceSlug}/workspace-views/assigned`}
       className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300"
     >
-      <div className="flex items-center justify-between gap-2 px-7">
+      <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <h4 className="text-lg font-semibold text-custom-text-300">Priority of assigned issues</h4>
+        <DurationFilterDropdown
+          value={widgetDetails.widget_filters.duration ?? "this_week"}
+          onChange={(val) =>
+            handleUpdateFilters({
+              duration: val,
+            })
+          }
+        />
       </div>
       <div className="flex items-center px-11 h-full">
         <div className="w-full -mt-[11px]">
@@ -187,15 +216,17 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
             enableGridY={false}
             layers={[CustomBarsLayer]}
           />
-          <div className="flex items-center gap-1 w-full mt-2 text-sm font-semibold text-custom-text-300">
+          <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
             {/* TODO: add priority icon */}
             {chartData.map((item) => (
               <p
                 key={item.priority}
+                className="flex items-center gap-1"
                 style={{
                   width: `${item.percentage}%`,
                 }}
               >
+                <PriorityIcon priority={item.priority} withContainer />
                 {item.percentage.toFixed(0)}%
               </p>
             ))}

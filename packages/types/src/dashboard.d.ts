@@ -1,4 +1,4 @@
-import { TIssuePriorities } from "./issues";
+import { IIssueActivity, TIssuePriorities } from "./issues";
 import { TIssueRelationTypes } from "./issues/issue_relation";
 import { TStateGroups } from "./state";
 
@@ -12,31 +12,91 @@ export type TWidgetKeys =
   | "recent_projects"
   | "recent_collaborators";
 
-export interface IWidget {
+export type TIssuesListTypes = "upcoming" | "overdue" | "completed";
+
+export type TDurationFilterOptions =
+  | "today"
+  | "this_week"
+  | "this_month"
+  | "this_year";
+
+// widget filters
+export type TAssignedIssuesWidgetFilters = {
+  duration?: TDurationFilterOptions;
+  tab?: TIssuesListTypes;
+};
+
+export type TCreatedIssuesWidgetFilters = {
+  duration?: TDurationFilterOptions;
+  tab?: TIssuesListTypes;
+};
+
+export type TIssuesByStateGroupsWidgetFilters = {
+  duration?: TDurationFilterOptions;
+};
+
+export type TIssuesByPriorityWidgetFilters = {
+  duration?: TDurationFilterOptions;
+};
+
+export type TWidgetFiltersFormData =
+  | {
+      widgetKey: "assigned_issues";
+      filters: Partial<TAssignedIssuesWidgetFilters>;
+    }
+  | {
+      widgetKey: "created_issues";
+      filters: Partial<TCreatedIssuesWidgetFilters>;
+    }
+  | {
+      widgetKey: "issues_by_state_groups";
+      filters: Partial<TIssuesByStateGroupsWidgetFilters>;
+    }
+  | {
+      widgetKey: "issues_by_priority";
+      filters: Partial<TIssuesByPriorityWidgetFilters>;
+    };
+
+export type TWidget = {
   id: string;
   is_visible: boolean;
-  filters: Object;
   key: TWidgetKeys;
-}
+  readonly widget_filters: // only for read
+  TAssignedIssuesWidgetFilters &
+    TCreatedIssuesWidgetFilters &
+    TIssuesByStateGroupsWidgetFilters &
+    TIssuesByPriorityWidgetFilters;
+  filters: // only for write
+  TAssignedIssuesWidgetFilters &
+    TCreatedIssuesWidgetFilters &
+    TIssuesByStateGroupsWidgetFilters &
+    TIssuesByPriorityWidgetFilters;
+};
 
-export interface IOverviewStatsWidgetResponse {
-  assigned_issues_count: number;
-  completed_issues_count: number;
-  created_issues_count: number;
-  pending_issues_count: number;
-}
+export type TWidgetStatsRequestParams =
+  | {
+      widget_key: TWidgetKeys;
+    }
+  | {
+      duration: string;
+      issue_type: TIssuesListTypes;
+      widget_key: "assigned_issues";
+    }
+  | {
+      duration: string;
+      issue_type: TIssuesListTypes;
+      widget_key: "created_issues";
+    }
+  | {
+      duration: string;
+      widget_key: "issues_by_state_groups";
+    }
+  | {
+      duration: string;
+      widget_key: "issues_by_priority";
+    };
 
-export interface IIssuesByStateGroupsWidgetResponse {
-  count: number;
-  state__group: TStateGroups;
-}
-
-export interface IIssuesByPriorityWidgetResponse {
-  count: number;
-  priority: TIssuePriorities;
-}
-
-export interface IWidgetIssue {
+export type TWidgetIssue = {
   assignees: string[];
   id: string;
   name: string;
@@ -52,43 +112,57 @@ export interface IWidgetIssue {
   state: string;
   target_date: string | null;
   workspace: string;
-}
+};
 
-export interface IAssignedIssuesWidgetResponse {
-  completed_issues: IWidgetIssue[];
+// widget stats responses
+export type TOverviewStatsWidgetResponse = {
+  assigned_issues_count: number;
   completed_issues_count: number;
-  overdue_issues: IWidgetIssue[];
-  overdue_issues_count: number;
-  upcoming_issues: IWidgetIssue[];
-  upcoming_issues_count: number;
-}
+  created_issues_count: number;
+  pending_issues_count: number;
+};
 
-export interface ICreatedIssuesWidgetResponse {
-  completed_issues: IWidgetIssue[];
-  completed_issues_count: number;
-  overdue_issues: IWidgetIssue[];
-  overdue_issues_count: number;
-  upcoming_issues: IWidgetIssue[];
-  upcoming_issues_count: number;
-}
+export type TAssignedIssuesWidgetResponse = {
+  issues: TWidgetIssue[];
+  count: number;
+};
 
-export type IRecentProjectsWidgetResponse = string[];
+export type TCreatedIssuesWidgetResponse = {
+  issues: TWidgetIssue[];
+  count: number;
+};
 
-export interface IRecentCollaboratorsWidgetResponse {
+export type TIssuesByStateGroupsWidgetResponse = {
+  count: number;
+  state: TStateGroups;
+};
+
+export type TIssuesByPriorityWidgetResponse = {
+  count: number;
+  priority: TIssuePriorities;
+};
+
+export type TRecentActivityWidgetResponse = IIssueActivity;
+
+export type TRecentProjectsWidgetResponse = string[];
+
+export type TRecentCollaboratorsWidgetResponse = {
   active_issue_count: number;
   user_id: string;
-}
+};
 
-export type IWidgetStatsResponse =
-  | IOverviewStatsWidgetResponse
-  | IIssuesByStateGroupsWidgetResponse[]
-  | IIssuesByPriorityWidgetResponse[]
-  | IAssignedIssuesWidgetResponse
-  | ICreatedIssuesWidgetResponse
-  | IRecentProjectsWidgetResponse
-  | IRecentCollaboratorsWidgetResponse[];
+export type TWidgetStatsResponse =
+  | TOverviewStatsWidgetResponse
+  | TIssuesByStateGroupsWidgetResponse[]
+  | TIssuesByPriorityWidgetResponse[]
+  | TAssignedIssuesWidgetResponse
+  | TCreatedIssuesWidgetResponse
+  | TRecentActivityWidgetResponse[]
+  | TRecentProjectsWidgetResponse
+  | TRecentCollaboratorsWidgetResponse[];
 
-export interface IDashboard {
+// dashboard
+export type TDashboard = {
   created_at: string;
   created_by: string | null;
   description_html: string;
@@ -100,9 +174,9 @@ export interface IDashboard {
   type: string;
   updated_at: string;
   updated_by: string | null;
-}
+};
 
-export interface IHomeDashboardResponse {
-  dashboard: IDashboard;
-  widgets: IWidget[];
-}
+export type THomeDashboardResponse = {
+  dashboard: TDashboard;
+  widgets: TWidget[];
+};

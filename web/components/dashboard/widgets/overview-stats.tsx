@@ -4,11 +4,12 @@ import Link from "next/link";
 // hooks
 import { useDashboard } from "hooks/store";
 // components
-import { OverviewStatsWidgetLoader } from "components/dashboard/widgets";
+import { WidgetLoader } from "components/dashboard/widgets";
 // helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
-import { IOverviewStatsWidgetResponse } from "@plane/types";
+import { TOverviewStatsWidgetResponse } from "@plane/types";
 
 type Props = {
   dashboardId: string;
@@ -20,43 +21,46 @@ const WIDGET_KEY = "overview_stats";
 export const OverviewStatsWidget: React.FC<Props> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = getWidgetStats<IOverviewStatsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
+  // derived values
+  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TOverviewStatsWidgetResponse;
 
+  const today = renderFormattedPayloadDate(new Date());
   const STATS_LIST = [
     {
       key: "assigned",
       title: "Issues assigned",
       count: widgetStats?.assigned_issues_count,
-      link: `/${workspaceSlug?.toString()}/workspace-views/assigned`,
+      link: `/${workspaceSlug}/workspace-views/assigned`,
     },
     {
       key: "overdue",
       title: "Issues overdue",
       count: widgetStats?.pending_issues_count,
-      link: `/${workspaceSlug?.toString()}/workspace-views/assigned`,
+      link: `/${workspaceSlug}/workspace-views/assigned/?target_date=${today};before`,
     },
     {
       key: "created",
       title: "Issues created",
       count: widgetStats?.created_issues_count,
-      link: `/${workspaceSlug?.toString()}/workspace-views/created`,
+      link: `/${workspaceSlug}/workspace-views/created`,
     },
     {
       key: "completed",
       title: "Issues completed",
       count: widgetStats?.completed_issues_count,
-      link: `/${workspaceSlug?.toString()}/workspace-views/assigned?state_group=completed`,
+      link: `/${workspaceSlug}/workspace-views/assigned?state_group=completed`,
     },
   ];
 
-  console.log("allWidgetStats", allWidgetStats);
-
   useEffect(() => {
-    if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);
+    if (!widgetStats)
+      fetchWidgetStats(workspaceSlug, dashboardId, {
+        widget_key: WIDGET_KEY,
+      });
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
-  if (!widgetStats) return <OverviewStatsWidgetLoader />;
+  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full grid grid-cols-4 p-0.5 hover:shadow-custom-shadow-4xl duration-300">

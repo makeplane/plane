@@ -1,10 +1,18 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import { History } from "lucide-react";
 // hooks
-import { useDashboard } from "hooks/store";
+import { useDashboard, useUser } from "hooks/store";
 // components
-import { RecentActivityWidgetLoader } from "components/dashboard/widgets";
+import { ActivityIcon, ActivityMessage } from "components/core";
+import { WidgetLoader } from "components/dashboard/widgets";
+// ui
+import { Avatar } from "@plane/ui";
+// helpers
+import { calculateTimeAgo } from "helpers/date-time.helper";
+// types
+import { TRecentActivityWidgetResponse } from "@plane/types";
 
 type Props = {
   dashboardId: string;
@@ -16,16 +24,19 @@ const WIDGET_KEY = "recent_activity";
 export const RecentActivityWidget: React.FC<Props> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = getWidgetStats<any>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const { currentUser } = useUser();
+  // derived values
+  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
+  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TRecentActivityWidgetResponse[];
 
   useEffect(() => {
-    if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);
+    if (!widgetStats)
+      fetchWidgetStats(workspaceSlug, dashboardId, {
+        widget_key: WIDGET_KEY,
+      });
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
-  console.log("allWidgetStats", allWidgetStats);
-
-  if (!widgetStats) return <RecentActivityWidgetLoader />;
+  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <Link
@@ -34,6 +45,59 @@ export const RecentActivityWidget: React.FC<Props> = observer((props) => {
     >
       <div className="flex items-center justify-between gap-2 px-7">
         <h4 className="text-lg font-semibold text-custom-text-300">My activity</h4>
+      </div>
+      <div className="space-y-6 mt-4 mx-7">
+        {widgetStats.map((activity) => (
+          <div key={activity.id} className="flex gap-5">
+            <div className="flex-shrink-0">
+              {activity.field ? (
+                activity.new_value === "restore" ? (
+                  <History className="h-3.5 w-3.5 text-custom-text-200" />
+                ) : (
+                  <div className="h-6 w-6 flex justify-center">
+                    <ActivityIcon activity={activity} />
+                  </div>
+                )
+              ) : activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
+                <Avatar
+                  src={activity.actor_detail.avatar}
+                  name={activity.actor_detail.display_name}
+                  size={24}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white">
+                  {activity.actor_detail.is_bot
+                    ? activity.actor_detail.first_name.charAt(0)
+                    : activity.actor_detail.display_name.charAt(0)}
+                </div>
+              )}
+            </div>
+            <div className="-mt-1 break-words">
+              <p className="text-sm text-custom-text-200">
+                <span className="font-medium text-custom-text-100">
+                  {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
+                </span>
+                {activity.field ? (
+                  <ActivityMessage activity={activity} showIssue />
+                ) : (
+                  <span>
+                    created this{" "}
+                    <a
+                      href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
+                    >
+                      Issue.
+                    </a>
+                  </span>
+                )}
+              </p>
+              <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </Link>
   );

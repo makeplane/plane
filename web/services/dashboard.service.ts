@@ -2,14 +2,14 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IHomeDashboardResponse, IWidget, IWidgetStatsResponse, TWidgetKeys } from "@plane/types";
+import { THomeDashboardResponse, TWidget, TWidgetStatsResponse, TWidgetStatsRequestParams } from "@plane/types";
 
 export class DashboardService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getHomeDashboardWidgets(workspaceSlug: string): Promise<IHomeDashboardResponse> {
+  async getHomeDashboardWidgets(workspaceSlug: string): Promise<THomeDashboardResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/dashboard/`, {
       params: {
         dashboard_type: "home",
@@ -24,12 +24,10 @@ export class DashboardService extends APIService {
   async getWidgetStats(
     workspaceSlug: string,
     dashboardId: string,
-    widgetKey: TWidgetKeys
-  ): Promise<IWidgetStatsResponse> {
+    params: TWidgetStatsRequestParams
+  ): Promise<TWidgetStatsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/dashboard/${dashboardId}/`, {
-      params: {
-        widget_key: widgetKey,
-      },
+      params,
     })
       .then((response) => response?.data)
       .catch((error) => {
@@ -37,7 +35,7 @@ export class DashboardService extends APIService {
       });
   }
 
-  async getDashboardDetails(dashboardId: string): Promise<IWidgetStatsResponse> {
+  async getDashboardDetails(dashboardId: string): Promise<TWidgetStatsResponse> {
     return this.get(`/api/dashboard/${dashboardId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -45,7 +43,7 @@ export class DashboardService extends APIService {
       });
   }
 
-  async updateDashboardWidget(dashboardId: string, widgetId: string, data: Partial<IWidget>): Promise<IWidget> {
+  async updateDashboardWidget(dashboardId: string, widgetId: string, data: Partial<TWidget>): Promise<TWidget> {
     return this.patch(`/api/dashboard/${dashboardId}/widgets/${widgetId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
