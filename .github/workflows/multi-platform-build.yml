@@ -7,65 +7,21 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
+  PLATFORMS: linux/amd64
 
 jobs:
-  # branch_build_setup:
-  #   name: Build-Push Web/Space/API/Proxy Docker Image
-  #   runs-on: ubuntu-20.04
-
-  #   steps:
-  #     - name: Check out the repo
-  #       uses: actions/checkout@v3.3.0
-
-  #     - name: Uploading Proxy Source
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: proxy-src-code
-  #         path: ./nginx
-  #     - name: Uploading Backend Source
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: backend-src-code
-  #         path: ./apiserver
-  #     - name: Uploading Web Source
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: web-src-code
-  #         path: |
-  #           ./
-  #           !./apiserver
-  #           !./nginx
-  #           !./deploy
-  #           !./space
-  #     # - name: Uploading Space Source
-  #     #   uses: actions/upload-artifact@v3
-  #     #   with:
-  #     #     name: space-src-code
-  #     #     path: |
-  #     #       ./
-  #     #       !./apiserver
-  #     #       !./nginx
-  #     #       !./deploy
-  #     #       !./web
-  #   outputs:
-  #     gh_branch_name: ${{ env.TARGET_BRANCH }}
 
   branch_build_push_frontend:
     runs-on: ubuntu-20.04
-    # needs: [branch_build_setup]
     env:
       FRONTEND_TAG: "FRONTEND_TAG"
     steps:
-      
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
       - name: Set Frontend Docker Tag 
         run: |
           rm -rf ./apiserver ./nginx ./deploy ./space
-
-      - name: Set Frontend Docker Tag 
-        run: |
           if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
@@ -78,23 +34,18 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
         with:
-          platforms: all
+          platforms: ${{ env.PLATFORMS }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.0.0
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ env.PLATFORMS }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2.1.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: Downloading Web Source Code
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: web-src-code
 
       - name: Build and Push Frontend to Docker Container Registry
         uses: docker/build-push-action@v4.0.0
@@ -109,129 +60,151 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  # branch_build_push_space:
-  #   runs-on: ubuntu-20.04
-  #   needs: [branch_build_setup]
-  #   env:
-  #     SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-  #   steps:
-  #     - name: Set Space Docker Tag 
-  #       run: |
-  #         if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-  #           TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-  #         elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-  #           TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-  #         else
-  #           TAG=${{ env.SPACE_TAG }}
-  #         fi
-  #         echo "SPACE_TAG=${TAG}" >> $GITHUB_ENV
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2.5.0
+  branch_build_push_space:
+    runs-on: ubuntu-20.04
+    env:
+      SPACE_TAG: "SPACE_TAG"
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3.3.0
 
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v2.1.0
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     - name: Downloading Space Source Code
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: space-src-code
+      - name: Set Space Docker Tag 
+        run: |
+          rm -rf ./apiserver ./nginx ./deploy ./web
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+          echo "SPACE_TAG=${TAG}" >> $GITHUB_ENV
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
 
-  #     - name: Build and Push Space to Docker Hub
-  #       uses: docker/build-push-action@v4.0.0
-  #       with:
-  #         context: .
-  #         file: ./space/Dockerfile.space
-  #         platforms: linux/arm64
-  #         tags: ${{ env.SPACE_TAG }}
-  #         push: true
-  #       env:
-  #         DOCKER_BUILDKIT: 1
-  #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
 
-  # branch_build_push_backend:
-  #   runs-on: ubuntu-20.04
-  #   needs: [branch_build_setup]
-  #   env:
-  #     BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-  #   steps:
-  #     - name: Set Backend Docker Tag 
-  #       run: |
-  #         if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-  #           TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-  #         elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-  #           TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-  #         else
-  #           TAG=${{ env.BACKEND_TAG }}
-  #         fi
-  #         echo "BACKEND_TAG=${TAG}" >> $GITHUB_ENV
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2.5.0
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Downloading Space Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: space-src-code
 
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v2.1.0
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     - name: Downloading Backend Source Code
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: backend-src-code
+      - name: Build and Push Space to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./space/Dockerfile.space
+          platforms: ${{ env.PLATFORMS }}
+          tags: ${{ env.SPACE_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  #     - name: Build and Push Backend to Docker Hub
-  #       uses: docker/build-push-action@v4.0.0
-  #       with:
-  #         context: .
-  #         file: ./Dockerfile.api
-  #         platforms: linux/arm64
-  #         push: true
-  #         tags: ${{ env.BACKEND_TAG }}
-  #       env:
-  #         DOCKER_BUILDKIT: 1
-  #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+  branch_build_push_backend:
+    runs-on: ubuntu-20.04
+    env:
+      BACKEND_TAG: "BACKEND_TAG"
+    steps:
+      - name: Set Backend Docker Tag 
+        run: |
+          rm -rf ./nginx ./deploy ./web ./space
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+          echo "BACKEND_TAG=${TAG}" >> $GITHUB_ENV
 
-  # branch_build_push_proxy:
-  #   runs-on: ubuntu-20.04
-  #   needs: [branch_build_setup]
-  #   env:
-  #     PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-  #   steps:
-  #     - name: Set Proxy Docker Tag 
-  #       run: |
-  #         if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-  #           TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-  #         elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
-  #           TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-  #         else
-  #           TAG=${{ env.PROXY_TAG }}
-  #         fi
-  #         echo "PROXY_TAG=${TAG}" >> $GITHUB_ENV
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2.5.0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
 
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v2.1.0
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
 
-  #     - name: Downloading Proxy Source Code
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: proxy-src-code
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Downloading Backend Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-src-code
 
-  #     - name: Build and Push Plane-Proxy to Docker Hub
-  #       uses: docker/build-push-action@v4.0.0
-  #       with:
-  #         context: .
-  #         file: ./Dockerfile
-  #         platforms: linux/arm64
-  #         tags: ${{ env.PROXY_TAG }}
-  #         push: true
-  #       env:
-  #         DOCKER_BUILDKIT: 1
-  #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and Push Backend to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./apiserver
+          file: ./Dockerfile.api
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+          tags: ${{ env.BACKEND_TAG }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_proxy:
+    runs-on: ubuntu-20.04
+    env:
+      PROXY_TAG: "PROXY_TAG"
+    steps:
+      - name: Set Proxy Docker Tag 
+        run: |
+          rm -rf ./apiserver ./deploy ./web ./space
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+          echo "PROXY_TAG=${TAG}" >> $GITHUB_ENV
+          
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Plane-Proxy to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./nginx
+          file: ./Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          tags: ${{ env.PROXY_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
