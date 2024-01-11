@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { usePage } from "hooks/store";
-// components
 import { PagesListView } from "components/pages/pages-list";
 // ui
 import { Loader } from "@plane/ui";
 import { useRouter } from "next/router";
 import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
+import { trace } from "mobx";
 
 export const AllPagesList: FC = observer(() => {
+  trace(true);
   const router = useRouter();
   const { projectId } = router.query;
   // store

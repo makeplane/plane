@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import {
@@ -14,7 +14,6 @@ import {
   Trash2,
 } from "lucide-react";
 // hooks
-import { useMember, usePage, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
@@ -28,40 +27,42 @@ import { EUserProjectRoles } from "constants/project";
 import { IPageStore } from "store/page.store";
 import { useRouter } from "next/router";
 
+import { trace } from "mobx";
+
 export interface IPagesListItem {
   pageStore: IPageStore;
 }
 
-export const PagesListItem: FC<IPagesListItem> = observer((props) => {
-  // const { workspaceSlug, projectId, pageId } = props;
-  const { pageStore } = props;
-
+export const PagesListItem: FC<IPagesListItem> = observer(({ pageStore }: IPagesListItem) => {
   const {
     id: pageId,
-    owned_by,
     archived_at,
     access,
     is_favorite,
-    is_locked,
     name,
     created_at,
     updated_at,
-    labels,
     makePublic,
     makePrivate,
     addToFavorites,
     removeFromFavorites,
   } = pageStore;
+
+  console.log("PagesListItemRererendered", pageStore.id);
+
   // states
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
-  const {
-    currentUser,
-    membership: { currentProjectRole },
-  } = useUser();
+  // const {
+  //   currentUser,
+  //   membership: { currentProjectRole },
+  // } = useUser();
+  //
+  //
+  const currentProjectRole = 15;
 
   // const {
   //   getArchivedPageById,
@@ -73,10 +74,12 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   //   makePublic,
   //   restorePage,
   // } = usePage();
-  const {
-    project: { getProjectMemberDetails },
-  } = useMember();
+  // const {
+  //   project: { getProjectMemberDetails },
+  // } = useMember();
   // toast alert
+  //
+
   const { setToastAlert } = useToast();
   // derived values
   // const pageDetails = getUnArchivedPageById(pageId) ?? getArchivedPageById(pageId);
@@ -97,6 +100,8 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   const handleAddToFavorites = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
+
+    console.log("handleAddToFavorites");
 
     addToFavorites()
       .then(() => {
@@ -181,8 +186,12 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
 
   // if (!pageDetails) return null;
 
-  const ownerDetails = getProjectMemberDetails(owned_by);
-  const isCurrentUserOwner = owned_by === currentUser?.id;
+  // const ownerDetails = getProjectMemberDetails(owned_by);
+  // const ownerDetails = useMemo(() => getProjectMemberDetails(owned_by), [owned_by, getProjectMemberDetails]);
+  const ownerDetails = { member: { display_name: "test" } };
+
+  // const isCurrentUserOwner = owned_by === currentUser?.id;
+  const isCurrentUserOwner = true;
 
   const userCanEdit =
     isCurrentUserOwner ||

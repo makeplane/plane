@@ -5,9 +5,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useApplication, usePage, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
+import { trace } from "mobx";
 import { PageForm } from "./page-form";
 // types
 import { IPage } from "@plane/types";
+import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
+import { useProjectPages } from "hooks/store/use-project-page";
 
 type Props = {
   data?: IPage | null;
@@ -21,6 +24,8 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { createPage: createPageMobx } = useProjectPages();
   // store hooks
   const {
     eventTracker: { postHogEventTracker },
@@ -36,98 +41,20 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
 
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;
-
-    // await createPage(workspaceSlug.toString(), projectId, payload)
-    //   .then((res) => {
-    //     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-    //     onClose();
-    //     setToastAlert({
-    //       type: "success",
-    //       title: "Success!",
-    //       message: "Page created successfully.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_CREATED",
-    //       {
-    //         ...res,
-    //         state: "SUCCESS",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     setToastAlert({
-    //       type: "error",
-    //       title: "Error!",
-    //       message: err.detail ?? "Page could not be created. Please try again.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_CREATED",
-    //       {
-    //         state: "FAILED",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   });
+    createPageMobx(workspaceSlug.toString(), projectId, payload);
   };
 
-  const updateProjectPage = async (payload: IPage) => {
-    if (!data || !workspaceSlug) return;
-
-    // await updatePage(workspaceSlug.toString(), projectId, data.id, payload)
-    //   .then((res) => {
-    //     onClose();
-    //     setToastAlert({
-    //       type: "success",
-    //       title: "Success!",
-    //       message: "Page updated successfully.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_UPDATED",
-    //       {
-    //         ...res,
-    //         state: "SUCCESS",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     setToastAlert({
-    //       type: "error",
-    //       title: "Error!",
-    //       message: err.detail ?? "Page could not be updated. Please try again.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_UPDATED",
-    //       {
-    //         state: "FAILED",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   });
-  };
+  // const updateProjectPage = async (payload: IPage) => {
+  //   if (!data || !workspaceSlug) return;
+  // };
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
+    await createProjectPage(formData);
 
-    if (!data) await createProjectPage(formData);
-    else await updateProjectPage(formData);
+    // if (!data) await createProjectPage(formData);
+    // TODO: implement update page
+    // else await updateProjectPage(formData);
   };
 
   return (

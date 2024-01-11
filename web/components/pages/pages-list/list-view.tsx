@@ -15,6 +15,8 @@ import emptyPage from "public/empty-state/empty_page.png";
 import { EUserProjectRoles } from "constants/project";
 import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 import { IPageStore } from "store/page.store";
+import { spy, trace } from "mobx";
+import { useMobxDependencyLogger } from "hooks/store/use-mobx-dependency-logger";
 
 // type IPagesListView = {
 //   pageIds: string[];
@@ -22,6 +24,7 @@ import { IPageStore } from "store/page.store";
 
 export const PagesListView: FC = observer(() => {
   // store hooks
+  // trace(true);
 
   const {
     commandPalette: { toggleCreatePageModal },
@@ -33,7 +36,13 @@ export const PagesListView: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const pageStores = useProjectSpecificPages(projectId as string);
+  console.log("PageListViewRererendered");
+
+  // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
+  const projectPageStore = useProjectSpecificPages(projectId as string);
+  // Now, I am observing only the projectPages, out of the projectPageStore.
+  const { projectPages } = projectPageStore;
+  const pageStores = projectPages[projectId as string];
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -43,9 +52,10 @@ export const PagesListView: FC = observer(() => {
         <div className="h-full space-y-4 overflow-y-auto">
           {pageStores.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pageStores.map((pageStore: IPageStore, index: number) => (
-                <PagesListItem key={index} pageStore={pageStore} />
-              ))}
+              {pageStores.map((pageStore: IPageStore, index: number) => {
+                console.log("PageListViewRererendered");
+                return <PagesListItem key={index} pageStore={pageStore} />;
+              })}
             </ul>
           ) : (
             <NewEmptyState
