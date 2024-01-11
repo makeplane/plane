@@ -1,8 +1,7 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { LabelList, LabelCreate } from "./";
-
+import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
 // hooks
 import { useIssueDetail, useLabel } from "hooks/store";
 // types
@@ -79,7 +78,13 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         labelOperations={labelOperations}
       />
 
-      {/* <div>select existing labels</div> */}
+      <IssueLabelSelectRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        labelOperations={labelOperations}
+        disabled={false}
+      />
 
       <LabelCreate
         workspaceSlug={workspaceSlug}
