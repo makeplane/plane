@@ -5,8 +5,8 @@ on:
     branches:
       - multi-platform-build
 
-# env:
-#   TARGET_BRANCH: ${{ github.ref_name }}
+env:
+  TARGET_BRANCH: ${{ github.ref_name }}
 
 jobs:
   # branch_build_setup:
@@ -54,9 +54,9 @@ jobs:
     runs-on: ubuntu-20.04
     # needs: [branch_build_setup]
     env:
-      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-      TARGET_BRANCH: ${{ github.ref_name }}
+      FRONTEND_TAG: "FRONTEND_TAG"
     steps:
+      
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
@@ -71,7 +71,7 @@ jobs:
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
-            TAG=${{ env.FRONTEND_TAG }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
           fi
           echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
       
