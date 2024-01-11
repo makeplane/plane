@@ -4,20 +4,21 @@ BRANCH=master
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
 ARCH=$(uname -m)
-DOCKERHUB_USER=makeplane
+export DOCKERHUB_USER=makeplane
+export APP_RELEASE=$BRANCH
+export PULL_POLICY=always
 NON_AMD_DOCKERHUB_USER=myplane
 
 function buildNonAMD64(){
-    export APP_RELEASE=$BRANCH
-    export DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+    DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
 
     REPO=https://github.com/makeplane/plane.git
 
     CURR_DIR=$PWD
     PLANE_TEMP_CODE_DIR=$(mktemp -d)
-    git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch -q
+    git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch
 
-    cp $PLANE_TEMP_CODE_DIR/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
+    cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
 
     cd $PLANE_TEMP_CODE_DIR
     if [ "$BRANCH" == "master" ];
@@ -26,20 +27,47 @@ function buildNonAMD64(){
     fi
 
     docker compose -f build.yml build --no-cache 
-    cd $CURR_DIR
-    rm -rf $PLANE_TEMP_CODE_DIR
+    # cd $CURR_DIR
+    # rm -rf $PLANE_TEMP_CODE_DIR
 }
 function install(){
     echo 
-    echo "Installing on $PLANE_INSTALL_DIR"
+    echo "Installing Plane.........."
 
-    if [ $ARCH != "amd64" ];
+    if [ $ARCH == "amd64" ];
     then
-        buildNonAMD64
-        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
-    fi
+        download
+    else
+        echo 
+	    echo "You are on '${ARCH}' cpu architecture. "
+        echo "Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. This might take 5-30 min based on your system's hardware configuration. "
+        echo 
+        echo "Select an option 1 to prceed:"
+        echo "   1) Proceed"
+        echo "   2) Exit"
+        echo 
+        read -p "Select Option [1]: " DO_BUILD
+        until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-2]$ ]]; do
+            echo "$DO_BUILD: invalid selection."
+            read -p "Select Option [1]: " DO_BUILD
+        done
+        echo
 
-    download
+        if [ "$DO_BUILD" == "1" ] 
+        then
+            buildNonAMD64
+            echo
+            echo "Build Completed"
+            echo
+            download
+            break;
+        elif [ "$DO_BUILD" == "2" ] 
+        then
+            echo "Install Action cancelled by you."
+        else
+            echo "INVALID ACTION SUPPLIED"
+        fi
+    fi
 }
 function download(){
     cd $SCRIPT_DIR
@@ -57,12 +85,6 @@ function download(){
         cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
     else
         mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
-    fi
-
-    if [ $ARCH != "amd64" ];
-    then
-        buildNonAMD64
-        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
     fi
 
     if [ "$BRANCH" != "master" ];
@@ -83,16 +105,33 @@ function download(){
 }
 function startServices(){
     cd $PLANE_INSTALL_DIR
-    docker compose up -d
+    if [ $ARCH == "amd64" ];
+    then
+        PULL_POLICY=always
+        docker compose up -d --quiet-pull
+    else 
+        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+        PULL_POLICY=never
+        docker compose up -d --quiet-pull
+    fi
     cd $SCRIPT_DIR
 }
 function stopServices(){
     cd $PLANE_INSTALL_DIR
+
+    if [ $ARCH != "amd64" ];
+    then
+        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+    fi
     docker compose down
     cd $SCRIPT_DIR
 }
 function restartServices(){
     cd $PLANE_INSTALL_DIR
+    if [ $ARCH != "amd64" ];
+    then
+        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+    fi
     docker compose restart
     cd $SCRIPT_DIR
 }
@@ -110,7 +149,7 @@ function upgrade(){
 function askForAction(){
     echo
     echo "Select a Action you want to perform:"
-    echo "   1) Install"
+    echo "   1) Install (${ARCH})"
     echo "   2) Start"
     echo "   3) Stop"
     echo "   4) Restart"
