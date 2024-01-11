@@ -7,7 +7,7 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
-  PLATFORMS: linux/amd64
+  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   conditional_build:
