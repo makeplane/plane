@@ -159,7 +159,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId}
                 issueId={issueId}
                 currentUserId={currentUser?.id}
-                disabled={!is_editable}
               />
             )}
 
@@ -439,7 +438,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           )}
 
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!is_editable} />
+            <IssueLinkRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              disabled={!is_editable}
+            />
           )}
         </div>
       </div>

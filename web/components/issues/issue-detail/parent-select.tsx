@@ -72,7 +72,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer(
             )}
           </div>
 
-          {issue?.parent_id && parentIssue && (
+          {issue?.parent_id && parentIssue && !disabled && (
             <div onClick={() => handleParentIssue(null)}>
               <X className="h-2.5 w-2.5" />
             </div>
