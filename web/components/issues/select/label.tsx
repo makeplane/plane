@@ -30,7 +30,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    project: { projectLabels, fetchProjectLabels },
+    project: { getProjectLabels, fetchProjectLabels },
   } = useLabel();
   // states
   const [query, setQuery] = useState("");
@@ -43,6 +43,9 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });
+
+  const projectLabels = getProjectLabels(projectId);
+
   // derived values
   const filteredOptions =
     query === "" ? projectLabels : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
