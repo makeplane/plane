@@ -11,8 +11,6 @@ import { SubIssuesRoot } from "../sub-issues";
 import { StateGroupIcon } from "@plane/ui";
 // types
 import { TIssueOperations } from "./root";
-// constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string;
@@ -28,10 +26,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
-  const {
-    currentUser,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { currentUser } = useUser();
   const { getProjectById } = useProject();
   const { projectStates } = useProjectState();
   const {
@@ -43,8 +38,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   const projectDetails = projectId ? getProjectById(projectId) : null;
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
-
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -78,7 +71,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           issue={issue}
           issueOperations={issueOperations}
-          isAllowed={isAllowed || !is_editable}
+          isAllowed={is_editable}
         />
 
         {currentUser && (
@@ -103,7 +96,12 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       </div>
 
       {/* issue attachments */}
-      <IssueAttachmentRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+      <IssueAttachmentRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        disabled={!is_editable}
+      />
 
       {/* <div className="space-y-5 pt-3">
         <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
