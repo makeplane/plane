@@ -59,11 +59,15 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} portalElement={portalElement} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
+        ellipsis
+      >
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             handleCopyIssueLink();
           }}
         >
@@ -74,8 +78,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setIssueToEdit({
               ...issue,
               cycle: cycleId?.toString() ?? null,
@@ -90,8 +92,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             handleRemoveFromView && handleRemoveFromView();
           }}
         >
@@ -102,8 +102,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -114,8 +112,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setDeleteIssueModal(true);
           }}
         >

@@ -40,11 +40,15 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} portalElement={portalElement} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
+        ellipsis
+      >
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             handleCopyIssueLink();
           }}
         >
@@ -55,8 +59,6 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setDeleteIssueModal(true);
           }}
         >
