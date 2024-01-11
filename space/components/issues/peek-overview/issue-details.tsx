@@ -1,5 +1,5 @@
+import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
 import { IssueReactions } from "components/issues/peek-overview";
-import { RichTextReadOnlyEditor } from "@plane/rich-text-editor";
 // types
 import { IIssue } from "types/issue";
 

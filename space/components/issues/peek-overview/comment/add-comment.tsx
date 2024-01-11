@@ -11,9 +11,7 @@ import { Button } from "@plane/ui";
 // types
 import { Comment } from "types/issue";
 // components
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
-// service
-import fileService from "services/file.service";
+import { LiteTextEditor } from "components/editor/lite-text-editor";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -70,16 +68,13 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <LiteTextEditorWithRef
+            <LiteTextEditor
+              workspaceSlug={workspace_slug}
               onEnterKeyPress={(e) => {
                 userStore.requiredLogin(() => {
                   handleSubmit(onSubmit)(e);
                 });
               }}
-              cancelUploadImage={fileService.cancelUpload}
-              uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
-              deleteFile={fileService.deleteImage}
-              restoreFile={fileService.restoreImage}
               ref={editorRef}
               value={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

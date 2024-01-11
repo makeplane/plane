@@ -6,16 +6,12 @@ import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
-
+import { LiteTextEditor } from "components/editor/lite-text-editor";
 import { CommentReactions } from "components/issues/peek-overview";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
-// services
-import fileService from "services/file.service";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   workspaceSlug: string;
@@ -28,8 +24,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
-
-  const mentionsConfig = useEditorSuggestions();
 
   const editorRef = React.useRef<any>(null);
 
@@ -101,15 +95,11 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <LiteTextEditorWithRef
+                  <LiteTextEditor
+                    workspaceSlug={workspaceSlug}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
-                    cancelUploadImage={fileService.cancelUpload}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={value}
-                    debouncedUpdatesEnabled={false}
                     customClassName="min-h-[50px] p-3 shadow-sm"
                     onChange={(comment_json: Object, comment_html: string) => {
                       onChange(comment_html);
