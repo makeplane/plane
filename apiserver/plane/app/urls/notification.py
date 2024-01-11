@@ -5,6 +5,7 @@ from plane.app.views import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     MarkAllReadNotificationViewSet,
+    UserNotificationPreferenceEndpoint,
 )
 
 
@@ -62,5 +63,10 @@ urlpatterns = [
             }
         ),
         name="mark-all-read-notifications",
+    ),
+    path(
+        "notification-preferences/",
+        UserNotificationPreferenceEndpoint.as_view(),
+        name="notification-preference",
     ),
 ]

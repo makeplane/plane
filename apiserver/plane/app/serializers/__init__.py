@@ -103,7 +103,7 @@ from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSeriali
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import NotificationSerializer
+from .notification import NotificationSerializer, EmailNotificationLogSerializer, UserNotificationPreferenceSerializer
 
 from .exporter import ExporterHistorySerializer
 

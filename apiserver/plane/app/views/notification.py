@@ -15,8 +15,12 @@ from plane.db.models import (
     IssueSubscriber,
     Issue,
     WorkspaceMember,
+    UserNotificationPreference,
 )
-from plane.app.serializers import NotificationSerializer
+from plane.app.serializers import (
+    NotificationSerializer,
+    UserNotificationPreferenceSerializer,
+)
 
 
 class NotificationViewSet(BaseViewSet, BasePaginator):
@@ -277,3 +281,29 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
             updated_notifications, ["read_at"], batch_size=100
         )
         return Response({"message": "Successful"}, status=status.HTTP_200_OK)
+
+
+class UserNotificationPreferenceEndpoint(BaseAPIView):
+    model = UserNotificationPreference
+    serializer_class = UserNotificationPreferenceSerializer
+
+    # request the object
+    def get(self, request):
+        user_notification_preference = UserNotificationPreference.objects.get(
+            user=request.user
+        )
+        serializer = UserNotificationPreferenceSerializer(user_notification_preference)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # update the object
+    def patch(self, request):
+        user_notification_preference = UserNotificationPreference.objects.get(
+            user=request.user
+        )
+        serializer = UserNotificationPreferenceSerializer(
+            user_notification_preference, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
