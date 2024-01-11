@@ -23,8 +23,9 @@ jobs:
 
 
   branch_build_push_frontend:
-    if: ${{ needs.conditional_build.outputs.build_frontend == 'true' }}
     runs-on: ubuntu-20.04
+    needs: conditional_build
+    if: ${{ needs.conditional_build.outputs.build_frontend == 'true' }}
     env:
       FRONTEND_TAG: "FRONTEND_TAG"
     steps:
@@ -71,8 +72,9 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_space:
-    if: ${{ needs.conditional_build.outputs.build_space == 'true' }}
     runs-on: ubuntu-20.04
+    needs: conditional_build
+    if: ${{ needs.conditional_build.outputs.build_space == 'true' }}
     env:
       SPACE_TAG: "SPACE_TAG"
     steps:
@@ -119,8 +121,9 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_backend:
-    if: ${{ needs.conditional_build.outputs.build_backend == 'true' }}
     runs-on: ubuntu-20.04
+    needs: conditional_build
+    if: ${{ needs.conditional_build.outputs.build_backend == 'true' }}
     env:
       BACKEND_TAG: "BACKEND_TAG"
     steps:
@@ -167,8 +170,9 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_proxy:
-    if: ${{ needs.conditional_build.outputs.build_proxy == 'true' }}
     runs-on: ubuntu-20.04
+    needs: conditional_build
+    if: ${{ needs.conditional_build.outputs.build_proxy == 'true' }}
     env:
       PROXY_TAG: "PROXY_TAG"
     steps:
