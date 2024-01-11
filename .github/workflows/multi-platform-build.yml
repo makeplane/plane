@@ -149,7 +149,7 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: ./apiserver
-          file: ./Dockerfile.api
+          file: ./apiserver/Dockerfile.api
           platforms: ${{ env.PLATFORMS }}
           push: true
           tags: ${{ env.BACKEND_TAG }}
@@ -198,7 +198,7 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: ./nginx
-          file: ./Dockerfile
+          file: ./nginx/Dockerfile
           platforms: ${{ env.PLATFORMS }}
           tags: ${{ env.PROXY_TAG }}
           push: true
