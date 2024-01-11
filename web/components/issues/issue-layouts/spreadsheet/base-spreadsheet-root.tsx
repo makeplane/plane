@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues, useLabel, useProjectState, useUser } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
@@ -40,10 +40,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    project: { projectLabels },
-  } = useLabel();
-  const { projectStates } = useProjectState();
   // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
   // user role validation
@@ -86,27 +82,31 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [issueFiltersStore, projectId, workspaceSlug, viewId]
   );
 
+  const renderQuickActions = useCallback(
+    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+      <QuickActions
+        customActionButton={customActionButton}
+        issue={issue}
+        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+        handleUpdate={
+          issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
+        }
+        handleRemoveFromView={
+          issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
+        }
+        portalElement={portalElement}
+      />
+    ),
+    [handleIssues]
+  );
+
   return (
     <SpreadsheetView
       displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
       displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues}
-      quickActions={(issue, customActionButton) => (
-        <QuickActions
-          customActionButton={customActionButton}
-          issue={issue}
-          handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-          handleUpdate={
-            issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
-          }
-          handleRemoveFromView={
-            issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
-          }
-        />
-      )}
-      labels={projectLabels ?? []}
-      states={projectStates}
+      quickActions={renderQuickActions}
       handleIssues={handleIssues}
       canEditProperties={canEditProperties}
       quickAddCallback={issueStore.quickAddIssue}
