@@ -10,7 +10,20 @@ env:
   PLATFORMS: linux/amd64
 
 jobs:
+  conditional_build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3.3.0
+    outputs:
+      build_frontend: "false"
+      build_space: "false"
+      build_backend: "true"
+      build_proxy: "true"
+
+
   branch_build_push_frontend:
+    if: ${{ needs.conditional_build.outputs.build_frontend == 'true' }}
     runs-on: ubuntu-20.04
     env:
       FRONTEND_TAG: "FRONTEND_TAG"
@@ -58,6 +71,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_space:
+    if: ${{ needs.conditional_build.outputs.build_space == 'true' }}
     runs-on: ubuntu-20.04
     env:
       SPACE_TAG: "SPACE_TAG"
@@ -105,6 +119,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_backend:
+    if: ${{ needs.conditional_build.outputs.build_backend == 'true' }}
     runs-on: ubuntu-20.04
     env:
       BACKEND_TAG: "BACKEND_TAG"
@@ -152,6 +167,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_proxy:
+    if: ${{ needs.conditional_build.outputs.build_proxy == 'true' }}
     runs-on: ubuntu-20.04
     env:
       PROXY_TAG: "PROXY_TAG"
