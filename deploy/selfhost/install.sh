@@ -60,7 +60,6 @@ function install(){
             echo "Build Completed"
             echo
             download
-            break;
         elif [ "$DO_BUILD" == "2" ] 
         then
             echo "Install Action cancelled by you."
