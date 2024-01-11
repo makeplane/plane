@@ -24,6 +24,7 @@ from plane.db.models import (
     IssueReaction,
     CommentReaction,
     IssueComment,
+    IssueSubscriber,
 )
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
@@ -345,6 +346,7 @@ def track_assignees(
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
 
+    bulk_subscribers = []
     for added_asignee in added_assignees:
         assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
@@ -362,6 +364,28 @@ def track_assignees(
                 epoch=epoch,
             )
         )
+        bulk_subscribers.append(
+            IssueSubscriber(
+                subscriber_id=assignee.id,
+                issue_id=issue_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                created_by_id=assignee.id,
+                updated_by_id=assignee.id,
+            )
+        )
+
+    # Create assignees subscribers to the issue and ignore if already
+    IssueSubscriber.objects.bulk_create(
+        bulk_subscribers, batch_size=10, ignore_conflicts=True
+    )
+
+    # Remove them from subscribers if they are dropped
+    IssueSubscriber.objects.filter(
+        workspace_id=workspace_id,
+        project_id=project_id,
+        subscriber_id__in=dropped_assginees,
+    ).delete()
 
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
@@ -509,6 +533,18 @@ def create_issue_activity(
             epoch=epoch,
         )
     )
+    try:
+        # Add the user as a subscriber to the issue
+        IssueSubscriber.objects.create(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            subscriber_id=actor_id,
+            created_by_id=actor_id,
+            updated_by_id=actor_id,
+        )
+    except Exception as e:
+        pass
 
 
 def update_issue_activity(
@@ -1289,7 +1325,7 @@ def create_issue_relation_activity(
         json.loads(current_instance) if current_instance is not None else None
     )
     if current_instance is None and requested_data.get("issues") is not None:
-        for related_issue in requested_data.get("issues"): 
+        for related_issue in requested_data.get("issues"):
             issue = Issue.objects.get(pk=related_issue)
             issue_activities.append(
                 IssueActivity(
@@ -1381,6 +1417,7 @@ def delete_issue_relation_activity(
             epoch=epoch,
         )
     )
+
 
 def create_draft_issue_activity(
     requested_data,

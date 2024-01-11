@@ -66,8 +66,6 @@ class UserNotificationPreference(BaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "user"]
-
         verbose_name = "Notification Preference"
         verbose_name_plural = "Notification Preferences"
         db_table = "user_notification_preferences"

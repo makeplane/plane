@@ -13,7 +13,6 @@ from plane.db.models import (
     Notification,
     IssueComment,
     IssueActivity,
-    NotificationPreference,
     EmailNotificationLog,
 )
 
@@ -341,11 +340,7 @@ def notifications(
                         workspace_id=project.workspace_id,
                     )
 
-                preference = NotificationPreference.objects.filter(
-                    user=subscriber,
-                    workspace_id=project.workspace_id,
-                    project_id=project_id,
-                ).values("created", "assigned", "subscribed").first()
+                preference = {}
 
                 if issue_activity.get("field") == "state":
                     preference = preference.get(trigger).get("state") 
