@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
 import { MoreHorizontal } from "lucide-react";
@@ -21,8 +20,6 @@ type Props = {
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues, issueIdList, quickActions, showAllIssues = false } = props;
-  // router
-  const router = useRouter();
   // hooks
   const {
     router: { workspaceSlug, projectId },

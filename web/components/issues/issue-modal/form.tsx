@@ -51,6 +51,8 @@ const defaultValues: Partial<TIssue> = {
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
+  isCreateMoreToggleEnabled: boolean;
+  onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
   onClose: () => void;
   onSubmit: (values: Partial<TIssue>) => Promise<void>;
@@ -62,14 +64,15 @@ const aiService = new AIService();
 const fileService = new FileService();
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
-  const { data, onChange, onClose, onSubmit, projectId } = props;
+  const { data, onChange, onClose, onSubmit, projectId, isCreateMoreToggleEnabled, onCreateMoreToggleChange } = props;
+  console.log("onCreateMoreToggleChange", typeof onCreateMoreToggleChange);
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-  const [createMore, setCreateMore] = useState(false);
+
   // refs
   const editorRef = useRef<any>(null);
   // router
@@ -276,7 +279,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               />
               <div className="relative">
                 <div className="absolute bottom-3.5 right-3.5 z-10 border-0.5 flex items-center gap-2">
-                  {issueName && issueName.trim() !== "" && (
+                  {issueName && issueName.trim() !== "" && envConfig?.has_openai_configured && (
                     <button
                       type="button"
                       className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-80 ${
@@ -593,14 +596,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
           <div
             className="flex cursor-default items-center gap-1.5"
-            onClick={() => setCreateMore((prevData) => !prevData)}
+            onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") setCreateMore((prevData) => !prevData);
+              if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
             }}
             tabIndex={16}
           >
             <div className="flex cursor-pointer items-center justify-center">
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+              <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
             </div>
             <span className="text-xs">Create more</span>
           </div>

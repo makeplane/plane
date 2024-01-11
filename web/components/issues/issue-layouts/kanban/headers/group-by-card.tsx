@@ -40,7 +40,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     handleKanbanFilters,
     issuePayload,
     disableIssueCreation,
-    currentStore,
     addIssuesToView,
   } = props;
   const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);

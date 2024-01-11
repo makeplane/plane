@@ -1,14 +1,20 @@
-import { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
-import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { Tooltip } from "@plane/ui";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
-import { EIssueActions } from "../types";
 import { observer } from "mobx-react-lite";
+// icons
+import { ChevronRight, MoreHorizontal } from "lucide-react";
+// constants
+import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
+// components
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// ui
+import { Tooltip } from "@plane/ui";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useIssueDetail, useProject } from "hooks/store";
+// types
+import { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { EIssueActions } from "../types";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
