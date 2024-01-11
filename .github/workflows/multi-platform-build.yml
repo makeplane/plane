@@ -95,10 +95,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Downloading Space Source Code
-        uses: actions/download-artifact@v3
-        with:
-          name: space-src-code
 
       - name: Build and Push Space to Docker Hub
         uses: docker/build-push-action@v4.0.0
@@ -118,6 +114,9 @@ jobs:
     env:
       BACKEND_TAG: "BACKEND_TAG"
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3.3.0
+
       - name: Set Backend Docker Tag 
         run: |
           rm -rf ./nginx ./deploy ./web ./space
@@ -145,10 +144,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Downloading Backend Source Code
-        uses: actions/download-artifact@v3
-        with:
-          name: backend-src-code
 
       - name: Build and Push Backend to Docker Hub
         uses: docker/build-push-action@v4.0.0
@@ -168,6 +163,9 @@ jobs:
     env:
       PROXY_TAG: "PROXY_TAG"
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3.3.0
+
       - name: Set Proxy Docker Tag 
         run: |
           rm -rf ./apiserver ./deploy ./web ./space
