@@ -1,16 +1,16 @@
 import * as React from "react";
 import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 
-interface ICoreReadOnlyEditor {
+export type ILiteReadOnlyEditor = {
   value: string;
   editorContentCustomClassNames?: string;
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
   mentionHighlights: string[];
-}
+};
 
-interface EditorCoreProps extends ICoreReadOnlyEditor {
+export interface LiteTextEditorReadOnlyProps extends ILiteReadOnlyEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -27,7 +27,7 @@ const LiteReadOnlyEditor = ({
   value,
   forwardedRef,
   mentionHighlights,
-}: EditorCoreProps) => {
+}: LiteTextEditorReadOnlyProps) => {
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
@@ -51,7 +51,7 @@ const LiteReadOnlyEditor = ({
   );
 };
 
-const LiteReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ICoreReadOnlyEditor>((props, ref) => (
+const LiteReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ILiteReadOnlyEditor>((props, ref) => (
   <LiteReadOnlyEditor {...props} forwardedRef={ref} />
 ));
 

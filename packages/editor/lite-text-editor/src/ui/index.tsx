@@ -12,12 +12,11 @@ import {
 import { FixedMenu } from "src/ui/menus/fixed-menu";
 import { LiteTextEditorExtensions } from "src/ui/extensions";
 
-interface ILiteTextEditor {
+export type ILiteTextEditor = {
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   restoreFile: RestoreImage;
-
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
@@ -42,9 +41,9 @@ interface ILiteTextEditor {
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
   submitButton?: React.ReactNode;
-}
+};
 
-interface LiteTextEditorProps extends ILiteTextEditor {
+export interface LiteTextEditorProps extends ILiteTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 

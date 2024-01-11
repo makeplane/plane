@@ -5,7 +5,7 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { RichTextEditor } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-editor";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";

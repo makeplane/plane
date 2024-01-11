@@ -1,12 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-// hooks
-import { useMention } from "hooks/store";
-// services
-import { FileService } from "services/file.service";
 // components
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { LiteTextEditor } from "components/editor/lite-text-editor";
 // ui
 import { Button } from "@plane/ui";
 import { Globe2, Lock } from "lucide-react";
@@ -42,17 +38,12 @@ const commentAccess: commentAccessType[] = [
   },
 ];
 
-// services
-const fileService = new FileService();
-
 export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
   // refs
   const editorRef = React.useRef<any>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     control,
@@ -82,25 +73,19 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                 name="comment_html"
                 control={control}
                 render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
-                  <LiteTextEditorWithRef
+                  <LiteTextEditor
+                    workspaceSlug={workspaceSlug as string}
                     onEnterKeyPress={handleSubmit(handleAddComment)}
-                    cancelUploadImage={fileService.cancelUpload}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"
                     editorContentCustomClassNames="min-h-[35px]"
-                    debouncedUpdatesEnabled={false}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier
                         ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
                         : undefined
                     }
-                    mentionSuggestions={mentionSuggestions}
-                    mentionHighlights={mentionHighlights}
                     submitButton={
                       <Button
                         variant="primary"

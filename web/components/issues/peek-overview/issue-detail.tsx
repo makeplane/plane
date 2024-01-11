@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useProject, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
-import { RichTextEditor } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-editor";
 import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";

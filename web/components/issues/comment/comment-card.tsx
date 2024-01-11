@@ -2,22 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMention, useUser } from "hooks/store";
-// services
-import { FileService } from "services/file.service";
+import { useUser } from "hooks/store";
 // icons
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
-import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+// components
+import { LiteTextEditor } from "components/editor/lite-text-editor";
+import { LiteTextReadOnlyEditor } from "components/editor/lite-text-read-only-editor";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueActivity } from "@plane/types";
-
-// services
-const fileService = new FileService();
 
 type Props = {
   comment: IIssueActivity;
@@ -36,7 +33,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const showEditorRef = React.useRef<any>(null);
   // store hooks
   const { currentUser } = useUser();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     formState: { isSubmitting },
@@ -97,19 +93,14 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         <div className="issue-comments-section p-0">
           <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
             <div>
-              <LiteTextEditorWithRef
+              <LiteTextEditor
+                workspaceSlug={workspaceSlug}
                 onEnterKeyPress={handleSubmit(onEnter)}
-                cancelUploadImage={fileService.cancelUpload}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.deleteImage}
-                restoreFile={fileService.restoreImage}
                 ref={editorRef}
                 value={watch("comment_html") ?? ""}
                 debouncedUpdatesEnabled={false}
                 customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
-                mentionSuggestions={mentionSuggestions}
-                mentionHighlights={mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -136,11 +127,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
               </div>
             )}
-            <LiteReadOnlyEditorWithRef
+            <LiteTextReadOnlyEditor
               ref={showEditorRef}
               value={comment.comment_html ?? ""}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={mentionHighlights}
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>

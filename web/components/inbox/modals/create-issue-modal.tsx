@@ -12,7 +12,7 @@ import { AIService } from "services/ai.service";
 // components
 import { GptAssistantPopover } from "components/core";
 import { PriorityDropdown } from "components/dropdowns";
-import { RichTextEditor } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-editor";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types

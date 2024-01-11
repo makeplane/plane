@@ -2,12 +2,8 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Globe2, Lock } from "lucide-react";
-// hooks
-import { useMention } from "hooks/store";
-// services
-import { FileService } from "services/file.service";
 // components
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { LiteTextEditor } from "components/editor/lite-text-editor";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -42,9 +38,6 @@ const commentAccess: commentAccessType[] = [
   },
 ];
 
-// services
-const fileService = new FileService();
-
 export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   const { disabled = false, onSubmit, showAccessSpecifier = false } = props;
   // refs
@@ -52,8 +45,6 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     control,
@@ -83,19 +74,13 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                 name="comment_html"
                 control={control}
                 render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
-                  <LiteTextEditorWithRef
+                  <LiteTextEditor
+                    workspaceSlug={workspaceSlug as string}
                     onEnterKeyPress={handleSubmit(handleAddComment)}
-                    cancelUploadImage={fileService.cancelUpload}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"
                     editorContentCustomClassNames="min-h-[35px]"
-                    debouncedUpdatesEnabled={false}
-                    mentionSuggestions={mentionSuggestions}
-                    mentionHighlights={mentionHighlights}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier

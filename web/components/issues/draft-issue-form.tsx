@@ -25,7 +25,7 @@ import { ParentIssuesListModal } from "components/issues";
 import { IssueLabelSelect } from "components/issues/select";
 import { CreateLabelModal } from "components/labels";
 import { CreateStateModal } from "components/states";
-import { RichTextEditor } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-editor";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // helpers

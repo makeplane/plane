@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
 // components
-import { RichTextEditor } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-editor";
 import { GptAssistantPopover } from "components/core";
 import {
   CycleDropdown,
