@@ -10,47 +10,21 @@ env:
   PLATFORMS: linux/amd64
 
 jobs:
-  build_environment_prepare:
+  branch_build_push_frontend:
     runs-on: ubuntu-20.04
     env:
       FRONTEND_TAG: "FRONTEND_TAG"
-      SPACE_TAG: "SPACE_TAG"
-      BACKEND_TAG: "BACKEND_TAG"
-      PROXY_TAG: "PROXY_TAG"
     steps:
-      - name: Set up Docker Buildx
+      - name: Prepare Environment
         run: |
           if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TEMP_FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TEMP_FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
             TEMP_FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
           fi
           echo "FRONTEND_TAG=${TEMP_FRONTEND_TAG}" >> $GITHUB_ENV
-          echo "SPACE_TAG=${TEMP_SPACE_TAG}" >> $GITHUB_ENV
-          echo "BACKEND_TAG=${TEMP_BACKEND_TAG}" >> $GITHUB_ENV
-          echo "PROXY_TAG=${TEMP_PROXY_TAG}" >> $GITHUB_ENV
-    outputs:
-      FRONTEND_TAG: ${{ env.FRONTEND_TAG }}
-      SPACE_TAG: ${{ env.SPACE_TAG }}
-      BACKEND_TAG: ${{ env.BACKEND_TAG }}
-      PROXY_TAG: ${{ env.PROXY_TAG }}
-
-
-  branch_build_push_frontend:
-    runs-on: ubuntu-20.04
-    needs: build_environment_prepare
-    steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
       
@@ -76,7 +50,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: ${{ env.PLATFORMS }}
-          tags: ${{ needs.build_environment_prepare.outputs.FRONTEND_TAG }}
+          tags: ${{ env.FRONTEND_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -85,8 +59,19 @@ jobs:
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
-    needs: build_environment_prepare
+    env:
+      SPACE_TAG: "SPACE_TAG"
     steps:
+      - name: Prepare Environment
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+          echo "SPACE_TAG=${TEMP_SPACE_TAG}" >> $GITHUB_ENV
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
@@ -112,7 +97,7 @@ jobs:
           context: .
           file: ./space/Dockerfile.space
           platforms: ${{ env.PLATFORMS }}
-          tags: ${{ needs.build_environment_prepare.outputs.SPACE_TAG }}
+          tags: ${{ env.SPACE_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -121,10 +106,19 @@ jobs:
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
-    needs: build_environment_prepare
     env:
       BACKEND_TAG: "BACKEND_TAG"
     steps:
+      - name: Prepare Environment
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+          echo "BACKEND_TAG=${TEMP_BACKEND_TAG}" >> $GITHUB_ENV
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
@@ -151,7 +145,7 @@ jobs:
           file: ./apiserver/Dockerfile.api
           platforms: ${{ env.PLATFORMS }}
           push: true
-          tags: ${{ needs.build_environment_prepare.outputs.BACKEND_TAG }}
+          tags: ${{ env.BACKEND_TAG }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -159,10 +153,19 @@ jobs:
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
-    needs: build_environment_prepare
     env:
       PROXY_TAG: "PROXY_TAG"
     steps:
+      - name: Prepare Environment
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+          echo "PROXY_TAG=${TEMP_PROXY_TAG}" >> $GITHUB_ENV
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
@@ -188,7 +191,7 @@ jobs:
           context: ./nginx
           file: ./nginx/Dockerfile
           platforms: ${{ env.PLATFORMS }}
-          tags: ${{ needs.build_environment_prepare.outputs.PROXY_TAG }}
+          tags: ${{ env.PROXY_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
