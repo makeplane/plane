@@ -5,7 +5,6 @@ import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 // components
-import { PagesListItem } from "./list-item";
 import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
@@ -16,7 +15,7 @@ import { EUserProjectRoles } from "constants/project";
 import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 import { IPageStore } from "store/page.store";
 import { spy, trace } from "mobx";
-import { useMobxDependencyLogger } from "hooks/store/use-mobx-dependency-logger";
+import { PagesListItem } from "./list-item";
 
 // type IPagesListView = {
 //   pageIds: string[];
@@ -41,20 +40,19 @@ export const PagesListView: FC = observer(() => {
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
   const projectPageStore = useProjectSpecificPages(projectId as string);
   // Now, I am observing only the projectPages, out of the projectPageStore.
-  const { projectPages } = projectPageStore;
-  const pageStores = projectPages[projectId as string];
+  const { projectPageIds } = projectPageStore;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
-      {pageStores && workspaceSlug && projectId ? (
+      {projectPageIds && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
-          {pageStores.length > 0 ? (
+          {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pageStores.map((pageStore: IPageStore, index: number) => {
-                console.log("PageListViewRererendered");
-                return <PagesListItem key={index} pageStore={pageStore} />;
+              {projectPageIds.map((pageId: string) => {
+                console.log("rerender list");
+                return <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />;
               })}
             </ul>
           ) : (

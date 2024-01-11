@@ -26,33 +26,23 @@ import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 import { EUserProjectRoles } from "constants/project";
 import { IPageStore } from "store/page.store";
 import { useRouter } from "next/router";
-
-import { trace } from "mobx";
+import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 
 export interface IPagesListItem {
-  pageStore: IPageStore;
+  pageId: string;
+  projectId: string;
 }
 
-export const PagesListItem: FC<IPagesListItem> = observer(({ pageStore }: IPagesListItem) => {
-  const {
-    id: pageId,
-    archived_at,
-    access,
-    is_favorite,
-    name,
-    created_at,
-    updated_at,
-    makePublic,
-    makePrivate,
-    addToFavorites,
-    removeFromFavorites,
-  } = pageStore;
+export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }: IPagesListItem) => {
+  const projectPageStore = useProjectSpecificPages(projectId);
+  // Now, I am observing only the projectPages, out of the projectPageStore.
+  const { projectPageMap } = projectPageStore;
 
-  console.log("PagesListItemRererendered", pageStore.id);
+  const pageStore = projectPageMap?.[projectId]?.[pageId];
 
   // states
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
@@ -83,6 +73,21 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageStore }: IPages
   const { setToastAlert } = useToast();
   // derived values
   // const pageDetails = getUnArchivedPageById(pageId) ?? getArchivedPageById(pageId);
+
+  if (!pageStore) return null;
+
+  const {
+    archived_at,
+    access,
+    is_favorite,
+    name,
+    created_at,
+    updated_at,
+    makePublic,
+    makePrivate,
+    addToFavorites,
+    removeFromFavorites,
+  } = pageStore;
 
   const handleCopyUrl = (e: any) => {
     e.preventDefault();

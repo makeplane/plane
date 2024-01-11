@@ -1,10 +1,7 @@
-import { action, observable, runInAction } from "mobx";
-import set from "lodash/set";
-import isYesterday from "date-fns/isYesterday";
+import { action, makeObservable, observable, runInAction } from "mobx";
 
 import { IPage } from "@plane/types";
 import { PageService } from "services/page.service";
-import { is } from "date-fns/locale";
 
 export interface IPageStore {
   access: number;
@@ -34,19 +31,19 @@ export interface IPageStore {
 }
 
 export class PageStore {
-  access: number;
+  access: number = 0;
   archived_at: string | null;
   color: string;
   created_at: Date;
   created_by: string;
   description: string;
-  description_html: string;
+  description_html: string = "";
   description_stripped: string | null;
   id: string;
-  is_favorite: boolean;
-  is_locked: boolean;
+  is_favorite: boolean = false;
+  is_locked: boolean = true;
   labels: string[];
-  name: string;
+  name: string = "";
   owned_by: string;
   project: string;
   updated_at: Date;
@@ -56,19 +53,19 @@ export class PageStore {
   pageService;
 
   constructor(page: IPage) {
-    observable(this, {
+    makeObservable(this, {
       name: observable.ref,
       description_html: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       access: observable.ref,
 
-      makePublic: action.bind,
-      makePrivate: action.bind,
-      addToFavorites: action.bind,
-      removeFromFavorites: action.bind,
-      updateName: action.bind,
-      updateDescription: action.bind,
+      makePublic: action,
+      makePrivate: action,
+      addToFavorites: action,
+      removeFromFavorites: action,
+      updateName: action,
+      updateDescription: action,
     });
     this.created_by = page?.created_by || "";
     this.created_at = page?.created_at || new Date();

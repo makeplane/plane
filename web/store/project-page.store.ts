@@ -1,4 +1,4 @@
-import { makeObservable, observable, runInAction, action } from "mobx";
+import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { set } from "lodash";
 // services
 import { PageService } from "services/page.service";
@@ -6,10 +6,12 @@ import { PageService } from "services/page.service";
 import { PageStore, IPageStore } from "store/page.store";
 // types
 import { IPage } from "@plane/types";
+import { RootStore } from "./root.store";
 
 export interface IProjectPageStore {
-  projectPages: Record<string, IPageStore[]>;
-  projectArchivedPages: Record<string, IPageStore[]>;
+  projectPageMap: Record<string, Record<string, IPageStore>>;
+  projectArchivedPageMap: Record<string, Record<string, IPageStore>>;
+  projectPageIds: string[] | undefined;
   // fetch actions
   fetchProjectPages: (workspaceSlug: string, projectId: string) => void;
   fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => void;
@@ -19,14 +21,19 @@ export interface IProjectPageStore {
 }
 
 export class ProjectPageStore implements IProjectPageStore {
-  projectPages: Record<string, IPageStore[]> = {}; // { projectId: [page1, page2] }
-  projectArchivedPages: Record<string, IPageStore[]> = {}; // { projectId: [page1, page2] }
+  projectPageMap: Record<string, Record<string, IPageStore>> = {}; // { projectId: [page1, page2] }
+  projectArchivedPageMap: Record<string, Record<string, IPageStore>> = {}; // { projectId: [page1, page2] }
+
+  // root store
+  rootStore;
 
   pageService;
-  constructor() {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      projectPages: observable.struct,
-      projectArchivedPages: observable.struct,
+      projectPageMap: observable,
+      projectArchivedPageMap: observable,
+      //
+      projectPageIds: computed,
       // fetch actions
       fetchProjectPages: action,
       fetchArchivedProjectPages: action,
@@ -34,20 +41,34 @@ export class ProjectPageStore implements IProjectPageStore {
       createPage: action,
       deletePage: action,
     });
+    this.rootStore = _rootStore;
+
     this.pageService = new PageService();
   }
 
+  get projectPageIds() {
+    const projectId = this.rootStore.app.router.projectId;
+
+    if (!projectId || !this.projectPageMap?.[projectId]) return;
+    return Object.keys(this.projectPageMap[projectId]);
+  }
   /**
    * Fetching all the pages for a specific project
    * @param workspaceSlug
    * @param projectId
    */
   fetchProjectPages = async (workspaceSlug: string, projectId: string) => {
-    const response = await this.pageService.getProjectPages(workspaceSlug, projectId);
-    runInAction(() => {
-      this.projectPages[projectId] = response?.map((page) => new PageStore(page));
-    });
-    return response;
+    try {
+      const response = await this.pageService.getProjectPages(workspaceSlug, projectId);
+      runInAction(() => {
+        for (const page of response) {
+          set(this.projectPageMap, [projectId, page.id], new PageStore(page));
+        }
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   /**
@@ -59,7 +80,9 @@ export class ProjectPageStore implements IProjectPageStore {
   fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) =>
     await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
-        this.projectArchivedPages[projectId] = response?.map((page) => new PageStore(page as any));
+        for (const page of response) {
+          set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page));
+        }
       });
       return response;
     });
@@ -73,7 +96,7 @@ export class ProjectPageStore implements IProjectPageStore {
   createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
     const response = await this.pageService.createPage(workspaceSlug, projectId, data);
     runInAction(() => {
-      this.projectPages[projectId] = [...this.projectPages[projectId], new PageStore(response as any)];
+      set(this.projectPageMap, [projectId, response.id], new PageStore(response));
     });
     return response;
   };
@@ -88,11 +111,7 @@ export class ProjectPageStore implements IProjectPageStore {
   deletePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
     const response = await this.pageService.deletePage(workspaceSlug, projectId, pageId);
     runInAction(() => {
-      this.projectPages = set(
-        this.projectPages,
-        [projectId],
-        this.projectPages[projectId].filter((page: any) => page.id !== pageId)
-      );
+      delete this.projectPageMap[projectId][pageId];
     });
     return response;
   };
@@ -106,12 +125,8 @@ export class ProjectPageStore implements IProjectPageStore {
   archivePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
     const response = await this.pageService.archivePage(workspaceSlug, projectId, pageId);
     runInAction(() => {
-      set(
-        this.projectPages,
-        [projectId],
-        this.projectPages[projectId].filter((page: any) => page.id !== pageId)
-      );
-      this.projectArchivedPages = set(this.projectArchivedPages, [projectId], this.projectArchivedPages[projectId]);
+      set(this.projectArchivedPageMap, [projectId, pageId], this.projectPageMap[projectId][pageId]);
+      delete this.projectPageMap[projectId][pageId];
     });
     return response;
   };
@@ -125,12 +140,8 @@ export class ProjectPageStore implements IProjectPageStore {
   restorePage = async (workspaceSlug: string, projectId: string, pageId: string) =>
     await this.pageService.restorePage(workspaceSlug, projectId, pageId).then(() => {
       runInAction(() => {
-        set(
-          this.projectArchivedPages,
-          [projectId],
-          this.projectArchivedPages[projectId].filter((page: any) => page.id !== pageId)
-        );
-        set(this.projectPages, [projectId], [...this.projectPages[projectId]]);
+        set(this.projectPageMap, [projectId, pageId], this.projectArchivedPageMap[projectId][pageId]);
+        delete this.projectArchivedPageMap[projectId][pageId];
       });
     });
 }
