@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 // react-popper
 import { usePopper } from "react-popper";
+// hooks
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // icons
@@ -29,11 +32,15 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     optionsClassName = "",
     value,
     width = "auto",
+    tabIndex,
   } = props;
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  // refs
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -50,8 +57,23 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
 
   if (multiple) comboboxProps.multiple = true;
 
+  const openDropdown = () => {
+    setIsOpen(true);
+    if (referenceElement) referenceElement.focus();
+  };
+  const closeDropdown = () => setIsOpen(false);
+  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+  useOutsideClickDetector(dropdownRef, closeDropdown);
+
   return (
-    <Combobox as="div" className={`relative flex-shrink-0 text-left ${className}`} {...comboboxProps}>
+    <Combobox
+      as="div"
+      ref={dropdownRef}
+      tabIndex={tabIndex}
+      className={`relative flex-shrink-0 text-left ${className}`}
+      onKeyDown={handleKeyDown}
+      {...comboboxProps}
+    >
       {({ open }: { open: boolean }) => {
         if (open && onOpen) onOpen();
 
@@ -67,6 +89,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                       ? "cursor-not-allowed text-custom-text-200"
                       : "cursor-pointer hover:bg-custom-background-80"
                   }  ${customButtonClassName}`}
+                  onClick={openDropdown}
                 >
                   {customButton}
                 </button>
@@ -83,86 +106,89 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                       ? "cursor-not-allowed text-custom-text-200"
                       : "cursor-pointer hover:bg-custom-background-80"
                   } ${buttonClassName}`}
+                  onClick={openDropdown}
                 >
                   {label}
                   {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
                 </button>
               </Combobox.Button>
             )}
-            <Combobox.Options as={React.Fragment}>
-              <div
-                className={`z-10 my-1 min-w-[10rem] rounded-md border border-custom-border-300 bg-custom-background-90 p-2 text-xs shadow-custom-shadow-rg focus:outline-none ${
-                  width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
-                } ${optionsClassName}`}
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-              >
-                <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                  <Search className="h-3 w-3 text-custom-text-200" />
-                  <Combobox.Input
-                    className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Type to search..."
-                    displayValue={(assigned: any) => assigned?.name}
-                  />
-                </div>
+            {isOpen && (
+              <Combobox.Options as={React.Fragment} static>
                 <div
-                  className={`mt-2 space-y-1 ${
-                    maxHeight === "lg"
-                      ? "max-h-60"
-                      : maxHeight === "md"
-                        ? "max-h-48"
-                        : maxHeight === "rg"
-                          ? "max-h-36"
-                          : maxHeight === "sm"
-                            ? "max-h-28"
-                            : ""
-                  } overflow-y-scroll`}
+                  className={`z-10 my-1 min-w-[10rem] rounded-md border border-custom-border-300 bg-custom-background-90 p-2 text-xs shadow-custom-shadow-rg focus:outline-none ${
+                    width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
+                  } ${optionsClassName}`}
+                  ref={setPopperElement}
+                  style={styles.popper}
+                  {...attributes.popper}
                 >
-                  {filteredOptions ? (
-                    filteredOptions.length > 0 ? (
-                      filteredOptions.map((option) => (
-                        <Combobox.Option
-                          key={option.value}
-                          value={option.value}
-                          className={({ active, selected }) =>
-                            `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                              active || selected ? "bg-custom-background-80" : ""
-                            } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                          }
-                        >
-                          {({ active, selected }) => (
-                            <>
-                              {option.content}
-                              {multiple ? (
-                                <div
-                                  className={`flex items-center justify-center rounded border border-custom-border-400 p-0.5 ${
-                                    active || selected ? "opacity-100" : "opacity-0"
-                                  }`}
-                                >
+                  <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
+                    <Search className="h-3 w-3 text-custom-text-200" />
+                    <Combobox.Input
+                      className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Type to search..."
+                      displayValue={(assigned: any) => assigned?.name}
+                    />
+                  </div>
+                  <div
+                    className={`mt-2 space-y-1 ${
+                      maxHeight === "lg"
+                        ? "max-h-60"
+                        : maxHeight === "md"
+                          ? "max-h-48"
+                          : maxHeight === "rg"
+                            ? "max-h-36"
+                            : maxHeight === "sm"
+                              ? "max-h-28"
+                              : ""
+                    } overflow-y-scroll`}
+                  >
+                    {filteredOptions ? (
+                      filteredOptions.length > 0 ? (
+                        filteredOptions.map((option) => (
+                          <Combobox.Option
+                            key={option.value}
+                            value={option.value}
+                            className={({ active, selected }) =>
+                              `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
+                                active || selected ? "bg-custom-background-80" : ""
+                              } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                            }
+                          >
+                            {({ active, selected }) => (
+                              <>
+                                {option.content}
+                                {multiple ? (
+                                  <div
+                                    className={`flex items-center justify-center rounded border border-custom-border-400 p-0.5 ${
+                                      active || selected ? "opacity-100" : "opacity-0"
+                                    }`}
+                                  >
+                                    <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                  </div>
+                                ) : (
                                   <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
-                                </div>
-                              ) : (
-                                <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
-                              )}
-                            </>
-                          )}
-                        </Combobox.Option>
-                      ))
+                                )}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))
+                      ) : (
+                        <span className="flex items-center gap-2 p-1">
+                          <p className="text-left text-custom-text-200 ">No matching results</p>
+                        </span>
+                      )
                     ) : (
-                      <span className="flex items-center gap-2 p-1">
-                        <p className="text-left text-custom-text-200 ">No matching results</p>
-                      </span>
-                    )
-                  ) : (
-                    <p className="text-center text-custom-text-200">Loading...</p>
-                  )}
+                      <p className="text-center text-custom-text-200">Loading...</p>
+                    )}
+                  </div>
+                  {footerOption}
                 </div>
-                {footerOption}
-              </div>
-            </Combobox.Options>
+              </Combobox.Options>
+            )}
           </>
         );
       }}

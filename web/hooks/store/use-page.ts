@@ -4,8 +4,8 @@ import { StoreContext } from "contexts/store-context";
 // types
 import { IPageStore } from "store/page.store";
 
-export const usePage = (): IPageStore => {
+export const usePage = (): any => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("usePage must be used within StoreProvider");
-  return context.page;
+  return context as any;
 };

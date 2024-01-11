@@ -7,7 +7,7 @@ import { IssueProperty } from "./properties";
 import { CustomMenu, Tooltip } from "@plane/ui";
 // types
 import { IUser, TIssue, TIssueSubIssues } from "@plane/types";
-import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 export interface ISubIssues {
@@ -24,8 +24,8 @@ export interface ISubIssues {
   user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: TIssue) => void;
-  issuesLoader: ISubIssuesRootLoaders;
-  handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
+  issuesLoader: any; // FIXME: ISubIssuesRootLoaders replace with any
+  handleIssuesLoader: ({ key, issueId }: any) => void; // FIXME: ISubIssuesRootLoadersHandler replace with any
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",

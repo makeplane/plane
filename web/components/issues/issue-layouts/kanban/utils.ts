@@ -8,6 +8,41 @@ import { IProjectViewIssues } from "store/issue/project-views";
 import { IWorkspaceIssues } from "store/issue/workspace";
 import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "@plane/types";
 
+const handleSortOrder = (destinationIssues: string[], destinationIndex: number, issueMap: IIssueMap) => {
+  const sortOrderDefaultValue = 65535;
+  let currentIssueState = {};
+
+  if (destinationIssues && destinationIssues.length > 0) {
+    if (destinationIndex === 0) {
+      const destinationIssueId = destinationIssues[destinationIndex];
+      currentIssueState = {
+        ...currentIssueState,
+        sort_order: issueMap[destinationIssueId].sort_order - sortOrderDefaultValue,
+      };
+    } else if (destinationIndex === destinationIssues.length) {
+      const destinationIssueId = destinationIssues[destinationIndex - 1];
+      currentIssueState = {
+        ...currentIssueState,
+        sort_order: issueMap[destinationIssueId].sort_order + sortOrderDefaultValue,
+      };
+    } else {
+      const destinationTopIssueId = destinationIssues[destinationIndex - 1];
+      const destinationBottomIssueId = destinationIssues[destinationIndex];
+      currentIssueState = {
+        ...currentIssueState,
+        sort_order: (issueMap[destinationTopIssueId].sort_order + issueMap[destinationBottomIssueId].sort_order) / 2,
+      };
+    }
+  } else {
+    currentIssueState = {
+      ...currentIssueState,
+      sort_order: sortOrderDefaultValue,
+    };
+  }
+
+  return currentIssueState;
+};
+
 export const handleDragDrop = async (
   source: DraggableLocation | null | undefined,
   destination: DraggableLocation | null | undefined,
@@ -50,7 +85,7 @@ export const handleDragDrop = async (
     !sourceGroupByColumnId ||
     !destinationGroupByColumnId ||
     !sourceSubGroupByColumnId ||
-    !sourceGroupByColumnId
+    !destinationSubGroupByColumnId
   )
     return;
 
@@ -76,92 +111,49 @@ export const handleDragDrop = async (
     const [removed] = sourceIssues.splice(source.index, 1);
     const removedIssueDetail = issueMap[removed];
 
+    updateIssue = {
+      id: removedIssueDetail?.id,
+      project_id: removedIssueDetail?.project_id,
+    };
+
+    // for both horizontal and vertical dnd
+    updateIssue = {
+      ...updateIssue,
+      ...handleSortOrder(destinationIssues, destination.index, issueMap),
+    };
+
     if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
-      updateIssue = {
-        id: removedIssueDetail?.id,
-      };
-
-      // for both horizontal and vertical dnd
-      updateIssue = {
-        ...updateIssue,
-        ...handleSortOrder(destinationIssues, destination.index, issueMap),
-      };
-
       if (sourceSubGroupByColumnId === destinationSubGroupByColumnId) {
         if (sourceGroupByColumnId != destinationGroupByColumnId) {
-          if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
+          if (groupBy === "state") updateIssue = { ...updateIssue, state_id: destinationGroupByColumnId };
           if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
         }
       } else {
         if (subGroupBy === "state")
           updateIssue = {
             ...updateIssue,
-            state: destinationSubGroupByColumnId,
+            state_id: destinationSubGroupByColumnId,
             priority: destinationGroupByColumnId,
           };
         if (subGroupBy === "priority")
           updateIssue = {
             ...updateIssue,
-            state: destinationGroupByColumnId,
+            state_id: destinationGroupByColumnId,
             priority: destinationSubGroupByColumnId,
           };
       }
     } else {
-      updateIssue = {
-        id: removedIssueDetail?.id,
-      };
-
-      // for both horizontal and vertical dnd
-      updateIssue = {
-        ...updateIssue,
-        ...handleSortOrder(destinationIssues, destination.index, issueMap),
-      };
-
       // for horizontal dnd
       if (sourceColumnId != destinationColumnId) {
-        if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
+        if (groupBy === "state") updateIssue = { ...updateIssue, state_id: destinationGroupByColumnId };
         if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
       }
     }
 
     if (updateIssue && updateIssue?.id) {
-      if (viewId) return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue); //, viewId);
-      else return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
+      if (viewId)
+        return await store?.updateIssue(workspaceSlug, updateIssue.project_id, updateIssue.id, updateIssue, viewId);
+      else return await store?.updateIssue(workspaceSlug, updateIssue.project_id, updateIssue.id, updateIssue);
     }
   }
-};
-
-const handleSortOrder = (destinationIssues: string[], destinationIndex: number, issueMap: IIssueMap) => {
-  const sortOrderDefaultValue = 65535;
-  let currentIssueState = {};
-
-  if (destinationIssues && destinationIssues.length > 0) {
-    if (destinationIndex === 0) {
-      const destinationIssueId = destinationIssues[destinationIndex];
-      currentIssueState = {
-        ...currentIssueState,
-        sort_order: issueMap[destinationIssueId].sort_order - sortOrderDefaultValue,
-      };
-    } else if (destinationIndex === destinationIssues.length) {
-      const destinationIssueId = destinationIssues[destinationIndex - 1];
-      currentIssueState = {
-        ...currentIssueState,
-        sort_order: issueMap[destinationIssueId].sort_order + sortOrderDefaultValue,
-      };
-    } else {
-      const destinationTopIssueId = destinationIssues[destinationIndex - 1];
-      const destinationBottomIssueId = destinationIssues[destinationIndex];
-      currentIssueState = {
-        ...currentIssueState,
-        sort_order: (issueMap[destinationTopIssueId].sort_order + issueMap[destinationBottomIssueId].sort_order) / 2,
-      };
-    }
-  } else {
-    currentIssueState = {
-      ...currentIssueState,
-      sort_order: sortOrderDefaultValue,
-    };
-  }
-
-  return currentIssueState;
 };

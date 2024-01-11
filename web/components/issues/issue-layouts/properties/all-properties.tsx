@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // hooks
-import { useLabel } from "hooks/store";
+import { useEstimate, useLabel } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
@@ -29,6 +29,7 @@ export interface IIssueProperties {
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
   const { labelMap } = useLabel();
+  const { areEstimatesEnabledForCurrentProject } = useEstimate();
 
   const handleState = (stateId: string) => {
     handleIssues({ ...issue, state_id: stateId });
@@ -92,7 +93,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* label */}
-
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
           projectId={issue?.project_id || null}
@@ -122,6 +122,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
         <div className="h-5">
           <DateDropdown
+            minDate={issue.start_date ? new Date(issue.start_date) : undefined}
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
             icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
@@ -148,17 +149,19 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* estimates */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-        <div className="h-5">
-          <EstimateDropdown
-            value={issue.estimate_point}
-            onChange={handleEstimate}
-            projectId={issue.project_id}
-            disabled={isReadOnly}
-            buttonVariant="border-with-text"
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
+      {areEstimatesEnabledForCurrentProject && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
+          <div className="h-5">
+            <EstimateDropdown
+              value={issue.estimate_point}
+              onChange={handleEstimate}
+              projectId={issue.project_id}
+              disabled={isReadOnly}
+              buttonVariant="border-with-text"
+            />
+          </div>
+        </WithDisplayPropertiesHOC>
+      )}
 
       {/* extra render properties */}
       {/* sub-issues */}

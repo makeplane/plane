@@ -1,25 +1,26 @@
 import { useRouter } from "next/router";
 // ui
-import { Tooltip, StateGroupIcon } from "@plane/ui";
+import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { TIssue } from "@plane/types";
-import { useProject, useProjectState } from "hooks/store";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
-  const router = useRouter();
   // hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
   const { getProjectStates } = useProjectState();
+  const { setPeekIssue } = useIssueDetail();
 
-  const handleIssuePeekOverview = () => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project_id },
-    });
-  };
+  const handleIssuePeekOverview = () =>
+    workspaceSlug &&
+    data &&
+    data.project_id &&
+    data.id &&
+    setPeekIssue({ workspaceSlug, projectId: data.project_id, issueId: data.id });
 
   return (
     <div
@@ -49,34 +50,42 @@ export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
 
 // rendering issues on gantt sidebar
 export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
-  const router = useRouter();
   // hooks
   const { getProjectStates } = useProjectState();
   const { getProjectById } = useProject();
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { setPeekIssue } = useIssueDetail();
 
-  const handleIssuePeekOverview = () => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project_id },
-    });
-  };
+  const handleIssuePeekOverview = () =>
+    workspaceSlug &&
+    data &&
+    data.project_id &&
+    data.id &&
+    setPeekIssue({ workspaceSlug, projectId: data.project_id, issueId: data.id });
 
   const currentStateDetails =
     getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id) || undefined;
 
   return (
-    <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
-      {currentStateDetails != undefined && (
-        <StateGroupIcon stateGroup={currentStateDetails?.group} color={currentStateDetails?.color} />
-      )}
-      <div className="flex-shrink-0 text-xs text-custom-text-300">
-        {getProjectById(data?.project_id)?.identifier} {data?.sequence_id}
+    <ControlLink
+      href={`/${workspaceSlug}/projects/${data.project_id}/issues/${data.id}`}
+      target="_blank"
+      onClick={handleIssuePeekOverview}
+      className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+    >
+      <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
+        {currentStateDetails != undefined && (
+          <StateGroupIcon stateGroup={currentStateDetails?.group} color={currentStateDetails?.color} />
+        )}
+        <div className="flex-shrink-0 text-xs text-custom-text-300">
+          {getProjectById(data?.project_id)?.identifier} {data?.sequence_id}
+        </div>
+        <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
+          <span className="flex-grow truncate text-sm font-medium">{data?.name}</span>
+        </Tooltip>
       </div>
-      <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
-        <span className="flex-grow truncate text-sm font-medium">{data?.name}</span>
-      </Tooltip>
-    </div>
+    </ControlLink>
   );
 };

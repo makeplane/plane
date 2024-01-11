@@ -17,5 +17,5 @@ export type TIssueReactionMap = {
 };
 
 export type TIssueReactionIdMap = {
-  [issue_id: string]: string[];
+  [issue_id: string]: { [reaction: string]: string[] };
 };

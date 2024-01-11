@@ -86,6 +86,8 @@ export class IssueRootStore implements IIssueRootStore {
 
   issues: IIssueStore;
 
+  issueDetail: IIssueDetail;
+
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
 
@@ -112,8 +114,6 @@ export class IssueRootStore implements IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
-
-  issueDetail: IIssueDetail;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
