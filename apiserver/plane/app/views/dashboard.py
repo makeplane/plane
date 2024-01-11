@@ -1,5 +1,4 @@
 # Django imports
-from django.utils import timezone
 from django.db.models import (
     Q,
     Case,
@@ -14,9 +13,8 @@ from django.db.models import (
     Max,
     Subquery,
     JSONField,
-    Prefetch,
+    Func,
 )
-from django.contrib.postgres.aggregates import ArrayAgg
 
 # Third Party imports
 from rest_framework.response import Response
@@ -32,11 +30,12 @@ from plane.db.models import (
     DashboardWidget,
     Dashboard,
     Project,
-    IssueRelation,
+    IssueLink,
+    IssueAttachment,
 )
 from plane.app.serializers import (
     IssueActivitySerializer,
-    DashBoardIssueSerializer,
+    IssueSerializer,
     DashboardSerializer,
     WidgetSerializer,
 )
@@ -83,6 +82,26 @@ def dashboard_assigned_issues(request, slug):
     # get all the assigned issues
     assigned_issues = (
         Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
+        .annotate(cycle_id=F("issue_cycle__cycle_id"))
+        .annotate(module_id=F("issue_module__module_id"))
+        .annotate(
+            link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
         .filter(**filters)
         .order_by("created_at")
     )
@@ -103,7 +122,7 @@ def dashboard_assigned_issues(request, slug):
         completed_issues = assigned_issues.filter(state__group__in=["completed"])[:5]
         return Response(
             {
-                "issues": DashBoardIssueSerializer(completed_issues, many=True).data,
+                "issues": IssueSerializer(completed_issues, many=True).data,
                 "count": completed_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -118,7 +137,7 @@ def dashboard_assigned_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": DashBoardIssueSerializer(overdue_issues, many=True).data,
+                "issues": IssueSerializer(overdue_issues, many=True).data,
                 "count": overdue_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -133,7 +152,7 @@ def dashboard_assigned_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": DashBoardIssueSerializer(upcoming_issues, many=True).data,
+                "issues": IssueSerializer(upcoming_issues, many=True).data,
                 "count": upcoming_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -152,19 +171,28 @@ def dashboard_created_issues(request, slug):
     # get all the assigned issues
     created_issues = (
         Issue.issue_objects.filter(workspace__slug=slug, created_by=request.user)
+        .annotate(cycle_id=F("issue_cycle__cycle_id"))
+        .annotate(module_id=F("issue_module__module_id"))
+        .annotate(
+            link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
         .filter(**filters)
         .order_by("created_at")
-        .annotate(assignee=ArrayAgg("assignees", filter=~Q(assignees=None)))
-        .values(
-            "id",
-            "name",
-            "priority",
-            "project",
-            "workspace",
-            "target_date",
-            "sequence_id",
-            "assignee",
-        )
     )
 
     # Priority Ordering
@@ -183,7 +211,7 @@ def dashboard_created_issues(request, slug):
         completed_issues = created_issues.filter(state__group__in=["completed"])[:5]
         return Response(
             {
-                "issues": completed_issues,
+                "issues": IssueSerializer(completed_issues, many=True).data,
                 "count": completed_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -198,7 +226,7 @@ def dashboard_created_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": overdue_issues,
+                "issues": IssueSerializer(overdue_issues, many=True).data,
                 "count": overdue_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -213,7 +241,7 @@ def dashboard_created_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": upcoming_issues,
+                "issues": IssueSerializer(upcoming_issues, many=True).data,
                 "count": upcoming_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -319,16 +347,12 @@ def dashboard_recent_projects(request, slug):
 
     # Fetch additional projects only if needed
     if recent_project_count < 4:
-        additional_projects = (
-            Project.objects.filter(
-                project_projectmember__member=request.user,
-                workspace__slug=slug
-            )
-            .exclude(id__in=project_ids)
-        )
+        additional_projects = Project.objects.filter(
+            project_projectmember__member=request.user, workspace__slug=slug
+        ).exclude(id__in=project_ids)
 
         # Apply slicing to limit the number of additional projects to 4 - recent_project_count
-        additional_projects = additional_projects[:4 - recent_project_count]
+        additional_projects = additional_projects[: 4 - recent_project_count]
 
         # Append additional project IDs to the existing list
         project_ids += list(additional_projects.values_list("id", flat=True))
