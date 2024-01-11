@@ -1,4 +1,4 @@
-import { observable, runInAction } from "mobx";
+import { action, observable, runInAction } from "mobx";
 import set from "lodash/set";
 import omit from "lodash/omit";
 import isToday from "date-fns/isToday";
@@ -28,6 +28,12 @@ export interface IPageStore {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  makePublic: () => Promise<void>;
+  makePrivate: () => Promise<void>;
+  addToFavorites: () => Promise<void>;
+  removeFromFavorites: () => Promise<void>;
+  updateName: (name: string) => Promise<void>;
+  updateDescription: (description: string) => Promise<void>;
 }
 
 export class PageStore {
@@ -58,6 +64,13 @@ export class PageStore {
       description_html: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
+
+      updateName: action.bound,
+      updateDescription: action.bound,
+      addToFavorites: action.bound,
+      removeFromFavorites: action.bound,
+      makePublic: action.bound,
+      makePrivate: action.bound,
     });
     this.created_by = page?.created_by || "";
     this.created_at = page?.created_at || new Date();

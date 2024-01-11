@@ -46,8 +46,10 @@ export class ProjectPageStore implements IProjectPageStore {
   fetchProjectPages = async (workspaceSlug: string, projectId: string) => {
     const response = await this.pageService.getProjectPages(workspaceSlug, projectId);
     runInAction(() => {
+      console.log(response);
       this.projectPages[projectId] = response?.map((page) => new PageStore(page));
     });
+    return response;
   };
 
   /**
