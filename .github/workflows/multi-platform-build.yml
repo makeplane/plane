@@ -35,11 +35,15 @@ jobs:
             _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
             _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
           fi
-
           echo "FRONTEND_TAG=${_FRONTEND_TAG}" >> $GITHUB_ENV
           echo "SPACE_TAG=${_SPACE_TAG}" >> $GITHUB_ENV
           echo "BACKEND_TAG=${_BACKEND_TAG}" >> $GITHUB_ENV
           echo "PROXY_TAG=${_PROXY_TAG}" >> $GITHUB_ENV
+    outputs:
+      FRONTEND_TAG: ${{ env.FRONTEND_TAG }}
+      SPACE_TAG: ${{ env.SPACE_TAG }}
+      BACKEND_TAG: ${{ env.BACKEND_TAG }}
+      PROXY_TAG: ${{ env.PROXY_TAG }}
 
 
   branch_build_push_frontend:
@@ -71,7 +75,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: ${{ env.PLATFORMS }}
-          tags: ${{ env.FRONTEND_TAG }}
+          tags: ${{ needs.build_environment_prepare.outputs.FRONTEND_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -107,7 +111,7 @@ jobs:
           context: .
           file: ./space/Dockerfile.space
           platforms: ${{ env.PLATFORMS }}
-          tags: ${{ env.SPACE_TAG }}
+          tags: ${{ needs.build_environment_prepare.outputs.SPACE_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -146,7 +150,7 @@ jobs:
           file: ./apiserver/Dockerfile.api
           platforms: ${{ env.PLATFORMS }}
           push: true
-          tags: ${{ env.BACKEND_TAG }}
+          tags: ${{ needs.build_environment_prepare.outputs.BACKEND_TAG }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -183,7 +187,7 @@ jobs:
           context: ./nginx
           file: ./nginx/Dockerfile
           platforms: ${{ env.PLATFORMS }}
-          tags: ${{ env.PROXY_TAG }}
+          tags: ${{ needs.build_environment_prepare.outputs.PROXY_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
