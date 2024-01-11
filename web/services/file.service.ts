@@ -65,12 +65,16 @@ export class FileService extends APIService {
 
   getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
     return async (file: File) => {
-      const formData = new FormData();
-      formData.append("asset", file);
-      formData.append("attributes", JSON.stringify({}));
+      try {
+        const formData = new FormData();
+        formData.append("asset", file);
+        formData.append("attributes", JSON.stringify({}));
 
-      const data = await this.uploadFile(workspaceSlug, formData);
-      return data.asset;
+        const data = await this.uploadFile(workspaceSlug, formData);
+        return data.asset;
+      } catch (e) {
+        console.error(e);
+      }
     };
   }
 

@@ -6,6 +6,7 @@ import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "components/editor/rich-text-editor";
+import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
@@ -26,13 +27,13 @@ export interface IssueDetailsProps {
     project_id?: string;
   };
   issueOperations: TIssueOperations;
-  isAllowed: boolean;
+  disabled: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { workspaceSlug, projectId, issueId, issue, issueOperations, isAllowed, isSubmitting, setIsSubmitting } = props;
+  const { workspaceSlug, projectId, issueId, issue, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -112,7 +113,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   return (
     <div className="relative">
       <div className="relative">
-        {isAllowed ? (
+        {!disabled ? (
           <Controller
             name="name"
             control={control}
@@ -134,14 +135,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.name)}
                 role="textbox"
-                disabled={!isAllowed}
               />
             )}
           />
         ) : (
           <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
         )}
-        {characterLimit && isAllowed && (
+        {characterLimit && !disabled && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200">
             <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
               {watch("name").length}
@@ -150,31 +150,36 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           </div>
         )}
       </div>
-      <span>
-        <>{errors.name ? errors.name.message : null}</>
-      </span>
+      <span>{errors.name ? errors.name.message : null}</span>
       <div className="relative">
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { onChange } }) => (
-            <RichTextEditor
-              workspaceSlug={workspaceSlug}
-              value={localIssueDescription.description_html}
-              rerenderOnPropsChange={localIssueDescription}
-              setShouldShowAlert={setShowAlert}
-              setIsSubmitting={setIsSubmitting}
-              dragDropEnabled
-              customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
-              noBorder={!isAllowed}
-              onChange={(description: Object, description_html: string) => {
-                setShowAlert(true);
-                setIsSubmitting("submitting");
-                onChange(description_html);
-                debouncedFormSave();
-              }}
-            />
-          )}
+          render={({ field: { onChange } }) =>
+            !disabled ? (
+              <RichTextEditor
+                workspaceSlug={workspaceSlug}
+                value={localIssueDescription.description_html}
+                rerenderOnPropsChange={localIssueDescription}
+                setShouldShowAlert={setShowAlert}
+                setIsSubmitting={setIsSubmitting}
+                dragDropEnabled
+                customClassName="min-h-[150px] shadow-sm"
+                onChange={(description: Object, description_html: string) => {
+                  setShowAlert(true);
+                  setIsSubmitting("submitting");
+                  onChange(description_html);
+                  debouncedFormSave();
+                }}
+              />
+            ) : (
+              <RichTextReadOnlyEditor
+                value={localIssueDescription.description_html}
+                customClassName="!p-0 !pt-2 text-custom-text-200"
+                noBorder={disabled}
+              />
+            )
+          }
         />
       </div>
     </div>

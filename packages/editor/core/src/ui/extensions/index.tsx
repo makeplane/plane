@@ -1,5 +1,4 @@
 import StarterKit from "@tiptap/starter-kit";
-import TiptapLink from "@tiptap/extension-link";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
@@ -19,13 +18,15 @@ import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
 
 import { CustomKeymap } from "src/ui/extensions/keymap";
-import { CustomCodeBlock } from "src/ui/extensions/code";
+import { CustomCodeBlockExtension } from "src/ui/extensions/code";
 import { CustomQuoteExtension } from "src/ui/extensions/quote";
 import { ListKeymap } from "src/ui/extensions/custom-list-keymap";
 
 import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
+import { CustomLinkExtension } from "src/ui/extensions/custom-link";
+import { CustomCodeInlineExtension } from "./code-inline";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -52,12 +53,7 @@ export const CoreEditorExtensions = (
         class: "leading-normal -mb-2",
       },
     },
-    code: {
-      HTMLAttributes: {
-        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-        spellcheck: "false",
-      },
-    },
+    code: false,
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
@@ -70,10 +66,12 @@ export const CoreEditorExtensions = (
   }),
   CustomKeymap,
   ListKeymap,
-  TiptapLink.configure({
-    autolink: false,
+  CustomLinkExtension.configure({
+    openOnClick: true,
+    autolink: true,
+    linkOnPaste: true,
     protocols: ["http", "https"],
-    validate: (url) => isValidHttpUrl(url),
+    validate: (url: string) => isValidHttpUrl(url),
     HTMLAttributes: {
       class:
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
@@ -92,13 +90,14 @@ export const CoreEditorExtensions = (
       class: "not-prose pl-2",
     },
   }),
-  CustomCodeBlock,
   TaskItem.configure({
     HTMLAttributes: {
       class: "flex items-start my-4",
     },
     nested: true,
   }),
+  CustomCodeBlockExtension,
+  CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
     transformCopiedText: true,
