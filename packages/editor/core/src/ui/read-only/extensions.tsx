@@ -1,5 +1,4 @@
 import StarterKit from "@tiptap/starter-kit";
-import TiptapLink from "@tiptap/extension-link";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
@@ -18,6 +17,7 @@ import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image"
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionSuggestions: IMentionSuggestion[];
@@ -59,7 +59,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     gapcursor: false,
   }),
   Gapcursor,
-  TiptapLink.configure({
+  CustomLinkExtension.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
     HTMLAttributes: {
