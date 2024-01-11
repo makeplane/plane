@@ -15,7 +15,7 @@ import {
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
-import { TIssue, IIssueLink, ILinkDetails } from "@plane/types";
+import { TIssue } from "@plane/types";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 interface IIssueView {
@@ -31,7 +31,7 @@ interface IIssueView {
   handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
   redirectToIssueDetail: () => void;
 
-  issueUpdate: (issue: Partial<TIssue>) => void;
+  issueUpdate: (issue: Partial<TIssue>) => Promise<void>;
   issueDelete: () => Promise<void>;
 
   issueReactionCreate: (reaction: string) => void;

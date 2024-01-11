@@ -1,7 +1,6 @@
 import React from "react";
 import { ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/lite-text-editor";
-
-import { useMention } from "hooks/store";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 interface EditorHandle {
   clearEditor: () => void;
@@ -12,11 +11,9 @@ interface LiteTextReadOnlyEditorWrapperProps extends Omit<ILiteTextReadOnlyEdito
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorHandle, LiteTextReadOnlyEditorWrapperProps>(
   ({ ...props }, ref) => {
-    const editorSuggestions = useMention();
+    const mentionsConfig = useEditorSuggestions();
 
-    return (
-      <LiteTextReadOnlyEditorWithRef ref={ref} mentionHighlights={editorSuggestions.mentionHighlights} {...props} />
-    );
+    return <LiteTextReadOnlyEditorWithRef ref={ref} mentionHighlights={mentionsConfig.mentionHighlights} {...props} />;
   }
 );
 

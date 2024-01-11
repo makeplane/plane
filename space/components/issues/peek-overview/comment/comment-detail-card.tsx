@@ -12,6 +12,7 @@ import { CommentReactions } from "components/issues/peek-overview";
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
+import { LiteTextReadOnlyEditor } from "components/editor/lite-text-read-only-editor";
 
 type Props = {
   workspaceSlug: string;
@@ -126,11 +127,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteReadOnlyEditorWithRef
+            <LiteTextReadOnlyEditor
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={mentionsConfig.mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
