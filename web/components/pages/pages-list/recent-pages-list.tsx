@@ -23,7 +23,8 @@ export const RecentPagesList: FC = observer(() => {
   } = useUser();
   const { recentProjectPages } = usePage();
 
-  const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
+  // FIXME: replace any with proper type
+  const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

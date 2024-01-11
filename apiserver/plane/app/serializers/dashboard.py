@@ -29,8 +29,6 @@ class DashBoardIssueSerializer(BaseSerializer):
             "workspace",
             "target_date",
             "sequence_id",
-            "state",
-            "assignees",
             "related_issues",
         ]
 

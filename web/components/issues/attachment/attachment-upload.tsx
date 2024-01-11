@@ -11,15 +11,15 @@ import { TAttachmentOperations } from "./root";
 type TAttachmentOperationsModal = Exclude<TAttachmentOperations, "remove">;
 
 type Props = {
+  workspaceSlug: string;
   disabled?: boolean;
   handleAttachmentOperations: TAttachmentOperationsModal;
 };
 
 export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
-  const { disabled = false, handleAttachmentOperations } = props;
+  const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
   // store hooks
   const {
-    router: { workspaceSlug },
     config: { envConfig },
   } = useApplication();
   // states

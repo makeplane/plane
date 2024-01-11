@@ -15,17 +15,16 @@ import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
+import { DeleteIssueModal } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { IssueKanBanViewStore } from "store/issue/issue_kanban_view.store";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
@@ -69,7 +68,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -77,9 +76,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const { issueMap } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();
-
-  // FIXME get from filters
-  const kanbanViewStore: IssueKanBanViewStore = {} as IssueKanBanViewStore;
 
   const issueIds = issues?.groupedIssueIds || [];
 
@@ -211,9 +207,18 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     });
   };
 
-  const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
-    kanbanViewStore.handleKanBanToggle(toggle, value);
+  const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
+    if (workspaceSlug && projectId) {
+      let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
+      else _kanbanFilters.push(value);
+      issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
+        [toggle]: _kanbanFilters,
+      });
+    }
   };
+
+  const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
     <>
@@ -230,8 +235,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         </div>
       )}
 
-      <div className={`relative h-max min-h-full w-max min-w-full bg-custom-background-90 px-3`}>
+      <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          {/* drag and delete component */}
           <div
             className={`fixed left-1/2 -translate-x-1/2 ${
               isDragStarted ? "z-40" : ""
@@ -262,8 +268,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             group_by={group_by}
             handleIssues={handleIssues}
             quickActions={renderQuickActions}
-            kanBanToggle={kanbanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
+            handleKanbanFilters={handleKanbanFilters}
+            kanbanFilters={kanbanFilters}
             enableQuickIssueCreate={enableQuickAdd}
             showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
             quickAddCallback={issues?.quickAddIssue}
@@ -275,15 +281,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           />
         </DragDropContext>
       </div>
-
-      {/* {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as TIssue, EIssueActions.UPDATE)}
-        />
-      )} */}
     </>
   );
 });

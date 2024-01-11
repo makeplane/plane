@@ -7,7 +7,13 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle 
 // hooks
 import { useProjectState, useUser, useInboxIssues } from "hooks/store";
 // components
-import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction, IssueUpdateStatus } from "components/issues";
+import {
+  IssueDescriptionForm,
+  // FIXME: have to replace this once the issue details page is ready --issue-detail--
+  // IssueDetailsSidebar,
+  // IssueReaction,
+  IssueUpdateStatus,
+} from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
@@ -226,7 +232,9 @@ export const InboxMainContent: React.FC = observer(() => {
               )}
               <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issueDetails} />
             </div>
-            <div>
+
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* <div>
               <IssueDescriptionForm
                 setIsSubmitting={(value) => setIsSubmitting(value)}
                 isSubmitting={isSubmitting}
@@ -239,26 +247,28 @@ export const InboxMainContent: React.FC = observer(() => {
                 handleFormSubmit={submitChanges}
                 isAllowed={isAllowed || currentUser?.id === issueDetails.created_by}
               />
-            </div>
+            </div> */}
 
-            {workspaceSlug && projectId && (
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* {workspaceSlug && projectId && (
               <IssueReaction
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 issueId={issueDetails.id}
               />
-            )}
+            )} */}
             <InboxIssueActivity issueDetails={issueDetails} />
           </div>
 
           <div className="basis-1/3 space-y-5 border-custom-border-200 py-5">
-            <IssueDetailsSidebar
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
               fieldsToShow={["assignee", "priority", "estimate", "dueDate", "label", "state"]}
-            />
+            /> */}
           </div>
         </div>
       ) : (

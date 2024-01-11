@@ -175,7 +175,7 @@ class IssueCreateSerializer(BaseSerializer):
 
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
-        labels = validated_data.pop("labels_ids", None)
+        labels = validated_data.pop("label_ids", None)
 
         # Related models
         project_id = instance.project_id

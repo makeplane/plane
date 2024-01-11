@@ -12,9 +12,10 @@ import { MODULE_STATUS } from "constants/module";
 type Props = {
   control: Control<IModule, any>;
   error?: FieldError;
+  tabIndex?: number;
 };
 
-export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
+export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }) => (
   <Controller
     control={control}
     rules={{ required: true }}
@@ -35,6 +36,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
           </div>
         }
         onChange={onChange}
+        tabIndex={tabIndex}
         noChevron
       >
         {MODULE_STATUS.map((status) => (

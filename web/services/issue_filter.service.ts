@@ -29,7 +29,7 @@ export class IssueFiltersService extends APIService {
   // }
 
   // project issue filters
-  async fetchProjectIssueFilters(workspaceSlug: string, projectId: string): Promise<any> {
+  async fetchProjectIssueFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -49,7 +49,11 @@ export class IssueFiltersService extends APIService {
   }
 
   // cycle issue filters
-  async fetchCycleIssueFilters(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+  async fetchCycleIssueFilters(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<IIssueFiltersResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -70,7 +74,11 @@ export class IssueFiltersService extends APIService {
   }
 
   // module issue filters
-  async fetchModuleIssueFilters(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+  async fetchModuleIssueFilters(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string
+  ): Promise<IIssueFiltersResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {

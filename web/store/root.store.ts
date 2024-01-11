@@ -33,7 +33,7 @@ export class RootStore {
   module: IModuleStore;
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
-  // page: IPageStore;
+  page: IPageStore;
   issue: IIssueRootStore;
   state: IStateStore;
   estimate: IEstimateStore;
@@ -60,5 +60,6 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectPages = new ProjectPageStore();
+    this.page = new PageStore(this);
   }
 }

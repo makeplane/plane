@@ -23,13 +23,17 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
   const { linkId, linkOperations, isNotAllowed } = props;
   // hooks
   const {
+    toggleIssueLinkModal: toggleIssueLinkModalStore,
     link: { getLinkById },
   } = useIssueDetail();
   const { setToastAlert } = useToast();
 
   // state
   const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
-  const toggleIssueLinkModal = (modalToggle: boolean) => setIsIssueLinkModalOpen(modalToggle);
+  const toggleIssueLinkModal = (modalToggle: boolean) => {
+    toggleIssueLinkModalStore(modalToggle);
+    setIsIssueLinkModalOpen(modalToggle);
+  };
 
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
@@ -74,7 +78,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setIsIssueLinkModalOpen(true);
+                  toggleIssueLinkModal(true);
                 }}
               >
                 <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />

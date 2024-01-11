@@ -2,7 +2,6 @@ import re
 import uuid
 from datetime import timedelta
 from django.utils import timezone
-from datetime import datetime
 
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
@@ -324,28 +323,6 @@ def filter_start_target_date_issues(params, filter, method):
         filter["target_date__isnull"] = False
         filter["start_date__isnull"] = False
     return filter
-
-
-def filter_duration(params, filter, method):
-    duration = params.get("duration", "false")
-    today = timezone.now().date()
-
-    if duration == "today":
-        filter["start_date"] = today
-    if duration == "this_week":
-        next_saturday = today + timedelta(days=(5 - today.weekday()))
-        past_sunday = today - timedelta(days=today.weekday())
-        filter["target_date__range"] = [past_sunday, next_saturday]
-    if duration == "this_month":
-        first_day_of_month = today.replace(day=1)
-        first_day_of_next_month = (
-            first_day_of_month.replace(month=first_day_of_month.month % 12 + 1, year=first_day_of_month.year + first_day_of_month.month // 12)
-        )
-        filter["target_date__range"] = [first_day_of_month, first_day_of_next_month - timedelta(days=1)]
-    if duration == "this_year":
-        first_day_of_year = today.replace(month=1, day=1)
-        first_day_of_next_year = first_day_of_year.replace(year=first_day_of_year.year + 1)
-        filter["target_date__range"] = [first_day_of_year, first_day_of_next_year - timedelta(days=1)]
     
 
 def issue_filters(query_params, method):
@@ -375,7 +352,6 @@ def issue_filters(query_params, method):
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
-        "duration": filter_duration,
     }
 
     for key, value in ISSUE_FILTER.items():
