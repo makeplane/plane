@@ -159,4 +159,4 @@ then
 fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
-# buildNonAMD64
+askForAction
