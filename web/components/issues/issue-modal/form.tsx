@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
 // components
-import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-wrapper";
 import { GptAssistantPopover } from "components/core";
 import {
   CycleDropdown,
@@ -322,7 +322,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   name="description_html"
                   control={control}
                   render={({ field: { value, onChange } }) => (
-                    <RichTextEditorWrapper
+                    <RichTextEditor
                       workspaceSlug={workspaceSlug as string}
                       ref={editorRef}
                       debouncedUpdatesEnabled={false}

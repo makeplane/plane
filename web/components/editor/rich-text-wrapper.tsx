@@ -20,7 +20,7 @@ interface RichTextEditorWrapperProps
 
 const fileService = new FileService();
 
-export const RichTextEditorWrapper = React.forwardRef<EditorHandle, RichTextEditorWrapperProps>(
+export const RichTextEditor = React.forwardRef<EditorHandle, RichTextEditorWrapperProps>(
   ({ workspaceSlug, ...props }, ref) => {
     const editorSuggestions = useMention();
 
@@ -38,4 +38,4 @@ export const RichTextEditorWrapper = React.forwardRef<EditorHandle, RichTextEdit
   }
 );
 
-RichTextEditorWrapper.displayName = "RichTextEditorWrapper";
+RichTextEditor.displayName = "RichTextEditor";

@@ -12,7 +12,7 @@ import { AIService } from "services/ai.service";
 // components
 import { GptAssistantPopover } from "components/core";
 import { PriorityDropdown } from "components/dropdowns";
-import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-wrapper";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
@@ -271,7 +271,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             name="description_html"
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                              <RichTextEditorWrapper
+                              <RichTextEditor
                                 workspaceSlug={workspaceSlug}
                                 ref={editorRef}
                                 debouncedUpdatesEnabled={false}

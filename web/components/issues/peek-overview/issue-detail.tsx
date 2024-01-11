@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useProject, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
-import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-wrapper";
 import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";
@@ -19,7 +19,7 @@ interface IPeekOverviewIssueDetails {
   issue: TIssue;
   issueReactions: any;
   user: IUser | null;
-  issueUpdate: (issue: Partial<TIssue>) => void;
+  issueUpdate: (issue: Partial<TIssue>) => Promise<void>;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   isSubmitting: "submitting" | "submitted" | "saved";
@@ -175,7 +175,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           name="description_html"
           control={control}
           render={({ field: { onChange } }) => (
-            <RichTextEditorWrapper
+            <RichTextEditor
               workspaceSlug={workspaceSlug}
               value={localIssueDescription.description_html}
               rerenderOnPropsChange={localIssueDescription}

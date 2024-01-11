@@ -5,7 +5,7 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-wrapper";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
@@ -158,7 +158,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           name="description_html"
           control={control}
           render={({ field: { onChange } }) => (
-            <RichTextEditorWrapper
+            <RichTextEditor
               workspaceSlug={workspaceSlug}
               value={localIssueDescription.description_html}
               rerenderOnPropsChange={localIssueDescription}

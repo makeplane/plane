@@ -25,7 +25,7 @@ import { ParentIssuesListModal } from "components/issues";
 import { IssueLabelSelect } from "components/issues/select";
 import { CreateLabelModal } from "components/labels";
 import { CreateStateModal } from "components/states";
-import { RichTextEditorWrapper } from "components/editor/rich-text-wrapper";
+import { RichTextEditor } from "components/editor/rich-text-wrapper";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // helpers
@@ -428,7 +428,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     name="description_html"
                     control={control}
                     render={({ field: { value, onChange } }) => (
-                      <RichTextEditorWrapper
+                      <RichTextEditor
                         workspaceSlug={workspaceSlug as string}
                         ref={editorRef}
                         debouncedUpdatesEnabled={false}
