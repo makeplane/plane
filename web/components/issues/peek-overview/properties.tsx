@@ -258,8 +258,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             workspaceSlug={workspaceSlug?.toString() ?? ""}
             projectId={projectId?.toString() ?? ""}
             issueId={issue?.id}
-            is_editable={uneditable}
-            is_archived={isAllowed}
           />
         </div>
       </div>

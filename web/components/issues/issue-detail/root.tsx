@@ -8,12 +8,15 @@ import { EmptyState } from "components/common";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 export type TIssueOperations = {
+  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
@@ -27,16 +30,16 @@ export type TIssueDetailRoot = {
   projectId: string;
   issueId: string;
   is_archived?: boolean;
-  is_editable?: boolean;
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
-  const { workspaceSlug, projectId, issueId, is_archived = false, is_editable = true } = props;
+  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
   // router
   const router = useRouter();
   // hooks
   const {
     issue: { getIssueById },
+    fetchIssue,
     updateIssue,
     removeIssue,
     addIssueToCycle,
@@ -45,9 +48,19 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
     removeIssueFromModule,
   } = useIssueDetail();
   const { setToastAlert } = useToast();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await fetchIssue(workspaceSlug, projectId, issueId);
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
+      },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
@@ -146,6 +159,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
     }),
     [
+      fetchIssue,
       updateIssue,
       removeIssue,
       addIssueToCycle,
@@ -156,7 +170,10 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
     ]
   );
 
+  // Issue details
   const issue = getIssueById(issueId);
+  // Check if issue is editable, based on user role
+  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -189,7 +206,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={true}
+              is_editable={is_editable}
             />
           </div>
         </div>

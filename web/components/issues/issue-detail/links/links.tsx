@@ -9,19 +9,24 @@ import { TLinkOperations } from "./root";
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 
 export type TIssueLinkList = {
+  issueId: string;
   linkOperations: TLinkOperationsModal;
 };
 
 export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
   // props
-  const { linkOperations } = props;
+  const { issueId, linkOperations } = props;
   // hooks
   const {
-    link: { issueLinks },
+    link: { getLinksByIssueId },
   } = useIssueDetail();
   const {
     membership: { currentProjectRole },
   } = useUser();
+
+  const issueLinks = getLinksByIssueId(issueId);
+
+  if (!issueLinks) return <></>;
 
   return (
     <div className="space-y-2">
