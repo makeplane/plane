@@ -76,22 +76,26 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         projectId={projectId}
         issueId={issueId}
         labelOperations={labelOperations}
-      />
-
-      <IssueLabelSelectRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        labelOperations={labelOperations}
         disabled={disabled}
       />
 
-      <LabelCreate
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        labelOperations={labelOperations}
-      />
+      {!disabled && (
+        <IssueLabelSelectRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          labelOperations={labelOperations}
+        />
+      )}
+
+      {!disabled && (
+        <LabelCreate
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          labelOperations={labelOperations}
+        />
+      )}
     </div>
   );
 });

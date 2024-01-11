@@ -6,18 +6,16 @@ import { Check, Search, Tag } from "lucide-react";
 import { useIssueDetail, useLabel } from "hooks/store";
 // components
 import { Combobox } from "@headlessui/react";
-import { Tooltip } from "@plane/ui";
 
 export interface IIssueLabelSelect {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   onSelect: (_labelIds: string[]) => void;
-  disabled?: boolean;
 }
 
 export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, onSelect, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, onSelect } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -72,16 +70,14 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const issueLabels = issue?.label_ids ?? [];
 
   const label = (
-    <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
-      <div
-        className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 py-0.5 text-custom-text-300 hover:text-custom-text-200 border border-custom-border-100`}
-      >
-        <div className="flex-shrink-0">
-          <Tag className="h-2.5 w-2.5" />
-        </div>
-        <div className="flex-shrink-0">Select Label</div>
+    <div
+      className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 py-0.5 text-custom-text-300 hover:text-custom-text-200 border border-custom-border-100`}
+    >
+      <div className="flex-shrink-0">
+        <Tag className="h-2.5 w-2.5" />
       </div>
-    </Tooltip>
+      <div className="flex-shrink-0">Select Label</div>
+    </div>
   );
 
   if (!issue) return <></>;
@@ -93,14 +89,13 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
         className={`w-auto max-w-full flex-shrink-0 text-left`}
         value={issueLabels}
         onChange={(value) => onSelect(value)}
-        disabled={disabled}
         multiple
       >
         <Combobox.Button as={Fragment}>
           <button
             ref={setReferenceElement}
             type="button"
-            className={`rounded  ${disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"} `}
+            className="rounded cursor-pointer"
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}

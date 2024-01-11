@@ -421,7 +421,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
-            <div className="flex flex-wrap items-start py-2">
+            <div className={`flex flex-wrap items-start py-2 ${!is_editable ? "opacity-60" : ""}`}>
               <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <p>Label</p>

@@ -11,10 +11,11 @@ type TLabelList = {
   projectId: string;
   issueId: string;
   labelOperations: TLabelOperations;
+  disabled: boolean;
 };
 
 export const LabelList: FC<TLabelList> = (props) => {
-  const { workspaceSlug, projectId, issueId, labelOperations } = props;
+  const { workspaceSlug, projectId, issueId, labelOperations, disabled } = props;
   // hooks
   const {
     issue: { getIssueById },
@@ -33,6 +34,7 @@ export const LabelList: FC<TLabelList> = (props) => {
           issueId={issueId}
           labelId={labelId}
           labelOperations={labelOperations}
+          disabled={disabled}
         />
       ))}
     </>
