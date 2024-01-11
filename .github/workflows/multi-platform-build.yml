@@ -55,24 +55,27 @@ jobs:
     needs: [branch_build_setup]
     env:
       FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-      FRONTEND_ARM_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}-arm
     steps:
       - name: Set Frontend Docker Tag 
         run: |
           if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            ARM_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest-arm,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}-arm
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            ARM_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable-arm
           else
             TAG=${{ env.FRONTEND_TAG }}
-            ARM_TAG=${{ env.FRONTEND_ARM_TAG }}
           fi
           echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
-          echo "FRONTEND_ARM_TAG=${ARM_TAG}" >> $GITHUB_ENV
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: all
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.5.0
+        uses: docker/setup-buildx-action@v3.0.0
+        with:
+          platforms: linux/amd64,linux/arm64
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2.1.0
@@ -89,21 +92,7 @@ jobs:
         with:
           context: .
           file: ./web/Dockerfile.web
-          platforms: linux/amd64
           tags: ${{ env.FRONTEND_TAG }}
-          push: true
-        env:
-          DOCKER_BUILDKIT: 1
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push Frontend ARM to Docker Container Registry
-        uses: docker/build-push-action@v4.0.0
-        with:
-          context: .
-          file: ./web/Dockerfile.web
-          platforms: linux/arm64
-          tags: ${{ env.FRONTEND_ARM_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
