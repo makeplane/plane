@@ -71,32 +71,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       });
     }
   }, [peekIssue, fetchIssue]);
-  if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
-
-  const issue = getIssueById(peekIssue.issueId) || undefined;
-
-  const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${peekIssue.workspaceSlug}/projects/${peekIssue.projectId}/${
-        isArchived ? "archived-issues" : "issues"
-      }/${peekIssue.issueId}`,
-    });
-  };
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(
-      `${peekIssue.workspaceSlug}/projects/${peekIssue.projectId}/${isArchived ? "archived-issues" : "issues"}/${
-        peekIssue.issueId
-      }`
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
 
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
@@ -167,6 +141,34 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }),
     [addIssueToCycle, removeIssueFromCycle, addIssueToModule, removeIssueFromModule, setToastAlert]
   );
+
+  if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
+
+  const issue = getIssueById(peekIssue.issueId) || undefined;
+
+  const redirectToIssueDetail = () => {
+    router.push({
+      pathname: `/${peekIssue.workspaceSlug}/projects/${peekIssue.projectId}/${
+        isArchived ? "archived-issues" : "issues"
+      }/${peekIssue.issueId}`,
+    });
+  };
+
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(
+      `${peekIssue.workspaceSlug}/projects/${peekIssue.projectId}/${isArchived ? "archived-issues" : "issues"}/${
+        peekIssue.issueId
+      }`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
+  };
 
   const issueUpdate = async (_data: Partial<TIssue>) => {
     if (!issue) return;

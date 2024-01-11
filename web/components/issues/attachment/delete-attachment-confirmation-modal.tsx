@@ -8,12 +8,15 @@ import { Button } from "@plane/ui";
 import { getFileName } from "helpers/attachment.helper";
 // types
 import type { TIssueAttachment } from "@plane/types";
-import { TIssueAttachmentsList } from "./attachments-list";
+import { TAttachmentOperations } from "./root";
 
-type Props = TIssueAttachmentsList & {
+export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+
+type Props = {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   data: TIssueAttachment;
+  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
 export const IssueAttachmentDeleteModal: FC<Props> = (props) => {

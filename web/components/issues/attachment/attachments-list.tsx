@@ -7,25 +7,35 @@ import { IssueAttachmentsDetail } from "./attachment-detail";
 // types
 import { TAttachmentOperations } from "./root";
 
-export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
 
-export type TIssueAttachmentsList = {
+type TIssueAttachmentsList = {
+  issueId: string;
   handleAttachmentOperations: TAttachmentOperationsRemoveModal;
+  disabled?: boolean;
 };
 
 export const IssueAttachmentsList: FC<TIssueAttachmentsList> = observer((props) => {
-  const { handleAttachmentOperations } = props;
+  const { issueId, handleAttachmentOperations, disabled } = props;
   // store hooks
   const {
-    attachment: { issueAttachments },
+    attachment: { getAttachmentsByIssueId },
   } = useIssueDetail();
+
+  const issueAttachments = getAttachmentsByIssueId(issueId);
+
+  if (!issueAttachments) return <></>;
 
   return (
     <>
       {issueAttachments &&
         issueAttachments.length > 0 &&
         issueAttachments.map((attachmentId) => (
-          <IssueAttachmentsDetail attachmentId={attachmentId} handleAttachmentOperations={handleAttachmentOperations} />
+          <IssueAttachmentsDetail
+            attachmentId={attachmentId}
+            disabled={disabled}
+            handleAttachmentOperations={handleAttachmentOperations}
+          />
         ))}
     </>
   );
