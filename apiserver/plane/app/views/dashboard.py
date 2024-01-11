@@ -111,11 +111,9 @@ def dashboard_assigned_issues(request, slug):
 
     if issue_type == "overdue":
         overdue_issues_count = assigned_issues.filter(
-            target_date__lt=timezone.now(),
             state__group__in=["backlog", "unstarted", "started"],
         ).count()
         overdue_issues = assigned_issues.filter(
-            target_date__lt=timezone.now(),
             state__group__in=["backlog", "unstarted", "started"],
         )[:5]
         return Response(
@@ -129,11 +127,9 @@ def dashboard_assigned_issues(request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now(),
         ).count()
         upcoming_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now(),
         )[:5]
         return Response(
             {
@@ -195,11 +191,9 @@ def dashboard_created_issues(request, slug):
 
     if issue_type == "overdue":
         overdue_issues_count = created_issues.filter(
-            target_date__lt=timezone.now(),
             state__group__in=["backlog", "unstarted", "started"],
         ).count()
         overdue_issues = created_issues.filter(
-            target_date__lt=timezone.now(),
             state__group__in=["backlog", "unstarted", "started"],
         )[:5]
         return Response(
@@ -213,11 +207,9 @@ def dashboard_created_issues(request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now(),
         ).count()
         upcoming_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now(),
         )[:5]
         return Response(
             {
