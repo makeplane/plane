@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { Spinner } from "@plane/ui";
@@ -9,7 +9,6 @@ import { EIssueActions } from "../types";
 import { useProject } from "hooks/store";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 import { SpreadsheetIssueRow } from "./issue-row";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;

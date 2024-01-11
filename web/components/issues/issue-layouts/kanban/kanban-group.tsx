@@ -55,7 +55,6 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     disableIssueCreation,
     quickAddCallback,
     viewId,
-    groupByVisibilityToggle,
   } = props;
   // hooks
   const projectState = useProjectState();
