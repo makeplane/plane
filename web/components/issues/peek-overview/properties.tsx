@@ -1,9 +1,9 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { CalendarDays, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject, useUser } from "hooks/store";
+import { useProject, useUser } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
 import { IssueLinkRoot, IssueCycleSelect, IssueModuleSelect, IssueParentSelect, IssueLabel } from "components/issues";
@@ -13,7 +13,7 @@ import { CustomDatePicker } from "components/ui";
 // types
 import { TIssue, TIssuePriorities } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
+// import { EUserProjectRoles } from "constants/project";
 
 interface IPeekOverviewProperties {
   issue: TIssue;
@@ -29,14 +29,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentUser } = useUser();
   const { getProjectById } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const uneditable = currentProjectRole ? [5, 10].includes(currentProjectRole) : false;
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  // const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleState = (_state: string) => {
     issueUpdate({ ...issue, state_id: _state });

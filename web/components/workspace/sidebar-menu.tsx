@@ -44,7 +44,7 @@ export const WorkspaceSidebarMenu = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // computed
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
@@ -76,7 +76,6 @@ export const WorkspaceSidebarMenu = observer(() => {
           </Link>
         );
       })}
-
       <NotificationPopover />
     </div>
   );

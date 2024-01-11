@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import debounce from "lodash/debounce";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
@@ -33,7 +33,6 @@ import { IPage, TIssue } from "@plane/types";
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
@@ -50,9 +49,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     config: { envConfig },
   } = useApplication();

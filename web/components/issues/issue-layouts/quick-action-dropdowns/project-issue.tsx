@@ -76,7 +76,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         ellipsis
       >
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -88,7 +88,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         {isEditingAllowed && (
           <>
             <CustomMenu.MenuItem
-              onClick={(e) => {
+              onClick={() => {
                 setIssueToEdit(issue);
                 setCreateUpdateIssueModal(true);
               }}
@@ -99,7 +99,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              onClick={(e) => {
+              onClick={() => {
                 setCreateUpdateIssueModal(true);
               }}
             >
@@ -109,7 +109,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              onClick={(e) => {
+              onClick={() => {
                 setDeleteIssueModal(true);
               }}
             >
