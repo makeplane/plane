@@ -119,6 +119,7 @@ export const NotificationPopover = observer(() => {
                             <NotificationCard
                               key={notification.id}
                               isSnoozedTabOpen={snoozed}
+                              closePopover={closePopover}
                               notification={notification}
                               markNotificationArchivedStatus={markNotificationArchivedStatus}
                               markNotificationReadStatus={markNotificationAsRead}

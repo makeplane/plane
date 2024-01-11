@@ -138,15 +138,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           addIssuesToView={addIssuesToView}
         />
       </div>
-
-      {/* {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as TIssue, EIssueActions.UPDATE)}
-        />
-      )} */}
     </>
   );
 });

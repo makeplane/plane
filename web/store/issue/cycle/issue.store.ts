@@ -1,5 +1,8 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -259,13 +262,17 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     try {
       runInAction(() => {
-        this.issues[cycleId].push(...issueIds);
+        update(this.issues, cycleId, (cycleIssueIds) => {
+          if (!cycleIssueIds) return issueIds;
+          else return concat(cycleIssueIds, issueIds);
+        });
       });
+
+      issueIds.map((issueId) => this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId }));
 
       const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
         issues: issueIds,
       });
-
       return issueToCycle;
     } catch (error) {
       throw error;
@@ -274,13 +281,13 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
   removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
     try {
-      const response = await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+      runInAction(() => {
+        pull(this.issues[cycleId], issueId);
+      });
 
-      const issueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[cycleId].splice(issueIndex, 1);
-        });
+      this.rootStore.issues.updateIssue(issueId, { cycle_id: null });
+
+      const response = await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
 
       return response;
     } catch (error) {

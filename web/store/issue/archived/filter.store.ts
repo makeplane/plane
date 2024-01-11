@@ -1,4 +1,4 @@
-import { computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 // base class
@@ -11,6 +11,7 @@ import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
+  TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
 } from "@plane/types";
@@ -31,7 +32,7 @@ export interface IArchivedIssuesFilter {
     workspaceSlug: string,
     projectId: string,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
 }
 
@@ -51,6 +52,9 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      // actions
+      fetchFilters: action,
+      updateFilters: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -100,22 +104,18 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
       const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
       const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
       const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
-
-      this.handleIssuesLocalFilters.set(
-        EIssuesStoreType.ARCHIVED,
-        EIssueFilterType.FILTERS,
-        workspaceSlug,
-        projectId,
-        undefined,
-        {
-          filters: filters,
-        }
-      );
+      const kanbanFilters = {
+        group_by: [],
+        sub_group_by: [],
+      };
+      kanbanFilters.group_by = _filters?.kanban_filters?.group_by || [];
+      kanbanFilters.sub_group_by = _filters?.kanban_filters?.sub_group_by || [];
 
       runInAction(() => {
         set(this.filters, [projectId, "filters"], filters);
         set(this.filters, [projectId, "displayFilters"], displayFilters);
         set(this.filters, [projectId, "displayProperties"], displayProperties);
+        set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
       });
     } catch (error) {
       throw error;
@@ -126,7 +126,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
     workspaceSlug: string,
     projectId: string,
     type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => {
     try {
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
@@ -135,6 +135,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
         filters: this.filters[projectId].filters as IIssueFilterOptions,
         displayFilters: this.filters[projectId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
+        kanbanFilters: this.filters[projectId].kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
@@ -148,7 +149,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
             });
           });
 
-          this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.archivedIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
             filters: _filters.filters,
           });
@@ -208,6 +209,28 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
           this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
             display_properties: _filters.displayProperties,
           });
+          break;
+
+        case EIssueFilterType.KANBAN_FILTERS:
+          const updatedKanbanFilters = filters as TIssueKanbanFilters;
+          _filters.kanbanFilters = { ..._filters.kanbanFilters, ...updatedKanbanFilters };
+
+          const currentUserId = this.rootIssueStore.currentUserId;
+          if (currentUserId)
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, projectId, undefined, {
+              kanban_filters: _filters.kanbanFilters,
+            });
+
+          runInAction(() => {
+            Object.keys(updatedKanbanFilters).forEach((_key) => {
+              set(
+                this.filters,
+                [projectId, "kanbanFilters", _key],
+                updatedKanbanFilters[_key as keyof TIssueKanbanFilters]
+              );
+            });
+          });
+
           break;
         default:
           break;

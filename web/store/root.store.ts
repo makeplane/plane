@@ -16,6 +16,7 @@ import { IInboxRootStore, InboxRootStore } from "./inbox";
 import { IEstimateStore, EstimateStore } from "./estimate.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IMentionStore, MentionStore } from "./mention.store";
+import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -36,6 +37,7 @@ export class RootStore {
   state: IStateStore;
   estimate: IEstimateStore;
   mention: IMentionStore;
+  projectPages: IProjectPageStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -50,10 +52,11 @@ export class RootStore {
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.page = new PageStore(this);
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
+    this.projectPages = new ProjectPageStore();
+    this.page = new PageStore(this);
   }
 }

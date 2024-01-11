@@ -15,6 +15,7 @@ export interface IDropdownProps {
   optionsClassName?: string;
   width?: "auto" | string;
   placement?: Placement;
+  tabIndex?: number;
 }
 
 export interface ICustomMenuDropdownProps extends IDropdownProps {

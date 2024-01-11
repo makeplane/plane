@@ -1,7 +1,7 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { IssueLinkCreateUpdateModal } from "./create-update-link-modal";
@@ -16,21 +16,27 @@ export type TLinkOperations = {
 };
 
 export type TIssueLinkRoot = {
-  uneditable: boolean;
-  isAllowed: boolean;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  is_editable: boolean;
+  is_archived: boolean;
 };
 
 export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
   // props
-  const { uneditable, isAllowed } = props;
+  const { workspaceSlug, projectId, issueId, is_editable, is_archived } = props;
   // hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
-  const { peekIssue, createLink, updateLink, removeLink } = useIssueDetail();
+  const { toggleIssueLinkModal: toggleIssueLinkModalStore, createLink, updateLink, removeLink } = useIssueDetail();
   // state
-  const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
-  const toggleIssueLinkModal = (modalToggle: boolean) => setIsIssueLinkModalOpen(modalToggle);
+  const [isIssueLinkModal, setIsIssueLinkModal] = useState(false);
+  const toggleIssueLinkModal = useCallback(
+    (modalToggle: boolean) => {
+      toggleIssueLinkModalStore(modalToggle);
+      setIsIssueLinkModal(modalToggle);
+    },
+    [toggleIssueLinkModalStore]
+  );
 
   const { setToastAlert } = useToast();
 
@@ -38,8 +44,8 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
     () => ({
       create: async (data: Partial<TIssueLink>) => {
         try {
-          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
-          await createLink(workspaceSlug, projectId, peekIssue?.issueId, data);
+          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
+          await createLink(workspaceSlug, projectId, issueId, data);
           setToastAlert({
             message: "The link has been successfully created",
             type: "success",
@@ -56,8 +62,8 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       },
       update: async (linkId: string, data: Partial<TIssueLink>) => {
         try {
-          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
-          await updateLink(workspaceSlug, projectId, peekIssue?.issueId, linkId, data);
+          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
+          await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToastAlert({
             message: "The link has been successfully updated",
             type: "success",
@@ -74,8 +80,8 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       },
       remove: async (linkId: string) => {
         try {
-          if (!workspaceSlug || !projectId || !peekIssue?.issueId) throw new Error("Missing required fields");
-          await removeLink(workspaceSlug, projectId, peekIssue?.issueId, linkId);
+          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
+          await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToastAlert({
             message: "The link has been successfully removed",
             type: "success",
@@ -91,28 +97,28 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         }
       },
     }),
-    [workspaceSlug, projectId, peekIssue, createLink, updateLink, removeLink, setToastAlert]
+    [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink, setToastAlert, toggleIssueLinkModal]
   );
 
   return (
     <>
       <IssueLinkCreateUpdateModal
-        isModalOpen={isIssueLinkModalOpen}
+        isModalOpen={isIssueLinkModal}
         handleModal={toggleIssueLinkModal}
         linkOperations={handleLinkOperations}
       />
 
-      <div className={`py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
+      <div className={`py-1 text-xs ${is_archived ? "opacity-60" : ""}`}>
         <div className="flex items-center justify-between gap-2">
           <h4>Links</h4>
-          {isAllowed && (
+          {is_editable && (
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
-                uneditable ? "cursor-not-allowed" : "cursor-pointer"
+                is_archived ? "cursor-not-allowed" : "cursor-pointer"
               }`}
-              onClick={() => setIsIssueLinkModalOpen(true)}
-              disabled={uneditable}
+              onClick={() => toggleIssueLinkModal(true)}
+              disabled={is_archived}
             >
               <Plus className="h-4 w-4" />
             </button>

@@ -130,6 +130,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
                   className="w-full resize-none text-xl focus:border-blue-400"
+                  tabIndex={1}
                 />
               )}
             />
@@ -147,6 +148,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
+                  tabIndex={2}
                 />
               )}
             />
@@ -156,7 +158,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               control={control}
               name="query_data"
               render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title="Filters" tabIndex={3}>
                   <FilterSelection
                     filters={filters ?? {}}
                     handleFiltersUpdate={(key, value) => {
@@ -199,10 +201,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit">
+        <Button variant="primary" size="sm" type="submit" tabIndex={5}>
           {data
             ? isSubmitting
               ? "Updating View..."
