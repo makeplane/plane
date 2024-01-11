@@ -8,28 +8,46 @@ on:
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
   PLATFORMS: linux/amd64
+  FRONTEND_TAG: "FRONTEND_TAG"
+  SPACE_TAG: "SPACE_TAG"
+  BACKEND_TAG: "BACKEND_TAG"
+  PROXY_TAG: "PROXY_TAG"
 
 jobs:
+  build_environment_prepare:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Docker Buildx
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            _FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            _SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            _FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            _SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+          else
+            _FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            _SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+          fi
+
+          echo "FRONTEND_TAG=${_FRONTEND_TAG}" >> $GITHUB_ENV
+          echo "SPACE_TAG=${_SPACE_TAG}" >> $GITHUB_ENV
+          echo "BACKEND_TAG=${_BACKEND_TAG}" >> $GITHUB_ENV
+          echo "PROXY_TAG=${_PROXY_TAG}" >> $GITHUB_ENV
+
 
   branch_build_push_frontend:
     runs-on: ubuntu-20.04
-    env:
-      FRONTEND_TAG: "FRONTEND_TAG"
+    needs: build_environment_prepare
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
-
-      - name: Set Frontend Docker Tag 
-        run: |
-          rm -rf ./apiserver ./nginx ./deploy ./space
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-          else
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-          fi
-          echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -52,7 +70,7 @@ jobs:
         with:
           context: .
           file: ./web/Dockerfile.web
-          platforms: linux/arm64
+          platforms: ${{ env.PLATFORMS }}
           tags: ${{ env.FRONTEND_TAG }}
           push: true
         env:
@@ -62,24 +80,11 @@ jobs:
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
-    env:
-      SPACE_TAG: "SPACE_TAG"
+    needs: build_environment_prepare
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
-      - name: Set Space Docker Tag 
-        run: |
-          rm -rf ./apiserver ./nginx ./deploy ./web
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-          else
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-          fi
-          echo "SPACE_TAG=${TAG}" >> $GITHUB_ENV
-      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
         with:
@@ -111,23 +116,12 @@ jobs:
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
+    needs: build_environment_prepare
     env:
       BACKEND_TAG: "BACKEND_TAG"
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
-
-      - name: Set Backend Docker Tag 
-        run: |
-          rm -rf ./nginx ./deploy ./web ./space
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-          else
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-          fi
-          echo "BACKEND_TAG=${TAG}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -160,24 +154,13 @@ jobs:
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
+    needs: build_environment_prepare
     env:
       PROXY_TAG: "PROXY_TAG"
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
-      - name: Set Proxy Docker Tag 
-        run: |
-          rm -rf ./apiserver ./deploy ./web ./space
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-          else
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-          fi
-          echo "PROXY_TAG=${TAG}" >> $GITHUB_ENV
-          
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
         with:
