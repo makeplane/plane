@@ -93,7 +93,7 @@ jobs:
         with:
           context: .
           file: ./web/Dockerfile.web
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: ${{ env.FRONTEND_TAG }}
           push: true
         env:
@@ -135,7 +135,7 @@ jobs:
         with:
           context: .
           file: ./space/Dockerfile.space
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: ${{ env.SPACE_TAG }}
           push: true
         env:
@@ -177,7 +177,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.api
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.BACKEND_TAG }}
         env:
@@ -220,7 +220,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: ${{ env.PROXY_TAG }}
           push: true
         env:
