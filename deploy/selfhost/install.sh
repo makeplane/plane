@@ -3,10 +3,42 @@
 BRANCH=master
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
+ARCH=$(uname -m)
+DOCKERHUB_USER=makeplane
+NON_AMD_DOCKERHUB_USER=myplane
 
+function buildNonAMD64(){
+    export APP_RELEASE=$BRANCH
+    export DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+
+    REPO=https://github.com/makeplane/plane.git
+
+    CURR_DIR=$PWD
+    PLANE_TEMP_CODE_DIR=$(mktemp -d)
+    git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch -q
+
+    cp $PLANE_TEMP_CODE_DIR/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
+
+    cd $PLANE_TEMP_CODE_DIR
+    if [ "$BRANCH" == "master" ];
+    then
+        APP_RELEASE=latest
+    fi
+
+    docker compose -f build.yml build --no-cache 
+    cd $CURR_DIR
+    rm -rf $PLANE_TEMP_CODE_DIR
+}
 function install(){
     echo 
     echo "Installing on $PLANE_INSTALL_DIR"
+
+    if [ $ARCH != "amd64" ];
+    then
+        buildNonAMD64
+        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+    fi
+
     download
 }
 function download(){
@@ -25,6 +57,12 @@ function download(){
         cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
     else
         mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
+    fi
+
+    if [ $ARCH != "amd64" ];
+    then
+        buildNonAMD64
+        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
     fi
 
     if [ "$BRANCH" != "master" ];
@@ -121,4 +159,4 @@ then
 fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
-askForAction
+# buildNonAMD64
