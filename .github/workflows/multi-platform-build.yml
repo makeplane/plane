@@ -92,6 +92,7 @@ jobs:
         with:
           context: .
           file: ./web/Dockerfile.web
+          platforms: all
           tags: ${{ env.FRONTEND_TAG }}
           push: true
         env:
