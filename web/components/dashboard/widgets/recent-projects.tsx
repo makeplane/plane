@@ -5,15 +5,16 @@ import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
 // components
-import { RecentProjectsWidgetLoader } from "components/dashboard/widgets";
+import { WidgetLoader } from "components/dashboard/widgets";
 // ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IRecentProjectsWidgetResponse } from "@plane/types";
+import { TRecentProjectsWidgetResponse } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROJECT_BACKGROUND_COLORS } from "constants/dashboard";
 
 type Props = {
   dashboardId: string;
@@ -27,15 +28,13 @@ type ProjectListItemProps = {
   workspaceSlug: string;
 };
 
-const RANDOM_COLORS = ["bg-yellow-500/20", "bg-purple-500/20", "bg-blue-500/20"];
-
 const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
   const { projectId, workspaceSlug } = props;
   // store hooks
   const { getProjectById } = useProject();
   const projectDetails = getProjectById(projectId);
 
-  const randomBgColor = RANDOM_COLORS[Math.floor(Math.random() * RANDOM_COLORS.length)];
+  const randomBgColor = PROJECT_BACKGROUND_COLORS[Math.floor(Math.random() * PROJECT_BACKGROUND_COLORS.length)];
 
   if (!projectDetails) return null;
 
@@ -81,18 +80,21 @@ export const RecentProjectsWidget: React.FC<Props> = observer((props) => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
+  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
   // derived values
-  const widgetStats = getWidgetStats<IRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TRecentProjectsWidgetResponse;
   const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   useEffect(() => {
-    if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);
+    if (!widgetStats)
+      fetchWidgetStats(workspaceSlug, dashboardId, {
+        widget_key: WIDGET_KEY,
+      });
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
   console.log("allWidgetStats", allWidgetStats);
 
-  if (!widgetStats) return <RecentProjectsWidgetLoader />;
+  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <Link

@@ -1,6 +1,6 @@
 import { linearGradientDef } from "@nivo/core";
 // types
-import { TStateGroups } from "@plane/types";
+import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
 
 export const PRIORITY_GRAPH_GRADIENTS = [
   linearGradientDef(
@@ -93,12 +93,61 @@ export const STATE_GROUP_GRAPH_GRADIENTS = [
   ]),
 ];
 
-export const STATE_GROUP_GRAPH_COLORS: {
-  [stateGroup in TStateGroups]: string;
-} = {
+export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
   backlog: "#CDCED6",
   unstarted: "#80838D",
   started: "#FFC53D",
   completed: "#3E9B4F",
   cancelled: "#E5484D",
 };
+
+export const DURATION_FILTER_OPTIONS: {
+  key: TDurationFilterOptions;
+  label: string;
+}[] = [
+  {
+    key: "today",
+    label: "Today",
+  },
+  {
+    key: "this_week",
+    label: "This week",
+  },
+  {
+    key: "this_month",
+    label: "This month",
+  },
+  {
+    key: "this_year",
+    label: "This year",
+  },
+];
+
+export const PROJECT_BACKGROUND_COLORS = [
+  "bg-gray-500/20",
+  "bg-green-500/20",
+  "bg-red-500/20",
+  "bg-orange-500/20",
+  "bg-blue-500/20",
+  "bg-yellow-500/20",
+  "bg-pink-500/20",
+  "bg-purple-500/20",
+];
+
+export const ISSUES_TABS_LIST: {
+  key: TIssuesListTypes;
+  label: string;
+}[] = [
+  {
+    key: "upcoming",
+    label: "Upcoming",
+  },
+  {
+    key: "overdue",
+    label: "Overdue",
+  },
+  {
+    key: "completed",
+    label: "Completed",
+  },
+];

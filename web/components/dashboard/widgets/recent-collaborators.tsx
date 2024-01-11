@@ -4,11 +4,11 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
-import { AssignedIssuesWidgetLoader } from "components/dashboard/widgets";
+import { WidgetLoader } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
 // types
-import { IRecentCollaboratorsWidgetResponse } from "@plane/types";
+import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 
 type Props = {
   dashboardId: string;
@@ -58,23 +58,26 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
 export const RecentCollaboratorsWidget: React.FC<Props> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { getWidgetStats, fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = getWidgetStats<IRecentCollaboratorsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
+  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[
+    WIDGET_KEY
+  ] as TRecentCollaboratorsWidgetResponse[];
 
   useEffect(() => {
-    if (!widgetStats) fetchWidgetStats(workspaceSlug, dashboardId, WIDGET_KEY);
+    if (!widgetStats)
+      fetchWidgetStats(workspaceSlug, dashboardId, {
+        widget_key: WIDGET_KEY,
+      });
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
-  console.log("allWidgetStats", allWidgetStats);
-
-  if (!widgetStats) return <AssignedIssuesWidgetLoader />;
+  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300">
       <div className="flex items-center justify-between gap-2 px-7">
         <h4 className="text-lg font-semibold text-custom-text-300">Collaborators</h4>
       </div>
-      <div className="mt-7 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2">
+      <div className="mt-7 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
         {widgetStats.map((user) => (
           <CollaboratorListItem
             key={user.user_id}
