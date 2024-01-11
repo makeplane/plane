@@ -25,7 +25,7 @@ export const LabelListItem: FC<TLabelListItem> = (props) => {
   const label = getLabelById(labelId);
 
   const handleLabel = async () => {
-    if (issue) {
+    if (issue && !disabled) {
       const currentLabels = issue.label_ids.filter((_labelId) => _labelId !== labelId);
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
     }
