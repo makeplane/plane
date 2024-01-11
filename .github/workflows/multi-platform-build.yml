@@ -8,37 +8,38 @@ on:
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
   PLATFORMS: linux/amd64
-  FRONTEND_TAG: "FRONTEND_TAG"
-  SPACE_TAG: "SPACE_TAG"
-  BACKEND_TAG: "BACKEND_TAG"
-  PROXY_TAG: "PROXY_TAG"
 
 jobs:
   build_environment_prepare:
     runs-on: ubuntu-20.04
+    env:
+      FRONTEND_TAG: "FRONTEND_TAG"
+      SPACE_TAG: "SPACE_TAG"
+      BACKEND_TAG: "BACKEND_TAG"
+      PROXY_TAG: "PROXY_TAG"
     steps:
       - name: Set up Docker Buildx
         run: |
           if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
-            _FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            _SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-            _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            TEMP_FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
+            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            _FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            _SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
-            _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            TEMP_FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
+            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
-            _FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-            _SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-            _BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
-            _PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            TEMP_FRONTEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            TEMP_SPACE_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            TEMP_BACKEND_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
+            TEMP_PROXY_TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ env.TARGET_BRANCH }}
           fi
-          echo "FRONTEND_TAG=${_FRONTEND_TAG}" >> $GITHUB_ENV
-          echo "SPACE_TAG=${_SPACE_TAG}" >> $GITHUB_ENV
-          echo "BACKEND_TAG=${_BACKEND_TAG}" >> $GITHUB_ENV
-          echo "PROXY_TAG=${_PROXY_TAG}" >> $GITHUB_ENV
+          echo "FRONTEND_TAG=${TEMP_FRONTEND_TAG}" >> $GITHUB_ENV
+          echo "SPACE_TAG=${TEMP_SPACE_TAG}" >> $GITHUB_ENV
+          echo "BACKEND_TAG=${TEMP_BACKEND_TAG}" >> $GITHUB_ENV
+          echo "PROXY_TAG=${TEMP_PROXY_TAG}" >> $GITHUB_ENV
     outputs:
       FRONTEND_TAG: ${{ env.FRONTEND_TAG }}
       SPACE_TAG: ${{ env.SPACE_TAG }}
