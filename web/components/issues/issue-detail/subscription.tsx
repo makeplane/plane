@@ -11,11 +11,10 @@ export type TIssueSubscription = {
   projectId: string;
   issueId: string;
   currentUserId: string;
-  disabled?: boolean;
 };
 
 export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, currentUserId, disabled } = props;
+  const { workspaceSlug, projectId, issueId, currentUserId } = props;
   // hooks
   const {
     issue: { getIssueById },
@@ -45,7 +44,6 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
-        disabled={disabled}
       >
         {loading ? "Loading..." : subscription?.subscribed ? "Unsubscribe" : "Subscribe"}
       </Button>

@@ -71,7 +71,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           issue={issue}
           issueOperations={issueOperations}
-          isAllowed={is_editable}
+          disabled={!is_editable}
         />
 
         {currentUser && (
