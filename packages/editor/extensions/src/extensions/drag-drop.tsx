@@ -43,22 +43,23 @@ function absoluteRect(node: Element) {
 }
 
 function nodeDOMAtCoords(coords: { x: number; y: number }) {
-  return document.elementsFromPoint(coords.x, coords.y).find((elem: Element) => {
-    return (
-      elem.parentElement?.matches?.(".ProseMirror") ||
-      elem.matches(
-        [
-          "li",
-          "p:not(:first-child)",
-          "pre",
-          "blockquote",
-          "h1, h2, h3",
-          "[data-type=horizontalRule]",
-          ".tableWrapper",
-        ].join(", ")
-      )
+  return document
+    .elementsFromPoint(coords.x, coords.y)
+    .find(
+      (elem: Element) =>
+        elem.parentElement?.matches?.(".ProseMirror") ||
+        elem.matches(
+          [
+            "li",
+            "p:not(:first-child)",
+            "pre",
+            "blockquote",
+            "h1, h2, h3",
+            "[data-type=horizontalRule]",
+            ".tableWrapper",
+          ].join(", ")
+        )
     );
-  });
 }
 
 function nodePosAtDOM(node: Element, view: EditorView) {

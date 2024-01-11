@@ -1,10 +1,9 @@
-import { isAtStartOfNode } from "@tiptap/core";
 import Blockquote from "@tiptap/extension-blockquote";
 
 export const CustomQuoteExtension = Blockquote.extend({
   addKeyboardShortcuts() {
     return {
-      Enter: ({ editor }) => {
+      Enter: () => {
         const { $from, $to, $head } = this.editor.state.selection;
         const parent = $head.node(-1);
 
