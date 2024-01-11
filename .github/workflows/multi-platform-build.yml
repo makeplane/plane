@@ -9,58 +9,65 @@ env:
   TARGET_BRANCH: ${{ github.ref_name }}
 
 jobs:
-  branch_build_setup:
-    name: Build-Push Web/Space/API/Proxy Docker Image
-    runs-on: ubuntu-20.04
+  # branch_build_setup:
+  #   name: Build-Push Web/Space/API/Proxy Docker Image
+  #   runs-on: ubuntu-20.04
 
+  #   steps:
+  #     - name: Check out the repo
+  #       uses: actions/checkout@v3.3.0
+
+  #     - name: Uploading Proxy Source
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: proxy-src-code
+  #         path: ./nginx
+  #     - name: Uploading Backend Source
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: backend-src-code
+  #         path: ./apiserver
+  #     - name: Uploading Web Source
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: web-src-code
+  #         path: |
+  #           ./
+  #           !./apiserver
+  #           !./nginx
+  #           !./deploy
+  #           !./space
+  #     # - name: Uploading Space Source
+  #     #   uses: actions/upload-artifact@v3
+  #     #   with:
+  #     #     name: space-src-code
+  #     #     path: |
+  #     #       ./
+  #     #       !./apiserver
+  #     #       !./nginx
+  #     #       !./deploy
+  #     #       !./web
+  #   outputs:
+  #     gh_branch_name: ${{ env.TARGET_BRANCH }}
+
+  branch_build_push_frontend:
+    runs-on: ubuntu-20.04
+    # needs: [branch_build_setup]
+    env:
+      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
 
-      - name: Uploading Proxy Source
-        uses: actions/upload-artifact@v3
-        with:
-          name: proxy-src-code
-          path: ./nginx
-      - name: Uploading Backend Source
-        uses: actions/upload-artifact@v3
-        with:
-          name: backend-src-code
-          path: ./apiserver
-      - name: Uploading Web Source
-        uses: actions/upload-artifact@v3
-        with:
-          name: web-src-code
-          path: |
-            ./
-            !./apiserver
-            !./nginx
-            !./deploy
-            !./space
-      # - name: Uploading Space Source
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: space-src-code
-      #     path: |
-      #       ./
-      #       !./apiserver
-      #       !./nginx
-      #       !./deploy
-      #       !./web
-    outputs:
-      gh_branch_name: ${{ env.TARGET_BRANCH }}
-
-  branch_build_push_frontend:
-    runs-on: ubuntu-20.04
-    needs: [branch_build_setup]
-    env:
-      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ needs.branch_build_setup.outputs.gh_branch_name }}
-    steps:
       - name: Set Frontend Docker Tag 
         run: |
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          rm -rf ./apiserver ./nginx ./deploy ./space
+
+      - name: Set Frontend Docker Tag 
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:${{ github.event.release.tag_name }}
-          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend${{ secrets.DOCKER_REPO_SUFFIX || '' }}:stable
           else
             TAG=${{ env.FRONTEND_TAG }}
@@ -82,10 +89,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Downloading Web Source Code
-        uses: actions/download-artifact@v3
-        with:
-          name: web-src-code
+
+      # - name: Downloading Web Source Code
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: web-src-code
 
       - name: Build and Push Frontend to Docker Container Registry
         uses: docker/build-push-action@v4.0.0
