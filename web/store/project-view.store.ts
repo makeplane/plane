@@ -7,6 +7,8 @@ import { RootStore } from "store/root.store";
 import { IProjectView } from "@plane/types";
 
 export interface IProjectViewStore {
+  //Loaders
+  fetchedMap: Record<string, boolean>;
   // observables
   viewMap: Record<string, IProjectView>;
   // computed
@@ -33,6 +35,8 @@ export interface IProjectViewStore {
 export class ProjectViewStore implements IProjectViewStore {
   // observables
   viewMap: Record<string, IProjectView> = {};
+  //loaders
+  fetchedMap: Record<string, boolean> = {};
   // root store
   rootStore;
   // services
@@ -42,6 +46,7 @@ export class ProjectViewStore implements IProjectViewStore {
     makeObservable(this, {
       // observables
       viewMap: observable,
+      fetchedMap: observable,
       // computed
       projectViewIds: computed,
       // computed actions
@@ -68,7 +73,7 @@ export class ProjectViewStore implements IProjectViewStore {
    */
   get projectViewIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     const viewIds = Object.keys(this.viewMap ?? {})?.filter((viewId) => this.viewMap?.[viewId]?.project === projectId);
     return viewIds;
   }
@@ -90,6 +95,7 @@ export class ProjectViewStore implements IProjectViewStore {
         response.forEach((view) => {
           set(this.viewMap, [view.id], view);
         });
+        set(this.fetchedMap, projectId, true);
       });
       return response;
     });

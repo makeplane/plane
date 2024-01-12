@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
 // services
 import { IssueLabelService } from "services/issue";
@@ -10,9 +10,13 @@ import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 import { ILabelRootStore } from "store/label";
 
 export interface IProjectLabelStore {
+  //Loaders
+  fetchedMap: Record<string, boolean>;
   // computed
   projectLabels: IIssueLabel[] | undefined;
   projectLabelsTree: IIssueLabelTree[] | undefined;
+  //computed actions
+  getProjectLabels: (projectId: string) => IIssueLabel[] | undefined;
   // fetch actions
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<IIssueLabel[]>;
   // crud actions
@@ -40,15 +44,21 @@ export class ProjectLabelStore implements IProjectLabelStore {
   rootStore;
   // root store labelMap
   labelMap: Record<string, IIssueLabel> = {};
+  //loaders
+  fetchedMap: Record<string, boolean> = {};
   // services
   issueLabelService;
 
   constructor(_labelRoot: ILabelRootStore, _rootStore: RootStore) {
     makeObservable(this, {
+      labelMap: observable,
+      fetchedMap: observable,
       // computed
       projectLabels: computed,
       projectLabelsTree: computed,
       // actions
+      getProjectLabels: action,
+
       fetchProjectLabels: action,
       createLabel: action,
       updateLabel: action,
@@ -68,7 +78,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
    */
   get projectLabels() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId || !this.labelMap) return;
+    if (!projectId || !this.fetchedMap[projectId] || !this.labelMap) return;
     return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
   }
 
@@ -79,6 +89,11 @@ export class ProjectLabelStore implements IProjectLabelStore {
     if (!this.projectLabels) return;
     return buildTree(this.projectLabels);
   }
+
+  getProjectLabels = (projectId: string) => {
+    if (!this.fetchedMap[projectId] || !this.labelMap) return;
+    return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
+  };
 
   /**
    * Fetches all the labelMap belongs to a specific project
@@ -92,6 +107,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
         response.forEach((label) => {
           set(this.labelMap, [label.id], label);
         });
+        set(this.fetchedMap, projectId, true);
       });
       return response;
     });
