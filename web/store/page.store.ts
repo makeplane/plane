@@ -196,7 +196,7 @@ export class PageStore implements IPageStore {
         return response;
       });
     } catch (error) {
-      return [];
+      throw error;
     }
   };
 
