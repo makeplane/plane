@@ -2,6 +2,8 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 // hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// store hooks
 import { useIssueDetail, useUser } from "hooks/store";
 // components
 import {
@@ -16,7 +18,6 @@ import {
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 interface IIssueView {
   workspaceSlug: string;

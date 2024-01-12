@@ -48,7 +48,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         ellipsis
       >
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -58,7 +58,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             setDeleteIssueModal(true);
           }}
         >

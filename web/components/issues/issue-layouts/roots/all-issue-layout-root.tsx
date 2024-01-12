@@ -66,7 +66,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   };
 
   const issueIds = (groupedIssueIds ?? []) as TUnGroupedIssues;
-  const issuesArray = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
+  const issuesArray = issueIds?.filter((id: string) => id && issueMap?.[id]).map((id: string) => issueMap?.[id]);
 
   const issueActions = useMemo(
     () => ({
