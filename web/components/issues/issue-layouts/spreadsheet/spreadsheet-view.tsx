@@ -3,12 +3,12 @@ import { observer } from "mobx-react-lite";
 // components
 import { Spinner } from "@plane/ui";
 import { SpreadsheetQuickAddIssueForm } from "components/issues";
+import { SpreadsheetTable } from "./spreadsheet-table";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueActions } from "../types";
+//hooks
 import { useProject } from "hooks/store";
-import { SpreadsheetHeader } from "./spreadsheet-header";
-import { SpreadsheetIssueRow } from "./issue-row";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -102,29 +102,17 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     <div className="relative flex flex-col h-full w-full overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <div ref={containerRef} className="horizontal-scroll-enable h-full w-full">
-        <table className="divide-x-[0.5px] divide-custom-border-200 overflow-y-auto">
-          <SpreadsheetHeader
-            displayProperties={displayProperties}
-            displayFilters={displayFilters}
-            handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-            isEstimateEnabled={isEstimateEnabled}
-          />
-          <tbody>
-            {issues.map(({ id }) => (
-              <SpreadsheetIssueRow
-                key={id}
-                issueId={id}
-                displayProperties={displayProperties}
-                quickActions={quickActions}
-                canEditProperties={canEditProperties}
-                nestingLevel={0}
-                isEstimateEnabled={isEstimateEnabled}
-                handleIssues={handleIssues}
-                portalElement={portalRef}
-              />
-            ))}
-          </tbody>
-        </table>
+        <SpreadsheetTable
+          displayProperties={displayProperties}
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          issues={issues}
+          isEstimateEnabled={isEstimateEnabled}
+          portalElement={portalRef}
+          quickActions={quickActions}
+          handleIssues={handleIssues}
+          canEditProperties={canEditProperties}
+        />
       </div>
       <div className="border-t border-custom-border-100">
         <div className="z-5 sticky bottom-0 left-0 mb-3">
