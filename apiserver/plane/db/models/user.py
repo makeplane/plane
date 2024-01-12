@@ -13,9 +13,6 @@ from django.contrib.auth.models import (
 )
 from django.utils import timezone
 
-# Module imports
-from plane.db.models import UserNotificationPreference
-
 
 def get_default_onboarding():
     return {
@@ -163,6 +160,8 @@ def send_welcome_slack(sender, instance, created, **kwargs):
 def create_user_notification(sender, instance, created, **kwargs):
     # create preferences
     if created and not instance.is_bot:
+        # Module imports
+        from plane.db.models import UserNotificationPreference
         UserNotificationPreference.objects.create(
             user=instance,
         )
