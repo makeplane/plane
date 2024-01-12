@@ -9,23 +9,36 @@ export APP_RELEASE=$BRANCH
 export PULL_POLICY=always
 NON_AMD_DOCKERHUB_USER=myplane
 
-function buildNonAMD64(){
-    echo 
-    echo "You are on '${ARCH}' cpu architecture. "
-    echo "Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. This might take 5-30 min based on your system's hardware configuration. "
-    echo 
-    echo "Select an option 1 to prceed:"
-    echo "   1) Proceed"
-    echo "   2) Exit"
-    echo 
-    read -p "Select Option [1]: " DO_BUILD
-    until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-2]$ ]]; do
-        echo "$DO_BUILD: invalid selection."
-        read -p "Select Option [1]: " DO_BUILD
-    done
-    echo
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
-    if [ "$DO_BUILD" == "1" ] 
+function buildNonAMD64(){
+    if [ "$1" == "--force-build" ]; then
+        DO_BUILD="1"
+    elif [ "$1" == "--skip-build" ]; then
+        DO_BUILD="2"
+    else 
+        printf "\n" >&2
+        printf "${YELLOW}You are on ${ARCH} cpu architecture. ${NC}\n" >&2
+        printf "${YELLOW}Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. ${NC} \n" >&2
+        printf "${YELLOW}This might take ${YELLOW}5-30 min based on your system's hardware configuration. \n ${NC} \n" >&2
+        printf "\n" >&2
+        printf "${GREEN}Select an option to proceed: ${NC}\n" >&2
+        printf "   1) Build Fresh Images \n" >&2
+        printf "   2) Skip Building Images \n" >&2
+        printf "   3) Exit \n" >&2
+        printf "\n" >&2
+        read -p "Select Option [1]: " DO_BUILD
+        until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-3]$ ]]; do
+            echo "$DO_BUILD: invalid selection." >&2
+            read -p "Select Option [1]: " DO_BUILD
+        done
+        echo "" >&2
+    fi
+
+    if [ "$DO_BUILD" == "1" ] || [ "$DO_BUILD" == "" ];
     then
         DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
 
@@ -43,58 +56,24 @@ function buildNonAMD64(){
             APP_RELEASE=latest
         fi
 
-        docker compose -f build.yml build --no-cache 
+        docker compose -f build.yml build --no-cache  >&2
         # cd $CURR_DIR
         # rm -rf $PLANE_TEMP_CODE_DIR
-        echo "build"
-    elif [ "$DO_BUILD" == "2" ] 
+        echo "build_completed"
+    elif [ "$DO_BUILD" == "2" ];
     then
-        printf "Install Action cancelled by you."
-        echo "exit"
+        printf "${YELLOW}Build action skipped by you in lieu of using existing images. ${NC} \n" >&2
+        echo "build_skipped"
+    elif [ "$DO_BUILD" == "3" ];
+    then
+        echo "build_exited"
     else
-        printf "INVALID ACTION SUPPLIED"
-        buildNonAMD64()
+        printf "INVALID OPTION SUPPLIED" >&2
     fi
 }
 function install(){
-    echo 
     echo "Installing Plane.........."
-
-    if [ $ARCH == "amd64" ];
-    then
-        download
-    else
-        local res=$(buildNonAMD64)
-        echo $res
-        # echo 
-	    # echo "You are on '${ARCH}' cpu architecture. "
-        # echo "Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. This might take 5-30 min based on your system's hardware configuration. "
-        # echo 
-        # echo "Select an option 1 to prceed:"
-        # echo "   1) Proceed"
-        # echo "   2) Exit"
-        # echo 
-        # read -p "Select Option [1]: " DO_BUILD
-        # until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-2]$ ]]; do
-        #     echo "$DO_BUILD: invalid selection."
-        #     read -p "Select Option [1]: " DO_BUILD
-        # done
-        # echo
-
-        # if [ "$DO_BUILD" == "1" ] 
-        # then
-        #     buildNonAMD64
-        #     echo
-        #     echo "Build Completed"
-        #     echo
-        #     download
-        # elif [ "$DO_BUILD" == "2" ] 
-        # then
-        #     echo "Install Action cancelled by you."
-        # else
-        #     echo "INVALID ACTION SUPPLIED"
-        # fi
-    fi
+    download
 }
 function download(){
     cd $SCRIPT_DIR
@@ -102,6 +81,19 @@ function download(){
     if [ -f "$PLANE_INSTALL_DIR/docker-compose.yaml" ]
     then
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
+    fi
+
+    if [ $ARCH != "amd64" ]; then
+        local res=$(buildNonAMD64)
+        # echo $res
+
+        if [ "$res" == "build_exited" ];
+        then
+            echo
+            echo "Install action cancelled by you. Exiting now."
+            echo
+            exit 0
+        fi
     fi
 
     curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
