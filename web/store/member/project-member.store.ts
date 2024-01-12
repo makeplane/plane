@@ -120,7 +120,8 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param projectId
    */
   getProjectMemberIds = (projectId: string): string[] | null => {
-    let members = Object.values(this.projectMemberMap?.[projectId] ?? {});
+    if (!this.projectMemberMap?.[projectId]) return null;
+    let members = Object.values(this.projectMemberMap?.[projectId]);
     members = sortBy(members, [
       (m) => m.member !== this.userStore.currentUser?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),

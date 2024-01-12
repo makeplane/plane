@@ -8,7 +8,7 @@ import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constan
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // ui
-import { Tooltip } from "@plane/ui";
+import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { useIssueDetail, useProject } from "hooks/store";
@@ -42,12 +42,13 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     quickActions,
     canEditProperties,
   } = props;
+
   // router
   const router = useRouter();
-
   const { workspaceSlug } = router.query;
-
+  //hooks
   const { getProjectById } = useProject();
+  const { setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -55,12 +56,8 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: TIssue) => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project_id },
-    });
+    if (workspaceSlug && issue && issue.project_id && issue.id)
+      setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
   };
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
@@ -134,16 +131,20 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               )}
             </div>
           </WithDisplayPropertiesHOC>
-          <div className="w-full overflow-hidden">
-            <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-              <div
-                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
-                onClick={() => handleIssuePeekOverview(issueDetail)}
-              >
-                {issueDetail.name}
-              </div>
-            </Tooltip>
-          </div>
+          <ControlLink
+            href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
+            target="_blank"
+            onClick={() => handleIssuePeekOverview(issueDetail)}
+            className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          >
+            <div className="w-full overflow-hidden">
+              <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
+                <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100">
+                  {issueDetail.name}
+                </div>
+              </Tooltip>
+            </div>
+          </ControlLink>
         </td>
         {/* Rest of the columns */}
         {SPREADSHEET_PROPERTY_LIST.map((property) => {

@@ -45,12 +45,16 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const canEditProperties = (projectId: string | undefined) => {
-    const isEditingAllowedBasedOnProject =
-      canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+  const canEditProperties = useCallback(
+    (projectId: string | undefined) => {
+      const isEditingAllowedBasedOnProject =
+        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
 
-    return enableInlineEditing && isEditingAllowedBasedOnProject;
-  };
+      return enableInlineEditing && isEditingAllowedBasedOnProject;
+    },
+    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
+  );
+
 
   const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
 
