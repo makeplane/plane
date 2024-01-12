@@ -129,34 +129,37 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                             <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
-                            {filteredIssues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                as="div"
-                                value={issue.id}
-                                className={({ active, selected }) =>
-                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                    active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } `
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor:
-                                        getProjectStates(issue?.project_id)?.find(
-                                          (state) => state?.id == issue?.state_id
-                                        )?.color || "",
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                    {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
-                                  </span>
-                                  <span className="text-custom-text-200">{issue.name}</span>
-                                </div>
-                              </Combobox.Option>
-                            ))}
+                            {filteredIssues.map((issue) => {
+                              const stateColor =
+                                getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)
+                                  ?.color || "";
+
+                              return (
+                                <Combobox.Option
+                                  key={issue.id}
+                                  as="div"
+                                  value={issue.id}
+                                  className={({ active, selected }) =>
+                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                      active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
+                                    } `
+                                  }
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: stateColor,
+                                      }}
+                                    />
+                                    <span className="flex-shrink-0 text-xs text-custom-text-200">
+                                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                                    </span>
+                                    <span className="text-custom-text-200">{issue.name}</span>
+                                  </div>
+                                </Combobox.Option>
+                              );
+                            })}
                           </ul>
                         </li>
                       ) : (

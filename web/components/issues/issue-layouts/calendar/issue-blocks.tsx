@@ -59,6 +59,10 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         if (!issues?.[issueId]) return null;
 
         const issue = issues?.[issueId];
+
+        const stateColor =
+          getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
+
         return (
           <Draggable key={issue.id} draggableId={issue.id} index={index}>
             {(provided, snapshot) => (
@@ -90,9 +94,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                         <span
                           className="h-full w-0.5 flex-shrink-0 rounded"
                           style={{
-                            backgroundColor: getProjectStates(issue?.project_id).find(
-                              (state) => state?.id == issue?.state_id
-                            )?.color,
+                            backgroundColor: stateColor,
                           }}
                         />
                         <div className="flex-shrink-0 text-xs text-custom-text-300">

@@ -22,11 +22,13 @@ export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
     data.id &&
     setPeekIssue({ workspaceSlug, projectId: data.project_id, issueId: data.id });
 
+  const stateColor = getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id)?.color || "";
+
   return (
     <div
       className="relative flex h-full w-full cursor-pointer items-center rounded"
       style={{
-        backgroundColor: getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id)?.color,
+        backgroundColor: stateColor,
       }}
       onClick={handleIssuePeekOverview}
     >
