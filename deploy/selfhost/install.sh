@@ -10,25 +10,51 @@ export PULL_POLICY=always
 NON_AMD_DOCKERHUB_USER=myplane
 
 function buildNonAMD64(){
-    DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
+    echo 
+    echo "You are on '${ARCH}' cpu architecture. "
+    echo "Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. This might take 5-30 min based on your system's hardware configuration. "
+    echo 
+    echo "Select an option 1 to prceed:"
+    echo "   1) Proceed"
+    echo "   2) Exit"
+    echo 
+    read -p "Select Option [1]: " DO_BUILD
+    until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-2]$ ]]; do
+        echo "$DO_BUILD: invalid selection."
+        read -p "Select Option [1]: " DO_BUILD
+    done
+    echo
 
-    REPO=https://github.com/makeplane/plane.git
-
-    CURR_DIR=$PWD
-    PLANE_TEMP_CODE_DIR=$(mktemp -d)
-    git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch
-
-    cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
-
-    cd $PLANE_TEMP_CODE_DIR
-    if [ "$BRANCH" == "master" ];
+    if [ "$DO_BUILD" == "1" ] 
     then
-        APP_RELEASE=latest
-    fi
+        DOCKERHUB_USER=$NON_AMD_DOCKERHUB_USER
 
-    docker compose -f build.yml build --no-cache 
-    # cd $CURR_DIR
-    # rm -rf $PLANE_TEMP_CODE_DIR
+        REPO=https://github.com/makeplane/plane.git
+
+        CURR_DIR=$PWD
+        PLANE_TEMP_CODE_DIR=$(mktemp -d)
+        git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch
+
+        cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
+
+        cd $PLANE_TEMP_CODE_DIR
+        if [ "$BRANCH" == "master" ];
+        then
+            APP_RELEASE=latest
+        fi
+
+        docker compose -f build.yml build --no-cache 
+        # cd $CURR_DIR
+        # rm -rf $PLANE_TEMP_CODE_DIR
+        echo "build"
+    elif [ "$DO_BUILD" == "2" ] 
+    then
+        printf "Install Action cancelled by you."
+        echo "exit"
+    else
+        printf "INVALID ACTION SUPPLIED"
+        buildNonAMD64()
+    fi
 }
 function install(){
     echo 
@@ -38,34 +64,36 @@ function install(){
     then
         download
     else
-        echo 
-	    echo "You are on '${ARCH}' cpu architecture. "
-        echo "Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. This might take 5-30 min based on your system's hardware configuration. "
-        echo 
-        echo "Select an option 1 to prceed:"
-        echo "   1) Proceed"
-        echo "   2) Exit"
-        echo 
-        read -p "Select Option [1]: " DO_BUILD
-        until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-2]$ ]]; do
-            echo "$DO_BUILD: invalid selection."
-            read -p "Select Option [1]: " DO_BUILD
-        done
-        echo
+        local res=$(buildNonAMD64)
+        echo $res
+        # echo 
+	    # echo "You are on '${ARCH}' cpu architecture. "
+        # echo "Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. This might take 5-30 min based on your system's hardware configuration. "
+        # echo 
+        # echo "Select an option 1 to prceed:"
+        # echo "   1) Proceed"
+        # echo "   2) Exit"
+        # echo 
+        # read -p "Select Option [1]: " DO_BUILD
+        # until [[ -z "$DO_BUILD" || "$DO_BUILD" =~ ^[1-2]$ ]]; do
+        #     echo "$DO_BUILD: invalid selection."
+        #     read -p "Select Option [1]: " DO_BUILD
+        # done
+        # echo
 
-        if [ "$DO_BUILD" == "1" ] 
-        then
-            buildNonAMD64
-            echo
-            echo "Build Completed"
-            echo
-            download
-        elif [ "$DO_BUILD" == "2" ] 
-        then
-            echo "Install Action cancelled by you."
-        else
-            echo "INVALID ACTION SUPPLIED"
-        fi
+        # if [ "$DO_BUILD" == "1" ] 
+        # then
+        #     buildNonAMD64
+        #     echo
+        #     echo "Build Completed"
+        #     echo
+        #     download
+        # elif [ "$DO_BUILD" == "2" ] 
+        # then
+        #     echo "Install Action cancelled by you."
+        # else
+        #     echo "INVALID ACTION SUPPLIED"
+        # fi
     fi
 }
 function download(){
