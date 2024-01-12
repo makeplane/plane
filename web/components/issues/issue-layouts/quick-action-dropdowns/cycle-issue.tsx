@@ -13,7 +13,7 @@ import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, handleRemoveFromView, customActionButton } = props;
+  const { issue, handleDelete, handleUpdate, handleRemoveFromView, customActionButton, portalElement } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -59,11 +59,15 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
+        ellipsis
+      >
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -73,9 +77,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setIssueToEdit({
               ...issue,
               cycle: cycleId?.toString() ?? null,
@@ -89,9 +91,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             handleRemoveFromView && handleRemoveFromView();
           }}
         >
@@ -101,9 +101,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -113,9 +111,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setDeleteIssueModal(true);
           }}
         >

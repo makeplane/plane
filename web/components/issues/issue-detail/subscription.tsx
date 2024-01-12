@@ -5,17 +5,17 @@ import { observer } from "mobx-react-lite";
 import { Button } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
+import useToast from "hooks/use-toast";
 
 export type TIssueSubscription = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   currentUserId: string;
-  disabled?: boolean;
 };
 
 export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, currentUserId, disabled } = props;
+  const { workspaceSlug, projectId, issueId, currentUserId } = props;
   // hooks
   const {
     issue: { getIssueById },
@@ -23,16 +23,32 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     createSubscription,
     removeSubscription,
   } = useIssueDetail();
+  const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
 
   const issue = getIssueById(issueId);
   const subscription = getSubscriptionByIssueId(issueId);
 
-  const handleSubscription = () => {
+  const handleSubscription = async () => {
     setLoading(true);
-    if (subscription?.subscribed) removeSubscription(workspaceSlug, projectId, issueId);
-    else createSubscription(workspaceSlug, projectId, issueId);
+    try {
+      if (subscription?.subscribed) await removeSubscription(workspaceSlug, projectId, issueId);
+      else await createSubscription(workspaceSlug, projectId, issueId);
+      setToastAlert({
+        type: "success",
+        title: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        message: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+      });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setToastAlert({
+        type: "error",
+        title: "Error",
+        message: "Something went wrong. Please try again later.",
+      });
+    }
   };
 
   if (issue?.created_by === currentUserId || issue?.assignee_ids.includes(currentUserId)) return <></>;
@@ -45,7 +61,6 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
-        disabled={disabled}
       >
         {loading ? "Loading..." : subscription?.subscribed ? "Unsubscribe" : "Subscribe"}
       </Button>

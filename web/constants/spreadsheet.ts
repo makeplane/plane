@@ -1,8 +1,22 @@
-import { TIssueOrderByOptions } from "@plane/types";
+import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 import { LayersIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarClock, CalendarCheck } from "lucide-react";
 import { FC } from "react";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
+import {
+  SpreadsheetAssigneeColumn,
+  SpreadsheetAttachmentColumn,
+  SpreadsheetCreatedOnColumn,
+  SpreadsheetDueDateColumn,
+  SpreadsheetEstimateColumn,
+  SpreadsheetLabelColumn,
+  SpreadsheetLinkColumn,
+  SpreadsheetPriorityColumn,
+  SpreadsheetStartDateColumn,
+  SpreadsheetStateColumn,
+  SpreadsheetSubIssueColumn,
+  SpreadsheetUpdatedOnColumn,
+} from "components/issues/issue-layouts/spreadsheet";
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
   [key: string]: {
@@ -12,6 +26,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: TIssueOrderByOptions;
     descendingOrderTitle: string;
     icon: FC<ISvgIcons>;
+    Column: React.FC<{ issue: TIssue; onChange: (issue: TIssue, data: Partial<TIssue>) => void; disabled: boolean }>;
   };
 } = {
   assignee: {
@@ -21,6 +36,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "-assignees__first_name",
     descendingOrderTitle: "Z",
     icon: UserGroupIcon,
+    Column: SpreadsheetAssigneeColumn,
   },
   created_on: {
     title: "Created on",
@@ -29,6 +45,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "created_at",
     descendingOrderTitle: "Old",
     icon: CalendarDays,
+    Column: SpreadsheetCreatedOnColumn,
   },
   due_date: {
     title: "Due date",
@@ -37,6 +54,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "target_date",
     descendingOrderTitle: "Old",
     icon: CalendarCheck,
+    Column: SpreadsheetDueDateColumn,
   },
   estimate: {
     title: "Estimate",
@@ -45,6 +63,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "-estimate_point",
     descendingOrderTitle: "High",
     icon: Triangle,
+    Column: SpreadsheetEstimateColumn,
   },
   labels: {
     title: "Labels",
@@ -53,6 +72,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "-labels__name",
     descendingOrderTitle: "Z",
     icon: Tag,
+    Column: SpreadsheetLabelColumn,
   },
   priority: {
     title: "Priority",
@@ -61,6 +81,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "-priority",
     descendingOrderTitle: "Urgent",
     icon: Signal,
+    Column: SpreadsheetPriorityColumn,
   },
   start_date: {
     title: "Start date",
@@ -69,6 +90,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "start_date",
     descendingOrderTitle: "Old",
     icon: CalendarClock,
+    Column: SpreadsheetStartDateColumn,
   },
   state: {
     title: "State",
@@ -77,6 +99,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "-state__name",
     descendingOrderTitle: "Z",
     icon: DoubleCircleIcon,
+    Column: SpreadsheetStateColumn,
   },
   updated_on: {
     title: "Updated on",
@@ -85,6 +108,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "updated_at",
     descendingOrderTitle: "Old",
     icon: CalendarDays,
+    Column: SpreadsheetUpdatedOnColumn,
   },
   link: {
     title: "Link",
@@ -93,6 +117,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "link_count",
     descendingOrderTitle: "Least",
     icon: Link2,
+    Column: SpreadsheetLinkColumn,
   },
   attachment_count: {
     title: "Attachment",
@@ -101,6 +126,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "attachment_count",
     descendingOrderTitle: "Least",
     icon: Paperclip,
+    Column: SpreadsheetAttachmentColumn,
   },
   sub_issue_count: {
     title: "Sub-issue",
@@ -109,5 +135,21 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "sub_issues_count",
     descendingOrderTitle: "Least",
     icon: LayersIcon,
+    Column: SpreadsheetSubIssueColumn,
   },
 };
+
+export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
+  "state",
+  "priority",
+  "assignee",
+  "labels",
+  "start_date",
+  "due_date",
+  "estimate",
+  "created_on",
+  "updated_on",
+  "link",
+  "attachment_count",
+  "sub_issue_count",
+];

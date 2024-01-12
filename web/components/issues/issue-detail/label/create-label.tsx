@@ -74,15 +74,11 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   return (
     <>
       <div
-        className="flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer border border-custom-border-100 rounded-full text-xs p-0.5 px-2 group hover:border-red-500/50 hover:bg-red-500/20"
+        className="flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer border border-custom-border-100 rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 text-custom-text-300 hover:text-custom-text-200"
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
-          {isCreateToggle ? (
-            <X className="transition-all h-2.5 w-2.5 group-hover:text-red-500" />
-          ) : (
-            <Plus className="transition-all h-2.5 w-2.5 group-hover:text-red-500" />
-          )}
+          {isCreateToggle ? <X className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
         </div>
         <div className="flex-shrink-0">{isCreateToggle ? "Cancel" : "New"}</div>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -28,7 +28,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { currentWebhook, clearSecretKey, fetchWebhookById, updateWebhook } = useWebhook();
+  const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   // toast
   const { setToastAlert } = useToast();
 

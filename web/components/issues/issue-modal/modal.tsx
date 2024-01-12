@@ -26,6 +26,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { data, isOpen, onClose, onSubmit, withDraftIssueWrapper = true } = props;
   // states
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
+  const [createMore, setCreateMore] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -45,13 +46,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
 
+  const handleCreateMoreToggleChange = (value: boolean) => {
+    setCreateMore(value);
+  };
+
   const handleClose = (saveDraftIssueInLocalStorage?: boolean) => {
     if (changesMade && saveDraftIssueInLocalStorage) {
       const draftIssue = JSON.stringify(changesMade);
-
       setLocalStorageDraftIssue(draftIssue);
     }
-
     onClose();
   };
 
@@ -65,7 +68,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Success!",
           message: "Issue created successfully.",
         });
-        handleClose();
+        !createMore && handleClose();
         return res;
       })
       .catch(() => {
@@ -169,11 +172,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     onClose={handleClose}
                     onSubmit={handleFormSubmit}
                     projectId={selectedProjectId}
+                    isCreateMoreToggleEnabled={createMore}
+                    onCreateMoreToggleChange={handleCreateMoreToggleChange}
                   />
                 ) : (
                   <IssueFormRoot
                     data={data}
                     onClose={() => handleClose(false)}
+                    isCreateMoreToggleEnabled={createMore}
+                    onCreateMoreToggleChange={handleCreateMoreToggleChange}
                     onSubmit={handleFormSubmit}
                     projectId={selectedProjectId}
                   />
