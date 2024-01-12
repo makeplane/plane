@@ -11,29 +11,27 @@ import { PageForm } from "./page-form";
 import { IPage } from "@plane/types";
 import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 import { useProjectPages } from "hooks/store/use-project-page";
+import { IPageStore } from "store/page.store";
 
 type Props = {
-  data?: IPage | null;
+  // data?: IPage | null;
+  pageStore?: IPageStore;
   handleClose: () => void;
   isOpen: boolean;
   projectId: string;
 };
 
 export const CreateUpdatePageModal: FC<Props> = (props) => {
-  const { isOpen, handleClose, data, projectId } = props;
+  const { isOpen, handleClose, projectId, pageStore } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { createPage: createPageMobx } = useProjectPages();
+  const { createPage } = useProjectPages();
   // store hooks
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { currentWorkspace } = useWorkspace();
-  const { createPage, updatePage } = usePage();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const onClose = () => {
     handleClose();
@@ -41,20 +39,23 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
 
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;
-    createPageMobx(workspaceSlug.toString(), projectId, payload);
+    console.log("createProjectPage", payload);
+    createPage(workspaceSlug.toString(), projectId, payload);
+    handleClose();
   };
-
-  // const updateProjectPage = async (payload: IPage) => {
-  //   if (!data || !workspaceSlug) return;
-  // };
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
-    await createProjectPage(formData);
-
-    // if (!data) await createProjectPage(formData);
-    // TODO: implement update page
-    // else await updateProjectPage(formData);
+    if (pageStore) {
+      if (pageStore.name !== formData.name) {
+        await pageStore.updateName(formData.name);
+      }
+      if (pageStore.access !== formData.access) {
+        formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
+      }
+    } else {
+      await createProjectPage(formData);
+    }
   };
 
   return (
@@ -84,7 +85,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
-                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} data={data} />
+                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} pageStore={pageStore} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

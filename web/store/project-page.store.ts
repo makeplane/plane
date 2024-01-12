@@ -16,7 +16,7 @@ export interface IProjectPageStore {
   fetchProjectPages: (workspaceSlug: string, projectId: string) => void;
   fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => void;
   // crud actions
-  createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => void;
+  createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<void>;
   deletePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
   archivePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
   restorePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
@@ -51,7 +51,7 @@ export class ProjectPageStore implements IProjectPageStore {
   get projectPageIds() {
     const projectId = this.rootStore.app.router.projectId;
 
-    if (!projectId || !this.projectPageMap?.[projectId]) return;
+    if (!projectId || !this.projectPageMap?.[projectId]) return [];
     return Object.keys(this.projectPageMap[projectId]);
   }
   /**

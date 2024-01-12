@@ -90,8 +90,13 @@ export class PageStore implements IPageStore {
   }
 
   updateName = action("updateName", async (name: string) => {
+    const oldName = this.name;
     this.name = name;
-    await this.pageService.patchPage(this.workspace, this.project, this.id, { name });
+    this.pageService.patchPage(this.workspace, this.project, this.id, { name }).catch(() => {
+      runInAction(() => {
+        this.name = oldName;
+      });
+    });
   });
 
   updateDescription = action("updateDescription", async (description: string) => {

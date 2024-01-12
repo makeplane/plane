@@ -21,7 +21,6 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { IPageStore } from "store/page.store";
 import { useRouter } from "next/router";
 import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 import { useMember, useUser } from "hooks/store";
@@ -148,7 +147,6 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   };
 
   // if (!pageDetails) return null;
-  console.log("PageListViewRererendered");
 
   // const ownerDetails = getProjectMemberDetails(owned_by);
   const ownerDetails = getProjectMemberDetails(owned_by);
@@ -165,15 +163,13 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
 
   return (
     <>
-      {/**
       <CreateUpdatePageModal
+        pageStore={pageStore}
         isOpen={createUpdatePageModal}
         handleClose={() => setCreateUpdatePageModal(false)}
-        data={pageDetails}
         projectId={projectId}
       />
-      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} data={pageDetails} />
-      **/}
+      {/** <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} data={pageDetails} /> **/}
       <li>
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}>
           <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
