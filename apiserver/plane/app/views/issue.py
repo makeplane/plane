@@ -775,11 +775,31 @@ class SubIssuesEndpoint(BaseAPIView):
             )
             for sub_issue_id in sub_issue_ids
         ]
+    
+        state_distribution = (
+            State.objects.filter(workspace__slug=slug, state_issue__parent_id=issue_id)
+            .annotate(state_group=F("group"))
+            .values("state_group")
+            .annotate(state_count=Count("state_group"))
+            .order_by("state_group")
+        )
 
+        result = {
+            item["state_group"]: item["state_count"] for item in state_distribution
+        }
+
+        serializer = IssueSerializer(
+            updated_sub_issues,
+            many=True,
+        )
         return Response(
-            IssueSerializer(updated_sub_issues, many=True).data,
+            {
+                "sub_issues": serializer.data,
+                "state_distribution": result,
+            },
             status=status.HTTP_200_OK,
         )
+    
 
 
 class IssueLinkViewSet(BaseViewSet):

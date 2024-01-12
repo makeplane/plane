@@ -48,10 +48,10 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
 
   const handleIssue = useMemo(
     () => ({
-      fetchIssues: async (issueId: string) => issueDetail.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId),
-      updateIssue: async (issueId: string, data: Partial<TIssue>) =>
-        issueDetail.updateIssue(workspaceSlug, projectId, issueId, data),
-      removeIssue: (issueId: string) => issueDetail.removeIssue(workspaceSlug, projectId, issueId),
+      // fetchIssues: async (issueId: string) => issueDetail.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId),
+      // updateIssue: async (issueId: string, data: Partial<TIssue>) =>
+      //   issueDetail.updateIssue(workspaceSlug, projectId, issueId, data),
+      // removeIssue: (issueId: string) => issueDetail.removeIssue(workspaceSlug, projectId, issueId),
     }),
     [issueDetail, workspaceSlug, projectId]
   );

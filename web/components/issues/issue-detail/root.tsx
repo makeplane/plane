@@ -191,9 +191,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
     ]
   );
 
-  // Issue details
+  // issue details
   const issue = getIssueById(issueId);
-  // Check if issue is editable, based on user role
+  // checking if issue is editable, based on user role
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
