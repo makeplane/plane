@@ -13,9 +13,6 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
-// helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
@@ -27,6 +24,7 @@ import { EUserProjectRoles } from "constants/project";
 import { IPageStore } from "store/page.store";
 import { useRouter } from "next/router";
 import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
+import { useMember, useUser } from "hooks/store";
 
 export interface IPagesListItem {
   pageId: string;
@@ -36,7 +34,7 @@ export interface IPagesListItem {
 export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }: IPagesListItem) => {
   const projectPageStore = useProjectSpecificPages(projectId);
   // Now, I am observing only the projectPages, out of the projectPageStore.
-  const { projectPageMap } = projectPageStore;
+  const { projectPageMap, archivePage, restorePage } = projectPageStore;
 
   const pageStore = projectPageMap?.[projectId]?.[pageId];
 
@@ -46,14 +44,10 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
-  // const {
-  //   currentUser,
-  //   membership: { currentProjectRole },
-  // } = useUser();
-  //
-  //
-  const currentProjectRole = 15;
-
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
   // const {
   //   getArchivedPageById,
   //   getUnArchivedPageById,
@@ -64,13 +58,13 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   //   makePublic,
   //   restorePage,
   // } = usePage();
-  // const {
-  //   project: { getProjectMemberDetails },
-  // } = useMember();
+  const {
+    project: { getProjectMemberDetails },
+  } = useMember();
   // toast alert
   //
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // derived values
   // const pageDetails = getUnArchivedPageById(pageId) ?? getArchivedPageById(pageId);
 
@@ -80,6 +74,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     archived_at,
     access,
     is_favorite,
+    owned_by,
     name,
     created_at,
     updated_at,
@@ -93,57 +88,20 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     e.preventDefault();
     e.stopPropagation();
 
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Page link copied to clipboard.",
-      });
-    });
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`);
   };
 
   const handleAddToFavorites = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
-
-    console.log("handleAddToFavorites");
-
-    addToFavorites()
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully added the page to favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the page to favorites. Please try again.",
-        });
-      });
+    addToFavorites();
   };
 
   const handleRemoveFromFavorites = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    removeFromFavorites()
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully removed the page from favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the page from favorites. Please try again.",
-        });
-      });
+    removeFromFavorites();
   };
 
   const handleMakePublic = (e: any) => {
@@ -165,14 +123,14 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     e.stopPropagation();
 
     // TODO: implement archive page inside page store
-    // archivePage(workspaceSlug, projectId, pageId);
+    archivePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleRestorePage = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // restorePage(workspaceSlug, projectId, pageId);
+    restorePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleDeletePage = (e: any) => {
@@ -190,13 +148,12 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   };
 
   // if (!pageDetails) return null;
+  console.log("PageListViewRererendered");
 
   // const ownerDetails = getProjectMemberDetails(owned_by);
-  // const ownerDetails = useMemo(() => getProjectMemberDetails(owned_by), [owned_by, getProjectMemberDetails]);
-  const ownerDetails = { member: { display_name: "test" } };
+  const ownerDetails = getProjectMemberDetails(owned_by);
 
-  // const isCurrentUserOwner = owned_by === currentUser?.id;
-  const isCurrentUserOwner = true;
+  const isCurrentUserOwner = owned_by === currentUser?.id;
 
   const userCanEdit =
     isCurrentUserOwner ||

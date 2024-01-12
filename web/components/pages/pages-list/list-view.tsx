@@ -50,10 +50,9 @@ export const PagesListView: FC = observer(() => {
         <div className="h-full space-y-4 overflow-y-auto">
           {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {projectPageIds.map((pageId: string) => {
-                console.log("rerender list");
-                return <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />;
-              })}
+              {projectPageIds.map((pageId: string) => (
+                <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />
+              ))}
             </ul>
           ) : (
             <NewEmptyState
