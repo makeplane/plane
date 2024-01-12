@@ -93,7 +93,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                         <span
                           className="h-full w-0.5 flex-shrink-0 rounded"
                           style={{
-                            backgroundColor: getProjectStates(issue?.project_id).find(
+                            backgroundColor: getProjectStates(issue?.project_id)?.find(
                               (state) => state?.id == issue?.state_id
                             )?.color,
                           }}
