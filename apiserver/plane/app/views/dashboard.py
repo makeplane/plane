@@ -14,6 +14,7 @@ from django.db.models import (
     Subquery,
     JSONField,
     Func,
+    Prefetch,
 )
 
 # Third Party imports
@@ -32,6 +33,7 @@ from plane.db.models import (
     Project,
     IssueLink,
     IssueAttachment,
+    IssueRelation,
 )
 from plane.app.serializers import (
     IssueActivitySerializer,
@@ -42,7 +44,7 @@ from plane.app.serializers import (
 from plane.utils.issue_filters import issue_filters
 
 
-def dashboard_overview_stats(request, slug):
+def dashboard_overview_stats(self, request, slug):
     assigned_issues = Issue.issue_objects.filter(
         workspace__slug=slug, assignees__in=[request.user]
     ).count()
@@ -75,13 +77,19 @@ def dashboard_overview_stats(request, slug):
     )
 
 
-def dashboard_assigned_issues(request, slug):
+def dashboard_assigned_issues(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     issue_type = request.GET.get("issue_type", None)
 
     # get all the assigned issues
     assigned_issues = (
         Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
+        .select_related("project")
+        .select_related("workspace")
+        .select_related("state")
+        .select_related("parent")
+        .prefetch_related("assignees")
+        .prefetch_related("labels")
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
         .annotate(module_id=F("issue_module__module_id"))
         .annotate(
@@ -122,7 +130,9 @@ def dashboard_assigned_issues(request, slug):
         completed_issues = assigned_issues.filter(state__group__in=["completed"])[:5]
         return Response(
             {
-                "issues": IssueSerializer(completed_issues, many=True).data,
+                "issues": IssueSerializer(
+                    completed_issues, many=True, expand=self.expand
+                ).data,
                 "count": completed_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -137,7 +147,9 @@ def dashboard_assigned_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": IssueSerializer(overdue_issues, many=True).data,
+                "issues": IssueSerializer(
+                    overdue_issues, many=True, expand=self.expand
+                ).data,
                 "count": overdue_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -152,7 +164,9 @@ def dashboard_assigned_issues(request, slug):
         )[:5]
         return Response(
             {
-                "issues": IssueSerializer(upcoming_issues, many=True).data,
+                "issues": IssueSerializer(
+                    upcoming_issues, many=True, expand=self.expand
+                ).data,
                 "count": upcoming_issues_count,
             },
             status=status.HTTP_200_OK,
@@ -164,13 +178,19 @@ def dashboard_assigned_issues(request, slug):
     )
 
 
-def dashboard_created_issues(request, slug):
+def dashboard_created_issues(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     issue_type = request.GET.get("issue_type", None)
 
     # get all the assigned issues
     created_issues = (
         Issue.issue_objects.filter(workspace__slug=slug, created_by=request.user)
+        .select_related("project")
+        .select_related("workspace")
+        .select_related("state")
+        .select_related("parent")
+        .prefetch_related("assignees")
+        .prefetch_related("labels")
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
         .annotate(module_id=F("issue_module__module_id"))
         .annotate(
@@ -253,7 +273,7 @@ def dashboard_created_issues(request, slug):
     )
 
 
-def dashboard_issues_by_state_groups(request, slug):
+def dashboard_issues_by_state_groups(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
     issues_by_state_groups = (
@@ -281,7 +301,7 @@ def dashboard_issues_by_state_groups(request, slug):
     return Response(output_data, status=status.HTTP_200_OK)
 
 
-def dashboard_issues_by_priority(request, slug):
+def dashboard_issues_by_priority(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     priority_order = ["urgent", "high", "medium", "low", "none"]
 
@@ -310,7 +330,7 @@ def dashboard_issues_by_priority(request, slug):
     return Response(output_data, status=status.HTTP_200_OK)
 
 
-def dashboard_recent_activity(request, slug):
+def dashboard_recent_activity(self, request, slug):
     queryset = (
         IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
@@ -327,7 +347,7 @@ def dashboard_recent_activity(request, slug):
     )
 
 
-def dashboard_recent_projects(request, slug):
+def dashboard_recent_projects(self, request, slug):
     project_ids = (
         IssueActivity.objects.filter(
             workspace__slug=slug,
@@ -363,7 +383,7 @@ def dashboard_recent_projects(request, slug):
     )
 
 
-def dashboard_recent_collaborators(request, slug):
+def dashboard_recent_collaborators(self, request, slug):
     # Fetch all project IDs where the user belongs to
     user_projects = Project.objects.filter(
         project_projectmember__member=request.user,
@@ -524,6 +544,7 @@ class DashboardEndpoint(BaseAPIView):
         func = WIDGETS_MAPPER.get(widget_key)
         if func is not None:
             response = func(
+                self,
                 request=request,
                 slug=slug,
             )
