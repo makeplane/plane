@@ -13,7 +13,6 @@ from plane.db.models import (
     Notification,
     IssueComment,
     IssueActivity,
-    EmailNotificationLog,
 )
 
 # Third Party imports
@@ -21,7 +20,7 @@ from celery import shared_task
 from bs4 import BeautifulSoup
 
 
-# =========== Issue Description Html Parsing and Notification Functions ======================
+# =========== Issue Description Html Parsing and notification Functions ======================
 
 
 def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
@@ -59,8 +58,6 @@ def get_new_mentions(requested_instance, current_instance):
 
 
 # Get Removed Mention
-
-
 def get_removed_mentions(requested_instance, current_instance):
     # requested_data is the newer instance of the current issue
     # current_instance is the older instance of the current issue, saved in the database
@@ -78,8 +75,6 @@ def get_removed_mentions(requested_instance, current_instance):
 
 
 # Adds mentions as subscribers
-
-
 def extract_mentions_as_subscribers(project_id, issue_id, mentions):
     # mentions is an array of User IDs representing the FILTERED set of mentioned users
 
@@ -131,7 +126,7 @@ def extract_mentions(issue_instance):
         return []
 
 
-# =========== Comment Parsing and Notification Functions ======================
+# =========== Comment Parsing and notification Functions ======================
 def extract_comment_mentions(comment_value):
     try:
         mentions = []
@@ -276,12 +271,7 @@ def notifications(
         - When the activity is a comment_updated and there exist a mention change, then also we have to send the "mention_in_comment" notification
         """
 
-        issue_assignees = list(
-            IssueAssignee.objects.filter(project_id=project_id, issue_id=issue_id)
-            .exclude(assignee_id__in=list(new_mentions + comment_mentions))
-            .values_list("assignee", flat=True)
-        )
-
+        # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
         issue_subscribers = list(
             IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id)
             .exclude(
@@ -292,62 +282,50 @@ def notifications(
 
         issue = Issue.objects.filter(pk=issue_id).first()
 
-        if issue.created_by_id is not None and str(issue.created_by_id) != str(
-            actor_id
-        ):
-            issue_subscribers = issue_subscribers + [issue.created_by_id]
-
         if subscriber:
             # add the user to issue subscriber
             try:
-                if (
-                    str(issue.created_by_id) != str(actor_id)
-                    and uuid.UUID(actor_id) not in issue_assignees
-                ):
-                    _ = IssueSubscriber.objects.get_or_create(
-                        project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
-                    )
+                _ = IssueSubscriber.objects.get_or_create(
+                    project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
+                )
             except Exception as e:
                 pass
 
         project = Project.objects.get(pk=project_id)
 
-        issue_subscribers = list(
-            set(issue_subscribers + issue_assignees) - {uuid.UUID(actor_id)}
-        )
+        issue_assignees = IssueAssignee.objects.filter(
+            issue_id=issue_id, project_id=project_id
+        ).values_list("assignees", flat=True)
+
+        issue_subscribers = list(set(issue_subscribers) - {uuid.UUID(actor_id)})
 
         for subscriber in issue_subscribers:
-            if subscriber in issue_subscribers:
-                trigger = "subscribed"
-                sender = "in_app:issue_activities:subscribed"
-            if issue.created_by_id is not None and subscriber == issue.created_by_id:
-                trigger = "created"
+            if issue.created_by_id and issue.created_by_id == subscriber:
                 sender = "in_app:issue_activities:created"
-            if subscriber in issue_assignees:
-                trigger = "assigned"
+            elif (
+                subscriber in issue_assignees
+                and issue.created_by_id not in issue_assignees
+            ):
                 sender = "in_app:issue_activities:assigned"
+            else:
+                sender = "in_app:issue_activities:subscribed"
 
             for issue_activity in issue_activities_created:
                 # Do not send notification for description update
                 if issue_activity.get("field") == "description":
                     continue
-                issue_comment = issue_activity.get("issue_comment")
-                if issue_comment is not None:
-                    issue_comment = IssueComment.objects.get(
-                        id=issue_comment,
+
+                # If activity is of issue comment fetch the comment
+                issue_comment = (
+                    IssueComment.objects.get(
+                        id=issue_activity.get("issue_comment"),
                         issue_id=issue_id,
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                     )
-
-                preference = {}
-
-                if issue_activity.get("field") == "state":
-                    preference = preference.get(trigger).get("state") 
-                elif issue_activity.get("field") == "comment":
-                    preference = preference.get(trigger).get("comment") 
-                else:
-                    preference = preference.get(trigger).get("property_change")
+                    if issue_activity.get("issue_comment")
+                    else None
+                )
 
                 bulk_notifications.append(
                     Notification(
@@ -377,7 +355,7 @@ def notifications(
                                 "old_value": str(issue_activity.get("old_value")),
                                 "issue_comment": str(
                                     issue_comment.comment_stripped
-                                    if issue_activity.get("issue_comment") is not None
+                                    if issue_comment is not None
                                     else ""
                                 ),
                             },
@@ -385,14 +363,8 @@ def notifications(
                     )
                 )
 
-                if preference:
-                    bulk_email_logs(
-                        EmailNotificationLog(
-                            user_id=subscriber,
-                            
-                        )
-                    )
 
+# ----------------------------------------------------------------------------------------------------------------- #
 
         # Add Mentioned as Issue Subscribers
         IssueSubscriber.objects.bulk_create(

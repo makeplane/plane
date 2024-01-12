@@ -17,6 +17,9 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+# Module imports
+from plane.db.models import UserNotificationPreference
+
 
 def get_default_onboarding():
     return {
@@ -65,7 +68,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     has_billing_address = models.BooleanField(default=False)
 
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
+    user_timezone = models.CharField(
+        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    )
 
     last_active = models.DateTimeField(default=timezone.now, null=True)
     last_login_time = models.DateTimeField(null=True)
@@ -142,3 +147,12 @@ def send_welcome_slack(sender, instance, created, **kwargs):
     except Exception as e:
         capture_exception(e)
         return
+
+
+@receiver(post_save, sender=User)
+def create_user_notification(sender, instance, created, **kwargs):
+    # create preferences
+    if created and not instance.is_bot:
+        UserNotificationPreference.objects.create(
+            user=instance,
+        )

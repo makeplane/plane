@@ -24,6 +24,7 @@ from plane.db.models import (
     Label,
     User,
     IssueProperty,
+    UserNotificationPreference,
 )
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
@@ -51,8 +52,13 @@ def service_importer(service, importer_id):
                     for user in users
                     if user.get("import", False) == "invite"
                 ],
-                batch_size=10,
+                batch_size=100,
                 ignore_conflicts=True,
+            )
+
+            _ = UserNotificationPreference.objects.bulk_create(
+                [UserNotificationPreference(user=user) for user in new_users],
+                batch_size=100,
             )
 
             _ = [
