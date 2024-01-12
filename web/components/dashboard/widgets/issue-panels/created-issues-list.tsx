@@ -29,7 +29,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
   const { setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TWidgetIssue) =>
-    setPeekIssue({ workspaceSlug, projectId: issue.project, issueId: issue.id });
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const today = renderFormattedPayloadDate(new Date());
   const filterParams =
@@ -71,7 +71,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
                 return (
                   <CreatedUpcomingIssueListItem
                     key={issue.id}
-                    issue={issue}
+                    issueId={issue.id}
                     workspaceSlug={workspaceSlug}
                     onClick={handleIssuePeekOverview}
                   />
@@ -80,7 +80,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
                 return (
                   <CreatedOverdueIssueListItem
                     key={issue.id}
-                    issue={issue}
+                    issueId={issue.id}
                     workspaceSlug={workspaceSlug}
                     onClick={handleIssuePeekOverview}
                   />
@@ -89,7 +89,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
                 return (
                   <CreatedCompletedIssueListItem
                     key={issue.id}
-                    issue={issue}
+                    issueId={issue.id}
                     workspaceSlug={workspaceSlug}
                     onClick={handleIssuePeekOverview}
                   />
