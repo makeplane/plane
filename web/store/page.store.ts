@@ -30,7 +30,7 @@ export interface IPageStore {
   updateDescription: (description: string) => Promise<void>;
 }
 
-export class PageStore {
+export class PageStore implements IPageStore {
   access: number = 0;
   archived_at: string | null;
   color: string;
@@ -103,31 +103,24 @@ export class PageStore {
    * Add Page to users favorites list
    */
   addToFavorites = action("addToFavorites", async () => {
-    console.log("add to favorites inside page store");
-    try {
-      this.is_favorite = true;
-      // await this.pageService.addPageToFavorites(this.workspace, this.project, this.id);
-    } catch (error) {
+    this.is_favorite = true;
+    this.pageService.addPageToFavorites(this.workspace, this.project, this.id).catch(() => {
       runInAction(() => {
         this.is_favorite = false;
       });
-      throw error;
-    }
+    });
   });
 
   /**
    * Remove page from the users favorites list
    */
   removeFromFavorites = action("removeFromFavorites", async () => {
-    try {
-      this.is_favorite = false;
-      // await this.pageService.removePageFromFavorites(this.workspace, this.project, this.id);
-    } catch (error) {
+    this.is_favorite = false;
+    this.pageService.removePageFromFavorites(this.workspace, this.project, this.id).catch(() => {
       runInAction(() => {
         this.is_favorite = true;
       });
-      throw error;
-    }
+    });
   });
 
   /**
@@ -135,15 +128,12 @@ export class PageStore {
    * @returns
    */
   makePublic = action("makePublic", async () => {
-    try {
-      this.access = 0;
-      await this.pageService.patchPage(this.workspace, this.project, this.id, { access: 0 });
-    } catch (error) {
+    this.access = 0;
+    this.pageService.patchPage(this.workspace, this.project, this.id, { access: 0 }).catch(() => {
       runInAction(() => {
         this.access = 1;
       });
-      throw error;
-    }
+    });
   });
 
   /**
@@ -151,14 +141,11 @@ export class PageStore {
    * @returns
    */
   makePrivate = action("makePrivate", async () => {
-    try {
-      this.access = 1;
-      await this.pageService.patchPage(this.workspace, this.project, this.id, { access: 1 });
-    } catch (error) {
+    this.access = 1;
+    this.pageService.patchPage(this.workspace, this.project, this.id, { access: 1 }).catch(() => {
       runInAction(() => {
         this.access = 0;
       });
-      throw error;
-    }
+    });
   });
 }
