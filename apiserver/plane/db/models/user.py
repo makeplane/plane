@@ -17,9 +17,6 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-# Module imports
-from plane.db.models import UserNotificationPreference
-
 
 def get_default_onboarding():
     return {
@@ -153,6 +150,8 @@ def send_welcome_slack(sender, instance, created, **kwargs):
 def create_user_notification(sender, instance, created, **kwargs):
     # create preferences
     if created and not instance.is_bot:
+        # Module imports
+        from plane.db.models import UserNotificationPreference
         UserNotificationPreference.objects.create(
             user=instance,
         )

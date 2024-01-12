@@ -2,9 +2,8 @@
 from django.db import models
 from django.conf import settings
 
-# Third party imports
-from .base import BaseModel
-from .project import ProjectBaseModel
+# Module imports
+from . import BaseModel
 
 
 class Notification(BaseModel):
