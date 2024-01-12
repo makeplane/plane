@@ -83,7 +83,11 @@ def dashboard_assigned_issues(self, request, slug):
 
     # get all the assigned issues
     assigned_issues = (
-        Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            assignees__in=[request.user],
+        )
         .select_related("project")
         .select_related("workspace")
         .select_related("state")
@@ -184,7 +188,11 @@ def dashboard_created_issues(self, request, slug):
 
     # get all the assigned issues
     created_issues = (
-        Issue.issue_objects.filter(workspace__slug=slug, created_by=request.user)
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            created_by=request.user,
+        )
         .select_related("project")
         .select_related("workspace")
         .select_related("state")
