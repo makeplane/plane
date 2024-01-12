@@ -8,10 +8,16 @@ from plane.app.views import (
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
+    ActiveCycleEndpoint
 )
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/active-cycles/",
+        ActiveCycleEndpoint.as_view(),
+        name="workspace-active-cycle",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/",
         CycleViewSet.as_view(
