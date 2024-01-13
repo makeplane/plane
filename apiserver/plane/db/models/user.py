@@ -8,7 +8,11 @@ import pytz
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    UserManager,
+    PermissionsMixin,
+)
 from django.utils import timezone
 from django.conf import settings
 
@@ -29,22 +33,34 @@ def get_default_onboarding():
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        db_index=True,
+        primary_key=True,
     )
     username = models.CharField(max_length=128, unique=True)
 
     # user fields
     mobile_number = models.CharField(max_length=255, blank=True, null=True)
-    email = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    email = models.CharField(
+        max_length=255, null=True, blank=True, unique=True
+    )
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
     avatar = models.CharField(max_length=255, blank=True)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
 
     # tracking metrics
-    date_joined = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last Modified At")
+    date_joined = models.DateTimeField(
+        auto_now_add=True, verbose_name="Created At"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Created At"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Last Modified At"
+    )
     last_location = models.CharField(max_length=255, blank=True)
     created_location = models.CharField(max_length=255, blank=True)
 
@@ -65,7 +81,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     has_billing_address = models.BooleanField(default=False)
 
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
+    user_timezone = models.CharField(
+        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    )
 
     last_active = models.DateTimeField(default=timezone.now, null=True)
     last_login_time = models.DateTimeField(null=True)
@@ -115,7 +133,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.display_name = (
                 self.email.split("@")[0]
                 if len(self.email.split("@"))
-                else "".join(random.choice(string.ascii_letters) for _ in range(6))
+                else "".join(
+                    random.choice(string.ascii_letters) for _ in range(6)
+                )
             )
 
         if self.is_superuser:

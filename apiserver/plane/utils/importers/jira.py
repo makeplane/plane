@@ -6,7 +6,12 @@ from urllib.parse import urlparse, urljoin
 
 
 def is_allowed_hostname(hostname):
-    allowed_domains = ["atl-paas.net", "atlassian.com", "atlassian.net", "jira.com"]
+    allowed_domains = [
+        "atl-paas.net",
+        "atlassian.com",
+        "atlassian.net",
+        "jira.com",
+    ]
     parsed_uri = urlparse(f"https://{hostname}")
     domain = parsed_uri.netloc.split(":")[0]  # Ensures no port is included
     base_domain = ".".join(domain.split(".")[-2:])
@@ -20,13 +25,15 @@ def is_valid_project_key(project_key):
         if len(project_key) > 30:
             return False
         # Check the validity of the key as well
-        pattern = re.compile(r'^[A-Z0-9]{1,10}$')
+        pattern = re.compile(r"^[A-Z0-9]{1,10}$")
         return pattern.match(project_key) is not None
     else:
         False
 
+
 def generate_valid_project_key(project_key):
     return project_key.strip().upper()
+
 
 def generate_url(hostname, path):
     if not is_allowed_hostname(hostname):
@@ -44,7 +51,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
 
         auth = HTTPBasicAuth(email, api_token)
         headers = {"Accept": "application/json"}
-        
+
         # make the project key upper case
         project_key = generate_valid_project_key(project_key)
 
@@ -59,7 +66,8 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
 
         # modules
         module_url = generate_url(
-            hostname, f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic"
+            hostname,
+            f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic",
         )
         module_response = requests.request(
             "GET", module_url, headers=headers, auth=auth
@@ -104,4 +112,6 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
         }
     except Exception as e:
         capture_exception(e)
-        return {"error": "Something went wrong could not fetch information from jira"}
+        return {
+            "error": "Something went wrong could not fetch information from jira"
+        }
