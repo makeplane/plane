@@ -86,9 +86,15 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(Q(project_projectmember__member=self.request.user) | Q(network=2))
+            .filter(
+                Q(project_projectmember__member=self.request.user)
+                | Q(network=2)
+            )
             .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
+                "workspace",
+                "workspace__owner",
+                "default_assignee",
+                "project_lead",
             )
             .annotate(
                 is_favorite=Exists(
@@ -160,7 +166,11 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
         )
 
     def list(self, request, slug):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
 
         sort_order_query = ProjectMember.objects.filter(
             member=request.user,
@@ -173,7 +183,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             .annotate(sort_order=Subquery(sort_order_query))
             .order_by("sort_order", "name")
         )
-        if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+        if request.GET.get("per_page", False) and request.GET.get(
+            "cursor", False
+        ):
             return self.paginate(
                 request=request,
                 queryset=(projects),
@@ -181,9 +193,10 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     projects, many=True
                 ).data,
             )
-        projects = ProjectListSerializer(projects, many=True, fields=fields if fields else None).data
+        projects = ProjectListSerializer(
+            projects, many=True, fields=fields if fields else None
+        ).data
         return Response(projects, status=status.HTTP_200_OK)
-
 
     def create(self, request, slug):
         try:
@@ -197,7 +210,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
 
                 # Add the user as Administrator to the project
                 project_member = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+                    project_id=serializer.data["id"],
+                    member=request.user,
+                    role=20,
                 )
                 # Also create the issue property for the user
                 _ = IssueProperty.objects.create(
@@ -270,9 +285,15 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     ]
                 )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
                 serializer = ProjectListSerializer(project)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
@@ -285,7 +306,8 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 )
         except Workspace.DoesNotExist as e:
             return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except serializers.ValidationError as e:
             return Response(
@@ -310,7 +332,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 serializer.save()
                 if serializer.data["inbox_view"]:
                     Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox", project=project, is_default=True
+                        name=f"{project.name} Inbox",
+                        project=project,
+                        is_default=True,
                     )
 
                     # Create the triage state in Backlog group
@@ -322,10 +346,16 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                         color="#ff7700",
                     )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         except IntegrityError as e:
             if "already exists" in str(e):
@@ -335,7 +365,8 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except serializers.ValidationError as e:
             return Response(
@@ -370,11 +401,14 @@ class ProjectInvitationsViewset(BaseViewSet):
         # Check if email is provided
         if not emails:
             return Response(
-                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Emails are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         requesting_user = ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project_id, member_id=request.user.id
+            workspace__slug=slug,
+            project_id=project_id,
+            member_id=request.user.id,
         )
 
         # Check if any invited user has an higher role
@@ -548,7 +582,9 @@ class ProjectJoinEndpoint(BaseAPIView):
                     _ = WorkspaceMember.objects.create(
                         workspace_id=project_invite.workspace_id,
                         member=user,
-                        role=15 if project_invite.role >= 15 else project_invite.role,
+                        role=15
+                        if project_invite.role >= 15
+                        else project_invite.role,
                     )
                 else:
                     # Else make him active
@@ -658,7 +694,8 @@ class ProjectMemberViewSet(BaseViewSet):
             sort_order = [
                 project_member.get("sort_order")
                 for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
+                if str(project_member.get("member_id"))
+                == str(member.get("member_id"))
             ]
             bulk_project_members.append(
                 ProjectMember(
@@ -666,7 +703,9 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 10),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
+                    sort_order=sort_order[0] - 10000
+                    if len(sort_order)
+                    else 65535,
                 )
             )
             bulk_issue_props.append(
@@ -719,7 +758,9 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         ).select_related("project", "member", "workspace")
 
-        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
+        serializer = ProjectMemberRoleSerializer(
+            project_members, fields=("id", "member", "role"), many=True
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk):
@@ -747,7 +788,9 @@ class ProjectMemberViewSet(BaseViewSet):
             > requested_project_member.role
         ):
             return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
+                {
+                    "error": "You cannot update a role that is higher than your own role"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -786,7 +829,9 @@ class ProjectMemberViewSet(BaseViewSet):
         # User cannot deactivate higher role
         if requesting_project_member.role < project_member.role:
             return Response(
-                {"error": "You cannot remove a user having role higher than you"},
+                {
+                    "error": "You cannot remove a user having role higher than you"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -837,7 +882,8 @@ class AddTeamToProjectEndpoint(BaseAPIView):
 
         if len(team_members) == 0:
             return Response(
-                {"error": "No such team exists"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "No such team exists"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         workspace = Workspace.objects.get(slug=slug)
@@ -884,7 +930,8 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         if name == "":
             return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Name is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         exists = ProjectIdentifier.objects.filter(
@@ -901,16 +948,23 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         if name == "":
             return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if Project.objects.filter(identifier=name, workspace__slug=slug).exists():
-            return Response(
-                {"error": "Cannot delete an identifier of an existing project"},
+                {"error": "Name is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        ProjectIdentifier.objects.filter(name=name, workspace__slug=slug).delete()
+        if Project.objects.filter(
+            identifier=name, workspace__slug=slug
+        ).exists():
+            return Response(
+                {
+                    "error": "Cannot delete an identifier of an existing project"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ProjectIdentifier.objects.filter(
+            name=name, workspace__slug=slug
+        ).delete()
 
         return Response(
             status=status.HTTP_204_NO_CONTENT,
@@ -928,7 +982,9 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         ).first()
 
         if project_member is None:
-            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
+            )
 
         view_props = project_member.view_props
         default_props = project_member.default_props
@@ -936,8 +992,12 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         sort_order = project_member.sort_order
 
         project_member.view_props = request.data.get("view_props", view_props)
-        project_member.default_props = request.data.get("default_props", default_props)
-        project_member.preferences = request.data.get("preferences", preferences)
+        project_member.default_props = request.data.get(
+            "default_props", default_props
+        )
+        project_member.preferences = request.data.get(
+            "preferences", preferences
+        )
         project_member.sort_order = request.data.get("sort_order", sort_order)
 
         project_member.save()
@@ -1085,6 +1145,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
         ).values("project_id", "role")
 
         project_members = {
-            str(member["project_id"]): member["role"] for member in project_members
+            str(member["project_id"]): member["role"]
+            for member in project_members
         }
         return Response(project_members, status=status.HTTP_200_OK)

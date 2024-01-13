@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0007_label_parent'),
+        ("db", "0007_label_parent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='label',
-            name='colour',
+            model_name="label",
+            name="colour",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

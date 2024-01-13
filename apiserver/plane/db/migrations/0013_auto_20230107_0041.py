@@ -4,35 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0012_auto_20230104_0117'),
+        ("db", "0012_auto_20230104_0117"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='issue',
-            name='description_html',
+            model_name="issue",
+            name="description_html",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='description_stripped',
+            model_name="issue",
+            name="description_stripped",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='role',
+            model_name="user",
+            name="role",
             field=models.CharField(blank=True, max_length=300, null=True),
         ),
         migrations.AddField(
-            model_name='workspacemember',
-            name='view_props',
+            model_name="workspacemember",
+            name="view_props",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='description',
+            model_name="issue",
+            name="description",
             field=models.JSONField(blank=True),
         ),
     ]

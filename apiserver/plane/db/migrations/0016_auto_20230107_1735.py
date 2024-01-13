@@ -6,20 +6,27 @@ import plane.db.models.asset
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0015_auto_20230107_1636'),
+        ("db", "0015_auto_20230107_1636"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='fileasset',
-            name='workspace',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='assets', to='db.workspace'),
+            model_name="fileasset",
+            name="workspace",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="assets",
+                to="db.workspace",
+            ),
         ),
         migrations.AlterField(
-            model_name='fileasset',
-            name='asset',
-            field=models.FileField(upload_to=plane.db.models.asset.get_upload_path, validators=[plane.db.models.asset.file_size]),
+            model_name="fileasset",
+            name="asset",
+            field=models.FileField(
+                upload_to=plane.db.models.asset.get_upload_path,
+                validators=[plane.db.models.asset.file_size],
+            ),
         ),
     ]

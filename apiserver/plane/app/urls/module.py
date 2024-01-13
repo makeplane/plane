@@ -7,7 +7,7 @@ from plane.app.views import (
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
     BulkImportModulesEndpoint,
-    ModuleUserPropertiesEndpoint
+    ModuleUserPropertiesEndpoint,
 )
 
 
@@ -106,5 +106,5 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
         ModuleUserPropertiesEndpoint.as_view(),
         name="cycle-user-filters",
-    )
+    ),
 ]

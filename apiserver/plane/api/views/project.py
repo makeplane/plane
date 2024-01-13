@@ -39,9 +39,15 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
     def get_queryset(self):
         return (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(Q(project_projectmember__member=self.request.user) | Q(network=2))
+            .filter(
+                Q(project_projectmember__member=self.request.user)
+                | Q(network=2)
+            )
             .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
+                "workspace",
+                "workspace__owner",
+                "default_assignee",
+                "project_lead",
             )
             .annotate(
                 is_member=Exists(
@@ -120,11 +126,18 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectSerializer(
-                    projects, many=True, fields=self.fields, expand=self.expand,
+                    projects,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
                 ).data,
             )
         project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
-        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
+        serializer = ProjectSerializer(
+            project,
+            fields=self.fields,
+            expand=self.expand,
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug):
@@ -138,7 +151,9 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
 
                 # Add the user as Administrator to the project
                 project_member = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+                    project_id=serializer.data["id"],
+                    member=request.user,
+                    role=20,
                 )
                 # Also create the issue property for the user
                 _ = IssueProperty.objects.create(
@@ -211,9 +226,15 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     ]
                 )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
                 serializer = ProjectSerializer(project)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
@@ -226,7 +247,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 )
         except Workspace.DoesNotExist as e:
             return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except ValidationError as e:
             return Response(
@@ -250,7 +272,9 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 serializer.save()
                 if serializer.data["inbox_view"]:
                     Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox", project=project, is_default=True
+                        name=f"{project.name} Inbox",
+                        project=project,
+                        is_default=True,
                     )
 
                     # Create the triage state in Backlog group
@@ -262,10 +286,16 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                         color="#ff7700",
                     )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -274,7 +304,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except ValidationError as e:
             return Response(

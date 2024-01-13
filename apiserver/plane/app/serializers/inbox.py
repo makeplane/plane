@@ -46,8 +46,12 @@ class InboxIssueLiteSerializer(BaseSerializer):
 class IssueStateInboxSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    label_details = LabelLiteSerializer(
+        read_only=True, source="labels", many=True
+    )
+    assignee_details = UserLiteSerializer(
+        read_only=True, source="assignees", many=True
+    )
     sub_issues_count = serializers.IntegerField(read_only=True)
     issue_inbox = InboxIssueLiteSerializer(read_only=True, many=True)
 

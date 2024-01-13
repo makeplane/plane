@@ -97,7 +97,9 @@ class PageViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         try:
-            page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            page = Page.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id
+            )
 
             if page.is_locked:
                 return Response(
@@ -127,7 +129,9 @@ class PageViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         except Page.DoesNotExist:
             return Response(
                 {
@@ -161,12 +165,17 @@ class PageViewSet(BaseViewSet):
         return Response(pages, status=status.HTTP_200_OK)
 
     def archive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
+        page = Page.objects.get(
+            pk=page_id, workspace__slug=slug, project_id=project_id
+        )
 
         # only the owner and admin can archive the page
         if (
             ProjectMember.objects.filter(
-                project_id=project_id, member=request.user, is_active=True, role__gt=20
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
+                role__gt=20,
             ).exists()
             or request.user.id != page.owned_by_id
         ):
@@ -180,12 +189,17 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unarchive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
+        page = Page.objects.get(
+            pk=page_id, workspace__slug=slug, project_id=project_id
+        )
 
         # only the owner and admin can un archive the page
         if (
             ProjectMember.objects.filter(
-                project_id=project_id, member=request.user, is_active=True, role__gt=20
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
+                role__gt=20,
             ).exists()
             or request.user.id != page.owned_by_id
         ):
@@ -212,14 +226,18 @@ class PageViewSet(BaseViewSet):
         pages = PageSerializer(pages, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-
     def destroy(self, request, slug, project_id, pk):
-        page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+        page = Page.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
 
         # only the owner and admin can delete the page
         if (
             ProjectMember.objects.filter(
-                project_id=project_id, member=request.user, is_active=True, role__gt=20
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
+                role__gt=20,
             ).exists()
             or request.user.id != page.owned_by_id
         ):
