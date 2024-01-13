@@ -99,7 +99,9 @@ class UserMeSettingsSerializer(BaseSerializer):
             ).first()
             return {
                 "last_workspace_id": obj.last_workspace_id,
-                "last_workspace_slug": workspace.slug if workspace is not None else "",
+                "last_workspace_slug": workspace.slug
+                if workspace is not None
+                else "",
                 "fallback_workspace_id": obj.last_workspace_id,
                 "fallback_workspace_slug": workspace.slug
                 if workspace is not None
@@ -109,7 +111,8 @@ class UserMeSettingsSerializer(BaseSerializer):
         else:
             fallback_workspace = (
                 Workspace.objects.filter(
-                    workspace_member__member_id=obj.id, workspace_member__is_active=True
+                    workspace_member__member_id=obj.id,
+                    workspace_member__is_active=True,
                 )
                 .order_by("created_at")
                 .first()
@@ -180,7 +183,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 
         if data.get("new_password") != data.get("confirm_password"):
             raise serializers.ValidationError(
-                {"error": "Confirm password should be same as the new password."}
+                {
+                    "error": "Confirm password should be same as the new password."
+                }
             )
 
         return data
@@ -190,4 +195,5 @@ class ResetPasswordSerializer(serializers.Serializer):
     """
     Serializer for password change endpoint.
     """
+
     new_password = serializers.CharField(required=True, min_length=8)

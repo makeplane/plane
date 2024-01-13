@@ -71,7 +71,9 @@ class ApiTokenEndpoint(BaseAPIView):
             user=request.user,
             pk=pk,
         )
-        serializer = APITokenSerializer(api_token, data=request.data, partial=True)
+        serializer = APITokenSerializer(
+            api_token, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

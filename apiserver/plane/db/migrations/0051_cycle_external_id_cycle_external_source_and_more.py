@@ -4,80 +4,79 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0050_user_use_case_alter_workspace_organization_size'),
+        ("db", "0050_user_use_case_alter_workspace_organization_size"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cycle',
-            name='external_id',
+            model_name="cycle",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='cycle',
-            name='external_source',
+            model_name="cycle",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='inboxissue',
-            name='external_id',
+            model_name="inboxissue",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='inboxissue',
-            name='external_source',
+            model_name="inboxissue",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='external_id',
+            model_name="issue",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='external_source',
+            model_name="issue",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='issuecomment',
-            name='external_id',
+            model_name="issuecomment",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='issuecomment',
-            name='external_source',
+            model_name="issuecomment",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='label',
-            name='external_id',
+            model_name="label",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='label',
-            name='external_source',
+            model_name="label",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='module',
-            name='external_id',
+            model_name="module",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='module',
-            name='external_source',
+            model_name="module",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='state',
-            name='external_id',
+            model_name="state",
+            name="external_id",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='state',
-            name='external_source',
+            model_name="state",
+            name="external_source",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
     ]

@@ -51,6 +51,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             "owner",
         ]
 
+
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
@@ -60,7 +61,6 @@ class WorkspaceLiteSerializer(BaseSerializer):
             "id",
         ]
         read_only_fields = fields
-
 
 
 class WorkSpaceMemberSerializer(DynamicBaseSerializer):
@@ -73,7 +73,6 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
-
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
@@ -109,7 +108,9 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
 
 
 class TeamSerializer(BaseSerializer):
-    members_detail = UserLiteSerializer(read_only=True, source="members", many=True)
+    members_detail = UserLiteSerializer(
+        read_only=True, source="members", many=True
+    )
     members = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
@@ -146,7 +147,9 @@ class TeamSerializer(BaseSerializer):
             members = validated_data.pop("members")
             TeamMember.objects.filter(team=instance).delete()
             team_members = [
-                TeamMember(member=member, team=instance, workspace=instance.workspace)
+                TeamMember(
+                    member=member, team=instance, workspace=instance.workspace
+                )
                 for member in members
             ]
             TeamMember.objects.bulk_create(team_members, batch_size=10)

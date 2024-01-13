@@ -10,6 +10,7 @@ import uuid
 import random
 import string
 
+
 def generate_display_name(apps, schema_editor):
     UserModel = apps.get_model("db", "User")
     updated_users = []
@@ -20,7 +21,9 @@ def generate_display_name(apps, schema_editor):
             else "".join(random.choice(string.ascii_letters) for _ in range(6))
         )
         updated_users.append(obj)
-    UserModel.objects.bulk_update(updated_users, ["display_name"], batch_size=100)
+    UserModel.objects.bulk_update(
+        updated_users, ["display_name"], batch_size=100
+    )
 
 
 def rectify_field_issue_activity(apps, schema_editor):
@@ -72,7 +75,13 @@ def update_assignee_issue_activity(apps, schema_editor):
 
     Model.objects.bulk_update(
         updated_activity,
-        ["old_value", "new_value", "old_identifier", "new_identifier", "comment"],
+        [
+            "old_value",
+            "new_value",
+            "old_identifier",
+            "new_identifier",
+            "comment",
+        ],
         batch_size=200,
     )
 
@@ -93,7 +102,9 @@ def random_cycle_order(apps, schema_editor):
     for obj in CycleModel.objects.all():
         obj.sort_order = random.randint(1, 65536)
         updated_cycles.append(obj)
-    CycleModel.objects.bulk_update(updated_cycles, ["sort_order"], batch_size=100)
+    CycleModel.objects.bulk_update(
+        updated_cycles, ["sort_order"], batch_size=100
+    )
 
 
 def random_module_order(apps, schema_editor):
@@ -102,7 +113,9 @@ def random_module_order(apps, schema_editor):
     for obj in ModuleModel.objects.all():
         obj.sort_order = random.randint(1, 65536)
         updated_modules.append(obj)
-    ModuleModel.objects.bulk_update(updated_modules, ["sort_order"], batch_size=100)
+    ModuleModel.objects.bulk_update(
+        updated_modules, ["sort_order"], batch_size=100
+    )
 
 
 def update_user_issue_properties(apps, schema_editor):
@@ -125,111 +138,353 @@ def workspace_member_properties(apps, schema_editor):
         updated_workspace_members.append(obj)
 
     WorkspaceMemberModel.objects.bulk_update(
-        updated_workspace_members, ["view_props", "default_props"], batch_size=100
+        updated_workspace_members,
+        ["view_props", "default_props"],
+        batch_size=100,
     )
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('db', '0040_projectmember_preferences_user_cover_image_and_more'),
+        ("db", "0040_projectmember_preferences_user_cover_image_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cycle',
-            name='sort_order',
+            model_name="cycle",
+            name="sort_order",
             field=models.FloatField(default=65535),
         ),
         migrations.AddField(
-            model_name='issuecomment',
-            name='access',
-            field=models.CharField(choices=[('INTERNAL', 'INTERNAL'), ('EXTERNAL', 'EXTERNAL')], default='INTERNAL', max_length=100),
+            model_name="issuecomment",
+            name="access",
+            field=models.CharField(
+                choices=[("INTERNAL", "INTERNAL"), ("EXTERNAL", "EXTERNAL")],
+                default="INTERNAL",
+                max_length=100,
+            ),
         ),
         migrations.AddField(
-            model_name='module',
-            name='sort_order',
+            model_name="module",
+            name="sort_order",
             field=models.FloatField(default=65535),
         ),
         migrations.AddField(
-            model_name='user',
-            name='display_name',
-            field=models.CharField(default='', max_length=255),
+            model_name="user",
+            name="display_name",
+            field=models.CharField(default="", max_length=255),
         ),
         migrations.CreateModel(
-            name='ExporterHistory',
+            name="ExporterHistory",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('project', django.contrib.postgres.fields.ArrayField(base_field=models.UUIDField(default=uuid.uuid4), blank=True, null=True, size=None)),
-                ('provider', models.CharField(choices=[('json', 'json'), ('csv', 'csv'), ('xlsx', 'xlsx')], max_length=50)),
-                ('status', models.CharField(choices=[('queued', 'Queued'), ('processing', 'Processing'), ('completed', 'Completed'), ('failed', 'Failed')], default='queued', max_length=50)),
-                ('reason', models.TextField(blank=True)),
-                ('key', models.TextField(blank=True)),
-                ('url', models.URLField(blank=True, max_length=800, null=True)),
-                ('token', models.CharField(default=plane.db.models.exporter.generate_token, max_length=255, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('initiated_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_exporters', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_exporters', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "project",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.UUIDField(default=uuid.uuid4),
+                        blank=True,
+                        null=True,
+                        size=None,
+                    ),
+                ),
+                (
+                    "provider",
+                    models.CharField(
+                        choices=[
+                            ("json", "json"),
+                            ("csv", "csv"),
+                            ("xlsx", "xlsx"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("queued", "Queued"),
+                            ("processing", "Processing"),
+                            ("completed", "Completed"),
+                            ("failed", "Failed"),
+                        ],
+                        default="queued",
+                        max_length=50,
+                    ),
+                ),
+                ("reason", models.TextField(blank=True)),
+                ("key", models.TextField(blank=True)),
+                (
+                    "url",
+                    models.URLField(blank=True, max_length=800, null=True),
+                ),
+                (
+                    "token",
+                    models.CharField(
+                        default=plane.db.models.exporter.generate_token,
+                        max_length=255,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "initiated_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_exporters",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_exporters",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Exporter',
-                'verbose_name_plural': 'Exporters',
-                'db_table': 'exporters',
-                'ordering': ('-created_at',),
+                "verbose_name": "Exporter",
+                "verbose_name_plural": "Exporters",
+                "db_table": "exporters",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='ProjectDeployBoard',
+            name="ProjectDeployBoard",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('anchor', models.CharField(db_index=True, default=plane.db.models.project.get_anchor, max_length=255, unique=True)),
-                ('comments', models.BooleanField(default=False)),
-                ('reactions', models.BooleanField(default=False)),
-                ('votes', models.BooleanField(default=False)),
-                ('views', models.JSONField(default=plane.db.models.project.get_default_views)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('inbox', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='bord_inbox', to='db.inbox')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_%(class)s', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_%(class)s', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "anchor",
+                    models.CharField(
+                        db_index=True,
+                        default=plane.db.models.project.get_anchor,
+                        max_length=255,
+                        unique=True,
+                    ),
+                ),
+                ("comments", models.BooleanField(default=False)),
+                ("reactions", models.BooleanField(default=False)),
+                ("votes", models.BooleanField(default=False)),
+                (
+                    "views",
+                    models.JSONField(
+                        default=plane.db.models.project.get_default_views
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "inbox",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="bord_inbox",
+                        to="db.inbox",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_%(class)s",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_%(class)s",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project Deploy Board',
-                'verbose_name_plural': 'Project Deploy Boards',
-                'db_table': 'project_deploy_boards',
-                'ordering': ('-created_at',),
-                'unique_together': {('project', 'anchor')},
+                "verbose_name": "Project Deploy Board",
+                "verbose_name_plural": "Project Deploy Boards",
+                "db_table": "project_deploy_boards",
+                "ordering": ("-created_at",),
+                "unique_together": {("project", "anchor")},
             },
         ),
         migrations.CreateModel(
-            name='IssueVote',
+            name="IssueVote",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('vote', models.IntegerField(choices=[(-1, 'DOWNVOTE'), (1, 'UPVOTE')])),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='votes', to=settings.AUTH_USER_MODEL)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='votes', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_%(class)s', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_%(class)s', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "vote",
+                    models.IntegerField(
+                        choices=[(-1, "DOWNVOTE"), (1, "UPVOTE")]
+                    ),
+                ),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="votes",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="votes",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_%(class)s",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_%(class)s",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Vote',
-                'verbose_name_plural': 'Issue Votes',
-                'db_table': 'issue_votes',
-                'ordering': ('-created_at',),
-                'unique_together': {('issue', 'actor')},
+                "verbose_name": "Issue Vote",
+                "verbose_name_plural": "Issue Votes",
+                "db_table": "issue_votes",
+                "ordering": ("-created_at",),
+                "unique_together": {("issue", "actor")},
             },
         ),
         migrations.AlterField(
-            model_name='modulelink',
-            name='title',
+            model_name="modulelink",
+            name="title",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.RunPython(generate_display_name),

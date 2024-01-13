@@ -14,7 +14,14 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.app.permissions import ProjectLitePermission
 from plane.api.serializers import InboxIssueSerializer, IssueSerializer
-from plane.db.models import InboxIssue, Issue, State, ProjectMember, Project, Inbox
+from plane.db.models import (
+    InboxIssue,
+    Issue,
+    State,
+    ProjectMember,
+    Project,
+    Inbox,
+)
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -43,7 +50,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         ).first()
 
         project = Project.objects.get(
-            workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
+            workspace__slug=self.kwargs.get("slug"),
+            pk=self.kwargs.get("project_id"),
         )
 
         if inbox is None and not project.inbox_view:
@@ -51,7 +59,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
 
         return (
             InboxIssue.objects.filter(
-                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                Q(snoozed_till__gte=timezone.now())
+                | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
                 inbox_id=inbox.id,
@@ -87,7 +96,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Name is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         inbox = Inbox.objects.filter(
@@ -117,7 +127,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             "none",
         ]:
             return Response(
-                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Invalid priority"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Create or get state
@@ -222,10 +233,14 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     "description_html": issue_data.get(
                         "description_html", issue.description_html
                     ),
-                    "description": issue_data.get("description", issue.description),
+                    "description": issue_data.get(
+                        "description", issue.description
+                    ),
                 }
 
-            issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
+            issue_serializer = IssueSerializer(
+                issue, data=issue_data, partial=True
+            )
 
             if issue_serializer.is_valid():
                 current_instance = issue
@@ -266,7 +281,9 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                         project_id=project_id,
                     )
                     state = State.objects.filter(
-                        group="cancelled", workspace__slug=slug, project_id=project_id
+                        group="cancelled",
+                        workspace__slug=slug,
+                        project_id=project_id,
                     ).first()
                     if state is not None:
                         issue.state = state
@@ -284,17 +301,22 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     if issue.state.name == "Triage":
                         # Move to default state
                         state = State.objects.filter(
-                            workspace__slug=slug, project_id=project_id, default=True
+                            workspace__slug=slug,
+                            project_id=project_id,
+                            default=True,
                         ).first()
                         if state is not None:
                             issue.state = state
                             issue.save()
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         else:
             return Response(
-                InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK
+                InboxIssueSerializer(inbox_issue).data,
+                status=status.HTTP_200_OK,
             )
 
     def delete(self, request, slug, project_id, issue_id):

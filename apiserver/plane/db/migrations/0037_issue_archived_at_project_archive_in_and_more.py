@@ -8,7 +8,6 @@ import plane.db.models.user
 import uuid
 
 
-
 def onboarding_default_steps(apps, schema_editor):
     default_onboarding_schema = {
         "workspace_join": True,
@@ -24,7 +23,9 @@ def onboarding_default_steps(apps, schema_editor):
         obj.is_tour_completed = True
         updated_user.append(obj)
 
-    Model.objects.bulk_update(updated_user, ["onboarding_step", "is_tour_completed"], batch_size=100)
+    Model.objects.bulk_update(
+        updated_user, ["onboarding_step", "is_tour_completed"], batch_size=100
+    )
 
 
 class Migration(migrations.Migration):
@@ -78,7 +79,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="user",
             name="onboarding_step",
-            field=models.JSONField(default=plane.db.models.user.get_default_onboarding),
+            field=models.JSONField(
+                default=plane.db.models.user.get_default_onboarding
+            ),
         ),
         migrations.RunPython(onboarding_default_steps),
         migrations.CreateModel(
@@ -86,7 +89,9 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
                 ),
                 (
                     "updated_at",
@@ -110,7 +115,10 @@ class Migration(migrations.Migration):
                 ("entity_name", models.CharField(max_length=255)),
                 ("title", models.TextField()),
                 ("message", models.JSONField(null=True)),
-                ("message_html", models.TextField(blank=True, default="<p></p>")),
+                (
+                    "message_html",
+                    models.TextField(blank=True, default="<p></p>"),
+                ),
                 ("message_stripped", models.TextField(blank=True, null=True)),
                 ("sender", models.CharField(max_length=255)),
                 ("read_at", models.DateTimeField(null=True)),
@@ -183,7 +191,9 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
                 ),
                 (
                     "updated_at",
