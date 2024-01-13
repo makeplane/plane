@@ -21,7 +21,10 @@ from plane.app.serializers import (
     GithubCommentSyncSerializer,
 )
 from plane.utils.integrations.github import get_github_repos
-from plane.app.permissions import ProjectBasePermission, ProjectEntityPermission
+from plane.app.permissions import (
+    ProjectBasePermission,
+    ProjectEntityPermission,
+)
 
 
 class GithubRepositoriesEndpoint(BaseAPIView):
@@ -185,11 +188,10 @@ class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
 
 
 class GithubCommentSyncViewSet(BaseViewSet):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
-    
+
     serializer_class = GithubCommentSyncSerializer
     model = GithubCommentSync
 

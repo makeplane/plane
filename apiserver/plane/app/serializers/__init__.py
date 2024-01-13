@@ -35,7 +35,11 @@ from .project import (
     ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
+from .view import (
+    GlobalViewSerializer,
+    IssueViewSerializer,
+    IssueViewFavoriteSerializer,
+)
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
@@ -65,7 +69,6 @@ from .issue import (
     RelatedIssueSerializer,
     IssuePublicSerializer,
     IssueRelationLiteSerializer,
-
 )
 
 from .module import (
@@ -91,7 +94,12 @@ from .integration import (
 
 from .importer import ImporterSerializer
 
-from .page import PageSerializer, PageLogSerializer, SubPageSerializer, PageFavoriteSerializer
+from .page import (
+    PageSerializer,
+    PageLogSerializer,
+    SubPageSerializer,
+    PageFavoriteSerializer,
+)
 
 from .estimate import (
     EstimateSerializer,
@@ -99,7 +107,11 @@ from .estimate import (
     EstimateReadSerializer,
 )
 
-from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSerializer
+from .inbox import (
+    InboxSerializer,
+    InboxIssueSerializer,
+    IssueStateInboxSerializer,
+)
 
 from .analytic import AnalyticViewSerializer
 

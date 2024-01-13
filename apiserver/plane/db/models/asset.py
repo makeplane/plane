@@ -34,7 +34,10 @@ class FileAsset(BaseModel):
         ],
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
     )
     is_deleted = models.BooleanField(default=False)
 

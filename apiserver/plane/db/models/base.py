@@ -12,7 +12,11 @@ from ..mixins import AuditModel
 
 class BaseModel(AuditModel):
     id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        db_index=True,
+        primary_key=True,
     )
 
     class Meta:

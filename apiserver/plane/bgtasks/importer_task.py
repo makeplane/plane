@@ -130,12 +130,17 @@ def service_importer(service, importer_id):
             repository_id = importer.metadata.get("repository_id", False)
 
             workspace_integration = WorkspaceIntegration.objects.get(
-                workspace_id=importer.workspace_id, integration__provider="github"
+                workspace_id=importer.workspace_id,
+                integration__provider="github",
             )
 
             # Delete the old repository object
-            GithubRepositorySync.objects.filter(project_id=importer.project_id).delete()
-            GithubRepository.objects.filter(project_id=importer.project_id).delete()
+            GithubRepositorySync.objects.filter(
+                project_id=importer.project_id
+            ).delete()
+            GithubRepository.objects.filter(
+                project_id=importer.project_id
+            ).delete()
 
             # Create a Label for github
             label = Label.objects.filter(
