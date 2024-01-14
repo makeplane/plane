@@ -33,6 +33,11 @@ const workspaceLinks = (workspaceSlug: string) => [
     name: "All Issues",
     href: `/${workspaceSlug}/workspace-views/all-issues`,
   },
+  {
+    Icon: CheckCircle,
+    name: "Active Cycles",
+    href: `/${workspaceSlug}/active-cycles`,
+  },
 ];
 
 export const WorkspaceSidebarMenu = observer(() => {
