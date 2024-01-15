@@ -21,33 +21,23 @@ export interface IIssueSubIssuesStoreActions {
     workspaceSlug: string,
     projectId: string,
     parentIssueId: string,
-    data: string[]
-  ) => Promise<TIssueSubIssues>;
+    issueIds: string[]
+  ) => Promise<void>;
   updateSubIssue: (
     workspaceSlug: string,
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    data: Partial<TIssue>
-  ) => any;
-  removeSubIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    parentIssueId: string,
-    issueId: string
-  ) => Promise<TIssueSubIssues>;
-  deleteSubIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    parentIssueId: string,
-    issueId: string
-  ) => Promise<TIssueSubIssues>;
+    currentIssue: Partial<TIssue>,
+    oldIssue?: Partial<TIssue> | undefined,
+    fromModal?: boolean
+  ) => Promise<void>;
+  removeSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
+  deleteSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
 }
 
-type TSubIssueHelpers = {
-  loaders: string[];
-  visible: string[];
-};
+type TSubIssueHelpersKeys = "issue_visibility" | "preview_loader" | "issue_loader";
+type TSubIssueHelpers = Record<TSubIssueHelpersKeys, string[]>;
 export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   // observables
   subIssuesStateDistribution: TIssueSubIssuesStateDistributionMap;
@@ -58,7 +48,7 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   subIssuesByIssueId: (issueId: string) => string[] | undefined;
   subIssueHelpersByIssueId: (issueId: string) => TSubIssueHelpers;
   // actions
-  setSubIssueHelpers: (parentIssueId: string, key: "visible" | "loaders", value: string) => void;
+  setSubIssueHelpers: (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => void;
 }
 
 export class IssueSubIssuesStore implements IIssueSubIssuesStore {
@@ -103,25 +93,25 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   };
 
   subIssueHelpersByIssueId = (issueId: string) => ({
-    loaders: this.subIssueHelpers?.[issueId]?.loaders || [],
-    visible: this.subIssueHelpers?.[issueId]?.visible || [],
+    preview_loader: this.subIssueHelpers?.[issueId]?.preview_loader || [],
+    issue_visibility: this.subIssueHelpers?.[issueId]?.issue_visibility || [],
+    issue_loader: this.subIssueHelpers?.[issueId]?.issue_loader || [],
   });
 
   // actions
-
-  setSubIssueHelpers = (parentIssueId: string, key: "visible" | "loaders", value: string) => {
+  setSubIssueHelpers = (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => {
     if (!parentIssueId || !key || !value) return;
-    update(this.subIssueHelpers, [parentIssueId, key], (helpers: string[]) => {
-      if (!helpers) return [value];
-      else if (helpers.includes(value)) pull(this.subIssueHelpers[parentIssueId][key], value);
-      else concat(helpers, value);
+
+    update(this.subIssueHelpers, [parentIssueId, key], (subIssueHelpers: string[]) => {
+      if (!subIssueHelpers || subIssueHelpers.length <= 0) return [value];
+      else if (subIssueHelpers.includes(value)) pull(subIssueHelpers, value);
+      else concat(subIssueHelpers, value);
+      return subIssueHelpers;
     });
   };
 
   fetchSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string) => {
     try {
-      this.setSubIssueHelpers(parentIssueId, "loaders", parentIssueId);
-      this.setSubIssueHelpers(parentIssueId, "visible", parentIssueId);
       const response = await this.issueService.subIssues(workspaceSlug, projectId, parentIssueId);
       const subIssuesStateDistribution = response?.state_distribution ?? {};
       const subIssues = (response.sub_issues ?? []) as TIssue[];
@@ -138,35 +128,40 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
           );
         });
       }
-      this.setSubIssueHelpers(parentIssueId, "loaders", parentIssueId);
       return response;
     } catch (error) {
       throw error;
     }
   };
 
-  createSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string, data: string[]) => {
+  createSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueIds: string[]) => {
     try {
       const response = await this.issueService.addSubIssues(workspaceSlug, projectId, parentIssueId, {
-        sub_issue_ids: data,
+        sub_issue_ids: issueIds,
       });
-
-      console.log("response", response);
 
       const subIssuesStateDistribution = response?.state_distribution;
       const subIssues = response.sub_issues as TIssue[];
 
-      // this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
+      runInAction(() => {
+        Object.keys(subIssuesStateDistribution).forEach((key) => {
+          const stateGroup = key as keyof TSubIssuesStateDistribution;
+          update(this.subIssuesStateDistribution, [parentIssueId, stateGroup], (stateDistribution) => {
+            if (!stateDistribution) return subIssuesStateDistribution[stateGroup];
+            return concat(stateDistribution, subIssuesStateDistribution[stateGroup]);
+          });
+        });
 
-      // runInAction(() => {
-      //   Object.keys(subIssuesStateDistribution).forEach((key) => {
-      //     const stateGroup = key as keyof TSubIssuesStateDistribution;
-      //     set(this.subIssuesStateDistribution, [parentIssueId, key], subIssuesStateDistribution[stateGroup]);
-      //   });
-      //   set(this.subIssuesStateDistribution, parentIssueId, data);
-      // });
+        const issueIds = subIssues.map((issue) => issue.id);
+        update(this.subIssues, [parentIssueId], (issues) => {
+          if (!issues) return issueIds;
+          return concat(issues, issueIds);
+        });
+      });
 
-      return response;
+      this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
+
+      return;
     } catch (error) {
       throw error;
     }
@@ -177,64 +172,70 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    data: Partial<TIssue>
+    currentIssue: Partial<TIssue>,
+    oldIssue: Partial<TIssue> | undefined = undefined,
+    fromModal: boolean = false
   ) => {
     try {
-      // const issue = this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId);
+      if (!fromModal)
+        await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
+          workspaceSlug,
+          projectId,
+          issueId,
+          currentIssue
+        );
 
-      // runInAction(() => {
-      //   Object.keys(subIssuesStateDistribution).forEach((key) => {
-      //     const stateGroup = key as keyof TSubIssuesStateDistribution;
-      //     set(this.subIssuesStateDistribution, [issueId, key], subIssuesStateDistribution[stateGroup]);
-      //   });
-      //   set(this.subIssuesStateDistribution, issueId, data);
-      // });
+      if (!oldIssue) return;
 
-      return {} as any;
+      if (currentIssue.state_id != oldIssue.state_id) {
+      }
+
+      if (currentIssue.parent_id != oldIssue.parent_id) {
+      }
+      // const updateResponse = await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
+      //   workspaceSlug,
+      //   projectId,
+      //   issueId,
+      //   oldIssue
+      // );
+
+      // console.log("---");
+      // console.log("parentIssueId", parentIssueId);
+      // console.log("fromModal", fromModal);
+      // console.log("updateResponse", updateResponse);
+      // console.log("---");
+
+      return;
     } catch (error) {
       throw error;
     }
   };
 
-  removeSubIssue = async (workspaceSlug: string, projectId: string, parentId: string, issueId: string) => {
+  removeSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => {
     try {
-      // const response = await this.issueService.addSubIssues(workspaceSlug, projectId, issueId, { sub_issue_ids: data });
-      // const subIssuesStateDistribution = response?.state_distribution;
-      // const subIssues = response.sub_issues as TIssue[];
+      await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, {
+        parent_id: null,
+      });
 
-      // this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
+      runInAction(() => {
+        pull(this.subIssues[parentIssueId], issueId);
+      });
 
-      // runInAction(() => {
-      //   Object.keys(subIssuesStateDistribution).forEach((key) => {
-      //     const stateGroup = key as keyof TSubIssuesStateDistribution;
-      //     set(this.subIssuesStateDistribution, [issueId, key], subIssuesStateDistribution[stateGroup]);
-      //   });
-      //   set(this.subIssuesStateDistribution, issueId, data);
-      // });
-
-      return {} as any;
+      return;
     } catch (error) {
       throw error;
     }
   };
 
-  deleteSubIssue = async (workspaceSlug: string, projectId: string, parentId: string, issueId: string) => {
+  deleteSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => {
     try {
-      // const response = await this.issueService.addSubIssues(workspaceSlug, projectId, issueId, { sub_issue_ids: data });
-      // const subIssuesStateDistribution = response?.state_distribution;
-      // const subIssues = response.sub_issues as TIssue[];
+      await this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      // this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
+      runInAction(() => {
+        pull(this.subIssues[parentIssueId], issueId);
+      });
 
-      // runInAction(() => {
-      //   Object.keys(subIssuesStateDistribution).forEach((key) => {
-      //     const stateGroup = key as keyof TSubIssuesStateDistribution;
-      //     set(this.subIssuesStateDistribution, [issueId, key], subIssuesStateDistribution[stateGroup]);
-      //   });
-      //   set(this.subIssuesStateDistribution, issueId, data);
-      // });
-
-      return {} as any;
+      return;
     } catch (error) {
       throw error;
     }

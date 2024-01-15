@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 // components
+import { IssuePeekOverview } from "components/issues";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
@@ -232,6 +233,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           </div>
         </div>
       )}
+
+      {/* peek overview */}
+      <IssuePeekOverview />
     </>
   );
 };
