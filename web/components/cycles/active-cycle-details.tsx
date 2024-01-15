@@ -1,6 +1,5 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
@@ -69,15 +68,13 @@ interface IActiveCycleDetails {
 }
 
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
-  // router
-  const router = useRouter();
+  // props
   const { workspaceSlug, projectId } = props;
-
+  // store hooks
   const {
     issues: { issues, fetchActiveCycleIssues },
     issueMap,
   } = useIssues(EIssuesStoreType.CYCLE);
-  // store hooks
   const {
     commandPalette: { toggleCreateCycleModal },
   } = useApplication();
@@ -467,7 +464,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 {
                   issueIds?.filter(
                     (issueId) =>
-                      getProjectStates(issueMap[issueId]?.project_id).find(
+                      getProjectStates(issueMap[issueId]?.project_id)?.find(
                         (issue) => issue.id === issueMap[issueId]?.state_id
                       )?.group === "completed"
                   )?.length

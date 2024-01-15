@@ -89,5 +89,5 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/user-properties/",
         CycleUserPropertiesEndpoint.as_view(),
         name="cycle-user-filters",
-    )
+    ),
 ]

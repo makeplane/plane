@@ -6,19 +6,22 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0002_auto_20221104_2239'),
+        ("db", "0002_auto_20221104_2239"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='issueproperty',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_property_user', to=settings.AUTH_USER_MODEL),
+            model_name="issueproperty",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="issue_property_user",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='issueproperty',
-            unique_together={('user', 'project')},
+            name="issueproperty",
+            unique_together={("user", "project")},
         ),
     ]

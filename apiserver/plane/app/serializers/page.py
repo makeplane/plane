@@ -6,19 +6,31 @@ from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import Page, PageLog, PageFavorite, PageLabel, Label, Issue, Module
+from plane.db.models import (
+    Page,
+    PageLog,
+    PageFavorite,
+    PageLabel,
+    Label,
+    Issue,
+    Module,
+)
 
 
 class PageSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
-    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
+    label_details = LabelLiteSerializer(
+        read_only=True, source="labels", many=True
+    )
     labels = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
         required=False,
     )
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        source="workspace", read_only=True
+    )
 
     class Meta:
         model = Page
@@ -28,9 +40,10 @@ class PageSerializer(BaseSerializer):
             "project",
             "owned_by",
         ]
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['labels'] = [str(label.id) for label in instance.labels.all()]
+        data["labels"] = [str(label.id) for label in instance.labels.all()]
         return data
 
     def create(self, validated_data):
@@ -94,7 +107,7 @@ class SubPageSerializer(BaseSerializer):
 
     def get_entity_details(self, obj):
         entity_name = obj.entity_name
-        if entity_name == 'forward_link' or entity_name == 'back_link':
+        if entity_name == "forward_link" or entity_name == "back_link":
             try:
                 page = Page.objects.get(pk=obj.entity_identifier)
                 return PageSerializer(page).data
@@ -104,7 +117,6 @@ class SubPageSerializer(BaseSerializer):
 
 
 class PageLogSerializer(BaseSerializer):
-
     class Meta:
         model = PageLog
         fields = "__all__"

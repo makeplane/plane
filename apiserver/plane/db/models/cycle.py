@@ -19,6 +19,7 @@ def get_default_filters():
         "subscriber": None,
     }
 
+
 def get_default_display_filters():
     return {
         "group_by": None,
@@ -29,6 +30,7 @@ def get_default_display_filters():
         "layout": "list",
         "calendar_date_range": "",
     }
+
 
 def get_default_display_properties():
     return {
@@ -47,10 +49,15 @@ def get_default_display_properties():
         "updated_on": True,
     }
 
+
 class Cycle(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Cycle Name")
-    description = models.TextField(verbose_name="Cycle Description", blank=True)
-    start_date = models.DateField(verbose_name="Start Date", blank=True, null=True)
+    description = models.TextField(
+        verbose_name="Cycle Description", blank=True
+    )
+    start_date = models.DateField(
+        verbose_name="Start Date", blank=True, null=True
+    )
     end_date = models.DateField(verbose_name="End Date", blank=True, null=True)
     owned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -134,7 +141,9 @@ class CycleFavorite(ProjectBaseModel):
 
 class CycleUserProperties(ProjectBaseModel):
     cycle = models.ForeignKey(
-        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_user_properties"
+        "db.Cycle",
+        on_delete=models.CASCADE,
+        related_name="cycle_user_properties",
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -143,8 +152,9 @@ class CycleUserProperties(ProjectBaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(default=get_default_display_properties)
-
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
 
     class Meta:
         unique_together = ["cycle", "user"]

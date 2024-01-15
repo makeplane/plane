@@ -67,7 +67,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         ellipsis
       >
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -77,7 +77,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             setIssueToEdit({
               ...issue,
               cycle: cycleId?.toString() ?? null,
@@ -91,7 +91,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             handleRemoveFromView && handleRemoveFromView();
           }}
         >
@@ -101,7 +101,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -111,7 +111,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
+          onClick={() => {
             setDeleteIssueModal(true);
           }}
         >

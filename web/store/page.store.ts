@@ -133,21 +133,21 @@ export class PageStore implements IPageStore {
   get recentProjectPages() {
     if (!this.projectPageIds) return null;
     const data: IRecentPages = { today: [], yesterday: [], this_week: [], older: [] };
-    data.today = this.projectPageIds.filter((p) => isToday(new Date(this.pages?.[p]?.created_at))) || [];
-    data.yesterday = this.projectPageIds.filter((p) => isYesterday(new Date(this.pages?.[p]?.created_at))) || [];
+    data.today = this.projectPageIds.filter((p) => isToday(new Date(this.pages?.[p]?.updated_at))) || [];
+    data.yesterday = this.projectPageIds.filter((p) => isYesterday(new Date(this.pages?.[p]?.updated_at))) || [];
     data.this_week =
       this.projectPageIds.filter((p) => {
-        const pageCreatedAt = this.pages?.[p]?.created_at;
+        const pageUpdatedAt = this.pages?.[p]?.updated_at;
         return (
-          isThisWeek(new Date(pageCreatedAt)) &&
-          !isToday(new Date(pageCreatedAt)) &&
-          !isYesterday(new Date(pageCreatedAt))
+          isThisWeek(new Date(pageUpdatedAt)) &&
+          !isToday(new Date(pageUpdatedAt)) &&
+          !isYesterday(new Date(pageUpdatedAt))
         );
       }) || [];
     data.older =
       this.projectPageIds.filter((p) => {
-        const pageCreatedAt = this.pages?.[p]?.created_at;
-        return !isThisWeek(new Date(pageCreatedAt)) && !isYesterday(new Date(pageCreatedAt));
+        const pageUpdatedAt = this.pages?.[p]?.updated_at;
+        return !isThisWeek(new Date(pageUpdatedAt)) && !isYesterday(new Date(pageUpdatedAt));
       }) || [];
     return data;
   }
@@ -184,15 +184,21 @@ export class PageStore implements IPageStore {
    * @param projectId
    * @returns Promise<IPage[]>
    */
-  fetchProjectPages = async (workspaceSlug: string, projectId: string) =>
-    await this.pageService.getProjectPages(workspaceSlug, projectId).then((response) => {
-      runInAction(() => {
-        response.forEach((page) => {
-          set(this.pages, [page.id], page);
+  fetchProjectPages = async (workspaceSlug: string, projectId: string) => {
+    try {
+      return await this.pageService.getProjectPages(workspaceSlug, projectId).then((response) => {
+        console.log("Response from backend 1", response);
+        runInAction(() => {
+          response.forEach((page) => {
+            set(this.pages, [page.id], page);
+          });
         });
+        return response;
       });
-      return response;
-    });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * fetches all archived pages for a project.

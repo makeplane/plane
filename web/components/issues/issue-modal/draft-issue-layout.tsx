@@ -14,6 +14,8 @@ import type { TIssue } from "@plane/types";
 export interface DraftIssueProps {
   changesMade: Partial<TIssue> | null;
   data?: Partial<TIssue>;
+  isCreateMoreToggleEnabled: boolean;
+  onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
   onSubmit: (formData: Partial<TIssue>) => Promise<void>;
@@ -23,7 +25,16 @@ export interface DraftIssueProps {
 const issueDraftService = new IssueDraftService();
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
-  const { changesMade, data, onChange, onClose, onSubmit, projectId } = props;
+  const {
+    changesMade,
+    data,
+    onChange,
+    onClose,
+    onSubmit,
+    projectId,
+    isCreateMoreToggleEnabled,
+    onCreateMoreToggleChange,
+  } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
   // router
@@ -76,7 +87,15 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           onClose(false);
         }}
       />
-      <IssueFormRoot data={data} onChange={onChange} onClose={handleClose} onSubmit={onSubmit} projectId={projectId} />
+      <IssueFormRoot
+        isCreateMoreToggleEnabled={isCreateMoreToggleEnabled}
+        onCreateMoreToggleChange={onCreateMoreToggleChange}
+        data={data}
+        onChange={onChange}
+        onClose={handleClose}
+        onSubmit={onSubmit}
+        projectId={projectId}
+      />
     </>
   );
 });

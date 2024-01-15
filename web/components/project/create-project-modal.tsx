@@ -98,7 +98,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   if (currentWorkspaceRole && isOpen)
-    if (currentWorkspaceRole <= EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
+    if (currentWorkspaceRole < EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
 
   const handleClose = () => {
     onClose();

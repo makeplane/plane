@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { MoveRight, MoveDiagonal, Link2, Trash2 } from "lucide-react";
 // hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// store hooks
 import { useIssueDetail, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
@@ -18,8 +20,6 @@ import {
 } from "components/issues";
 // ui
 import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
-// types
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 

@@ -31,7 +31,12 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
               <div className="flex h-full w-full justify-between">
                 <div className="flex h-full w-full flex-col overflow-y-auto">
                   {cycleIds.map((cycleId) => (
-                    <CyclesListItem cycleId={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} />
+                    <CyclesListItem
+                      key={cycleId}
+                      cycleId={cycleId}
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                    />
                   ))}
                 </div>
                 <CyclePeekOverview

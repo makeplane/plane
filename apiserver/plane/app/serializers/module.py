@@ -26,7 +26,9 @@ class ModuleWriteSerializer(BaseSerializer):
     )
 
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        source="workspace", read_only=True
+    )
 
     class Meta:
         model = Module
@@ -39,16 +41,22 @@ class ModuleWriteSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['members'] = [str(member.id) for member in instance.members.all()]
+        data["members"] = [str(member.id) for member in instance.members.all()]
         return data
 
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
-            raise serializers.ValidationError("Start date cannot exceed target date")
-        return data    
+        if (
+            data.get("start_date", None) is not None
+            and data.get("target_date", None) is not None
+            and data.get("start_date", None) > data.get("target_date", None)
+        ):
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
+        return data
 
     def create(self, validated_data):
         members = validated_data.pop("members", None)
@@ -152,7 +160,8 @@ class ModuleLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
+            url=validated_data.get("url"),
+            module_id=validated_data.get("module_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
@@ -163,7 +172,9 @@ class ModuleLinkSerializer(BaseSerializer):
 class ModuleSerializer(DynamicBaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     lead_detail = UserLiteSerializer(read_only=True, source="lead")
-    members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
+    members_detail = UserLiteSerializer(
+        read_only=True, many=True, source="members"
+    )
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
@@ -198,13 +209,9 @@ class ModuleFavoriteSerializer(BaseSerializer):
             "user",
         ]
 
+
 class ModuleUserPropertiesSerializer(BaseSerializer):
     class Meta:
         model = ModuleUserProperties
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "module",
-            "user"
-        ]
+        read_only_fields = ["workspace", "project", "module", "user"]

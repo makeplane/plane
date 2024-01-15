@@ -27,6 +27,7 @@ from .module import ModuleSerializer, ModuleLiteSerializer
 from .user import UserLiteSerializer
 from .state import StateLiteSerializer
 
+
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
@@ -66,14 +67,16 @@ class IssueSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed target date")
-        
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
+
         try:
-            if(data.get("description_html", None) is not None):
+            if data.get("description_html", None) is not None:
                 parsed = html.fromstring(data["description_html"])
-                parsed_str = html.tostring(parsed, encoding='unicode')
+                parsed_str = html.tostring(parsed, encoding="unicode")
                 data["description_html"] = parsed_str
-            
+
         except Exception as e:
             raise serializers.ValidationError(f"Invalid HTML: {str(e)}")
 
@@ -96,7 +99,8 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("state")
             and not State.objects.filter(
-                project_id=self.context.get("project_id"), pk=data.get("state").id
+                project_id=self.context.get("project_id"),
+                pk=data.get("state").id,
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -107,7 +111,8 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
+                workspace_id=self.context.get("workspace_id"),
+                pk=data.get("parent").id,
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -238,9 +243,13 @@ class IssueSerializer(BaseSerializer):
                 ]
         if "labels" in self.fields:
             if "labels" in self.expand:
-                data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
+                data["labels"] = LabelSerializer(
+                    instance.labels.all(), many=True
+                ).data
             else:
-                data["labels"] = [str(label.id) for label in instance.labels.all()]
+                data["labels"] = [
+                    str(label.id) for label in instance.labels.all()
+                ]
 
         return data
 
@@ -278,7 +287,8 @@ class IssueLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
+            url=validated_data.get("url"),
+            issue_id=validated_data.get("issue_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
@@ -324,11 +334,11 @@ class IssueCommentSerializer(BaseSerializer):
 
     def validate(self, data):
         try:
-            if(data.get("comment_html", None) is not None):
+            if data.get("comment_html", None) is not None:
                 parsed = html.fromstring(data["comment_html"])
-                parsed_str = html.tostring(parsed, encoding='unicode')
+                parsed_str = html.tostring(parsed, encoding="unicode")
                 data["comment_html"] = parsed_str
-            
+
         except Exception as e:
             raise serializers.ValidationError(f"Invalid HTML: {str(e)}")
         return data
@@ -362,7 +372,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class LabelLiteSerializer(BaseSerializer):
-
     class Meta:
         model = Label
         fields = [

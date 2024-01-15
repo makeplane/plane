@@ -206,5 +206,5 @@ urlpatterns = [
         "workspaces/<str:slug>/user-properties/",
         WorkspaceUserPropertiesEndpoint.as_view(),
         name="workspace-user-filters",
-    )
+    ),
 ]
