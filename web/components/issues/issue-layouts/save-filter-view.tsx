@@ -20,7 +20,7 @@ export const SaveFilterView: FC<ISaveFilterView> = (props) => {
       <CreateUpdateProjectViewModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        preLoadedData={{ query_data: { ...filterParams } }}
+        preLoadedData={{ filters: { ...filterParams } }}
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
       />

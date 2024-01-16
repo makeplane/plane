@@ -80,8 +80,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 ) : (
                   <div
                     className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-custom-background-80"
-                    onClick={() => {
-                      setSubIssueHelpers(parentIssueId, "preview_loader", issue.id);
+                    onClick={async () => {
+                      if (!subIssueHelpers.issue_visibility.includes(issue.id)) {
+                        setSubIssueHelpers(parentIssueId, "preview_loader", issue.id);
+                        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, issue.id);
+                        setSubIssueHelpers(parentIssueId, "preview_loader", issue.id);
+                      }
                       setSubIssueHelpers(parentIssueId, "issue_visibility", issue.id);
                     }}
                   >

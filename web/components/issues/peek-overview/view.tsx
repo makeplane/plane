@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { MoveRight, MoveDiagonal, Link2, Trash2 } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useKeypress from "hooks/use-keypress";
 // store hooks
 import { useIssueDetail, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -83,6 +84,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     router.push({
       pathname: `/${workspaceSlug}/projects/${projectId}/${is_archived ? "archived-issues" : "issues"}/${issueId}`,
     });
+    removeRoutePeekId();
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -98,6 +100,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       });
     });
   };
+
+  const handleKeyDown = () => !isAnyModalOpen && removeRoutePeekId();
+  useKeypress("Escape", handleKeyDown);
 
   return (
     <>

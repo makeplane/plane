@@ -7,7 +7,6 @@ import { IssueListItem } from "./issue-list-item";
 // types
 import { TIssue } from "@plane/types";
 import { TSubIssueOperations } from "./root";
-import useSWR from "swr";
 
 export interface IIssueList {
   workspaceSlug: string;
@@ -38,24 +37,12 @@ export const IssueList: FC<IIssueList> = observer((props) => {
     subIssues: { subIssuesByIssueId, subIssueHelpersByIssueId },
   } = useIssueDetail();
 
-  useSWR(
-    workspaceSlug && projectId && parentIssueId
-      ? `ISSUE_DETAIL_SUB_ISSUES_${workspaceSlug}_${projectId}_${parentIssueId}`
-      : null,
-    async () => {
-      workspaceSlug &&
-        projectId &&
-        parentIssueId &&
-        (await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId));
-    }
-  );
-
   const subIssueIds = subIssuesByIssueId(parentIssueId);
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
 
   return (
     <>
-      {subIssueHelpers.preview_loader.includes(parentIssueId) ? "Loading..." : "Hello"}
+      {subIssueHelpers.preview_loader.includes(parentIssueId) ? "Loading..." : null}
 
       <div className="relative">
         {subIssueIds &&
