@@ -51,7 +51,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     }
   };
 
-  if (issue?.created_by === currentUserId || issue?.assignee_ids.includes(currentUserId)) return <></>;
+  if (issue?.created_by === currentUserId || issue?.assignee_ids?.includes(currentUserId)) return <></>;
 
   return (
     <div>
