@@ -92,7 +92,7 @@ export class PageStore implements IPageStore {
   updateName = action("updateName", async (name: string) => {
     const oldName = this.name;
     this.name = name;
-    this.pageService.patchPage(this.workspace, this.project, this.id, { name }).catch(() => {
+    await this.pageService.patchPage(this.workspace, this.project, this.id, { name }).catch(() => {
       runInAction(() => {
         this.name = oldName;
       });
@@ -109,7 +109,7 @@ export class PageStore implements IPageStore {
    */
   addToFavorites = action("addToFavorites", async () => {
     this.is_favorite = true;
-    this.pageService.addPageToFavorites(this.workspace, this.project, this.id).catch(() => {
+    await this.pageService.addPageToFavorites(this.workspace, this.project, this.id).catch(() => {
       runInAction(() => {
         this.is_favorite = false;
       });
@@ -121,7 +121,7 @@ export class PageStore implements IPageStore {
    */
   removeFromFavorites = action("removeFromFavorites", async () => {
     this.is_favorite = false;
-    this.pageService.removePageFromFavorites(this.workspace, this.project, this.id).catch(() => {
+    await this.pageService.removePageFromFavorites(this.workspace, this.project, this.id).catch(() => {
       runInAction(() => {
         this.is_favorite = true;
       });
