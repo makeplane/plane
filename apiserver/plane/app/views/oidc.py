@@ -135,7 +135,6 @@ def get_access_token(request_token: str, client_id: str) -> str:
     res = requests.post(url, headers=headers, data=data)
     
     data = res.json()
-    print(data)
     access_token = data["access_token"]
 
     return access_token
