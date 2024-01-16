@@ -30,7 +30,11 @@ export const ProjectLayoutRoot: FC = observer(() => {
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null, async () => {
     if (workspaceSlug && projectId) {
       await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await issues?.fetchIssues(workspaceSlug.toString(), projectId.toString(), issues?.groupedIssueIds ? "mutation" : "init-loader");
+      await issues?.fetchIssues(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        issues?.groupedIssueIds ? "mutation" : "init-loader"
+      );
     }
   });
 

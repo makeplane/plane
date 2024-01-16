@@ -41,7 +41,7 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
   ));
 
 const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
-  const chartData = Object.keys(distribution).map((key) => ({
+  const chartData = Object.keys(distribution ?? []).map((key) => ({
     currentDate: renderFormattedDateWithoutYear(key),
     pending: distribution[key],
   }));

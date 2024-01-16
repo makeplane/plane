@@ -577,7 +577,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                distribution={moduleDetails.distribution.completion_chart}
+                                distribution={moduleDetails.distribution?.completion_chart}
                                 startDate={moduleDetails.start_date ?? ""}
                                 endDate={moduleDetails.target_date ?? ""}
                                 totalIssues={moduleDetails.total_issues}
