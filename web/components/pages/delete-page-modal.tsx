@@ -10,6 +10,7 @@ import useToast from "hooks/use-toast";
 import { Button } from "@plane/ui";
 // types
 import type { IPage } from "@plane/types";
+import { useProjectPages } from "hooks/store/use-project-page";
 
 type TConfirmPageDeletionProps = {
   data?: IPage | null;
@@ -19,6 +20,9 @@ type TConfirmPageDeletionProps = {
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
   const { data, isOpen, onClose } = props;
+
+  // const projectStore = useProjectPages();
+
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // router

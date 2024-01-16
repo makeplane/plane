@@ -32,9 +32,7 @@ export const PageForm: React.FC<Props> = (props) => {
       : defaultValues,
   });
 
-  const handleCreateUpdatePage = async (formData: IPage) => {
-    await handleFormSubmit(formData);
-  };
+  const handleCreateUpdatePage = (formData: IPage) => handleFormSubmit(formData);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
