@@ -3,7 +3,7 @@ from django.urls import path
 from plane.api.views import ProjectAPIEndpoint
 
 urlpatterns = [
-        path(
+    path(
         "workspaces/<str:slug>/projects/",
         ProjectAPIEndpoint.as_view(),
         name="project",

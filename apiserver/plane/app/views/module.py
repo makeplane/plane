@@ -23,7 +23,10 @@ from plane.app.serializers import (
     IssueSerializer,
     ModuleUserPropertiesSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    ProjectLitePermission,
+)
 from plane.db.models import (
     Module,
     ModuleIssue,
@@ -76,7 +79,9 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related("module", "created_by"),
+                    queryset=ModuleLink.objects.select_related(
+                        "module", "created_by"
+                    ),
                 )
             )
             .annotate(
@@ -157,7 +162,11 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
         modules = ModuleSerializer(
             queryset, many=True, fields=fields if fields else None
         ).data
@@ -177,7 +186,13 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .annotate(assignee_id=F("assignees__id"))
             .annotate(display_name=F("assignees__display_name"))
             .annotate(avatar=F("assignees__avatar"))
-            .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
+            .values(
+                "first_name",
+                "last_name",
+                "assignee_id",
+                "avatar",
+                "display_name",
+            )
             .annotate(
                 total_issues=Count(
                     "assignee_id",
@@ -261,7 +276,10 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
 
         if queryset.start_date and queryset.target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
-                queryset=queryset, slug=slug, project_id=project_id, module_id=pk
+                queryset=queryset,
+                slug=slug,
+                project_id=project_id,
+                module_id=pk,
             )
 
         return Response(
@@ -270,9 +288,13 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, pk):
-        module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        module = Module.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
         module_issues = list(
-            ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
+            ModuleIssue.objects.filter(module_id=pk).values_list(
+                "issue", flat=True
+            )
         )
         issue_activity.delay(
             type="module.activity.deleted",
@@ -313,7 +335,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             super()
             .get_queryset()
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("issue")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -333,13 +357,19 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id, module_id):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
         order_by = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
         issues = (
             Issue.issue_objects.filter(issue_module__module_id=module_id)
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -363,7 +393,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -385,7 +417,8 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Issues are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=module_id
@@ -460,7 +493,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         issues = self.get_queryset().values_list("issue_id", flat=True)
 
         return Response(
-            IssueSerializer(Issue.objects.filter(pk__in=issues), many=True).data,
+            IssueSerializer(
+                Issue.objects.filter(pk__in=issues), many=True
+            ).data,
             status=status.HTTP_200_OK,
         )
 

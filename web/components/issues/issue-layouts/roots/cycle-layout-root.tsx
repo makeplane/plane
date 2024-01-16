@@ -13,6 +13,7 @@ import {
   CycleKanBanLayout,
   CycleListLayout,
   CycleSpreadsheetLayout,
+  IssuePeekOverview,
 } from "components/issues";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
@@ -73,19 +74,23 @@ export const CycleLayoutRoot: React.FC = observer(() => {
                 cycleId={cycleId.toString()}
               />
             ) : (
-              <div className="h-full w-full overflow-auto">
-                {activeLayout === "list" ? (
-                  <CycleListLayout />
-                ) : activeLayout === "kanban" ? (
-                  <CycleKanBanLayout />
-                ) : activeLayout === "calendar" ? (
-                  <CycleCalendarLayout />
-                ) : activeLayout === "gantt_chart" ? (
-                  <CycleGanttLayout />
-                ) : activeLayout === "spreadsheet" ? (
-                  <CycleSpreadsheetLayout />
-                ) : null}
-              </div>
+              <>
+                <div className="h-full w-full overflow-auto">
+                  {activeLayout === "list" ? (
+                    <CycleListLayout />
+                  ) : activeLayout === "kanban" ? (
+                    <CycleKanBanLayout />
+                  ) : activeLayout === "calendar" ? (
+                    <CycleCalendarLayout />
+                  ) : activeLayout === "gantt_chart" ? (
+                    <CycleGanttLayout />
+                  ) : activeLayout === "spreadsheet" ? (
+                    <CycleSpreadsheetLayout />
+                  ) : null}
+                </div>
+                {/* peek overview */}
+                <IssuePeekOverview />
+              </>
             )}
           </>
         )}

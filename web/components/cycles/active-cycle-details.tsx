@@ -464,7 +464,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 {
                   issueIds?.filter(
                     (issueId) =>
-                      getProjectStates(issueMap[issueId]?.project_id).find(
+                      getProjectStates(issueMap[issueId]?.project_id)?.find(
                         (issue) => issue.id === issueMap[issueId]?.state_id
                       )?.group === "completed"
                   )?.length

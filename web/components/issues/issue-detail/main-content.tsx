@@ -87,10 +87,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           <SubIssuesRoot
             workspaceSlug={workspaceSlug}
             projectId={projectId}
-            issueId={issueId}
+            parentIssueId={issueId}
             currentUser={currentUser}
-            is_archived={is_archived}
-            is_editable={is_editable}
+            disabled={!is_editable}
           />
         )}
       </div>

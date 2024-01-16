@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 // components
+import { IssuePeekOverview } from "components/issues";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
@@ -8,16 +9,23 @@ import { EmptyState } from "components/common";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // hooks
-import { useIssueDetail, useUser } from "hooks/store";
+import { useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  update: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    showToast?: boolean
+  ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -47,6 +55,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
     addIssueToModule,
     removeIssueFromModule,
   } = useIssueDetail();
+  const {
+    issues: { removeIssue: removeArchivedIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
   const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
@@ -61,14 +72,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           console.error("Error fetching the parent issue");
         }
       },
-      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+      update: async (
+        workspaceSlug: string,
+        projectId: string,
+        issueId: string,
+        data: Partial<TIssue>,
+        showToast: boolean = true
+      ) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
-          setToastAlert({
-            title: "Issue updated successfully",
-            type: "success",
-            message: "Issue updated successfully",
-          });
+          if (showToast) {
+            setToastAlert({
+              title: "Issue updated successfully",
+              type: "success",
+              message: "Issue updated successfully",
+            });
+          }
         } catch (error) {
           setToastAlert({
             title: "Issue update failed",
@@ -79,7 +98,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await removeIssue(workspaceSlug, projectId, issueId);
+          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          else await removeIssue(workspaceSlug, projectId, issueId);
           setToastAlert({
             title: "Issue deleted successfully",
             type: "success",
@@ -159,9 +179,11 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
     }),
     [
+      is_archived,
       fetchIssue,
       updateIssue,
       removeIssue,
+      removeArchivedIssue,
       addIssueToCycle,
       removeIssueFromCycle,
       addIssueToModule,
@@ -170,9 +192,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
     ]
   );
 
-  // Issue details
+  // issue details
   const issue = getIssueById(issueId);
-  // Check if issue is editable, based on user role
+  // checking if issue is editable, based on user role
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
@@ -211,6 +233,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           </div>
         </div>
       )}
+
+      {/* peek overview */}
+      <IssuePeekOverview />
     </>
   );
 };

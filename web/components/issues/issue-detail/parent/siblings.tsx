@@ -23,10 +23,10 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = (props) => {
   } = useIssueDetail();
 
   const { isLoading } = useSWR(
-    peekIssue && parentIssue
+    peekIssue && parentIssue && parentIssue.project_id
       ? `ISSUE_PARENT_CHILD_ISSUES_${peekIssue?.workspaceSlug}_${parentIssue.project_id}_${parentIssue.id}`
       : null,
-    peekIssue && parentIssue
+    peekIssue && parentIssue && parentIssue.project_id
       ? () => fetchSubIssues(peekIssue?.workspaceSlug, parentIssue.project_id, parentIssue.id)
       : null
   );

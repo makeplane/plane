@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class AnalyticsConfig(AppConfig):
-    name = 'plane.analytics'
+    name = "plane.analytics"

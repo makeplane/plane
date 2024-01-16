@@ -36,7 +36,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         # The complete url including the domain
         abs_url = str(current_site) + relative_link
 
-
         (
             EMAIL_HOST,
             EMAIL_HOST_USER,

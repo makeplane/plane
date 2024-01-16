@@ -9,6 +9,8 @@ import { IModule, ILinkDetails } from "@plane/types";
 import { RootStore } from "store/root.store";
 
 export interface IModuleStore {
+  //Loaders
+  fetchedMap: Record<string, boolean>;
   // observables
   moduleMap: Record<string, IModule>;
   // computed
@@ -51,6 +53,8 @@ export interface IModuleStore {
 export class ModulesStore implements IModuleStore {
   // observables
   moduleMap: Record<string, IModule> = {};
+  //loaders
+  fetchedMap: Record<string, boolean> = {};
   // root store
   rootStore;
   // services
@@ -61,6 +65,7 @@ export class ModulesStore implements IModuleStore {
     makeObservable(this, {
       // observables
       moduleMap: observable,
+      fetchedMap: observable,
       // computed
       projectModuleIds: computed,
       // computed actions
@@ -92,7 +97,7 @@ export class ModulesStore implements IModuleStore {
    */
   get projectModuleIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
     projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
     const projectModuleIds = projectModules.map((m) => m.id);
@@ -111,10 +116,12 @@ export class ModulesStore implements IModuleStore {
    * @param projectId
    */
   getProjectModuleIds = (projectId: string) => {
+    if (!this.fetchedMap[projectId]) return null;
+
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
     projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
     const projectModuleIds = projectModules.map((m) => m.id);
-    return projectModuleIds || null;
+    return projectModuleIds;
   };
 
   /**
@@ -129,6 +136,7 @@ export class ModulesStore implements IModuleStore {
         response.forEach((module) => {
           set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
         });
+        set(this.fetchedMap, projectId, true);
       });
       return response;
     });

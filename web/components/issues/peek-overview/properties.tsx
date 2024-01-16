@@ -1,61 +1,40 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { CalendarDays, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 // hooks
-import { useProject, useUser } from "hooks/store";
+import { useIssueDetail, useProject } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import { IssueLinkRoot, IssueCycleSelect, IssueModuleSelect, IssueParentSelect, IssueLabel } from "components/issues";
+import {
+  IssueLinkRoot,
+  IssueCycleSelect,
+  IssueModuleSelect,
+  IssueParentSelect,
+  IssueLabel,
+  TIssueOperations,
+} from "components/issues";
 import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
-// types
-import { TIssue, TIssuePriorities } from "@plane/types";
-// constants
-// import { EUserProjectRoles } from "constants/project";
 
 interface IPeekOverviewProperties {
-  issue: TIssue;
-  issueUpdate: (issue: Partial<TIssue>) => void;
-  disableUserActions: boolean;
-  issueOperations: any;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  disabled: boolean;
+  issueOperations: TIssueOperations;
 }
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { issue, issueUpdate, disableUserActions, issueOperations } = props;
-
+  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { getProjectById } = useProject();
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const uneditable = currentProjectRole ? [5, 10].includes(currentProjectRole) : false;
-  // const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
-  const handleState = (_state: string) => {
-    issueUpdate({ ...issue, state_id: _state });
-  };
-  const handlePriority = (_priority: TIssuePriorities) => {
-    issueUpdate({ ...issue, priority: _priority });
-  };
-  const handleAssignee = (_assignees: string[]) => {
-    issueUpdate({ ...issue, assignee_ids: _assignees });
-  };
-  const handleEstimate = (_estimate: number | null) => {
-    issueUpdate({ ...issue, estimate_point: _estimate });
-  };
-  const handleStartDate = (_startDate: string | null) => {
-    issueUpdate({ ...issue, start_date: _startDate || undefined });
-  };
-  const handleTargetDate = (_targetDate: string | null) => {
-    issueUpdate({ ...issue, target_date: _targetDate || undefined });
-  };
-
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  // derived values
+  const issue = getIssueById(issueId);
+  if (!issue) return <></>;
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
 
@@ -68,7 +47,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   return (
     <>
       <div className="flex flex-col">
-        <div className="flex w-full flex-col gap-5 py-5">
+        <div className={`flex w-full flex-col gap-5 py-5 ${disabled ? "opacity-60" : ""}`}>
           {/* state */}
           <div className="flex w-full items-center gap-2">
             <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
@@ -77,10 +56,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
             <div>
               <StateDropdown
-                value={issue?.state_id || ""}
-                onChange={handleState}
-                projectId={issue.project_id}
-                disabled={disableUserActions}
+                value={issue?.state_id ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                projectId={projectId?.toString() ?? ""}
+                disabled={disabled}
                 buttonVariant="background-with-text"
               />
             </div>
@@ -94,14 +73,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
             <div className="h-5 sm:w-1/2">
               <ProjectMemberDropdown
-                value={issue.assignee_ids}
-                onChange={handleAssignee}
-                disabled={disableUserActions}
+                value={issue?.assignee_ids ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                disabled={disabled}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Assignees"
                 multiple
-                buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"}
-                buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                buttonClassName={issue?.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
               />
             </div>
           </div>
@@ -114,9 +93,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
             <div className="h-5">
               <PriorityDropdown
-                value={issue.priority || ""}
-                onChange={handlePriority}
-                disabled={disableUserActions}
+                value={issue?.priority || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                disabled={disabled}
                 buttonVariant="background-with-text"
               />
             </div>
@@ -131,10 +110,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
               <div>
                 <EstimateDropdown
-                  value={issue.estimate_point}
-                  onChange={handleEstimate}
-                  projectId={issue.project_id}
-                  disabled={disableUserActions}
+                  value={issue?.estimate_point || null}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
+                  projectId={projectId}
+                  disabled={disabled}
                   buttonVariant="background-with-text"
                 />
               </div>
@@ -150,11 +129,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <CustomDatePicker
                 placeholder="Start date"
-                value={issue.start_date}
-                onChange={handleStartDate}
-                className="!rounded border-none bg-custom-background-80 !px-2.5 !py-0.5"
+                value={issue.start_date || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { start_date: val })}
+                className="border-none bg-custom-background-80"
                 maxDate={maxDate ?? undefined}
-                disabled={disableUserActions}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -168,11 +147,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <CustomDatePicker
                 placeholder="Due date"
-                value={issue.target_date}
-                onChange={handleTargetDate}
-                className="!rounded border-none bg-custom-background-80 !px-2.5 !py-0.5"
+                value={issue.target_date || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { target_date: val })}
+                className="border-none bg-custom-background-80"
                 minDate={minDate ?? undefined}
-                disabled={disableUserActions}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -185,11 +164,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
             <div>
               <IssueParentSelect
-                workspaceSlug={workspaceSlug?.toString() ?? ""}
-                projectId={projectId?.toString() ?? ""}
-                issueId={issue?.id}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
                 issueOperations={issueOperations}
-                disabled={disableUserActions}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -197,7 +176,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <span className="border-t border-custom-border-200" />
 
-        <div className="flex w-full flex-col gap-5 py-5">
+        <div className={`flex w-full flex-col gap-5 py-5 ${disabled ? "opacity-60" : ""}`}>
           {projectDetails?.cycle_view && (
             <div className="flex w-full items-center gap-2">
               <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
@@ -206,11 +185,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
               <div>
                 <IssueCycleSelect
-                  workspaceSlug={workspaceSlug?.toString() ?? ""}
-                  projectId={projectId?.toString() ?? ""}
-                  issueId={issue?.id}
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
                   issueOperations={issueOperations}
-                  disabled={disableUserActions}
+                  disabled={disabled}
                 />
               </div>
             </div>
@@ -224,11 +203,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               </div>
               <div>
                 <IssueModuleSelect
-                  workspaceSlug={workspaceSlug?.toString() ?? ""}
-                  projectId={projectId?.toString() ?? ""}
-                  issueId={issue?.id}
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
                   issueOperations={issueOperations}
-                  disabled={disableUserActions}
+                  disabled={disabled}
                 />
               </div>
             </div>
@@ -240,12 +219,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Label</p>
             </div>
             <div className="flex w-full flex-col gap-3">
-              <IssueLabel
-                workspaceSlug={workspaceSlug?.toString() ?? ""}
-                projectId={projectId?.toString() ?? ""}
-                issueId={issue?.id}
-                disabled={uneditable}
-              />
+              <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
             </div>
           </div>
         </div>
@@ -253,11 +227,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <span className="border-t border-custom-border-200" />
 
         <div className="w-full pt-3">
-          <IssueLinkRoot
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
-            projectId={projectId?.toString() ?? ""}
-            issueId={issue?.id}
-          />
+          <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
         </div>
       </div>
     </>

@@ -2,12 +2,17 @@
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
+from plane.db.models import (
+    Project,
+    ProjectIdentifier,
+    WorkspaceMember,
+    State,
+    Estimate,
+)
 from .base import BaseSerializer
 
 
 class ProjectSerializer(BaseSerializer):
-
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
@@ -21,7 +26,7 @@ class ProjectSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
-            'emoji',
+            "emoji",
             "workspace",
             "created_at",
             "updated_at",
@@ -59,12 +64,16 @@ class ProjectSerializer(BaseSerializer):
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
         if identifier == "":
-            raise serializers.ValidationError(detail="Project Identifier is required")
+            raise serializers.ValidationError(
+                detail="Project Identifier is required"
+            )
 
         if ProjectIdentifier.objects.filter(
             name=identifier, workspace_id=self.context["workspace_id"]
         ).exists():
-            raise serializers.ValidationError(detail="Project Identifier is taken")
+            raise serializers.ValidationError(
+                detail="Project Identifier is taken"
+            )
 
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]

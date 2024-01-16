@@ -13,10 +13,6 @@ import { getCurrentHookAsCSV } from "./utils";
 // types
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 
-interface WebhookWithKey {
-  webHook: IWebhook;
-  secretKey: string | undefined;
-}
 interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;
   isOpen: boolean;

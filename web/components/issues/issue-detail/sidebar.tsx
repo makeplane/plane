@@ -162,7 +162,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             )}
 
-            {/* {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
                 className="rounded-md border border-custom-border-200 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
@@ -170,9 +170,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               >
                 <LinkIcon className="h-3.5 w-3.5" />
               </button>
-            )} */}
+            )}
 
-            {/* {isAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
+            {is_editable && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
@@ -180,7 +180,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
-            )} */}
+            )}
           </div>
         </div>
 
