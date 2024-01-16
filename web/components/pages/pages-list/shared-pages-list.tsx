@@ -3,12 +3,13 @@ import { observer } from "mobx-react-lite";
 // components
 import { PagesListView } from "components/pages/pages-list";
 // hooks
-import { usePage } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const SharedPagesList: FC = observer(() => {
-  const { publicProjectPageIds } = usePage();
+  const projectPageStore = useProjectPages();
+  const { publicProjectPageIds } = projectPageStore;
 
   if (!publicProjectPageIds)
     return (

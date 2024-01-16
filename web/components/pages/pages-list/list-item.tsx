@@ -12,7 +12,7 @@ import { CreateUpdatePageModal } from "components/pages";
 import { EUserProjectRoles } from "constants/project";
 import { useRouter } from "next/router";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { useMember, useUser } from "hooks/store";
+import { useMember, usePage, useUser } from "hooks/store";
 
 export interface IPagesListItem {
   pageId: string;
@@ -24,7 +24,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   // Now, I am observing only the projectPages, out of the projectPageStore.
   const { projectPageMap, archivePage, restorePage } = projectPageStore;
 
-  const pageStore = projectPageMap?.[projectId]?.[pageId];
+  const pageStore = usePage(pageId);
 
   // states
   const router = useRouter();

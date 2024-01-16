@@ -14,6 +14,7 @@ export interface IProjectPageStore {
   projectArchivedPageMap: Record<string, Record<string, IPageStore>>;
 
   projectPageIds: string[] | undefined;
+  archivedPageIds: string[] | undefined;
   favoriteProjectPageIds: string[] | undefined;
   privateProjectPageIds: string[] | undefined;
   publicProjectPageIds: string[] | undefined;
@@ -42,6 +43,7 @@ export class ProjectPageStore implements IProjectPageStore {
       projectArchivedPageMap: observable,
 
       projectPageIds: computed,
+      archivedPageIds: computed,
       favoriteProjectPageIds: computed,
       privateProjectPageIds: computed,
       publicProjectPageIds: computed,
@@ -63,7 +65,26 @@ export class ProjectPageStore implements IProjectPageStore {
     const projectId = this.rootStore.app.router.projectId;
 
     if (!projectId || !this.projectPageMap?.[projectId]) return [];
-    return Object.keys(this.projectPageMap[projectId]);
+    const allProjectIds = Object.keys(this.projectPageMap[projectId]);
+    return allProjectIds
+      .filter((pageId) => !this.projectPageMap[projectId][pageId].archived_at)
+      .sort((a, b) => {
+        const dateA = new Date(this.projectPageMap[projectId][a].created_at).getTime();
+        const dateB = new Date(this.projectPageMap[projectId][b].created_at).getTime();
+        return dateB - dateA;
+      });
+  }
+
+  get archivedPageIds() {
+    const projectId = this.rootStore.app.router.projectId;
+
+    if (!projectId || !this.projectArchivedPageMap[projectId]) return [];
+    const archivedPages = Object.keys(this.projectArchivedPageMap[projectId]);
+    return archivedPages.sort((a, b) => {
+      const dateA = new Date(this.projectArchivedPageMap[projectId][a].created_at).getTime();
+      const dateB = new Date(this.projectArchivedPageMap[projectId][b].created_at).getTime();
+      return dateB - dateA;
+    });
   }
 
   get favoriteProjectPageIds() {
@@ -213,15 +234,21 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param projectId
    * @returns Promise<IPage[]>
    */
-  fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) =>
-    await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
-      runInAction(() => {
-        for (const page of response) {
-          set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page));
-        }
+  fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) => {
+    console.log("fetchArchivedProjectPages");
+    try {
+      await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
+        runInAction(() => {
+          for (const page of response) {
+            set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page));
+          }
+        });
+        return response;
       });
-      return response;
-    });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   /**
    * Creates a new page using the api and updated the local state in store
