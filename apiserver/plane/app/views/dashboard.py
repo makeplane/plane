@@ -6,7 +6,6 @@ from django.db.models import (
     Value,
     CharField,
     Count,
-    BooleanField,
     F,
     Exists,
     OuterRef,
@@ -88,6 +87,7 @@ def dashboard_assigned_issues(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
+        .filter(**filters)
         .select_related("project")
         .select_related("workspace")
         .select_related("state")
@@ -114,7 +114,14 @@ def dashboard_assigned_issues(self, request, slug):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        .filter(**filters)
+        .prefetch_related(
+            Prefetch(
+                "issue_relation",
+                queryset=IssueRelation.objects.select_related(
+                    "related_issue"
+                ).select_related("issue"),
+            )
+        )
         .order_by("created_at")
     )
 
