@@ -95,6 +95,7 @@ class EmailNotificationLog(BaseModel):
     # data
     data = models.JSONField(null=True)
     # sent at
+    processed_at = models.DateTimeField(null=True)
     sent_at = models.DateTimeField(null=True)
 
     class Meta:

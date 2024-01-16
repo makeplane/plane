@@ -256,12 +256,14 @@ def notifications(
                 if issue_comment is not None:
                     # TODO: Maybe save the comment mentions, so that in future, we can filter out the issues based on comment mentions as well.
 
-                    all_comment_mentions = all_comment_mentions + extract_comment_mentions(
-                        issue_comment_new_value
+                    all_comment_mentions = (
+                        all_comment_mentions
+                        + extract_comment_mentions(issue_comment_new_value)
                     )
 
                     new_comment_mentions = get_new_comment_mentions(
-                        old_value=issue_comment_old_value, new_value=issue_comment_new_value
+                        old_value=issue_comment_old_value,
+                        new_value=issue_comment_new_value,
                     )
                     comment_mentions = comment_mentions + new_comment_mentions
 
@@ -323,7 +325,10 @@ def notifications(
 
                     # Check if the value should be sent or not
                     send_email = False
-                    if issue_activity.get("field") == "state" and preference.state_change:
+                    if (
+                        issue_activity.get("field") == "state"
+                        and preference.state_change
+                    ):
                         send_email = True
                     elif (
                         issue_activity.get("field") == "state"
@@ -335,7 +340,9 @@ def notifications(
                         ).exists()
                     ):
                         send_email = True
-                    elif issue_activity.get("field") == "comment" and preference.comment:
+                    elif (
+                        issue_activity.get("field") == "comment" and preference.comment
+                    ):
                         send_email = True
                     elif preference.property_change:
                         send_email = True
@@ -425,7 +432,9 @@ def notifications(
 
             # Add Mentioned as Issue Subscribers
             IssueSubscriber.objects.bulk_create(
-                mention_subscribers + comment_mention_subscribers, batch_size=100, ignore_conflicts=True,
+                mention_subscribers + comment_mention_subscribers,
+                batch_size=100,
+                ignore_conflicts=True,
             )
 
             last_activity = (
@@ -438,7 +447,9 @@ def notifications(
 
             for mention_id in comment_mentions:
                 if mention_id != actor_id:
-                    preference = UserNotificationPreference.objects.get(user_id=mention_id)
+                    preference = UserNotificationPreference.objects.get(
+                        user_id=mention_id
+                    )
                     for issue_activity in issue_activities_created:
                         notification = create_mention_notification(
                             project=project,
@@ -458,14 +469,39 @@ def notifications(
                                     receiver_id=subscriber,
                                     entity_identifier=issue_id,
                                     entity_name="issue",
-                                    data=notification.data,
+                                    data={
+                                        "issue": {
+                                            "id": str(issue_id),
+                                            "name": str(issue.name),
+                                            "identifier": str(issue.project.identifier),
+                                            "sequence_id": issue.sequence_id,
+                                            "state_name": issue.state.name,
+                                            "state_group": issue.state.group,
+                                        },
+                                        "issue_activity": {
+                                            "id": str(issue_activity.get("id")),
+                                            "verb": str(issue_activity.get("verb")),
+                                            "field": str("mention"),
+                                            "actor": str(
+                                                issue_activity.get("actor_id")
+                                            ),
+                                            "new_value": str(
+                                                issue_activity.get("new_value")
+                                            ),
+                                            "old_value": str(
+                                                issue_activity.get("old_value")
+                                            ),
+                                        },
+                                    },
                                 )
                             )
                         bulk_notifications.append(notification)
 
             for mention_id in new_mentions:
                 if mention_id != actor_id:
-                    preference = UserNotificationPreference.objects.get(user_id=mention_id)
+                    preference = UserNotificationPreference.objects.get(
+                        user_id=mention_id
+                    )
                     if (
                         last_activity is not None
                         and last_activity.field == "description"
@@ -520,7 +556,7 @@ def notifications(
                                         "issue_activity": {
                                             "id": str(last_activity.id),
                                             "verb": str(last_activity.verb),
-                                            "field": str(last_activity.field),
+                                            "field": "mention",
                                             "actor": str(last_activity.actor_id),
                                             "new_value": str(last_activity.new_value),
                                             "old_value": str(last_activity.old_value),
@@ -546,7 +582,32 @@ def notifications(
                                         receiver_id=subscriber,
                                         entity_identifier=issue_id,
                                         entity_name="issue",
-                                        data=notification.data,
+                                        data={
+                                            "issue": {
+                                                "id": str(issue_id),
+                                                "name": str(issue.name),
+                                                "identifier": str(
+                                                    issue.project.identifier
+                                                ),
+                                                "sequence_id": issue.sequence_id,
+                                                "state_name": issue.state.name,
+                                                "state_group": issue.state.group,
+                                            },
+                                            "issue_activity": {
+                                                "id": str(issue_activity.get("id")),
+                                                "verb": str(issue_activity.get("verb")),
+                                                "field": str("mention"),
+                                                "actor": str(
+                                                    issue_activity.get("actor_id")
+                                                ),
+                                                "new_value": str(
+                                                    issue_activity.get("new_value")
+                                                ),
+                                                "old_value": str(
+                                                    issue_activity.get("old_value")
+                                                ),
+                                            },
+                                        },
                                     )
                                 )
                             bulk_notifications.append(notification)
@@ -558,10 +619,11 @@ def notifications(
                 new_mentions=new_mentions,
                 removed_mention=removed_mention,
             )
-            print(bulk_email_logs)
             # Bulk create notifications
             Notification.objects.bulk_create(bulk_notifications, batch_size=100)
-            EmailNotificationLog.objects.bulk_create(bulk_email_logs, batch_size=100, ignore_conflicts=True)
+            EmailNotificationLog.objects.bulk_create(
+                bulk_email_logs, batch_size=100, ignore_conflicts=True
+            )
         return
     except Exception as e:
         print(e)
