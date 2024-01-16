@@ -1046,6 +1046,99 @@ class ActiveCycleEndpoint(BaseAPIView):
             .order_by("-created_at")
         )
 
-        active_cycles = CycleSerializer(active_cycles, many=True).data
+        cycles = CycleSerializer(active_cycles, many=True).data
 
-        return Response(active_cycles, status=status.HTTP_200_OK)
+        for cycle in cycles:
+            assignee_distribution = (
+                Issue.objects.filter(
+                    issue_cycle__cycle_id=cycle["id"],
+                    project_id=cycle["project"],
+                    workspace__slug=slug,
+                )
+                .annotate(display_name=F("assignees__display_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(avatar=F("assignees__avatar"))
+                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    total_issues=Count(
+                        "assignee_id",
+                        filter=Q(archived_at__isnull=True, is_draft=False),
+                    ),
+                )
+                .annotate(
+                    completed_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("display_name")
+            )
+
+            label_distribution = (
+                Issue.objects.filter(
+                    issue_cycle__cycle_id=cycle["id"],
+                    project_id=cycle["project"],
+                    workspace__slug=slug,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(
+                    total_issues=Count(
+                        "label_id",
+                        filter=Q(archived_at__isnull=True, is_draft=False),
+                    )
+                )
+                .annotate(
+                    completed_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("label_name")
+            )
+            cycle["distribution"] = {
+                "assignees": assignee_distribution,
+                "labels": label_distribution,
+                "completion_chart": {},
+            }
+            if cycle["start_date"] and cycle["end_date"]:
+                cycle["distribution"][
+                    "completion_chart"
+                ] = burndown_plot(
+                    queryset=active_cycles.get(pk=cycle["id"]),
+                    slug=slug,
+                    project_id=cycle["project"],
+                    cycle_id=cycle["id"],
+                )
+
+        return Response(cycles, status=status.HTTP_200_OK)
