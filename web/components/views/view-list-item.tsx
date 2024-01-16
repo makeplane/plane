@@ -62,7 +62,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const totalFilters = calculateTotalFilters(view.query_data ?? {});
+  const totalFilters = calculateTotalFilters(view.filters ?? {});
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
