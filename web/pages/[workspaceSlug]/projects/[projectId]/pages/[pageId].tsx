@@ -34,6 +34,7 @@ import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { useIssueEmbeds } from "hooks/use-issue-embeds";
 
 // services
 const fileService = new FileService();
@@ -50,9 +51,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+
   const {
     config: { envConfig },
   } = useApplication();
@@ -69,12 +68,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     defaultValues: { name: "", description_html: "" },
   });
 
-  const { data: issuesResponse } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
-  );
-
-  const issues = Object.values(issuesResponse ?? {});
+  const { issues, isLoading } = useIssueEmbeds();
 
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -388,7 +382,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      {pageDetails && issuesResponse ? (
+      {pageDetails && issues ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
             {isPageReadOnly ? (
