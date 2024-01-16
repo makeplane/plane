@@ -6,14 +6,13 @@ import { History } from "lucide-react";
 import { useDashboard, useUser } from "hooks/store";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { WidgetLoader } from "components/dashboard/widgets";
+import { RecentActivityEmptyState, WidgetLoader } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
-import { RecentActivityEmptyState } from "./empty-states";
 
 type Props = {
   dashboardId: string;

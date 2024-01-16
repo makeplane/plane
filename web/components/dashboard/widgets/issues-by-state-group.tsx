@@ -6,13 +6,12 @@ import { observer } from "mobx-react-lite";
 import { useDashboard } from "hooks/store";
 // components
 import { PieGraph } from "components/ui";
-import { WidgetLoader } from "components/dashboard/widgets";
+import { IssuesByStateGroupEmptyState, WidgetLoader } from "components/dashboard/widgets";
 import { DurationFilterDropdown } from "./dropdowns";
 // types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
 import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
-import { IssuesByStateGroupEmptyState } from "./empty-states";
 
 type Props = {
   dashboardId: string;
@@ -197,7 +196,7 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
         </div>
       ) : (
         <div className="h-full grid items-end">
-          <IssuesByStateGroupEmptyState />
+          <IssuesByStateGroupEmptyState filter={widgetDetails.widget_filters.duration ?? "this_week"} />
         </div>
       )}
     </Link>

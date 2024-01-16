@@ -4,12 +4,11 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
-import { WidgetLoader } from "components/dashboard/widgets";
+import { RecentCollaboratorsEmptyState, WidgetLoader } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
 // types
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
-import { RecentCollaboratorsEmptyState } from "./empty-states";
 
 type Props = {
   dashboardId: string;

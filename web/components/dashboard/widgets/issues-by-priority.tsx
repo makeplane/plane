@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useDashboard } from "hooks/store";
 // components
 import { MarimekkoGraph } from "components/ui";
-import { WidgetLoader } from "components/dashboard/widgets";
+import { IssuesByPriorityEmptyState, WidgetLoader } from "components/dashboard/widgets";
 import { DurationFilterDropdown } from "./dropdowns";
 // ui
 import { PriorityIcon } from "@plane/ui";
@@ -13,7 +13,6 @@ import { PriorityIcon } from "@plane/ui";
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
-import { IssuesByPriorityEmptyState } from "./empty-states";
 
 const TEXT_COLORS = {
   urgent: "#F4A9AA",
@@ -235,7 +234,7 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
         </div>
       ) : (
         <div className="h-full grid items-end">
-          <IssuesByPriorityEmptyState />
+          <IssuesByPriorityEmptyState filter={widgetDetails.widget_filters.duration ?? "this_week"} />
         </div>
       )}
     </Link>

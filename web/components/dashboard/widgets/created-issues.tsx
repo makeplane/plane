@@ -95,7 +95,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
           <TabsList />
         </div>
         <Tab.Panels as="div" className="mt-7 h-full">
-          <Tab.Panel as="div" className="h-full">
+          <Tab.Panel as="div" className="h-full flex flex-col">
             <CreatedIssuesList
               filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
@@ -105,7 +105,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
               isLoading={fetching}
             />
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel as="div" className="h-full flex flex-col">
             <CreatedIssuesList
               filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
@@ -115,7 +115,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
               isLoading={fetching}
             />
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel as="div" className="h-full flex flex-col">
             <CreatedIssuesList
               filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}

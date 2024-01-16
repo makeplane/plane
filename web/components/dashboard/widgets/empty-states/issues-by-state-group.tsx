@@ -5,17 +5,24 @@ import DarkImage from "public/empty-state/dashboard/dark/issues-by-state-group.s
 import LightImage from "public/empty-state/dashboard/light/issues-by-state-group.svg";
 // helpers
 import { cn } from "helpers/common.helper";
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+// types
+import { TDurationFilterOptions } from "@plane/types";
 
-type Props = {};
+type Props = {
+  filter: TDurationFilterOptions;
+};
 
 export const IssuesByStateGroupEmptyState: React.FC<Props> = (props) => {
-  const {} = props;
+  const { filter } = props;
   // next-themes
   const { resolvedTheme } = useTheme();
 
   return (
     <div className="text-center space-y-10 mt-16 flex flex-col items-center">
-      <p className="text-sm font-medium text-custom-text-300">No assigned issues</p>
+      <p className="text-sm font-medium text-custom-text-300">
+        No assigned issues {replaceUnderscoreIfSnakeCase(filter)}.
+      </p>
       <div
         className={cn("w-1/2 h-1/3 p-1.5 pb-0 rounded-t-md", {
           "border border-custom-border-200": resolvedTheme === "dark",

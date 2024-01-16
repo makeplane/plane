@@ -15,6 +15,7 @@ import CompletedCreatedIssuesLight from "public/empty-state/dashboard/light/comp
 // types
 import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
 
+// gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
   linearGradientDef(
     "gradientUrgent",
@@ -83,6 +84,7 @@ export const PRIORITY_GRAPH_GRADIENTS = [
   ),
 ];
 
+// colors for issues by state group widget graph arcs
 export const STATE_GROUP_GRAPH_GRADIENTS = [
   linearGradientDef("gradientBacklog", [
     { offset: 0, color: "#DEDEDE" },
@@ -114,6 +116,7 @@ export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
   cancelled: "#E5484D",
 };
 
+// filter duration options
 export const DURATION_FILTER_OPTIONS: {
   key: TDurationFilterOptions;
   label: string;
@@ -136,6 +139,7 @@ export const DURATION_FILTER_OPTIONS: {
   },
 ];
 
+// random background colors for project cards
 export const PROJECT_BACKGROUND_COLORS = [
   "bg-gray-500/20",
   "bg-green-500/20",
@@ -147,6 +151,7 @@ export const PROJECT_BACKGROUND_COLORS = [
   "bg-purple-500/20",
 ];
 
+// assigned and created issues widgets tabs list
 export const ISSUES_TABS_LIST: {
   key: TIssuesListTypes;
   label: string;
@@ -165,7 +170,33 @@ export const ISSUES_TABS_LIST: {
   },
 ];
 
-const DURATION_TITLES: {
+// empty state constants
+const ASSIGNED_ISSUES_DURATION_TITLES: {
+  [type in TIssuesListTypes]: {
+    [duration in TDurationFilterOptions]: string;
+  };
+} = {
+  upcoming: {
+    today: "today",
+    this_week: "yet in this week",
+    this_month: "yet in this month",
+    this_year: "yet in this year",
+  },
+  overdue: {
+    today: "today",
+    this_week: "in this week",
+    this_month: "in this month",
+    this_year: "in this year",
+  },
+  completed: {
+    today: "today",
+    this_week: "this week",
+    this_month: "this month",
+    this_year: "this year",
+  },
+};
+
+const CREATED_ISSUES_DURATION_TITLES: {
   [duration in TDurationFilterOptions]: string;
 } = {
   today: "today",
@@ -176,17 +207,20 @@ const DURATION_TITLES: {
 
 export const ASSIGNED_ISSUES_EMPTY_STATES = {
   upcoming: {
-    title: "No upcoming issues",
+    title: (duration: TDurationFilterOptions) =>
+      `No issues assigned to you ${ASSIGNED_ISSUES_DURATION_TITLES.upcoming[duration]}.`,
     darkImage: UpcomingAssignedIssuesDark,
     lightImage: UpcomingAssignedIssuesLight,
   },
   overdue: {
-    title: "No overdue issues",
+    title: (duration: TDurationFilterOptions) =>
+      `No issues with due dates ${ASSIGNED_ISSUES_DURATION_TITLES.overdue[duration]} are open.`,
     darkImage: OverdueAssignedIssuesDark,
     lightImage: OverdueAssignedIssuesLight,
   },
   completed: {
-    title: "No completed issues",
+    title: (duration: TDurationFilterOptions) =>
+      `No issues completed by you ${ASSIGNED_ISSUES_DURATION_TITLES.completed[duration]}.`,
     darkImage: CompletedAssignedIssuesDark,
     lightImage: CompletedAssignedIssuesLight,
   },
@@ -195,18 +229,19 @@ export const ASSIGNED_ISSUES_EMPTY_STATES = {
 export const CREATED_ISSUES_EMPTY_STATES = {
   upcoming: {
     title: (duration: TDurationFilterOptions) =>
-      `No created issues have deadlines coming up ${DURATION_TITLES[duration]}.`,
+      `No created issues have deadlines coming up ${CREATED_ISSUES_DURATION_TITLES[duration]}.`,
     darkImage: UpcomingCreatedIssuesDark,
     lightImage: UpcomingCreatedIssuesLight,
   },
   overdue: {
     title: (duration: TDurationFilterOptions) =>
-      `No created issues with due dates ${DURATION_TITLES[duration]} are open.`,
+      `No created issues with due dates ${CREATED_ISSUES_DURATION_TITLES[duration]} are open.`,
     darkImage: OverdueCreatedIssuesDark,
     lightImage: OverdueCreatedIssuesLight,
   },
   completed: {
-    title: (duration: TDurationFilterOptions) => `No created issues are completed ${DURATION_TITLES[duration]}.`,
+    title: (duration: TDurationFilterOptions) =>
+      `No created issues are completed ${CREATED_ISSUES_DURATION_TITLES[duration]}.`,
     darkImage: CompletedCreatedIssuesDark,
     lightImage: CompletedCreatedIssuesLight,
   },

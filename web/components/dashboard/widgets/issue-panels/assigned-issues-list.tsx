@@ -7,9 +7,9 @@ import {
   AssignedOverdueIssueListItem,
   AssignedUpcomingIssueListItem,
 } from "components/dashboard";
-import { AssignedIssuesEmptyState } from "../empty-states";
+import { AssignedIssuesEmptyState } from "components/dashboard/widgets";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Loader, getButtonStyling } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
@@ -68,7 +68,7 @@ export const AssignedIssuesList: React.FC<Props> = (props) => {
               {type === "overdue" && <h6 className="text-center">Due by</h6>}
               {type !== "completed" && <h6 className="text-center">Blocked by</h6>}
             </div>
-            <div className="px-4 mt-2">
+            <div className="px-4 pb-3 mt-2">
               {issues.map((issue) => {
                 if (type === "upcoming")
                   return (
@@ -107,10 +107,11 @@ export const AssignedIssuesList: React.FC<Props> = (props) => {
         )}
       </div>
       {totalIssues > issues.length && (
-        <Link href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`} className="block mt-6 text-center">
-          <Button type="button" variant="accent-primary" className="py-1 px-2 text-xs">
-            View all issues
-          </Button>
+        <Link
+          href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
+          className={cn(getButtonStyling("accent-primary", "sm"), "w-min my-3 mx-auto py-1 px-2 text-xs")}
+        >
+          View all issues
         </Link>
       )}
     </>

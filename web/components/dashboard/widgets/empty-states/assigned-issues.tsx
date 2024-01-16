@@ -23,9 +23,7 @@ export const AssignedIssuesEmptyState: React.FC<Props> = (props) => {
 
   return (
     <div className="text-center space-y-10 mt-16 flex flex-col items-center">
-      <p className="text-sm font-medium text-custom-text-300">
-        {typeDetails.title} {filter}
-      </p>
+      <p className="text-sm font-medium text-custom-text-300">{typeDetails.title(filter)}</p>
       <div
         className={cn("w-1/2 h-1/3 p-1.5 pb-0 rounded-t-md", {
           "border border-custom-border-200": resolvedTheme === "dark",
@@ -37,7 +35,7 @@ export const AssignedIssuesEmptyState: React.FC<Props> = (props) => {
               : "",
         }}
       >
-        <Image src={image} className="w-full h-full" alt={typeDetails.title} />
+        <Image src={image} className="w-full h-full" alt="Assigned issues" />
       </div>
     </div>
   );

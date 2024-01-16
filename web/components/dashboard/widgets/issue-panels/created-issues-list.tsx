@@ -7,14 +7,14 @@ import {
   CreatedOverdueIssueListItem,
   CreatedUpcomingIssueListItem,
 } from "components/dashboard";
+import { CreatedIssuesEmptyState } from "components/dashboard/widgets";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Loader, getButtonStyling } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
 import { TDurationFilterOptions, TIssue, TIssuesListTypes, TWidgetIssue } from "@plane/types";
-import { CreatedIssuesEmptyState } from "../empty-states";
 
 type Props = {
   filter: TDurationFilterOptions | undefined;
@@ -68,7 +68,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
               {type === "overdue" && <h6 className="text-center">Due by</h6>}
               <h6 className="text-center">Assigned to</h6>
             </div>
-            <div className="px-4 mt-2">
+            <div className="px-4 pb-3 mt-2">
               {issues.map((issue) => {
                 if (type === "upcoming")
                   return (
@@ -107,10 +107,11 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
         )}
       </div>
       {totalIssues > issues.length && (
-        <Link href={`/${workspaceSlug}/workspace-views/created/${filterParams}`} className="block mt-6 text-center">
-          <Button type="button" variant="accent-primary" className="py-1 px-2 text-xs">
-            View all issues
-          </Button>
+        <Link
+          href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
+          className={cn(getButtonStyling("accent-primary", "sm"), "w-min my-3 mx-auto py-1 px-2 text-xs")}
+        >
+          View all issues
         </Link>
       )}
     </>
