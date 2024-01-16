@@ -6,12 +6,7 @@ export type TIssueRelationTypes =
   | "duplicate"
   | "relates_to";
 
-export type TIssueRelationObject = { issue_detail: TIssue };
-
-export type TIssueRelation = Record<
-  TIssueRelationTypes,
-  TIssueRelationObject[]
->;
+export type TIssueRelation = Record<TIssueRelationTypes, TIssue[]>;
 
 export type TIssueRelationMap = {
   [issue_id: string]: Record<TIssueRelationTypes, string[]>;
