@@ -38,7 +38,6 @@ export const PagesListView: FC = observer(() => {
   const projectPageStore = useProjectSpecificPages(projectId as string);
   // Now, I am observing only the projectPages, out of the projectPageStore.
   const { projectPageIds } = projectPageStore;
-  console.log("projectPageIds", projectPageIds);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

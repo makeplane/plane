@@ -1,24 +1,13 @@
 import { FC, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import {
-  AlertCircle,
-  Archive,
-  ArchiveRestoreIcon,
-  FileText,
-  Globe2,
-  LinkIcon,
-  Lock,
-  Pencil,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, Archive, ArchiveRestoreIcon, FileText, Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
-import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
+import { CreateUpdatePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useRouter } from "next/router";
@@ -41,31 +30,18 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const router = useRouter();
   const { workspaceSlug } = router.query;
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  const [deletePageModal, setDeletePageModal] = useState(false);
-  // store hooks
+
+  // Delete doesn't exist in pages, we are using archive instead
+  // const [deletePageModal, setDeletePageModal] = useState(false);
+
   const {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  // const {
-  //   getArchivedPageById,
-  //   getUnArchivedPageById,
-  //   archivePage,
-  //   removeFromFavorites,
-  //   addToFavorites,
-  //   makePrivate,
-  //   makePublic,
-  //   restorePage,
-  // } = usePage();
+
   const {
     project: { getProjectMemberDetails },
   } = useMember();
-  // toast alert
-  //
-
-  // const { setToastAlert } = useToast();
-  // derived values
-  // const pageDetails = getUnArchivedPageById(pageId) ?? getArchivedPageById(pageId);
 
   if (!pageStore) return null;
 
@@ -121,7 +97,6 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     e.preventDefault();
     e.stopPropagation();
 
-    // TODO: implement archive page inside page store
     archivePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
@@ -132,12 +107,12 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     restorePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
-  const handleDeletePage = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setDeletePageModal(true);
-  };
+  // const handleDeletePage = (e: any) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //
+  //   setDeletePageModal(true);
+  // };
 
   const handleEditPage = (e: any) => {
     e.preventDefault();
@@ -146,11 +121,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     setCreateUpdatePageModal(true);
   };
 
-  // if (!pageDetails) return null;
-
-  // const ownerDetails = getProjectMemberDetails(owned_by);
   const ownerDetails = getProjectMemberDetails(owned_by);
-
   const isCurrentUserOwner = owned_by === currentUser?.id;
 
   const userCanEdit =
@@ -158,7 +129,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     (currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole));
   const userCanChangeAccess = isCurrentUserOwner;
   const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
-  const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
+  // const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
@@ -264,14 +235,14 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                           </div>
                         </CustomMenu.MenuItem>
                       )}
-                      {userCanDelete && isEditingAllowed && (
+                      {/** userCanDelete && isEditingAllowed && (
                         <CustomMenu.MenuItem onClick={handleDeletePage}>
                           <div className="flex items-center gap-2">
                             <Trash2 className="h-3 w-3" />
                             <span>Delete page</span>
                           </div>
                         </CustomMenu.MenuItem>
-                      )}
+                      ) **/}
                     </>
                   ) : (
                     <>
