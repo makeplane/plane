@@ -16,14 +16,14 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   const priorityClasses = {
-    urgent: "bg-red-500 text-red-950 border-red-500",
-    high: "bg-orange-500/20 text-orange-950 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "bg-custom-background-80 border-custom-border-300",
+    urgent: "bg-red-500 text-red-500 border-red-500",
+    high: "bg-orange-500/20 text-orange-500 border-orange-500",
+    medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
+    low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
+    none: "bg-custom-background-80 text-custom-text-200 border-custom-border-300",
   };
 
-  //get priority icon
+  // get priority icon
   const icons = {
     urgent: AlertCircle,
     high: SignalHigh,
@@ -32,6 +32,8 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
     none: Ban,
   };
   const Icon = icons[priority];
+
+  if (!Icon) return null;
 
   return (
     <>
@@ -45,13 +47,16 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
         >
           <Icon
             size={size}
-            className={cn({
-              "text-white": priority === "urgent",
-              // centre align the icons if text is hidden
-              "translate-x-[0.0625rem]": priority === "high",
-              "translate-x-0.5": priority === "medium",
-              "translate-x-1": priority === "low",
-            })}
+            className={cn(
+              {
+                "text-white": priority === "urgent",
+                // centre align the icons
+                "translate-x-[0.0625rem]": priority === "high",
+                "translate-x-0.5": priority === "medium",
+                "translate-x-1": priority === "low",
+              },
+              className
+            )}
           />
         </div>
       ) : (

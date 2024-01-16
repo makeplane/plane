@@ -13,6 +13,7 @@ import { PriorityIcon } from "@plane/ui";
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
+import { IssuesByPriorityEmptyState } from "./empty-states";
 
 const TEXT_COLORS = {
   urgent: "#F4A9AA",
@@ -128,7 +129,7 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
   return (
     <Link
       href={`/${workspaceSlug}/workspace-views/assigned`}
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300"
+      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden"
     >
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <h4 className="text-lg font-semibold text-custom-text-300">Priority of assigned issues</h4>
@@ -141,98 +142,104 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
           }
         />
       </div>
-      <div className="flex items-center px-11 h-full">
-        <div className="w-full -mt-[11px]">
-          <MarimekkoGraph
-            data={chartData}
-            id="priority"
-            value="percentage"
-            dimensions={[
-              {
-                id: "urgent",
-                value: "urgent",
-              },
-              {
-                id: "high",
-                value: "high",
-              },
-              {
-                id: "medium",
-                value: "medium",
-              },
-              {
-                id: "low",
-                value: "low",
-              },
-              {
-                id: "none",
-                value: "none",
-              },
-            ]}
-            axisBottom={null}
-            axisLeft={null}
-            height="119px"
-            margin={{
-              top: 11,
-              right: 0,
-              bottom: 0,
-              left: 0,
-            }}
-            defs={PRIORITY_GRAPH_GRADIENTS}
-            fill={[
-              {
-                match: {
+      {totalCount > 0 ? (
+        <div className="flex items-center px-11 h-full">
+          <div className="w-full -mt-[11px]">
+            <MarimekkoGraph
+              data={chartData}
+              id="priority"
+              value="percentage"
+              dimensions={[
+                {
                   id: "urgent",
+                  value: "urgent",
                 },
-                id: "gradientUrgent",
-              },
-              {
-                match: {
+                {
                   id: "high",
+                  value: "high",
                 },
-                id: "gradientHigh",
-              },
-              {
-                match: {
+                {
                   id: "medium",
+                  value: "medium",
                 },
-                id: "gradientMedium",
-              },
-              {
-                match: {
+                {
                   id: "low",
+                  value: "low",
                 },
-                id: "gradientLow",
-              },
-              {
-                match: {
+                {
                   id: "none",
+                  value: "none",
                 },
-                id: "gradientNone",
-              },
-            ]}
-            tooltip={() => <></>}
-            enableGridX={false}
-            enableGridY={false}
-            layers={[CustomBarsLayer]}
-          />
-          <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
-            {/* TODO: add priority icon */}
-            {chartData.map((item) => (
-              <p
-                key={item.priority}
-                className="flex items-center gap-1"
-                style={{
-                  width: `${item.percentage}%`,
-                }}
-              >
-                <PriorityIcon priority={item.priority} withContainer />
-                {item.percentage.toFixed(0)}%
-              </p>
-            ))}
+              ]}
+              axisBottom={null}
+              axisLeft={null}
+              height="119px"
+              margin={{
+                top: 11,
+                right: 0,
+                bottom: 0,
+                left: 0,
+              }}
+              defs={PRIORITY_GRAPH_GRADIENTS}
+              fill={[
+                {
+                  match: {
+                    id: "urgent",
+                  },
+                  id: "gradientUrgent",
+                },
+                {
+                  match: {
+                    id: "high",
+                  },
+                  id: "gradientHigh",
+                },
+                {
+                  match: {
+                    id: "medium",
+                  },
+                  id: "gradientMedium",
+                },
+                {
+                  match: {
+                    id: "low",
+                  },
+                  id: "gradientLow",
+                },
+                {
+                  match: {
+                    id: "none",
+                  },
+                  id: "gradientNone",
+                },
+              ]}
+              tooltip={() => <></>}
+              enableGridX={false}
+              enableGridY={false}
+              layers={[CustomBarsLayer]}
+            />
+            <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
+              {/* TODO: add priority icon */}
+              {chartData.map((item) => (
+                <p
+                  key={item.priority}
+                  className="flex items-center gap-1"
+                  style={{
+                    width: `${item.percentage}%`,
+                  }}
+                >
+                  <PriorityIcon priority={item.priority} withContainer />
+                  {item.percentage.toFixed(0)}%
+                </p>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="h-full grid items-end">
+          <IssuesByPriorityEmptyState />
+        </div>
+      )}
     </Link>
   );
 });

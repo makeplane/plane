@@ -12,6 +12,7 @@ import { DurationFilterDropdown } from "./dropdowns";
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
 import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
+import { IssuesByStateGroupEmptyState } from "./empty-states";
 
 type Props = {
   dashboardId: string;
@@ -99,7 +100,7 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
   return (
     <Link
       href={`/${workspaceSlug?.toString()}/workspace-views/assigned`}
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300"
+      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden"
     >
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <h4 className="text-lg font-semibold text-custom-text-300">State of assigned issues</h4>
@@ -112,87 +113,93 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
           }
         />
       </div>
-      <div className="flex items-center pl-20 md:pl-11 lg:pl-14 pr-11 mt-11">
-        <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-8 w-full">
-          <div className="w-full flex justify-center">
-            <PieGraph
-              data={chartData}
-              height="220px"
-              width="220px"
-              innerRadius={0.6}
-              cornerRadius={5}
-              colors={(datum) => datum.data.color}
-              padAngle={1}
-              enableArcLinkLabels={false}
-              enableArcLabels={false}
-              activeOuterRadiusOffset={5}
-              tooltip={() => <></>}
-              margin={{
-                top: 0,
-                right: 5,
-                bottom: 0,
-                left: 5,
-              }}
-              defs={STATE_GROUP_GRAPH_GRADIENTS}
-              fill={[
-                {
-                  match: {
-                    id: "backlog",
+      {totalCount > 0 ? (
+        <div className="flex items-center pl-20 md:pl-11 lg:pl-14 pr-11 mt-11">
+          <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-8 w-full">
+            <div className="w-full flex justify-center">
+              <PieGraph
+                data={chartData}
+                height="220px"
+                width="220px"
+                innerRadius={0.6}
+                cornerRadius={5}
+                colors={(datum) => datum.data.color}
+                padAngle={1}
+                enableArcLinkLabels={false}
+                enableArcLabels={false}
+                activeOuterRadiusOffset={5}
+                tooltip={() => <></>}
+                margin={{
+                  top: 0,
+                  right: 5,
+                  bottom: 0,
+                  left: 5,
+                }}
+                defs={STATE_GROUP_GRAPH_GRADIENTS}
+                fill={[
+                  {
+                    match: {
+                      id: "backlog",
+                    },
+                    id: "gradientBacklog",
                   },
-                  id: "gradientBacklog",
-                },
-                {
-                  match: {
-                    id: "unstarted",
+                  {
+                    match: {
+                      id: "unstarted",
+                    },
+                    id: "gradientUnstarted",
                   },
-                  id: "gradientUnstarted",
-                },
-                {
-                  match: {
-                    id: "started",
+                  {
+                    match: {
+                      id: "started",
+                    },
+                    id: "gradientStarted",
                   },
-                  id: "gradientStarted",
-                },
-                {
-                  match: {
-                    id: "completed",
+                  {
+                    match: {
+                      id: "completed",
+                    },
+                    id: "gradientCompleted",
                   },
-                  id: "gradientCompleted",
-                },
-                {
-                  match: {
-                    id: "cancelled",
+                  {
+                    match: {
+                      id: "cancelled",
+                    },
+                    id: "gradientCanceled",
                   },
-                  id: "gradientCanceled",
-                },
-              ]}
-              onClick={(datum, e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                router.push(`/${workspaceSlug}/workspace-views/assigned/?state_group=${datum.id}`);
-              }}
-              onMouseEnter={(datum) => setActiveStateGroup(datum.id as TStateGroups)}
-              layers={["arcs", CenteredMetric]}
-            />
-          </div>
-          <div className="justify-self-end space-y-6 w-min whitespace-nowrap">
-            {chartData.map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-6">
-                <div className="flex items-center gap-2.5 w-24">
-                  <div
-                    className="h-3 w-3 rounded-full"
-                    style={{
-                      backgroundColor: item.color,
-                    }}
-                  />
-                  <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>
+                ]}
+                onClick={(datum, e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push(`/${workspaceSlug}/workspace-views/assigned/?state_group=${datum.id}`);
+                }}
+                onMouseEnter={(datum) => setActiveStateGroup(datum.id as TStateGroups)}
+                layers={["arcs", CenteredMetric]}
+              />
+            </div>
+            <div className="justify-self-end space-y-6 w-min whitespace-nowrap">
+              {chartData.map((item) => (
+                <div key={item.id} className="flex items-center justify-between gap-6">
+                  <div className="flex items-center gap-2.5 w-24">
+                    <div
+                      className="h-3 w-3 rounded-full"
+                      style={{
+                        backgroundColor: item.color,
+                      }}
+                    />
+                    <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>
+                  </div>
+                  <span className="text-custom-text-400 text-sm">{item.value.toFixed(0)}%</span>
                 </div>
-                <span className="text-custom-text-400 text-sm">{item.value.toFixed(0)}%</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="h-full grid items-end">
+          <IssuesByStateGroupEmptyState />
+        </div>
+      )}
     </Link>
   );
 });

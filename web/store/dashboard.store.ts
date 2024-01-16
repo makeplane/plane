@@ -36,11 +36,6 @@ export interface IDashboardStore {
   getWidgetDetails: (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => TWidget | undefined;
   // actions
   fetchHomeDashboardWidgets: (workspaceSlug: string) => Promise<THomeDashboardResponse>;
-  fetchIssuesWidget: (
-    workspaceSlug: string,
-    dashboardId: string,
-    params: TWidgetStatsRequestParams
-  ) => Promise<TWidgetStatsResponse>;
   fetchWidgetStats: (
     workspaceSlug: string,
     dashboardId: string,
@@ -83,7 +78,6 @@ export class DashboardStore implements IDashboardStore {
       getWidgetDetails: action,
       // fetch actions
       fetchHomeDashboardWidgets: action,
-      fetchIssuesWidget: action,
       fetchWidgetStats: action,
       // update actions
       updateDashboardWidget: action,
@@ -152,27 +146,11 @@ export class DashboardStore implements IDashboardStore {
    * @param widgetKey
    * @returns widget stats
    */
-  fetchIssuesWidget = async (workspaceSlug: string, dashboardId: string, params: TWidgetStatsRequestParams) =>
-    this.dashboardService.getWidgetStats(workspaceSlug, dashboardId, params).then((res) => {
-      if (res.issues)
-        runInAction(() => {
-          this.issueStore.addIssue(res.issues);
-          set(this.widgetStats, [workspaceSlug, dashboardId, params.widget_key], res);
-        });
-
-      return res;
-    });
-
-  /**
-   * @description fetch widget stats
-   * @param workspaceSlug
-   * @param dashboardId
-   * @param widgetKey
-   * @returns widget stats
-   */
   fetchWidgetStats = async (workspaceSlug: string, dashboardId: string, params: TWidgetStatsRequestParams) =>
     this.dashboardService.getWidgetStats(workspaceSlug, dashboardId, params).then((res) => {
       runInAction(() => {
+        // @ts-ignore
+        if (res.issues) this.issueStore.addIssue(res.issues);
         set(this.widgetStats, [workspaceSlug, dashboardId, params.widget_key], res);
       });
 

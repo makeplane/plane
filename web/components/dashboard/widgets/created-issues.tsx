@@ -70,7 +70,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col">
       <Link href={redirectionLink} className="flex items-center justify-between gap-2 p-6 pl-7">
         <h4 className="text-lg font-semibold text-custom-text-300">All issues created</h4>
         <DurationFilterDropdown
@@ -89,13 +89,15 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
           const selectedTab = ISSUES_TABS_LIST[i];
           handleUpdateFilters({ tab: selectedTab.key ?? "upcoming" });
         }}
+        className="h-full flex flex-col"
       >
         <div className="px-6">
           <TabsList />
         </div>
-        <Tab.Panels as="div" className="mt-7 pb-3">
-          <Tab.Panel>
+        <Tab.Panels as="div" className="mt-7 h-full">
+          <Tab.Panel as="div" className="h-full">
             <CreatedIssuesList
+              filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="upcoming"
@@ -105,6 +107,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel>
             <CreatedIssuesList
+              filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="overdue"
@@ -114,6 +117,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel>
             <CreatedIssuesList
+              filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="completed"

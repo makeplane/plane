@@ -50,6 +50,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
         widget_key: WIDGET_KEY,
         issue_type: filters.tab,
         duration: getCustomDates(filters.duration ?? "this_week"),
+        expand: "issue_relation",
       }).finally(() => setFetching(false));
     }
   };
@@ -57,11 +58,14 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (!widgetDetails) return;
 
+    const filterDates = getCustomDates(widgetDetails.widget_filters.duration ?? "this_week");
+
     if (!widgetStats)
       fetchWidgetStats(workspaceSlug, dashboardId, {
         widget_key: WIDGET_KEY,
         issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-        duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+        duration: filterDates,
+        expand: "issue_relation",
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
 
@@ -70,7 +74,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col">
       <Link href={redirectionLink} className="flex items-center justify-between gap-2 p-6 pl-7">
         <h4 className="text-lg font-semibold text-custom-text-300">All issues assigned</h4>
         <DurationFilterDropdown
@@ -89,12 +93,13 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
           const selectedTab = ISSUES_TABS_LIST[i];
           handleUpdateFilters({ tab: selectedTab.key ?? "upcoming" });
         }}
+        className="h-full flex flex-col"
       >
         <div className="px-6">
           <TabsList />
         </div>
-        <Tab.Panels as="div" className="mt-7 pb-3">
-          <Tab.Panel>
+        <Tab.Panels as="div" className="mt-7 h-full">
+          <Tab.Panel as="div" className="h-full">
             <AssignedIssuesList
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}

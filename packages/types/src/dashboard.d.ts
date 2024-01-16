@@ -1,4 +1,5 @@
 import { IIssueActivity, TIssuePriorities } from "./issues";
+import { TIssue } from "./issues/issue";
 import { TIssueRelationTypes } from "./issues/issue_relation";
 import { TStateGroups } from "./state";
 
@@ -81,6 +82,7 @@ export type TWidgetStatsRequestParams =
       duration: string;
       issue_type: TIssuesListTypes;
       widget_key: "assigned_issues";
+      expand?: "issue_relation";
     }
   | {
       duration: string;
@@ -96,22 +98,13 @@ export type TWidgetStatsRequestParams =
       widget_key: "issues_by_priority";
     };
 
-export type TWidgetIssue = {
-  assignees: string[];
-  id: string;
-  name: string;
-  priority: TIssuePriorities;
-  project: string;
-  related_issues: {
+export type TWidgetIssue = TIssue & {
+  issue_relation: {
     id: string;
     project_id: string;
     relation_type: TIssueRelationTypes;
     sequence_id: number;
   }[];
-  sequence_id: number;
-  state: string;
-  target_date: string | null;
-  workspace: string;
 };
 
 // widget stats responses

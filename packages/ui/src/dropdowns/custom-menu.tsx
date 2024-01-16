@@ -63,7 +63,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       static
     >
       <div
-        className={`my-1 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-custom-shadow-rg focus:outline-none ${
+        className={`my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${
           maxHeight === "lg"
             ? "max-h-60"
             : maxHeight === "md"
@@ -73,7 +73,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 : maxHeight === "sm"
                   ? "max-h-28"
                   : ""
-        } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
+        } ${width === "auto" ? "min-w-[12rem] whitespace-nowrap" : width} ${optionsClassName}`}
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
@@ -169,7 +169,7 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
         <button
           type="button"
           className={cn(
-            "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80",
+            "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
             {
               "bg-custom-background-80": active,
             },

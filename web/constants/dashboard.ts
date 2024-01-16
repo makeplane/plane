@@ -1,4 +1,17 @@
 import { linearGradientDef } from "@nivo/core";
+// assets
+import UpcomingAssignedIssuesDark from "public/empty-state/dashboard/dark/upcoming-assigned-issues.svg";
+import UpcomingAssignedIssuesLight from "public/empty-state/dashboard/light/upcoming-assigned-issues.svg";
+import OverdueAssignedIssuesDark from "public/empty-state/dashboard/dark/overdue-assigned-issues.svg";
+import OverdueAssignedIssuesLight from "public/empty-state/dashboard/light/overdue-assigned-issues.svg";
+import CompletedAssignedIssuesDark from "public/empty-state/dashboard/dark/completed-assigned-issues.svg";
+import CompletedAssignedIssuesLight from "public/empty-state/dashboard/light/completed-assigned-issues.svg";
+import UpcomingCreatedIssuesDark from "public/empty-state/dashboard/dark/upcoming-created-issues.svg";
+import UpcomingCreatedIssuesLight from "public/empty-state/dashboard/light/upcoming-created-issues.svg";
+import OverdueCreatedIssuesDark from "public/empty-state/dashboard/dark/overdue-created-issues.svg";
+import OverdueCreatedIssuesLight from "public/empty-state/dashboard/light/overdue-created-issues.svg";
+import CompletedCreatedIssuesDark from "public/empty-state/dashboard/dark/completed-created-issues.svg";
+import CompletedCreatedIssuesLight from "public/empty-state/dashboard/light/completed-created-issues.svg";
 // types
 import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
 
@@ -151,3 +164,50 @@ export const ISSUES_TABS_LIST: {
     label: "Completed",
   },
 ];
+
+const DURATION_TITLES: {
+  [duration in TDurationFilterOptions]: string;
+} = {
+  today: "today",
+  this_week: "in this week",
+  this_month: "in this month",
+  this_year: "in this year",
+};
+
+export const ASSIGNED_ISSUES_EMPTY_STATES = {
+  upcoming: {
+    title: "No upcoming issues",
+    darkImage: UpcomingAssignedIssuesDark,
+    lightImage: UpcomingAssignedIssuesLight,
+  },
+  overdue: {
+    title: "No overdue issues",
+    darkImage: OverdueAssignedIssuesDark,
+    lightImage: OverdueAssignedIssuesLight,
+  },
+  completed: {
+    title: "No completed issues",
+    darkImage: CompletedAssignedIssuesDark,
+    lightImage: CompletedAssignedIssuesLight,
+  },
+};
+
+export const CREATED_ISSUES_EMPTY_STATES = {
+  upcoming: {
+    title: (duration: TDurationFilterOptions) =>
+      `No created issues have deadlines coming up ${DURATION_TITLES[duration]}.`,
+    darkImage: UpcomingCreatedIssuesDark,
+    lightImage: UpcomingCreatedIssuesLight,
+  },
+  overdue: {
+    title: (duration: TDurationFilterOptions) =>
+      `No created issues with due dates ${DURATION_TITLES[duration]} are open.`,
+    darkImage: OverdueCreatedIssuesDark,
+    lightImage: OverdueCreatedIssuesLight,
+  },
+  completed: {
+    title: (duration: TDurationFilterOptions) => `No created issues are completed ${DURATION_TITLES[duration]}.`,
+    darkImage: CompletedCreatedIssuesDark,
+    lightImage: CompletedCreatedIssuesLight,
+  },
+};

@@ -13,6 +13,7 @@ import { Avatar } from "@plane/ui";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
+import { RecentActivityEmptyState } from "./empty-states";
 
 type Props = {
   dashboardId: string;
@@ -46,59 +47,65 @@ export const RecentActivityWidget: React.FC<Props> = observer((props) => {
       <div className="flex items-center justify-between gap-2 px-7">
         <h4 className="text-lg font-semibold text-custom-text-300">My activity</h4>
       </div>
-      <div className="space-y-6 mt-4 mx-7">
-        {widgetStats.map((activity) => (
-          <div key={activity.id} className="flex gap-5">
-            <div className="flex-shrink-0">
-              {activity.field ? (
-                activity.new_value === "restore" ? (
-                  <History className="h-3.5 w-3.5 text-custom-text-200" />
-                ) : (
-                  <div className="h-6 w-6 flex justify-center">
-                    <ActivityIcon activity={activity} />
-                  </div>
-                )
-              ) : activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
-                <Avatar
-                  src={activity.actor_detail.avatar}
-                  name={activity.actor_detail.display_name}
-                  size={24}
-                  className="h-full w-full rounded-full object-cover"
-                />
-              ) : (
-                <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white">
-                  {activity.actor_detail.is_bot
-                    ? activity.actor_detail.first_name.charAt(0)
-                    : activity.actor_detail.display_name.charAt(0)}
-                </div>
-              )}
-            </div>
-            <div className="-mt-1 break-words">
-              <p className="text-sm text-custom-text-200">
-                <span className="font-medium text-custom-text-100">
-                  {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
-                </span>
+      {widgetStats.length > 0 ? (
+        <div className="space-y-6 mt-4 mx-7">
+          {widgetStats.map((activity) => (
+            <div key={activity.id} className="flex gap-5">
+              <div className="flex-shrink-0">
                 {activity.field ? (
-                  <ActivityMessage activity={activity} showIssue />
+                  activity.new_value === "restore" ? (
+                    <History className="h-3.5 w-3.5 text-custom-text-200" />
+                  ) : (
+                    <div className="h-6 w-6 flex justify-center">
+                      <ActivityIcon activity={activity} />
+                    </div>
+                  )
+                ) : activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
+                  <Avatar
+                    src={activity.actor_detail.avatar}
+                    name={activity.actor_detail.display_name}
+                    size={24}
+                    className="h-full w-full rounded-full object-cover"
+                  />
                 ) : (
-                  <span>
-                    created this{" "}
-                    <a
-                      href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
-                    >
-                      Issue.
-                    </a>
-                  </span>
+                  <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white">
+                    {activity.actor_detail.is_bot
+                      ? activity.actor_detail.first_name.charAt(0)
+                      : activity.actor_detail.display_name.charAt(0)}
+                  </div>
                 )}
-              </p>
-              <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
+              </div>
+              <div className="-mt-1 break-words">
+                <p className="text-sm text-custom-text-200">
+                  <span className="font-medium text-custom-text-100">
+                    {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
+                  </span>
+                  {activity.field ? (
+                    <ActivityMessage activity={activity} showIssue />
+                  ) : (
+                    <span>
+                      created this{" "}
+                      <a
+                        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
+                      >
+                        Issue.
+                      </a>
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="h-full grid items-end">
+          <RecentActivityEmptyState />
+        </div>
+      )}
     </Link>
   );
 });

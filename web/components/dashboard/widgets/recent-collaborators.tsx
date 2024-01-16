@@ -9,6 +9,7 @@ import { WidgetLoader } from "components/dashboard/widgets";
 import { Avatar } from "@plane/ui";
 // types
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
+import { RecentCollaboratorsEmptyState } from "./empty-states";
 
 type Props = {
   dashboardId: string;
@@ -73,20 +74,26 @@ export const RecentCollaboratorsWidget: React.FC<Props> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300">
-      <div className="flex items-center justify-between gap-2 px-7">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
+      <div className="flex items-center justify-between gap-2 px-7 pt-6">
         <h4 className="text-lg font-semibold text-custom-text-300">Collaborators</h4>
       </div>
-      <div className="mt-7 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
-        {widgetStats.map((user) => (
-          <CollaboratorListItem
-            key={user.user_id}
-            issueCount={user.active_issue_count}
-            userId={user.user_id}
-            workspaceSlug={workspaceSlug}
-          />
-        ))}
-      </div>
+      {widgetStats.length > 1 ? (
+        <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
+          {widgetStats.map((user) => (
+            <CollaboratorListItem
+              key={user.user_id}
+              issueCount={user.active_issue_count}
+              userId={user.user_id}
+              workspaceSlug={workspaceSlug}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="h-full grid items-end">
+          <RecentCollaboratorsEmptyState />
+        </div>
+      )}
     </div>
   );
 });

@@ -7,11 +7,11 @@ import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { TWidgetIssue } from "@plane/types";
+import { TIssue, TWidgetIssue } from "@plane/types";
 
 type Props = {
   issueId: string;
-  onClick: (issue: TWidgetIssue) => void;
+  onClick: (issue: TIssue) => void;
   workspaceSlug: string;
 };
 
@@ -29,7 +29,7 @@ export const AssignedUpcomingIssueListItem: React.FC<Props> = observer((props) =
 
   const projectDetails = getProjectById(issueDetails.project_id);
 
-  const blockedByIssues = issueDetails.related_issues?.filter((issue) => issue.relation_type === "blocked_by") ?? [];
+  const blockedByIssues = issueDetails.issue_relation?.filter((issue) => issue.relation_type === "blocked_by") ?? [];
 
   const blockedByIssueProjectDetails =
     blockedByIssues.length === 1 ? getProjectById(blockedByIssues[0]?.project_id ?? "") : null;
@@ -78,7 +78,7 @@ export const AssignedOverdueIssueListItem: React.FC<Props> = observer((props) =>
   if (!issueDetails) return null;
 
   const projectDetails = getProjectById(issueDetails.project_id);
-  const blockedByIssues = issueDetails.related_issues?.filter((issue) => issue.relation_type === "blocked_by") ?? [];
+  const blockedByIssues = issueDetails.issue_relation?.filter((issue) => issue.relation_type === "blocked_by") ?? [];
 
   const blockedByIssueProjectDetails =
     blockedByIssues.length === 1 ? getProjectById(blockedByIssues[0]?.project_id ?? "") : null;
