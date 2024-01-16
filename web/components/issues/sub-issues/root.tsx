@@ -1,6 +1,7 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
+import useSWR from "swr";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -33,9 +34,7 @@ export type TSubIssueOperations = {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    currentIssue: Partial<TIssue>,
-    oldIssue?: Partial<TIssue> | undefined,
-    fromModal?: boolean
+    data: Partial<TIssue>
   ) => Promise<void>;
   removeSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
   deleteSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
@@ -84,6 +83,18 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
       issue: undefined,
     },
   });
+
+  useSWR(
+    workspaceSlug && projectId && parentIssueId
+      ? `ISSUE_DETAIL_SUB_ISSUES_${workspaceSlug}_${projectId}_${parentIssueId}`
+      : null,
+    async () => {
+      workspaceSlug &&
+        projectId &&
+        parentIssueId &&
+        (await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId));
+    }
+  );
 
   const handleIssueCrudState = (
     key: "create" | "existing" | "update" | "delete",
@@ -144,13 +155,11 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         projectId: string,
         parentIssueId: string,
         issueId: string,
-        currentIssue: Partial<TIssue>,
-        oldIssue: Partial<TIssue> | undefined = undefined,
-        fromModal: boolean = false
+        data: Partial<TIssue>
       ) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, currentIssue, oldIssue, fromModal);
+          await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, data);
           setToastAlert({
             type: "success",
             title: "Sub-issue updated successfully",
@@ -386,15 +395,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 }}
                 data={issueCrudState?.update?.issue ?? undefined}
                 onSubmit={async (_issue: TIssue) => {
-                  await subIssueOperations.updateSubIssue(
-                    workspaceSlug,
-                    projectId,
-                    parentIssueId,
-                    _issue.id,
-                    _issue,
-                    issueCrudState?.update?.issue,
-                    true
-                  );
+                  await subIssueOperations.updateSubIssue(workspaceSlug, projectId, parentIssueId, _issue.id, _issue);
                 }}
               />
             </>
