@@ -83,17 +83,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
-        # Send message on slack as well
-        if settings.SLACK_BOT_TOKEN:
-            client = WebClient(token=settings.SLACK_BOT_TOKEN)
-            try:
-                _ = client.chat_postMessage(
-                    channel="#trackers",
-                    text=f"{workspace_member_invite.email} has been invited to {workspace.name} as a {workspace_member_invite.role}",
-                )
-            except SlackApiError as e:
-                print(f"Got an error: {e.response['error']}")
-
         return
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
         print("Workspace or WorkspaceMember Invite Does not exists")
