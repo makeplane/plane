@@ -18,13 +18,13 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // fetching active cycles in workspace
   const { data } = useSWR("WORKSPACE_ACTIVE_CYCLES", () => cycleService.workspaceActiveCycles(workspaceSlug as string));
   // store
-  const { searchQuery } = useWorkspace();
+  const { workspaceActiveCyclesSearchQuery } = useWorkspace();
   // filter cycles based on search query
   const filteredCycles = data?.filter(
     (cycle) =>
-      cycle.project_detail.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cycle.project_detail.identifier?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cycle.name.toLowerCase().includes(searchQuery.toLowerCase())
+      cycle.project_detail.name.toLowerCase().includes(workspaceActiveCyclesSearchQuery.toLowerCase()) ||
+      cycle.project_detail.identifier?.toLowerCase().includes(workspaceActiveCyclesSearchQuery.toLowerCase()) ||
+      cycle.name.toLowerCase().includes(workspaceActiveCyclesSearchQuery.toLowerCase())
   );
 
   return (

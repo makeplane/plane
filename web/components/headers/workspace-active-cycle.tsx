@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@plane/ui";
 
 export const WorkspaceActiveCycleHeader = observer(() => {
   // store hooks
-  const { searchQuery, setSearchQuery } = useWorkspace();
+  const { workspaceActiveCyclesSearchQuery, setWorkspaceActiveCyclesSearchQuery } = useWorkspace();
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
@@ -16,7 +16,7 @@ export const WorkspaceActiveCycleHeader = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               icon={<SendToBack className="h-4 w-4 text-custom-text-300" />}
-              label="Workspace Active Cycles"
+              label="Active Cycles"
             />
           </Breadcrumbs>
         </div>
@@ -26,8 +26,8 @@ export const WorkspaceActiveCycleHeader = observer(() => {
           <Search className="h-3.5 w-3.5" />
           <input
             className="w-full min-w-[234px] border-none bg-transparent text-sm focus:outline-none"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={workspaceActiveCyclesSearchQuery}
+            onChange={(e) => setWorkspaceActiveCyclesSearchQuery(e.target.value)}
             placeholder="Search"
           />
         </div>

@@ -12,12 +12,12 @@ import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 export interface IWorkspaceRootStore {
   // observables
   workspaces: Record<string, IWorkspace>;
-  searchQuery: string;
+  workspaceActiveCyclesSearchQuery: string;
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
   // actions
-  setSearchQuery: (query: string) => void;
+  setWorkspaceActiveCyclesSearchQuery: (query: string) => void;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
@@ -34,7 +34,7 @@ export interface IWorkspaceRootStore {
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
   // observables
-  searchQuery: string = "";
+  workspaceActiveCyclesSearchQuery: string = "";
   workspaces: Record<string, IWorkspace> = {};
   // services
   workspaceService;
@@ -49,7 +49,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     makeObservable(this, {
       // observables
       workspaces: observable,
-      searchQuery: observable.ref,
+      workspaceActiveCyclesSearchQuery: observable.ref,
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
@@ -57,7 +57,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
       // actions
-      setSearchQuery: action,
+      setWorkspaceActiveCyclesSearchQuery: action,
       fetchWorkspaces: action,
       createWorkspace: action,
       updateWorkspace: action,
@@ -112,8 +112,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * Sets search query
    * @param query
    */
-  setSearchQuery = (query: string) => {
-    this.searchQuery = query;
+  setWorkspaceActiveCyclesSearchQuery = (query: string) => {
+    this.workspaceActiveCyclesSearchQuery = query;
   };
 
   /**
