@@ -16,24 +16,28 @@ const PROFILE_ACTION_LINKS = [
     key: "profile",
     label: "Profile",
     href: `/profile`,
+    highlight: (pathName: string) => pathName === "/profile",
     Icon: CircleUser,
   },
   {
     key: "change-password",
     label: "Change password",
     href: `/profile/change-password`,
+    highlight: (pathName: string) => pathName === "/profile/change-password",
     Icon: KeyRound,
   },
   {
     key: "activity",
     label: "Activity",
     href: `/profile/activity`,
+    highlight: (pathName: string) => pathName === "/profile/activity",
     Icon: Activity,
   },
   {
     key: "preferences",
     label: "Preferences",
-    href: `/profile/preferences`,
+    href: `/profile/preferences/theme`,
+    highlight: (pathName: string) => pathName.includes("/profile/preferences"),
     Icon: Settings2,
   },
 ];
@@ -130,7 +134,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                        router.pathname === link.href
+                        link.highlight(router.pathname)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
