@@ -1,5 +1,8 @@
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import pull from "lodash/pull";
+import concat from "lodash/concat";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -120,14 +123,16 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
-        this.issues[projectId].push(response.id);
+        update(this.issues, [projectId], (issueIds) => {
+          if (!issueIds) return [response.id];
+          return concat(issueIds, response.id);
+        });
       });
 
       this.rootStore.issues.addIssue([response]);
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
@@ -148,16 +153,13 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     try {
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[projectId].splice(issueIndex, 1);
-        });
+      runInAction(() => {
+        pull(this.issues[projectId], issueId);
+      });
 
       this.rootStore.issues.removeIssue(issueId);
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
