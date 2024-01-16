@@ -88,10 +88,17 @@ class UserNotificationPreference(BaseModel):
         """Return name of the notifications"""
         return f"{self.user.email} <{self.workspace.name}>"
 
-
-class EmailNotificationLog(ProjectBaseModel):
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications")
-    triggered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="triggered_by_notifications")
+class EmailNotificationLog(BaseModel):
+    # receiver
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="email_notifications")
+    triggered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="triggered_emails")
+    # entity - can be issues, pages, etc.
+    entity_identifier = models.UUIDField(null=True)
+    entity_name = models.CharField(max_length=255)
+    # data
+    data = models.JSONField(null=True)
+    # sent at
+    processed_at = models.DateTimeField(null=True)
     sent_at = models.DateTimeField(null=True)
     entity = models.CharField(max_length=200)
     old_value = models.CharField(max_length=300, blank=True, null=True)
