@@ -14,7 +14,10 @@ from django.conf import settings
 from .base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project
-from plane.app.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
+from plane.app.serializers import (
+    ProjectLiteSerializer,
+    WorkspaceLiteSerializer,
+)
 from plane.utils.integrations.github import get_release_notes
 from plane.license.utils.instance_value import get_configuration_value
 
@@ -51,7 +54,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         if not task:
             return Response(
-                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Task is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         final_text = task + "\n" + prompt
@@ -89,7 +93,7 @@ class ReleaseNotesEndpoint(BaseAPIView):
 
 class UnsplashEndpoint(BaseAPIView):
     def get(self, request):
-        UNSPLASH_ACCESS_KEY, = get_configuration_value(
+        (UNSPLASH_ACCESS_KEY,) = get_configuration_value(
             [
                 {
                     "key": "UNSPLASH_ACCESS_KEY",

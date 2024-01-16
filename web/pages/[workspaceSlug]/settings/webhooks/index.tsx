@@ -21,7 +21,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // mobx store
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

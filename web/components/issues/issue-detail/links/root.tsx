@@ -107,7 +107,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         linkOperations={handleLinkOperations}
       />
 
-      <div className={`py-1 text-xs ${disabled ? "opacity-60" : ""}`}>
+      <div className="py-1 text-xs">
         <div className="flex items-center justify-between gap-2">
           <h4>Links</h4>
           {!disabled && (

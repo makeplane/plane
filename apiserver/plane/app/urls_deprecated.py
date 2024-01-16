@@ -192,7 +192,7 @@ from plane.app.views import (
 )
 
 
-#TODO: Delete this file
+# TODO: Delete this file
 # This url file has been deprecated use apiserver/plane/urls folder to create new urls
 
 urlpatterns = [
@@ -204,10 +204,14 @@ urlpatterns = [
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # Magic Sign In/Up
     path(
-        "magic-generate/", MagicSignInGenerateEndpoint.as_view(), name="magic-generate"
+        "magic-generate/",
+        MagicSignInGenerateEndpoint.as_view(),
+        name="magic-generate",
     ),
-    path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(
+        "magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"
+    ),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # Email verification
     path("email-verify/", VerifyEmailEndpoint.as_view(), name="email-verify"),
     path(
@@ -272,7 +276,9 @@ urlpatterns = [
     # user workspace invitations
     path(
         "users/me/invitations/workspaces/",
-        UserWorkspaceInvitationsEndpoint.as_view({"get": "list", "post": "create"}),
+        UserWorkspaceInvitationsEndpoint.as_view(
+            {"get": "list", "post": "create"}
+        ),
         name="user-workspace-invitations",
     ),
     # user workspace invitation
@@ -311,7 +317,9 @@ urlpatterns = [
     # user project invitations
     path(
         "users/me/invitations/projects/",
-        UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
+        UserProjectInvitationsViewset.as_view(
+            {"get": "list", "post": "create"}
+        ),
         name="user-project-invitaions",
     ),
     ## Workspaces ##
@@ -1238,7 +1246,7 @@ urlpatterns = [
                 "post": "unarchive",
             }
         ),
-        name="project-page-unarchive"
+        name="project-page-unarchive",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-pages/",
@@ -1264,19 +1272,22 @@ urlpatterns = [
             {
                 "post": "unlock",
             }
-        )
+        ),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/transactions/",
-        PageLogEndpoint.as_view(), name="page-transactions"
+        PageLogEndpoint.as_view(),
+        name="page-transactions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/transactions/<uuid:transaction>/",
-        PageLogEndpoint.as_view(), name="page-transactions"
+        PageLogEndpoint.as_view(),
+        name="page-transactions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",
-          SubPagesEndpoint.as_view(), name="sub-page"
+        SubPagesEndpoint.as_view(),
+        name="sub-page",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/",
@@ -1326,7 +1337,9 @@ urlpatterns = [
     ## End Pages
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
-    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"),
+    path(
+        "api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"
+    ),
     ## End API Tokens
     # Integrations
     path(

@@ -138,7 +138,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   ) => {
     try {
       if (!cycleId) throw new Error("Cycle id is required");
-      if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
+      if (isEmpty(this.filters) || isEmpty(this.filters[cycleId]) || isEmpty(filters)) return;
 
       const _filters = {
         filters: this.filters[cycleId].filters as IIssueFilterOptions,

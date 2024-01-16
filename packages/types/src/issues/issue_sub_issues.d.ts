@@ -1,11 +1,11 @@
 import { TIssue } from "./issue";
 
 export type TSubIssuesStateDistribution = {
-  backlog: number;
-  unstarted: number;
-  started: number;
-  completed: number;
-  cancelled: number;
+  backlog: string[];
+  unstarted: string[];
+  started: string[];
+  completed: string[];
+  cancelled: string[];
 };
 
 export type TIssueSubIssues = {

@@ -9,89 +9,289 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0026_alter_projectmember_view_props'),
+        ("db", "0026_alter_projectmember_view_props"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Estimate',
+            name="Estimate",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField(blank=True, verbose_name='Estimate Description')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='estimate_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_estimate', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='estimate_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_estimate', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="Estimate Description"
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="estimate_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_estimate",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="estimate_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_estimate",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Estimate',
-                'verbose_name_plural': 'Estimates',
-                'db_table': 'estimates',
-                'ordering': ('name',),
-                'unique_together': {('name', 'project')},
+                "verbose_name": "Estimate",
+                "verbose_name_plural": "Estimates",
+                "db_table": "estimates",
+                "ordering": ("name",),
+                "unique_together": {("name", "project")},
             },
         ),
         migrations.RemoveField(
-            model_name='issue',
-            name='attachments',
+            model_name="issue",
+            name="attachments",
         ),
         migrations.AddField(
-            model_name='issue',
-            name='estimate_point',
-            field=models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(7)]),
+            model_name="issue",
+            name="estimate_point",
+            field=models.IntegerField(
+                default=0,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(7),
+                ],
+            ),
         ),
         migrations.CreateModel(
-            name='IssueAttachment',
+            name="IssueAttachment",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('attributes', models.JSONField(default=dict)),
-                ('asset', models.FileField(upload_to=plane.db.models.issue.get_upload_path, validators=[plane.db.models.issue.file_size])),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueattachment_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_attachment', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issueattachment', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueattachment_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issueattachment', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("attributes", models.JSONField(default=dict)),
+                (
+                    "asset",
+                    models.FileField(
+                        upload_to=plane.db.models.issue.get_upload_path,
+                        validators=[plane.db.models.issue.file_size],
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueattachment_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_attachment",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issueattachment",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueattachment_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issueattachment",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Attachment',
-                'verbose_name_plural': 'Issue Attachments',
-                'db_table': 'issue_attachments',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Attachment",
+                "verbose_name_plural": "Issue Attachments",
+                "db_table": "issue_attachments",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='project',
-            name='estimate',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projects', to='db.estimate'),
+            model_name="project",
+            name="estimate",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="projects",
+                to="db.estimate",
+            ),
         ),
         migrations.CreateModel(
-            name='EstimatePoint',
+            name="EstimatePoint",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('key', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(7)])),
-                ('description', models.TextField(blank=True)),
-                ('value', models.CharField(max_length=20)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='estimatepoint_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('estimate', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='points', to='db.estimate')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_estimatepoint', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='estimatepoint_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_estimatepoint', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "key",
+                    models.IntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(7),
+                        ],
+                    ),
+                ),
+                ("description", models.TextField(blank=True)),
+                ("value", models.CharField(max_length=20)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="estimatepoint_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "estimate",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="points",
+                        to="db.estimate",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_estimatepoint",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="estimatepoint_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_estimatepoint",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Estimate Point',
-                'verbose_name_plural': 'Estimate Points',
-                'db_table': 'estimate_points',
-                'ordering': ('value',),
-                'unique_together': {('value', 'estimate')},
+                "verbose_name": "Estimate Point",
+                "verbose_name_plural": "Estimate Points",
+                "db_table": "estimate_points",
+                "ordering": ("value",),
+                "unique_together": {("value", "estimate")},
             },
         ),
     ]

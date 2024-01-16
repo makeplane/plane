@@ -17,7 +17,9 @@ class SlackProjectSync(ProjectBaseModel):
     team_id = models.CharField(max_length=30)
     team_name = models.CharField(max_length=300)
     workspace_integration = models.ForeignKey(
-        "db.WorkspaceIntegration", related_name="slack_syncs", on_delete=models.CASCADE
+        "db.WorkspaceIntegration",
+        related_name="slack_syncs",
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):
