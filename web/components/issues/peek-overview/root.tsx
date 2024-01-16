@@ -1,14 +1,10 @@
 import { FC, Fragment, useEffect, useState, useMemo } from "react";
-// router
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useMember, useProject, useUser } from "hooks/store";
+import { useIssueDetail, useIssues, useMember, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { TIssue } from "@plane/types";
 // constants
@@ -16,10 +12,20 @@ import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
 interface IIssuePeekOverview {
-  isArchived?: boolean;
+  is_archived?: boolean;
+  onIssueUpdate?: (issue: Partial<TIssue>) => Promise<void>;
 }
 
 export type TIssuePeekOperations = {
+  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  update: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    showToast?: boolean
+  ) => Promise<void>;
+  remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
@@ -27,17 +33,13 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { isArchived = false } = props;
-  // router
-  const router = useRouter();
+  const { is_archived = false, onIssueUpdate } = props;
   // hooks
   const {
     project: {},
   } = useMember();
-  const { currentProjectDetails } = useProject();
   const { setToastAlert } = useToast();
   const {
-    currentUser,
     membership: { currentProjectRole },
   } = useUser();
   const {
@@ -47,17 +49,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     peekIssue,
     updateIssue,
     removeIssue,
-    createComment,
-    updateComment,
-    removeComment,
-    createCommentReaction,
-    removeCommentReaction,
-    createReaction,
-    removeReaction,
-    createSubscription,
-    removeSubscription,
     issue: { getIssueById, fetchIssue },
-    fetchActivities,
   } = useIssueDetail();
   const { addIssueToCycle, removeIssueFromCycle, addIssueToModule, removeIssueFromModule } = useIssueDetail();
   // state
@@ -74,6 +66,54 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await fetchIssue(workspaceSlug, projectId, issueId);
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
+      },
+      update: async (
+        workspaceSlug: string,
+        projectId: string,
+        issueId: string,
+        data: Partial<TIssue>,
+        showToast: boolean = true
+      ) => {
+        try {
+          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
+          if (onIssueUpdate) await onIssueUpdate(response);
+          if (showToast)
+            setToastAlert({
+              title: "Issue updated successfully",
+              type: "success",
+              message: "Issue updated successfully",
+            });
+        } catch (error) {
+          setToastAlert({
+            title: "Issue update failed",
+            type: "error",
+            message: "Issue update failed",
+          });
+        }
+      },
+      remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          else await removeIssue(workspaceSlug, projectId, issueId);
+          setToastAlert({
+            title: "Issue deleted successfully",
+            type: "success",
+            message: "Issue deleted successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Issue delete failed",
+            type: "error",
+            message: "Issue delete failed",
+          });
+        }
+      },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
@@ -139,73 +179,27 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
     }),
-    [addIssueToCycle, removeIssueFromCycle, addIssueToModule, removeIssueFromModule, setToastAlert]
+    [
+      is_archived,
+      fetchIssue,
+      updateIssue,
+      removeIssue,
+      removeArchivedIssue,
+      addIssueToCycle,
+      removeIssueFromCycle,
+      addIssueToModule,
+      removeIssueFromModule,
+      setToastAlert,
+      onIssueUpdate,
+    ]
   );
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
   const issue = getIssueById(peekIssue.issueId) || undefined;
 
-  const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${peekIssue.workspaceSlug}/projects/${peekIssue.projectId}/${
-        isArchived ? "archived-issues" : "issues"
-      }/${peekIssue.issueId}`,
-    });
-  };
-
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(
-      `${peekIssue.workspaceSlug}/projects/${peekIssue.projectId}/${isArchived ? "archived-issues" : "issues"}/${
-        peekIssue.issueId
-      }`
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
-  const issueUpdate = async (_data: Partial<TIssue>) => {
-    if (!issue) return;
-    await updateIssue(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, _data);
-    fetchActivities(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
-  };
-  const issueDelete = async () => {
-    if (!issue) return;
-    if (isArchived) await removeArchivedIssue(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
-    else await removeIssue(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
-  };
-
-  const issueReactionCreate = (reaction: string) =>
-    createReaction(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, reaction);
-  const issueReactionRemove = (reaction: string) =>
-    currentUser &&
-    currentUser.id &&
-    removeReaction(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, reaction, currentUser.id);
-
-  const issueCommentCreate = (comment: any) =>
-    createComment(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, comment);
-  const issueCommentUpdate = (comment: any) =>
-    updateComment(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, comment?.id, comment);
-  const issueCommentRemove = (commentId: string) =>
-    removeComment(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, commentId);
-
-  const issueCommentReactionCreate = (commentId: string, reaction: string) =>
-    createCommentReaction(peekIssue.workspaceSlug, peekIssue.projectId, commentId, reaction);
-  const issueCommentReactionRemove = (commentId: string, reaction: string) =>
-    removeCommentReaction(peekIssue.workspaceSlug, peekIssue.projectId, commentId, reaction);
-
-  const issueSubscriptionCreate = () =>
-    createSubscription(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
-  const issueSubscriptionRemove = () =>
-    removeSubscription(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
-
-  const userRole = currentProjectRole ?? EUserProjectRoles.GUEST;
+  // Check if issue is editable, based on user role
+  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const isLoading = !issue || loader ? true : false;
 
   return (
@@ -215,23 +209,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         projectId={peekIssue.projectId}
         issueId={peekIssue.issueId}
         isLoading={isLoading}
-        isArchived={isArchived}
-        issue={issue}
-        handleCopyText={handleCopyText}
-        redirectToIssueDetail={redirectToIssueDetail}
-        issueUpdate={issueUpdate}
-        issueDelete={issueDelete}
-        issueReactionCreate={issueReactionCreate}
-        issueReactionRemove={issueReactionRemove}
-        issueCommentCreate={issueCommentCreate}
-        issueCommentUpdate={issueCommentUpdate}
-        issueCommentRemove={issueCommentRemove}
-        issueCommentReactionCreate={issueCommentReactionCreate}
-        issueCommentReactionRemove={issueCommentReactionRemove}
-        issueSubscriptionCreate={issueSubscriptionCreate}
-        issueSubscriptionRemove={issueSubscriptionRemove}
-        disableUserActions={[5, 10].includes(userRole)}
-        showCommentAccessSpecifier={currentProjectDetails?.is_deployed}
+        is_archived={is_archived}
+        disabled={!is_editable}
         issueOperations={issueOperations}
       />
     </Fragment>

@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { useIssues } from "hooks/store";
 // components
 import {
+  IssuePeekOverview,
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
   ModuleEmptyState,
@@ -16,6 +17,7 @@ import {
 } from "components/issues";
 // ui
 import { Spinner } from "@plane/ui";
+// constants
 import { EIssuesStoreType } from "constants/issue";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
@@ -62,19 +64,23 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
               moduleId={moduleId.toString()}
             />
           ) : (
-            <div className="h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <ModuleListLayout />
-              ) : activeLayout === "kanban" ? (
-                <ModuleKanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <ModuleCalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <ModuleGanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <ModuleSpreadsheetLayout />
-              ) : null}
-            </div>
+            <>
+              <div className="h-full w-full overflow-auto">
+                {activeLayout === "list" ? (
+                  <ModuleListLayout />
+                ) : activeLayout === "kanban" ? (
+                  <ModuleKanBanLayout />
+                ) : activeLayout === "calendar" ? (
+                  <ModuleCalendarLayout />
+                ) : activeLayout === "gantt_chart" ? (
+                  <ModuleGanttLayout />
+                ) : activeLayout === "spreadsheet" ? (
+                  <ModuleSpreadsheetLayout />
+                ) : null}
+              </div>
+              {/* peek overview */}
+              <IssuePeekOverview />
+            </>
           )}
         </>
       )}

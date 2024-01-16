@@ -18,7 +18,7 @@ export interface IssuesModalProps {
   data?: Partial<TIssue>;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (res: Partial<TIssue>) => Promise<void>;
+  onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
 }
 
@@ -58,52 +58,46 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     onClose();
   };
 
-  const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | null> => {
-    if (!workspaceSlug || !payload.project_id) return null;
+  const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+    if (!workspaceSlug || !payload.project_id) return undefined;
 
-    await createIssue(workspaceSlug.toString(), payload.project_id, payload)
-      .then(async (res) => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
-        });
-        !createMore && handleClose();
-        return res;
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be created. Please try again.",
-        });
+    try {
+      const response = await createIssue(workspaceSlug.toString(), payload.project_id, payload);
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Issue created successfully.",
       });
-
-    return null;
+      !createMore && handleClose();
+      return response;
+    } catch (error) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Issue could not be created. Please try again.",
+      });
+    }
   };
 
-  const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | null> => {
-    if (!workspaceSlug || !payload.project_id || !data?.id) return null;
+  const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+    if (!workspaceSlug || !payload.project_id || !data?.id) return undefined;
 
-    await updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
-      .then((res) => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue updated successfully.",
-        });
-        handleClose();
-        return { ...payload, ...res };
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be updated. Please try again.",
-        });
+    try {
+      const response = await updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload);
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Issue updated successfully.",
       });
-
-    return null;
+      handleClose();
+      return response;
+    } catch (error) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Issue could not be created. Please try again.",
+      });
+    }
   };
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
@@ -114,7 +108,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       description_html: formData.description_html ?? "<p></p>",
     };
 
-    let res: TIssue | null = null;
+    let res: TIssue | undefined = undefined;
     if (!data?.id) res = await handleCreateIssue(payload);
     else res = await handleUpdateIssue(payload);
 
@@ -126,7 +120,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (formData.module_id && res && (!data?.id || formData.module_id !== data?.module_id))
       await addIssueToModule(workspaceSlug.toString(), formData.project_id, formData.module_id, [res.id]);
 
-    if (res && onSubmit) await onSubmit(res);
+    if (res != undefined && onSubmit) await onSubmit(res);
   };
 
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);

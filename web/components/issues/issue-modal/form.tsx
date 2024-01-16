@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -6,7 +6,7 @@ import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // editor
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // hooks
-import { useApplication, useEstimate, useMention, useProject } from "hooks/store";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
@@ -85,6 +85,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
   const { mentionHighlights, mentionSuggestions } = useMention();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -178,6 +181,28 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   maxDate?.setDate(maxDate.getDate());
 
   const projectDetails = getProjectById(projectId);
+
+  // executing this useEffect when the parent_id coming from the component prop
+  useEffect(() => {
+    const parentId = watch("parent_id") || undefined;
+    if (!parentId) return;
+    if (parentId === selectedParentIssue?.id || selectedParentIssue) return;
+
+    const issue = getIssueById(parentId);
+    if (!issue) return;
+
+    const projectDetails = getProjectById(issue.project_id);
+    if (!projectDetails) return;
+
+    setSelectedParentIssue({
+      id: issue.id,
+      name: issue.name,
+      project_id: issue.project_id,
+      project__identifier: projectDetails.identifier,
+      project__name: projectDetails.name,
+      sequence_id: issue.sequence_id,
+    } as ISearchIssueResponse);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue]);
 
   return (
     <>

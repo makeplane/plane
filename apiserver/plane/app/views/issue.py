@@ -82,7 +82,7 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-
+from collections import defaultdict
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
@@ -784,22 +784,13 @@ class SubIssuesEndpoint(BaseAPIView):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
+            .annotate(state_group=F("state__group"))
         )
 
-        state_distribution = (
-            State.objects.filter(
-                workspace__slug=slug, state_issue__parent_id=issue_id
-            )
-            .annotate(state_group=F("group"))
-            .values("state_group")
-            .annotate(state_count=Count("state_group"))
-            .order_by("state_group")
-        )
-
-        result = {
-            item["state_group"]: item["state_count"]
-            for item in state_distribution
-        }
+        # create's a dict with state group name with their respective issue id's
+        result = defaultdict(list)
+        for sub_issue in sub_issues:
+            result[sub_issue.state_group].append(str(sub_issue.id))
 
         serializer = IssueSerializer(
             sub_issues,
@@ -831,7 +822,7 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
+        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(state_group=F("state__group"))
 
         # Track the issue
         _ = [
@@ -846,11 +837,24 @@ class SubIssuesEndpoint(BaseAPIView):
             )
             for sub_issue_id in sub_issue_ids
         ]
+    
+        # create's a dict with state group name with their respective issue id's
+        result = defaultdict(list)
+        for sub_issue in updated_sub_issues:
+            result[sub_issue.state_group].append(str(sub_issue.id))
 
+        serializer = IssueSerializer(
+            updated_sub_issues,
+            many=True,
+        )
         return Response(
-            IssueSerializer(updated_sub_issues, many=True).data,
+            {
+                "sub_issues": serializer.data,
+                "state_distribution": result,
+            },
             status=status.HTTP_200_OK,
         )
+    
 
 
 class IssueLinkViewSet(BaseViewSet):

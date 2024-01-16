@@ -183,7 +183,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           )}
         </Tab.Panel>
         <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
-          {distribution.labels.length > 0 ? (
+          {distribution?.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}
