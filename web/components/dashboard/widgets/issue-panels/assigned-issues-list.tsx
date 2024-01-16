@@ -7,16 +7,17 @@ import {
   AssignedOverdueIssueListItem,
   AssignedUpcomingIssueListItem,
 } from "components/dashboard";
+import { AssignedIssuesEmptyState } from "../empty-states";
 // ui
 import { Button, Loader } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
-import { TIssue, TIssuesListTypes, TWidgetIssue } from "@plane/types";
-import { AssignedIssuesEmptyState } from "../empty-states";
+import { TDurationFilterOptions, TIssue, TIssuesListTypes, TWidgetIssue } from "@plane/types";
 
 type Props = {
+  filter: TDurationFilterOptions | undefined;
   issues: TWidgetIssue[];
   isLoading?: boolean;
   totalIssues: number;
@@ -25,7 +26,7 @@ type Props = {
 };
 
 export const AssignedIssuesList: React.FC<Props> = (props) => {
-  const { issues, isLoading = false, totalIssues, type, workspaceSlug } = props;
+  const { filter, issues, isLoading = false, totalIssues, type, workspaceSlug } = props;
   // store hooks
   const { setPeekIssue } = useIssueDetail();
 
@@ -101,7 +102,7 @@ export const AssignedIssuesList: React.FC<Props> = (props) => {
           </>
         ) : (
           <div className="h-full grid items-end">
-            <AssignedIssuesEmptyState type={type} />
+            <AssignedIssuesEmptyState filter={filter ?? "this_week"} type={type} />
           </div>
         )}
       </div>

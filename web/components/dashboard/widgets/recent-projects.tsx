@@ -61,7 +61,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         </h6>
         <div className="mt-2">
           <AvatarGroup>
-            {projectDetails.members.map((member) => (
+            {projectDetails.members?.map((member) => (
               <Avatar src={member.member__avatar} name={member.member__display_name} />
             ))}
           </AvatarGroup>

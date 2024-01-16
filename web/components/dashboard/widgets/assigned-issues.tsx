@@ -101,6 +101,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
         <Tab.Panels as="div" className="mt-7 h-full">
           <Tab.Panel as="div" className="h-full">
             <AssignedIssuesList
+              filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="upcoming"
@@ -110,6 +111,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel>
             <AssignedIssuesList
+              filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="overdue"
@@ -119,6 +121,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel>
             <AssignedIssuesList
+              filter={widgetDetails.widget_filters.duration}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="completed"

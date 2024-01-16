@@ -29,13 +29,12 @@ const CustomBar = (props: any) => {
   const [isMouseOver, setIsMouseOver] = useState(false);
 
   return (
-    <Link href={`/${workspaceSlug}/workspace-views/?priority=${bar?.id}`}>
+    <Link href={`/${workspaceSlug}/workspace-views/assigned?priority=${bar?.id}`}>
       <g
         transform={`translate(${bar?.x},${bar?.y})`}
         onMouseEnter={() => setIsMouseOver(true)}
         onMouseLeave={() => setIsMouseOver(false)}
       >
-        {/* Actual Bar */}
         <rect
           x={0}
           y={isMouseOver ? -6 : 0}
@@ -219,11 +218,10 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
               layers={[CustomBarsLayer]}
             />
             <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
-              {/* TODO: add priority icon */}
               {chartData.map((item) => (
                 <p
                   key={item.priority}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 flex-shrink-0"
                   style={{
                     width: `${item.percentage}%`,
                   }}
