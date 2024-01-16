@@ -18,7 +18,7 @@ export interface IProjectPageStore {
   favoriteProjectPageIds: string[] | undefined;
   privateProjectPageIds: string[] | undefined;
   publicProjectPageIds: string[] | undefined;
-  recentProjectPageIds: IRecentPages | undefined;
+  recentProjectPages: IRecentPages | undefined;
   // fetch actions
   fetchProjectPages: (workspaceSlug: string, projectId: string) => void;
   fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => void;
@@ -47,7 +47,7 @@ export class ProjectPageStore implements IProjectPageStore {
       favoriteProjectPageIds: computed,
       privateProjectPageIds: computed,
       publicProjectPageIds: computed,
-      recentProjectPageIds: computed,
+      recentProjectPages: computed,
 
       // fetch actions
       fetchProjectPages: action,
@@ -65,14 +65,13 @@ export class ProjectPageStore implements IProjectPageStore {
     const projectId = this.rootStore.app.router.projectId;
 
     if (!projectId || !this.projectPageMap?.[projectId]) return [];
+
     const allProjectIds = Object.keys(this.projectPageMap[projectId]);
-    return allProjectIds
-      .filter((pageId) => !this.projectPageMap[projectId][pageId].archived_at)
-      .sort((a, b) => {
-        const dateA = new Date(this.projectPageMap[projectId][a].created_at).getTime();
-        const dateB = new Date(this.projectPageMap[projectId][b].created_at).getTime();
-        return dateB - dateA;
-      });
+    return allProjectIds.sort((a, b) => {
+      const dateA = new Date(this.projectPageMap[projectId][a].created_at).getTime();
+      const dateB = new Date(this.projectPageMap[projectId][b].created_at).getTime();
+      return dateB - dateA;
+    });
   }
 
   get archivedPageIds() {
@@ -109,15 +108,17 @@ export class ProjectPageStore implements IProjectPageStore {
 
   get publicProjectPageIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!this.projectPageIds || !projectId) return [];
+    const userId = this.rootStore.user.currentUser?.id;
+    if (!this.projectPageIds || !projectId || !userId) return [];
 
     const publicPages: string[] = this.projectPageIds.filter(
-      (page) => this.projectPageMap[projectId][page].access === 0
+      (page) =>
+        this.projectPageMap[projectId][page].access === 0 && this.projectPageMap[projectId][page].owned_by === userId
     );
     return publicPages;
   }
 
-  get recentProjectPageIds() {
+  get recentProjectPages() {
     const projectId = this.rootStore.app.router.projectId;
     if (!this.projectPageIds || !projectId) return;
 
@@ -235,7 +236,6 @@ export class ProjectPageStore implements IProjectPageStore {
    * @returns Promise<IPage[]>
    */
   fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) => {
-    console.log("fetchArchivedProjectPages");
     try {
       await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
         runInAction(() => {
@@ -286,10 +286,17 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param pageId
    */
   archivePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    const response = await this.pageService.archivePage(workspaceSlug, projectId, pageId);
     runInAction(() => {
       set(this.projectArchivedPageMap, [projectId, pageId], this.projectPageMap[projectId][pageId]);
+      set(this.projectArchivedPageMap[projectId][pageId], "archived_at", new Date().toISOString());
       delete this.projectPageMap[projectId][pageId];
+    });
+    const response = await this.pageService.archivePage(workspaceSlug, projectId, pageId).catch((e) => {
+      runInAction(() => {
+        set(this.projectPageMap, [projectId, pageId], this.projectArchivedPageMap[projectId][pageId]);
+        set(this.projectPageMap[projectId][pageId], "archived_at", null);
+        delete this.projectArchivedPageMap[projectId][pageId];
+      });
     });
     return response;
   };
@@ -300,11 +307,19 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param projectId
    * @param pageId
    */
-  restorePage = async (workspaceSlug: string, projectId: string, pageId: string) =>
-    await this.pageService.restorePage(workspaceSlug, projectId, pageId).then(() => {
+  restorePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    const pageArchivedAt = this.projectArchivedPageMap[projectId][pageId].archived_at;
+    runInAction(() => {
+      set(this.projectPageMap, [projectId, pageId], this.projectArchivedPageMap[projectId][pageId]);
+      set(this.projectPageMap[projectId][pageId], "archived_at", null);
+      delete this.projectArchivedPageMap[projectId][pageId];
+    });
+    await this.pageService.restorePage(workspaceSlug, projectId, pageId).catch((e) => {
       runInAction(() => {
-        set(this.projectPageMap, [projectId, pageId], this.projectArchivedPageMap[projectId][pageId]);
-        delete this.projectArchivedPageMap[projectId][pageId];
+        set(this.projectArchivedPageMap, [projectId, pageId], this.projectPageMap[projectId][pageId]);
+        set(this.projectArchivedPageMap[projectId][pageId], "archived_at", pageArchivedAt);
+        delete this.projectPageMap[projectId][pageId];
       });
     });
+  };
 }
