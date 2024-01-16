@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid, SendToBack } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 // components
@@ -32,6 +32,11 @@ const workspaceLinks = (workspaceSlug: string) => [
     Icon: CheckCircle,
     name: "All Issues",
     href: `/${workspaceSlug}/workspace-views/all-issues`,
+  },
+  {
+    Icon: SendToBack,
+    name: "Active Cycles",
+    href: `/${workspaceSlug}/active-cycles`,
   },
 ];
 
