@@ -5,18 +5,24 @@ import { PageService } from "services/page.service";
 // store
 import { PageStore, IPageStore } from "store/page.store";
 // types
-import { IPage } from "@plane/types";
+import { IPage, IRecentPages } from "@plane/types";
 import { RootStore } from "./root.store";
+import { isThisWeek, isToday, isYesterday } from "date-fns";
 
 export interface IProjectPageStore {
   projectPageMap: Record<string, Record<string, IPageStore>>;
   projectArchivedPageMap: Record<string, Record<string, IPageStore>>;
+
   projectPageIds: string[] | undefined;
+  favoriteProjectPageIds: string[] | undefined;
+  privateProjectPageIds: string[] | undefined;
+  publicProjectPageIds: string[] | undefined;
+  recentProjectPageIds: IRecentPages | undefined;
   // fetch actions
   fetchProjectPages: (workspaceSlug: string, projectId: string) => void;
   fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => void;
   // crud actions
-  createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<void>;
+  createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<IPage>;
   deletePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
   archivePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
   restorePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
@@ -34,8 +40,13 @@ export class ProjectPageStore implements IProjectPageStore {
     makeObservable(this, {
       projectPageMap: observable,
       projectArchivedPageMap: observable,
-      //
+
       projectPageIds: computed,
+      favoriteProjectPageIds: computed,
+      privateProjectPageIds: computed,
+      publicProjectPageIds: computed,
+      recentProjectPageIds: computed,
+
       // fetch actions
       fetchProjectPages: action,
       fetchArchivedProjectPages: action,
@@ -54,6 +65,129 @@ export class ProjectPageStore implements IProjectPageStore {
     if (!projectId || !this.projectPageMap?.[projectId]) return [];
     return Object.keys(this.projectPageMap[projectId]);
   }
+
+  get favoriteProjectPageIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!this.projectPageIds || !projectId) return [];
+
+    const favouritePages: string[] = this.projectPageIds.filter(
+      (page) => this.projectPageMap[projectId][page].is_favorite
+    );
+    return favouritePages;
+  }
+
+  get privateProjectPageIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!this.projectPageIds || !projectId) return [];
+
+    const privatePages: string[] = this.projectPageIds.filter(
+      (page) => this.projectPageMap[projectId][page].access === 1
+    );
+    return privatePages;
+  }
+
+  get publicProjectPageIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!this.projectPageIds || !projectId) return [];
+
+    const publicPages: string[] = this.projectPageIds.filter(
+      (page) => this.projectPageMap[projectId][page].access === 0
+    );
+    return publicPages;
+  }
+
+  get recentProjectPageIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!this.projectPageIds || !projectId) return;
+
+    const today: string[] = this.projectPageIds.filter((page) =>
+      isToday(new Date(this.projectPageMap[projectId][page].updated_at))
+    );
+
+    const yesterday: string[] = this.projectPageIds.filter((page) =>
+      isYesterday(new Date(this.projectPageMap[projectId][page].updated_at))
+    );
+
+    const this_week: string[] = this.projectPageIds.filter((page) => {
+      const pageUpdatedAt = this.projectPageMap[projectId][page].updated_at;
+      return (
+        isThisWeek(new Date(pageUpdatedAt)) &&
+        !isToday(new Date(pageUpdatedAt)) &&
+        !isYesterday(new Date(pageUpdatedAt))
+      );
+    });
+
+    const older: string[] = this.projectPageIds.filter((page) => {
+      const pageUpdatedAt = this.projectPageMap[projectId][page].updated_at;
+      return !isThisWeek(new Date(pageUpdatedAt)) && !isYesterday(new Date(pageUpdatedAt));
+    });
+
+    return { today, yesterday, this_week, older };
+  }
+
+  // get favoriteProjectPages() {
+  //   const projectId = this.rootStore.app.router.projectId;
+  //   if (!this.projectPageIds || !projectId) return [];
+  //
+  //   const favouritePages: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => page.is_favorite);
+  //   return favouritePages;
+  // }
+
+  // get privateProjectPages() {
+  //   const projectId = this.rootStore.app.router.projectId;
+  //   if (!this.projectPageIds || !projectId) return [];
+  //
+  //   const privatePages: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => page.access === 1);
+  //   return privatePages;
+  // }
+
+  // get publicProjectPages() {
+  //   const projectId = this.rootStore.app.router.projectId;
+  //   if (!this.projectPageIds || !projectId) return [];
+  //
+  //   const publicPages: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => page.access === 1);
+  //   return publicPages;
+  // }
+
+  // get recentProjectPages() {
+  //   const projectId = this.rootStore.app.router.projectId;
+  //   if (!this.projectPageIds || !projectId) return;
+  //
+  //   const today: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => isToday(new Date(page.updated_at)));
+  //
+  //   const yesterday: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => isYesterday(new Date(page.updated_at)));
+  //
+  //   const this_week: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => {
+  //       const pageUpdatedAt = page.updated_at;
+  //       return (
+  //         isThisWeek(new Date(pageUpdatedAt)) &&
+  //         !isToday(new Date(pageUpdatedAt)) &&
+  //         !isYesterday(new Date(pageUpdatedAt))
+  //       );
+  //     });
+  //
+  //   const older: IPageStore[] = this.projectPageIds
+  //     .map((pageId) => this.projectPageMap[projectId][pageId])
+  //     .filter((page) => {
+  //       const pageUpdatedAt = page.updated_at;
+  //       return !isThisWeek(new Date(pageUpdatedAt)) && !isYesterday(new Date(pageUpdatedAt));
+  //     });
+  //
+  //   return { today, yesterday, this_week, older };
+  // }
+
   /**
    * Fetching all the pages for a specific project
    * @param workspaceSlug
