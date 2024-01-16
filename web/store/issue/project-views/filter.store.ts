@@ -139,7 +139,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     try {
       if (!viewId) throw new Error("View id is required");
 
-      if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
+      if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
 
       const _filters = {
         filters: this.filters[viewId].filters as IIssueFilterOptions,

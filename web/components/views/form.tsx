@@ -47,7 +47,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   });
 
   const selectedFilters: IIssueFilterOptions = {};
-  Object.entries(watch("query_data") ?? {}).forEach(([key, value]) => {
+  Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -59,7 +59,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     // If value is null then remove all the filters of that key
     if (!value) {
-      setValue("query_data", {
+      setValue("filters", {
         ...selectedFilters,
         [key]: null,
       });
@@ -76,14 +76,18 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
     }
 
-    setValue("query_data", {
+    setValue("filters", {
       ...selectedFilters,
       [key]: newValues,
     });
   };
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
-    await handleFormSubmit(formData);
+    await handleFormSubmit({
+      name: formData.name,
+      description: formData.description,
+      filters: formData.filters,
+    } as IProjectView);
 
     reset({
       ...defaultValues,
@@ -93,7 +97,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const clearAllFilters = () => {
     if (!selectedFilters) return;
 
-    setValue("query_data", {});
+    setValue("filters", {});
   };
 
   useEffect(() => {
@@ -156,7 +160,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
           <div>
             <Controller
               control={control}
-              name="query_data"
+              name="filters"
               render={({ field: { onChange, value: filters } }) => (
                 <FiltersDropdown title="Filters" tabIndex={3}>
                   <FilterSelection
