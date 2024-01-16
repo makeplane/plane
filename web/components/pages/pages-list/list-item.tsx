@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { AlertCircle, Archive, ArchiveRestoreIcon, FileText, Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
@@ -11,7 +11,7 @@ import { CreateUpdatePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useRouter } from "next/router";
-import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { useMember, useUser } from "hooks/store";
 
 export interface IPagesListItem {
@@ -20,7 +20,7 @@ export interface IPagesListItem {
 }
 
 export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }: IPagesListItem) => {
-  const projectPageStore = useProjectSpecificPages(projectId);
+  const projectPageStore = useProjectPages();
   // Now, I am observing only the projectPages, out of the projectPageStore.
   const { projectPageMap, archivePage, restorePage } = projectPageStore;
 

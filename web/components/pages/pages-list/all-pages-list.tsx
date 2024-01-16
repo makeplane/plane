@@ -4,18 +4,14 @@ import { observer } from "mobx-react-lite";
 import { PagesListView } from "components/pages/pages-list";
 // ui
 import { Loader } from "@plane/ui";
-import { useRouter } from "next/router";
-import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const AllPagesList: FC = observer(() => {
-  const router = useRouter();
-  const { projectId } = router.query;
-  // store
-  const pageStores = useProjectSpecificPages(projectId as string);
+  const pageStores = useProjectPages();
   // subscribing to the projectPageStore
-  const { projectPageMap } = pageStores;
+  const { projectPageIds } = pageStores;
 
-  if (!projectPageMap) {
+  if (!projectPageIds) {
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -24,5 +20,5 @@ export const AllPagesList: FC = observer(() => {
       </Loader>
     );
   }
-  return <PagesListView />;
+  return <PagesListView pageIds={projectPageIds} />;
 });

@@ -12,15 +12,14 @@ import { Loader } from "@plane/ui";
 import emptyPage from "public/empty-state/empty_page.png";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
-import { IPageStore } from "store/page.store";
 import { PagesListItem } from "./list-item";
 
-// type IPagesListView = {
-//   pageIds: string[];
-// };
+type IPagesListView = {
+  pageIds: string[];
+};
 
-export const PagesListView: FC = observer(() => {
+export const PagesListView: FC<IPagesListView> = (props) => {
+  const { pageIds: projectPageIds } = props;
   // store hooks
   // trace(true);
 
@@ -35,9 +34,6 @@ export const PagesListView: FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
-  const projectPageStore = useProjectSpecificPages(projectId as string);
-  // Now, I am observing only the projectPages, out of the projectPageStore.
-  const { projectPageIds } = projectPageStore;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -80,4 +76,4 @@ export const PagesListView: FC = observer(() => {
       )}
     </>
   );
-});
+};
