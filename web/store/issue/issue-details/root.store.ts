@@ -208,11 +208,8 @@ export class IssueDetail implements IIssueDetail {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    oldIssue: Partial<TIssue>,
-    currentIssue?: Partial<TIssue>,
-    fromModal?: boolean
-  ) =>
-    this.subIssues.updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, oldIssue, currentIssue, fromModal);
+    data: Partial<TIssue>
+  ) => this.subIssues.updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, data);
   removeSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) =>
     this.subIssues.removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
   deleteSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) =>

@@ -28,9 +28,7 @@ export interface IIssueSubIssuesStoreActions {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    currentIssue: Partial<TIssue>,
-    oldIssue?: Partial<TIssue> | undefined,
-    fromModal?: boolean
+    data: Partial<TIssue>
   ) => Promise<void>;
   removeSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
   deleteSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
@@ -118,16 +116,15 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
 
-      if (subIssues.length > 0) {
-        runInAction(() => {
-          set(this.subIssuesStateDistribution, parentIssueId, subIssuesStateDistribution);
-          set(
-            this.subIssues,
-            parentIssueId,
-            subIssues.map((issue) => issue.id)
-          );
-        });
-      }
+      runInAction(() => {
+        set(this.subIssuesStateDistribution, parentIssueId, subIssuesStateDistribution);
+        set(
+          this.subIssues,
+          parentIssueId,
+          subIssues.map((issue) => issue.id)
+        );
+      });
+
       return response;
     } catch (error) {
       throw error;
@@ -172,39 +169,16 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    currentIssue: Partial<TIssue>,
-    oldIssue: Partial<TIssue> | undefined = undefined,
-    fromModal: boolean = false
+    data: Partial<TIssue>
   ) => {
     try {
-      if (!fromModal)
-        await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
-          workspaceSlug,
-          projectId,
-          issueId,
-          currentIssue
-        );
+      await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
 
-      if (!oldIssue) return;
-
-      if (currentIssue.state_id != oldIssue.state_id) {
+      if (data.hasOwnProperty("parent_id") && data.parent_id !== parentIssueId) {
+        runInAction(() => {
+          pull(this.subIssues[parentIssueId], issueId);
+        });
       }
-
-      if (currentIssue.parent_id != oldIssue.parent_id) {
-      }
-      // const updateResponse = await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
-      //   workspaceSlug,
-      //   projectId,
-      //   issueId,
-      //   oldIssue
-      // );
-
-      // console.log("---");
-      // console.log("parentIssueId", parentIssueId);
-      // console.log("fromModal", fromModal);
-      // console.log("updateResponse", updateResponse);
-      // console.log("---");
-
       return;
     } catch (error) {
       throw error;

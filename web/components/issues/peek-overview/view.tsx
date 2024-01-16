@@ -84,6 +84,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     router.push({
       pathname: `/${workspaceSlug}/projects/${projectId}/${is_archived ? "archived-issues" : "issues"}/${issueId}`,
     });
+    removeRoutePeekId();
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
