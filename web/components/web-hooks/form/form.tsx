@@ -1,10 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useWebhook, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useWebhook } from "hooks/store";
 // components
 import {
   WebhookIndividualEventOptions,
@@ -37,14 +35,8 @@ export const WebhookForm: FC<Props> = observer((props) => {
   const { data, onSubmit, handleClose } = props;
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-  // toast
-  const { setToastAlert } = useToast();
   // store hooks
-  const { currentWorkspace } = useWorkspace();
-  const { createWebhook, updateWebhook, webhookSecretKey } = useWebhook();
+  const {webhookSecretKey } = useWebhook();
   // use form
   const {
     handleSubmit,
