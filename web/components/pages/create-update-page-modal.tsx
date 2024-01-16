@@ -2,14 +2,11 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, usePage, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication } from "hooks/store";
 // components
-import { trace } from "mobx";
 import { PageForm } from "./page-form";
 // types
 import { IPage } from "@plane/types";
-import { useProjectSpecificPages } from "hooks/store/use-project-specific-pages";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { IPageStore } from "store/page.store";
 
@@ -33,28 +30,27 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
     eventTracker: { postHogEventTracker },
   } = useApplication();
 
-  const onClose = () => {
-    handleClose();
-  };
-
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;
-    console.log("createProjectPage", payload);
-    createPage(workspaceSlug.toString(), projectId, payload);
-    handleClose();
+    await createPage(workspaceSlug.toString(), projectId, payload);
   };
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
-    if (pageStore) {
-      if (pageStore.name !== formData.name) {
-        await pageStore.updateName(formData.name);
+    try {
+      if (pageStore) {
+        if (pageStore.name !== formData.name) {
+          await pageStore.updateName(formData.name);
+        }
+        if (pageStore.access !== formData.access) {
+          formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
+        }
+      } else {
+        await createProjectPage(formData);
       }
-      if (pageStore.access !== formData.access) {
-        formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
-      }
-    } else {
-      await createProjectPage(formData);
+      handleClose();
+    } catch (error) {
+      console.log(error);
     }
   };
 
