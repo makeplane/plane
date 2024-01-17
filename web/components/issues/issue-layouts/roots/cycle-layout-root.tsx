@@ -47,8 +47,8 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
-  const cycleDetails = cycleId ? cycleStore.cycle_details[cycleId.toString()] : undefined;
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase() ?? "draft";
+  const cycleDetails = cycleId ? cycleStore?.cycle_details?.[cycleId.toString()] : undefined;
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
 
   return (
     <>

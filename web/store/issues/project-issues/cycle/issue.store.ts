@@ -200,7 +200,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToCycle = await this.addIssueToCycle(workspaceSlug, cycleId, [response.id], false);
+      await this.addIssueToCycle(workspaceSlug, cycleId, [response.id], false);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -211,7 +211,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
         this.issues = _issues;
       });
 
-      return issueToCycle;
+      return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
@@ -298,7 +298,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
 
-      if (this.issues) {
+      if (this.issues && response) {
         delete this.issues[cycleId][data.id as keyof IIssue];
 
         let _issues = { ...this.issues };
