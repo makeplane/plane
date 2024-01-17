@@ -6,9 +6,9 @@ import useSWR from "swr";
 import { useIssues } from "hooks/store";
 // components
 import {
-  ProjectEmptyState,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
+  ProjectViewEmptyState,
   ProjectViewGanttLayout,
   ProjectViewKanBanLayout,
   ProjectViewListLayout,
@@ -53,8 +53,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
       ) : (
         <>
           {!issues?.groupedIssueIds ? (
-            // TODO: Replace this with project view empty state
-            <ProjectEmptyState />
+            <ProjectViewEmptyState />
           ) : (
             <div className="relative h-full w-full overflow-auto">
               {activeLayout === "list" ? (
