@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -16,7 +16,11 @@ import {
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
+// constants
 import { EIssuesStoreType } from "constants/issue";
+// types
+import { TIssue } from "@plane/types";
+import { EIssueActions } from "../types";
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // router
@@ -40,6 +44,22 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     }
   );
 
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
+
+        await issues.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue, viewId?.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
+
+        await issues.removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id, viewId?.toString());
+      },
+    }),
+    [issues, workspaceSlug, projectId, viewId]
+  );
+
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
@@ -59,15 +79,15 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
             <>
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
-                  <ProjectViewListLayout />
+                  <ProjectViewListLayout issueActions={issueActions} />
                 ) : activeLayout === "kanban" ? (
-                  <ProjectViewKanBanLayout />
+                  <ProjectViewKanBanLayout issueActions={issueActions} />
                 ) : activeLayout === "calendar" ? (
-                  <ProjectViewCalendarLayout />
+                  <ProjectViewCalendarLayout issueActions={issueActions} />
                 ) : activeLayout === "gantt_chart" ? (
-                  <ProjectViewGanttLayout />
+                  <ProjectViewGanttLayout issueActions={issueActions} />
                 ) : activeLayout === "spreadsheet" ? (
-                  <ProjectViewSpreadsheetLayout />
+                  <ProjectViewSpreadsheetLayout issueActions={issueActions} />
                 ) : null}
               </div>
 

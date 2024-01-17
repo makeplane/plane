@@ -1,42 +1,34 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // store
 import { useIssues } from "hooks/store";
 // constants
-import { useRouter } from "next/router";
+import { EIssuesStoreType } from "constants/issue";
+// types
 import { EIssueActions } from "../../types";
 import { TIssue } from "@plane/types";
 // components
 import { BaseListRoot } from "../base-list-root";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EIssuesStoreType } from "constants/issue";
 
-export interface IViewListLayout {}
+export interface IViewListLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+  };
+}
 
-export const ProjectViewListLayout: React.FC = observer(() => {
+export const ProjectViewListLayout: React.FC<IViewListLayout> = observer((props) => {
+  const { issueActions } = props;
   // store
   const { issuesFilter, issues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   if (!workspaceSlug || !projectId) return null;
-
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !projectId) return;
-
-        await issues.updateIssue(workspaceSlug, projectId, issue.id, issue);
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !projectId) return;
-
-        await issues.removeIssue(workspaceSlug, projectId, issue.id);
-      },
-    }),
-    [issues, workspaceSlug, projectId]
-  );
 
   return (
     <BaseListRoot
@@ -45,6 +37,7 @@ export const ProjectViewListLayout: React.FC = observer(() => {
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       currentStore={EIssuesStoreType.PROJECT_VIEW}
+      viewId={viewId?.toString()}
     />
   );
 });
