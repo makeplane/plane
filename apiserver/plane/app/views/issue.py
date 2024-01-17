@@ -84,6 +84,7 @@ from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
 
+
 class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
         return (
@@ -493,17 +494,27 @@ class IssueActivityEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
+        filters = {}
+        if request.GET.get("created_at__gt", None) is not None:
+            filters = {"created_at__gt": request.GET.get("created_at__gt")}
+
         issue_activities = (
             IssueActivity.objects.filter(issue_id=issue_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
             )
+            .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
         issue_comments = (
             IssueComment.objects.filter(issue_id=issue_id)
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+            )
+            .filter(**filters)
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
             .prefetch_related(
@@ -822,7 +833,9 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(state_group=F("state__group"))
+        updated_sub_issues = Issue.issue_objects.filter(
+            id__in=sub_issue_ids
+        ).annotate(state_group=F("state__group"))
 
         # Track the issue
         _ = [
@@ -854,7 +867,6 @@ class SubIssuesEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-    
 
 
 class IssueLinkViewSet(BaseViewSet):
