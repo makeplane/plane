@@ -483,11 +483,3 @@ class OIDCEndpoint(BaseAPIView):
             }
 
             return Response(data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {
-                    "error": "Something went wrong. Please try again later or contact the support team."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
