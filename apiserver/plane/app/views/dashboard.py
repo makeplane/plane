@@ -318,6 +318,8 @@ def dashboard_issues_by_state_groups(self, request, slug):
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
         .filter(**filters)
@@ -347,6 +349,8 @@ def dashboard_issues_by_priority(self, request, slug):
     issues_by_priority = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
         .filter(**filters)
