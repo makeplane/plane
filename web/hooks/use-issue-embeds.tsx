@@ -1,8 +1,6 @@
-import { TIssue } from "@plane/types";
 import { PROJECT_ISSUES_LIST, STATES_LIST } from "constants/fetch-keys";
 import { StoreContext } from "contexts/store-context";
 import { toJS } from "mobx";
-import { useRouter } from "next/router";
 import { useContext } from "react";
 import { IssueService } from "services/issue";
 import useSWR from "swr";
@@ -18,7 +16,6 @@ export const useIssueEmbeds = () => {
   const { setPeekIssue } = useIssueDetail();
   const { getStateById, fetchProjectStates } = useProjectState();
   const { getUserDetails } = useMember();
-  const router = useRouter();
 
   const { data: issuesResponse, isLoading: issuesLoading } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,

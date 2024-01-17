@@ -1,10 +1,10 @@
 import { Sparkle } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useIssueDetail, usePage, useUser } from "hooks/store";
+import { useApplication, usePage, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services

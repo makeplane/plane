@@ -5,7 +5,6 @@ import { StoreContext } from "contexts/store-context";
 
 export const usePage = (pageId: string) => {
   const context = useContext(StoreContext);
-  // TODO: Handle fetching of Pages when they are not in the store
   if (context === undefined) throw new Error("usePage must be used within StoreProvider");
 
   const { projectPageMap, projectArchivedPageMap, fetchProjectPages, fetchArchivedProjectPages } = context.projectPages;
