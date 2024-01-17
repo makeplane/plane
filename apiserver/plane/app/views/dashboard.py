@@ -45,22 +45,30 @@ from plane.utils.issue_filters import issue_filters
 
 def dashboard_overview_stats(self, request, slug):
     assigned_issues = Issue.issue_objects.filter(
+        project__project_projectmember__is_active=True,
+        project__project_projectmember__member=request.user,
         workspace__slug=slug, assignees__in=[request.user]
     ).count()
 
     pending_issues_count = Issue.issue_objects.filter(
         ~Q(state__group__in=["completed", "cancelled"]),
+        project__project_projectmember__is_active=True,
+        project__project_projectmember__member=request.user,
         workspace__slug=slug,
         assignees__in=[request.user],
     ).count()
 
     created_issues_count = Issue.issue_objects.filter(
         workspace__slug=slug,
+        project__project_projectmember__is_active=True,
+        project__project_projectmember__member=request.user,
         created_by_id=request.user.id,
     ).count()
 
     completed_issues_count = Issue.issue_objects.filter(
         workspace__slug=slug,
+        project__project_projectmember__is_active=True,
+        project__project_projectmember__member=request.user,
         assignees__in=[request.user],
         state__group="completed",
     ).count()
@@ -85,6 +93,7 @@ def dashboard_assigned_issues(self, request, slug):
         Issue.issue_objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             assignees__in=[request.user],
         )
         .filter(**filters)
@@ -103,7 +112,9 @@ def dashboard_assigned_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+            attachment_count=IssueAttachment.objects.filter(
+                issue=OuterRef("id")
+            )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -129,7 +140,10 @@ def dashboard_assigned_issues(self, request, slug):
     priority_order = ["urgent", "high", "medium", "low", "none"]
     assigned_issues = assigned_issues.annotate(
         priority_order=Case(
-            *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+            *[
+                When(priority=p, then=Value(i))
+                for i, p in enumerate(priority_order)
+            ],
             output_field=CharField(),
         )
     ).order_by("priority_order")
@@ -138,7 +152,9 @@ def dashboard_assigned_issues(self, request, slug):
         completed_issues_count = assigned_issues.filter(
             state__group__in=["completed"]
         ).count()
-        completed_issues = assigned_issues.filter(state__group__in=["completed"])[:5]
+        completed_issues = assigned_issues.filter(
+            state__group__in=["completed"]
+        )[:5]
         return Response(
             {
                 "issues": IssueSerializer(
@@ -198,6 +214,7 @@ def dashboard_created_issues(self, request, slug):
         Issue.issue_objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             created_by=request.user,
         )
         .select_related("project")
@@ -215,7 +232,9 @@ def dashboard_created_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+            attachment_count=IssueAttachment.objects.filter(
+                issue=OuterRef("id")
+            )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -234,7 +253,10 @@ def dashboard_created_issues(self, request, slug):
     priority_order = ["urgent", "high", "medium", "low", "none"]
     created_issues = created_issues.annotate(
         priority_order=Case(
-            *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+            *[
+                When(priority=p, then=Value(i))
+                for i, p in enumerate(priority_order)
+            ],
             output_field=CharField(),
         )
     ).order_by("priority_order")
@@ -243,7 +265,9 @@ def dashboard_created_issues(self, request, slug):
         completed_issues_count = created_issues.filter(
             state__group__in=["completed"]
         ).count()
-        completed_issues = created_issues.filter(state__group__in=["completed"])[:5]
+        completed_issues = created_issues.filter(
+            state__group__in=["completed"]
+        )[:5]
         return Response(
             {
                 "issues": IssueSerializer(completed_issues, many=True).data,
@@ -294,6 +318,8 @@ def dashboard_issues_by_state_groups(self, request, slug):
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
         .filter(**filters)
@@ -323,6 +349,8 @@ def dashboard_issues_by_priority(self, request, slug):
     issues_by_priority = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
         .filter(**filters)
@@ -339,26 +367,25 @@ def dashboard_issues_by_priority(self, request, slug):
 
     # Prepare output including all groups with their counts
     output_data = [
-        {"priority": group, "count": count} for group, count in all_groups.items()
+        {"priority": group, "count": count}
+        for group, count in all_groups.items()
     ]
 
     return Response(output_data, status=status.HTTP_200_OK)
 
 
 def dashboard_recent_activity(self, request, slug):
-    queryset = (
-        IssueActivity.objects.filter(
-            ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-            workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            actor=request.user,
-        )
-        .select_related("actor", "workspace", "issue", "project")
-        .order_by("updated_at")[:8]
-    )
+    queryset = IssueActivity.objects.filter(
+        ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+        workspace__slug=slug,
+        project__project_projectmember__member=request.user,
+        project__project_projectmember__is_active=True,
+        actor=request.user,
+    ).select_related("actor", "workspace", "issue", "project")[:8]
 
     return Response(
-        IssueActivitySerializer(queryset, many=True).data, status=status.HTTP_200_OK
+        IssueActivitySerializer(queryset, many=True).data,
+        status=status.HTTP_200_OK,
     )
 
 
@@ -367,6 +394,7 @@ def dashboard_recent_projects(self, request, slug):
         IssueActivity.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             actor=request.user,
         )
         .values("project_id")
@@ -383,7 +411,9 @@ def dashboard_recent_projects(self, request, slug):
     # Fetch additional projects only if needed
     if recent_project_count < 4:
         additional_projects = Project.objects.filter(
-            project_projectmember__member=request.user, workspace__slug=slug
+            project_projectmember__member=request.user,
+            project_projectmember__is_active=True,
+            workspace__slug=slug,
         ).exclude(id__in=project_ids)
 
         # Apply slicing to limit the number of additional projects to 4 - recent_project_count
@@ -402,6 +432,7 @@ def dashboard_recent_collaborators(self, request, slug):
     # Fetch all project IDs where the user belongs to
     user_projects = Project.objects.filter(
         project_projectmember__member=request.user,
+        project_projectmember__is_active=True,
         workspace__slug=slug,
     ).values_list("id", flat=True)
 
@@ -434,8 +465,38 @@ def dashboard_recent_collaborators(self, request, slug):
         assignees__in=[request.user],
         state__group__in=["unstarted", "started"],
     ).count()
+
+    if users_with_activities.count() < 7:
+        # Calculate the additional collaborators needed
+        additional_collaborators_needed = 7 - users_with_activities.count()
+
+        # Fetch additional collaborators from the project_member table
+        additional_collaborators = list(set(
+            ProjectMember.objects
+            .filter(
+                ~Q(member=request.user),
+                project_id__in=user_projects,
+                workspace__slug=slug,
+            )
+            .exclude(member__in=[user["actor"] for user in users_with_activities])
+            .values_list("member", flat=True)
+        ))
+
+        additional_collaborators = additional_collaborators[:additional_collaborators_needed]
+
+        # Append additional collaborators to the list
+        for collaborator_id in additional_collaborators:
+            active_issue_count = Issue.objects.filter(
+                assignees__in=[collaborator_id],
+                state__group__in=["unstarted", "started"],
+            ).count()
+            users_with_active_issues.append(
+                {"user_id": str(collaborator_id), "active_issue_count": active_issue_count}
+            )
+
     users_with_active_issues.insert(
-        0, {"user_id": request.user.id, "active_issue_count": active_issue_count}
+        0,
+        {"user_id": request.user.id, "active_issue_count": active_issue_count},
     )
 
     return Response(users_with_active_issues, status=status.HTTP_200_OK)
@@ -584,6 +645,10 @@ class WidgetsEndpoint(BaseAPIView):
         dashboard_widget.sort_order = request.data.get(
             "sort_order", dashboard_widget.sort_order
         )
-        dashboard_widget.filters = request.data.get("filters", dashboard_widget.filters)
+        dashboard_widget.filters = request.data.get(
+            "filters", dashboard_widget.filters
+        )
         dashboard_widget.save()
-        return Response({"message": "successfully updated"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "successfully updated"}, status=status.HTTP_200_OK
+        )
