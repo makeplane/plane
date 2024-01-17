@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, usePage, useUser } from "hooks/store";
+import { useApplication, useIssueDetail, usePage, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -27,6 +27,7 @@ import { NextPageWithLayout } from "lib/types";
 import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { useIssueEmbeds } from "hooks/use-issue-embeds";
+import { IssuePeekOverview } from "components/issues";
 
 // services
 const fileService = new FileService();
@@ -349,6 +350,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                 )}
               </div>
             )}
+            <IssuePeekOverview />
           </div>
         </div>
       ) : (

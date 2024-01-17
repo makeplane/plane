@@ -16,7 +16,6 @@ export const IssueWidgetCard = (props) => {
         setLoading(0);
       })
       .catch((error) => {
-        console.log(error);
         setLoading(-1);
       });
   }, []);

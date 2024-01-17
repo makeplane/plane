@@ -63,7 +63,6 @@ export class ProjectPageStore implements IProjectPageStore {
 
   get projectPageIds() {
     const projectId = this.rootStore.app.router.projectId;
-
     if (!projectId || !this.projectPageMap?.[projectId]) return [];
 
     const allProjectIds = Object.keys(this.projectPageMap[projectId]);
@@ -76,7 +75,6 @@ export class ProjectPageStore implements IProjectPageStore {
 
   get archivedPageIds() {
     const projectId = this.rootStore.app.router.projectId;
-
     if (!projectId || !this.projectArchivedPageMap[projectId]) return [];
     const archivedPages = Object.keys(this.projectArchivedPageMap[projectId]);
     return archivedPages.sort((a, b) => {

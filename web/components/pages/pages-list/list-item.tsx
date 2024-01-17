@@ -33,7 +33,7 @@ export interface IPagesListItem {
 export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }: IPagesListItem) => {
   const projectPageStore = useProjectPages();
   // Now, I am observing only the projectPages, out of the projectPageStore.
-  const { projectPageMap, archivePage, restorePage } = projectPageStore;
+  const { archivePage, restorePage } = projectPageStore;
 
   const pageStore = usePage(pageId);
 

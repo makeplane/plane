@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 import { IssueService } from "services/issue";
 import useSWR from "swr";
-import { useProject, useProjectState } from "./store";
+import { useIssueDetail, useMember, useProject, useProjectState } from "./store";
 
 const issueService = new IssueService();
 
@@ -15,7 +15,9 @@ export const useIssueEmbeds = () => {
   const projectId = useContext(StoreContext).app.router.projectId;
 
   const { getProjectById, fetchProjects } = useProject();
+  const { setPeekIssue } = useIssueDetail();
   const { getStateById, fetchProjectStates } = useProjectState();
+  const { getUserDetails } = useMember();
   const router = useRouter();
 
   const { data: issuesResponse, isLoading: issuesLoading } = useSWR(
@@ -46,20 +48,14 @@ export const useIssueEmbeds = () => {
       ...issue,
       state_detail: toJS(getStateById(issue.state_id)),
       project_detail: toJS(getProjectById(issue.project_id)),
+      assignee_details: issue.assignee_ids.map((assigneeId) => toJS(getUserDetails(assigneeId))),
     };
   };
 
   const issueWidgetClickAction = (issueId: string) => {
-    const url = new URL(router.asPath, window.location.origin);
-    const params = new URLSearchParams(url.search);
+    if (!workspaceSlug || !projectId) return;
 
-    if (params.has("peekIssueId")) {
-      params.set("peekIssueId", issueId);
-    } else {
-      params.append("peekIssueId", issueId);
-    }
-    // Replace the current URL with the new one
-    router.replace(`${url.pathname}?${params.toString()}`, undefined, { shallow: true });
+    setPeekIssue({ workspaceSlug, projectId: projectId, issueId });
   };
 
   return {
