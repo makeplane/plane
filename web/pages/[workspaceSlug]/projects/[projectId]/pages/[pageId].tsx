@@ -129,7 +129,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     });
   };
 
-  const updatePageTitle = async (title: string) => {
+  const updatePageTitle = (title: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
     updateNameMobx(title);
   };
