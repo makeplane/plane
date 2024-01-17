@@ -10,7 +10,6 @@ import {
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueTypeFilters,
-  TStateGroups,
 } from "@plane/types";
 
 export enum EIssuesStoreType {
@@ -49,21 +48,6 @@ export const ISSUE_PRIORITIES: {
   { key: "low", title: "Low" },
   { key: "none", title: "None" },
 ];
-
-export const issuePriorityByKey = (key: string) => ISSUE_PRIORITIES.find((item) => item.key === key) || null;
-
-export const ISSUE_STATE_GROUPS: {
-  key: TStateGroups;
-  title: string;
-}[] = [
-  { key: "backlog", title: "Backlog" },
-  { key: "unstarted", title: "Unstarted" },
-  { key: "started", title: "Started" },
-  { key: "completed", title: "Completed" },
-  { key: "cancelled", title: "Cancelled" },
-];
-
-export const issueStateGroupByKey = (key: string) => ISSUE_STATE_GROUPS.find((item) => item.key === key) || null;
 
 export const ISSUE_START_DATE_OPTIONS = [
   { key: "last_week", title: "Last Week" },

@@ -14,11 +14,11 @@ import { Loader, getButtonStyling } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
 // types
-import { TDurationFilterOptions, TIssue, TIssuesListTypes, TWidgetIssue } from "@plane/types";
+import { TDurationFilterOptions, TIssue, TIssuesListTypes } from "@plane/types";
 
 type Props = {
   filter: TDurationFilterOptions | undefined;
-  issues: TWidgetIssue[];
+  issues: TIssue[];
   isLoading?: boolean;
   totalIssues: number;
   type: TIssuesListTypes;

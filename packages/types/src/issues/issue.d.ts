@@ -1,4 +1,5 @@
 import { TIssuePriorities } from "../issues";
+import { TIssueRelationTypes } from "./issue_relation";
 
 // new issue structure types
 export type TIssue = {
@@ -35,6 +36,14 @@ export type TIssue = {
 
   is_draft: boolean;
   is_subscribed: boolean;
+
+  // only if expand=issue_relation is passed in the query
+  issue_relation?: {
+    id: string;
+    project_id: string;
+    relation_type: TIssueRelationTypes;
+    sequence_id: number;
+  }[];
 
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;

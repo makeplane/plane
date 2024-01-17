@@ -5,7 +5,7 @@ import stateGraph from "public/empty-state/state_graph.svg";
 // types
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -28,7 +28,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                     id: group.state_group,
                     label: group.state_group,
                     value: group.state_count,
-                    color: STATE_GROUP_COLORS[group.state_group],
+                    color: STATE_GROUPS[group.state_group].color,
                   })) ?? []
                 }
                 height="250px"
@@ -62,7 +62,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                       <div
                         className="h-2.5 w-2.5 rounded-sm"
                         style={{
-                          backgroundColor: STATE_GROUP_COLORS[group.state_group],
+                          backgroundColor: STATE_GROUPS[group.state_group].color,
                         }}
                       />
                       <div className="whitespace-nowrap capitalize">{group.state_group}</div>

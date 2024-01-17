@@ -13,6 +13,7 @@ import { getCustomDates } from "helpers/dashboard.helper";
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
 import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
+import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   dashboardId: string;
@@ -144,38 +145,12 @@ export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
                   left: 5,
                 }}
                 defs={STATE_GROUP_GRAPH_GRADIENTS}
-                fill={[
-                  {
-                    match: {
-                      id: "backlog",
-                    },
-                    id: "gradientBacklog",
+                fill={Object.values(STATE_GROUPS).map((p) => ({
+                  match: {
+                    id: p.key,
                   },
-                  {
-                    match: {
-                      id: "unstarted",
-                    },
-                    id: "gradientUnstarted",
-                  },
-                  {
-                    match: {
-                      id: "started",
-                    },
-                    id: "gradientStarted",
-                  },
-                  {
-                    match: {
-                      id: "completed",
-                    },
-                    id: "gradientCompleted",
-                  },
-                  {
-                    match: {
-                      id: "cancelled",
-                    },
-                    id: "gradientCanceled",
-                  },
-                ]}
+                  id: `gradient${p.label}`,
+                }))}
                 onClick={(datum, e) => {
                   e.preventDefault();
                   e.stopPropagation();

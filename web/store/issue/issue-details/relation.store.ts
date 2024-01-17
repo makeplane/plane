@@ -83,8 +83,6 @@ export class IssueRelationStore implements IIssueRelationStore {
     try {
       const response = await this.issueRelationService.listIssueRelations(workspaceSlug, projectId, issueId);
 
-      console.log("response", response);
-
       runInAction(() => {
         Object.keys(response).forEach((key) => {
           const relation_key = key as TIssueRelationTypes;

@@ -7,7 +7,7 @@ import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { TIssue, TWidgetIssue } from "@plane/types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   issueId: string;
@@ -23,7 +23,7 @@ export const AssignedUpcomingIssueListItem: React.FC<Props> = observer((props) =
     issue: { getIssueById },
   } = useIssueDetail();
   // derived values
-  const issueDetails = getIssueById(issueId) as TWidgetIssue;
+  const issueDetails = getIssueById(issueId);
 
   if (!issueDetails) return null;
 
@@ -73,7 +73,7 @@ export const AssignedOverdueIssueListItem: React.FC<Props> = observer((props) =>
     issue: { getIssueById },
   } = useIssueDetail();
   // derived values
-  const issueDetails = getIssueById(issueId) as TWidgetIssue;
+  const issueDetails = getIssueById(issueId);
 
   if (!issueDetails) return null;
 

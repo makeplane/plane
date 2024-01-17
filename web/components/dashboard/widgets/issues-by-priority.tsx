@@ -14,6 +14,7 @@ import { getCustomDates } from "helpers/dashboard.helper";
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
+import { ISSUE_PRIORITIES } from "constants/issue";
 
 const TEXT_COLORS = {
   urgent: "#F4A9AA",
@@ -156,28 +157,10 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
               data={chartData}
               id="priority"
               value="percentage"
-              dimensions={[
-                {
-                  id: "urgent",
-                  value: "urgent",
-                },
-                {
-                  id: "high",
-                  value: "high",
-                },
-                {
-                  id: "medium",
-                  value: "medium",
-                },
-                {
-                  id: "low",
-                  value: "low",
-                },
-                {
-                  id: "none",
-                  value: "none",
-                },
-              ]}
+              dimensions={ISSUE_PRIORITIES.map((p) => ({
+                id: p.key,
+                value: p.key,
+              }))}
               axisBottom={null}
               axisLeft={null}
               height="119px"
@@ -188,38 +171,12 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
                 left: 0,
               }}
               defs={PRIORITY_GRAPH_GRADIENTS}
-              fill={[
-                {
-                  match: {
-                    id: "urgent",
-                  },
-                  id: "gradientUrgent",
+              fill={ISSUE_PRIORITIES.map((p) => ({
+                match: {
+                  id: p.key,
                 },
-                {
-                  match: {
-                    id: "high",
-                  },
-                  id: "gradientHigh",
-                },
-                {
-                  match: {
-                    id: "medium",
-                  },
-                  id: "gradientMedium",
-                },
-                {
-                  match: {
-                    id: "low",
-                  },
-                  id: "gradientLow",
-                },
-                {
-                  match: {
-                    id: "none",
-                  },
-                  id: "gradientNone",
-                },
-              ]}
+                id: `gradient${p.title}`,
+              }))}
               tooltip={() => <></>}
               enableGridX={false}
               enableGridY={false}
