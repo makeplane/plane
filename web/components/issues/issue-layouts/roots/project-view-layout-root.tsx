@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { useIssues } from "hooks/store";
 // components
 import {
+  IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
   ProjectViewEmptyState,
@@ -55,19 +56,24 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
           {!issues?.groupedIssueIds ? (
             <ProjectViewEmptyState />
           ) : (
-            <div className="relative h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <ProjectViewListLayout />
-              ) : activeLayout === "kanban" ? (
-                <ProjectViewKanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <ProjectViewCalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <ProjectViewGanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <ProjectViewSpreadsheetLayout />
-              ) : null}
-            </div>
+            <>
+              <div className="relative h-full w-full overflow-auto">
+                {activeLayout === "list" ? (
+                  <ProjectViewListLayout />
+                ) : activeLayout === "kanban" ? (
+                  <ProjectViewKanBanLayout />
+                ) : activeLayout === "calendar" ? (
+                  <ProjectViewCalendarLayout />
+                ) : activeLayout === "gantt_chart" ? (
+                  <ProjectViewGanttLayout />
+                ) : activeLayout === "spreadsheet" ? (
+                  <ProjectViewSpreadsheetLayout />
+                ) : null}
+              </div>
+
+              {/* peek overview */}
+              <IssuePeekOverview />
+            </>
           )}
         </>
       )}
