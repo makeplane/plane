@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 
-import { IPage } from "@plane/types";
+import { IIssueLabel, IPage } from "@plane/types";
 import { PageService } from "services/page.service";
 
 import { RootStore } from "./root.store";
@@ -17,6 +17,7 @@ export interface IPageStore {
   description_stripped: string | null;
   id: string;
   is_favorite: boolean;
+  label_details: IIssueLabel[];
   is_locked: boolean;
   labels: string[];
   name: string;
@@ -67,6 +68,7 @@ export class PageStore implements IPageStore {
   updated_by: string;
   workspace: string;
   oldName: string = "";
+  label_details: IIssueLabel[] = [];
   disposers: Array<() => void> = [];
 
   pageService;
@@ -106,6 +108,7 @@ export class PageStore implements IPageStore {
     this.project = page?.project || "";
     this.owned_by = page?.owned_by || "";
     this.labels = page?.labels || [];
+    this.label_details = page?.label_details || [];
     this.is_locked = page?.is_locked || false;
     this.id = page?.id || "";
     this.is_favorite = page?.is_favorite || false;
