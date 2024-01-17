@@ -1,38 +1,32 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { useIssues } from "hooks/store";
 // constant
+import { EIssuesStoreType } from "constants/issue";
+// types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
-import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EIssuesStoreType } from "constants/issue";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 
-export interface IViewKanBanLayout {}
+export interface IViewKanBanLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+  };
+}
 
-export const ProjectViewKanBanLayout: React.FC = observer(() => {
+export const ProjectViewKanBanLayout: React.FC<IViewKanBanLayout> = observer((props) => {
+  const { issueActions } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
+  const { viewId } = router.query;
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug) return;
-
-        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue);
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug) return;
-
-        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
-      },
-    }),
-    [issues, workspaceSlug]
-  );
 
   return (
     <BaseKanBanRoot
@@ -42,6 +36,7 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
       currentStore={EIssuesStoreType.PROJECT_VIEW}
+      viewId={viewId?.toString()}
     />
   );
 });

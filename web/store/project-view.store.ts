@@ -1,4 +1,4 @@
-import { omit, set } from "lodash";
+import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // services
 import { ViewService } from "services/view.service";
@@ -163,7 +163,7 @@ export class ProjectViewStore implements IProjectViewStore {
   deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<any> => {
     await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
       runInAction(() => {
-        omit(this.viewMap, [viewId]);
+        delete this.viewMap[viewId];
       });
     });
   };

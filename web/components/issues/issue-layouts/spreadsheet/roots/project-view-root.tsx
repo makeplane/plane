@@ -1,36 +1,32 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
 import { useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+// types
 import { EIssueActions } from "../../types";
 import { TIssue } from "@plane/types";
-import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+// constants
 import { EIssuesStoreType } from "constants/issue";
 
-export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
+export interface IViewSpreadsheetLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+  };
+}
+
+export const ProjectViewSpreadsheetLayout: React.FC<IViewSpreadsheetLayout> = observer((props) => {
+  const { issueActions } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
+  const { viewId } = router.query;
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug) return;
-
-        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue);
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug) return;
-
-        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
-      },
-    }),
-    [issues, workspaceSlug]
-  );
 
   return (
     <BaseSpreadsheetRoot
@@ -38,6 +34,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
       issueFiltersStore={issuesFilter}
       issueActions={issueActions}
       QuickActions={ProjectIssueQuickActions}
+      viewId={viewId?.toString()}
     />
   );
 });

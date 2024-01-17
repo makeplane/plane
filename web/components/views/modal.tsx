@@ -1,7 +1,6 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-import { debounce } from "lodash";
 // hooks
 import { useProjectView } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -33,9 +32,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const handleCreateView = async (payload: IProjectView) => {
     await createView(workspaceSlug, projectId, payload)
       .then(() => {
-        // console.log("after calling store");
         handleClose();
-        // console.log("after closing");
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -68,8 +65,6 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     else await handleUpdateView(formData);
   };
 
-  const debouncedFormSubmit = debounce(handleFormSubmit, 10, { leading: false, trailing: true });
-
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -100,7 +95,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
                 <ProjectViewForm
                   data={data}
                   handleClose={handleClose}
-                  handleFormSubmit={debouncedFormSubmit as (formData: IProjectView) => Promise<void>}
+                  handleFormSubmit={handleFormSubmit}
                   preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>
