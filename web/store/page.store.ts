@@ -48,26 +48,26 @@ export interface IPageStore {
 }
 
 export class PageStore implements IPageStore {
-  access: number = 0;
+  access = 0;
   isSubmitting: "submitting" | "submitted" | "saved" = "saved";
   archived_at: string | null;
   color: string;
   created_at: Date;
   created_by: string;
   description: string;
-  description_html: string = "";
+  description_html = "";
   description_stripped: string | null;
   id: string;
-  is_favorite: boolean = false;
-  is_locked: boolean = true;
+  is_favorite = false;
+  is_locked = true;
   labels: string[];
-  name: string = "";
+  name = "";
   owned_by: string;
   project: string;
   updated_at: Date;
   updated_by: string;
   workspace: string;
-  oldName: string = "";
+  oldName = "";
   label_details: IIssueLabel[] = [];
   disposers: Array<() => void> = [];
 

@@ -14,7 +14,6 @@ import { StoreProvider } from "contexts/store-context";
 import { AppProvider } from "lib/app-provider";
 // types
 import { NextPageWithLayout } from "lib/types";
-import DevTools from "mobx-react-devtools";
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;

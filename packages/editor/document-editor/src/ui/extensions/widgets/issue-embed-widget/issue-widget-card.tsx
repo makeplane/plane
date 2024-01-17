@@ -15,7 +15,7 @@ export const IssueWidgetCard = (props) => {
         setIssueDetails(issue);
         setLoading(0);
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(-1);
       });
   }, []);

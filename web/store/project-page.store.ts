@@ -227,7 +227,7 @@ export class ProjectPageStore implements IProjectPageStore {
       set(this.projectArchivedPageMap[projectId][pageId], "archived_at", new Date().toISOString());
       delete this.projectPageMap[projectId][pageId];
     });
-    const response = await this.pageService.archivePage(workspaceSlug, projectId, pageId).catch((e) => {
+    const response = await this.pageService.archivePage(workspaceSlug, projectId, pageId).catch(() => {
       runInAction(() => {
         set(this.projectPageMap, [projectId, pageId], this.projectArchivedPageMap[projectId][pageId]);
         set(this.projectPageMap[projectId][pageId], "archived_at", null);
@@ -250,7 +250,7 @@ export class ProjectPageStore implements IProjectPageStore {
       set(this.projectPageMap[projectId][pageId], "archived_at", null);
       delete this.projectArchivedPageMap[projectId][pageId];
     });
-    await this.pageService.restorePage(workspaceSlug, projectId, pageId).catch((e) => {
+    await this.pageService.restorePage(workspaceSlug, projectId, pageId).catch(() => {
       runInAction(() => {
         set(this.projectArchivedPageMap, [projectId, pageId], this.projectPageMap[projectId][pageId]);
         set(this.projectArchivedPageMap[projectId][pageId], "archived_at", pageArchivedAt);

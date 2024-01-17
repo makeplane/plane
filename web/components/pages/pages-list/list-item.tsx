@@ -24,6 +24,7 @@ import { EUserProjectRoles } from "constants/project";
 import { useRouter } from "next/router";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { useMember, usePage, useUser } from "hooks/store";
+import { IIssueLabel } from "@plane/types";
 
 export interface IPagesListItem {
   pageId: string;
@@ -70,11 +71,11 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     removeFromFavorites,
   } = pageStore;
 
-  const handleCopyUrl = (e: any) => {
+  const handleCopyUrl = async (e: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`);
+    await copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`);
   };
 
   const handleAddToFavorites = (e: any) => {
@@ -104,18 +105,18 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     makePrivate();
   };
 
-  const handleArchivePage = (e: any) => {
+  const handleArchivePage = async (e: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    archivePage(workspaceSlug as string, projectId as string, pageId as string);
+    await archivePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
-  const handleRestorePage = (e: any) => {
+  const handleRestorePage = async (e: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    restorePage(workspaceSlug as string, projectId as string, pageId as string);
+    await restorePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleDeletePage = (e: any) => {
@@ -160,7 +161,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                 <FileText className="h-4 w-4 shrink-0" />
                 <p className="mr-2 truncate text-sm text-custom-text-100">{name}</p>
                 {label_details.length > 0 &&
-                  label_details.map((label: any) => (
+                  label_details.map((label: IIssueLabel) => (
                     <div
                       key={label.id}
                       className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs"

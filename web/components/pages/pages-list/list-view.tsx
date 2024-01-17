@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
