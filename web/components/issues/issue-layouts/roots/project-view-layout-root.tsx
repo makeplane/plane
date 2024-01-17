@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -6,16 +6,21 @@ import useSWR from "swr";
 import { useIssues } from "hooks/store";
 // components
 import {
-  ProjectEmptyState,
+  IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
+  ProjectViewEmptyState,
   ProjectViewGanttLayout,
   ProjectViewKanBanLayout,
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
+// constants
 import { EIssuesStoreType } from "constants/issue";
+// types
+import { TIssue } from "@plane/types";
+import { EIssueActions } from "../types";
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // router
@@ -39,6 +44,22 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     }
   );
 
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
+
+        await issues.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue, viewId?.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
+
+        await issues.removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id, viewId?.toString());
+      },
+    }),
+    [issues, workspaceSlug, projectId, viewId]
+  );
+
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
@@ -53,22 +74,26 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
       ) : (
         <>
           {!issues?.groupedIssueIds ? (
-            // TODO: Replace this with project view empty state
-            <ProjectEmptyState />
+            <ProjectViewEmptyState />
           ) : (
-            <div className="relative h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <ProjectViewListLayout />
-              ) : activeLayout === "kanban" ? (
-                <ProjectViewKanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <ProjectViewCalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <ProjectViewGanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <ProjectViewSpreadsheetLayout />
-              ) : null}
-            </div>
+            <>
+              <div className="relative h-full w-full overflow-auto">
+                {activeLayout === "list" ? (
+                  <ProjectViewListLayout issueActions={issueActions} />
+                ) : activeLayout === "kanban" ? (
+                  <ProjectViewKanBanLayout issueActions={issueActions} />
+                ) : activeLayout === "calendar" ? (
+                  <ProjectViewCalendarLayout issueActions={issueActions} />
+                ) : activeLayout === "gantt_chart" ? (
+                  <ProjectViewGanttLayout issueActions={issueActions} />
+                ) : activeLayout === "spreadsheet" ? (
+                  <ProjectViewSpreadsheetLayout issueActions={issueActions} />
+                ) : null}
+              </div>
+
+              {/* peek overview */}
+              <IssuePeekOverview />
+            </>
           )}
         </>
       )}
