@@ -62,6 +62,18 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
+
   if (!value) return null;
 
   let projectLabels: IIssueLabel[] = defaultOptions;
@@ -85,18 +97,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   const label = (
     <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">

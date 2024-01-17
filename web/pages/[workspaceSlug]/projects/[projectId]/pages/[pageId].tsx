@@ -49,7 +49,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-
   const {
     config: { envConfig },
   } = useApplication();

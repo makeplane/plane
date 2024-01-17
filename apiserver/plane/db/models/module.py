@@ -7,17 +7,20 @@ from . import ProjectBaseModel
 
 
 def get_default_filters():
-    return {
-        "priority": None,
-        "state": None,
-        "state_group": None,
-        "assignees": None,
-        "created_by": None,
-        "labels": None,
-        "start_date": None,
-        "target_date": None,
-        "subscriber": None,
-    },
+    return (
+        {
+            "priority": None,
+            "state": None,
+            "state_group": None,
+            "assignees": None,
+            "created_by": None,
+            "labels": None,
+            "start_date": None,
+            "target_date": None,
+            "subscriber": None,
+        },
+    )
+
 
 def get_default_display_filters():
     return {
@@ -29,6 +32,7 @@ def get_default_display_filters():
         "layout": "list",
         "calendar_date_range": "",
     }
+
 
 def get_default_display_properties():
     return {
@@ -47,9 +51,12 @@ def get_default_display_properties():
         "updated_on": True,
     }
 
+
 class Module(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Module Name")
-    description = models.TextField(verbose_name="Module Description", blank=True)
+    description = models.TextField(
+        verbose_name="Module Description", blank=True
+    )
     description_text = models.JSONField(
         verbose_name="Module Description RT", blank=True, null=True
     )
@@ -71,7 +78,10 @@ class Module(ProjectBaseModel):
         max_length=20,
     )
     lead = models.ForeignKey(
-        "db.User", on_delete=models.SET_NULL, related_name="module_leads", null=True
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="module_leads",
+        null=True,
     )
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -94,9 +104,9 @@ class Module(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            smallest_sort_order = Module.objects.filter(project=self.project).aggregate(
-                smallest=models.Min("sort_order")
-            )["smallest"]
+            smallest_sort_order = Module.objects.filter(
+                project=self.project
+            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
 
             if smallest_sort_order is not None:
                 self.sort_order = smallest_sort_order - 10000
@@ -186,7 +196,9 @@ class ModuleFavorite(ProjectBaseModel):
 
 class ModuleUserProperties(ProjectBaseModel):
     module = models.ForeignKey(
-        "db.Module", on_delete=models.CASCADE, related_name="module_user_properties"
+        "db.Module",
+        on_delete=models.CASCADE,
+        related_name="module_user_properties",
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -195,8 +207,9 @@ class ModuleUserProperties(ProjectBaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(default=get_default_display_properties)
-
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
 
     class Meta:
         unique_together = ["module", "user"]

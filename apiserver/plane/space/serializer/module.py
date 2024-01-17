@@ -4,6 +4,7 @@ from plane.db.models import (
     Module,
 )
 
+
 class ModuleBaseSerializer(BaseSerializer):
     class Meta:
         model = Module

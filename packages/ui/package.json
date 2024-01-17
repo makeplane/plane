@@ -36,6 +36,7 @@
     "@headlessui/react": "^1.7.17",
     "@popperjs/core": "^2.11.8",
     "react-color": "^2.19.3",
+    "react-dom": "^18.2.0",
     "react-popper": "^2.3.0"
   }
 }

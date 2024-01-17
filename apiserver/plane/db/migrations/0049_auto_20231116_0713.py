@@ -18,7 +18,9 @@ def update_pages(apps, schema_editor):
         # looping through all the pages
         for page in Page.objects.all():
             page_blocks = PageBlock.objects.filter(
-                page_id=page.id, project_id=page.project_id, workspace_id=page.workspace_id
+                page_id=page.id,
+                project_id=page.project_id,
+                workspace_id=page.workspace_id,
             ).order_by("sort_order")
 
             if page_blocks:

@@ -128,7 +128,9 @@ class IssueCommentPublicViewSet(BaseViewSet):
             )
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(
+                    serializer.data, cls=DjangoJSONEncoder
+                ),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
@@ -162,7 +164,9 @@ class IssueCommentPublicViewSet(BaseViewSet):
         comment = IssueComment.objects.get(
             workspace__slug=slug, pk=pk, actor=request.user
         )
-        serializer = IssueCommentSerializer(comment, data=request.data, partial=True)
+        serializer = IssueCommentSerializer(
+            comment, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -191,7 +195,10 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         comment = IssueComment.objects.get(
-            workspace__slug=slug, pk=pk, project_id=project_id, actor=request.user
+            workspace__slug=slug,
+            pk=pk,
+            project_id=project_id,
+            actor=request.user,
         )
         issue_activity.delay(
             type="comment.activity.deleted",
@@ -261,7 +268,9 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 )
             issue_activity.delay(
                 type="issue_reaction.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(
+                    self.request.data, cls=DjangoJSONEncoder
+                ),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
@@ -343,7 +352,9 @@ class CommentReactionPublicViewSet(BaseViewSet):
         serializer = CommentReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                project_id=project_id, comment_id=comment_id, actor=request.user
+                project_id=project_id,
+                comment_id=comment_id,
+                actor=request.user,
             )
             if not ProjectMember.objects.filter(
                 project_id=project_id,
@@ -357,7 +368,9 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 )
             issue_activity.delay(
                 type="comment_reaction.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(
+                    self.request.data, cls=DjangoJSONEncoder
+                ),
                 actor_id=str(self.request.user.id),
                 issue_id=None,
                 project_id=str(self.kwargs.get("project_id", None)),
@@ -445,7 +458,9 @@ class IssueVotePublicViewSet(BaseViewSet):
         issue_vote.save()
         issue_activity.delay(
             type="issue_vote.activity.created",
-            requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+            requested_data=json.dumps(
+                self.request.data, cls=DjangoJSONEncoder
+            ),
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
@@ -507,13 +522,21 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        state_order = [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -544,7 +567,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -554,7 +579,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
-                priority_order if order_by_param == "priority" else priority_order[::-1]
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
             )
             issue_queryset = issue_queryset.annotate(
                 priority_order=Case(
@@ -602,7 +629,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                     else order_by_param
                 )
             ).order_by(
-                "-max_values" if order_by_param.startswith("-") else "max_values"
+                "-max_values"
+                if order_by_param.startswith("-")
+                else "max_values"
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)

@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
 import { MoreHorizontal } from "lucide-react";
@@ -21,8 +20,6 @@ type Props = {
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues, issueIdList, quickActions, showAllIssues = false } = props;
-  // router
-  const router = useRouter();
   // hooks
   const {
     router: { workspaceSlug, projectId },
@@ -62,6 +59,10 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         if (!issues?.[issueId]) return null;
 
         const issue = issues?.[issueId];
+
+        const stateColor =
+          getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
+
         return (
           <Draggable key={issue.id} draggableId={issue.id} index={index}>
             {(provided, snapshot) => (
@@ -93,9 +94,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                         <span
                           className="h-full w-0.5 flex-shrink-0 rounded"
                           style={{
-                            backgroundColor: getProjectStates(issue?.project_id).find(
-                              (state) => state?.id == issue?.state_id
-                            )?.color,
+                            backgroundColor: stateColor,
                           }}
                         />
                         <div className="flex-shrink-0 text-xs text-custom-text-300">

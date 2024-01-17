@@ -10,8 +10,7 @@ export type TIssueAttachmentRoot = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  is_archived: boolean;
-  is_editable: boolean;
+  disabled?: boolean;
 };
 
 export type TAttachmentOperations = {
@@ -21,7 +20,7 @@ export type TAttachmentOperations = {
 
 export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   // props
-  const { workspaceSlug, projectId, issueId, is_archived, is_editable } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { createAttachment, removeAttachment } = useIssueDetail();
   const { setToastAlert } = useToast();
@@ -72,10 +71,14 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
       <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <IssueAttachmentUpload
           workspaceSlug={workspaceSlug}
-          disabled={is_editable}
+          disabled={disabled}
           handleAttachmentOperations={handleAttachmentOperations}
         />
-        <IssueAttachmentsList handleAttachmentOperations={handleAttachmentOperations} />
+        <IssueAttachmentsList
+          issueId={issueId}
+          disabled={disabled}
+          handleAttachmentOperations={handleAttachmentOperations}
+        />
       </div>
     </div>
   );

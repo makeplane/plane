@@ -72,8 +72,18 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
     # ids
-    state_id = serializers.PrimaryKeyRelatedField(source="state", queryset=State.objects.all(), required=False, allow_null=True)
-    parent_id = serializers.PrimaryKeyRelatedField(source='parent', queryset=Issue.objects.all(), required=False, allow_null=True)
+    state_id = serializers.PrimaryKeyRelatedField(
+        source="state",
+        queryset=State.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent",
+        queryset=Issue.objects.all(),
+        required=False,
+        allow_null=True,
+    )
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
@@ -99,10 +109,10 @@ class IssueCreateSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        assignee_ids = self.initial_data.get('assignee_ids')
-        data['assignee_ids'] = assignee_ids if assignee_ids else []
-        label_ids = self.initial_data.get('label_ids')
-        data['label_ids'] = label_ids if label_ids else []
+        assignee_ids = self.initial_data.get("assignee_ids")
+        data["assignee_ids"] = assignee_ids if assignee_ids else []
+        label_ids = self.initial_data.get("label_ids")
+        data["label_ids"] = label_ids if label_ids else []
         return data
 
     def validate(self, data):
@@ -111,7 +121,9 @@ class IssueCreateSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed target date")
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
         return data
 
     def create(self, validated_data):
@@ -226,12 +238,13 @@ class IssueActivitySerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkspaceLiteSerializer(
+        read_only=True, source="workspace"
+    )
 
     class Meta:
         model = IssueActivity
         fields = "__all__"
-
 
 
 class IssuePropertySerializer(BaseSerializer):
@@ -246,7 +259,9 @@ class IssuePropertySerializer(BaseSerializer):
 
 
 class LabelSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        source="workspace", read_only=True
+    )
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
 
     class Meta:
@@ -269,7 +284,6 @@ class LabelLiteSerializer(BaseSerializer):
 
 
 class IssueLabelSerializer(BaseSerializer):
-
     class Meta:
         model = IssueLabel
         fields = "__all__"
@@ -281,6 +295,7 @@ class IssueLabelSerializer(BaseSerializer):
 
 class IssueRelationLiteSerializer(DynamicBaseSerializer):
     project_id = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Issue
         fields = [
@@ -295,7 +310,9 @@ class IssueRelationLiteSerializer(DynamicBaseSerializer):
 
 
 class IssueRelationSerializer(BaseSerializer):
-    issue_detail = IssueRelationLiteSerializer(read_only=True, source="related_issue")
+    issue_detail = IssueRelationLiteSerializer(
+        read_only=True, source="related_issue"
+    )
 
     class Meta:
         model = IssueRelation
@@ -306,6 +323,7 @@ class IssueRelationSerializer(BaseSerializer):
             "workspace",
             "project",
         ]
+
 
 class RelatedIssueSerializer(BaseSerializer):
     issue_detail = IssueRelationLiteSerializer(read_only=True, source="issue")
@@ -408,7 +426,8 @@ class IssueLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
+            url=validated_data.get("url"),
+            issue_id=validated_data.get("issue_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
@@ -432,9 +451,8 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueReactionSerializer(BaseSerializer):
-    
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    
+
     class Meta:
         model = IssueReaction
         fields = "__all__"
@@ -467,12 +485,18 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 class IssueVoteSerializer(BaseSerializer):
-
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:
         model = IssueVote
-        fields = ["issue", "vote", "workspace", "project", "actor", "actor_detail"]
+        fields = [
+            "issue",
+            "vote",
+            "workspace",
+            "project",
+            "actor",
+            "actor_detail",
+        ]
         read_only_fields = fields
 
 
@@ -480,8 +504,12 @@ class IssueCommentSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-    comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        read_only=True, source="workspace"
+    )
+    comment_reactions = CommentReactionLiteSerializer(
+        read_only=True, many=True
+    )
     is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -515,10 +543,14 @@ class IssueStateFlatSerializer(BaseSerializer):
 
 # Issue Serializer with state details
 class IssueStateSerializer(DynamicBaseSerializer):
-    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
+    label_details = LabelLiteSerializer(
+        read_only=True, source="labels", many=True
+    )
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    assignee_details = UserLiteSerializer(
+        read_only=True, source="assignees", many=True
+    )
     sub_issues_count = serializers.IntegerField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
@@ -537,8 +569,12 @@ class IssueSerializer(DynamicBaseSerializer):
     module_id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     # Many to many
-    label_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="labels")
-    assignee_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source="assignees")
+    label_ids = serializers.PrimaryKeyRelatedField(
+        read_only=True, many=True, source="labels"
+    )
+    assignee_ids = serializers.PrimaryKeyRelatedField(
+        read_only=True, many=True, source="assignees"
+    )
 
     # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -583,11 +619,17 @@ class IssueSerializer(DynamicBaseSerializer):
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkspaceLiteSerializer(
+        read_only=True, source="workspace"
+    )
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    label_details = LabelLiteSerializer(
+        read_only=True, source="labels", many=True
+    )
+    assignee_details = UserLiteSerializer(
+        read_only=True, source="assignees", many=True
+    )
     sub_issues_count = serializers.IntegerField(read_only=True)
     cycle_id = serializers.UUIDField(read_only=True)
     module_id = serializers.UUIDField(read_only=True)
@@ -614,7 +656,9 @@ class IssueLiteSerializer(DynamicBaseSerializer):
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
+    reactions = IssueReactionSerializer(
+        read_only=True, many=True, source="issue_reactions"
+    )
     votes = IssueVoteSerializer(read_only=True, many=True)
 
     class Meta:
@@ -635,7 +679,6 @@ class IssuePublicSerializer(BaseSerializer):
             "votes",
         ]
         read_only_fields = fields
-
 
 
 class IssueSubscriberSerializer(BaseSerializer):

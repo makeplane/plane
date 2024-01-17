@@ -30,16 +30,20 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer(
 
     const issue = getIssueById(issueId);
 
-    const parentIssue = issue && issue.parent_id ? getIssueById(issue.parent_id) : undefined;
+    const parentIssue = issue?.parent_id ? getIssueById(issue.parent_id) : undefined;
     const parentIssueProjectDetails =
       parentIssue && parentIssue.project_id ? getProjectById(parentIssue.project_id) : undefined;
 
     const handleParentIssue = async (_issueId: string | null = null) => {
       setUpdating(true);
-      await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId }).finally(() => {
+      try {
+        await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId });
+        await issueOperations.fetch(workspaceSlug, projectId, issueId);
         toggleParentIssueModal(false);
         setUpdating(false);
-      });
+      } catch (error) {
+        console.error("something went wrong while fetching the issue");
+      }
     };
 
     if (!issue) return <></>;
@@ -61,14 +65,14 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer(
           disabled={disabled}
         >
           <div onClick={() => toggleParentIssueModal(true)}>
-            {parentIssue ? (
+            {issue?.parent_id && parentIssue ? (
               `${parentIssueProjectDetails?.identifier}-${parentIssue.sequence_id}`
             ) : (
               <span className="text-custom-text-200">Select issue</span>
             )}
           </div>
 
-          {parentIssue && (
+          {issue?.parent_id && parentIssue && !disabled && (
             <div onClick={() => handleParentIssue(null)}>
               <X className="h-2.5 w-2.5" />
             </div>

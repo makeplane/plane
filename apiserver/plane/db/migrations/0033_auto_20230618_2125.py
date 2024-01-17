@@ -7,77 +7,210 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0032_auto_20230520_2015'),
+        ("db", "0032_auto_20230520_2015"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Inbox',
+            name="Inbox",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField(blank=True, verbose_name='Inbox Description')),
-                ('is_default', models.BooleanField(default=False)),
-                ('view_props', models.JSONField(default=dict)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='inbox_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="Inbox Description"
+                    ),
+                ),
+                ("is_default", models.BooleanField(default=False)),
+                ("view_props", models.JSONField(default=dict)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="inbox_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Inbox',
-                'verbose_name_plural': 'Inboxes',
-                'db_table': 'inboxes',
-                'ordering': ('name',),
+                "verbose_name": "Inbox",
+                "verbose_name_plural": "Inboxes",
+                "db_table": "inboxes",
+                "ordering": ("name",),
             },
         ),
         migrations.AddField(
-            model_name='project',
-            name='inbox_view',
+            model_name="project",
+            name="inbox_view",
             field=models.BooleanField(default=False),
         ),
         migrations.CreateModel(
-            name='InboxIssue',
+            name="InboxIssue",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('status', models.IntegerField(choices=[(-2, 'Pending'), (-1, 'Rejected'), (0, 'Snoozed'), (1, 'Accepted'), (2, 'Duplicate')], default=-2)),
-                ('snoozed_till', models.DateTimeField(null=True)),
-                ('source', models.TextField(blank=True, null=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='inboxissue_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('duplicate_to', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='inbox_duplicate', to='db.issue')),
-                ('inbox', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_inbox', to='db.inbox')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_inbox', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_inboxissue', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='inboxissue_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_inboxissue', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "status",
+                    models.IntegerField(
+                        choices=[
+                            (-2, "Pending"),
+                            (-1, "Rejected"),
+                            (0, "Snoozed"),
+                            (1, "Accepted"),
+                            (2, "Duplicate"),
+                        ],
+                        default=-2,
+                    ),
+                ),
+                ("snoozed_till", models.DateTimeField(null=True)),
+                ("source", models.TextField(blank=True, null=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="inboxissue_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "duplicate_to",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="inbox_duplicate",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "inbox",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_inbox",
+                        to="db.inbox",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_inbox",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_inboxissue",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="inboxissue_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_inboxissue",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'InboxIssue',
-                'verbose_name_plural': 'InboxIssues',
-                'db_table': 'inbox_issues',
-                'ordering': ('-created_at',),
+                "verbose_name": "InboxIssue",
+                "verbose_name_plural": "InboxIssues",
+                "db_table": "inbox_issues",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='inbox',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_inbox', to='db.project'),
+            model_name="inbox",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_inbox",
+                to="db.project",
+            ),
         ),
         migrations.AddField(
-            model_name='inbox',
-            name='updated_by',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='inbox_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
+            model_name="inbox",
+            name="updated_by",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="inbox_updated_by",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Last Modified By",
+            ),
         ),
         migrations.AddField(
-            model_name='inbox',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_inbox', to='db.workspace'),
+            model_name="inbox",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_inbox",
+                to="db.workspace",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='inbox',
-            unique_together={('name', 'project')},
+            name="inbox",
+            unique_together={("name", "project")},
         ),
     ]

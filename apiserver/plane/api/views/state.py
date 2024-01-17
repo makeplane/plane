@@ -34,7 +34,9 @@ class StateAPIEndpoint(BaseAPIView):
         )
 
     def post(self, request, slug, project_id):
-        serializer = StateSerializer(data=request.data, context={"project_id": project_id})
+        serializer = StateSerializer(
+            data=request.data, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save(project_id=project_id)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -64,14 +66,19 @@ class StateAPIEndpoint(BaseAPIView):
         )
 
         if state.default:
-            return Response({"error": "Default state cannot be deleted"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Default state cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check for any issues in the state
         issue_exist = Issue.issue_objects.filter(state=state_id).exists()
 
         if issue_exist:
             return Response(
-                {"error": "The state is not empty, only empty states can be deleted"},
+                {
+                    "error": "The state is not empty, only empty states can be deleted"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -79,7 +86,9 @@ class StateAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, project_id, state_id=None):
-        state = State.objects.get(workspace__slug=slug, project_id=project_id, pk=state_id)
+        state = State.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=state_id
+        )
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

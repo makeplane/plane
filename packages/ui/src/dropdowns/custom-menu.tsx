@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import ReactDOM from "react-dom";
 // react-poppper
 import { usePopper } from "react-popper";
 // hooks
@@ -29,8 +29,10 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     optionsClassName = "",
     verticalEllipsis = false,
     width = "auto",
+    portalElement,
     menuButtonOnClick,
     tabIndex,
+    closeOnSelect,
   } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
@@ -50,6 +52,39 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   const closeDropdown = () => setIsOpen(false);
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
   useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  let menuItems = (
+    <Menu.Items
+      className="fixed z-10"
+      onClick={() => {
+        if (closeOnSelect) closeDropdown();
+      }}
+      static
+    >
+      <div
+        className={`my-1 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-custom-shadow-rg focus:outline-none ${
+          maxHeight === "lg"
+            ? "max-h-60"
+            : maxHeight === "md"
+              ? "max-h-48"
+              : maxHeight === "rg"
+                ? "max-h-36"
+                : maxHeight === "sm"
+                  ? "max-h-28"
+                  : ""
+        } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+      >
+        {children}
+      </div>
+    </Menu.Items>
+  );
+
+  if (portalElement) {
+    menuItems = ReactDOM.createPortal(menuItems, portalElement);
+  }
 
   return (
     <Menu
@@ -118,28 +153,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               )}
             </>
           )}
-          {isOpen && (
-            <Menu.Items className="fixed z-10" static>
-              <div
-                className={`my-1 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-custom-shadow-rg focus:outline-none ${
-                  maxHeight === "lg"
-                    ? "max-h-60"
-                    : maxHeight === "md"
-                      ? "max-h-48"
-                      : maxHeight === "rg"
-                        ? "max-h-36"
-                        : maxHeight === "sm"
-                          ? "max-h-28"
-                          : ""
-                } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-              >
-                {children}
-              </div>
-            </Menu.Items>
-          )}
+          {isOpen && menuItems}
         </>
       )}
     </Menu>

@@ -1,7 +1,5 @@
-export * from "./issue";
 export * from "./assignee-column";
 export * from "./attachment-column";
-export * from "./columns-list";
 export * from "./created-on-column";
 export * from "./due-date-column";
 export * from "./estimate-column";

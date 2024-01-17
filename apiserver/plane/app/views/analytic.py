@@ -61,7 +61,9 @@ class AnalyticsEndpoint(BaseAPIView):
             )
 
         # If segment is present it cannot be same as x-axis
-        if segment and (segment not in valid_xaxis_segment or x_axis == segment):
+        if segment and (
+            segment not in valid_xaxis_segment or x_axis == segment
+        ):
             return Response(
                 {
                     "error": "Both segment and x axis cannot be same and segment should be valid"
@@ -110,7 +112,9 @@ class AnalyticsEndpoint(BaseAPIView):
         if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
             assignee_details = (
                 Issue.issue_objects.filter(
-                    workspace__slug=slug, **filters, assignees__avatar__isnull=False
+                    workspace__slug=slug,
+                    **filters,
+                    assignees__avatar__isnull=False,
                 )
                 .order_by("assignees__id")
                 .distinct("assignees__id")
@@ -124,7 +128,9 @@ class AnalyticsEndpoint(BaseAPIView):
             )
 
         cycle_details = {}
-        if x_axis in ["issue_cycle__cycle_id"] or segment in ["issue_cycle__cycle_id"]:
+        if x_axis in ["issue_cycle__cycle_id"] or segment in [
+            "issue_cycle__cycle_id"
+        ]:
             cycle_details = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
@@ -186,7 +192,9 @@ class AnalyticViewViewset(BaseViewSet):
 
     def get_queryset(self):
         return self.filter_queryset(
-            super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
         )
 
 
@@ -196,7 +204,9 @@ class SavedAnalyticEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, analytic_id):
-        analytic_view = AnalyticView.objects.get(pk=analytic_id, workspace__slug=slug)
+        analytic_view = AnalyticView.objects.get(
+            pk=analytic_id, workspace__slug=slug
+        )
 
         filter = analytic_view.query
         queryset = Issue.issue_objects.filter(**filter)
@@ -266,7 +276,9 @@ class ExportAnalyticsEndpoint(BaseAPIView):
             )
 
         # If segment is present it cannot be same as x-axis
-        if segment and (segment not in valid_xaxis_segment or x_axis == segment):
+        if segment and (
+            segment not in valid_xaxis_segment or x_axis == segment
+        ):
             return Response(
                 {
                     "error": "Both segment and x axis cannot be same and segment should be valid"
@@ -293,7 +305,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         filters = issue_filters(request.GET, "GET")
-        base_issues = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+        base_issues = Issue.issue_objects.filter(
+            workspace__slug=slug, **filters
+        )
 
         total_issues = base_issues.count()
 
@@ -306,7 +320,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         )
 
         open_issues_groups = ["backlog", "unstarted", "started"]
-        open_issues_queryset = state_groups.filter(state__group__in=open_issues_groups)
+        open_issues_queryset = state_groups.filter(
+            state__group__in=open_issues_groups
+        )
 
         open_issues = open_issues_queryset.count()
         open_issues_classified = (
@@ -361,10 +377,12 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             .order_by("-count")
         )
 
-        open_estimate_sum = open_issues_queryset.aggregate(sum=Sum("estimate_point"))[
+        open_estimate_sum = open_issues_queryset.aggregate(
+            sum=Sum("estimate_point")
+        )["sum"]
+        total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))[
             "sum"
         ]
-        total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))["sum"]
 
         return Response(
             {

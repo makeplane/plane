@@ -8,9 +8,16 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.app.views import BaseViewSet, BaseAPIView
-from plane.db.models import SlackProjectSync, WorkspaceIntegration, ProjectMember
+from plane.db.models import (
+    SlackProjectSync,
+    WorkspaceIntegration,
+    ProjectMember,
+)
 from plane.app.serializers import SlackProjectSyncSerializer
-from plane.app.permissions import ProjectBasePermission, ProjectEntityPermission
+from plane.app.permissions import (
+    ProjectBasePermission,
+    ProjectEntityPermission,
+)
 from plane.utils.integrations.slack import slack_oauth
 
 
@@ -38,7 +45,8 @@ class SlackProjectSyncViewSet(BaseViewSet):
 
             if not code:
                 return Response(
-                    {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Code is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             slack_response = slack_oauth(code=code)
@@ -54,7 +62,9 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 access_token=slack_response.get("access_token"),
                 scopes=slack_response.get("scope"),
                 bot_user_id=slack_response.get("bot_user_id"),
-                webhook_url=slack_response.get("incoming_webhook", {}).get("url"),
+                webhook_url=slack_response.get("incoming_webhook", {}).get(
+                    "url"
+                ),
                 data=slack_response,
                 team_id=slack_response.get("team", {}).get("id"),
                 team_name=slack_response.get("team", {}).get("name"),
@@ -62,7 +72,9 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 project_id=project_id,
             )
             _ = ProjectMember.objects.get_or_create(
-                member=workspace_integration.actor, role=20, project_id=project_id
+                member=workspace_integration.actor,
+                role=20,
+                project_id=project_id,
             )
             serializer = SlackProjectSyncSerializer(slack_project_sync)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -74,6 +86,8 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 )
             capture_exception(e)
             return Response(
-                {"error": "Slack could not be installed. Please try again later"},
+                {
+                    "error": "Slack could not be installed. Please try again later"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )

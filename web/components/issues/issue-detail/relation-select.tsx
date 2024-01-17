@@ -126,22 +126,24 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                         {issueRelationObject[relationKey].icon(10)}
                         {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}
                       </a>
-                      <button
-                        type="button"
-                        className="opacity-0 duration-300 group-hover:opacity-100"
-                        onClick={() => {
-                          if (!currentUser) return;
-                          removeRelation(
-                            workspaceSlug as string,
-                            projectId as string,
-                            issueId,
-                            relationKey,
-                            relationIssueId
-                          );
-                        }}
-                      >
-                        <X className="h-2 w-2" />
-                      </button>
+                      {!disabled && (
+                        <button
+                          type="button"
+                          className="opacity-0 duration-300 group-hover:opacity-100"
+                          onClick={() => {
+                            if (!currentUser) return;
+                            removeRelation(
+                              workspaceSlug as string,
+                              projectId as string,
+                              issueId,
+                              relationKey,
+                              relationIssueId
+                            );
+                          }}
+                        >
+                          <X className="h-2 w-2" />
+                        </button>
+                      )}
                     </div>
                   );
                 })

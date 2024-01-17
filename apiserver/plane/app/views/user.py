@@ -43,7 +43,9 @@ class UserEndpoint(BaseViewSet):
         is_admin = InstanceAdmin.objects.filter(
             instance=instance, user=request.user
         ).exists()
-        return Response({"is_instance_admin": is_admin}, status=status.HTTP_200_OK)
+        return Response(
+            {"is_instance_admin": is_admin}, status=status.HTTP_200_OK
+        )
 
     def deactivate(self, request):
         # Check all workspace user is active
@@ -51,7 +53,12 @@ class UserEndpoint(BaseViewSet):
 
         # Instance admin check
         if InstanceAdmin.objects.filter(user=user).exists():
-            return Response({"error": "You cannot deactivate your account since you are an instance admin"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "error": "You cannot deactivate your account since you are an instance admin"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         projects_to_deactivate = []
         workspaces_to_deactivate = []
@@ -61,7 +68,10 @@ class UserEndpoint(BaseViewSet):
         ).annotate(
             other_admin_exists=Count(
                 Case(
-                    When(Q(role=20, is_active=True) & ~Q(member=request.user), then=1),
+                    When(
+                        Q(role=20, is_active=True) & ~Q(member=request.user),
+                        then=1,
+                    ),
                     default=0,
                     output_field=IntegerField(),
                 )
@@ -86,7 +96,10 @@ class UserEndpoint(BaseViewSet):
         ).annotate(
             other_admin_exists=Count(
                 Case(
-                    When(Q(role=20, is_active=True) & ~Q(member=request.user), then=1),
+                    When(
+                        Q(role=20, is_active=True) & ~Q(member=request.user),
+                        then=1,
+                    ),
                     default=0,
                     output_field=IntegerField(),
                 )
@@ -95,7 +108,9 @@ class UserEndpoint(BaseViewSet):
         )
 
         for workspace in workspaces:
-            if workspace.other_admin_exists > 0 or (workspace.total_members == 1):
+            if workspace.other_admin_exists > 0 or (
+                workspace.total_members == 1
+            ):
                 workspace.is_active = False
                 workspaces_to_deactivate.append(workspace)
             else:
@@ -134,7 +149,9 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
         user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_onboarded = request.data.get("is_onboarded", False)
         user.save()
-        return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Updated successfully"}, status=status.HTTP_200_OK
+        )
 
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
@@ -142,14 +159,16 @@ class UpdateUserTourCompletedEndpoint(BaseAPIView):
         user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_tour_completed = request.data.get("is_tour_completed", False)
         user.save()
-        return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Updated successfully"}, status=status.HTTP_200_OK
+        )
 
 
 class UserActivityEndpoint(BaseAPIView, BasePaginator):
     def get(self, request):
-        queryset = IssueActivity.objects.filter(actor=request.user).select_related(
-            "actor", "workspace", "issue", "project"
-        )
+        queryset = IssueActivity.objects.filter(
+            actor=request.user
+        ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
             request=request,
@@ -158,4 +177,3 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
-

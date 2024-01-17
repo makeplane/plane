@@ -12,7 +12,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, customActionButton } = props;
+  const { issue, handleDelete, customActionButton, portalElement } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -40,11 +40,15 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
+        ellipsis
+      >
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -54,9 +58,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setDeleteIssueModal(true);
           }}
         >
