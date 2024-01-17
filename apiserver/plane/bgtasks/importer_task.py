@@ -25,6 +25,7 @@ from plane.db.models import (
     User,
     IssueProperty,
 )
+from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
 @shared_task
@@ -53,6 +54,15 @@ def service_importer(service, importer_id):
                 batch_size=10,
                 ignore_conflicts=True,
             )
+
+            _ = [
+                send_welcome_slack.delay(
+                    str(user.id),
+                    True,
+                    f"{user.email} was imported to Plane from {service}",
+                )
+                for user in new_users
+            ]
 
             workspace_users = User.objects.filter(
                 email__in=[

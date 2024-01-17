@@ -8,7 +8,14 @@ import pytz
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
 
+# Third party imports
+from sentry_sdk import capture_exception
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 
 def get_default_onboarding():
@@ -58,7 +65,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     has_billing_address = models.BooleanField(default=False)
 
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
+    user_timezone = models.CharField(
+        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    )
 
     last_active = models.DateTimeField(default=timezone.now, null=True)
     last_login_time = models.DateTimeField(null=True)
@@ -115,3 +124,23 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.is_staff = True
 
         super(User, self).save(*args, **kwargs)
+
+
+@receiver(post_save, sender=User)
+def send_welcome_slack(sender, instance, created, **kwargs):
+    try:
+        if created and not instance.is_bot:
+            # Send message on slack as well
+            if settings.SLACK_BOT_TOKEN:
+                client = WebClient(token=settings.SLACK_BOT_TOKEN)
+                try:
+                    _ = client.chat_postMessage(
+                        channel="#trackers",
+                        text=f"New user {instance.email} has signed up and begun the onboarding journey.",
+                    )
+                except SlackApiError as e:
+                    print(f"Got an error: {e.response['error']}")
+        return
+    except Exception as e:
+        capture_exception(e)
+        return
