@@ -20,11 +20,11 @@ export interface IProjectPageStore {
   publicProjectPageIds: string[] | undefined;
   recentProjectPages: IRecentPages | undefined;
   // fetch actions
-  fetchProjectPages: (workspaceSlug: string, projectId: string) => void;
-  fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => void;
+  fetchProjectPages: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => Promise<void>;
   // crud actions
   createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<IPage>;
-  deletePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
+  deletePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
   archivePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
   restorePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
 }
@@ -147,69 +147,6 @@ export class ProjectPageStore implements IProjectPageStore {
     return { today, yesterday, this_week, older };
   }
 
-  // get favoriteProjectPages() {
-  //   const projectId = this.rootStore.app.router.projectId;
-  //   if (!this.projectPageIds || !projectId) return [];
-  //
-  //   const favouritePages: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => page.is_favorite);
-  //   return favouritePages;
-  // }
-
-  // get privateProjectPages() {
-  //   const projectId = this.rootStore.app.router.projectId;
-  //   if (!this.projectPageIds || !projectId) return [];
-  //
-  //   const privatePages: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => page.access === 1);
-  //   return privatePages;
-  // }
-
-  // get publicProjectPages() {
-  //   const projectId = this.rootStore.app.router.projectId;
-  //   if (!this.projectPageIds || !projectId) return [];
-  //
-  //   const publicPages: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => page.access === 1);
-  //   return publicPages;
-  // }
-
-  // get recentProjectPages() {
-  //   const projectId = this.rootStore.app.router.projectId;
-  //   if (!this.projectPageIds || !projectId) return;
-  //
-  //   const today: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => isToday(new Date(page.updated_at)));
-  //
-  //   const yesterday: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => isYesterday(new Date(page.updated_at)));
-  //
-  //   const this_week: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => {
-  //       const pageUpdatedAt = page.updated_at;
-  //       return (
-  //         isThisWeek(new Date(pageUpdatedAt)) &&
-  //         !isToday(new Date(pageUpdatedAt)) &&
-  //         !isYesterday(new Date(pageUpdatedAt))
-  //       );
-  //     });
-  //
-  //   const older: IPageStore[] = this.projectPageIds
-  //     .map((pageId) => this.projectPageMap[projectId][pageId])
-  //     .filter((page) => {
-  //       const pageUpdatedAt = page.updated_at;
-  //       return !isThisWeek(new Date(pageUpdatedAt)) && !isYesterday(new Date(pageUpdatedAt));
-  //     });
-  //
-  //   return { today, yesterday, this_week, older };
-  // }
-
   /**
    * Fetching all the pages for a specific project
    * @param workspaceSlug
@@ -217,15 +154,16 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   fetchProjectPages = async (workspaceSlug: string, projectId: string) => {
     try {
-      const response = await this.pageService.getProjectPages(workspaceSlug, projectId);
-      runInAction(() => {
-        for (const page of response) {
-          set(this.projectPageMap, [projectId, page.id], new PageStore(page));
-        }
+      await this.pageService.getProjectPages(workspaceSlug, projectId).then((response) => {
+        runInAction(() => {
+          for (const page of response) {
+            set(this.projectPageMap, [projectId, page.id], new PageStore(page, this.rootStore));
+          }
+        });
+        return response;
       });
-      return response;
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   };
 
@@ -240,13 +178,13 @@ export class ProjectPageStore implements IProjectPageStore {
       await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
         runInAction(() => {
           for (const page of response) {
-            set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page));
+            set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page, this.rootStore));
           }
         });
         return response;
       });
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   };
 
@@ -259,7 +197,7 @@ export class ProjectPageStore implements IProjectPageStore {
   createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
     const response = await this.pageService.createPage(workspaceSlug, projectId, data);
     runInAction(() => {
-      set(this.projectPageMap, [projectId, response.id], new PageStore(response));
+      set(this.projectPageMap, [projectId, response.id], new PageStore(response, this.rootStore));
     });
     return response;
   };
@@ -274,7 +212,7 @@ export class ProjectPageStore implements IProjectPageStore {
   deletePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
     const response = await this.pageService.deletePage(workspaceSlug, projectId, pageId);
     runInAction(() => {
-      delete this.projectPageMap[projectId][pageId];
+      delete this.projectArchivedPageMap[projectId][pageId];
     });
     return response;
   };

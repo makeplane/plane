@@ -1,9 +1,12 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 
 import { IPage } from "@plane/types";
 import { PageService } from "services/page.service";
 
+import { RootStore } from "./root.store";
+
 export interface IPageStore {
+  // Page Properties
   access: number;
   archived_at: string | null;
   color: string;
@@ -23,8 +26,7 @@ export interface IPageStore {
   updated_by: string;
   workspace: string;
 
-  getPageTitle: () => string;
-  getPageDescription: () => string;
+  // Actions
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lockPage: () => Promise<void>;
@@ -33,10 +35,20 @@ export interface IPageStore {
   removeFromFavorites: () => Promise<void>;
   updateName: (name: string) => Promise<void>;
   updateDescription: (description: string) => Promise<void>;
+
+  // Reactions
+  disposers: Array<() => void>;
+
+  // Helpers
+  oldName: string;
+  cleanup: () => void;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: (isSubmitting: "submitting" | "submitted" | "saved") => void;
 }
 
 export class PageStore implements IPageStore {
   access: number = 0;
+  isSubmitting: "submitting" | "submitted" | "saved" = "saved";
   archived_at: string | null;
   color: string;
   created_at: Date;
@@ -54,15 +66,20 @@ export class PageStore implements IPageStore {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  oldName: string = "";
+  disposers: Array<() => void> = [];
 
   pageService;
+  // root store
+  rootStore;
 
-  constructor(page: IPage) {
+  constructor(page: IPage, _rootStore: RootStore) {
     makeObservable(this, {
       name: observable.ref,
       description_html: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
+      isSubmitting: observable.ref,
       access: observable.ref,
 
       makePublic: action,
@@ -71,6 +88,8 @@ export class PageStore implements IPageStore {
       removeFromFavorites: action,
       updateName: action,
       updateDescription: action,
+      setIsSubmitting: action,
+      cleanup: action,
     });
     this.created_by = page?.created_by || "";
     this.created_at = page?.created_at || new Date();
@@ -90,36 +109,84 @@ export class PageStore implements IPageStore {
     this.is_locked = page?.is_locked || false;
     this.id = page?.id || "";
     this.is_favorite = page?.is_favorite || false;
+    this.oldName = page?.name || "";
 
+    this.rootStore = _rootStore;
     this.pageService = new PageService();
-  }
 
-  getPageTitle() {
-    return this.name;
-  }
+    const descriptionDisposer = reaction(
+      () => this.description_html,
+      (description_html) => {
+        //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
+        const { projectId, workspaceSlug } = this.rootStore.app.router;
+        if (!projectId || !workspaceSlug) return;
+        this.isSubmitting = "submitting";
+        this.pageService.patchPage(workspaceSlug, projectId, this.id, { description_html }).finally(() => {
+          runInAction(() => {
+            this.isSubmitting = "submitted";
+          });
+        });
+      },
+      { delay: 3000 }
+    );
 
-  getPageDescription() {
-    return this.description;
+    const pageTitleDisposer = reaction(
+      () => this.name,
+      (name) => {
+        const { projectId, workspaceSlug } = this.rootStore.app.router;
+        if (!projectId || !workspaceSlug) return;
+        this.isSubmitting = "submitting";
+        this.pageService
+          .patchPage(workspaceSlug, projectId, this.id, { name })
+          .catch(() => {
+            runInAction(() => {
+              this.name = this.oldName;
+            });
+          })
+          .finally(() => {
+            runInAction(() => {
+              this.isSubmitting = "submitted";
+            });
+          });
+      },
+      { delay: 2000 }
+    );
+
+    this.disposers.push(descriptionDisposer, pageTitleDisposer);
   }
 
   updateName = action("updateName", async (name: string) => {
-    const oldName = this.name;
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.oldName = this.name;
     this.name = name;
-    await this.pageService.patchPage(this.workspace, this.project, this.id, { name }).catch(() => {
-      runInAction(() => {
-        this.name = oldName;
-      });
+  });
+
+  updateDescription = action("updateDescription", async (description_html: string) => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.description_html = description_html;
+  });
+
+  cleanup = action("cleanup", () => {
+    this.disposers.forEach((disposer) => {
+      disposer();
     });
   });
 
-  updateDescription = action("updateDescription", async (description: string) => {
-    this.description = description;
-    this.pageService.patchPage(this.workspace, this.project, this.id, { description });
+  setIsSubmitting = action("setIsSubmitting", (isSubmitting: "submitting" | "submitted" | "saved") => {
+    this.isSubmitting = isSubmitting;
   });
 
   lockPage = action("lockPage", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
     this.is_locked = true;
-    await this.pageService.lockPage(this.workspace, this.project, this.id).catch(() => {
+
+    await this.pageService.lockPage(workspaceSlug, projectId, this.id).catch(() => {
       runInAction(() => {
         this.is_locked = false;
       });
@@ -127,8 +194,12 @@ export class PageStore implements IPageStore {
   });
 
   unlockPage = action("unlockPage", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
     this.is_locked = false;
-    await this.pageService.unlockPage(this.workspace, this.project, this.id).catch(() => {
+
+    await this.pageService.unlockPage(workspaceSlug, projectId, this.id).catch(() => {
       runInAction(() => {
         this.is_locked = true;
       });
@@ -139,8 +210,12 @@ export class PageStore implements IPageStore {
    * Add Page to users favorites list
    */
   addToFavorites = action("addToFavorites", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
     this.is_favorite = true;
-    await this.pageService.addPageToFavorites(this.workspace, this.project, this.id).catch(() => {
+
+    await this.pageService.addPageToFavorites(workspaceSlug, projectId, this.id).catch(() => {
       runInAction(() => {
         this.is_favorite = false;
       });
@@ -151,8 +226,12 @@ export class PageStore implements IPageStore {
    * Remove page from the users favorites list
    */
   removeFromFavorites = action("removeFromFavorites", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
     this.is_favorite = false;
-    await this.pageService.removePageFromFavorites(this.workspace, this.project, this.id).catch(() => {
+
+    await this.pageService.removePageFromFavorites(workspaceSlug, projectId, this.id).catch(() => {
       runInAction(() => {
         this.is_favorite = true;
       });
@@ -164,8 +243,12 @@ export class PageStore implements IPageStore {
    * @returns
    */
   makePublic = action("makePublic", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
     this.access = 0;
-    this.pageService.patchPage(this.workspace, this.project, this.id, { access: 0 }).catch(() => {
+
+    this.pageService.patchPage(workspaceSlug, projectId, this.id, { access: 0 }).catch(() => {
       runInAction(() => {
         this.access = 1;
       });
@@ -177,8 +260,12 @@ export class PageStore implements IPageStore {
    * @returns
    */
   makePrivate = action("makePrivate", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
     this.access = 1;
-    this.pageService.patchPage(this.workspace, this.project, this.id, { access: 1 }).catch(() => {
+
+    this.pageService.patchPage(workspaceSlug, projectId, this.id, { access: 1 }).catch(() => {
       runInAction(() => {
         this.access = 0;
       });
