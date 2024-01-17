@@ -18,7 +18,7 @@ export const WorkspaceDashboardView = observer(() => {
   } = useApplication();
   const { currentUser, updateTourCompleted } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
-  const { workspaceProjectIds } = useProject();
+  const { joinedProjectIds } = useProject();
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -49,10 +49,10 @@ export const WorkspaceDashboardView = observer(() => {
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
-      {homeDashboardId && workspaceProjectIds ? (
+      {homeDashboardId && joinedProjectIds ? (
         <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
           {currentUser && <UserGreetingsView user={currentUser} />}
-          {workspaceProjectIds.length > 0 ? <DashboardWidgets /> : <DashboardProjectEmptyState />}
+          {joinedProjectIds.length > 0 ? <DashboardWidgets /> : <DashboardProjectEmptyState />}
         </div>
       ) : (
         <div className="h-full w-full grid place-items-center">
