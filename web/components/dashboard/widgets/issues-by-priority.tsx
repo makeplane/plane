@@ -90,7 +90,7 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
     });
   };
 
@@ -100,7 +100,7 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
     if (!widgetStats)
       fetchWidgetStats(workspaceSlug, dashboardId, {
         widget_key: WIDGET_KEY,
-        duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+        target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
 
@@ -141,10 +141,10 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <h4 className="text-lg font-semibold text-custom-text-300">Priority of assigned issues</h4>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.duration ?? "this_week"}
+          value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
             handleUpdateFilters({
-              duration: val,
+              target_date: val,
             })
           }
         />
@@ -243,7 +243,7 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
         </div>
       ) : (
         <div className="h-full grid items-end">
-          <IssuesByPriorityEmptyState filter={widgetDetails.widget_filters.duration ?? "this_week"} />
+          <IssuesByPriorityEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
         </div>
       )}
     </Link>

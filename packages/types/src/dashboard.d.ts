@@ -23,21 +23,21 @@ export type TDurationFilterOptions =
 
 // widget filters
 export type TAssignedIssuesWidgetFilters = {
-  duration?: TDurationFilterOptions;
+  target_date?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TCreatedIssuesWidgetFilters = {
-  duration?: TDurationFilterOptions;
+  target_date?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TIssuesByStateGroupsWidgetFilters = {
-  duration?: TDurationFilterOptions;
+  target_date?: TDurationFilterOptions;
 };
 
 export type TIssuesByPriorityWidgetFilters = {
-  duration?: TDurationFilterOptions;
+  target_date?: TDurationFilterOptions;
 };
 
 export type TWidgetFiltersFormData =
@@ -79,22 +79,22 @@ export type TWidgetStatsRequestParams =
       widget_key: TWidgetKeys;
     }
   | {
-      duration: string;
+      target_date: string;
       issue_type: TIssuesListTypes;
       widget_key: "assigned_issues";
       expand?: "issue_relation";
     }
   | {
-      duration: string;
+      target_date: string;
       issue_type: TIssuesListTypes;
       widget_key: "created_issues";
     }
   | {
-      duration: string;
+      target_date: string;
       widget_key: "issues_by_state_groups";
     }
   | {
-      duration: string;
+      target_date: string;
       widget_key: "issues_by_priority";
     };
 
