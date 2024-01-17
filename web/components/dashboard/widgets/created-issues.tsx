@@ -7,7 +7,7 @@ import { useDashboard } from "hooks/store";
 // components
 import { CreatedIssuesList, DurationFilterDropdown, TabsList, WidgetLoader } from "components/dashboard/widgets";
 // helpers
-import { getCustomDates } from "helpers/dashboard.helper";
+import { getCustomDates, getRedirectionFilters } from "helpers/dashboard.helper";
 // types
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // constants
@@ -63,7 +63,8 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
 
-  const redirectionLink = `/${workspaceSlug}/workspace-views/assigned`;
+  const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "upcoming");
+  const redirectionLink = `/${workspaceSlug}/workspace-views/created/${filterParams}`;
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 

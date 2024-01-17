@@ -11,8 +11,8 @@ import { AssignedIssuesEmptyState } from "components/dashboard/widgets";
 // ui
 import { Loader, getButtonStyling } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
+import { getRedirectionFilters } from "helpers/dashboard.helper";
 // types
 import { TDurationFilterOptions, TIssue, TIssuesListTypes, TWidgetIssue } from "@plane/types";
 
@@ -33,13 +33,7 @@ export const AssignedIssuesList: React.FC<Props> = (props) => {
   const handleIssuePeekOverview = (issue: TIssue) =>
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
-  const today = renderFormattedPayloadDate(new Date());
-  const filterParams =
-    type === "upcoming"
-      ? `?target_date=${today};after`
-      : type === "overdue"
-      ? `?target_date=${today};before`
-      : "?state_group=completed";
+  const filterParams = getRedirectionFilters(type);
 
   return (
     <>

@@ -11,8 +11,8 @@ import { CreatedIssuesEmptyState } from "components/dashboard/widgets";
 // ui
 import { Loader, getButtonStyling } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
+import { getRedirectionFilters } from "helpers/dashboard.helper";
 // types
 import { TDurationFilterOptions, TIssue, TIssuesListTypes, TWidgetIssue } from "@plane/types";
 
@@ -33,13 +33,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
   const handleIssuePeekOverview = (issue: TIssue) =>
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
-  const today = renderFormattedPayloadDate(new Date());
-  const filterParams =
-    type === "upcoming"
-      ? `?target_date=${today};after`
-      : type === "overdue"
-      ? `?target_date=${today};before`
-      : "?state_group=completed";
+  const filterParams = getRedirectionFilters(type);
 
   return (
     <>
@@ -108,7 +102,7 @@ export const CreatedIssuesList: React.FC<Props> = (props) => {
       </div>
       {totalIssues > issues.length && (
         <Link
-          href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
+          href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
           className={cn(getButtonStyling("accent-primary", "sm"), "w-min my-3 mx-auto py-1 px-2 text-xs")}
         >
           View all issues
