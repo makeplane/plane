@@ -48,7 +48,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-      duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
       expand: "issue_relation",
     }).finally(() => setFetching(false));
   };
@@ -56,13 +56,13 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (!widgetDetails) return;
 
-    const filterDates = getCustomDates(widgetDetails.widget_filters.duration ?? "this_week");
+    const filterDates = getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week");
 
     if (!widgetStats)
       fetchWidgetStats(workspaceSlug, dashboardId, {
         widget_key: WIDGET_KEY,
         issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-        duration: filterDates,
+        target_date: filterDates,
         expand: "issue_relation",
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
@@ -76,10 +76,10 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
       <Link href={redirectionLink} className="flex items-center justify-between gap-2 p-6 pl-7">
         <h4 className="text-lg font-semibold text-custom-text-300">All issues assigned</h4>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.duration ?? "this_week"}
+          value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
             handleUpdateFilters({
-              duration: val,
+              target_date: val,
             })
           }
         />
@@ -99,7 +99,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
         <Tab.Panels as="div" className="mt-7 h-full">
           <Tab.Panel as="div" className="h-full flex flex-col">
             <AssignedIssuesList
-              filter={widgetDetails.widget_filters.duration}
+              filter={widgetDetails.widget_filters.target_date}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="upcoming"
@@ -109,7 +109,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel as="div" className="h-full flex flex-col">
             <AssignedIssuesList
-              filter={widgetDetails.widget_filters.duration}
+              filter={widgetDetails.widget_filters.target_date}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="overdue"
@@ -119,7 +119,7 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel as="div" className="h-full flex flex-col">
             <AssignedIssuesList
-              filter={widgetDetails.widget_filters.duration}
+              filter={widgetDetails.widget_filters.target_date}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="completed"

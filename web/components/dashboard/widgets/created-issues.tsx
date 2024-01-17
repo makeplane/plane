@@ -48,7 +48,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-      duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
     }).finally(() => setFetching(false));
   };
 
@@ -59,7 +59,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
       fetchWidgetStats(workspaceSlug, dashboardId, {
         widget_key: WIDGET_KEY,
         issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-        duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+        target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
 
@@ -72,10 +72,10 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
       <Link href={redirectionLink} className="flex items-center justify-between gap-2 p-6 pl-7">
         <h4 className="text-lg font-semibold text-custom-text-300">All issues created</h4>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.duration ?? "this_week"}
+          value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
             handleUpdateFilters({
-              duration: val,
+              target_date: val,
             })
           }
         />
@@ -95,7 +95,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
         <Tab.Panels as="div" className="mt-7 h-full">
           <Tab.Panel as="div" className="h-full flex flex-col">
             <CreatedIssuesList
-              filter={widgetDetails.widget_filters.duration}
+              filter={widgetDetails.widget_filters.target_date}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="upcoming"
@@ -105,7 +105,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel as="div" className="h-full flex flex-col">
             <CreatedIssuesList
-              filter={widgetDetails.widget_filters.duration}
+              filter={widgetDetails.widget_filters.target_date}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="overdue"
@@ -115,7 +115,7 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
           </Tab.Panel>
           <Tab.Panel as="div" className="h-full flex flex-col">
             <CreatedIssuesList
-              filter={widgetDetails.widget_filters.duration}
+              filter={widgetDetails.widget_filters.target_date}
               issues={widgetStats.issues}
               totalIssues={widgetStats.count}
               type="completed"
