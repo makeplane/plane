@@ -101,7 +101,12 @@ export const HeaderGroupByCard = observer(
               fieldsToShow={["all"]}
             />
           ) : (
-            <CreateUpdateIssueModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
+            <CreateUpdateIssueModal
+              isOpen={isOpen}
+              onClose={() => setIsOpen(false)}
+              data={issuePayload}
+              currentStore={currentStore}
+            />
           )}
 
           {renderExistingIssueModal && (
