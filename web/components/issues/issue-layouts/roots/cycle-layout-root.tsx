@@ -50,7 +50,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase() ?? "draft";
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
 
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
   return (
