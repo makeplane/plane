@@ -16,7 +16,7 @@ interface IDocumentEditor {
   // document info
   documentDetails: DocumentDetails;
   value: string;
-  rerenderOnPropsChange: {
+  rerenderOnPropsChange?: {
     id: string;
     description_html: string;
   };
