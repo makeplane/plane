@@ -208,7 +208,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={5}>
+        <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
           {data
             ? isSubmitting
               ? "Updating View..."
