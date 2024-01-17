@@ -25,8 +25,8 @@ export interface IProjectPageStore {
   // crud actions
   createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<IPage>;
   deletePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
-  archivePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
-  restorePage: (workspaceSlug: string, projectId: string, pageId: string) => void;
+  archivePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  restorePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
 }
 
 export class ProjectPageStore implements IProjectPageStore {

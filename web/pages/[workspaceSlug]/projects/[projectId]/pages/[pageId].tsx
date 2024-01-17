@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import debounce from "lodash/debounce";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useIssues, usePage, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
@@ -33,13 +33,11 @@ import { IPage, TIssue } from "@plane/types";
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 import { useIssueEmbeds } from "hooks/use-issue-embeds";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 // services
 const fileService = new FileService();
-const pageService = new PageService();
-const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -61,14 +59,33 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   } = useUser();
   // toast alert
   const { setToastAlert } = useToast();
-
   const { setShowAlert } = useReloadConfirmations();
 
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
-  const { issues, isLoading } = useIssueEmbeds();
+  const { issues, fetchIssue, issueWidgetClickAction } = useIssueEmbeds();
+  const { archivePage: archivePageMobx, restorePage: restorePageMobx, createPage: createPageMobx } = useProjectPages();
+  const pageStore = usePage(pageId as string);
+
+  // We need to get the values of title and description from the page store but we don't have to subscribe to those values
+  const pageTitle = pageStore?.name;
+  const pageDescription = pageStore?.description_html;
+  const {
+    lockPage: lockPageMobx,
+    unlockPage: unlockPageMobx,
+    updateName: updateNameMobx,
+    updateDescription: updateDescriptionMobx,
+    id: pageIdMobx,
+    owned_by,
+    is_locked,
+    archived_at,
+    created_at,
+    created_by,
+    updated_at,
+    updated_by,
+  } = pageStore;
 
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -76,47 +93,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const newDescription = `${watch("description_html")}<p>${response}</p>`;
     setValue("description_html", newDescription);
     editorRef.current?.setEditorValue(newDescription);
-
-    pageService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), {
-        description_html: newDescription,
-      })
-      .then(() => {
-        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
-      });
-  };
-
-  // =================== Fetching Page Details ======================
-  const {
-    data: pageDetails,
-    mutate: mutatePageDetails,
-    error,
-  } = useSWR(
-    workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId.toString()) : null,
-    workspaceSlug && projectId && pageId
-      ? () => pageService.getPageDetails(workspaceSlug.toString(), projectId.toString(), pageId.toString())
-      : null,
-    {
-      revalidateOnFocus: false,
-    }
-  );
-
-  const fetchIssue = async (issueId: string) => {
-    const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string);
-    return issue as TIssue;
-  };
-
-  const issueWidgetClickAction = (issueId: string) => {
-    const url = new URL(router.asPath, window.location.origin);
-    const params = new URLSearchParams(url.search);
-
-    if (params.has("peekIssueId")) {
-      params.set("peekIssueId", issueId);
-    } else {
-      params.append("peekIssueId", issueId);
-    }
-    // Replace the current URL with the new one
-    router.replace(`${url.pathname}?${params.toString()}`, undefined, { shallow: true });
+    updateDescriptionMobx(newDescription);
   };
 
   const actionCompleteAlert = ({
@@ -146,80 +123,16 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   }, [isSubmitting, setShowAlert]);
 
-  // adding pageDetails.description_html to dependency array causes
-  // editor rerendering on every save
-  useEffect(() => {
-    if (pageDetails?.description_html) {
-      setLocalIssueDescription({ id: pageId as string, description_html: pageDetails.description_html });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageDetails?.description_html]); // TODO: Verify the exhaustive-deps warning
-
-  function createObjectFromArray(keys: string[], options: any): any {
-    return keys.reduce((obj, key) => {
-      if (options[key] !== undefined) {
-        obj[key] = options[key];
-      }
-      return obj;
-    }, {} as { [key: string]: any });
-  }
-
-  const mutatePageDetailsHelper = (
-    serverMutatorFn: Promise<any>,
-    dataToMutate: Partial<IPage>,
-    formDataValues: Array<keyof IPage>,
-    onErrorAction: () => void
-  ) => {
-    const commonSwrOptions: MutatorOptions = {
-      revalidate: false,
-      populateCache: false,
-      rollbackOnError: () => {
-        onErrorAction();
-        return true;
-      },
-    };
-    const formData = getValues();
-    const formDataMutationObject = createObjectFromArray(formDataValues, formData);
-
-    mutatePageDetails(async () => serverMutatorFn, {
-      optimisticData: (prevData) => {
-        if (!prevData) return;
-        return {
-          ...prevData,
-          description_html: formData["description_html"],
-          ...formDataMutationObject,
-          ...dataToMutate,
-        };
-      },
-      ...commonSwrOptions,
-    });
-  };
-
-  useEffect(() => {
-    mutatePageDetails(undefined, {
-      revalidate: true,
-      populateCache: true,
-      rollbackOnError: () => {
-        actionCompleteAlert({
-          title: `Page could not be updated`,
-          message: `Sorry, page could not be updated, please try again later`,
-          type: "error",
-        });
-        return true;
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    formData.name = pageDetails?.name as string;
+    formData.name = pageTitle as string;
 
     if (!formData?.name || formData?.name.length === 0) return;
 
     try {
-      await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), formData);
+      await updateDescriptionMobx(formData.description_html);
+      await updateNameMobx(formData.name);
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be updated`,
@@ -231,26 +144,12 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePageTitle = async (title: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-
-    mutatePageDetailsHelper(
-      pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), { name: title }),
-      {
-        name: title,
-      },
-      [],
-      () =>
-        actionCompleteAlert({
-          title: `Page Title could not be updated`,
-          message: `Sorry, page title could not be updated, please try again later`,
-          type: "error",
-        })
-    );
+    await updateNameMobx(title);
   };
 
   const createPage = async (payload: Partial<IPage>) => {
     if (!workspaceSlug || !projectId) return;
-
-    await pageService.createPage(workspaceSlug.toString(), projectId.toString(), payload);
+    await createPageMobx(workspaceSlug as string, projectId as string, payload);
   };
 
   // ================ Page Menu Actions ==================
@@ -258,90 +157,82 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const currentPageValues = getValues();
 
     if (!currentPageValues?.description_html) {
-      currentPageValues.description_html = pageDetails?.description_html as string;
+      // TODO: We need to get latest data the above variable will give us stale data
+      currentPageValues.description_html = pageDescription as string;
     }
 
     const formData: Partial<IPage> = {
-      name: "Copy of " + pageDetails?.name,
+      name: "Copy of " + pageTitle,
       description_html: currentPageValues.description_html,
     };
-    await createPage(formData);
+
+    try {
+      await createPage(formData);
+    } catch (error) {
+      actionCompleteAlert({
+        title: `Page could not be duplicated`,
+        message: `Sorry, page could not be duplicated, please try again later`,
+        type: "error",
+      });
+    }
   };
 
   const archivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    mutatePageDetailsHelper(
-      pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
-      {
-        archived_at: renderFormattedPayloadDate(new Date()),
-      },
-      ["description_html"],
-      () =>
-        actionCompleteAlert({
-          title: `Page could not be Archived`,
-          message: `Sorry, page could not be Archived, please try again later`,
-          type: "error",
-        })
-    );
+    try {
+      await archivePageMobx(workspaceSlug as string, projectId as string, pageId as string);
+    } catch (error) {
+      actionCompleteAlert({
+        title: `Page could not be archived`,
+        message: `Sorry, page could not be archived, please try again later`,
+        type: "error",
+      });
+    }
   };
 
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
-
-    mutatePageDetailsHelper(
-      pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
-      {
-        archived_at: null,
-      },
-      ["description_html"],
-      () =>
-        actionCompleteAlert({
-          title: `Page could not be Restored`,
-          message: `Sorry, page could not be Restored, please try again later`,
-          type: "error",
-        })
-    );
+    try {
+      await restorePageMobx(workspaceSlug as string, projectId as string, pageId as string);
+    } catch (error) {
+      actionCompleteAlert({
+        title: `Page could not be restored`,
+        message: `Sorry, page could not be restored, please try again later`,
+        type: "error",
+      });
+    }
   };
 
   // ========================= Page Lock ==========================
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    mutatePageDetailsHelper(
-      pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
-      {
-        is_locked: true,
-      },
-      ["description_html"],
-      () =>
-        actionCompleteAlert({
-          title: `Page cannot be Locked`,
-          message: `Sorry, page cannot be Locked, please try again later`,
-          type: "error",
-        })
-    );
+    try {
+      await lockPageMobx();
+    } catch (error) {
+      actionCompleteAlert({
+        title: `Page could not be locked`,
+        message: `Sorry, page could not be locked, please try again later`,
+        type: "error",
+      });
+    }
   };
 
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
-
-    mutatePageDetailsHelper(
-      pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
-      {
-        is_locked: false,
-      },
-      ["description_html"],
-      () =>
-        actionCompleteAlert({
-          title: `Page could not be Unlocked`,
-          message: `Sorry, page could not be Unlocked, please try again later`,
-          type: "error",
-        })
-    );
+    try {
+      await unlockPageMobx();
+    } catch (error) {
+      actionCompleteAlert({
+        title: `Page could not be unlocked`,
+        message: `Sorry, page could not be unlocked, please try again later`,
+        type: "error",
+      });
+    }
   };
 
   const [localPageDescription, setLocalIssueDescription] = useState({
     id: pageId as string,
-    description_html: "",
+    description_html: pageDescription as string,
   });
 
   // ADDING updatePage TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
@@ -351,28 +242,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
     }, 1500),
-    [handleSubmit, pageDetails]
+    [handleSubmit]
   );
 
-  if (error)
-    return (
-      <EmptyState
-        image={emptyPage}
-        title="Page does not exist"
-        description="The page you are looking for does not exist or has been deleted."
-        primaryButton={{
-          text: "View other pages",
-          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
-        }}
-      />
-    );
-
   const isPageReadOnly =
-    pageDetails?.is_locked ||
-    pageDetails?.archived_at ||
+    is_locked ||
+    archived_at ||
     (currentProjectRole && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(currentProjectRole));
 
-  const isCurrentUserOwner = pageDetails?.owned_by === currentUser?.id;
+  const isCurrentUserOwner = owned_by === currentUser?.id;
 
   const userCanDuplicate =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -382,7 +260,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      {pageDetails && issues ? (
+      {pageIdMobx && issues ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
             {isPageReadOnly ? (
@@ -395,26 +273,20 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                 borderOnFocus={false}
                 noBorder
                 documentDetails={{
-                  title: pageDetails.name,
-                  created_by: pageDetails.created_by,
-                  created_on: pageDetails.created_at,
-                  last_updated_at: pageDetails.updated_at,
-                  last_updated_by: pageDetails.updated_by,
+                  title: pageTitle,
+                  created_by: created_by,
+                  created_on: created_at,
+                  last_updated_at: updated_at,
+                  last_updated_by: updated_by,
                 }}
-                pageLockConfig={
-                  userCanLock && !pageDetails.archived_at
-                    ? { action: unlockPage, is_locked: pageDetails.is_locked }
-                    : undefined
-                }
-                pageDuplicationConfig={
-                  userCanDuplicate && !pageDetails.archived_at ? { action: duplicate_page } : undefined
-                }
+                pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
+                pageDuplicationConfig={userCanDuplicate && !archived_at ? { action: duplicate_page } : undefined}
                 pageArchiveConfig={
                   userCanArchive
                     ? {
-                        action: pageDetails.archived_at ? unArchivePage : archivePage,
-                        is_archived: pageDetails.archived_at ? true : false,
-                        archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
+                        action: archived_at ? unArchivePage : archivePage,
+                        is_archived: archived_at ? true : false,
+                        archived_at: archived_at ? new Date(archived_at) : undefined,
                       }
                     : undefined
                 }
@@ -435,11 +307,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     <DocumentEditorWithRef
                       isSubmitting={isSubmitting}
                       documentDetails={{
-                        title: pageDetails.name,
-                        created_by: pageDetails.created_by,
-                        created_on: pageDetails.created_at,
-                        last_updated_at: pageDetails.updated_at,
-                        last_updated_by: pageDetails.updated_by,
+                        title: pageTitle,
+                        created_by: created_by,
+                        created_on: created_at,
+                        last_updated_at: updated_at,
+                        last_updated_by: updated_by,
                       }}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       setShouldShowAlert={setShowAlert}
@@ -464,8 +336,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       pageArchiveConfig={
                         userCanArchive
                           ? {
-                              is_archived: pageDetails.archived_at ? true : false,
-                              action: pageDetails.archived_at ? unArchivePage : archivePage,
+                              is_archived: archived_at ? true : false,
+                              action: archived_at ? unArchivePage : archivePage,
                             }
                           : undefined
                       }

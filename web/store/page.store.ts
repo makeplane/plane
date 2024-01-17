@@ -22,8 +22,13 @@ export interface IPageStore {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+
+  getPageTitle: () => string;
+  getPageDescription: () => string;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
+  lockPage: () => Promise<void>;
+  unlockPage: () => Promise<void>;
   addToFavorites: () => Promise<void>;
   removeFromFavorites: () => Promise<void>;
   updateName: (name: string) => Promise<void>;
@@ -89,6 +94,14 @@ export class PageStore implements IPageStore {
     this.pageService = new PageService();
   }
 
+  getPageTitle() {
+    return this.name;
+  }
+
+  getPageDescription() {
+    return this.description;
+  }
+
   updateName = action("updateName", async (name: string) => {
     const oldName = this.name;
     this.name = name;
@@ -101,7 +114,25 @@ export class PageStore implements IPageStore {
 
   updateDescription = action("updateDescription", async (description: string) => {
     this.description = description;
-    await this.pageService.patchPage(this.workspace, this.project, this.id, { description });
+    this.pageService.patchPage(this.workspace, this.project, this.id, { description });
+  });
+
+  lockPage = action("lockPage", async () => {
+    this.is_locked = true;
+    await this.pageService.lockPage(this.workspace, this.project, this.id).catch(() => {
+      runInAction(() => {
+        this.is_locked = false;
+      });
+    });
+  });
+
+  unlockPage = action("unlockPage", async () => {
+    this.is_locked = false;
+    await this.pageService.unlockPage(this.workspace, this.project, this.id).catch(() => {
+      runInAction(() => {
+        this.is_locked = true;
+      });
+    });
   });
 
   /**
