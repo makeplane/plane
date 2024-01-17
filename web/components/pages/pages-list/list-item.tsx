@@ -71,62 +71,62 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     removeFromFavorites,
   } = pageStore;
 
-  const handleCopyUrl = async (e: any) => {
+  const handleCopyUrl = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     await copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`);
   };
 
-  const handleAddToFavorites = (e: any) => {
+  const handleAddToFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
     addToFavorites();
   };
 
-  const handleRemoveFromFavorites = (e: any) => {
+  const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     removeFromFavorites();
   };
 
-  const handleMakePublic = (e: any) => {
+  const handleMakePublic = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     makePublic();
   };
 
-  const handleMakePrivate = (e: any) => {
+  const handleMakePrivate = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     makePrivate();
   };
 
-  const handleArchivePage = async (e: any) => {
+  const handleArchivePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     await archivePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
-  const handleRestorePage = async (e: any) => {
+  const handleRestorePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     await restorePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
-  const handleDeletePage = (e: any) => {
+  const handleDeletePage = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     setDeletePageModal(true);
   };
 
-  const handleEditPage = (e: any) => {
+  const handleEditPage = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
