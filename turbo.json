@@ -29,63 +29,18 @@
         "dist/**"
       ]
     },
-    "web#develop": {
+    "develop": {
       "cache": false,
       "persistent": true,
       "dependsOn": [
-        "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build",
-        "@plane/document-editor#build",
-        "@plane/ui#build"
+        "^build"
       ]
     },
-    "space#develop": {
+    "dev": {
       "cache": false,
       "persistent": true,
       "dependsOn": [
-        "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build",
-        "@plane/document-editor#build",
-        "@plane/ui#build"
-      ]
-    },
-    "web#build": {
-      "cache": true,
-      "dependsOn": [
-        "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build",
-        "@plane/document-editor#build",
-        "@plane/ui#build"
-      ]
-    },
-    "space#build": {
-      "cache": true,
-      "dependsOn": [
-        "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build",
-        "@plane/document-editor#build",
-        "@plane/ui#build"
-      ]
-    },
-    "@plane/lite-text-editor#build": {
-      "cache": true,
-      "dependsOn": [
-        "@plane/editor-core#build",
-        "@plane/editor-extensions#build"
-      ]
-    },
-    "@plane/rich-text-editor#build": {
-      "cache": true,
-      "dependsOn": [
-        "@plane/editor-core#build",
-        "@plane/editor-extensions#build"
-      ]
-    },
-    "@plane/document-editor#build": {
-      "cache": true,
-      "dependsOn": [
-        "@plane/editor-core#build",
-        "@plane/editor-extensions#build"
+        "^build"
       ]
     },
     "test": {
@@ -96,12 +51,6 @@
     },
     "lint": {
       "outputs": []
-    },
-    "dev": {
-      "cache": false
-    },
-    "develop": {
-      "cache": false
     },
     "start": {
       "cache": false
