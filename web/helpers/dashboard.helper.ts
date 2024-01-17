@@ -12,17 +12,18 @@ export const getCustomDates = (duration: TDurationFilterOptions): string => {
     case "today":
       firstDay = renderFormattedPayloadDate(today);
       lastDay = renderFormattedPayloadDate(today);
-      console.log("duration", `${firstDay};after,${lastDay};before`);
+      return `${firstDay};after,${lastDay};before`;
     case "this_week":
       firstDay = renderFormattedPayloadDate(startOfWeek(today));
       lastDay = renderFormattedPayloadDate(endOfWeek(today));
+      return `${firstDay};after,${lastDay};before`;
     case "this_month":
       firstDay = renderFormattedPayloadDate(startOfMonth(today));
       lastDay = renderFormattedPayloadDate(endOfMonth(today));
+      return `${firstDay};after,${lastDay};before`;
     case "this_year":
       firstDay = renderFormattedPayloadDate(startOfYear(today));
       lastDay = renderFormattedPayloadDate(endOfYear(today));
+      return `${firstDay};after,${lastDay};before`;
   }
-
-  return `${firstDay};after,${lastDay};before`;
 };

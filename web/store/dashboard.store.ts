@@ -228,7 +228,7 @@ export class DashboardStore implements IDashboardStore {
           this.widgetDetails?.[workspaceSlug]?.[dashboardId]?.map((w) => (w.id === widgetId ? updatedWidget : w))
         );
       });
-      const response = this.updateDashboardWidget(workspaceSlug, dashboardId, widgetId, {
+      const response = await this.updateDashboardWidget(workspaceSlug, dashboardId, widgetId, {
         filters: {
           ...widgetDetails.widget_filters,
           ...data.filters,

@@ -5,8 +5,7 @@ import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";
 // components
-import { CreatedIssuesList, TabsList, WidgetLoader } from "components/dashboard/widgets";
-import { DurationFilterDropdown } from "./dropdowns";
+import { CreatedIssuesList, DurationFilterDropdown, TabsList, WidgetLoader } from "components/dashboard/widgets";
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
@@ -28,30 +27,29 @@ export const CreatedIssuesWidget: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     fetchWidgetStats,
+    widgetDetails: allWidgetDetails,
     widgetStats: allWidgetStats,
-    getWidgetDetails,
     updateDashboardWidgetFilters,
   } = useDashboard();
   // derived values
-  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetDetails = allWidgetDetails?.[workspaceSlug]?.[dashboardId]?.find((w) => w.key === WIDGET_KEY);
   const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TCreatedIssuesWidgetResponse;
 
-  const handleUpdateFilters = (filters: Partial<TCreatedIssuesWidgetFilters>) => {
+  const handleUpdateFilters = async (filters: Partial<TCreatedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
 
-    updateDashboardWidgetFilters(workspaceSlug, dashboardId, widgetDetails.id, {
+    setFetching(true);
+
+    await updateDashboardWidgetFilters(workspaceSlug, dashboardId, widgetDetails.id, {
       widgetKey: WIDGET_KEY,
       filters,
     });
 
-    if (filters.tab) {
-      setFetching(true);
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-        issue_type: filters.tab,
-        duration: getCustomDates(filters.duration ?? "this_week"),
-      }).finally(() => setFetching(false));
-    }
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
+      duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
+    }).finally(() => setFetching(false));
   };
 
   useEffect(() => {

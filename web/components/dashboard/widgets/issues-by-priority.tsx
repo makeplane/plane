@@ -5,10 +5,11 @@ import { observer } from "mobx-react-lite";
 import { useDashboard } from "hooks/store";
 // components
 import { MarimekkoGraph } from "components/ui";
-import { IssuesByPriorityEmptyState, WidgetLoader } from "components/dashboard/widgets";
-import { DurationFilterDropdown } from "./dropdowns";
+import { DurationFilterDropdown, IssuesByPriorityEmptyState, WidgetLoader } from "components/dashboard/widgets";
 // ui
 import { PriorityIcon } from "@plane/ui";
+// helpers
+import { getCustomDates } from "helpers/dashboard.helper";
 // types
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
@@ -72,28 +73,36 @@ export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     fetchWidgetStats,
+    widgetDetails: allWidgetDetails,
     widgetStats: allWidgetStats,
-    getWidgetDetails,
     updateDashboardWidgetFilters,
   } = useDashboard();
-  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetDetails = allWidgetDetails?.[workspaceSlug]?.[dashboardId]?.find((w) => w.key === WIDGET_KEY);
   const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TIssuesByPriorityWidgetResponse[];
 
-  const handleUpdateFilters = (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
+  const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
     if (!widgetDetails) return;
 
-    updateDashboardWidgetFilters(workspaceSlug, dashboardId, widgetDetails.id, {
+    await updateDashboardWidgetFilters(workspaceSlug, dashboardId, widgetDetails.id, {
       widgetKey: WIDGET_KEY,
       filters,
+    });
+
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
     });
   };
 
   useEffect(() => {
+    if (!widgetDetails) return;
+
     if (!widgetStats)
       fetchWidgetStats(workspaceSlug, dashboardId, {
         widget_key: WIDGET_KEY,
+        duration: getCustomDates(widgetDetails.widget_filters.duration ?? "this_week"),
       });
-  }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
+  }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 

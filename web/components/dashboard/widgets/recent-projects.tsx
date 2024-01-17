@@ -92,8 +92,6 @@ export const RecentProjectsWidget: React.FC<Props> = observer((props) => {
       });
   }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
 
-  console.log("allWidgetStats", allWidgetStats);
-
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
