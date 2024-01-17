@@ -15,12 +15,16 @@ export const usePage = (pageId: string) => {
 
   const { isLoading: projectPagesLoading } = useSWR(
     workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId && !projectPageMap[projectId] && !projectArchivedPageMap[projectId]
+      ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString())
+      : null
   );
   // fetching archived pages from API
   const { isLoading: archivePageLoading } = useSWR(
     workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId && !projectArchivedPageMap[projectId] && !projectPageMap[projectId]
+      ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString())
+      : null
   );
 
   if (!projectPagesLoading || !archivePageLoading) {
