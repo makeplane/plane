@@ -144,8 +144,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
       currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
-      if (payload.cycle_id && payload.cycle_id !== "") await addIssueToCycle(response, payload.cycle_id);
-      if (payload.module_id && payload.module_id !== "") await addIssueToModule(response, payload.module_id);
+      if (payload.cycle_id && payload.cycle_id !== "" && currentStore !== EIssuesStoreType.CYCLE)
+        await addIssueToCycle(response, payload.cycle_id);
+      if (payload.module_id && payload.module_id !== "" && currentStore !== EIssuesStoreType.MODULE)
+        await addIssueToModule(response, payload.module_id);
 
       setToastAlert({
         type: "success",
