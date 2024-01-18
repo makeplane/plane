@@ -52,7 +52,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EIssuesStoreType.PROFILE}
+      storeType={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );

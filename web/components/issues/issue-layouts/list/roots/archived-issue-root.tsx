@@ -34,7 +34,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
       issues={issues}
       QuickActions={ArchivedIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EIssuesStoreType.PROJECT}
+      storeType={EIssuesStoreType.PROJECT}
     />
   );
 });

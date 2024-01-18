@@ -44,7 +44,7 @@ export const ListLayout: FC = observer(() => {
       issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EIssuesStoreType.PROJECT}
+      storeType={EIssuesStoreType.PROJECT}
     />
   );
 });

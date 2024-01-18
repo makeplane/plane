@@ -75,7 +75,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("MODULE_EMPTY_STATE");
-              toggleCreateIssueModal(true);
+              toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
             },
           }}
           secondaryButton={

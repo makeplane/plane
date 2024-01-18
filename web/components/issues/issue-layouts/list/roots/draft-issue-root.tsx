@@ -43,7 +43,7 @@ export const DraftIssueListLayout: FC = observer(() => {
       issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EIssuesStoreType.PROJECT}
+      storeType={EIssuesStoreType.PROJECT}
     />
   );
 });
