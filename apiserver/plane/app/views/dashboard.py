@@ -534,7 +534,7 @@ class DashboardEndpoint(BaseAPIView):
             dashboard_type = request.GET.get("dashboard_type", None)
             if dashboard_type == "home":
                 dashboard, created = Dashboard.objects.get_or_create(
-                    type=dashboard_type, owned_by=request.user, is_default=True
+                    type_identifier=dashboard_type, owned_by=request.user, is_default=True
                 )
 
                 if created:
