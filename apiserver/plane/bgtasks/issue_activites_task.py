@@ -376,6 +376,21 @@ def track_assignees(
                 epoch=epoch,
             )
         )
+        bulk_subscribers.append(
+            IssueSubscriber(
+                subscriber_id=assignee.id,
+                issue_id=issue_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                created_by_id=assignee.id,
+                updated_by_id=assignee.id,
+            )
+        )
+
+    # Create assignees subscribers to the issue and ignore if already
+    IssueSubscriber.objects.bulk_create(
+        bulk_subscribers, batch_size=10, ignore_conflicts=True
+    )
 
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
