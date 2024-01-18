@@ -1,5 +1,4 @@
 "use client";
-import * as React from "react";
 import {
   DeleteImage,
   EditorContainer,
@@ -10,8 +9,9 @@ import {
   UploadImage,
   useEditor,
 } from "@plane/editor-core";
-import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
+import * as React from "react";
 import { RichTextEditorExtensions } from "src/ui/extensions";
+import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 
 export type IRichTextEditor = {
   value: string;
@@ -66,6 +66,14 @@ const RichTextEditor = ({
   rerenderOnPropsChange,
   mentionSuggestions,
 }: RichTextEditorProps) => {
+  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
+
+  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
+  // loads such that we can invoke it from react when the cursor leaves the container
+  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
+    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
+  };
+
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
@@ -78,7 +86,7 @@ const RichTextEditor = ({
     restoreFile,
     forwardedRef,
     rerenderOnPropsChange,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting, dragDropEnabled),
+    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting, dragDropEnabled, setHideDragHandleFunction),
     mentionHighlights,
     mentionSuggestions,
   });
@@ -92,7 +100,7 @@ const RichTextEditor = ({
   if (!editor) return null;
 
   return (
-    <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer hideDragHandle={hideDragHandleOnMouseLeave} editor={editor} editorClassNames={editorClassNames}>
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />

@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import debounce from "lodash/debounce";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
@@ -18,7 +18,6 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { GptAssistantPopover } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
-import { IssuePeekOverview } from "components/issues/peek-overview";
 import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
@@ -34,7 +33,6 @@ import { IPage, TIssue } from "@plane/types";
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
@@ -49,11 +47,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const editorRef = useRef<any>(null);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
+  const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
   const {
     config: { envConfig },
   } = useApplication();
@@ -107,12 +102,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       revalidateOnFocus: false,
     }
   );
-
-  const handleUpdateIssue = (issueId: string, data: Partial<TIssue>) => {
-    if (!workspaceSlug || !projectId || !currentUser) return;
-
-    updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
-  };
 
   const fetchIssue = async (issueId: string) => {
     const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string);
@@ -523,17 +512,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                 )}
               </div>
             )}
-            <IssuePeekOverview
-              workspaceSlug={workspaceSlug as string}
-              projectId={projectId as string}
-              issueId={peekIssueId ? (peekIssueId as string) : ""}
-              isArchived={false}
-              handleIssue={(issueToUpdate) => {
-                if (peekIssueId && typeof peekIssueId === "string") {
-                  handleUpdateIssue(peekIssueId, issueToUpdate);
-                }
-              }}
-            />
           </div>
         </div>
       ) : (

@@ -3,37 +3,41 @@
 from django.db import migrations, models
 import plane.db.models.workspace
 
+
 def user_password_autoset(apps, schema_editor):
     User = apps.get_model("db", "User")
     User.objects.update(is_password_autoset=True)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0049_auto_20231116_0713'),
+        ("db", "0049_auto_20231116_0713"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='use_case',
+            model_name="user",
+            name="use_case",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='workspace',
-            name='organization_size',
+            model_name="workspace",
+            name="organization_size",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AddField(
-            model_name='fileasset',
-            name='is_deleted',
+            model_name="fileasset",
+            name="is_deleted",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='workspace',
-            name='slug',
-            field=models.SlugField(max_length=48, unique=True, validators=[plane.db.models.workspace.slug_validator]),
+            model_name="workspace",
+            name="slug",
+            field=models.SlugField(
+                max_length=48,
+                unique=True,
+                validators=[plane.db.models.workspace.slug_validator],
+            ),
         ),
-         migrations.RunPython(user_password_autoset),
+        migrations.RunPython(user_password_autoset),
     ]

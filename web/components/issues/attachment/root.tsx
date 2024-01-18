@@ -1,13 +1,16 @@
 import { FC, useMemo } from "react";
 // hooks
-import { useApplication, useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
 import { IssueAttachmentsList } from "./attachments-list";
 
 export type TIssueAttachmentRoot = {
-  isEditable: boolean;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  disabled?: boolean;
 };
 
 export type TAttachmentOperations = {
@@ -17,12 +20,9 @@ export type TAttachmentOperations = {
 
 export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   // props
-  const { isEditable } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
-  const { issueId, createAttachment, removeAttachment } = useIssueDetail();
+  const { createAttachment, removeAttachment } = useIssueDetail();
   const { setToastAlert } = useToast();
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
@@ -69,8 +69,16 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
     <div className="relative py-3 space-y-3">
       <h3 className="text-lg">Attachments</h3>
       <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        <IssueAttachmentUpload disabled={isEditable} handleAttachmentOperations={handleAttachmentOperations} />
-        <IssueAttachmentsList handleAttachmentOperations={handleAttachmentOperations} />
+        <IssueAttachmentUpload
+          workspaceSlug={workspaceSlug}
+          disabled={disabled}
+          handleAttachmentOperations={handleAttachmentOperations}
+        />
+        <IssueAttachmentsList
+          issueId={issueId}
+          disabled={disabled}
+          handleAttachmentOperations={handleAttachmentOperations}
+        />
       </div>
     </div>
   );

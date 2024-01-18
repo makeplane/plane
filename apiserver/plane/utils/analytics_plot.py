@@ -6,7 +6,12 @@ from datetime import timedelta
 from django.db import models
 from django.db.models.functions import TruncDate
 from django.db.models import Count, F, Sum, Value, Case, When, CharField
-from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, Concat
+from django.db.models.functions import (
+    Coalesce,
+    ExtractMonth,
+    ExtractYear,
+    Concat,
+)
 
 # Module imports
 from plane.db.models import Issue
@@ -21,13 +26,17 @@ def annotate_with_monthly_dimension(queryset, field_name, attribute):
     # Annotate the dimension
     return queryset.annotate(**{attribute: dimension})
 
+
 def extract_axis(queryset, x_axis):
     # Format the dimension when the axis is in date
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = annotate_with_monthly_dimension(queryset, x_axis, "dimension")
+        queryset = annotate_with_monthly_dimension(
+            queryset, x_axis, "dimension"
+        )
         return queryset, "dimension"
     else:
         return queryset.annotate(dimension=F(x_axis)), "dimension"
+
 
 def sort_data(data, temp_axis):
     # When the axis is in priority order by
@@ -37,6 +46,7 @@ def sort_data(data, temp_axis):
     else:
         return dict(sorted(data.items(), key=lambda x: (x[0] == "none", x[0])))
 
+
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     # temp x_axis
     temp_axis = x_axis
@@ -45,9 +55,11 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     if x_axis == "dimension":
         queryset = queryset.exclude(dimension__isnull=True)
 
-    # 
+    #
     if segment in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = annotate_with_monthly_dimension(queryset, segment, "segmented")
+        queryset = annotate_with_monthly_dimension(
+            queryset, segment, "segmented"
+        )
         segment = "segmented"
 
     queryset = queryset.values(x_axis)
@@ -62,20 +74,40 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
             ),
             dimension_ex=Coalesce("dimension", Value("null")),
         ).values("dimension")
-        queryset = queryset.annotate(segment=F(segment)) if segment else queryset
-        queryset = queryset.values("dimension", "segment") if segment else queryset.values("dimension")
+        queryset = (
+            queryset.annotate(segment=F(segment)) if segment else queryset
+        )
+        queryset = (
+            queryset.values("dimension", "segment")
+            if segment
+            else queryset.values("dimension")
+        )
         queryset = queryset.annotate(count=Count("*")).order_by("dimension")
 
     # Estimate
     else:
-        queryset = queryset.annotate(estimate=Sum("estimate_point")).order_by(x_axis)
-        queryset = queryset.annotate(segment=F(segment)) if segment else queryset
-        queryset = queryset.values("dimension", "segment", "estimate") if segment else queryset.values("dimension", "estimate")
+        queryset = queryset.annotate(estimate=Sum("estimate_point")).order_by(
+            x_axis
+        )
+        queryset = (
+            queryset.annotate(segment=F(segment)) if segment else queryset
+        )
+        queryset = (
+            queryset.values("dimension", "segment", "estimate")
+            if segment
+            else queryset.values("dimension", "estimate")
+        )
 
     result_values = list(queryset)
-    grouped_data = {str(key): list(items) for key, items in groupby(result_values, key=lambda x: x[str("dimension")])}
+    grouped_data = {
+        str(key): list(items)
+        for key, items in groupby(
+            result_values, key=lambda x: x[str("dimension")]
+        )
+    }
 
     return sort_data(grouped_data, temp_axis)
+
 
 def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
     # Total Issues in Cycle or Module
@@ -107,7 +139,9 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
         # Get all dates between the two dates
         date_range = [
             queryset.start_date + timedelta(days=x)
-            for x in range((queryset.target_date - queryset.start_date).days + 1)
+            for x in range(
+                (queryset.target_date - queryset.start_date).days + 1
+            )
         ]
 
         chart_data = {str(date): 0 for date in date_range}

@@ -1,6 +1,5 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
@@ -33,6 +32,7 @@ import { truncateText } from "helpers/string.helper";
 import { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 import { ACTIVE_CYCLE_ISSUES } from "store/issue/cycle";
+import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 const stateGroups = [
   {
@@ -68,15 +68,13 @@ interface IActiveCycleDetails {
 }
 
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
-  // router
-  const router = useRouter();
+  // props
   const { workspaceSlug, projectId } = props;
-
+  // store hooks
   const {
-    issues: { issues },
+    issues: { issues, fetchActiveCycleIssues },
     issueMap,
   } = useIssues(EIssuesStoreType.CYCLE);
-  // store hooks
   const {
     commandPalette: { toggleCreateCycleModal },
   } = useApplication();
@@ -99,13 +97,14 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
   const issueIds = issues?.[ACTIVE_CYCLE_ISSUES];
 
-  // useSWR(
-  //   workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
-  //   workspaceSlug && projectId && cycleId
-  //     ? () =>
-  //     fetchActiveCycleIssues(workspaceSlug, projectId, )
-  //     : null
-  // );
+  useSWR(
+    workspaceSlug && projectId && currentProjectActiveCycleId
+      ? CYCLE_ISSUES_WITH_PARAMS(currentProjectActiveCycleId, { priority: "urgent,high" })
+      : null,
+    workspaceSlug && projectId && currentProjectActiveCycleId
+      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, currentProjectActiveCycleId)
+      : null
+  );
 
   if (!activeCycle && isLoading)
     return (
@@ -382,9 +381,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               {issueIds ? (
                 issueIds.length > 0 ? (
                   issueIds.map((issue: any) => (
-                    <div
+                    <Link
                       key={issue.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
+                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                       className="flex cursor-pointer flex-wrap items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
                     >
                       <div className="flex flex-col gap-1">
@@ -427,7 +426,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                           )}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))
                 ) : (
                   <div className="grid place-items-center text-center text-sm text-custom-text-200">
@@ -465,7 +464,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 {
                   issueIds?.filter(
                     (issueId) =>
-                      getProjectStates(issueMap[issueId]?.project_id).find(
+                      getProjectStates(issueMap[issueId]?.project_id)?.find(
                         (issue) => issue.id === issueMap[issueId]?.state_id
                       )?.group === "completed"
                   )?.length

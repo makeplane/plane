@@ -25,7 +25,9 @@ class Importer(ProjectBaseModel):
         default="queued",
     )
     initiated_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="imports"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="imports",
     )
     metadata = models.JSONField(default=dict)
     config = models.JSONField(default=dict)

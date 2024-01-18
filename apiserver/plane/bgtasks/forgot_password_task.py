@@ -42,7 +42,9 @@ def forgot_password(first_name, email, uidb64, token, current_site):
             "email": email,
         }
 
-        html_content = render_to_string("emails/auth/forgot_password.html", context)
+        html_content = render_to_string(
+            "emails/auth/forgot_password.html", context
+        )
 
         text_content = strip_tags(html_content)
 

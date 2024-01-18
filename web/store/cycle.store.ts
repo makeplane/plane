@@ -12,9 +12,11 @@ import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 
 export interface ICycleStore {
+  //Loaders
+  fetchedMap: Record<string, boolean>;
   // observables
   cycleMap: Record<string, ICycle>;
-  activeCycleMap: Record<string, ICycle>; // TODO: Merge these two into single map
+  activeCycleIdMap: Record<string, boolean>;
   // computed
   currentProjectCycleIds: string[] | null;
   currentProjectCompletedCycleIds: string[] | null;
@@ -49,7 +51,9 @@ export interface ICycleStore {
 export class CycleStore implements ICycleStore {
   // observables
   cycleMap: Record<string, ICycle> = {};
-  activeCycleMap: Record<string, ICycle> = {};
+  activeCycleIdMap: Record<string, boolean> = {};
+  //loaders
+  fetchedMap: Record<string, boolean> = {};
   // root store
   rootStore;
   // services
@@ -61,7 +65,8 @@ export class CycleStore implements ICycleStore {
     makeObservable(this, {
       // observables
       cycleMap: observable,
-      activeCycleMap: observable,
+      activeCycleIdMap: observable,
+      fetchedMap: observable,
       // computed
       currentProjectCycleIds: computed,
       currentProjectCompletedCycleIds: computed,
@@ -96,11 +101,11 @@ export class CycleStore implements ICycleStore {
    */
   get currentProjectCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project === projectId);
     allCycles = sortBy(allCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const allCycleIds = allCycles.map((c) => c.id);
-    return allCycleIds || null;
+    return allCycleIds;
   }
 
   /**
@@ -108,14 +113,14 @@ export class CycleStore implements ICycleStore {
    */
   get currentProjectCompletedCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
       return c.project === projectId && hasEndDatePassed;
     });
     completedCycles = sortBy(completedCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const completedCycleIds = completedCycles.map((c) => c.id);
-    return completedCycleIds || null;
+    return completedCycleIds;
   }
 
   /**
@@ -123,14 +128,14 @@ export class CycleStore implements ICycleStore {
    */
   get currentProjectUpcomingCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const isStartDateUpcoming = isFuture(new Date(c.start_date ?? ""));
       return c.project === projectId && isStartDateUpcoming;
     });
     upcomingCycles = sortBy(upcomingCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const upcomingCycleIds = upcomingCycles.map((c) => c.id);
-    return upcomingCycleIds || null;
+    return upcomingCycleIds;
   }
 
   /**
@@ -138,14 +143,14 @@ export class CycleStore implements ICycleStore {
    */
   get currentProjectIncompleteCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
       return c.project === projectId && !hasEndDatePassed;
     });
     incompleteCycles = sortBy(incompleteCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);
-    return incompleteCycleIds || null;
+    return incompleteCycleIds;
   }
 
   /**
@@ -153,13 +158,13 @@ export class CycleStore implements ICycleStore {
    */
   get currentProjectDraftCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
     let draftCycles = Object.values(this.cycleMap ?? {}).filter(
       (c) => c.project === projectId && !c.start_date && !c.end_date
     );
     draftCycles = sortBy(draftCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const draftCycleIds = draftCycles.map((c) => c.id);
-    return draftCycleIds || null;
+    return draftCycleIds;
   }
 
   /**
@@ -168,8 +173,8 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
-    const activeCycle = Object.keys(this.activeCycleMap ?? {}).find(
-      (cycleId) => this.activeCycleMap?.[cycleId]?.project === projectId
+    const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
+      (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
     );
     return activeCycle || null;
   }
@@ -186,13 +191,16 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    * @returns
    */
-  getActiveCycleById = (cycleId: string): ICycle | null => this.activeCycleMap?.[cycleId] ?? null;
+  getActiveCycleById = (cycleId: string): ICycle | null =>
+    this.activeCycleIdMap?.[cycleId] && this.cycleMap?.[cycleId] ? this.cycleMap?.[cycleId] : null;
 
   /**
    * @description returns list of cycle ids of the project id passed as argument
    * @param projectId
    */
   getProjectCycleIds = (projectId: string): string[] | null => {
+    if (!this.fetchedMap[projectId]) return null;
+
     let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project === projectId);
     cycles = sortBy(cycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const cycleIds = cycles.map((c) => c.id);
@@ -221,6 +229,7 @@ export class CycleStore implements ICycleStore {
         response.forEach((cycle) => {
           set(this.cycleMap, [cycle.id], cycle);
         });
+        set(this.fetchedMap, projectId, true);
       });
       return response;
     });
@@ -235,7 +244,8 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current").then((response) => {
       runInAction(() => {
         response.forEach((cycle) => {
-          set(this.activeCycleMap, [cycle.id], cycle);
+          set(this.activeCycleIdMap, [cycle.id], true);
+          set(this.cycleMap, [cycle.id], cycle);
         });
       });
       return response;
@@ -252,7 +262,6 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
-        set(this.activeCycleMap, [response.id], { ...this.activeCycleMap?.[response.id], ...response });
       });
       return response;
     });
@@ -268,7 +277,6 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], response);
-        set(this.activeCycleMap, [response.id], response);
       });
       return response;
     });
@@ -285,7 +293,6 @@ export class CycleStore implements ICycleStore {
     try {
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
-        set(this.activeCycleMap, [cycleId], { ...this.activeCycleMap?.[cycleId], ...data });
       });
       const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
       return response;
@@ -307,7 +314,7 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
         delete this.cycleMap[cycleId];
-        delete this.activeCycleMap[cycleId];
+        delete this.activeCycleIdMap[cycleId];
       });
     });
 
@@ -324,7 +331,6 @@ export class CycleStore implements ICycleStore {
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
       // updating through api.
       const response = await this.cycleService.addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId });
@@ -332,7 +338,6 @@ export class CycleStore implements ICycleStore {
     } catch (error) {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
       throw error;
     }
@@ -351,14 +356,12 @@ export class CycleStore implements ICycleStore {
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], false);
       });
       const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
-        if (currentActiveCycle) set(this.activeCycleMap, [cycleId, "is_favorite"], true);
       });
       throw error;
     }

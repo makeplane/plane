@@ -278,14 +278,14 @@ export const WorkspaceSidebarDropdown = observer(() => {
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
                 {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Menu.Item key={index} as="button" type="button">
-                    <Link href={link.link}>
+                  <Link key={index} href={link.link}>
+                    <Menu.Item key={index} as="div">
                       <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
                       </span>
-                    </Link>
-                  </Menu.Item>
+                    </Menu.Item>
+                  </Link>
                 ))}
               </div>
               <div className={`pt-2 ${isUserInstanceAdmin ? "pb-2" : ""}`}>
@@ -301,13 +301,13 @@ export const WorkspaceSidebarDropdown = observer(() => {
               </div>
               {isUserInstanceAdmin && (
                 <div className="p-2 pb-0">
-                  <Menu.Item as="button" type="button" className="w-full">
-                    <Link href="/god-mode">
+                  <Link href="/god-mode">
+                    <Menu.Item as="button" type="button" className="w-full">
                       <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
                         Enter God Mode
                       </span>
-                    </Link>
-                  </Menu.Item>
+                    </Menu.Item>
+                  </Link>
                 </div>
               )}
             </Menu.Items>

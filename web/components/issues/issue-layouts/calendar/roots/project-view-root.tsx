@@ -4,33 +4,28 @@ import { observer } from "mobx-react-lite";
 import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
+import { BaseCalendarRoot } from "../base-calendar-root";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
-import { BaseCalendarRoot } from "../base-calendar-root";
+// constants
 import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
 
-export const ProjectViewCalendarLayout: React.FC = observer(() => {
+export interface IViewCalendarLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+  };
+}
+
+export const ProjectViewCalendarLayout: React.FC<IViewCalendarLayout> = observer((props) => {
+  const { issueActions } = props;
+  // store
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
-
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !projectId) return;
-
-        await issues.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue);
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !projectId) return;
-
-        await issues.removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
-      },
-    }),
-    [issues, workspaceSlug, projectId]
-  );
+  const { viewId } = router.query;
 
   return (
     <BaseCalendarRoot

@@ -13,16 +13,20 @@ import { getFileIcon } from "components/icons";
 import { truncateText } from "helpers/string.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
-// type
-import { TIssueAttachmentsList } from "./attachments-list";
+// types
+import { TAttachmentOperations } from "./root";
 
-export type TIssueAttachmentsDetail = TIssueAttachmentsList & {
+type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+
+type TIssueAttachmentsDetail = {
   attachmentId: string;
+  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
+  disabled?: boolean;
 };
 
 export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
   // props
-  const { attachmentId, handleAttachmentOperations } = props;
+  const { attachmentId, handleAttachmentOperations, disabled } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
@@ -75,13 +79,15 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
           </div>
         </Link>
 
-        <button
-          onClick={() => {
-            setAttachmentDeleteModal(true);
-          }}
-        >
-          <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
-        </button>
+        {!disabled && (
+          <button
+            onClick={() => {
+              setAttachmentDeleteModal(true);
+            }}
+          >
+            <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+          </button>
+        )}
       </div>
     </>
   );

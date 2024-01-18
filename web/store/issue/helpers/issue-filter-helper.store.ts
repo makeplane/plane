@@ -6,7 +6,9 @@ import {
   IIssueFilterOptions,
   IIssueFilters,
   IIssueFiltersResponse,
+  TIssueKanbanFilters,
   TIssueParams,
+  TStaticViewTypes,
 } from "@plane/types";
 // constants
 import { isNil } from "constants/common";
@@ -17,7 +19,7 @@ import { storage } from "lib/local-storage";
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
   workspaceSlug: string;
-  projectId: string | undefined;
+  viewId: string | undefined; // It can be projectId, moduleId, cycleId, projectViewId
   userId: string | undefined;
   filters: IIssueFilters;
 }
@@ -46,6 +48,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     filters: isEmpty(filters?.filters) ? undefined : filters?.filters,
     displayFilters: isEmpty(filters?.displayFilters) ? undefined : filters?.displayFilters,
     displayProperties: isEmpty(filters?.displayProperties) ? undefined : filters?.displayProperties,
+    kanbanFilters: isEmpty(filters?.kanbanFilters) ? undefined : filters?.kanbanFilters,
   });
 
   /**
@@ -108,6 +111,39 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   });
 
   /**
+   * This PR is to get the filters of the fixed global views
+   * @param currentUserId current logged in user id
+   * @param type fixed view type
+   * @returns filterOptions based on views
+   */
+  getComputedFiltersBasedOnViews = (currentUserId: string | undefined, type: TStaticViewTypes) => {
+    const noFilters = this.computedFilters({});
+
+    if (!currentUserId) return noFilters;
+
+    switch (type) {
+      case "assigned":
+        return {
+          ...noFilters,
+          assignees: [currentUserId],
+        };
+      case "created":
+        return {
+          ...noFilters,
+          created_by: [currentUserId],
+        };
+      case "subscribed":
+        return {
+          ...noFilters,
+          subscriber: [currentUserId],
+        };
+      case "all-issues":
+      default:
+        return noFilters;
+    }
+  };
+
+  /**
    * @description This method is used to apply the display filters on the issues
    * @param {IIssueDisplayFilterOptions} displayFilters
    * @returns {IIssueDisplayFilterOptions}
@@ -157,7 +193,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     get: (
       currentView: EIssuesStoreType,
       workspaceSlug: string,
-      projectId: string | undefined,
+      viewId: string | undefined, // It can be projectId, moduleId, cycleId, projectViewId
       userId: string | undefined
     ) => {
       const storageFilters = this.handleIssuesLocalFilters.fetchFiltersFromStorage();
@@ -165,28 +201,28 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
         (filter: ILocalStoreIssueFilters) =>
           filter.key === currentView &&
           filter.workspaceSlug === workspaceSlug &&
-          filter.projectId === projectId &&
+          filter.viewId === viewId &&
           filter.userId === userId
       );
       if (!currentFilterIndex && currentFilterIndex.length < 0) return undefined;
 
-      return storageFilters[currentFilterIndex];
+      return storageFilters[currentFilterIndex]?.filters || {};
     },
 
     set: (
       currentView: EIssuesStoreType,
       filterType: EIssueFilterType,
       workspaceSlug: string,
-      projectId: string | undefined,
+      viewId: string | undefined, // It can be projectId, moduleId, cycleId, projectViewId
       userId: string | undefined,
-      filters: Partial<IIssueFiltersResponse>
+      filters: Partial<IIssueFiltersResponse & { kanban_filters: TIssueKanbanFilters }>
     ) => {
       const storageFilters = this.handleIssuesLocalFilters.fetchFiltersFromStorage();
       const currentFilterIndex = storageFilters.findIndex(
         (filter: ILocalStoreIssueFilters) =>
           filter.key === currentView &&
           filter.workspaceSlug === workspaceSlug &&
-          filter.projectId === projectId &&
+          filter.viewId === viewId &&
           filter.userId === userId
       );
 
@@ -194,14 +230,17 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
         storageFilters.push({
           key: currentView,
           workspaceSlug: workspaceSlug,
-          projectId: projectId,
+          viewId: viewId,
           userId: userId,
           filters: filters,
         });
       else
         storageFilters[currentFilterIndex] = {
           ...storageFilters[currentFilterIndex],
-          [filterType]: filters,
+          filters: {
+            ...storageFilters[currentFilterIndex].filters,
+            [filterType]: filters[filterType],
+          },
         };
 
       storage.set("issue_local_filters", JSON.stringify(storageFilters));

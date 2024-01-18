@@ -25,12 +25,12 @@ export const ModuleListLayout: React.FC = observer(() => {
       [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue);
+        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
       },
       [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id);
+        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
       },
       [EIssueActions.REMOVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
@@ -48,7 +48,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
       viewId={moduleId?.toString()}
-      currentStore={EIssuesStoreType.MODULE}
+      storeType={EIssuesStoreType.MODULE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);

@@ -151,6 +151,7 @@ const DocumentEditor = ({
         </div>
         <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
+            onActionCompleteHandler={onActionCompleteHandler}
             readonly={false}
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}

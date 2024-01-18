@@ -4,11 +4,11 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // store hooks
-import { useGlobalView } from "hooks/store";
+import { useGlobalView, useUser } from "hooks/store";
 // components
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -46,6 +46,9 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const { workspaceSlug, globalViewId } = router.query;
   // store hooks
   const { currentWorkspaceViews } = useGlobalView();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   // bring the active view to the centre of the header
   useEffect(() => {
@@ -56,7 +59,8 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
   }, [globalViewId]);
 
-  const isTabSelected = (tabKey: string) => router.pathname.includes(tabKey);
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
@@ -66,7 +70,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
             <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
               <span
                 className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                  isTabSelected(tab.key)
+                  tab.key === globalViewId
                     ? "border-custom-primary-100 text-custom-primary-100"
                     : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
                 }`}
@@ -81,13 +85,15 @@ export const GlobalViewsHeader: React.FC = observer(() => {
           ))}
         </div>
 
-        <button
-          type="button"
-          className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
-          onClick={() => setCreateViewModal(true)}
-        >
-          <Plus className="h-4 w-4 text-custom-primary-200" />
-        </button>
+        {isAuthorizedUser && (
+          <button
+            type="button"
+            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
+            onClick={() => setCreateViewModal(true)}
+          >
+            <Plus className="h-4 w-4 text-custom-primary-200" />
+          </button>
+        )}
       </div>
     </>
   );

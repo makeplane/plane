@@ -1,5 +1,11 @@
 import { EUserProjectRoles } from "constants/project";
-import type { IUser, IUserLite, IWorkspace, IWorkspaceLite, TStateGroups } from ".";
+import type {
+  IUser,
+  IUserLite,
+  IWorkspace,
+  IWorkspaceLite,
+  TStateGroups,
+} from ".";
 
 export interface IProject {
   archive_in: number;
@@ -52,6 +58,11 @@ export interface IProjectLite {
   id: string;
   name: string;
   identifier: string;
+  emoji: string | null;
+  icon_prop: {
+    name: string;
+    color: string;
+  } | null;
 }
 
 type ProjectPreferences = {

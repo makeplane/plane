@@ -7,7 +7,8 @@ import values from "lodash/values";
 import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 // constants
-import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
+import { ISSUE_PRIORITIES } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 
@@ -76,7 +77,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         const state_group =
           this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
         groupArray = [state_group];
-      } else groupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]), isCalendarIssues);
+      } else {
+        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : [];
+      }
 
       for (const group of groupArray) {
         if (group && _issues[group]) _issues[group].push(_issue.id);
@@ -116,8 +120,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
-        subGroupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]));
-        groupArray = this.getGroupArray(get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]));
+        const subGroupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]);
+        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : [];
+        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : [];
       }
 
       for (const subGroup of subGroupArray) {
@@ -140,7 +146,7 @@ export class IssueHelperStore implements TIssueHelperStore {
       case "state":
         return this.rootStore?.states || [];
       case "state_detail.group":
-        return ISSUE_STATE_GROUPS.map((i) => i.key);
+        return Object.keys(STATE_GROUPS);
       case "priority":
         return ISSUE_PRIORITIES.map((i) => i.key);
       case "labels":

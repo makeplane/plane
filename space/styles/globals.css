@@ -64,6 +64,7 @@
       0px 1px 32px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
 
     --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
     --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
@@ -88,6 +89,7 @@
     --color-sidebar-shadow-xl: var(--color-shadow-xl);
     --color-sidebar-shadow-2xl: var(--color-shadow-2xl);
     --color-sidebar-shadow-3xl: var(--color-shadow-3xl);
+    --color-sidebar-shadow-4xl: var(--color-shadow-4xl);
   }
 
   [data-theme="light"],

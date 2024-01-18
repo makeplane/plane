@@ -12,9 +12,12 @@ import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 export interface IWorkspaceRootStore {
   // observables
   workspaces: Record<string, IWorkspace>;
+  workspaceActiveCyclesSearchQuery: string;
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
+  // actions
+  setWorkspaceActiveCyclesSearchQuery: (query: string) => void;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
@@ -31,6 +34,7 @@ export interface IWorkspaceRootStore {
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
   // observables
+  workspaceActiveCyclesSearchQuery: string = "";
   workspaces: Record<string, IWorkspace> = {};
   // services
   workspaceService;
@@ -45,6 +49,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     makeObservable(this, {
       // observables
       workspaces: observable,
+      workspaceActiveCyclesSearchQuery: observable.ref,
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
@@ -52,6 +57,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
       // actions
+      setWorkspaceActiveCyclesSearchQuery: action,
       fetchWorkspaces: action,
       createWorkspace: action,
       updateWorkspace: action,
@@ -103,6 +109,14 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null; // TODO: use undefined instead of null
 
   /**
+   * Sets search query
+   * @param query
+   */
+  setWorkspaceActiveCyclesSearchQuery = (query: string) => {
+    this.workspaceActiveCyclesSearchQuery = query;
+  };
+
+  /**
    * fetch user workspaces from API
    */
   fetchWorkspaces = async () => {
@@ -135,7 +149,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) =>
     await this.workspaceService.updateWorkspace(workspaceSlug, data).then((response) => {
       runInAction(() => {
-        set(this.workspaces, response.id, data);
+        set(this.workspaces, response.id, response);
       });
       return response;
     });

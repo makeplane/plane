@@ -28,6 +28,7 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.26.4",
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@plane/ui": "*",
@@ -36,6 +37,7 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
     "eslint-config-next": "13.2.4",
+    "lucide-react": "^0.309.0",
     "react-popper": "^2.3.0",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.1"

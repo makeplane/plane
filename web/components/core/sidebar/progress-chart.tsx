@@ -1,5 +1,5 @@
 import React from "react";
-import { eachDayOfInterval } from "date-fns";
+import { eachDayOfInterval, isValid } from "date-fns";
 // ui
 import { LineGraph } from "components/ui";
 // helpers
@@ -41,13 +41,19 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
   ));
 
 const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
-  const chartData = Object.keys(distribution).map((key) => ({
+  const chartData = Object.keys(distribution ?? []).map((key) => ({
     currentDate: renderFormattedDateWithoutYear(key),
     pending: distribution[key],
   }));
 
   const generateXAxisTickValues = () => {
-    const dates = eachDayOfInterval({ start: new Date(startDate), end: new Date(endDate) });
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    let dates: Date[] = [];
+    if (isValid(start) && isValid(end)) {
+      dates = eachDayOfInterval({ start, end });
+    }
 
     const maxDates = 4;
     const totalDates = dates.length;

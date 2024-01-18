@@ -47,7 +47,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   });
 
   const selectedFilters: IIssueFilterOptions = {};
-  Object.entries(watch("query_data") ?? {}).forEach(([key, value]) => {
+  Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -59,7 +59,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     // If value is null then remove all the filters of that key
     if (!value) {
-      setValue("query_data", {
+      setValue("filters", {
         ...selectedFilters,
         [key]: null,
       });
@@ -76,14 +76,18 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
     }
 
-    setValue("query_data", {
+    setValue("filters", {
       ...selectedFilters,
       [key]: newValues,
     });
   };
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
-    await handleFormSubmit(formData);
+    await handleFormSubmit({
+      name: formData.name,
+      description: formData.description,
+      filters: formData.filters,
+    } as IProjectView);
 
     reset({
       ...defaultValues,
@@ -93,7 +97,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const clearAllFilters = () => {
     if (!selectedFilters) return;
 
-    setValue("query_data", {});
+    setValue("filters", {});
   };
 
   useEffect(() => {
@@ -130,6 +134,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
                   className="w-full resize-none text-xl focus:border-blue-400"
+                  tabIndex={1}
                 />
               )}
             />
@@ -147,6 +152,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
+                  tabIndex={2}
                 />
               )}
             />
@@ -154,9 +160,9 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
           <div>
             <Controller
               control={control}
-              name="query_data"
+              name="filters"
               render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title="Filters" tabIndex={3}>
                   <FilterSelection
                     filters={filters ?? {}}
                     handleFiltersUpdate={(key, value) => {
@@ -199,10 +205,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit">
+        <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
           {data
             ? isSubmitting
               ? "Updating View..."

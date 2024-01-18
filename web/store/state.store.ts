@@ -9,6 +9,8 @@ import { IState } from "@plane/types";
 import { ProjectStateService } from "services/project";
 
 export interface IStateStore {
+  //Loaders
+  fetchedMap: Record<string, boolean>;
   // observables
   stateMap: Record<string, IState>;
   // computed
@@ -16,7 +18,7 @@ export interface IStateStore {
   groupedProjectStates: Record<string, IState[]> | undefined;
   // computed actions
   getStateById: (stateId: string) => IState | undefined;
-  getProjectStates: (projectId: string) => IState[];
+  getProjectStates: (projectId: string) => IState[] | undefined;
   // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   // crud actions
@@ -40,6 +42,8 @@ export interface IStateStore {
 
 export class StateStore implements IStateStore {
   stateMap: Record<string, IState> = {};
+  //loaders
+  fetchedMap: Record<string, boolean> = {};
   router;
   stateService;
 
@@ -47,6 +51,7 @@ export class StateStore implements IStateStore {
     makeObservable(this, {
       // observables
       stateMap: observable,
+      fetchedMap: observable,
       // computed
       projectStates: computed,
       groupedProjectStates: computed,
@@ -71,7 +76,8 @@ export class StateStore implements IStateStore {
    * Returns the stateMap belongs to a specific project
    */
   get projectStates() {
-    if (!this.router.query?.projectId) return;
+    const projectId = this.router.query?.projectId?.toString();
+    if (!projectId || !this.fetchedMap[projectId]) return;
     return Object.values(this.stateMap).filter((state) => state.project === this.router.query.projectId);
   }
 
@@ -97,7 +103,10 @@ export class StateStore implements IStateStore {
    * @param projectId
    * @returns IState[]
    */
-  getProjectStates = (projectId: string) => Object.values(this.stateMap).filter((state) => state.project === projectId);
+  getProjectStates = (projectId: string) => {
+    if (!projectId || !this.fetchedMap[projectId]) return;
+    return Object.values(this.stateMap).filter((state) => state.project === projectId);
+  };
 
   /**
    * fetches the stateMap of a project
@@ -111,6 +120,7 @@ export class StateStore implements IStateStore {
       statesResponse.forEach((state) => {
         set(this.stateMap, [state.id], state);
       });
+      set(this.fetchedMap, projectId, true);
     });
     return statesResponse;
   };

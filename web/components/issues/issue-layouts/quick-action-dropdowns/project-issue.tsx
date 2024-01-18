@@ -14,9 +14,10 @@ import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constant
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, customActionButton } = props;
+  const { issue, handleDelete, handleUpdate, customActionButton, portalElement } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -67,12 +68,17 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
+        storeType={EIssuesStoreType.PROJECT}
       />
-      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
+      <CustomMenu
+        placement="bottom-start"
+        customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
+        ellipsis
+      >
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -84,9 +90,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         {isEditingAllowed && (
           <>
             <CustomMenu.MenuItem
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 setIssueToEdit(issue);
                 setCreateUpdateIssueModal(true);
               }}
@@ -97,9 +101,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 setCreateUpdateIssueModal(true);
               }}
             >
@@ -109,9 +111,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 setDeleteIssueModal(true);
               }}
             >

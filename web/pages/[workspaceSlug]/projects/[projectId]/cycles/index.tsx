@@ -59,7 +59,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   if (!workspaceSlug || !projectId) return null;
 
   return (
-    <>
+    <div className="w-full h-full">
       <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
@@ -67,7 +67,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
         handleClose={() => setCreateModal(false)}
       />
       {totalCycles === 0 ? (
-        <div className="grid h-full place-items-center">
+        <div className="h-full place-items-center">
           <NewEmptyState
             title="Group and timebox your work in Cycles."
             description="Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team."
@@ -194,7 +194,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
           </Tab.Panels>
         </Tab.Group>
       )}
-    </>
+    </div>
   );
 });
 

@@ -12,10 +12,11 @@ type Props = {
   title?: string;
   placement?: Placement;
   disabled?: boolean;
+  tabIndex?: number;
 };
 
 export const FiltersDropdown: React.FC<Props> = (props) => {
-  const { children, title = "Dropdown", placement, disabled = false } = props;
+  const { children, title = "Dropdown", placement, disabled = false, tabIndex } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -40,6 +41,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                 appendIcon={
                   <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
                 }
+                tabIndex={tabIndex}
               >
                 <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
                   <span>{title}</span>

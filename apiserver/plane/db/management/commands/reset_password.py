@@ -35,7 +35,7 @@ class Command(BaseCommand):
         # get password for the user
         password = getpass.getpass("Password: ")
         confirm_password = getpass.getpass("Password (again): ")
-        
+
         # If the passwords doesn't match raise error
         if password != confirm_password:
             self.stderr.write("Error: Your passwords didn't match.")
@@ -50,5 +50,7 @@ class Command(BaseCommand):
         user.set_password(password)
         user.is_password_autoset = False
         user.save()
-        
-        self.stdout.write(self.style.SUCCESS(f"User password updated succesfully"))
+
+        self.stdout.write(
+            self.style.SUCCESS(f"User password updated succesfully")
+        )

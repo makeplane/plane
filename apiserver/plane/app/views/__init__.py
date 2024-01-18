@@ -62,6 +62,7 @@ from .cycle import (
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
+    ActiveCycleEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .issue import (
@@ -140,7 +141,11 @@ from .page import (
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
-from .external import GPTIntegrationEndpoint, ReleaseNotesEndpoint, UnsplashEndpoint
+from .external import (
+    GPTIntegrationEndpoint,
+    ReleaseNotesEndpoint,
+    UnsplashEndpoint,
+)
 
 from .estimate import (
     ProjectEstimatePointEndpoint,
@@ -165,10 +170,15 @@ from .notification import (
 
 from .exporter import ExportIssuesEndpoint
 
-from .config import ConfigurationEndpoint
+from .config import ConfigurationEndpoint, MobileConfigurationEndpoint
 
 from .webhook import (
     WebhookEndpoint,
     WebhookLogsEndpoint,
     WebhookSecretRegenerateEndpoint,
+)
+
+from .dashboard import (
+    DashboardEndpoint,
+    WidgetsEndpoint
 )

@@ -1,11 +1,12 @@
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
+import { ISSUE_PRIORITIES } from "constants/issue";
 import { renderEmoji } from "helpers/emoji.helper";
 import { ILabelRootStore } from "store/label";
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
 import { GroupByColumnTypes, IGroupByColumn } from "@plane/types";
+import { STATE_GROUPS } from "constants/state";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
@@ -31,7 +32,7 @@ export const getGroupByColumns = (
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
-      if (includeNone) return [{ id: `null`, name: `All Issues`, payload: {}, Icon: undefined }];
+      if (includeNone) return [{ id: `null`, name: `All Issues`, payload: {}, icon: undefined }];
   }
 };
 
@@ -48,8 +49,8 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
       return {
         id: project.id,
         name: project.name,
-        Icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
-        payload: { project: project.id },
+        icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
+        payload: { project_id: project.id },
       };
     }) as any;
 };
@@ -61,22 +62,22 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
   return projectStates.map((state) => ({
     id: state.id,
     name: state.name,
-    Icon: (
+    icon: (
       <div className="w-3.5 h-3.5 rounded-full">
         <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
       </div>
     ),
-    payload: { state: state.id },
+    payload: { state_id: state.id },
   })) as any;
 };
 
 const getStateGroupColumns = () => {
-  const stateGroups = ISSUE_STATE_GROUPS;
+  const stateGroups = STATE_GROUPS;
 
-  return stateGroups.map((stateGroup) => ({
+  return Object.values(stateGroups).map((stateGroup) => ({
     id: stateGroup.key,
-    name: stateGroup.title,
-    Icon: (
+    name: stateGroup.label,
+    icon: (
       <div className="w-3.5 h-3.5 rounded-full">
         <StateGroupIcon stateGroup={stateGroup.key} width="14" height="14" />
       </div>
@@ -91,7 +92,7 @@ const getPriorityColumns = () => {
   return priorities.map((priority) => ({
     id: priority.key,
     name: priority.title,
-    Icon: <PriorityIcon priority={priority?.key} />,
+    icon: <PriorityIcon priority={priority?.key} />,
     payload: { priority: priority.key },
   }));
 };
@@ -108,10 +109,10 @@ const getLabelsColumns = (projectLabel: ILabelRootStore) => {
   return labels.map((label) => ({
     id: label.id,
     name: label.name,
-    Icon: (
+    icon: (
       <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
     ),
-    payload: { labels: [label.id] },
+    payload: label?.id === "None" ? {} : { label_ids: [label.id] },
   }));
 };
 
@@ -123,17 +124,17 @@ const getAssigneeColumns = (member: IMemberRootStore) => {
 
   if (!projectMemberIds) return;
 
-  const assigneeColumns = projectMemberIds.map((memberId) => {
+  const assigneeColumns: any = projectMemberIds.map((memberId) => {
     const member = getUserDetails(memberId);
     return {
       id: memberId,
       name: member?.display_name || "",
-      Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-      payload: { assignees: [memberId] },
+      icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      payload: { assignee_ids: [memberId] },
     };
   });
 
-  assigneeColumns.push({ id: "None", name: "None", Icon: <Avatar size="md" />, payload: { assignees: [""] } });
+  assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
 
   return assigneeColumns;
 };
@@ -151,8 +152,8 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
     return {
       id: memberId,
       name: member?.display_name || "",
-      Icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
-      payload: { assignees: [memberId] },
+      icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      payload: {},
     };
   });
 };

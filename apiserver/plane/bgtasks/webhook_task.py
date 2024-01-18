@@ -189,7 +189,8 @@ def send_webhook(event, payload, kw, action, slug, bulk):
                             pk__in=[
                                 str(event.get("issue")) for event in payload
                             ]
-                        ).prefetch_related("issue_cycle", "issue_module"), many=True
+                        ).prefetch_related("issue_cycle", "issue_module"),
+                        many=True,
                     ).data
                     event = "issue"
                     action = "PATCH"
@@ -197,7 +198,9 @@ def send_webhook(event, payload, kw, action, slug, bulk):
                     event_data = [
                         get_model_data(
                             event=event,
-                            event_id=payload.get("id") if isinstance(payload, dict) else None,
+                            event_id=payload.get("id")
+                            if isinstance(payload, dict)
+                            else None,
                             many=False,
                         )
                     ]

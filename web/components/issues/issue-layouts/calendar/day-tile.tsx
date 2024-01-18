@@ -97,7 +97,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                       formKey="target_date"
                       groupId={formattedDatePayload}
                       prePopulatedData={{
-                        target_date: renderFormattedPayloadDate(date.date),
+                        target_date: renderFormattedPayloadDate(date.date) ?? undefined,
                       }}
                       quickAddCallback={quickAddCallback}
                       viewId={viewId}

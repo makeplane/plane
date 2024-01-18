@@ -43,7 +43,7 @@ export const KanBanLayout: React.FC = observer(() => {
       issuesFilter={issuesFilter}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
-      currentStore={EIssuesStoreType.PROJECT}
+      storeType={EIssuesStoreType.PROJECT}
     />
   );
 });

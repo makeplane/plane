@@ -48,7 +48,7 @@ interface IBaseListRoot {
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
-  currentStore: TCreateModalStoreTypes;
+  storeType: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
@@ -60,7 +60,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     QuickActions,
     issueActions,
     viewId,
-    currentStore,
+    storeType,
     addIssuesToView,
     canEditPropertiesBasedOnProject,
   } = props;
@@ -134,19 +134,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}
           disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-          currentStore={currentStore}
+          storeType={storeType}
           addIssuesToView={addIssuesToView}
         />
       </div>
-
-      {/* {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as TIssue, EIssueActions.UPDATE)}
-        />
-      )} */}
     </>
   );
 });

@@ -148,7 +148,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(currentWorkspace, currentProjectDetails, {
+    const payload = createIssuePayload(currentProjectDetails.id, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
