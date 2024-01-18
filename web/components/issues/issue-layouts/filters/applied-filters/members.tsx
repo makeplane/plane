@@ -15,13 +15,13 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values, editable } = props;
 
   const {
-    project: { getProjectMemberDetails },
+    workspace: { getWorkspaceMemberDetails },
   } = useMember();
 
   return (
     <>
       {values.map((memberId) => {
-        const memberDetails = getProjectMemberDetails(memberId)?.member;
+        const memberDetails = getWorkspaceMemberDetails(memberId)?.member;
 
         if (!memberDetails) return null;
 

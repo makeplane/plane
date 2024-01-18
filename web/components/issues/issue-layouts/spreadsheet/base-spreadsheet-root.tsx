@@ -58,8 +58,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
 
   const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
 
-  const issues = issueIds?.filter((id) => id && issueMap?.[id]).map((id) => issueMap?.[id]);
-
   const handleIssues = useCallback(
     async (issue: TIssue, action: EIssueActions) => {
       if (issueActions[action]) {
@@ -109,7 +107,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
       displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-      issues={issues}
+      issueIds={issueIds}
       quickActions={renderQuickActions}
       handleIssues={handleIssues}
       canEditProperties={canEditProperties}

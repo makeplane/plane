@@ -1,32 +1,44 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import isEqual from "lodash/isEqual";
 // hooks
-import { useIssues, useLabel } from "hooks/store";
+import { useGlobalView, useIssues, useLabel } from "hooks/store";
+//ui
+import { Button } from "@plane/ui";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
-export const GlobalViewsAppliedFiltersRoot = observer(() => {
+type Props = {
+  globalViewId: string;
+};
+
+export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
+  const { globalViewId } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId: urlGlobalViewId } = router.query;
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const {
     workspace: { workspaceLabels },
   } = useLabel();
+  const { globalViewMap, updateGlobalView } = useGlobalView();
+
   // derived values
-  const userFilters = issueFilters?.filters;
+  const userFilters = filters?.[globalViewId]?.filters;
+  const viewDetails = globalViewMap[globalViewId];
 
   // filters whose value not null or empty array
-  const appliedFilters: IIssueFilterOptions = {};
+  let appliedFilters: IIssueFilterOptions | undefined = undefined;
   Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
     if (Array.isArray(value) && value.length === 0) return;
+    if (!appliedFilters) appliedFilters = {};
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
@@ -70,29 +82,20 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
     );
   };
 
-  // const handleUpdateView = () => {
-  //   if (!workspaceSlug || !globalViewId || !viewDetails) return;
+  const handleUpdateView = () => {
+    if (!workspaceSlug || !globalViewId) return;
 
-  //   globalViewsStore.updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), {
-  //     query_data: {
-  //       ...viewDetails.query_data,
-  //       filters: {
-  //         ...(storedFilters ?? {}),
-  //       },
-  //     },
-  //   });
-  // };
+    updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), {
+      filters: {
+        ...(appliedFilters ?? {}),
+      },
+    });
+  };
 
-  // update stored filters when view details are fetched
-  // useEffect(() => {
-  //   if (!globalViewId || !viewDetails) return;
-
-  //   if (!globalViewFiltersStore.storedFilters[globalViewId.toString()])
-  //     globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), viewDetails?.query_data?.filters ?? {});
-  // }, [globalViewId, globalViewFiltersStore, viewDetails]);
+  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
 
   // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
+  if (!appliedFilters && areFiltersEqual) return null;
 
   return (
     <div className="flex items-start justify-between gap-4 p-4">
@@ -101,13 +104,17 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
         appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
+        alwaysAllowEditing
       />
 
-      {/* {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data.filters ?? {}) && (
-        <Button variant="primary" onClick={handleUpdateView}>
-          Update view
-        </Button>
-      )} */}
+      {urlGlobalViewId && !areFiltersEqual && (
+        <>
+          <div />
+          <Button variant="primary" onClick={handleUpdateView}>
+            Update view
+          </Button>
+        </>
+      )}
     </div>
   );
 });

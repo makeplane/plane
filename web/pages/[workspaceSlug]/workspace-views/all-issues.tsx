@@ -18,7 +18,7 @@ const GlobalViewAllIssuesPage: NextPageWithLayout = () => (
 );
 
 GlobalViewAllIssuesPage.getLayout = function getLayout(page: ReactElement) {
-  return <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>{page}</AppLayout>;
+  return <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" type="all-issues" />}>{page}</AppLayout>;
 };
 
 export default GlobalViewAllIssuesPage;

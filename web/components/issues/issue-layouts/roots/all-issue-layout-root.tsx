@@ -28,11 +28,11 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
   // store
   const {
-    issuesFilter: { issueFilters, fetchFilters, updateFilters },
+    issuesFilter: { filters, fetchFilters, updateFilters },
     issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
-    issueMap,
   } = useIssues(EIssuesStoreType.GLOBAL);
 
+  const { dataViewId, issueIds } = groupedIssueIds;
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -65,8 +65,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
-  const issueIds = (groupedIssueIds ?? []) as TUnGroupedIssues;
-  const issuesArray = issueIds?.filter((id: string) => id && issueMap?.[id]).map((id: string) => issueMap?.[id]);
+  const issueFilters = filters?.[currentIssueView];
 
   const issueActions = useMemo(
     () => ({
@@ -107,15 +106,15 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {globalViewId != currentIssueView && (loader === "init-loader" || !groupedIssueIds) ? (
+      {!currentIssueView || currentIssueView !== dataViewId || loader === "init-loader" || !issueIds ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <GlobalViewsAppliedFiltersRoot />
+          <GlobalViewsAppliedFiltersRoot globalViewId={currentIssueView} />
 
-          {(groupedIssueIds ?? {}).length == 0 ? (
+          {(issueIds ?? {}).length == 0 ? (
             <>{/* <GlobalViewEmptyState /> */}</>
           ) : (
             <div className="relative h-full w-full overflow-auto">
@@ -123,7 +122,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-                issues={issuesArray}
+                issueIds={issueIds}
                 quickActions={(issue) => (
                   <AllIssueQuickActions
                     issue={issue}

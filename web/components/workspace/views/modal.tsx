@@ -36,8 +36,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     const payloadData: Partial<IWorkspaceView> = {
       ...payload,
-      query: {
-        ...payload.query_data?.filters,
+      filters: {
+        ...payload?.filters,
       },
     };
 
@@ -67,7 +67,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
     const payloadData: Partial<IWorkspaceView> = {
       ...payload,
       query: {
-        ...payload.query_data?.filters,
+        ...payload?.filters,
       },
     };
 

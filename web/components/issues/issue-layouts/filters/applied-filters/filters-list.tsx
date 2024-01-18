@@ -25,13 +25,14 @@ type Props = {
   handleRemoveFilter: (key: keyof IIssueFilterOptions, value: string | null) => void;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
+  alwaysAllowEditing?: boolean;
 };
 
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states } = props;
+  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -41,7 +42,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
-  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = alwaysAllowEditing || (currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER);
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">

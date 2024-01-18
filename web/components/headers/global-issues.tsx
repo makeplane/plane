@@ -12,7 +12,12 @@ import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plan
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TStaticViewTypes,
+} from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -24,10 +29,11 @@ const GLOBAL_VIEW_LAYOUTS = [
 
 type Props = {
   activeLayout: "list" | "spreadsheet";
+  type?: TStaticViewTypes | null;
 };
 
 export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
-  const { activeLayout } = props;
+  const { activeLayout, type = null } = props;
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -47,9 +53,11 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
 
+  const currentIssueView = type ?? globalViewId;
+
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !globalViewId) return;
+      if (!workspaceSlug || !currentIssueView) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -66,38 +74,38 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         undefined,
         EIssueFilterType.FILTERS,
         { [key]: newValues },
-        globalViewId.toString()
+        currentIssueView.toString()
       );
     },
-    [workspaceSlug, issueFilters, updateFilters, globalViewId]
+    [workspaceSlug, issueFilters, updateFilters, currentIssueView]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !globalViewId) return;
+      if (!workspaceSlug || !currentIssueView) return;
       updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
-        globalViewId.toString()
+        currentIssueView.toString()
       );
     },
-    [workspaceSlug, updateFilters, globalViewId]
+    [workspaceSlug, updateFilters, currentIssueView]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !globalViewId) return;
+      if (!workspaceSlug || !currentIssueView) return;
       updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_PROPERTIES,
         property,
-        globalViewId.toString()
+        currentIssueView.toString()
       );
     },
-    [workspaceSlug, updateFilters, globalViewId]
+    [workspaceSlug, updateFilters, currentIssueView]
   );
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
