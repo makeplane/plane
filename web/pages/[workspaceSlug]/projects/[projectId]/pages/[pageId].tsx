@@ -59,7 +59,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
 
   const { issues, fetchIssue, issueWidgetClickAction } = useIssueEmbeds();
-  const { archivePage: archivePageMobx, restorePage: restorePageMobx, createPage: createPageMobx } = useProjectPages();
+  const {
+    archivePage: archivePageAction,
+    restorePage: restorePageAction,
+    createPage: createPageAction,
+  } = useProjectPages();
   const pageStore = usePage(pageId as string);
 
   useEffect(
@@ -83,10 +87,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const pageTitle = pageStore?.name;
   const pageDescription = pageStore?.description_html;
   const {
-    lockPage: lockPageMobx,
-    unlockPage: unlockPageMobx,
-    updateName: updateNameMobx,
-    updateDescription: updateDescriptionMobx,
+    lockPage: lockPageAction,
+    unlockPage: unlockPageAction,
+    updateName: updateNameAction,
+    updateDescription: updateDescriptionAction,
     id: pageIdMobx,
     isSubmitting,
     setIsSubmitting,
@@ -101,7 +105,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    await updateDescriptionMobx(formData.description_html);
+    await updateDescriptionAction(formData.description_html);
   };
 
   const handleAiAssistance = async (response: string) => {
@@ -110,7 +114,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const newDescription = `${watch("description_html")}<p>${response}</p>`;
     setValue("description_html", newDescription);
     editorRef.current?.setEditorValue(newDescription);
-    updateDescriptionMobx(newDescription);
+    updateDescriptionAction(newDescription);
   };
 
   const actionCompleteAlert = ({
@@ -131,12 +135,12 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePageTitle = (title: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    updateNameMobx(title);
+    updateNameAction(title);
   };
 
   const createPage = async (payload: Partial<IPage>) => {
     if (!workspaceSlug || !projectId) return;
-    await createPageMobx(workspaceSlug as string, projectId as string, payload);
+    await createPageAction(workspaceSlug as string, projectId as string, payload);
   };
 
   // ================ Page Menu Actions ==================
@@ -167,7 +171,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const archivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await archivePageMobx(workspaceSlug as string, projectId as string, pageId as string);
+      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string);
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be archived`,
@@ -180,7 +184,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await restorePageMobx(workspaceSlug as string, projectId as string, pageId as string);
+      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string);
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be restored`,
@@ -193,7 +197,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await lockPageMobx();
+      await lockPageAction();
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be locked`,
@@ -206,7 +210,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await unlockPageMobx();
+      await unlockPageAction();
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be unlocked`,
