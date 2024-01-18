@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
-import { ProfileIssuesAppliedFiltersRoot } from "components/issues";
+import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "components/issues";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useIssues } from "hooks/store";
@@ -34,7 +34,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     async () => {
       if (workspaceSlug && userId) {
         await fetchFilters(workspaceSlug, userId);
-        await fetchIssues(workspaceSlug, userId, groupedIssueIds ? "mutation" : "init-loader", undefined, type);
+        await fetchIssues(workspaceSlug, undefined, groupedIssueIds ? "mutation" : "init-loader", userId, type);
       }
     }
   );
@@ -57,6 +57,8 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
               <ProfileIssuesKanBanLayout />
             ) : null}
           </div>
+          {/* peek overview */}
+          <IssuePeekOverview />
         </>
       )}
     </>

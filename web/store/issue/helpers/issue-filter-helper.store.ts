@@ -169,19 +169,18 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns {IIssueDisplayProperties}
    */
   computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties => ({
-    assignee: displayProperties?.assignee || false,
-    start_date: displayProperties?.start_date || false,
-    due_date: displayProperties?.due_date || false,
-    labels: displayProperties?.labels || false,
-    priority: displayProperties?.priority || false,
-    state: displayProperties?.state || false,
-    sub_issue_count: displayProperties?.sub_issue_count || false,
-    attachment_count: displayProperties?.attachment_count || false,
-    estimate: displayProperties?.estimate || false,
-    link: displayProperties?.link || false,
-    key: displayProperties?.key || false,
-    created_on: displayProperties?.created_on || false,
-    updated_on: displayProperties?.updated_on || false,
+    assignee: isNil(displayProperties?.assignee) ? true : displayProperties?.assignee,
+    start_date: isNil(displayProperties?.start_date) ? true : displayProperties?.start_date,
+    due_date: isNil(displayProperties?.due_date) ? true : displayProperties?.due_date,
+    labels: isNil(displayProperties?.labels) ? true : displayProperties?.labels,
+    priority: isNil(displayProperties?.priority) ? true : displayProperties?.priority,
+    state: isNil(displayProperties?.state) ? true : displayProperties?.state,
+    sub_issue_count: isNil(displayProperties?.sub_issue_count) ? true : displayProperties?.sub_issue_count,
+    attachment_count: isNil(displayProperties?.attachment_count) ? true : displayProperties?.attachment_count,
+    estimate: isNil(displayProperties?.estimate) ? true : displayProperties?.estimate,
+    key: isNil(displayProperties?.key) ? true : displayProperties?.key,
+    created_on: isNil(displayProperties?.created_on) ? true : displayProperties?.created_on,
+    updated_on: isNil(displayProperties?.updated_on) ? true : displayProperties?.updated_on,
   });
 
   handleIssuesLocalFilters = {
