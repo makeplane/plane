@@ -3,7 +3,7 @@ import { Triangle } from "lucide-react";
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;
@@ -27,7 +27,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{
-                    backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
+                    backgroundColor: STATE_GROUPS[group.state_group as TStateGroups].color,
                   }}
                 />
                 <h6 className="capitalize">{group.state_group}</h6>
@@ -42,7 +42,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                 className="absolute left-0 top-0 h-1 rounded duration-300"
                 style={{
                   width: `${percentage}%`,
-                  backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
+                  backgroundColor: STATE_GROUPS[group.state_group as TStateGroups].color,
                 }}
               />
             </div>

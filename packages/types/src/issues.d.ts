@@ -9,7 +9,6 @@ import type {
   IStateLite,
   Properties,
   IIssueDisplayFilterOptions,
-  IIssueReaction,
   TIssue,
 } from "@plane/types";
 
