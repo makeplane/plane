@@ -50,7 +50,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       showLoader={true}
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString() ?? ""}
-      currentStore={EIssuesStoreType.CYCLE}
+      storeType={EIssuesStoreType.CYCLE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !cycleId) throw new Error();
         return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);

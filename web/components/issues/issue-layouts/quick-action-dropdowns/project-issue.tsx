@@ -14,6 +14,7 @@ import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constant
 import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, customActionButton, portalElement } = props;
@@ -67,6 +68,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
+        storeType={EIssuesStoreType.PROJECT}
       />
       <CustomMenu
         placement="bottom-start"

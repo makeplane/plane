@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useIssues, useProject } from "hooks/store";
+import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -12,7 +11,7 @@ import { IssueFormRoot } from "./form";
 // types
 import type { TIssue } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -20,31 +19,108 @@ export interface IssuesModalProps {
   onClose: () => void;
   onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
+  storeType?: TCreateModalStoreTypes;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, isOpen, onClose, onSubmit, withDraftIssueWrapper = true } = props;
+  const {
+    data,
+    isOpen,
+    onClose,
+    onSubmit,
+    withDraftIssueWrapper = true,
+    storeType = EIssuesStoreType.PROJECT,
+  } = props;
   // states
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
   const [createMore, setCreateMore] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   // store hooks
+  const {
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentUser } = useUser();
+  const {
+    router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
   const { workspaceProjectIds } = useProject();
-  const {
-    issues: { createIssue, updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    issues: { addIssueToCycle },
-  } = useIssues(EIssuesStoreType.CYCLE);
-  const {
-    issues: { addIssueToModule },
-  } = useIssues(EIssuesStoreType.MODULE);
+  const { fetchCycleDetails } = useCycle();
+  const { fetchModuleDetails } = useModule();
+  const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
+  const { issues: moduleIssues } = useIssues(EIssuesStoreType.MODULE);
+  const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
+  // store mapping based on current store
+  const issueStores = {
+    [EIssuesStoreType.PROJECT]: {
+      store: projectIssues,
+      dataIdToUpdate: activeProjectId,
+      viewId: undefined,
+    },
+    [EIssuesStoreType.PROJECT_VIEW]: {
+      store: viewIssues,
+      dataIdToUpdate: activeProjectId,
+      viewId: projectViewId,
+    },
+    [EIssuesStoreType.PROFILE]: {
+      store: profileIssues,
+      dataIdToUpdate: currentUser?.id || undefined,
+      viewId: undefined,
+    },
+    [EIssuesStoreType.CYCLE]: {
+      store: cycleIssues,
+      dataIdToUpdate: activeProjectId,
+      viewId: cycleId,
+    },
+    [EIssuesStoreType.MODULE]: {
+      store: moduleIssues,
+      dataIdToUpdate: activeProjectId,
+      viewId: moduleId,
+    },
+  };
   // toast alert
   const { setToastAlert } = useToast();
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
+  // current store details
+  const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[storeType];
+
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProjectId being set to some other project
+    if (!isOpen) {
+      setActiveProjectId(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (data && data.project_id) {
+      setActiveProjectId(data.project_id);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProjectId)
+      setActiveProjectId(projectId ?? workspaceProjectIds?.[0]);
+  }, [data, projectId, workspaceProjectIds, isOpen, activeProjectId]);
+
+  const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
+    if (!workspaceSlug || !activeProjectId) return;
+
+    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
+    fetchCycleDetails(workspaceSlug, activeProjectId, cycleId);
+  };
+
+  const addIssueToModule = async (issue: TIssue, moduleId: string) => {
+    if (!workspaceSlug || !activeProjectId) return;
+
+    await moduleIssues.addIssueToModule(workspaceSlug, activeProjectId, moduleId, [issue.id]);
+    fetchModuleDetails(workspaceSlug, activeProjectId, moduleId);
+  };
 
   const handleCreateMoreToggleChange = (value: boolean) => {
     setCreateMore(value);
@@ -55,19 +131,41 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       const draftIssue = JSON.stringify(changesMade);
       setLocalStorageDraftIssue(draftIssue);
     }
+    setActiveProjectId(null);
     onClose();
   };
 
   const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !payload.project_id) return undefined;
+    if (!workspaceSlug || !dataIdToUpdate) return;
 
     try {
-      const response = await createIssue(workspaceSlug.toString(), payload.project_id, payload);
+      const response = await currentIssueStore.createIssue(workspaceSlug, dataIdToUpdate, payload, viewId);
+      if (!response) throw new Error();
+
+      currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
+
+      if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
+        await addIssueToCycle(response, payload.cycle_id);
+      if (payload.module_id && payload.module_id !== "" && storeType !== EIssuesStoreType.MODULE)
+        await addIssueToModule(response, payload.module_id);
+
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
+      postHogEventTracker(
+        "ISSUE_CREATED",
+        {
+          ...response,
+          state: "SUCCESS",
+        },
+        {
+          isGrouping: true,
+          groupType: "Workspace_metrics",
+          groupId: currentWorkspace?.id!,
+        }
+      );
       !createMore && handleClose();
       return response;
     } catch (error) {
@@ -76,19 +174,42 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
+      postHogEventTracker(
+        "ISSUE_CREATED",
+        {
+          state: "FAILED",
+        },
+        {
+          isGrouping: true,
+          groupType: "Workspace_metrics",
+          groupId: currentWorkspace?.id!,
+        }
+      );
     }
   };
 
   const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !payload.project_id || !data?.id) return undefined;
+    if (!workspaceSlug || !dataIdToUpdate || !data?.id) return;
 
     try {
-      const response = await updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload);
+      const response = await currentIssueStore.updateIssue(workspaceSlug, dataIdToUpdate, data.id, payload, viewId);
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue updated successfully.",
       });
+      postHogEventTracker(
+        "ISSUE_UPDATED",
+        {
+          ...response,
+          state: "SUCCESS",
+        },
+        {
+          isGrouping: true,
+          groupType: "Workspace_metrics",
+          groupId: currentWorkspace?.id!,
+        }
+      );
       handleClose();
       return response;
     } catch (error) {
@@ -97,39 +218,39 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
+      postHogEventTracker(
+        "ISSUE_UPDATED",
+        {
+          state: "FAILED",
+        },
+        {
+          isGrouping: true,
+          groupType: "Workspace_metrics",
+          groupId: currentWorkspace?.id!,
+        }
+      );
     }
   };
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    if (!workspaceSlug || !formData.project_id) return;
+    if (!workspaceSlug || !dataIdToUpdate || !storeType) return;
 
     const payload: Partial<TIssue> = {
       ...formData,
       description_html: formData.description_html ?? "<p></p>",
     };
 
-    let res: TIssue | undefined = undefined;
-    if (!data?.id) res = await handleCreateIssue(payload);
-    else res = await handleUpdateIssue(payload);
+    let response: TIssue | undefined = undefined;
+    if (!data?.id) response = await handleCreateIssue(payload);
+    else response = await handleUpdateIssue(payload);
 
-    // add issue to cycle if cycle is selected, and cycle is different from current cycle
-    if (formData.cycle_id && res && (!data?.id || formData.cycle_id !== data?.cycle_id))
-      await addIssueToCycle(workspaceSlug.toString(), formData.project_id, formData.cycle_id, [res.id]);
-
-    // add issue to module if module is selected, and module is different from current module
-    if (formData.module_id && res && (!data?.id || formData.module_id !== data?.module_id))
-      await addIssueToModule(workspaceSlug.toString(), formData.project_id, formData.module_id, [res.id]);
-
-    if (res != undefined && onSubmit) await onSubmit(res);
+    if (response != undefined && onSubmit) await onSubmit(response);
   };
 
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);
 
   // don't open the modal if there are no projects
-  if (!workspaceProjectIds || workspaceProjectIds.length === 0) return null;
-
-  // if project id is present in the router query, use that as the selected project id, otherwise use the first project id
-  const selectedProjectId = projectId ? projectId.toString() : workspaceProjectIds[0];
+  if (!workspaceProjectIds || workspaceProjectIds.length === 0 || !activeProjectId) return null;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -161,22 +282,30 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                 {withDraftIssueWrapper ? (
                   <DraftIssueLayout
                     changesMade={changesMade}
-                    data={data}
+                    data={{
+                      ...data,
+                      cycle_id: cycleId ?? null,
+                      module_id: moduleId ?? null,
+                    }}
                     onChange={handleFormChange}
                     onClose={handleClose}
                     onSubmit={handleFormSubmit}
-                    projectId={selectedProjectId}
+                    projectId={activeProjectId}
                     isCreateMoreToggleEnabled={createMore}
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
                   />
                 ) : (
                   <IssueFormRoot
-                    data={data}
+                    data={{
+                      ...data,
+                      cycle_id: cycleId ?? null,
+                      module_id: moduleId ?? null,
+                    }}
                     onClose={() => handleClose(false)}
                     isCreateMoreToggleEnabled={createMore}
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
                     onSubmit={handleFormSubmit}
-                    projectId={selectedProjectId}
+                    projectId={activeProjectId}
                   />
                 )}
               </Dialog.Panel>

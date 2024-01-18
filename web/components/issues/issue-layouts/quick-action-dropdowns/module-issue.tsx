@@ -11,6 +11,8 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, handleRemoveFromView, customActionButton, portalElement } = props;
@@ -58,6 +60,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
+        storeType={EIssuesStoreType.MODULE}
       />
       <CustomMenu
         placement="bottom-start"

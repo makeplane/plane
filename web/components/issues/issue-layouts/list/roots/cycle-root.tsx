@@ -48,7 +48,7 @@ export const CycleListLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
       viewId={cycleId?.toString()}
-      currentStore={EIssuesStoreType.CYCLE}
+      storeType={EIssuesStoreType.CYCLE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !cycleId) throw new Error();
         return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);

@@ -65,7 +65,6 @@ const fileService = new FileService();
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { data, onChange, onClose, onSubmit, projectId, isCreateMoreToggleEnabled, onCreateMoreToggleChange } = props;
-  console.log("onCreateMoreToggleChange", typeof onCreateMoreToggleChange);
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);

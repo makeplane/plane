@@ -19,12 +19,12 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  currentStore: TCreateModalStoreTypes;
+  storeType: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard = observer(
-  ({ icon, title, count, issuePayload, disableIssueCreation, currentStore, addIssuesToView }: IHeaderGroupByCard) => {
+  ({ icon, title, count, issuePayload, disableIssueCreation, storeType, addIssuesToView }: IHeaderGroupByCard) => {
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
@@ -101,7 +101,12 @@ export const HeaderGroupByCard = observer(
               fieldsToShow={["all"]}
             />
           ) : (
-            <CreateUpdateIssueModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
+            <CreateUpdateIssueModal
+              isOpen={isOpen}
+              onClose={() => setIsOpen(false)}
+              data={issuePayload}
+              storeType={storeType}
+            />
           )}
 
           {renderExistingIssueModal && (
