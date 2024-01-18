@@ -361,7 +361,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         ))}
 
         <div className="relative mt-20">
-          <div className="absolute right-24 mt-1 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onbording-shadow-sm">
+          <div className="absolute right-24 mt-1 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onboarding-shadow-sm">
             <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user2} alt="user" />
             </div>
@@ -371,7 +371,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className="absolute right-12 mt-16 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onbording-shadow-sm">
+          <div className="absolute right-12 mt-16 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onboarding-shadow-sm">
             <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user1} alt="user" />
             </div>

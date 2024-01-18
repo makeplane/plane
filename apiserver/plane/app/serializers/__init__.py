@@ -68,7 +68,6 @@ from .issue import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
-    IssueRelationLiteSerializer,
 )
 
 from .module import (
@@ -120,3 +119,5 @@ from .notification import NotificationSerializer
 from .exporter import ExporterHistorySerializer
 
 from .webhook import WebhookSerializer, WebhookLogSerializer
+
+from .dashboard import DashboardSerializer, WidgetSerializer

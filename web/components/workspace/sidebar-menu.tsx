@@ -35,7 +35,7 @@ const workspaceLinks = (workspaceSlug: string) => [
   },
   {
     Icon: SendToBack,
-    name: "Active Cycles",
+    name: "Active cycles",
     href: `/${workspaceSlug}/active-cycles`,
   },
 ];

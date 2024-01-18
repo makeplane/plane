@@ -1766,6 +1766,19 @@
     "@react-spring/web" "9.4.5"
     d3-shape "^1.3.5"
 
+"@nivo/marimekko@0.80.0":
+  version "0.80.0"
+  resolved "https://registry.yarnpkg.com/@nivo/marimekko/-/marimekko-0.80.0.tgz#1eda4207935b3776bd1d7d729dc39a0e42bb1b86"
+  integrity sha512-0u20SryNtbOQhtvhZsbxmgnF7o8Yc2rjDQ/gCYPTXtxeooWCuhSaRZbDCnCeyKQY3B62D7z2mu4Js4KlTEftjA==
+  dependencies:
+    "@nivo/axes" "0.80.0"
+    "@nivo/colors" "0.80.0"
+    "@nivo/legends" "0.80.0"
+    "@nivo/scales" "0.80.0"
+    "@react-spring/web" "9.4.5"
+    d3-shape "^1.3.5"
+    lodash "^4.17.21"
+
 "@nivo/pie@0.80.0":
   version "0.80.0"
   resolved "https://registry.yarnpkg.com/@nivo/pie/-/pie-0.80.0.tgz#04b35839bf5a2b661fa4e5b677ae76b3c028471e"
