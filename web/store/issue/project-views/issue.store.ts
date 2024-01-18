@@ -130,11 +130,15 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       runInAction(() => {
-        set(this.issues, [viewId], Object.keys(response));
+        set(
+          this.issues,
+          [viewId],
+          response.map((issue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

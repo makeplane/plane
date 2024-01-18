@@ -28,9 +28,9 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     project: { projectLabels },
   } = useLabel();
   const { projectStates } = useProjectState();
-  const { getViewById, updateView } = useProjectView();
+  const { viewMap, updateView } = useProjectView();
   // derived values
-  const viewDetails = viewId ? getViewById(viewId.toString()) : null;
+  const viewDetails = viewId ? viewMap[viewId.toString()] : null;
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -43,18 +43,30 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!workspaceSlug || !projectId) return;
     if (!value) {
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug,
+        projectId,
+        EIssueFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        viewId
+      );
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug,
+      projectId,
+      EIssueFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      viewId
+    );
   };
 
   const handleClearAllFilters = () => {
@@ -67,14 +79,14 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   };
 
   // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
+  if (Object.keys(appliedFilters).length === 0 && !areFiltersDifferent(appliedFilters, viewDetails?.filters ?? {}))
+    return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
 
     updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
-      query_data: {
-        ...viewDetails.query_data,
+      filters: {
         ...(appliedFilters ?? {}),
       },
     });
@@ -90,15 +102,13 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         states={projectStates}
       />
 
-      {appliedFilters &&
-        viewDetails?.query_data &&
-        areFiltersDifferent(appliedFilters, viewDetails?.query_data ?? {}) && (
-          <div className="flex flex-shrink-0 items-center justify-center">
-            <Button variant="primary" size="sm" onClick={handleUpdateView}>
-              Update view
-            </Button>
-          </div>
-        )}
+      {viewDetails?.filters && areFiltersDifferent(appliedFilters, viewDetails?.filters ?? {}) && (
+        <div className="flex flex-shrink-0 items-center justify-center">
+          <Button variant="primary" size="sm" onClick={handleUpdateView}>
+            Update view
+          </Button>
+        </div>
+      )}
     </div>
   );
 });

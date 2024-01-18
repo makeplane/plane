@@ -26,6 +26,7 @@ from bs4 import BeautifulSoup
 # =========== Issue Description Html Parsing and notification Functions ======================
 
 
+
 def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
     aggregated_issue_mentions = []
 
@@ -40,7 +41,9 @@ def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
         )
 
     IssueMention.objects.bulk_create(aggregated_issue_mentions, batch_size=100)
-    IssueMention.objects.filter(issue=issue, mention__in=removed_mention).delete()
+    IssueMention.objects.filter(
+        issue=issue, mention__in=removed_mention
+    ).delete()
 
 
 def get_new_mentions(requested_instance, current_instance):
@@ -92,7 +95,9 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
                 project_id=project_id,
             ).exists()
             and not IssueAssignee.objects.filter(
-                project_id=project_id, issue_id=issue_id, assignee_id=mention_id
+                project_id=project_id,
+                issue_id=issue_id,
+                assignee_id=mention_id,
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
@@ -120,7 +125,9 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mention_tags = soup.find_all(
+            "mention-component", attrs={"target": "users"}
+        )
 
         mentions = [mention_tag["id"] for mention_tag in mention_tags]
 
@@ -129,12 +136,14 @@ def extract_mentions(issue_instance):
         return []
 
 
-# =========== Comment Parsing and notification Functions ======================
+# =========== Comment Parsing and Notification Functions ======================
 def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mentions_tags = soup.find_all(
+            "mention-component", attrs={"target": "users"}
+        )
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["id"])
         return list(set(mentions))
@@ -157,7 +166,13 @@ def get_new_comment_mentions(new_value, old_value):
 
 
 def create_mention_notification(
-    project, notification_comment, issue, actor_id, mention_id, issue_id, activity
+    project,
+    notification_comment,
+    issue,
+    actor_id,
+    mention_id,
+    issue_id,
+    activity,
 ):
     return Notification(
         workspace=project.workspace,
@@ -292,7 +307,9 @@ def notifications(
                 # add the user to issue subscriber
                 try:
                     _ = IssueSubscriber.objects.get_or_create(
-                        project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
+                        project_id=project_id,
+                        issue_id=issue_id,
+                        subscriber_id=actor_id,
                     )
                 except Exception as e:
                     pass
@@ -375,7 +392,9 @@ def notifications(
                                 "issue": {
                                     "id": str(issue_id),
                                     "name": str(issue.name),
-                                    "identifier": str(issue.project.identifier),
+                                    "identifier": str(
+                                        issue.project.identifier
+                                    ),
                                     "sequence_id": issue.sequence_id,
                                     "state_name": issue.state.name,
                                     "state_group": issue.state.group,

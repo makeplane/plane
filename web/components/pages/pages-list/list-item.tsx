@@ -186,8 +186,9 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
               <div className="flex items-center gap-2 overflow-hidden">
                 <FileText className="h-4 w-4 shrink-0" />
                 <p className="mr-2 truncate text-sm text-custom-text-100">{pageDetails.name}</p>
+                {/* FIXME: replace any with proper type */}
                 {pageDetails.label_details.length > 0 &&
-                  pageDetails.label_details.map((label) => (
+                  pageDetails.label_details.map((label: any) => (
                     <div
                       key={label.id}
                       className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs"

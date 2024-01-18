@@ -76,7 +76,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -577,7 +577,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                distribution={moduleDetails.distribution.completion_chart}
+                                distribution={moduleDetails.distribution?.completion_chart}
                                 startDate={moduleDetails.start_date ?? ""}
                                 endDate={moduleDetails.target_date ?? ""}
                                 totalIssues={moduleDetails.total_issues}

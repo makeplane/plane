@@ -94,7 +94,6 @@ export class IssueRelationStore implements IIssueRelationStore {
           const relation_key = key as TIssueRelationTypes;
           const relation_issues = response[relation_key];
           const issues = relation_issues.flat().map((issue) => issue.issue_detail);
-          if (issues && issues.length > 0) this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issues);
           set(
             this.relationMap,
             [issueId, relation_key],

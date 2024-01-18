@@ -55,7 +55,9 @@ def update_workspace_member_props(apps, schema_editor):
 
         updated_workspace_member.append(obj)
 
-    Model.objects.bulk_update(updated_workspace_member, ["view_props"], batch_size=100)
+    Model.objects.bulk_update(
+        updated_workspace_member, ["view_props"], batch_size=100
+    )
 
 
 def update_project_member_sort_order(apps, schema_editor):
@@ -67,7 +69,9 @@ def update_project_member_sort_order(apps, schema_editor):
         obj.sort_order = random.randint(1, 65536)
         updated_project_members.append(obj)
 
-    Model.objects.bulk_update(updated_project_members, ["sort_order"], batch_size=100)
+    Model.objects.bulk_update(
+        updated_project_members, ["sort_order"], batch_size=100
+    )
 
 
 class Migration(migrations.Migration):
@@ -79,18 +83,22 @@ class Migration(migrations.Migration):
         migrations.RunPython(rename_field),
         migrations.RunPython(update_workspace_member_props),
         migrations.AlterField(
-            model_name='workspacemember',
-            name='view_props',
-            field=models.JSONField(default=plane.db.models.workspace.get_default_props),
+            model_name="workspacemember",
+            name="view_props",
+            field=models.JSONField(
+                default=plane.db.models.workspace.get_default_props
+            ),
         ),
         migrations.AddField(
-            model_name='workspacemember',
-            name='default_props',
-            field=models.JSONField(default=plane.db.models.workspace.get_default_props),
+            model_name="workspacemember",
+            name="default_props",
+            field=models.JSONField(
+                default=plane.db.models.workspace.get_default_props
+            ),
         ),
         migrations.AddField(
-            model_name='projectmember',
-            name='sort_order',
+            model_name="projectmember",
+            name="sort_order",
             field=models.FloatField(default=65535),
         ),
         migrations.RunPython(update_project_member_sort_order),

@@ -19,6 +19,7 @@ def get_default_filters():
         "subscriber": None,
     }
 
+
 def get_default_display_filters():
     return {
         "group_by": None,
@@ -29,6 +30,7 @@ def get_default_display_filters():
         "layout": "list",
         "calendar_date_range": "",
     }
+
 
 def get_default_display_properties():
     return {
@@ -46,6 +48,7 @@ def get_default_display_properties():
         "sub_issue_count": True,
         "updated_on": True,
     }
+
 
 class GlobalView(BaseModel):
     workspace = models.ForeignKey(
@@ -65,7 +68,7 @@ class GlobalView(BaseModel):
         verbose_name_plural = "Global Views"
         db_table = "global_views"
         ordering = ("-created_at",)
-    
+
     def save(self, *args, **kwargs):
         if self._state.adding:
             largest_sort_order = GlobalView.objects.filter(
@@ -87,7 +90,9 @@ class IssueView(WorkspaceBaseModel):
     query = models.JSONField(verbose_name="View Query")
     filters = models.JSONField(default=dict)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(default=get_default_display_properties)
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
     access = models.PositiveSmallIntegerField(
         default=1, choices=((0, "Private"), (1, "Public"))
     )

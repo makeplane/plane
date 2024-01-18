@@ -4,7 +4,10 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from plane.app.serializers.workspace import WorkspaceLiteSerializer
-from plane.app.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
+from plane.app.serializers.user import (
+    UserLiteSerializer,
+    UserAdminLiteSerializer,
+)
 from plane.db.models import (
     Project,
     ProjectMember,
@@ -17,7 +20,9 @@ from plane.db.models import (
 
 
 class ProjectSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        source="workspace", read_only=True
+    )
 
     class Meta:
         model = Project
@@ -29,12 +34,16 @@ class ProjectSerializer(BaseSerializer):
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
         if identifier == "":
-            raise serializers.ValidationError(detail="Project Identifier is required")
+            raise serializers.ValidationError(
+                detail="Project Identifier is required"
+            )
 
         if ProjectIdentifier.objects.filter(
             name=identifier, workspace_id=self.context["workspace_id"]
         ).exists():
-            raise serializers.ValidationError(detail="Project Identifier is taken")
+            raise serializers.ValidationError(
+                detail="Project Identifier is taken"
+            )
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]
         )
@@ -73,7 +82,9 @@ class ProjectSerializer(BaseSerializer):
             return project
 
         # If not same fail update
-        raise serializers.ValidationError(detail="Project Identifier is already taken")
+        raise serializers.ValidationError(
+            detail="Project Identifier is already taken"
+        )
 
 
 class ProjectLiteSerializer(BaseSerializer):
@@ -159,11 +170,12 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         model = ProjectMember
         fields = "__all__"
 
-class ProjectMemberRoleSerializer(DynamicBaseSerializer):
 
+class ProjectMemberRoleSerializer(DynamicBaseSerializer):
     class Meta:
         model = ProjectMember
         fields = ("id", "role", "member", "project")
+
 
 class ProjectMemberInviteSerializer(BaseSerializer):
     project = ProjectLiteSerializer(read_only=True)
@@ -202,7 +214,9 @@ class ProjectMemberLiteSerializer(BaseSerializer):
 
 class ProjectDeployBoardSerializer(BaseSerializer):
     project_details = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkspaceLiteSerializer(
+        read_only=True, source="workspace"
+    )
 
     class Meta:
         model = ProjectDeployBoard

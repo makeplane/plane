@@ -4,8 +4,11 @@ from .user import UserLiteSerializer
 from plane.db.models import Notification, EmailNotificationLog, UserNotificationPreference
 
 
+
 class NotificationSerializer(BaseSerializer):
-    triggered_by_details = UserLiteSerializer(read_only=True, source="triggered_by")
+    triggered_by_details = UserLiteSerializer(
+        read_only=True, source="triggered_by"
+    )
 
     class Meta:
         model = Notification

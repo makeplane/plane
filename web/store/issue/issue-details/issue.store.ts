@@ -49,10 +49,21 @@ export class IssueStore implements IIssueStore {
   // actions
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
+      const query = {
+        expand: "state,assignees,labels,parent",
+      };
+      const issue = (await this.issueService.retrieve(workspaceSlug, projectId, issueId, query)) as any;
       if (!issue) throw new Error("Issue not found");
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
+
+      // store handlers from issue detail
+      // parent
+      if (issue && issue?.parent && issue?.parent?.id)
+        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue?.parent]);
+      // assignees
+      // labels
+      // state
 
       // issue reactions
       this.rootIssueDetailStore.reaction.fetchReactions(workspaceSlug, projectId, issueId);

@@ -63,7 +63,7 @@ Thats it!
 
 ## 🍙 Self Hosting
 
-For self hosting environment setup, visit the [Self Hosting](https://docs.plane.so/self-hosting/docker-compose) documentation page
+For self hosting environment setup, visit the [Self Hosting](https://docs.plane.so/docker-compose) documentation page
 
 ## 🚀 Features
 

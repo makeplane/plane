@@ -31,8 +31,10 @@ class Cursor:
         try:
             bits = value.split(":")
             if len(bits) != 3:
-                raise ValueError("Cursor must be in the format 'value:offset:is_prev'")
-            
+                raise ValueError(
+                    "Cursor must be in the format 'value:offset:is_prev'"
+                )
+
             value = float(bits[0]) if "." in bits[0] else int(bits[0])
             return cls(value, int(bits[1]), bool(int(bits[2])))
         except (TypeError, ValueError) as e:
@@ -178,7 +180,9 @@ class BasePaginator:
         input_cursor = None
         if request.GET.get(self.cursor_name):
             try:
-                input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name))
+                input_cursor = cursor_cls.from_string(
+                    request.GET.get(self.cursor_name)
+                )
             except ValueError:
                 raise ParseError(detail="Invalid cursor parameter.")
 
@@ -186,7 +190,9 @@ class BasePaginator:
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
-            cursor_result = paginator.get_result(limit=per_page, cursor=input_cursor)
+            cursor_result = paginator.get_result(
+                limit=per_page, cursor=input_cursor
+            )
         except BadPaginationError as e:
             raise ParseError(detail="Error in parsing")
 

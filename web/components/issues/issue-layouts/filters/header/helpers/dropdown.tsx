@@ -1,10 +1,7 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
-import { Popover } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 import { Placement } from "@popperjs/core";
-// hooks
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -23,24 +20,13 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-  // refs
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
   });
 
-  const openDropdown = () => {
-    setIsOpen(true);
-    if (referenceElement) referenceElement.focus();
-  };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
-
   return (
-    <Popover as="div" ref={dropdownRef} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
+    <Popover as="div">
       {({ open }) => {
         if (open) {
         }
@@ -55,15 +41,23 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                 appendIcon={
                   <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
                 }
-                onClick={openDropdown}
+                tabIndex={tabIndex}
               >
                 <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
                   <span>{title}</span>
                 </div>
               </Button>
             </Popover.Button>
-            {isOpen && (
-              <Popover.Panel static>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <Popover.Panel>
                 <div
                   className="z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
                   ref={setPopperElement}
@@ -73,7 +67,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                   <div className="flex max-h-[37.5rem] w-[18.75rem] flex-col overflow-hidden">{children}</div>
                 </div>
               </Popover.Panel>
-            )}
+            </Transition>
           </>
         );
       }}

@@ -25,12 +25,12 @@ export const ModuleListLayout: React.FC = observer(() => {
       [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue);
+        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
       },
       [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
 
-        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id);
+        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
       },
       [EIssueActions.REMOVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;

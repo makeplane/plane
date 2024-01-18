@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid, SendToBack } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 // components
@@ -33,6 +33,11 @@ const workspaceLinks = (workspaceSlug: string) => [
     name: "All Issues",
     href: `/${workspaceSlug}/workspace-views/all-issues`,
   },
+  {
+    Icon: SendToBack,
+    name: "Active Cycles",
+    href: `/${workspaceSlug}/active-cycles`,
+  },
 ];
 
 export const WorkspaceSidebarMenu = observer(() => {
@@ -44,7 +49,7 @@ export const WorkspaceSidebarMenu = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // computed
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
@@ -70,13 +75,23 @@ export const WorkspaceSidebarMenu = observer(() => {
                 >
                   {<link.Icon className="h-4 w-4" />}
                   {!themeStore?.sidebarCollapsed && link.name}
+                  {link.name === "Active Cycles" && (
+                    <span
+                      className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl"
+                      style={{
+                        color: "#F59E0B",
+                        backgroundColor: "#F59E0B20",
+                      }}
+                    >
+                      Beta
+                    </span>
+                  )}
                 </div>
               </Tooltip>
             </span>
           </Link>
         );
       })}
-
       <NotificationPopover />
     </div>
   );

@@ -5,6 +5,7 @@ from .base import BaseSerializer
 
 class WorkspaceLiteSerializer(BaseSerializer):
     """Lite serializer with only required fields"""
+
     class Meta:
         model = Workspace
         fields = [

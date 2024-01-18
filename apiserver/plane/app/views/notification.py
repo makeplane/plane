@@ -55,8 +55,10 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         # Filters based on query parameters
         snoozed_filters = {
-            "true": Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False),
-            "false": Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+            "true": Q(snoozed_till__lt=timezone.now())
+            | Q(snoozed_till__isnull=False),
+            "false": Q(snoozed_till__gte=timezone.now())
+            | Q(snoozed_till__isnull=True),
         }
 
         notifications = notifications.filter(snoozed_filters[snoozed])
@@ -76,14 +78,18 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             issue_ids = IssueSubscriber.objects.filter(
                 workspace__slug=slug, subscriber_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(entity_identifier__in=issue_ids)
+            notifications = notifications.filter(
+                entity_identifier__in=issue_ids
+            )
 
         # Assigned Issues
         if type == "assigned":
             issue_ids = IssueAssignee.objects.filter(
                 workspace__slug=slug, assignee_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(entity_identifier__in=issue_ids)
+            notifications = notifications.filter(
+                entity_identifier__in=issue_ids
+            )
 
         # Created issues
         if type == "created":
@@ -98,10 +104,14 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 issue_ids = Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
-                notifications = notifications.filter(entity_identifier__in=issue_ids)
+                notifications = notifications.filter(
+                    entity_identifier__in=issue_ids
+                )
 
         # Pagination
-        if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+        if request.GET.get("per_page", False) and request.GET.get(
+            "cursor", False
+        ):
             return self.paginate(
                 request=request,
                 queryset=(notifications),
@@ -231,11 +241,13 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
         # Filter for snoozed notifications
         if snoozed:
             notifications = notifications.filter(
-                Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
+                Q(snoozed_till__lt=timezone.now())
+                | Q(snoozed_till__isnull=False)
             )
         else:
             notifications = notifications.filter(
-                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                Q(snoozed_till__gte=timezone.now())
+                | Q(snoozed_till__isnull=True),
             )
 
         # Filter for archived or unarchive
@@ -249,14 +261,18 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
             issue_ids = IssueSubscriber.objects.filter(
                 workspace__slug=slug, subscriber_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(entity_identifier__in=issue_ids)
+            notifications = notifications.filter(
+                entity_identifier__in=issue_ids
+            )
 
         # Assigned Issues
         if type == "assigned":
             issue_ids = IssueAssignee.objects.filter(
                 workspace__slug=slug, assignee_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(entity_identifier__in=issue_ids)
+            notifications = notifications.filter(
+                entity_identifier__in=issue_ids
+            )
 
         # Created issues
         if type == "created":
@@ -271,7 +287,9 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
                 issue_ids = Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
-                notifications = notifications.filter(entity_identifier__in=issue_ids)
+                notifications = notifications.filter(
+                    entity_identifier__in=issue_ids
+                )
 
         updated_notifications = []
         for notification in notifications:

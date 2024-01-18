@@ -142,8 +142,13 @@ export class IssueDetail implements IIssueDetail {
     this.reaction.fetchReactions(workspaceSlug, projectId, issueId);
   createReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) =>
     this.reaction.createReaction(workspaceSlug, projectId, issueId, reaction);
-  removeReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) =>
-    this.reaction.removeReaction(workspaceSlug, projectId, issueId, reaction);
+  removeReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    reaction: string,
+    userId: string
+  ) => this.reaction.removeReaction(workspaceSlug, projectId, issueId, reaction, userId);
 
   // activity
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string) =>
@@ -196,8 +201,19 @@ export class IssueDetail implements IIssueDetail {
   // sub issues
   fetchSubIssues = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
-  createSubIssues = async (workspaceSlug: string, projectId: string, issueId: string, data: string[]) =>
-    this.subIssues.createSubIssues(workspaceSlug, projectId, issueId, data);
+  createSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string, data: string[]) =>
+    this.subIssues.createSubIssues(workspaceSlug, projectId, parentIssueId, data);
+  updateSubIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentIssueId: string,
+    issueId: string,
+    data: Partial<TIssue>
+  ) => this.subIssues.updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, data);
+  removeSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) =>
+    this.subIssues.removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+  deleteSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) =>
+    this.subIssues.deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
 
   // subscription
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) =>

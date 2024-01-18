@@ -66,8 +66,9 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   }, [projectIntegration, projectId]);
 
   const handleDelete = async () => {
+    if (!workspaceSlug || !projectId) return;
     if (projectIntegration.length === 0) return;
-    mutate(SLACK_CHANNEL_INFO, (prevData: any) => {
+    mutate(SLACK_CHANNEL_INFO(workspaceSlug?.toString(), projectId?.toString()), (prevData: any) => {
       if (!prevData) return;
       return prevData.id !== integration.id;
     }).then(() => {

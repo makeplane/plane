@@ -54,7 +54,14 @@ from .cycle import Cycle, CycleIssue, CycleFavorite, CycleUserProperties
 
 from .view import GlobalView, IssueView, IssueViewFavorite
 
-from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite, ModuleUserProperties
+from .module import (
+    Module,
+    ModuleMember,
+    ModuleIssue,
+    ModuleLink,
+    ModuleFavorite,
+    ModuleUserProperties,
+)
 
 from .api import APIToken, APIActivityLog
 

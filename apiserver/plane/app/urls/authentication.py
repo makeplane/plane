@@ -31,8 +31,14 @@ urlpatterns = [
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # magic sign in
-    path("magic-generate/", MagicGenerateEndpoint.as_view(), name="magic-generate"),
-    path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
+    path(
+        "magic-generate/",
+        MagicGenerateEndpoint.as_view(),
+        name="magic-generate",
+    ),
+    path(
+        "magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"
+    ),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # Password Manipulation
     path(
@@ -52,6 +58,8 @@ urlpatterns = [
     ),
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
-    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"),
+    path(
+        "api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"
+    ),
     ## End API Tokens
 ]

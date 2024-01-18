@@ -90,10 +90,14 @@ class ConfigurationEndpoint(BaseAPIView):
         data = {}
         # Authentication
         data["google_client_id"] = (
-            GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != '""' else None
+            GOOGLE_CLIENT_ID
+            if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != '""'
+            else None
         )
         data["github_client_id"] = (
-            GITHUB_CLIENT_ID if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != '""' else None
+            GITHUB_CLIENT_ID
+            if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != '""'
+            else None
         )
         data["github_app_name"] = GITHUB_APP_NAME
         data["magic_login"] = (
@@ -115,11 +119,13 @@ class ConfigurationEndpoint(BaseAPIView):
         data["has_openai_configured"] = bool(OPENAI_API_KEY)
 
         # File size settings
-        data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+        data["file_size_limit"] = float(
+            os.environ.get("FILE_SIZE_LIMIT", 5242880)
+        )
 
         # is smtp configured
-        data["is_smtp_configured"] = (
-            bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
+        data["is_smtp_configured"] = bool(EMAIL_HOST_USER) and bool(
+            EMAIL_HOST_PASSWORD
         )
 
         return Response(data, status=status.HTTP_200_OK)
@@ -194,7 +200,9 @@ class MobileConfigurationEndpoint(BaseAPIView):
         data = {}
         # Authentication
         data["google_client_id"] = (
-            GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != '""' else None
+            GOOGLE_CLIENT_ID
+            if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != '""'
+            else None
         )
         data["google_server_client_id"] = (
             GOOGLE_SERVER_CLIENT_ID
@@ -202,7 +210,9 @@ class MobileConfigurationEndpoint(BaseAPIView):
             else None
         )
         data["google_ios_client_id"] = (
-            (GOOGLE_IOS_CLIENT_ID)[::-1] if GOOGLE_IOS_CLIENT_ID is not None else None
+            (GOOGLE_IOS_CLIENT_ID)[::-1]
+            if GOOGLE_IOS_CLIENT_ID is not None
+            else None
         )
         # Posthog
         data["posthog_api_key"] = POSTHOG_API_KEY
@@ -225,7 +235,9 @@ class MobileConfigurationEndpoint(BaseAPIView):
         data["has_openai_configured"] = bool(OPENAI_API_KEY)
 
         # File size settings
-        data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+        data["file_size_limit"] = float(
+            os.environ.get("FILE_SIZE_LIMIT", 5242880)
+        )
 
         # is smtp configured
         data["is_smtp_configured"] = not (
