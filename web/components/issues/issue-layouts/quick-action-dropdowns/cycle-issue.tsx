@@ -60,7 +60,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
-        currentStore={EIssuesStoreType.CYCLE}
+        storeType={EIssuesStoreType.CYCLE}
       />
       <CustomMenu
         placement="bottom-start"

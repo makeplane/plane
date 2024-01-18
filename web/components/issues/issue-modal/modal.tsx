@@ -19,7 +19,7 @@ export interface IssuesModalProps {
   onClose: () => void;
   onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
-  currentStore?: TCreateModalStoreTypes;
+  storeType?: TCreateModalStoreTypes;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
@@ -29,7 +29,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     onClose,
     onSubmit,
     withDraftIssueWrapper = true,
-    currentStore = EIssuesStoreType.PROJECT,
+    storeType = EIssuesStoreType.PROJECT,
   } = props;
   // states
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
@@ -85,7 +85,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
   // current store details
-  const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[currentStore];
+  const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[storeType];
 
   useEffect(() => {
     // if modal is closed, reset active project to null
@@ -144,9 +144,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
       currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
-      if (payload.cycle_id && payload.cycle_id !== "" && currentStore !== EIssuesStoreType.CYCLE)
+      if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
-      if (payload.module_id && payload.module_id !== "" && currentStore !== EIssuesStoreType.MODULE)
+      if (payload.module_id && payload.module_id !== "" && storeType !== EIssuesStoreType.MODULE)
         await addIssueToModule(response, payload.module_id);
 
       setToastAlert({
@@ -233,7 +233,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    if (!workspaceSlug || !dataIdToUpdate || !currentStore) return;
+    if (!workspaceSlug || !dataIdToUpdate || !storeType) return;
 
     const payload: Partial<TIssue> = {
       ...formData,

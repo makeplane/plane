@@ -36,7 +36,7 @@ export const ProjectViewListLayout: React.FC<IViewListLayout> = observer((props)
       issues={issues}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      currentStore={EIssuesStoreType.PROJECT_VIEW}
+      storeType={EIssuesStoreType.PROJECT_VIEW}
       viewId={viewId?.toString()}
     />
   );

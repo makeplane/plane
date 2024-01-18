@@ -217,7 +217,7 @@ export const CommandPalette: FC = observer(() => {
         isOpen={isCreateIssueModalOpen}
         onClose={() => toggleCreateIssueModal(false)}
         data={cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_id: moduleId.toString() } : undefined}
-        currentStore={createIssueStoreType}
+        storeType={createIssueStoreType}
       />
 
       {workspaceSlug && projectId && issueId && issueDetails && (

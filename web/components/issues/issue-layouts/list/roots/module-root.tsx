@@ -48,7 +48,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
       viewId={moduleId?.toString()}
-      currentStore={EIssuesStoreType.MODULE}
+      storeType={EIssuesStoreType.MODULE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);

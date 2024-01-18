@@ -52,7 +52,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
       issues={issues}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
-      currentStore={EIssuesStoreType.PROFILE}
+      storeType={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );

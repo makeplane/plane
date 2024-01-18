@@ -25,7 +25,7 @@ interface IHeaderGroupByCard {
   handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  currentStore?: TCreateModalStoreTypes;
+  storeType?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
@@ -40,7 +40,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     handleKanbanFilters,
     issuePayload,
     disableIssueCreation,
-    currentStore,
+    storeType,
     addIssuesToView,
   } = props;
   const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);
@@ -88,7 +88,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           data={issuePayload}
-          currentStore={currentStore}
+          storeType={storeType}
         />
       )}
       {renderExistingIssueModal && (
