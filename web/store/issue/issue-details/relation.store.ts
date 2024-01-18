@@ -4,13 +4,7 @@ import set from "lodash/set";
 import { IssueRelationService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
-import {
-  TIssueRelationIdMap,
-  TIssueRelationMap,
-  TIssueRelationTypes,
-  TIssueRelation,
-  TIssueRelationObject,
-} from "@plane/types";
+import { TIssueRelationIdMap, TIssueRelationMap, TIssueRelationTypes, TIssueRelation, TIssue } from "@plane/types";
 
 export interface IIssueRelationStoreActions {
   // actions
@@ -21,7 +15,7 @@ export interface IIssueRelationStoreActions {
     issueId: string,
     relationType: TIssueRelationTypes,
     issues: string[]
-  ) => Promise<TIssueRelationObject[]>;
+  ) => Promise<TIssue[]>;
   removeRelation: (
     workspaceSlug: string,
     projectId: string,
@@ -93,7 +87,8 @@ export class IssueRelationStore implements IIssueRelationStore {
         Object.keys(response).forEach((key) => {
           const relation_key = key as TIssueRelationTypes;
           const relation_issues = response[relation_key];
-          const issues = relation_issues.flat().map((issue) => issue.issue_detail);
+          const issues = relation_issues.flat().map((issue) => issue);
+          if (issues && issues.length > 0) this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issues);
           set(
             this.relationMap,
             [issueId, relation_key],
@@ -124,8 +119,8 @@ export class IssueRelationStore implements IIssueRelationStore {
       if (response && response.length > 0)
         runInAction(() => {
           response.forEach((issue) => {
-            this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue?.issue_detail]);
-            this.relationMap[issueId][relationType].push(issue.issue_detail.id);
+            this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
+            this.relationMap[issueId][relationType].push(issue.id);
           });
         });
 

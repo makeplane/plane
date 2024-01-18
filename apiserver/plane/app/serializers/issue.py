@@ -293,31 +293,19 @@ class IssueLabelSerializer(BaseSerializer):
         ]
 
 
-class IssueRelationLiteSerializer(DynamicBaseSerializer):
-    project_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Issue
-        fields = [
-            "id",
-            "project_id",
-            "sequence_id",
-        ]
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
-
-
 class IssueRelationSerializer(BaseSerializer):
-    issue_detail = IssueRelationLiteSerializer(
-        read_only=True, source="related_issue"
-    )
+    id = serializers.UUIDField(source="related_issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueRelation
         fields = [
-            "issue_detail",
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
         ]
         read_only_fields = [
             "workspace",
@@ -326,12 +314,18 @@ class IssueRelationSerializer(BaseSerializer):
 
 
 class RelatedIssueSerializer(BaseSerializer):
-    issue_detail = IssueRelationLiteSerializer(read_only=True, source="issue")
+    id = serializers.UUIDField(source="issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueRelation
         fields = [
-            "issue_detail",
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
         ]
         read_only_fields = [
             "workspace",

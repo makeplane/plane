@@ -3,7 +3,6 @@ import uuid
 from datetime import timedelta
 from django.utils import timezone
 
-
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
 
@@ -464,7 +463,7 @@ def filter_start_target_date_issues(params, filter, method):
         filter["target_date__isnull"] = False
         filter["start_date__isnull"] = False
     return filter
-
+    
 
 def issue_filters(query_params, method):
     filter = {}
