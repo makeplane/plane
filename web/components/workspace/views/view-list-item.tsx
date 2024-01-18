@@ -30,7 +30,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
 
   if (!view) return null;
 
-  const totalFilters = calculateTotalFilters(view.query_data.filters ?? {});
+  const totalFilters = calculateTotalFilters(view.filters ?? {});
 
   return (
     <>
