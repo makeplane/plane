@@ -40,7 +40,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { workspaceSlug, globalViewId } = router.query;
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const {
     membership: { currentWorkspaceRole },
@@ -51,6 +51,8 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+
+  const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
