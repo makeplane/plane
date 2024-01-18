@@ -325,7 +325,7 @@ class MagicSignInEndpoint(BaseAPIView):
             )
 
         user_token = request.data.get("token", "").strip()
-        key = request.data.get("key", False).strip().lower()
+        key = request.data.get("key", "").strip().lower()
 
         if not key or user_token == "":
             return Response(
