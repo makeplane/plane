@@ -6,7 +6,7 @@ import { History } from "lucide-react";
 import { useDashboard, useUser } from "hooks/store";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { RecentActivityEmptyState, WidgetLoader } from "components/dashboard/widgets";
+import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
 // helpers
@@ -14,14 +14,9 @@ import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
 
-type Props = {
-  dashboardId: string;
-  workspaceSlug: string;
-};
-
 const WIDGET_KEY = "recent_activity";
 
-export const RecentActivityWidget: React.FC<Props> = observer((props) => {
+export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { currentUser } = useUser();

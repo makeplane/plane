@@ -5,7 +5,12 @@ import { observer } from "mobx-react-lite";
 import { useDashboard } from "hooks/store";
 // components
 import { MarimekkoGraph } from "components/ui";
-import { DurationFilterDropdown, IssuesByPriorityEmptyState, WidgetLoader } from "components/dashboard/widgets";
+import {
+  DurationFilterDropdown,
+  IssuesByPriorityEmptyState,
+  WidgetLoader,
+  WidgetProps,
+} from "components/dashboard/widgets";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // helpers
@@ -62,14 +67,9 @@ const CustomBar = (props: any) => {
   );
 };
 
-type Props = {
-  dashboardId: string;
-  workspaceSlug: string;
-};
-
 const WIDGET_KEY = "issues_by_priority";
 
-export const IssuesByPriorityWidget: React.FC<Props> = observer((props) => {
+export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const {

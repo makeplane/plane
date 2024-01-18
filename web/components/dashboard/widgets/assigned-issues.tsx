@@ -5,7 +5,13 @@ import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";
 // components
-import { AssignedIssuesList, DurationFilterDropdown, TabsList, WidgetLoader } from "components/dashboard/widgets";
+import {
+  DurationFilterDropdown,
+  TabsList,
+  WidgetIssuesList,
+  WidgetLoader,
+  WidgetProps,
+} from "components/dashboard/widgets";
 // helpers
 import { getCustomDates, getRedirectionFilters } from "helpers/dashboard.helper";
 // types
@@ -13,14 +19,9 @@ import { TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@pl
 // constants
 import { ISSUES_TABS_LIST } from "constants/dashboard";
 
-type Props = {
-  dashboardId: string;
-  workspaceSlug: string;
-};
-
 const WIDGET_KEY = "assigned_issues";
 
-export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
+export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // states
   const [fetching, setFetching] = useState(false);
@@ -98,36 +99,19 @@ export const AssignedIssuesWidget: React.FC<Props> = observer((props) => {
           <TabsList />
         </div>
         <Tab.Panels as="div" className="mt-7 h-full">
-          <Tab.Panel as="div" className="h-full flex flex-col">
-            <AssignedIssuesList
-              filter={widgetDetails.widget_filters.target_date}
-              issues={widgetStats.issues}
-              totalIssues={widgetStats.count}
-              type="upcoming"
-              workspaceSlug={workspaceSlug}
-              isLoading={fetching}
-            />
-          </Tab.Panel>
-          <Tab.Panel as="div" className="h-full flex flex-col">
-            <AssignedIssuesList
-              filter={widgetDetails.widget_filters.target_date}
-              issues={widgetStats.issues}
-              totalIssues={widgetStats.count}
-              type="overdue"
-              workspaceSlug={workspaceSlug}
-              isLoading={fetching}
-            />
-          </Tab.Panel>
-          <Tab.Panel as="div" className="h-full flex flex-col">
-            <AssignedIssuesList
-              filter={widgetDetails.widget_filters.target_date}
-              issues={widgetStats.issues}
-              totalIssues={widgetStats.count}
-              type="completed"
-              workspaceSlug={workspaceSlug}
-              isLoading={fetching}
-            />
-          </Tab.Panel>
+          {ISSUES_TABS_LIST.map((tab) => (
+            <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col">
+              <WidgetIssuesList
+                filter={widgetDetails.widget_filters.target_date}
+                issues={widgetStats.issues}
+                tab={tab.key}
+                totalIssues={widgetStats.count}
+                type="assigned"
+                workspaceSlug={workspaceSlug}
+                isLoading={fetching}
+              />
+            </Tab.Panel>
+          ))}
         </Tab.Panels>
       </Tab.Group>
     </div>

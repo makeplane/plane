@@ -1,4 +1,3 @@
-export * from "./assigned-issues-list";
-export * from "./created-issues-list";
 export * from "./issue-list-item";
+export * from "./issues-list";
 export * from "./tabs-list";

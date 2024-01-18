@@ -6,7 +6,12 @@ import { observer } from "mobx-react-lite";
 import { useDashboard } from "hooks/store";
 // components
 import { PieGraph } from "components/ui";
-import { DurationFilterDropdown, IssuesByStateGroupEmptyState, WidgetLoader } from "components/dashboard/widgets";
+import {
+  DurationFilterDropdown,
+  IssuesByStateGroupEmptyState,
+  WidgetLoader,
+  WidgetProps,
+} from "components/dashboard/widgets";
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
@@ -15,14 +20,9 @@ import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, 
 import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 import { STATE_GROUPS } from "constants/state";
 
-type Props = {
-  dashboardId: string;
-  workspaceSlug: string;
-};
-
 const WIDGET_KEY = "issues_by_state_groups";
 
-export const IssuesByStateGroupWidget: React.FC<Props> = observer((props) => {
+export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // states
   const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups>("started");

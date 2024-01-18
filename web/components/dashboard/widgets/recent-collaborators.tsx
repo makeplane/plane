@@ -4,16 +4,11 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
-import { RecentCollaboratorsEmptyState, WidgetLoader } from "components/dashboard/widgets";
+import { RecentCollaboratorsEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
 // types
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
-
-type Props = {
-  dashboardId: string;
-  workspaceSlug: string;
-};
 
 type CollaboratorListItemProps = {
   issueCount: number;
@@ -55,7 +50,7 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
   );
 });
 
-export const RecentCollaboratorsWidget: React.FC<Props> = observer((props) => {
+export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();

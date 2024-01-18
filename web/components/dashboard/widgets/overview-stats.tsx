@@ -11,14 +11,14 @@ import { cn } from "helpers/common.helper";
 // types
 import { TOverviewStatsWidgetResponse } from "@plane/types";
 
-type Props = {
+export type WidgetProps = {
   dashboardId: string;
   workspaceSlug: string;
 };
 
 const WIDGET_KEY = "overview_stats";
 
-export const OverviewStatsWidget: React.FC<Props> = observer((props) => {
+export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();

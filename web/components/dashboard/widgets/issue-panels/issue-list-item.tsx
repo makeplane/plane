@@ -9,13 +9,13 @@ import { findTotalDaysInRange, renderFormattedDate } from "helpers/date-time.hel
 // types
 import { TIssue } from "@plane/types";
 
-type Props = {
+export type IssueListItemProps = {
   issueId: string;
   onClick: (issue: TIssue) => void;
   workspaceSlug: string;
 };
 
-export const AssignedUpcomingIssueListItem: React.FC<Props> = observer((props) => {
+export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = observer((props) => {
   const { issueId, onClick, workspaceSlug } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -65,7 +65,7 @@ export const AssignedUpcomingIssueListItem: React.FC<Props> = observer((props) =
   );
 });
 
-export const AssignedOverdueIssueListItem: React.FC<Props> = observer((props) => {
+export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observer((props) => {
   const { issueId, onClick, workspaceSlug } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -112,7 +112,7 @@ export const AssignedOverdueIssueListItem: React.FC<Props> = observer((props) =>
   );
 });
 
-export const AssignedCompletedIssueListItem: React.FC<Props> = observer((props) => {
+export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = observer((props) => {
   const { issueId, onClick, workspaceSlug } = props;
   // store hooks
   const {
@@ -143,7 +143,7 @@ export const AssignedCompletedIssueListItem: React.FC<Props> = observer((props) 
   );
 });
 
-export const CreatedUpcomingIssueListItem: React.FC<Props> = observer((props) => {
+export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observer((props) => {
   const { issueId, onClick, workspaceSlug } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -197,7 +197,7 @@ export const CreatedUpcomingIssueListItem: React.FC<Props> = observer((props) =>
   );
 });
 
-export const CreatedOverdueIssueListItem: React.FC<Props> = observer((props) => {
+export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observer((props) => {
   const { issueId, onClick, workspaceSlug } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -249,7 +249,7 @@ export const CreatedOverdueIssueListItem: React.FC<Props> = observer((props) => 
   );
 });
 
-export const CreatedCompletedIssueListItem: React.FC<Props> = observer((props) => {
+export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = observer((props) => {
   const { issueId, onClick, workspaceSlug } = props;
   // store hooks
   const { getUserDetails } = useMember();

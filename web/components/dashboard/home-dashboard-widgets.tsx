@@ -11,12 +11,25 @@ import {
   RecentActivityWidget,
   RecentCollaboratorsWidget,
   RecentProjectsWidget,
+  WidgetProps,
 } from "components/dashboard";
 // types
 import { TWidgetKeys } from "@plane/types";
 
-export const DashboardWidgets: React.FC<any> = observer((props) => {
-  const {} = props;
+const WIDGETS_LIST: {
+  [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };
+} = {
+  overview_stats: { component: OverviewStatsWidget, fullWidth: true },
+  assigned_issues: { component: AssignedIssuesWidget, fullWidth: false },
+  created_issues: { component: CreatedIssuesWidget, fullWidth: false },
+  issues_by_state_groups: { component: IssuesByStateGroupWidget, fullWidth: false },
+  issues_by_priority: { component: IssuesByPriorityWidget, fullWidth: false },
+  recent_activity: { component: RecentActivityWidget, fullWidth: false },
+  recent_projects: { component: RecentProjectsWidget, fullWidth: false },
+  recent_collaborators: { component: RecentCollaboratorsWidget, fullWidth: true },
+};
+
+export const DashboardWidgets = observer(() => {
   // store hooks
   const {
     router: { workspaceSlug },
@@ -30,34 +43,19 @@ export const DashboardWidgets: React.FC<any> = observer((props) => {
 
   return (
     <div className="grid lg:grid-cols-2 gap-7">
-      {doesWidgetExist("overview_stats") && (
-        <div className="lg:col-span-2">
-          <OverviewStatsWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-        </div>
-      )}
-      {doesWidgetExist("assigned_issues") && (
-        <AssignedIssuesWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-      )}
-      {doesWidgetExist("created_issues") && (
-        <CreatedIssuesWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-      )}
-      {doesWidgetExist("issues_by_state_groups") && (
-        <IssuesByStateGroupWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-      )}
-      {doesWidgetExist("issues_by_priority") && (
-        <IssuesByPriorityWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-      )}
-      {doesWidgetExist("recent_activity") && (
-        <RecentActivityWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-      )}
-      {doesWidgetExist("recent_projects") && (
-        <RecentProjectsWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-      )}
-      {doesWidgetExist("recent_collaborators") && (
-        <div className="lg:col-span-2">
-          <RecentCollaboratorsWidget dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
-        </div>
-      )}
+      {Object.entries(WIDGETS_LIST).map(([key, widget]) => {
+        const WidgetComponent = widget.component;
+        // if the widget doesn't exist, return null
+        if (!doesWidgetExist(key as TWidgetKeys)) return null;
+        // if the widget is full width, return it in a 2 column grid
+        if (widget.fullWidth)
+          return (
+            <div className="col-span-2">
+              <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
+            </div>
+          );
+        else return <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />;
+      })}
     </div>
   );
 });

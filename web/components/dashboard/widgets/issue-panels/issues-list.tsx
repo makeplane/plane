@@ -4,10 +4,15 @@ import { useIssueDetail } from "hooks/store";
 // components
 import {
   AssignedCompletedIssueListItem,
+  AssignedIssuesEmptyState,
   AssignedOverdueIssueListItem,
   AssignedUpcomingIssueListItem,
-} from "components/dashboard";
-import { AssignedIssuesEmptyState } from "components/dashboard/widgets";
+  CreatedCompletedIssueListItem,
+  CreatedIssuesEmptyState,
+  CreatedOverdueIssueListItem,
+  CreatedUpcomingIssueListItem,
+  IssueListItemProps,
+} from "components/dashboard/widgets";
 // ui
 import { Loader, getButtonStyling } from "@plane/ui";
 // helpers
@@ -16,24 +21,42 @@ import { getRedirectionFilters } from "helpers/dashboard.helper";
 // types
 import { TDurationFilterOptions, TIssue, TIssuesListTypes } from "@plane/types";
 
-type Props = {
+export type WidgetIssuesListProps = {
   filter: TDurationFilterOptions | undefined;
+  isLoading: boolean;
   issues: TIssue[];
-  isLoading?: boolean;
+  tab: TIssuesListTypes;
   totalIssues: number;
-  type: TIssuesListTypes;
+  type: "assigned" | "created";
   workspaceSlug: string;
 };
 
-export const AssignedIssuesList: React.FC<Props> = (props) => {
-  const { filter, issues, isLoading = false, totalIssues, type, workspaceSlug } = props;
+export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
+  const { filter, isLoading, issues, tab, totalIssues, type, workspaceSlug } = props;
   // store hooks
   const { setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
-  const filterParams = getRedirectionFilters(type);
+  const filterParams = getRedirectionFilters(tab);
+
+  const ISSUE_LIST_ITEM: {
+    [key in string]: {
+      [key in TIssuesListTypes]: React.FC<IssueListItemProps>;
+    };
+  } = {
+    assigned: {
+      upcoming: AssignedUpcomingIssueListItem,
+      overdue: AssignedOverdueIssueListItem,
+      completed: AssignedCompletedIssueListItem,
+    },
+    created: {
+      upcoming: CreatedUpcomingIssueListItem,
+      overdue: CreatedOverdueIssueListItem,
+      completed: CreatedCompletedIssueListItem,
+    },
+  };
 
   return (
     <>
@@ -50,7 +73,8 @@ export const AssignedIssuesList: React.FC<Props> = (props) => {
             <div className="mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
                 className={cn("pl-1 flex items-center gap-1 col-span-4", {
-                  "col-span-6": type === "completed",
+                  "col-span-6": type === "assigned" && tab === "completed",
+                  "col-span-5": type === "created" && tab === "completed",
                 })}
               >
                 Issues
@@ -58,45 +82,32 @@ export const AssignedIssuesList: React.FC<Props> = (props) => {
                   {totalIssues}
                 </span>
               </h6>
-              {type === "upcoming" && <h6 className="text-center">Due date</h6>}
-              {type === "overdue" && <h6 className="text-center">Due by</h6>}
-              {type !== "completed" && <h6 className="text-center">Blocked by</h6>}
+              {tab === "upcoming" && <h6 className="text-center">Due date</h6>}
+              {tab === "overdue" && <h6 className="text-center">Due by</h6>}
+              {type === "assigned" && tab !== "completed" && <h6 className="text-center">Blocked by</h6>}
+              {type === "created" && <h6 className="text-center">Assigned to</h6>}
             </div>
             <div className="px-4 pb-3 mt-2">
               {issues.map((issue) => {
-                if (type === "upcoming")
-                  return (
-                    <AssignedUpcomingIssueListItem
-                      key={issue.id}
-                      issueId={issue.id}
-                      workspaceSlug={workspaceSlug}
-                      onClick={handleIssuePeekOverview}
-                    />
-                  );
-                if (type === "overdue")
-                  return (
-                    <AssignedOverdueIssueListItem
-                      key={issue.id}
-                      issueId={issue.id}
-                      workspaceSlug={workspaceSlug}
-                      onClick={handleIssuePeekOverview}
-                    />
-                  );
-                if (type === "completed")
-                  return (
-                    <AssignedCompletedIssueListItem
-                      key={issue.id}
-                      issueId={issue.id}
-                      workspaceSlug={workspaceSlug}
-                      onClick={handleIssuePeekOverview}
-                    />
-                  );
+                const IssueListItem = ISSUE_LIST_ITEM[type][tab];
+
+                if (!IssueListItem) return null;
+
+                return (
+                  <IssueListItem
+                    key={issue.id}
+                    issueId={issue.id}
+                    workspaceSlug={workspaceSlug}
+                    onClick={handleIssuePeekOverview}
+                  />
+                );
               })}
             </div>
           </>
         ) : (
           <div className="h-full grid items-end">
-            <AssignedIssuesEmptyState filter={filter ?? "this_week"} type={type} />
+            {type === "assigned" && <AssignedIssuesEmptyState filter={filter ?? "this_week"} type={tab} />}
+            {type === "created" && <CreatedIssuesEmptyState filter={filter ?? "this_week"} type={tab} />}
           </div>
         )}
       </div>

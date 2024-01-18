@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
 // components
-import { WidgetLoader } from "components/dashboard/widgets";
+import { WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // helpers
@@ -15,11 +15,6 @@ import { TRecentProjectsWidgetResponse } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { PROJECT_BACKGROUND_COLORS } from "constants/dashboard";
-
-type Props = {
-  dashboardId: string;
-  workspaceSlug: string;
-};
 
 const WIDGET_KEY = "recent_projects";
 
@@ -71,7 +66,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
   );
 });
 
-export const RecentProjectsWidget: React.FC<Props> = observer((props) => {
+export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const {
