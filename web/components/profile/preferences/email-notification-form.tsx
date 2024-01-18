@@ -1,7 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, ToggleSwitch } from "@plane/ui";
+import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -18,38 +18,19 @@ const userService = new UserService();
 
 export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
   const { data } = props;
-  // states
-  const [notificationSettings, setNotificationSettings] = useState<boolean>(false);
-  const [isUpdateAllSettings, setIsUpdateAllSettings] = useState<boolean>(false);
   // toast
   const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
-    watch,
     control,
     setValue,
-    reset,
     formState: { isSubmitting, isDirty, dirtyFields },
   } = useForm<IUserEmailNotificationSettings>({
     defaultValues: {
       ...data,
     },
   });
-
-  useEffect(() => {
-    // Update notificationSettings whenever any of the data values change
-    setNotificationSettings(
-      watch("comment") ||
-        watch("issue_completed") ||
-        watch("mention") ||
-        watch("property_change") ||
-        watch("state_change")
-    );
-  }, [
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    watch, watch("comment"), watch("issue_completed"), watch("mention"), watch("property_change"), watch("state_change"),
-  ]);
 
   const onSubmit = async (formData: IUserEmailNotificationSettings) => {
     // Get the dirty fields from the form data and create a payload
@@ -69,20 +50,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
           message: "Email Notification Settings updated successfully",
         })
       )
-      .catch((err) => console.error(err))
-      .finally(() => setIsUpdateAllSettings(false));
-  };
-
-  const updateAllSettings = async (value: boolean) => {
-    setNotificationSettings(value);
-    setIsUpdateAllSettings(true);
-    reset({
-      comment: value,
-      issue_completed: value,
-      mention: value,
-      property_change: value,
-      state_change: value,
-    });
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -93,13 +61,6 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
           <div className="text-sm font-normal text-custom-text-300">
             Stay in the loop on Issues you are subscribed to. Enable this to get notified.
           </div>
-        </div>
-        <div className="shrink-0">
-          <ToggleSwitch
-            value={notificationSettings}
-            onChange={() => updateAllSettings(!notificationSettings)}
-            size="sm"
-          />
         </div>
       </div>
       <div className="pt-2 text-lg font-medium text-custom-text-100">Notify me when:</div>
@@ -218,12 +179,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
       </div>
       <div className="flex items-center py-12">
-        <Button
-          variant="primary"
-          onClick={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-          disabled={!isDirty && !isUpdateAllSettings}
-        >
+        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
