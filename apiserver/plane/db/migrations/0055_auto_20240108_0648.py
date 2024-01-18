@@ -3,9 +3,8 @@
 from django.db import migrations
 
 
-def widgets(apps, schema_editor):
+def create_widgets(apps, schema_editor):
     Widget = apps.get_model("db", "Widget")
-    updated_widgets = []
     widgets_list = [
         {"key": "overview_stats", "filters": {}},
         {
@@ -38,49 +37,51 @@ def widgets(apps, schema_editor):
         {"key": "recent_projects", "filters": {}},
         {"key": "recent_collaborators", "filters": {}},
     ]
-    for widget in widgets_list:
-        updated_widgets.append(
+    Widget.objects.bulk_create(
+        [
             Widget(
                 key=widget["key"],
                 filters=widget["filters"],
             )
-        )
-    Widget.objects.bulk_create(updated_widgets, batch_size=100)
+            for widget in widgets_list
+        ],
+        batch_size=10,
+    )
 
 
-def dashboard(apps, schema_editor):
+def create_dashboards(apps, schema_editor):
     Dashboard = apps.get_model("db", "Dashboard")
     User = apps.get_model("db", "User")
-    updated_dashboard = []
-    for user in User.objects.all():
-        updated_dashboard.append(
+    Dashboard.objects.bulk_create(
+        [
             Dashboard(
                 name="Home dashboard",
                 description_html="<p></p>",
                 identifier=None,
-                owned_by=user,
-                type="home",
+                owned_by_id=user_id,
+                type_identifier="home",
                 is_default=True,
             )
-        )
-    Dashboard.objects.bulk_create(updated_dashboard, batch_size=2000)
+            for user_id in User.objects.values_list('id', flat=True)
+        ],
+        batch_size=2000,
+    )
 
 
-def dashboard_widgets(apps, schema_editor):
+def create_dashboard_widgets(apps, schema_editor):
     Widget = apps.get_model("db", "Widget")
     Dashboard = apps.get_model("db", "Dashboard")
     DashboardWidget = apps.get_model("db", "DashboardWidget")
-    updated_dashboard_widget = []
 
-    for widget in Widget.objects.all():
-        for dashboard in Dashboard.objects.all():
-            updated_dashboard_widget.append(
-                DashboardWidget(
-                    widget_id=widget.id,
-                    dashboard_id=dashboard.id,
-                    is_visible=True,
-                )
-            )
+    updated_dashboard_widget = [
+        DashboardWidget(
+            widget_id=widget_id,
+            dashboard_id=dashboard_id,
+        )
+        for widget_id in Widget.objects.values_list('id', flat=True)
+        for dashboard_id in Dashboard.objects.values_list('id', flat=True)
+    ]
+
     DashboardWidget.objects.bulk_create(updated_dashboard_widget, batch_size=2000)
 
 
@@ -90,7 +91,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(widgets),
-        migrations.RunPython(dashboard),
-        migrations.RunPython(dashboard_widgets),
+        migrations.RunPython(create_widgets),
+        migrations.RunPython(create_dashboards),
+        migrations.RunPython(create_dashboard_widgets),
     ]
