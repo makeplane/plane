@@ -30,37 +30,11 @@ import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.help
 import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "@plane/types";
+// constants
 import { EIssuesStoreType } from "constants/issue";
 import { ACTIVE_CYCLE_ISSUES } from "store/issue/cycle";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-
-const stateGroups = [
-  {
-    key: "backlog_issues",
-    title: "Backlog",
-    color: "#dee2e6",
-  },
-  {
-    key: "unstarted_issues",
-    title: "Unstarted",
-    color: "#26b5ce",
-  },
-  {
-    key: "started_issues",
-    title: "Started",
-    color: "#f7ae59",
-  },
-  {
-    key: "cancelled_issues",
-    title: "Cancelled",
-    color: "#d687ff",
-  },
-  {
-    key: "completed_issues",
-    title: "Completed",
-    color: "#09a953",
-  },
-];
+import { STATE_GROUPS_DETAILS } from "constants/cycle";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -177,7 +151,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     });
   };
 
-  const progressIndicatorData = stateGroups.map((group, index) => ({
+  const progressIndicatorData = STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value:
@@ -355,7 +329,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         <span
                           className="block h-3 w-3 rounded-full "
                           style={{
-                            backgroundColor: stateGroups[index].color,
+                            backgroundColor: STATE_GROUPS_DETAILS[index].color,
                           }}
                         />
                         <span className="text-xs capitalize">{group}</span>
@@ -430,7 +404,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   ))
                 ) : (
                   <div className="grid place-items-center text-center text-sm text-custom-text-200">
-                    No issues present in the cycle.
+                    There are no high priority issues present in this cycle
                   </div>
                 )
               ) : (
