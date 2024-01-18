@@ -58,8 +58,10 @@ class S3:
 
     @staticmethod
     def verify_s3_url(url):
-        pattern = re.compile(r"amazonaws\.com")
-        return pattern.search(url)
+        if url:
+            pattern = re.compile(r"amazonaws\.com")
+            return pattern.search(url)
+        return False
 
     @staticmethod
     def url_file_has_expired(url, date_format="%Y%m%dT%H%M%SZ"):
