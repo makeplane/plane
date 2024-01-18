@@ -1,7 +1,8 @@
 name: Bug report
 description: Create a bug report to help us improve Plane
 title: "[bug]: "
-labels: [bug, need testing]
+labels: [🐛bug]
+assignees: [srinivaspendem, pushya-plane]
 body:
 - type: markdown
   attributes:
