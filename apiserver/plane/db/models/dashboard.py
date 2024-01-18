@@ -25,7 +25,7 @@ class Dashboard(BaseModel):
         related_name="dashboards",
     )
     is_default = models.BooleanField(default=False)
-    type = models.CharField(
+    type_identifier = models.CharField(
         max_length=30,
         choices=DASHBOARD_CHOICES,
         verbose_name="Dashboard Type",
@@ -40,7 +40,7 @@ class Dashboard(BaseModel):
         verbose_name = "Dashboard"
         verbose_name_plural = "Dashboards"
         db_table = "dashboards"
-        ordering = ("name",)
+        ordering = ("-created_at",)
 
 
 class Widget(TimeAuditModel):
@@ -72,7 +72,7 @@ class DashboardWidget(BaseModel):
         on_delete=models.CASCADE,
         related_name="dashboard_widgets",
     )
-    is_visible = models.BooleanField(default=False)
+    is_visible = models.BooleanField(default=True)
     sort_order = models.FloatField(default=65535)
     filters = models.JSONField(default=dict)
     properties = models.JSONField(default=dict)

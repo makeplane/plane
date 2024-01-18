@@ -15,6 +15,7 @@ from django.db.models import (
     Func,
     Prefetch,
 )
+from django.utils import timezone
 
 # Third Party imports
 from rest_framework.response import Response
@@ -47,7 +48,8 @@ def dashboard_overview_stats(self, request, slug):
     assigned_issues = Issue.issue_objects.filter(
         project__project_projectmember__is_active=True,
         project__project_projectmember__member=request.user,
-        workspace__slug=slug, assignees__in=[request.user]
+        workspace__slug=slug,
+        assignees__in=[request.user],
     ).count()
 
     pending_issues_count = Issue.issue_objects.filter(
@@ -97,12 +99,16 @@ def dashboard_assigned_issues(self, request, slug):
             assignees__in=[request.user],
         )
         .filter(**filters)
-        .select_related("project")
-        .select_related("workspace")
-        .select_related("state")
-        .select_related("parent")
-        .prefetch_related("assignees")
-        .prefetch_related("labels")
+        .select_related("workspace", "project", "state", "parent")
+        .prefetch_related("assignees", "labels")
+        .prefetch_related(
+            Prefetch(
+                "issue_relation",
+                queryset=IssueRelation.objects.select_related(
+                    "related_issue"
+                ).select_related("issue"),
+            )
+        )
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
         .annotate(module_id=F("issue_module__module_id"))
         .annotate(
@@ -124,14 +130,6 @@ def dashboard_assigned_issues(self, request, slug):
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
-        )
-        .prefetch_related(
-            Prefetch(
-                "issue_relation",
-                queryset=IssueRelation.objects.select_related(
-                    "related_issue"
-                ).select_related("issue"),
-            )
         )
         .order_by("created_at")
     )
@@ -168,9 +166,11 @@ def dashboard_assigned_issues(self, request, slug):
     if issue_type == "overdue":
         overdue_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__lt=timezone.now()
         ).count()
         overdue_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__lt=timezone.now()
         )[:5]
         return Response(
             {
@@ -185,9 +185,11 @@ def dashboard_assigned_issues(self, request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now()
         ).count()
         upcoming_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now()
         )[:5]
         return Response(
             {
@@ -217,12 +219,9 @@ def dashboard_created_issues(self, request, slug):
             project__project_projectmember__is_active=True,
             created_by=request.user,
         )
-        .select_related("project")
-        .select_related("workspace")
-        .select_related("state")
-        .select_related("parent")
-        .prefetch_related("assignees")
-        .prefetch_related("labels")
+        .filter(**filters)
+        .select_related("workspace", "project", "state", "parent")
+        .prefetch_related("assignees", "labels")
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
         .annotate(module_id=F("issue_module__module_id"))
         .annotate(
@@ -245,7 +244,6 @@ def dashboard_created_issues(self, request, slug):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        .filter(**filters)
         .order_by("created_at")
     )
 
@@ -279,9 +277,11 @@ def dashboard_created_issues(self, request, slug):
     if issue_type == "overdue":
         overdue_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__lt=timezone.now()
         ).count()
         overdue_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__lt=timezone.now()
         )[:5]
         return Response(
             {
@@ -294,9 +294,11 @@ def dashboard_created_issues(self, request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now()
         ).count()
         upcoming_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
+            target_date__gte=timezone.now()
         )[:5]
         return Response(
             {
@@ -397,33 +399,26 @@ def dashboard_recent_projects(self, request, slug):
             project__project_projectmember__is_active=True,
             actor=request.user,
         )
-        .values("project_id")
-        .annotate(latest_activity=Max("updated_at"))
-        .order_by("-latest_activity")[:4]
+        .values_list("project_id", flat=True)
+        .distinct()
     )
 
-    # Use Count aggregation to get the number of recent projects
-    recent_project_count = project_ids.count()
-
     # Extract project IDs from the recent projects
-    project_ids = [activity["project_id"] for activity in project_ids]
+    unique_project_ids = set(project_id for project_id in project_ids)
 
     # Fetch additional projects only if needed
-    if recent_project_count < 4:
+    if len(unique_project_ids) < 4:
         additional_projects = Project.objects.filter(
             project_projectmember__member=request.user,
             project_projectmember__is_active=True,
             workspace__slug=slug,
-        ).exclude(id__in=project_ids)
-
-        # Apply slicing to limit the number of additional projects to 4 - recent_project_count
-        additional_projects = additional_projects[: 4 - recent_project_count]
+        ).exclude(id__in=unique_project_ids)
 
         # Append additional project IDs to the existing list
-        project_ids += list(additional_projects.values_list("id", flat=True))
+        unique_project_ids.update(additional_projects.values_list("id", flat=True))
 
     return Response(
-        project_ids,
+        list(unique_project_ids)[:4],
         status=status.HTTP_200_OK,
     )
 
@@ -471,18 +466,25 @@ def dashboard_recent_collaborators(self, request, slug):
         additional_collaborators_needed = 7 - users_with_activities.count()
 
         # Fetch additional collaborators from the project_member table
-        additional_collaborators = list(set(
-            ProjectMember.objects
-            .filter(
-                ~Q(member=request.user),
-                project_id__in=user_projects,
-                workspace__slug=slug,
+        additional_collaborators = list(
+            set(
+                ProjectMember.objects.filter(
+                    ~Q(member=request.user),
+                    project_id__in=user_projects,
+                    workspace__slug=slug,
+                )
+                .exclude(
+                    member__in=[
+                        user["actor"] for user in users_with_activities
+                    ]
+                )
+                .values_list("member", flat=True)
             )
-            .exclude(member__in=[user["actor"] for user in users_with_activities])
-            .values_list("member", flat=True)
-        ))
+        )
 
-        additional_collaborators = additional_collaborators[:additional_collaborators_needed]
+        additional_collaborators = additional_collaborators[
+            :additional_collaborators_needed
+        ]
 
         # Append additional collaborators to the list
         for collaborator_id in additional_collaborators:
@@ -491,7 +493,10 @@ def dashboard_recent_collaborators(self, request, slug):
                 state__group__in=["unstarted", "started"],
             ).count()
             users_with_active_issues.append(
-                {"user_id": str(collaborator_id), "active_issue_count": active_issue_count}
+                {
+                    "user_id": str(collaborator_id),
+                    "active_issue_count": active_issue_count,
+                }
             )
 
     users_with_active_issues.insert(
@@ -546,13 +551,12 @@ class DashboardEndpoint(BaseAPIView):
 
                     updated_dashboard_widgets = []
                     for widget_key in widgets_to_fetch:
-                        widget = Widget.objects.filter(key=widget_key).first()
+                        widget = Widget.objects.filter(key=widget_key).values_list("id", flat=True)
                         if widget:
                             updated_dashboard_widgets.append(
                                 DashboardWidget(
-                                    widget_id=widget.id,
+                                    widget_id=widget,
                                     dashboard_id=dashboard.id,
-                                    is_visible=True,
                                 )
                             )
 
