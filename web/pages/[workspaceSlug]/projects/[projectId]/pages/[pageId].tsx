@@ -1,10 +1,11 @@
 import { Sparkle } from "lucide-react";
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, usePage, useUser } from "hooks/store";
+import { useApplication, useIssues, usePage, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -28,9 +29,13 @@ import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { useIssueEmbeds } from "hooks/use-issue-embeds";
 import { IssuePeekOverview } from "components/issues";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { IssueService } from "services/issue";
+import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
+const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -39,6 +44,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const editorRef = useRef<any>(null);
   // router
   const router = useRouter();
+
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
   const {
@@ -58,12 +64,32 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     defaultValues: { name: "", description_html: "" },
   });
 
-  const { issues, fetchIssue, issueWidgetClickAction } = useIssueEmbeds();
   const {
     archivePage: archivePageAction,
     restorePage: restorePageAction,
     createPage: createPageAction,
+    projectPageMap,
+    projectArchivedPageMap,
+    fetchProjectPages,
+    fetchArchivedProjectPages,
   } = useProjectPages();
+
+  useSWR(
+    workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
+      ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+  // fetching archived pages from API
+  useSWR(
+    workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
+      ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const { issues, fetchIssue, issueWidgetClickAction } = useIssueEmbeds();
+
   const pageStore = usePage(pageId as string);
 
   useEffect(
