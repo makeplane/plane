@@ -3,6 +3,7 @@ import { Extension } from "@tiptap/core";
 import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
 // @ts-ignore
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import React from "react";
 
 function createDragHandleElement(): HTMLElement {
   const dragHandleElement = document.createElement("div");
@@ -30,6 +31,7 @@ function createDragHandleElement(): HTMLElement {
 
 export interface DragHandleOptions {
   dragHandleWidth: number;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
 }
 
 function absoluteRect(node: Element) {
@@ -151,6 +153,8 @@ function DragHandle(options: DragHandleOptions) {
     }
   }
 
+  options.setHideDragHandle?.(hideDragHandle);
+
   return new Plugin({
     key: new PluginKey("dragHandle"),
     view: (view) => {
@@ -238,14 +242,16 @@ function DragHandle(options: DragHandleOptions) {
   });
 }
 
-export const DragAndDrop = Extension.create({
-  name: "dragAndDrop",
+export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void) =>
+  Extension.create({
+    name: "dragAndDrop",
 
-  addProseMirrorPlugins() {
-    return [
-      DragHandle({
-        dragHandleWidth: 24,
-      }),
-    ];
-  },
-});
+    addProseMirrorPlugins() {
+      return [
+        DragHandle({
+          dragHandleWidth: 24,
+          setHideDragHandle,
+        }),
+      ];
+    },
+  });
