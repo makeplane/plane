@@ -29,11 +29,10 @@ const GLOBAL_VIEW_LAYOUTS = [
 
 type Props = {
   activeLayout: "list" | "spreadsheet";
-  type?: TStaticViewTypes | null;
 };
 
 export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
-  const { activeLayout, type = null } = props;
+  const { activeLayout } = props;
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -53,11 +52,9 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
 
-  const currentIssueView = type ?? globalViewId;
-
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !currentIssueView) return;
+      if (!workspaceSlug || !globalViewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -74,38 +71,38 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         undefined,
         EIssueFilterType.FILTERS,
         { [key]: newValues },
-        currentIssueView.toString()
+        globalViewId.toString()
       );
     },
-    [workspaceSlug, issueFilters, updateFilters, currentIssueView]
+    [workspaceSlug, issueFilters, updateFilters, globalViewId]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !currentIssueView) return;
+      if (!workspaceSlug || !globalViewId) return;
       updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
-        currentIssueView.toString()
+        globalViewId.toString()
       );
     },
-    [workspaceSlug, updateFilters, currentIssueView]
+    [workspaceSlug, updateFilters, globalViewId]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !currentIssueView) return;
+      if (!workspaceSlug || !globalViewId) return;
       updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_PROPERTIES,
         property,
-        currentIssueView.toString()
+        globalViewId.toString()
       );
     },
-    [workspaceSlug, updateFilters, currentIssueView]
+    [workspaceSlug, updateFilters, globalViewId]
   );
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;

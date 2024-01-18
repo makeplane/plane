@@ -137,8 +137,7 @@ export class IssueRootStore implements IIssueRootStore {
       if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
       if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
       if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
-      if (rootStore.app.router.globalViewId !== this.globalViewId)
-        this.globalViewId = rootStore.app.router.globalViewId;
+      if (rootStore.app.router.globalViewId) this.globalViewId = rootStore.app.router.globalViewId;
       if (rootStore.app.router.userId) this.userId = rootStore.app.router.userId;
       if (!isEmpty(rootStore?.state?.stateMap)) this.states = Object.keys(rootStore?.state?.stateMap);
       if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;

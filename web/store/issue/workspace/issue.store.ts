@@ -42,7 +42,6 @@ export interface IWorkspaceIssues {
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
   loader: TLoader = "init-loader";
   issues: { [viewId: string]: string[] } = {};
-  viewId: string | undefined = undefined;
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
@@ -59,7 +58,6 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
     makeObservable(this, {
       // observable
-      viewId: observable.ref,
       loader: observable.ref,
       issues: observable,
       // computed
@@ -78,7 +76,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   }
 
   get groupedIssueIds() {
-    const viewId = this.rootIssueStore.globalViewId || this.viewId;
+    const viewId = this.rootIssueStore.globalViewId;
     if (!viewId) return { dataViewId: "", issueIds: undefined };
 
     const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.filters?.[viewId]?.displayFilters;
@@ -103,8 +101,6 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader = "init-loader") => {
     try {
       this.loader = loadType;
-      //set viewId
-      this.viewId = viewId;
 
       const params = this.rootIssueStore?.workspaceIssuesFilter?.getAppliedFilters(viewId);
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);

@@ -56,7 +56,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
   }, [globalViewId]);
 
-  const isTabSelected = (tabKey: string) => router.pathname.includes(tabKey);
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
@@ -66,7 +65,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
             <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
               <span
                 className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                  isTabSelected(tab.key)
+                  tab.key === globalViewId
                     ? "border-custom-primary-100 text-custom-primary-100"
                     : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
                 }`}

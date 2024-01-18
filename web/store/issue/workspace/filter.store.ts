@@ -44,7 +44,6 @@ export interface IWorkspaceIssuesFilter {
 
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
   // observables
-  viewId: string | undefined = undefined;
   filters: { [viewId: string]: IIssueFilters } = {};
   // root store
   rootIssueStore;
@@ -55,7 +54,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     super();
     makeObservable(this, {
       // observables
-      viewId: observable.ref,
       filters: observable,
       // computed
       issueFilters: computed,
@@ -105,12 +103,12 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   };
 
   get issueFilters() {
-    const viewId = this.rootIssueStore.globalViewId || this.viewId;
+    const viewId = this.rootIssueStore.globalViewId;
     return this.getIssueFilters(viewId);
   }
 
   get appliedFilters() {
-    const viewId = this.rootIssueStore.globalViewId || this.viewId;
+    const viewId = this.rootIssueStore.globalViewId;
     return this.getAppliedFilters(viewId);
   }
 
@@ -123,9 +121,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
         group_by: [],
         sub_group_by: [],
       };
-
-      //set viewId
-      this.viewId = viewId;
 
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
       displayFilters = this.computedDisplayFilters(_filters?.display_filters);
