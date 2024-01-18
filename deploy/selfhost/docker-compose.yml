@@ -55,6 +55,8 @@ x-app-env : &app-env
     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"secret-key"}
     - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
     - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-uploads}
+    - AWS_S3_BUCKET_AUTH=${AWS_S3_BUCKET_AUTH:-False}
+    - AWS_QUERYSTRING_AUTH=${AWS_QUERYSTRING_AUTH:-False}
     - MINIO_ROOT_USER=${MINIO_ROOT_USER:-"access-key"}
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
