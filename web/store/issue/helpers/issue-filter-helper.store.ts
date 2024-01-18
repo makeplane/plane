@@ -8,6 +8,7 @@ import {
   IIssueFiltersResponse,
   TIssueKanbanFilters,
   TIssueParams,
+  TStaticViewTypes,
 } from "@plane/types";
 // constants
 import { isNil } from "constants/common";
@@ -108,6 +109,39 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     project: filters?.project || null,
     subscriber: filters?.subscriber || null,
   });
+
+  /**
+   * This PR is to get the filters of the fixed global views
+   * @param currentUserId current logged in user id
+   * @param type fixed view type
+   * @returns filterOptions based on views
+   */
+  getComputedFiltersBasedOnViews = (currentUserId: string | undefined, type: TStaticViewTypes) => {
+    const noFilters = this.computedFilters({});
+
+    if (!currentUserId) return noFilters;
+
+    switch (type) {
+      case "assigned":
+        return {
+          ...noFilters,
+          assignees: [currentUserId],
+        };
+      case "created":
+        return {
+          ...noFilters,
+          created_by: [currentUserId],
+        };
+      case "subscribed":
+        return {
+          ...noFilters,
+          subscriber: [currentUserId],
+        };
+      case "all-issues":
+      default:
+        return noFilters;
+    }
+  };
 
   /**
    * @description This method is used to apply the display filters on the issues

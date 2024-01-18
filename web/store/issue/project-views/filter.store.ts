@@ -160,9 +160,6 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           });
 
           this.rootIssueStore.projectViewIssues.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
-          await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
-            filters: _filters.filters,
-          });
           break;
         case EIssueFilterType.DISPLAY_FILTERS:
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;

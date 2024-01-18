@@ -10,7 +10,7 @@ type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  issues: TIssue[];
+  issueIds: string[];
   isEstimateEnabled: boolean;
   quickActions: (
     issue: TIssue,
@@ -27,7 +27,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
-    issues,
+    issueIds,
     isEstimateEnabled,
     portalElement,
     quickActions,
@@ -44,7 +44,7 @@ export const SpreadsheetTable = observer((props: Props) => {
         isEstimateEnabled={isEstimateEnabled}
       />
       <tbody>
-        {issues.map(({ id }) => (
+        {issueIds.map((id) => (
           <SpreadsheetIssueRow
             key={id}
             issueId={id}
