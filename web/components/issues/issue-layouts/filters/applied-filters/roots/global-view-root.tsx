@@ -2,14 +2,15 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import isEqual from "lodash/isEqual";
 // hooks
-import { useGlobalView, useIssues, useLabel } from "hooks/store";
+import { useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
 //ui
 import { Button } from "@plane/ui";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
-import { IIssueFilterOptions } from "@plane/types";
+import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   globalViewId: string;
@@ -19,7 +20,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const { globalViewId } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId: urlGlobalViewId } = router.query;
+  const { workspaceSlug } = router.query;
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },
@@ -28,6 +29,9 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     workspace: { workspaceLabels },
   } = useLabel();
   const { globalViewMap, updateGlobalView } = useGlobalView();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   // derived values
   const userFilters = filters?.[globalViewId]?.filters;
@@ -94,6 +98,10 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
 
   const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
 
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
+  const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
+
   // return if no filters are applied
   if (!appliedFilters && areFiltersEqual) return null;
 
@@ -107,7 +115,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         alwaysAllowEditing
       />
 
-      {urlGlobalViewId && !areFiltersEqual && (
+      {!isDefaultView && !areFiltersEqual && isAuthorizedUser && (
         <>
           <div />
           <Button variant="primary" onClick={handleUpdateView}>
