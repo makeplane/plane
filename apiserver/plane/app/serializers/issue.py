@@ -38,13 +38,13 @@ from plane.utils.parse_html import parse_text_to_html, refresh_url_content
 class BaseIssueSerializerMixin:
     """abstract class for refresh s3 link in description htlm images"""
 
-    def refresh_html_content(self, instance):
+    def refresh_html_content(self, instance, html, html_field_name="description_html"):
         if settings.AWS_S3_BUCKET_AUTH:
-            html = parse_text_to_html(instance.description_html)
+            html = parse_text_to_html(html)
             refreshed, html = refresh_url_content(html)
 
             if refreshed:
-                instance.description_html = html
+                setattr(instance, html_field_name, html)
                 instance.save()
 
 
@@ -67,7 +67,7 @@ class IssueFlatSerializer(BaseSerializer, BaseIssueSerializerMixin):
         ]
 
     def to_representation(self, instance):
-        self.refresh_html_content(instance)
+        self.refresh_html_content(instance, instance.description_html)
         return super().to_representation(instance)
 
 
@@ -472,7 +472,7 @@ class IssueVoteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class IssueCommentSerializer(BaseSerializer):
+class IssueCommentSerializer(BaseSerializer, BaseIssueSerializerMixin):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
@@ -492,6 +492,10 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def to_representation(self, instance):
+        self.refresh_html_content(instance, instance.comment_html, "comment_html")
+        return super().to_representation(instance)
 
 
 class IssueStateFlatSerializer(BaseSerializer):
@@ -525,7 +529,7 @@ class IssueStateSerializer(DynamicBaseSerializer, BaseIssueSerializerMixin):
         fields = "__all__"
 
     def to_representation(self, instance):
-        self.refresh_html_content(instance)
+        self.refresh_html_content(instance, instance.description_html)
         return super().to_representation(instance)
 
 
@@ -561,7 +565,7 @@ class IssueSerializer(BaseSerializer, BaseIssueSerializerMixin):
         ]
 
     def to_representation(self, instance):
-        self.refresh_html_content(instance)
+        self.refresh_html_content(instance, instance.description_html)
         return super().to_representation(instance)
 
 
@@ -594,7 +598,7 @@ class IssueLiteSerializer(DynamicBaseSerializer, BaseIssueSerializerMixin):
         ]
 
     def to_representation(self, instance):
-        self.refresh_html_content(instance)
+        self.refresh_html_content(instance, instance.description_html)
         return super().to_representation(instance)
 
 
@@ -626,7 +630,7 @@ class IssuePublicSerializer(BaseSerializer, BaseIssueSerializerMixin):
         read_only_fields = fields
 
     def to_representation(self, instance):
-        self.refresh_html_content(instance)
+        self.refresh_html_content(instance, instance.description_html)
         return super().to_representation(instance)
 
 
