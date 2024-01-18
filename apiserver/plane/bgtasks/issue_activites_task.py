@@ -394,13 +394,6 @@ def track_assignees(
         bulk_subscribers, batch_size=10, ignore_conflicts=True
     )
 
-    # Remove them from subscribers if they are dropped
-    IssueSubscriber.objects.filter(
-        workspace_id=workspace_id,
-        project_id=project_id,
-        subscriber_id__in=dropped_assginees,
-    ).delete()
-
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
         issue_activities.append(
