@@ -8,7 +8,6 @@ import { Editor } from "@tiptap/core";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 
 import { icons } from "src/ui/extensions/table/table/icons";
-import { EditorState } from "@tiptap/pm/state";
 
 type ToolboxItem = {
   label: string;
@@ -84,22 +83,16 @@ const defaultTippyOptions: Partial<Props> = {
 };
 
 function setCellsBackgroundColor(editor: Editor, backgroundColor: string) {
-  const curr_color = editor.getAttributes("tableCell").background;
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("setCellsBackgroundColor curr_color: %s", curr_color); // __AUTO_GENERATED_PRINT_VAR_END__
-  return (
-    editor
-      .chain()
-      .focus()
-      // .setCellAttribute("backgroundColor", backgroundColor)
-      .updateAttributes("tableCell", {
-        background: backgroundColor,
-      })
-      .updateAttributes("tableHeader", {
-        background: backgroundColor,
-      })
-      .run()
-  );
+  return editor
+    .chain()
+    .focus()
+    .updateAttributes("tableCell", {
+      background: backgroundColor,
+    })
+    .updateAttributes("tableHeader", {
+      background: backgroundColor,
+    })
+    .run();
 }
 
 const columnsToolboxItems: ToolboxItem[] = [
@@ -146,22 +139,6 @@ const columnsToolboxItems: ToolboxItem[] = [
   },
 ];
 
-function getRowStartPosition(cellPos: number, state: EditorState) {
-  // Resolve the position to get a ResolvedPos object
-  let resolvedCellPos = state.doc.resolve(cellPos);
-
-  // Find the depth of the table row node
-  let rowDepth = resolvedCellPos.depth;
-  while (resolvedCellPos.node(rowDepth).type.name !== "tableRow") {
-    rowDepth--;
-  }
-
-  // Get the position where the table row starts
-  let rowStartPos = resolvedCellPos.start(rowDepth);
-
-  return rowStartPos;
-}
-
 function setTableRowBackgroundColor(editor: Editor, backgroundColor: string) {
   const { state, dispatch } = editor.view;
   const { selection } = state;
@@ -171,11 +148,24 @@ function setTableRowBackgroundColor(editor: Editor, backgroundColor: string) {
 
   // Get the position of the hovered cell in the selection to determine the row.
   const hoveredCell = selection.$headCell || selection.$anchorCell;
-  let rowPos = hoveredCell.start(-1); // -1 gives us the position of the parent row node.
+
+  // Find the depth of the table row node
+  let rowDepth = hoveredCell.depth;
+  while (rowDepth > 0 && hoveredCell.node(rowDepth).type.name !== "tableRow") {
+    rowDepth--;
+  }
+
+  // If we couldn't find a tableRow node, we can't set the background color
+  if (hoveredCell.node(rowDepth).type.name !== "tableRow") {
+    return false;
+  }
+
+  // Get the position where the table row starts
+  const rowStartPos = hoveredCell.start(rowDepth);
 
   // Create a transaction that sets the background color on the tableRow node.
-  const tr = state.tr.setNodeMarkup(rowPos, null, {
-    ...hoveredCell.node(-1).attrs,
+  const tr = state.tr.setNodeMarkup(rowStartPos - 1, null, {
+    ...hoveredCell.node(rowDepth).attrs,
     backgroundColor: backgroundColor,
   });
 
@@ -492,16 +482,19 @@ export class TableView implements NodeView {
   }
 
   updateControls() {
-    const { hoveredTable: table, hoveredCell: cell } = Object.values(this.decorations).reduce((acc, curr) => {
-      if (curr.spec.hoveredCell !== undefined) {
-        acc["hoveredCell"] = curr.spec.hoveredCell;
-      }
+    const { hoveredTable: table, hoveredCell: cell } = Object.values(this.decorations).reduce(
+      (acc, curr) => {
+        if (curr.spec.hoveredCell !== undefined) {
+          acc["hoveredCell"] = curr.spec.hoveredCell;
+        }
 
-      if (curr.spec.hoveredTable !== undefined) {
-        acc["hoveredTable"] = curr.spec.hoveredTable;
-      }
-      return acc;
-    }, {} as Record<string, HTMLElement>) as any;
+        if (curr.spec.hoveredTable !== undefined) {
+          acc["hoveredTable"] = curr.spec.hoveredTable;
+        }
+        return acc;
+      },
+      {} as Record<string, HTMLElement>
+    ) as any;
 
     if (table === undefined || cell === undefined) {
       return this.root.classList.add("controls--disabled");
@@ -535,8 +528,6 @@ export class TableView implements NodeView {
     const colIndex = this.map.colCount(this.hoveredCell.pos - (this.getPos() + 1));
     const anchorCellPos = this.hoveredCell.pos;
     const headCellPos = this.map.map[colIndex + this.map.width * (this.map.height - 1)] + (this.getPos() + 1);
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("       TableView#selectColumn headCellPos: %s", headCellPos); // __AUTO_GENERATED_PRINT_VAR_END__
 
     const cellSelection = CellSelection.create(this.editor.view.state.doc, anchorCellPos, headCellPos);
     this.editor.view.dispatch(this.editor.state.tr.setSelection(cellSelection));
@@ -544,11 +535,6 @@ export class TableView implements NodeView {
 
   selectRow() {
     if (!this.hoveredCell) return;
-
-    const cellPos = this.hoveredCell.pos;
-    const rowStartPos = getRowStartPosition(cellPos, this.editor.state);
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("TableView#selectRow rowStartPos: %s", rowStartPos); // __AUTO_GENERATED_PRINT_VAR_END__
 
     const anchorCellPos = this.hoveredCell.pos;
     const anchorCellIndex = this.map.map.indexOf(anchorCellPos - (this.getPos() + 1));
