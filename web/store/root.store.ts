@@ -9,7 +9,6 @@ import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IStateStore, StateStore } from "./state.store";
-import { IPageStore, PageStore } from "./page.store";
 import { ILabelRootStore, LabelRootStore } from "./label";
 import { IMemberRootStore, MemberRootStore } from "./member";
 import { IInboxRootStore, InboxRootStore } from "./inbox";
@@ -33,7 +32,6 @@ export class RootStore {
   module: IModuleStore;
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
-  page: IPageStore;
   issue: IIssueRootStore;
   state: IStateStore;
   estimate: IEstimateStore;
@@ -58,8 +56,7 @@ export class RootStore {
     this.state = new StateStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
+    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
-    this.projectPages = new ProjectPageStore();
-    this.page = new PageStore(this);
   }
 }

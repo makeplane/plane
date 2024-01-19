@@ -1,17 +1,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { usePage } from "hooks/store";
-// components
 import { PagesListView } from "components/pages/pages-list";
 // ui
 import { Loader } from "@plane/ui";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const AllPagesList: FC = observer(() => {
-  // store
-  const { projectPageIds } = usePage();
+  const pageStores = useProjectPages();
+  // subscribing to the projectPageStore
+  const { projectPageIds } = pageStores;
 
-  if (!projectPageIds)
+  if (!projectPageIds) {
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -19,6 +19,6 @@ export const AllPagesList: FC = observer(() => {
         <Loader.Item height="40px" />
       </Loader>
     );
-
+  }
   return <PagesListView pageIds={projectPageIds} />;
 });
