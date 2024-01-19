@@ -2,4 +2,5 @@
 set -e
 
 python manage.py wait_for_db
+python manage.py wait_for_migrations
 celery -A plane beat -l info
