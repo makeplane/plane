@@ -1152,5 +1152,10 @@ class ActiveCycleEndpoint(BaseAPIView):
             ).order_by("priority_order")[:5]
 
             cycle["issues"] = IssueSerializer(priority_issues, many=True).data
-            
-        return Response(cycles, status=status.HTTP_200_OK)
+        
+        return self.paginate(
+            request=request,
+            queryset=active_cycles,
+            on_results=lambda active_cycles: Response(cycles, status=status.HTTP_200_OK).data,
+            default_per_page=int(request.GET.get("per_page", 3))
+        )
