@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -54,7 +54,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
     getValues,
     handleSubmit,
     setError,
-    setFocus,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -106,10 +105,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
       )
       .finally(() => setIsSendingUniqueCode(false));
   };
-
-  useEffect(() => {
-    setFocus("password");
-  }, [setFocus]);
 
   return (
     <>
@@ -169,6 +164,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
                 hasError={Boolean(errors.password)}
                 placeholder="Enter password"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                autoFocus
               />
             )}
           />

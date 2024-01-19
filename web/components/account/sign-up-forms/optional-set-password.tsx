@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
@@ -41,7 +41,6 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
     control,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
-    setFocus,
   } = useForm<TCreatePasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -81,10 +80,6 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
     await handleSignInRedirection().finally(() => setIsGoingToWorkspace(false));
   };
 
-  useEffect(() => {
-    setFocus("password");
-  }, [setFocus]);
-
   return (
     <>
       <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
@@ -123,16 +118,16 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
             rules={{
               required: "Password is required",
             }}
-            render={({ field: { value, onChange, ref } }) => (
+            render={({ field: { value, onChange } }) => (
               <Input
                 type="password"
                 value={value}
                 onChange={onChange}
-                ref={ref}
                 hasError={Boolean(errors.password)}
                 placeholder="Enter password"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 minLength={8}
+                autoFocus
               />
             )}
           />

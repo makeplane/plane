@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -50,7 +50,6 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
     getValues,
     handleSubmit,
     reset,
-    setFocus,
   } = useForm<TUniqueCodeFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -122,10 +121,6 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
-  useEffect(() => {
-    setFocus("token");
-  }, [setFocus]);
-
   return (
     <>
       <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
@@ -181,6 +176,7 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
                 hasError={Boolean(errors.token)}
                 placeholder="gets-sets-flys"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                autoFocus
               />
             )}
           />

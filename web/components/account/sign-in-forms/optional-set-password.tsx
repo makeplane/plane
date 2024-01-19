@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
@@ -38,7 +38,6 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
     control,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
-    setFocus,
   } = useForm<TCreatePasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -77,10 +76,6 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
 
     await handleSignInRedirection().finally(() => setIsGoingToWorkspace(false));
   };
-
-  useEffect(() => {
-    setFocus("password");
-  }, [setFocus]);
 
   return (
     <>
@@ -128,6 +123,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
                 placeholder="Enter password"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 minLength={8}
+                autoFocus
               />
             )}
           />
