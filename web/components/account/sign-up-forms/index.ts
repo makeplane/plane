@@ -1,4 +1,4 @@
-export * from "./email-form";
+export * from "./email";
 export * from "./optional-set-password";
 export * from "./password";
 export * from "./root";

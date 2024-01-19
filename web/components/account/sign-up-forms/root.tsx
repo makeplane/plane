@@ -22,7 +22,7 @@ export enum ESignUpSteps {
 
 export const SignUpRoot = observer(() => {
   // states
-  const [signInStep, setSignInStep] = useState<ESignUpSteps>(ESignUpSteps.PASSWORD);
+  const [signInStep, setSignInStep] = useState<ESignUpSteps>(ESignUpSteps.EMAIL);
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
