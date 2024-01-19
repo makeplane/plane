@@ -41,7 +41,7 @@ from plane.app.serializers import (
     ProjectMemberSerializer,
     WorkspaceThemeSerializer,
     IssueActivitySerializer,
-    IssueLiteSerializer,
+    IssueSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     ProjectMemberRoleSerializer,
@@ -1339,23 +1339,10 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
             )
             .filter(**filters)
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .select_related("project", "workspace", "state", "parent")
+            .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .order_by("-created_at")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1370,6 +1357,13 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .order_by("created_at")
         ).distinct()
 
         # Priority Ordering
@@ -1432,7 +1426,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(
+        issues = IssueSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
         return Response(issues, status=status.HTTP_200_OK)
