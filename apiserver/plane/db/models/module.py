@@ -7,19 +7,17 @@ from . import ProjectBaseModel
 
 
 def get_default_filters():
-    return (
-        {
-            "priority": None,
-            "state": None,
-            "state_group": None,
-            "assignees": None,
-            "created_by": None,
-            "labels": None,
-            "start_date": None,
-            "target_date": None,
-            "subscriber": None,
-        },
-    )
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
 
 
 def get_default_display_filters():
