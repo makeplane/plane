@@ -25,6 +25,13 @@ class ConfigurationEndpoint(BaseAPIView):
             GOOGLE_CLIENT_ID,
             GITHUB_CLIENT_ID,
             GITHUB_APP_NAME,
+            OIDC_AUTO,
+            OIDC_CLIENT_ID,
+            OIDC_CLIENT_SECRET,
+            OIDC_URL_AUTHORIZATION,
+            OIDC_URL_TOKEN,
+            OIDC_URL_USERINFO,
+            OIDC_URL_ENDSESSION,
             EMAIL_HOST_USER,
             EMAIL_HOST_PASSWORD,
             ENABLE_MAGIC_LINK_LOGIN,
@@ -47,6 +54,34 @@ class ConfigurationEndpoint(BaseAPIView):
                 {
                     "key": "GITHUB_APP_NAME",
                     "default": os.environ.get("GITHUB_APP_NAME", None),
+                },
+                {
+                    "key": "OIDC_AUTO",
+                    "default": os.environ.get("OIDC_AUTO", None),
+                },
+                {
+                    "key": "OIDC_CLIENT_ID",
+                    "default": os.environ.get("OIDC_CLIENT_ID", None),
+                },
+                {
+                    "key": "OIDC_CLIENT_SECRET",
+                    "default": os.environ.get("OIDC_CLIENT_SECRET", None),
+                },
+                {
+                    "key": "OIDC_URL_AUTHORIZATION",
+                    "default": os.environ.get("OIDC_URL_AUTHORIZATION", None),
+                },
+                {
+                    "key": "OIDC_URL_TOKEN",
+                    "default": os.environ.get("OIDC_URL_TOKEN", None),
+                },
+                {
+                    "key": "OIDC_URL_USERINFO",
+                    "default": os.environ.get("OIDC_URL_USERINFO", None),
+                },
+                {
+                    "key": "OIDC_URL_ENDSESSION",
+                    "default": os.environ.get("OIDC_URL_ENDSESSION", None),
                 },
                 {
                     "key": "EMAIL_HOST_USER",
@@ -100,6 +135,18 @@ class ConfigurationEndpoint(BaseAPIView):
             else None
         )
         data["github_app_name"] = GITHUB_APP_NAME
+        data["oidc_auto"] = (
+            bool(OIDC_CLIENT_ID) and 
+            bool(OIDC_CLIENT_SECRET) and 
+            bool(OIDC_URL_AUTHORIZATION) and 
+            bool(OIDC_URL_TOKEN) and 
+            bool(OIDC_URL_USERINFO)
+        ) and OIDC_AUTO == "1"
+        data["oidc_client_id"] = (
+            OIDC_CLIENT_ID if OIDC_CLIENT_ID and OIDC_CLIENT_ID != '""' else None
+        )
+        data["oidc_url_authorize"] = OIDC_URL_AUTHORIZATION
+        data["oidc_url_endsession"] = OIDC_URL_ENDSESSION
         data["magic_login"] = (
             bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
         ) and ENABLE_MAGIC_LINK_LOGIN == "1"

@@ -6,6 +6,7 @@ import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { GitHubSignInButton, GoogleSignInButton } from "components/account";
+import { OidcSignInButton } from "../oidc-sign-in";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;
@@ -69,7 +70,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
     <>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-onboarding-border-100" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">Or continue with</p>
+        <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">
+          {envConfig?.oidc_auto ? "Automatically signing you in via OIDC" : "Or continue with"}
+        </p>
         <hr className="w-full border-onboarding-border-100" />
       </div>
       <div className="mx-auto mt-7 space-y-4 overflow-hidden sm:w-96">
@@ -78,6 +81,14 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         )}
         {envConfig?.github_client_id && (
           <GitHubSignInButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
+        )}
+        {envConfig?.oidc_client_id && envConfig?.oidc_url_authorize && (
+          <OidcSignInButton
+            autoRedirect={envConfig?.oidc_auto}
+            clientId={envConfig?.oidc_client_id}
+            authUrl={envConfig?.oidc_url_authorize}
+            handleSignInRedirection={handleSignInRedirection}
+          />
         )}
       </div>
     </>

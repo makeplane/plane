@@ -39,6 +39,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const { setToastAlert } = useToast();
   // store hooks
   const {
+    config: { envConfig },
     theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
   const { currentUser, currentUserSettings, signOut } = useUser();
@@ -59,7 +60,8 @@ export const ProfileLayoutSidebar = observer(() => {
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
-        router.push("/");
+        if (envConfig?.oidc_url_endsession) router.push(envConfig.oidc_url_endsession);
+        else router.push("/");
       })
       .catch(() =>
         setToastAlert({

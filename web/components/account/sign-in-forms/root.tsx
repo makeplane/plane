@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import { LatestFeatureBlock } from "components/common";
@@ -14,6 +13,7 @@ import {
   OptionalSetPasswordForm,
   CreatePasswordForm,
 } from "components/account";
+import { useApplication } from "hooks/store";
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",
@@ -39,12 +39,18 @@ export const SignInRoot = observer(() => {
     config: { envConfig },
   } = useApplication();
 
-  const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
+  const isOAuthEnabled =
+    envConfig &&
+    (envConfig.google_client_id ||
+      envConfig.github_client_id ||
+      (envConfig.oidc_client_id && envConfig.oidc_url_authorize));
 
   return (
     <>
-      <div className="mx-auto flex flex-col">
-        <>
+      {envConfig?.oidc_auto ? (
+        <></>
+      ) : (
+        <div className="mx-auto flex flex-col">
           {signInStep === ESignInSteps.EMAIL && (
             <EmailForm
               handleStepChange={(step) => setSignInStep(step)}
@@ -110,8 +116,8 @@ export const SignInRoot = observer(() => {
               isOnboarded={isOnboarded}
             />
           )}
-        </>
-      </div>
+        </div>
+      )}
       {isOAuthEnabled && !OAUTH_HIDDEN_STEPS.includes(signInStep) && (
         <OAuthOptions handleSignInRedirection={handleRedirection} />
       )}
