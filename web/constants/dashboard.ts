@@ -14,6 +14,11 @@ import CompletedCreatedIssuesDark from "public/empty-state/dashboard/dark/comple
 import CompletedCreatedIssuesLight from "public/empty-state/dashboard/light/completed-created-issues.svg";
 // types
 import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
+import { Props } from "components/icons/types";
+// constants
+import { EUserWorkspaceRoles } from "./workspace";
+// icons
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid, SendToBack } from "lucide-react";
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
@@ -246,3 +251,53 @@ export const CREATED_ISSUES_EMPTY_STATES = {
     lightImage: CompletedCreatedIssuesLight,
   },
 };
+
+export const SIDEBAR_MENU_ITEMS: {
+  key: string;
+  label: string;
+  href: string;
+  access: EUserWorkspaceRoles;
+  highlight: (pathname: string, baseUrl: string) => boolean;
+  Icon: React.FC<Props>;
+}[] = [
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    href: ``,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
+    Icon: LayoutGrid,
+  },
+  {
+    key: "analytics",
+    label: "Analytics",
+    href: `/analytics`,
+    access: EUserWorkspaceRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/analytics`,
+    Icon: BarChart2,
+  },
+  {
+    key: "projects",
+    label: "Projects",
+    href: `/projects`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects`,
+    Icon: Briefcase,
+  },
+  {
+    key: "all-issues",
+    label: "All Issues",
+    href: `/workspace-views/all-issues`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/workspace-views/all-issues`,
+    Icon: CheckCircle,
+  },
+  {
+    key: "active-cycles",
+    label: "Active cycles",
+    href: `/active-cycles`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles`,
+    Icon: SendToBack,
+  },
+];
