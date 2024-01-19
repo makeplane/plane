@@ -101,7 +101,7 @@ export const STATE_GROUPS_DETAILS = [
   {
     key: "unstarted_issues",
     title: "Unstarted",
-    color: "#3E63DD",
+    color: "#FB923C",
   },
   {
     key: "backlog_issues",

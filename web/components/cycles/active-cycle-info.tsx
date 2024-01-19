@@ -4,12 +4,14 @@ import Link from "next/link";
 import useLocalStorage from "hooks/use-local-storage";
 // ui
 import { Tooltip, LinearProgressIndicator, Loader, PriorityIcon, Button, CycleGroupIcon } from "@plane/ui";
+import { CalendarCheck } from "lucide-react";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
+import { StateDropdown } from "components/dropdowns";
 // types
 import { ICycle, TCycleGroups, TCycleLayout, TCycleView } from "@plane/types";
 // helpers
-import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
@@ -202,11 +204,10 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
                     <Link
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-                      className="flex cursor-pointer flex-wrap items-center justify-between gap-2 rounded-md border border-custom-border-200  px-3 py-1.5"
+                      className="flex cursor-pointer items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5"
                     >
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-grow w-full truncate">
                         <PriorityIcon priority={issue.priority} withContainer size={12} />
-
                         <Tooltip
                           tooltipHeading="Issue ID"
                           tooltipContent={`${cycle.project_detail?.identifier}-${issue.sequence_id}`}
@@ -216,8 +217,23 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
                           </span>
                         </Tooltip>
                         <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                          <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
+                          <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                         </Tooltip>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <StateDropdown
+                          value={issue.state_id ?? undefined}
+                          onChange={() => {}}
+                          projectId={projectId?.toString() ?? ""}
+                          disabled={true}
+                          buttonVariant="background-with-text"
+                        />
+                        {issue.target_date && (
+                          <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                            <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                            <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
+                          </div>
+                        )}
                       </div>
                     </Link>
                   ))
