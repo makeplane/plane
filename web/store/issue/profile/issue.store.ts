@@ -97,7 +97,9 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const userIssueIds = this.issues[userId][currentView] ?? [];
+    const userIssueIds = this.issues[userId]?.[currentView];
+
+    if (!userIssueIds) return;
 
     const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds);
     if (!_issues) return undefined;

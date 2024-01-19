@@ -26,7 +26,7 @@ export const DocumentEditorExtensions = (
           .focus()
           .insertContentAt(
             range,
-            "<p class='text-sm bg-gray-300 w-fit pl-3 pr-3 pt-1 pb-1 rounded shadow-sm'>#issue_</p>"
+            "<p class='text-sm bg-gray-300 w-fit pl-3 pr-3 pt-1 pb-1 rounded shadow-sm'>#issue_</p>\n"
           )
           .run();
       },

@@ -2,132 +2,56 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, usePage, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication } from "hooks/store";
 // components
 import { PageForm } from "./page-form";
 // types
 import { IPage } from "@plane/types";
+import { useProjectPages } from "hooks/store/use-project-page";
+import { IPageStore } from "store/page.store";
 
 type Props = {
-  data?: IPage | null;
+  // data?: IPage | null;
+  pageStore?: IPageStore;
   handleClose: () => void;
   isOpen: boolean;
   projectId: string;
 };
 
 export const CreateUpdatePageModal: FC<Props> = (props) => {
-  const { isOpen, handleClose, data, projectId } = props;
+  const { isOpen, handleClose, projectId, pageStore } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { createPage } = useProjectPages();
   // store hooks
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { currentWorkspace } = useWorkspace();
-  const { createPage, updatePage } = usePage();
-  // toast alert
-  const { setToastAlert } = useToast();
-
-  const onClose = () => {
-    handleClose();
-  };
 
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;
-
-    // await createPage(workspaceSlug.toString(), projectId, payload)
-    //   .then((res) => {
-    //     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-    //     onClose();
-    //     setToastAlert({
-    //       type: "success",
-    //       title: "Success!",
-    //       message: "Page created successfully.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_CREATED",
-    //       {
-    //         ...res,
-    //         state: "SUCCESS",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     setToastAlert({
-    //       type: "error",
-    //       title: "Error!",
-    //       message: err.detail ?? "Page could not be created. Please try again.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_CREATED",
-    //       {
-    //         state: "FAILED",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   });
-  };
-
-  const updateProjectPage = async (payload: IPage) => {
-    if (!data || !workspaceSlug) return;
-
-    // await updatePage(workspaceSlug.toString(), projectId, data.id, payload)
-    //   .then((res) => {
-    //     onClose();
-    //     setToastAlert({
-    //       type: "success",
-    //       title: "Success!",
-    //       message: "Page updated successfully.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_UPDATED",
-    //       {
-    //         ...res,
-    //         state: "SUCCESS",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     setToastAlert({
-    //       type: "error",
-    //       title: "Error!",
-    //       message: err.detail ?? "Page could not be updated. Please try again.",
-    //     });
-    //     postHogEventTracker(
-    //       "PAGE_UPDATED",
-    //       {
-    //         state: "FAILED",
-    //       },
-    //       {
-    //         isGrouping: true,
-    //         groupType: "Workspace_metrics",
-    //         groupId: currentWorkspace?.id!,
-    //       }
-    //     );
-    //   });
+    await createPage(workspaceSlug.toString(), projectId, payload);
   };
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
-
-    if (!data) await createProjectPage(formData);
-    else await updateProjectPage(formData);
+    try {
+      if (pageStore) {
+        if (pageStore.name !== formData.name) {
+          await pageStore.updateName(formData.name);
+        }
+        if (pageStore.access !== formData.access) {
+          formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
+        }
+      } else {
+        await createProjectPage(formData);
+      }
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -157,7 +81,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
-                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} data={data} />
+                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} pageStore={pageStore} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

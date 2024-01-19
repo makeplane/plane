@@ -5,11 +5,12 @@ import { Button, Input, Tooltip } from "@plane/ui";
 import { IPage } from "@plane/types";
 // constants
 import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
+import { IPageStore } from "store/page.store";
 
 type Props = {
   handleFormSubmit: (values: IPage) => Promise<void>;
   handleClose: () => void;
-  data?: IPage | null;
+  pageStore?: IPageStore;
 };
 
 const defaultValues = {
@@ -19,24 +20,24 @@ const defaultValues = {
 };
 
 export const PageForm: React.FC<Props> = (props) => {
-  const { handleFormSubmit, handleClose, data } = props;
+  const { handleFormSubmit, handleClose, pageStore } = props;
 
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
   } = useForm<IPage>({
-    defaultValues: { ...defaultValues, ...data },
+    defaultValues: pageStore
+      ? { name: pageStore.name, description: pageStore.description, access: pageStore.access }
+      : defaultValues,
   });
 
-  const handleCreateUpdatePage = async (formData: IPage) => {
-    await handleFormSubmit(formData);
-  };
+  const handleCreateUpdatePage = (formData: IPage) => handleFormSubmit(formData);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
       <div className="space-y-4">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} Page</h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{pageStore ? "Update" : "Create"} Page</h3>
         <div className="space-y-3">
           <div>
             <Controller
@@ -104,7 +105,7 @@ export const PageForm: React.FC<Props> = (props) => {
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
-            {data ? (isSubmitting ? "Updating..." : "Update page") : isSubmitting ? "Creating..." : "Create Page"}
+            {pageStore ? (isSubmitting ? "Updating..." : "Update page") : isSubmitting ? "Creating..." : "Create Page"}
           </Button>
         </div>
       </div>
