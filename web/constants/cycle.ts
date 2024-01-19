@@ -89,28 +89,23 @@ export const CYCLE_STATUS: {
 
 export const STATE_GROUPS_DETAILS = [
   {
-    key: "backlog_issues",
-    title: "Backlog",
-    color: "#d9d9d9",
-  },
-  {
-    key: "unstarted_issues",
-    title: "Unstarted",
-    color: "#3f76ff",
+    key: "completed_issues",
+    title: "Completed",
+    color: "#46A758",
   },
   {
     key: "started_issues",
     title: "Started",
-    color: "#f59e0b",
+    color: "#FFC53D",
   },
   {
-    key: "completed_issues",
-    title: "Completed",
-    color: "#16a34a",
+    key: "unstarted_issues",
+    title: "Unstarted",
+    color: "#3E63DD",
   },
   {
-    key: "cancelled_issues",
-    title: "Cancelled",
-    color: "#dc2626",
+    key: "backlog_issues",
+    title: "Backlog",
+    color: "#F0F0F3",
   },
 ];

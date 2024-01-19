@@ -62,7 +62,7 @@ export type TAssigneesDistribution = {
 };
 
 export type TCompletionChartDistribution = {
-  [key: string]: number;
+  [key: string]: number | null;
 };
 
 export type TLabelsDistribution = {
