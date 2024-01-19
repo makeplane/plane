@@ -100,11 +100,26 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
   },
 
   parseHTML() {
-    return [{ tag: 'a[href]:not([href *= "javascript:" i])' }];
+    return [
+      {
+        tag: "a[href]",
+        getAttrs: (node) => {
+          if (typeof node === "string" || !(node instanceof HTMLElement)) {
+            return null;
+          }
+          const href = node.getAttribute("href")?.toLowerCase() || "";
+          if (href.startsWith("javascript:") || href.startsWith("data:") || href.startsWith("vbscript:")) {
+            return false;
+          }
+          return {};
+        },
+      },
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    if (HTMLAttributes.href?.startsWith("javascript:")) {
+    const href = HTMLAttributes.href?.toLowerCase() || "";
+    if (href.startsWith("javascript:") || href.startsWith("data:") || href.startsWith("vbscript:")) {
       return ["a", mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, href: "" }), 0];
     }
     return ["a", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
