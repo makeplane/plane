@@ -19,13 +19,7 @@ export const WorkspaceActiveCycleHeader = observer(() => {
               label="Active Cycles"
             />
           </Breadcrumbs>
-          <span
-            className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-5 rounded-xl"
-            style={{
-              color: "#F59E0B",
-              backgroundColor: "#F59E0B20",
-            }}
-          >
+          <span className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl text-orange-500 bg-orange-500/20">
             Beta
           </span>
         </div>

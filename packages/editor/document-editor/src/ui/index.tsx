@@ -16,7 +16,7 @@ interface IDocumentEditor {
   // document info
   documentDetails: DocumentDetails;
   value: string;
-  rerenderOnPropsChange: {
+  rerenderOnPropsChange?: {
     id: string;
     description_html: string;
   };
@@ -39,7 +39,7 @@ interface IDocumentEditor {
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
-  updatePageTitle: (title: string) => Promise<void>;
+  updatePageTitle: (title: string) => void;
   debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
 

@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -14,9 +15,7 @@ import { checkEmailValidity } from "helpers/string.helper";
 import { IPasswordSignInData } from "@plane/types";
 
 type Props = {
-  email: string;
-  updateEmail: (email: string) => void;
-  handleSignInRedirection: () => Promise<void>;
+  onSubmit: () => Promise<void>;
 };
 
 type TPasswordFormValues = {
@@ -31,20 +30,18 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const SelfHostedSignInForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleSignInRedirection } = props;
+export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
+  const { onSubmit } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
     control,
-    formState: { dirtyFields, errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
-    setFocus,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
-      email,
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -56,11 +53,9 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
       password: formData.password,
     };
 
-    updateEmail(formData.email);
-
     await authService
       .passwordSignIn(payload)
-      .then(async () => await handleSignInRedirection())
+      .then(async () => await onSubmit())
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -70,16 +65,15 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
       );
   };
 
-  useEffect(() => {
-    setFocus("email");
-  }, [setFocus]);
-
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-semibold text-onboarding-text-100">
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
         Get on your flight deck
       </h1>
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-11 space-y-4 sm:w-96">
+      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
+        Create or join a workspace. Start with your e-mail.
+      </p>
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>
           <Controller
             control={control}
@@ -97,7 +91,7 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@frstflt.com"
+                  placeholder="name@company.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                 />
                 {value.length > 0 && (
@@ -115,7 +109,7 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
             control={control}
             name="password"
             rules={{
-              required: dirtyFields.email ? false : "Password is required",
+              required: "Password is required",
             }}
             render={({ field: { value, onChange } }) => (
               <Input
@@ -125,12 +119,16 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
                 hasError={Boolean(errors.password)}
                 placeholder="Enter password"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                autoFocus
               />
             )}
           />
+          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
+            This password will continue to be your account{"'"}s password.
+          </p>
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" loading={isSubmitting}>
-          Continue
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
+          Create account
         </Button>
         <p className="text-xs text-onboarding-text-200">
           When you click the button above, you agree with our{" "}
@@ -141,4 +139,4 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
       </form>
     </>
   );
-};
+});

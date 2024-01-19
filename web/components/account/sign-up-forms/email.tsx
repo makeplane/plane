@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 import { observer } from "mobx-react-lite";
@@ -6,18 +6,15 @@ import { observer } from "mobx-react-lite";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData } from "@plane/types";
-// constants
-import { ESignInSteps } from "components/account";
 
 type Props = {
-  handleStepChange: (step: ESignInSteps) => void;
+  onSubmit: () => void;
   updateEmail: (email: string) => void;
 };
 
@@ -27,18 +24,14 @@ type TEmailFormValues = {
 
 const authService = new AuthService();
 
-export const EmailForm: React.FC<Props> = observer((props) => {
-  const { handleStepChange, updateEmail } = props;
+export const SignUpEmailForm: React.FC<Props> = observer((props) => {
+  const { onSubmit, updateEmail } = props;
   // hooks
   const { setToastAlert } = useToast();
-  const {
-    config: { envConfig },
-  } = useApplication();
   const {
     control,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
-    setFocus,
   } = useForm<TEmailFormValues>({
     defaultValues: {
       email: "",
@@ -57,14 +50,7 @@ export const EmailForm: React.FC<Props> = observer((props) => {
 
     await authService
       .emailCheck(payload)
-      .then((res) => {
-        // if the password has been auto set, send the user to magic sign-in
-        if (res.is_password_autoset && envConfig?.is_smtp_configured) {
-          handleStepChange(ESignInSteps.UNIQUE_CODE);
-        }
-        // if the password has not been auto set, send them to password sign-in
-        else handleStepChange(ESignInSteps.PASSWORD);
-      })
+      .then(() => onSubmit())
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -73,10 +59,6 @@ export const EmailForm: React.FC<Props> = observer((props) => {
         })
       );
   };
-
-  useEffect(() => {
-    setFocus("email");
-  }, [setFocus]);
 
   return (
     <>
@@ -96,7 +78,7 @@ export const EmailForm: React.FC<Props> = observer((props) => {
               required: "Email is required",
               validate: (value) => checkEmailValidity(value) || "Email is invalid",
             }}
-            render={({ field: { value, onChange, ref } }) => (
+            render={({ field: { value, onChange } }) => (
               <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                 <Input
                   id="email"
@@ -104,10 +86,10 @@ export const EmailForm: React.FC<Props> = observer((props) => {
                   type="email"
                   value={value}
                   onChange={onChange}
-                  ref={ref}
                   hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@frstflt.com"
+                  placeholder="name@company.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+                  autoFocus
                 />
                 {value.length > 0 && (
                   <XCircle
@@ -120,7 +102,7 @@ export const EmailForm: React.FC<Props> = observer((props) => {
           />
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          Continue
+          Verify
         </Button>
       </form>
     </>

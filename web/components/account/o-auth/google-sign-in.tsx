@@ -4,10 +4,11 @@ import Script from "next/script";
 type Props = {
   handleSignIn: React.Dispatch<any>;
   clientId: string;
+  type: "sign_in" | "sign_up";
 };
 
 export const GoogleSignInButton: FC<Props> = (props) => {
-  const { handleSignIn, clientId } = props;
+  const { handleSignIn, clientId, type } = props;
   // refs
   const googleSignInButton = useRef<HTMLDivElement>(null);
   // states
@@ -29,7 +30,7 @@ export const GoogleSignInButton: FC<Props> = (props) => {
           theme: "outline",
           size: "large",
           logo_alignment: "center",
-          text: "signin_with",
+          text: type === "sign_in" ? "signin_with" : "signup_with",
           width: 384,
         } as GsiButtonConfiguration // customization attributes
       );
@@ -40,7 +41,7 @@ export const GoogleSignInButton: FC<Props> = (props) => {
     window?.google?.accounts.id.prompt(); // also display the One Tap dialog
 
     setGsiScriptLoaded(true);
-  }, [handleSignIn, gsiScriptLoaded, clientId]);
+  }, [handleSignIn, gsiScriptLoaded, clientId, type]);
 
   useEffect(() => {
     if (window?.google?.accounts?.id) {
