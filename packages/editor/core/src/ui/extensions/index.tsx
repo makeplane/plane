@@ -27,6 +27,7 @@ import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "./code-inline";
+import HardBreak from "@tiptap/extension-hard-break";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -64,6 +65,11 @@ export const CoreEditorExtensions = (
   }),
   CustomQuoteExtension.configure({
     HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
+  }),
+  HardBreak.configure({
+    HTMLAttributes: {
+      class: "p-2",
+    },
   }),
   CustomKeymap,
   ListKeymap,
