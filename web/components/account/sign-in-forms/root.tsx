@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -24,7 +24,7 @@ export enum ESignInSteps {
 
 export const SignInRoot = observer(() => {
   // states
-  const [signInStep, setSignInStep] = useState<ESignInSteps>(ESignInSteps.EMAIL);
+  const [signInStep, setSignInStep] = useState<ESignInSteps | null>(null);
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
@@ -32,10 +32,12 @@ export const SignInRoot = observer(() => {
   const {
     config: { envConfig },
   } = useApplication();
+  // derived values
+  const isSmtpConfigured = envConfig?.is_smtp_configured;
 
   // step 1 submit handler- email verification
   const handleEmailVerification = (isPasswordAutoset: boolean) => {
-    if (envConfig?.is_smtp_configured && isPasswordAutoset) setSignInStep(ESignInSteps.UNIQUE_CODE);
+    if (isSmtpConfigured && isPasswordAutoset) setSignInStep(ESignInSteps.UNIQUE_CODE);
     else setSignInStep(ESignInSteps.PASSWORD);
   };
 
@@ -51,6 +53,11 @@ export const SignInRoot = observer(() => {
   };
 
   const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
+
+  useEffect(() => {
+    if (isSmtpConfigured) setSignInStep(ESignInSteps.EMAIL);
+    else setSignInStep(ESignInSteps.PASSWORD);
+  }, [isSmtpConfigured]);
 
   return (
     <>
@@ -73,12 +80,12 @@ export const SignInRoot = observer(() => {
           {signInStep === ESignInSteps.PASSWORD && (
             <SignInPasswordForm
               email={email}
-              onSubmit={handlePasswordSignIn}
-              handleStepChange={(step) => setSignInStep(step)}
               handleEmailClear={() => {
                 setEmail("");
                 setSignInStep(ESignInSteps.EMAIL);
               }}
+              onSubmit={handlePasswordSignIn}
+              handleStepChange={(step) => setSignInStep(step)}
             />
           )}
           {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
@@ -97,17 +104,18 @@ export const SignInRoot = observer(() => {
           )}
         </>
       </div>
-      {isOAuthEnabled && signInStep === ESignInSteps.EMAIL && (
-        <>
-          <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_in" />
-          <p className="text-xs text-onboarding-text-300 text-center mt-6">
-            Don{"'"}t have an account?{" "}
-            <Link href="/accounts/sign-up" className="text-custom-primary-100 font-medium underline">
-              Sign up
-            </Link>
-          </p>
-        </>
-      )}
+      {isOAuthEnabled &&
+        (signInStep === ESignInSteps.EMAIL || (!isSmtpConfigured && signInStep === ESignInSteps.PASSWORD)) && (
+          <>
+            <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_in" />
+            <p className="text-xs text-onboarding-text-300 text-center mt-6">
+              Don{"'"}t have an account?{" "}
+              <Link href="/accounts/sign-up" className="text-custom-primary-100 font-medium underline">
+                Sign up
+              </Link>
+            </p>
+          </>
+        )}
       <LatestFeatureBlock />
     </>
   );

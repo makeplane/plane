@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication } from "hooks/store";
@@ -20,9 +20,11 @@ export enum ESignUpSteps {
   OPTIONAL_SET_PASSWORD = "OPTIONAL_SET_PASSWORD",
 }
 
+const OAUTH_ENABLED_STEPS = [ESignUpSteps.EMAIL];
+
 export const SignUpRoot = observer(() => {
   // states
-  const [signInStep, setSignInStep] = useState<ESignUpSteps>(ESignUpSteps.EMAIL);
+  const [signInStep, setSignInStep] = useState<ESignUpSteps | null>(null);
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
@@ -32,10 +34,7 @@ export const SignUpRoot = observer(() => {
   } = useApplication();
 
   // step 1 submit handler- email verification
-  const handleEmailVerification = () => {
-    if (envConfig?.is_smtp_configured) setSignInStep(ESignUpSteps.UNIQUE_CODE);
-    else setSignInStep(ESignUpSteps.PASSWORD);
-  };
+  const handleEmailVerification = () => setSignInStep(ESignUpSteps.UNIQUE_CODE);
 
   // step 2 submit handler- unique code sign in
   const handleUniqueCodeSignIn = async (isPasswordAutoset: boolean) => {
@@ -49,6 +48,11 @@ export const SignUpRoot = observer(() => {
   };
 
   const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
+
+  useEffect(() => {
+    if (envConfig?.is_smtp_configured) setSignInStep(ESignUpSteps.EMAIL);
+    else setSignInStep(ESignUpSteps.PASSWORD);
+  }, [envConfig?.is_smtp_configured]);
 
   return (
     <>
@@ -67,16 +71,7 @@ export const SignUpRoot = observer(() => {
               onSubmit={handleUniqueCodeSignIn}
             />
           )}
-          {signInStep === ESignUpSteps.PASSWORD && (
-            <SignUpPasswordForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignUpSteps.EMAIL);
-              }}
-              onSubmit={handlePasswordSignIn}
-            />
-          )}
+          {signInStep === ESignUpSteps.PASSWORD && <SignUpPasswordForm onSubmit={handlePasswordSignIn} />}
           {signInStep === ESignUpSteps.OPTIONAL_SET_PASSWORD && (
             <SignUpOptionalSetPasswordForm
               email={email}
@@ -86,7 +81,7 @@ export const SignUpRoot = observer(() => {
           )}
         </>
       </div>
-      {isOAuthEnabled && signInStep === ESignUpSteps.EMAIL && (
+      {isOAuthEnabled && signInStep && OAUTH_ENABLED_STEPS.includes(signInStep) && (
         <>
           <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_up" />
           <p className="text-xs text-onboarding-text-300 text-center mt-6">

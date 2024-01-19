@@ -86,7 +86,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
     <>
       <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Set your password</h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        If you{"'"}d like to do away with codes, set a password here
+        If you{"'"}d like to do away with codes, set a password here.
       </p>
       <form onSubmit={handleSubmit(handleCreatePassword)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <Controller

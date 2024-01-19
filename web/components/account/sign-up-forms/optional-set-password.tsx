@@ -89,7 +89,9 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
     <>
       <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Let{"'"}s set a password so you can do away with codes.
+        Let{"'"}s set a password so
+        <br />
+        you can do away with codes.
       </p>
       <form onSubmit={handleSubmit(handleCreatePassword)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <Controller
@@ -135,7 +137,7 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
             )}
           />
           <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
-            This password will continue to be your account{"'"}s password
+            This password will continue to be your account{"'"}s password.
           </p>
         </div>
         <div className="space-y-2.5">

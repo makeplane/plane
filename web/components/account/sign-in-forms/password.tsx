@@ -45,6 +45,8 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   const {
     config: { envConfig },
   } = useApplication();
+  // derived values
+  const isSmtpConfigured = envConfig?.is_smtp_configured;
   // form info
   const {
     control,
@@ -137,12 +139,15 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@frstflt.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-                  disabled
+                  disabled={isSmtpConfigured}
                 />
                 {value.length > 0 && (
                   <XCircle
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={handleEmailClear}
+                    onClick={() => {
+                      if (isSmtpConfigured) handleEmailClear();
+                      else onChange("");
+                    }}
                   />
                 )}
               </div>
@@ -168,7 +173,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             )}
           />
           <div className="w-full text-right mt-2 pb-3">
-            {envConfig?.is_smtp_configured ? (
+            {isSmtpConfigured ? (
               <Link
                 href={`/accounts/forgot-password?email=${email}`}
                 className="text-xs font-medium text-custom-primary-100"

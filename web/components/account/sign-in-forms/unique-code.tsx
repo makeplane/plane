@@ -130,7 +130,9 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
     <>
       <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Paste the code you got at <span className="font-semibold text-custom-primary-100">{email}</span> below.
+        Paste the code you got at
+        <br />
+        <span className="font-semibold text-custom-primary-100">{email}</span> below.
       </p>
       <form onSubmit={handleSubmit(handleUniqueCodeSignIn)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>

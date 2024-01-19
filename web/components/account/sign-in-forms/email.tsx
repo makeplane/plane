@@ -66,7 +66,7 @@ export const SignInEmailForm: React.FC<Props> = observer((props) => {
         Welcome back, let{"'"}s get you on board
       </h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Get back to your issues, projects and workspaces
+        Get back to your issues, projects and workspaces.
       </p>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-8 space-y-4 sm:w-96">

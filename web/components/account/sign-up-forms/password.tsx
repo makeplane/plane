@@ -15,8 +15,6 @@ import { checkEmailValidity } from "helpers/string.helper";
 import { IPasswordSignInData } from "@plane/types";
 
 type Props = {
-  email: string;
-  handleEmailClear: () => void;
   onSubmit: () => Promise<void>;
 };
 
@@ -33,7 +31,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
-  const { email, handleEmailClear, onSubmit } = props;
+  const { onSubmit } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -45,7 +43,6 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
-      email,
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -75,10 +72,12 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-semibold text-onboarding-text-100">
-        Moving to the runway
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
+        Get on your flight deck
       </h1>
-      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">Can{"'"}t wait to have you on board.</p>
+      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
+        Create or join a workspace. Start with your e-mail.
+      </p>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>
           <Controller
@@ -99,12 +98,11 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@frstflt.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-                  disabled
                 />
                 {value.length > 0 && (
                   <XCircle
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={handleEmailClear}
+                    onClick={() => onChange("")}
                   />
                 )}
               </div>
@@ -124,13 +122,13 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.password)}
-                placeholder="Choose password"
+                placeholder="Enter password"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               />
             )}
           />
           <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
-            This password will continue to be your account{"'"}s password
+            This password will continue to be your account{"'"}s password.
           </p>
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
