@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
+import { observer } from "mobx-react-lite";
 // services
-import { AuthService } from "services/authentication.service";
+import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -10,12 +11,10 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IEmailCheckData } from "types/auth";
-// constants
-import { ESignInSteps } from "components/accounts";
+import { IEmailCheckData } from "@plane/types";
 
 type Props = {
-  handleStepChange: (step: ESignInSteps) => void;
+  onSubmit: (isPasswordAutoset: boolean) => void;
   updateEmail: (email: string) => void;
 };
 
@@ -25,16 +24,14 @@ type TEmailFormValues = {
 
 const authService = new AuthService();
 
-export const EmailForm: React.FC<Props> = (props) => {
-  const { handleStepChange, updateEmail } = props;
-
+export const SignInEmailForm: React.FC<Props> = observer((props) => {
+  const { onSubmit, updateEmail } = props;
+  // hooks
   const { setToastAlert } = useToast();
-
   const {
     control,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
-    setFocus,
   } = useForm<TEmailFormValues>({
     defaultValues: {
       email: "",
@@ -53,12 +50,7 @@ export const EmailForm: React.FC<Props> = (props) => {
 
     await authService
       .emailCheck(payload)
-      .then((res) => {
-        // if the password has been autoset, send the user to magic sign-in
-        if (res.is_password_autoset) handleStepChange(ESignInSteps.UNIQUE_CODE);
-        // if the password has not been autoset, send them to password sign-in
-        else handleStepChange(ESignInSteps.PASSWORD);
-      })
+      .then((res) => onSubmit(res.is_password_autoset))
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -68,17 +60,13 @@ export const EmailForm: React.FC<Props> = (props) => {
       );
   };
 
-  useEffect(() => {
-    setFocus("email");
-  }, [setFocus]);
-
   return (
     <>
       <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
-        Get on your flight deck
+        Welcome back, let{"'"}s get you on board
       </h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Create or join a workspace. Start with your e-mail.
+        Get back to your issues, projects and workspaces.
       </p>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-8 space-y-4 sm:w-96">
@@ -90,7 +78,7 @@ export const EmailForm: React.FC<Props> = (props) => {
               required: "Email is required",
               validate: (value) => checkEmailValidity(value) || "Email is invalid",
             }}
-            render={({ field: { value, onChange, ref } }) => (
+            render={({ field: { value, onChange } }) => (
               <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                 <Input
                   id="email"
@@ -98,10 +86,10 @@ export const EmailForm: React.FC<Props> = (props) => {
                   type="email"
                   value={value}
                   onChange={onChange}
-                  ref={ref}
                   hasError={Boolean(errors.email)}
                   placeholder="name@company.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+                  autoFocus
                 />
                 {value.length > 0 && (
                   <XCircle
@@ -119,4 +107,4 @@ export const EmailForm: React.FC<Props> = (props) => {
       </form>
     </>
   );
-};
+});
