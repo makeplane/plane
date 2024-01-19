@@ -75,8 +75,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       target_date: filters?.target_date || undefined,
       // display filters
       type: displayFilters?.type || undefined,
-      sub_issue: displayFilters?.sub_issue ?? displayFilters?.sub_issue,
-      start_target_date: displayFilters?.start_target_date ?? displayFilters?.start_target_date,
+      sub_issue: displayFilters?.sub_issue ?? true,
+      start_target_date: displayFilters?.start_target_date ?? true,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
