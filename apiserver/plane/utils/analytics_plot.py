@@ -12,6 +12,7 @@ from django.db.models.functions import (
     ExtractYear,
     Concat,
 )
+from django.utils import timezone
 
 # Module imports
 from plane.db.models import Issue
@@ -168,6 +169,9 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             if item["date"] is not None and item["date"] <= date
         )
         cumulative_pending_issues -= total_completed
-        chart_data[str(date)] = cumulative_pending_issues
+        if date > timezone.now().date():
+            chart_data[str(date)] = None
+        else:
+            chart_data[str(date)] = cumulative_pending_issues
 
     return chart_data

@@ -1141,4 +1141,16 @@ class ActiveCycleEndpoint(BaseAPIView):
                     cycle_id=cycle["id"],
                 )
 
+            priority_issues = Issue.objects.filter(issue_cycle__cycle_id=cycle["id"], priority__in=["urgent", "high"])
+            # Priority Ordering
+            priority_order = ["urgent", "high"]
+            priority_issues = priority_issues.annotate(
+                priority_order=Case(
+                    *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+                    output_field=CharField(),
+                )
+            ).order_by("priority_order")[:5]
+
+            cycle["issues"] = IssueSerializer(priority_issues, many=True).data
+            
         return Response(cycles, status=status.HTTP_200_OK)
