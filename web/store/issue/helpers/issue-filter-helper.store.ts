@@ -11,7 +11,6 @@ import {
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import { isNil } from "constants/common";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // lib
 import { storage } from "lib/local-storage";
@@ -76,8 +75,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       target_date: filters?.target_date || undefined,
       // display filters
       type: displayFilters?.type || undefined,
-      sub_issue: isNil(displayFilters?.sub_issue) ? true : displayFilters?.sub_issue,
-      start_target_date: isNil(displayFilters?.start_target_date) ? true : displayFilters?.start_target_date,
+      sub_issue: displayFilters?.sub_issue ?? displayFilters?.sub_issue,
+      start_target_date: displayFilters?.start_target_date ?? displayFilters?.start_target_date,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
@@ -169,18 +168,19 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns {IIssueDisplayProperties}
    */
   computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties => ({
-    assignee: isNil(displayProperties?.assignee) ? true : displayProperties?.assignee,
-    start_date: isNil(displayProperties?.start_date) ? true : displayProperties?.start_date,
-    due_date: isNil(displayProperties?.due_date) ? true : displayProperties?.due_date,
-    labels: isNil(displayProperties?.labels) ? true : displayProperties?.labels,
-    priority: isNil(displayProperties?.priority) ? true : displayProperties?.priority,
-    state: isNil(displayProperties?.state) ? true : displayProperties?.state,
-    sub_issue_count: isNil(displayProperties?.sub_issue_count) ? true : displayProperties?.sub_issue_count,
-    attachment_count: isNil(displayProperties?.attachment_count) ? true : displayProperties?.attachment_count,
-    estimate: isNil(displayProperties?.estimate) ? true : displayProperties?.estimate,
-    key: isNil(displayProperties?.key) ? true : displayProperties?.key,
-    created_on: isNil(displayProperties?.created_on) ? true : displayProperties?.created_on,
-    updated_on: isNil(displayProperties?.updated_on) ? true : displayProperties?.updated_on,
+    assignee: displayProperties?.assignee ?? true,
+    start_date: displayProperties?.start_date ?? true,
+    due_date: displayProperties?.due_date ?? true,
+    labels: displayProperties?.labels ?? true,
+    priority: displayProperties?.priority ?? true,
+    state: displayProperties?.state ?? true,
+    sub_issue_count: displayProperties?.sub_issue_count ?? true,
+    attachment_count: displayProperties?.attachment_count ?? true,
+    link: displayProperties?.link ?? true,
+    estimate: displayProperties?.estimate ?? true,
+    key: displayProperties?.key ?? true,
+    created_on: displayProperties?.created_on ?? true,
+    updated_on: displayProperties?.updated_on ?? true,
   });
 
   handleIssuesLocalFilters = {
