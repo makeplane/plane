@@ -53,6 +53,11 @@ export const CoreEditorExtensions = (
         class: "leading-normal -mb-2",
       },
     },
+    hardBreak: {
+      HTMLAttributes: {
+        class: "p-2",
+      },
+    },
     code: false,
     codeBlock: false,
     horizontalRule: false,
