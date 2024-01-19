@@ -88,7 +88,7 @@ export const SignUpRoot = observer(() => {
       </div>
       {isOAuthEnabled && signInStep === ESignUpSteps.EMAIL && (
         <>
-          <OAuthOptions handleSignInRedirection={handleRedirection} />
+          <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_up" />
           <p className="text-xs text-onboarding-text-300 text-center mt-6">
             Already using Plane?{" "}
             <Link href="/" className="text-custom-primary-100 font-medium underline">

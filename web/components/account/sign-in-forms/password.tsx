@@ -8,14 +8,14 @@ import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 import { useApplication } from "hooks/store";
+// components
+import { ESignInSteps, ForgotPasswordPopover } from "components/account";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "@plane/types";
-// constants
-import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
@@ -168,12 +168,16 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             )}
           />
           <div className="w-full text-right mt-2 pb-3">
-            <Link
-              href={`/accounts/forgot-password?email=${email}`}
-              className="text-xs font-medium text-custom-primary-100"
-            >
-              Forgot your password?
-            </Link>
+            {envConfig?.is_smtp_configured ? (
+              <Link
+                href={`/accounts/forgot-password?email=${email}`}
+                className="text-xs font-medium text-custom-primary-100"
+              >
+                Forgot your password?
+              </Link>
+            ) : (
+              <ForgotPasswordPopover />
+            )}
           </div>
         </div>
         <div className="space-y-2.5">
