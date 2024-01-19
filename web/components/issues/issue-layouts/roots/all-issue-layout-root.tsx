@@ -5,18 +5,16 @@ import useSWR from "swr";
 // hooks
 import { useGlobalView, useIssues, useUser } from "hooks/store";
 // components
-import { GlobalViewsAppliedFiltersRoot } from "components/issues";
+import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { TIssue, IIssueDisplayFilterOptions, TStaticViewTypes, TUnGroupedIssues } from "@plane/types";
+import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssueActions } from "../types";
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-
-
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -48,11 +46,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && globalViewId) {
         await fetchAllGlobalViews(workspaceSlug.toString());
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
-        await fetchIssues(
-          workspaceSlug.toString(),
-          globalViewId.toString(),
-          groupedIssueIds ? "mutation" : "init-loader"
-        );
+        await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
       }
     }
   );
@@ -138,6 +132,9 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
           )}
         </>
       )}
+
+      {/* peek overview */}
+      <IssuePeekOverview />
     </div>
   );
 });
