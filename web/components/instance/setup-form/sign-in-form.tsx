@@ -88,7 +88,7 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
                 type="email"
                 value={value}
                 onChange={onChange}
-                placeholder="orville.wright@frstflt.com"
+                placeholder="name@company.com"
                 className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
               />
               {value.length > 0 && (

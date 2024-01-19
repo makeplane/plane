@@ -1,9 +1,6 @@
 import { ReactElement } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { Lightbulb } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
@@ -12,11 +9,12 @@ import useToast from "hooks/use-toast";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // layouts
 import DefaultLayout from "layouts/default-layout";
+// components
+import { LatestFeatureBlock } from "components/common";
 // ui
 import { Button, Input } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import latestFeatures from "public/onboarding/onboarding-pages.svg";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // type
@@ -35,12 +33,10 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const HomePage: NextPageWithLayout = () => {
+const ResetPasswordPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
   const { uidb64, token, email } = router.query;
-  // next-themes
-  const { resolvedTheme } = useTheme();
   // toast
   const { setToastAlert } = useToast();
   // sign in redirection hook
@@ -108,35 +104,30 @@ const HomePage: NextPageWithLayout = () => {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.email)}
-                    placeholder="orville.wright@frstflt.com"
+                    placeholder="name@company.com"
                     className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
                     disabled
                   />
                 )}
               />
-              <div>
-                <Controller
-                  control={control}
-                  name="password"
-                  rules={{
-                    required: "Password is required",
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      type="password"
-                      value={value}
-                      onChange={onChange}
-                      hasError={Boolean(errors.password)}
-                      placeholder="Choose password"
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                      minLength={8}
-                    />
-                  )}
-                />
-                <p className="mt-3 text-xs text-onboarding-text-200">
-                  Whatever you choose now will be your account{"'"}s password until you change it.
-                </p>
-              </div>
+              <Controller
+                control={control}
+                name="password"
+                rules={{
+                  required: "Password is required",
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    type="password"
+                    value={value}
+                    onChange={onChange}
+                    hasError={Boolean(errors.password)}
+                    placeholder="Enter password"
+                    className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                    minLength={8}
+                  />
+                )}
+              />
               <Button
                 type="submit"
                 variant="primary"
@@ -145,44 +136,19 @@ const HomePage: NextPageWithLayout = () => {
                 disabled={!isValid}
                 loading={isSubmitting}
               >
-                {isSubmitting ? "Signing in..." : "Go to workspace"}
+                Set password
               </Button>
-              <p className="text-xs text-onboarding-text-200">
-                When you click the button above, you agree with our{" "}
-                <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-                  <span className="font-semibold underline">terms and conditions of service.</span>
-                </Link>
-              </p>
             </form>
           </div>
-          <div className="mx-auto mt-16 flex rounded-[3.5px] border border-onboarding-border-200 bg-onboarding-background-100 py-2 sm:w-96">
-            <Lightbulb className="mx-3 mr-2 h-7 w-7" />
-            <p className="text-left text-sm text-onboarding-text-100">
-              Try the latest features, like Tiptap editor, to write compelling responses.{" "}
-              <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
-                <span className="text-sm font-medium underline hover:cursor-pointer">See new features</span>
-              </Link>
-            </p>
-          </div>
-          <div className="mx-auto mt-8 overflow-hidden rounded-md border border-onboarding-border-200 bg-onboarding-background-100 object-cover sm:h-52 sm:w-96">
-            <div className="h-[90%]">
-              <Image
-                src={latestFeatures}
-                alt="Plane Issues"
-                className={`-mt-2 ml-8 h-full rounded-md ${
-                  resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
-                } `}
-              />
-            </div>
-          </div>
+          <LatestFeatureBlock />
         </div>
       </div>
     </div>
   );
 };
 
-HomePage.getLayout = function getLayout(page: ReactElement) {
+ResetPasswordPage.getLayout = function getLayout(page: ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;
 };
 
-export default HomePage;
+export default ResetPasswordPage;

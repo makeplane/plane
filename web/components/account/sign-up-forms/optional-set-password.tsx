@@ -8,9 +8,12 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
+// constants
+import { ESignUpSteps } from "components/account";
 
 type Props = {
   email: string;
+  handleStepChange: (step: ESignUpSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
@@ -27,7 +30,7 @@ const defaultValues: TCreatePasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
+export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
   const { email, handleSignInRedirection } = props;
   // states
   const [isGoingToWorkspace, setIsGoingToWorkspace] = useState(false);
@@ -79,9 +82,11 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Set your password</h1>
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        If you{"'"}d like to do away with codes, set a password here.
+        Let{"'"}s set a password so
+        <br />
+        you can do away with codes.
       </p>
       <form onSubmit={handleSubmit(handleCreatePassword)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <Controller
@@ -113,12 +118,11 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
             rules={{
               required: "Password is required",
             }}
-            render={({ field: { value, onChange, ref } }) => (
+            render={({ field: { value, onChange } }) => (
               <Input
                 type="password"
                 value={value}
                 onChange={onChange}
-                ref={ref}
                 hasError={Boolean(errors.password)}
                 placeholder="Enter password"
                 className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
@@ -128,7 +132,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
             )}
           />
           <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
-            Whatever you choose now will be your account{"'"}s password until you change it.
+            This password will continue to be your account{"'"}s password.
           </p>
         </div>
         <div className="space-y-2.5">
@@ -150,7 +154,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
             onClick={handleGoToWorkspace}
             loading={isGoingToWorkspace}
           >
-            Skip to workspace
+            Skip to setup
           </Button>
         </div>
       </form>
