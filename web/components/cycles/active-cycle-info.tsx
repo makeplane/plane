@@ -1,11 +1,13 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import Link from "next/link";
+// hooks
+import useLocalStorage from "hooks/use-local-storage";
 // ui
 import { Tooltip, LinearProgressIndicator, Loader, PriorityIcon, Button, CycleGroupIcon } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 // types
-import { ICycle, TCycleGroups } from "@plane/types";
+import { ICycle, TCycleGroups, TCycleLayout, TCycleView } from "@plane/types";
 // helpers
 import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -21,8 +23,26 @@ export type ActiveCycleInfoProps = {
 
 export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
+  // local storage
+  const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
+  const { setValue: setCycleLayout } = useLocalStorage<TCycleLayout>("cycle_layout", "list");
 
   const cycleIssues = cycle.issues ?? [];
+
+  const handleCurrentLayout = useCallback(
+    (_layout: TCycleLayout) => {
+      setCycleLayout(_layout);
+    },
+    [setCycleLayout]
+  );
+
+  const handleCurrentView = useCallback(
+    (_view: TCycleView) => {
+      setCycleTab(_view);
+      if (_view === "draft") handleCurrentLayout("list");
+    },
+    [handleCurrentLayout, setCycleTab]
+  );
 
   const groupedIssues: any = {
     completed: cycle.completed_issues,
@@ -39,6 +59,8 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
   }));
 
   const cuurentCycle = cycle.status.toLowerCase() as TCycleGroups;
+
+  const daysLeft = findHowManyDaysLeft(cycle.end_date ?? new Date());
 
   return (
     <>
@@ -72,7 +94,7 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
               position="top-left"
             >
               <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
-                {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left{" "}
+                {`${daysLeft} ${daysLeft > 1 ? "Days" : "Day"} Left`}
               </span>
             </Tooltip>
           </div>
@@ -98,8 +120,14 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
                 </div>
               </span>
             </span>
-            <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-              <Button variant="primary" size="sm">
+            <Link href={`/${workspaceSlug}/projects/${projectId}/cycles`}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  handleCurrentView("active");
+                }}
+              >
                 View Cycle
               </Button>
             </Link>

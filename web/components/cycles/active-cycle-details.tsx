@@ -155,6 +155,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     color: group.color,
   }));
 
+  const daysLeft = findHowManyDaysLeft(activeCycle.end_date ?? new Date());
+
   return (
     <div className="grid-row-2 grid divide-y rounded-[10px] border border-custom-border-200 bg-custom-background-100 shadow">
       <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
@@ -172,7 +174,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 </span>
                 <span className="flex items-center gap-1 capitalize">
                   <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
-                    {findHowManyDaysLeft(activeCycle.end_date ?? new Date())} Days Left
+                    {`${daysLeft} ${daysLeft > 1 ? "Days" : "Day"} Left`}
                   </span>
                   {activeCycle.is_favorite ? (
                     <button
@@ -289,9 +291,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
         </div>
       </div>
       <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
-        <div className="flex flex-col justify-between p-4 max-h-60 overflow-hidden">
+        <div className="flex flex-col gap-3 p-4 max-h-60 overflow-hidden">
           <div className="text-custom-primary">High Priority Issues</div>
-          <div className="my-3 flex flex-col gap-2.5 overflow-y-scroll rounded-md">
+          <div className="flex flex-col h-full gap-2.5 overflow-y-scroll rounded-md">
             {activeCycleIssues ? (
               activeCycleIssues.length > 0 ? (
                 activeCycleIssues.map((issue: any) => (
@@ -318,7 +320,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   </Link>
                 ))
               ) : (
-                <div className="grid place-items-center text-center text-sm text-custom-text-200">
+                <div className="flex items-center justify-center h-full text-sm text-custom-text-200">
                   There are no high priority issues present in this cycle.
                 </div>
               )
