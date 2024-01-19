@@ -21,10 +21,11 @@ import {
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
+import { StateDropdown } from "components/dropdowns";
 // icons
-import { ArrowRight, CalendarDays, Star, Target } from "lucide-react";
+import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
-import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
@@ -316,6 +317,23 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
                         <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
                       </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <StateDropdown
+                        value={issue.state_id ?? undefined}
+                        onChange={() => {}}
+                        projectId={projectId?.toString() ?? ""}
+                        disabled={true}
+                        buttonVariant="background-with-text"
+                      />
+                      {issue.target_date && (
+                        <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
+                          <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                            <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                            <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
+                          </div>
+                        </Tooltip>
+                      )}
                     </div>
                   </Link>
                 ))

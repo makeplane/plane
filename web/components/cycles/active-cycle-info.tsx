@@ -229,10 +229,12 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
                           buttonVariant="background-with-text"
                         />
                         {issue.target_date && (
-                          <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
-                            <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                            <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
-                          </div>
+                          <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
+                            <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                              <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                              <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
+                            </div>
+                          </Tooltip>
                         )}
                       </div>
                     </Link>
