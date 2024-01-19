@@ -134,7 +134,7 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
               />
             )}
           />
-          <p className="text-onboarding-text-200 text-xs mt-2">
+          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
             This password will continue to be your account{"'"}s password
           </p>
         </div>

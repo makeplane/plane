@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-import { CornerDownLeft, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
 import { UserService } from "services/user.service";
@@ -19,13 +18,10 @@ import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
-  updateEmail: (email: string) => void;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
-  submitButtonLabel?: string;
-  showTermsAndConditions?: boolean;
-  updateUserOnboardingStatus: (value: boolean) => void;
   handleEmailClear: () => void;
+  submitButtonText: string;
 };
 
 type TUniqueCodeFormValues = {
@@ -42,17 +38,8 @@ const defaultValues: TUniqueCodeFormValues = {
 const authService = new AuthService();
 const userService = new UserService();
 
-export const UniqueCodeForm: React.FC<Props> = (props) => {
-  const {
-    email,
-    updateEmail,
-    handleStepChange,
-    handleSignInRedirection,
-    submitButtonLabel = "Continue",
-    showTermsAndConditions = false,
-    updateUserOnboardingStatus,
-    handleEmailClear,
-  } = props;
+export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
+  const { email, handleStepChange, handleSignInRedirection, handleEmailClear, submitButtonText } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
@@ -62,7 +49,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   // form info
   const {
     control,
-    formState: { dirtyFields, errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid },
     getValues,
     handleSubmit,
     reset,
@@ -87,8 +74,6 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       .magicSignIn(payload)
       .then(async () => {
         const currentUser = await userService.currentUser();
-
-        updateUserOnboardingStatus(currentUser.is_onboarded);
 
         if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
         else await handleSignInRedirection();
@@ -131,13 +116,6 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
-  const handleFormSubmit = async (formData: TUniqueCodeFormValues) => {
-    updateEmail(formData.email);
-
-    if (dirtyFields.email) await handleSendNewCode(formData);
-    else await handleUniqueCodeSignIn(formData);
-  };
-
   const handleRequestNewCode = async () => {
     setIsRequestingNewCode(true);
 
@@ -147,21 +125,18 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   };
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
-  const hasEmailChanged = dirtyFields.email;
 
   useEffect(() => {
     setFocus("token");
   }, [setFocus]);
+
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
-        Get on your flight deck
-      </h1>
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
         Paste the code you got at <span className="font-semibold text-custom-primary-100">{email}</span> below.
       </p>
-
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
+      <form onSubmit={handleSubmit(handleUniqueCodeSignIn)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>
           <Controller
             control={control}
@@ -178,9 +153,6 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                   type="email"
                   value={value}
                   onChange={onChange}
-                  onBlur={() => {
-                    if (hasEmailChanged) handleSendNewCode(getValues());
-                  }}
                   ref={ref}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@frstflt.com"
@@ -196,21 +168,13 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          {hasEmailChanged && (
-            <button
-              type="submit"
-              className="mt-1.5 flex items-center gap-1 border-none bg-transparent text-xs text-onboarding-text-300 outline-none"
-            >
-              Hit <CornerDownLeft className="h-2.5 w-2.5" /> or <span className="italic">Tab</span> to get a new code
-            </button>
-          )}
         </div>
         <div>
           <Controller
             control={control}
             name="token"
             rules={{
-              required: hasEmailChanged ? false : "Code is required",
+              required: "Code is required",
             }}
             render={({ field: { value, onChange } }) => (
               <Input
@@ -241,24 +205,9 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
             </button>
           </div>
         </div>
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          size="xl"
-          disabled={!isValid || hasEmailChanged}
-          loading={isSubmitting}
-        >
-          {submitButtonLabel}
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
+          {submitButtonText}
         </Button>
-        {showTermsAndConditions && (
-          <p className="text-xs text-onboarding-text-200">
-            When you click the button above, you agree with our{" "}
-            <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-              <span className="font-semibold underline">terms and conditions of service.</span>
-            </Link>
-          </p>
-        )}
       </form>
     </>
   );

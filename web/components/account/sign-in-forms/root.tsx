@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication } from "hooks/store";
@@ -6,32 +7,25 @@ import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import { LatestFeatureBlock } from "components/common";
 import {
-  EmailForm,
-  UniqueCodeForm,
-  PasswordForm,
-  SetPasswordLink,
+  SignInEmailForm,
+  SignInUniqueCodeForm,
+  SignInPasswordForm,
   OAuthOptions,
-  OptionalSetPasswordForm,
-  CreatePasswordForm,
+  SignInOptionalSetPasswordForm,
 } from "components/account";
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",
   PASSWORD = "PASSWORD",
-  SET_PASSWORD_LINK = "SET_PASSWORD_LINK",
   UNIQUE_CODE = "UNIQUE_CODE",
   OPTIONAL_SET_PASSWORD = "OPTIONAL_SET_PASSWORD",
-  CREATE_PASSWORD = "CREATE_PASSWORD",
   USE_UNIQUE_CODE_FROM_PASSWORD = "USE_UNIQUE_CODE_FROM_PASSWORD",
 }
-
-const OAUTH_HIDDEN_STEPS = [ESignInSteps.OPTIONAL_SET_PASSWORD, ESignInSteps.CREATE_PASSWORD];
 
 export const SignInRoot = observer(() => {
   // states
   const [signInStep, setSignInStep] = useState<ESignInSteps>(ESignInSteps.EMAIL);
   const [email, setEmail] = useState("");
-  const [isOnboarded, setIsOnboarded] = useState(false);
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // mobx store
@@ -46,74 +40,66 @@ export const SignInRoot = observer(() => {
       <div className="mx-auto flex flex-col">
         <>
           {signInStep === ESignInSteps.EMAIL && (
-            <EmailForm
+            <SignInEmailForm
               handleStepChange={(step) => setSignInStep(step)}
               updateEmail={(newEmail) => setEmail(newEmail)}
-            />
-          )}
-          {signInStep === ESignInSteps.PASSWORD && (
-            <PasswordForm
-              email={email}
-              updateEmail={(newEmail) => setEmail(newEmail)}
-              handleStepChange={(step) => setSignInStep(step)}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              handleSignInRedirection={handleRedirection}
-            />
-          )}
-          {signInStep === ESignInSteps.SET_PASSWORD_LINK && (
-            <SetPasswordLink email={email} updateEmail={(newEmail) => setEmail(newEmail)} />
-          )}
-          {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
-            <UniqueCodeForm
-              email={email}
-              updateEmail={(newEmail) => setEmail(newEmail)}
-              handleStepChange={(step) => setSignInStep(step)}
-              handleSignInRedirection={handleRedirection}
-              submitButtonLabel="Go to workspace"
-              showTermsAndConditions
-              updateUserOnboardingStatus={(value) => setIsOnboarded(value)}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
             />
           )}
           {signInStep === ESignInSteps.UNIQUE_CODE && (
-            <UniqueCodeForm
+            <SignInUniqueCodeForm
               email={email}
-              updateEmail={(newEmail) => setEmail(newEmail)}
               handleStepChange={(step) => setSignInStep(step)}
               handleSignInRedirection={handleRedirection}
-              updateUserOnboardingStatus={(value) => setIsOnboarded(value)}
               handleEmailClear={() => {
                 setEmail("");
                 setSignInStep(ESignInSteps.EMAIL);
               }}
+              submitButtonText="Continue"
+            />
+          )}
+          {signInStep === ESignInSteps.PASSWORD && (
+            <SignInPasswordForm
+              email={email}
+              updateEmail={(newEmail) => setEmail(newEmail)}
+              handleStepChange={(step) => setSignInStep(step)}
+              handleEmailClear={() => {
+                setEmail("");
+                setSignInStep(ESignInSteps.EMAIL);
+              }}
+              handleSignInRedirection={handleRedirection}
+            />
+          )}
+          {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
+            <SignInUniqueCodeForm
+              email={email}
+              handleStepChange={(step) => setSignInStep(step)}
+              handleSignInRedirection={handleRedirection}
+              handleEmailClear={() => {
+                setEmail("");
+                setSignInStep(ESignInSteps.EMAIL);
+              }}
+              submitButtonText="Go to workspace"
             />
           )}
           {signInStep === ESignInSteps.OPTIONAL_SET_PASSWORD && (
-            <OptionalSetPasswordForm
+            <SignInOptionalSetPasswordForm
               email={email}
               handleStepChange={(step) => setSignInStep(step)}
               handleSignInRedirection={handleRedirection}
-              isOnboarded={isOnboarded}
-            />
-          )}
-          {signInStep === ESignInSteps.CREATE_PASSWORD && (
-            <CreatePasswordForm
-              email={email}
-              handleStepChange={(step) => setSignInStep(step)}
-              handleSignInRedirection={handleRedirection}
-              isOnboarded={isOnboarded}
             />
           )}
         </>
       </div>
-      {isOAuthEnabled && !OAUTH_HIDDEN_STEPS.includes(signInStep) && (
-        <OAuthOptions handleSignInRedirection={handleRedirection} />
+      {isOAuthEnabled && signInStep === ESignInSteps.EMAIL && (
+        <>
+          <OAuthOptions handleSignInRedirection={handleRedirection} />
+          <p className="text-xs text-onboarding-text-300 text-center mt-6">
+            Don{"'"}t have an account?{" "}
+            <Link href="/accounts/sign-up" className="text-custom-primary-100 font-medium underline">
+              Sign up
+            </Link>
+          </p>
+        </>
       )}
       <LatestFeatureBlock />
     </>

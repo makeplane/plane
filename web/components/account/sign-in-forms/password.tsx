@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -15,7 +16,6 @@ import { checkEmailValidity } from "helpers/string.helper";
 import { IPasswordSignInData } from "@plane/types";
 // constants
 import { ESignInSteps } from "components/account";
-import { observer } from "mobx-react-lite";
 
 type Props = {
   email: string;
@@ -37,11 +37,10 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const PasswordForm: React.FC<Props> = observer((props) => {
+export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   const { email, updateEmail, handleStepChange, handleSignInRedirection, handleEmailClear } = props;
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
-  const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
   const {
@@ -84,31 +83,6 @@ export const PasswordForm: React.FC<Props> = observer((props) => {
       );
   };
 
-  const handleForgotPassword = async () => {
-    const emailFormValue = getValues("email");
-
-    const isEmailValid = checkEmailValidity(emailFormValue);
-
-    if (!isEmailValid) {
-      setError("email", { message: "Email is invalid" });
-      return;
-    }
-
-    setIsSendingResetPasswordLink(true);
-
-    authService
-      .sendResetPasswordLink({ email: emailFormValue })
-      .then(() => handleStepChange(ESignInSteps.SET_PASSWORD_LINK))
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsSendingResetPasswordLink(false));
-  };
-
   const handleSendUniqueCode = async () => {
     const emailFormValue = getValues("email");
 
@@ -140,10 +114,13 @@ export const PasswordForm: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-semibold text-onboarding-text-100">
-        Get on your flight deck
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
+        Welcome back, let{"'"}s get you on board
       </h1>
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-11 space-y-4 sm:w-96">
+      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
+        Get back to your issues, projects and workspaces.
+      </p>
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>
           <Controller
             control={control}
@@ -193,20 +170,23 @@ export const PasswordForm: React.FC<Props> = observer((props) => {
               />
             )}
           />
-          <div className="w-full text-right">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className={`text-xs font-medium ${
-                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-custom-primary-100"
-              }`}
-              disabled={isSendingResetPasswordLink}
-            >
-              {isSendingResetPasswordLink ? "Sending link" : "Forgot your password?"}
-            </button>
+          <div className="w-full text-right mt-2 pb-3">
+            <Link href="/accounts/forgot-password" className="text-xs font-medium text-custom-primary-100">
+              Forgot your password?
+            </Link>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="space-y-2.5">
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full"
+            size="xl"
+            disabled={!isValid}
+            loading={isSubmitting}
+          >
+            {envConfig?.is_smtp_configured ? "Continue" : "Go to workspace"}
+          </Button>
           {envConfig && envConfig.is_smtp_configured && (
             <Button
               type="button"
@@ -216,26 +196,10 @@ export const PasswordForm: React.FC<Props> = observer((props) => {
               size="xl"
               loading={isSendingUniqueCode}
             >
-              {isSendingUniqueCode ? "Sending code" : "Use unique code"}
+              {isSendingUniqueCode ? "Sending code" : "Sign in with unique code"}
             </Button>
           )}
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full"
-            size="xl"
-            disabled={!isValid}
-            loading={isSubmitting}
-          >
-            Continue
-          </Button>
         </div>
-        <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
       </form>
     </>
   );
