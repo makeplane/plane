@@ -11,7 +11,6 @@ import {
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import { isNil } from "constants/common";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // lib
 import { storage } from "lib/local-storage";
@@ -76,8 +75,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       target_date: filters?.target_date || undefined,
       // display filters
       type: displayFilters?.type || undefined,
-      sub_issue: isNil(displayFilters?.sub_issue) ? true : displayFilters?.sub_issue,
-      start_target_date: isNil(displayFilters?.start_target_date) ? true : displayFilters?.start_target_date,
+      sub_issue: displayFilters?.sub_issue ?? true,
+      start_target_date: displayFilters?.start_target_date ?? true,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
@@ -169,19 +168,19 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns {IIssueDisplayProperties}
    */
   computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties => ({
-    assignee: displayProperties?.assignee || false,
-    start_date: displayProperties?.start_date || false,
-    due_date: displayProperties?.due_date || false,
-    labels: displayProperties?.labels || false,
-    priority: displayProperties?.priority || false,
-    state: displayProperties?.state || false,
-    sub_issue_count: displayProperties?.sub_issue_count || false,
-    attachment_count: displayProperties?.attachment_count || false,
-    estimate: displayProperties?.estimate || false,
-    link: displayProperties?.link || false,
-    key: displayProperties?.key || false,
-    created_on: displayProperties?.created_on || false,
-    updated_on: displayProperties?.updated_on || false,
+    assignee: displayProperties?.assignee ?? true,
+    start_date: displayProperties?.start_date ?? true,
+    due_date: displayProperties?.due_date ?? true,
+    labels: displayProperties?.labels ?? true,
+    priority: displayProperties?.priority ?? true,
+    state: displayProperties?.state ?? true,
+    sub_issue_count: displayProperties?.sub_issue_count ?? true,
+    attachment_count: displayProperties?.attachment_count ?? true,
+    link: displayProperties?.link ?? true,
+    estimate: displayProperties?.estimate ?? true,
+    key: displayProperties?.key ?? true,
+    created_on: displayProperties?.created_on ?? true,
+    updated_on: displayProperties?.updated_on ?? true,
   });
 
   handleIssuesLocalFilters = {

@@ -183,10 +183,10 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to state if layout is switched to kanban and group_by is null
+          // set group_by to priority if layout is switched to kanban and group_by is null
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
-            _filters.displayFilters.group_by = "state";
-            updatedDisplayFilters.group_by = "state";
+            _filters.displayFilters.group_by = "priority";
+            updatedDisplayFilters.group_by = "priority";
           }
 
           runInAction(() => {
