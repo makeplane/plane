@@ -98,7 +98,7 @@ function setCellsBackgroundColor(editor: Editor, backgroundColor: string) {
 const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Toggle Column Header",
-    icon: icons.insertBottomTableIcon,
+    icon: icons.toggleColumnHeader,
     action: ({ editor }: { editor: Editor }) => editor.chain().focus().toggleHeaderColumn().run(),
   },
   {
@@ -176,7 +176,7 @@ function setTableRowBackgroundColor(editor: Editor, backgroundColor: string) {
 const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Toggle Row Header",
-    icon: icons.insertBottomTableIcon,
+    icon: icons.toggleRowHeader,
     action: ({ editor }: { editor: Editor }) => editor.chain().focus().toggleHeaderRow().run(),
   },
   {
