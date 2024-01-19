@@ -1,23 +1,17 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { FileText, Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
-// services
-import { PageService } from "services/page.service";
+import { useApplication, usePage, useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// fetch-keys
-import { PAGE_DETAILS } from "constants/fetch-keys";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
 }
-const pageService = new PageService();
 
 export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { showButton = false } = props;
@@ -28,12 +22,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const { currentProjectDetails } = useProject();
 
-  const { data: pageDetails } = useSWR(
-    workspaceSlug && currentProjectDetails?.id && pageId ? PAGE_DETAILS(pageId as string) : null,
-    workspaceSlug && currentProjectDetails?.id
-      ? () => pageService.getPageDetails(workspaceSlug as string, currentProjectDetails.id, pageId as string)
-      : null
-  );
+  const pageDetails = usePage(pageId as string);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
