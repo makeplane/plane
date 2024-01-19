@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import type { TIssueRelation, TIssueRelationObject, TIssueRelationTypes } from "@plane/types";
+import type { TIssueRelation, TIssue, TIssueRelationTypes } from "@plane/types";
 
 export class IssueRelationService extends APIService {
   constructor() {
@@ -22,7 +22,7 @@ export class IssueRelationService extends APIService {
     projectId: string,
     issueId: string,
     data: { relation_type: TIssueRelationTypes; issues: string[] }
-  ): Promise<TIssueRelationObject[]> {
+  ): Promise<TIssue[]> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`, data)
       .then((response) => response?.data)
       .catch((error) => {

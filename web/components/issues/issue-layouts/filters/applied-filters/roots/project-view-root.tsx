@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import isEqual from "lodash/isEqual";
 // hooks
 import { useIssues, useLabel, useProjectState, useProjectView } from "hooks/store";
 // components
 import { AppliedFiltersList } from "components/issues";
 // ui
 import { Button } from "@plane/ui";
-// helpers
-import { areFiltersDifferent } from "helpers/filter.helper";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
@@ -33,10 +32,11 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const viewDetails = viewId ? viewMap[viewId.toString()] : null;
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
-  const appliedFilters: IIssueFilterOptions = {};
+  let appliedFilters: IIssueFilterOptions | undefined = undefined;
   Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
     if (Array.isArray(value) && value.length === 0) return;
+    if (!appliedFilters) appliedFilters = {};
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
@@ -78,9 +78,9 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { ...newFilters }, viewId);
   };
 
+  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
   // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0 && !areFiltersDifferent(appliedFilters, viewDetails?.filters ?? {}))
-    return null;
+  if (!appliedFilters && areFiltersEqual) return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
@@ -95,19 +95,23 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   return (
     <div className="flex items-center justify-between gap-4 p-4">
       <AppliedFiltersList
-        appliedFilters={appliedFilters}
+        appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
         states={projectStates}
+        alwaysAllowEditing
       />
 
-      {viewDetails?.filters && areFiltersDifferent(appliedFilters, viewDetails?.filters ?? {}) && (
-        <div className="flex flex-shrink-0 items-center justify-center">
-          <Button variant="primary" size="sm" onClick={handleUpdateView}>
-            Update view
-          </Button>
-        </div>
+      {!areFiltersEqual && (
+        <>
+          <div />
+          <div className="flex flex-shrink-0 items-center justify-center">
+            <Button variant="primary" size="sm" onClick={handleUpdateView}>
+              Update view
+            </Button>
+          </div>
+        </>
       )}
     </div>
   );

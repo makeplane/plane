@@ -52,7 +52,6 @@ from plane.app.serializers import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
-    IssueRelationLiteSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,

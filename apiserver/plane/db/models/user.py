@@ -6,20 +6,12 @@ import pytz
 
 # Django imports
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.contrib.auth.models import (
     AbstractBaseUser,
     UserManager,
     PermissionsMixin,
 )
 from django.utils import timezone
-from django.conf import settings
-
-# Third party imports
-from sentry_sdk import capture_exception
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 
 def get_default_onboarding():
@@ -142,23 +134,3 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.is_staff = True
 
         super(User, self).save(*args, **kwargs)
-
-
-@receiver(post_save, sender=User)
-def send_welcome_slack(sender, instance, created, **kwargs):
-    try:
-        if created and not instance.is_bot:
-            # Send message on slack as well
-            if settings.SLACK_BOT_TOKEN:
-                client = WebClient(token=settings.SLACK_BOT_TOKEN)
-                try:
-                    _ = client.chat_postMessage(
-                        channel="#trackers",
-                        text=f"New user {instance.email} has signed up and begun the onboarding journey.",
-                    )
-                except SlackApiError as e:
-                    print(f"Got an error: {e.response['error']}")
-        return
-    except Exception as e:
-        capture_exception(e)
-        return

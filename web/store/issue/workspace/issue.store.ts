@@ -15,7 +15,7 @@ export interface IWorkspaceIssues {
   issues: { [viewId: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: TUnGroupedIssues | undefined;
+  groupedIssueIds: { dataViewId: string; issueIds: TUnGroupedIssues | undefined };
   // actions
   fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (
@@ -59,7 +59,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     makeObservable(this, {
       // observable
       loader: observable.ref,
-      issues: observable.ref,
+      issues: observable,
       // computed
       groupedIssueIds: computed,
       // action
@@ -77,30 +77,32 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
   get groupedIssueIds() {
     const viewId = this.rootIssueStore.globalViewId;
-    if (!viewId) return undefined;
+    if (!viewId) return { dataViewId: "", issueIds: undefined };
 
-    const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters) return undefined;
+    const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.filters?.[viewId]?.displayFilters;
+    if (!displayFilters) return { dataViewId: viewId, issueIds: undefined };
 
     const orderBy = displayFilters?.order_by;
 
-    const viewIssueIds = this.issues[viewId] ?? [];
+    const viewIssueIds = this.issues[viewId];
+
+    if (!viewIssueIds) return { dataViewId: viewId, issueIds: undefined };
 
     const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return { dataViewId: viewId, issueIds: [] };
 
-    let issues: TIssue | TUnGroupedIssues | undefined = undefined;
+    let issueIds: TIssue | TUnGroupedIssues | undefined = undefined;
 
-    issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
+    issueIds = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
 
-    return issues;
+    return { dataViewId: viewId, issueIds };
   }
 
   fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader = "init-loader") => {
     try {
       this.loader = loadType;
 
-      const params = this.rootIssueStore?.workspaceIssuesFilter?.appliedFilters;
+      const params = this.rootIssueStore?.workspaceIssuesFilter?.getAppliedFilters(viewId);
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
       runInAction(() => {

@@ -1,6 +1,8 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
+import pickBy from "lodash/pickBy";
+import isArray from "lodash/isArray";
 // base class
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
@@ -157,8 +159,14 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
               set(this.filters, [moduleId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
             });
           });
-
-          this.rootIssueStore.moduleIssues.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
+          const appliedFilters = _filters.filters || {};
+          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
+          this.rootIssueStore.moduleIssues.fetchIssues(
+            workspaceSlug,
+            projectId,
+            isEmpty(filteredFilters) ? "init-loader" : "mutation",
+            moduleId
+          );
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             filters: _filters.filters,
           });

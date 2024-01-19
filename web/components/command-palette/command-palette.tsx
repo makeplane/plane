@@ -60,6 +60,7 @@ export const CommandPalette: FC = observer(() => {
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
     isAnyModalOpen,
+    createIssueStoreType,
   } = commandPalette;
 
   const { setToastAlert } = useToast();
@@ -216,6 +217,7 @@ export const CommandPalette: FC = observer(() => {
         isOpen={isCreateIssueModalOpen}
         onClose={() => toggleCreateIssueModal(false)}
         data={cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_id: moduleId.toString() } : undefined}
+        storeType={createIssueStoreType}
       />
 
       {workspaceSlug && projectId && issueId && issueDetails && (

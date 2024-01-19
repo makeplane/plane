@@ -35,7 +35,7 @@ const workspaceLinks = (workspaceSlug: string) => [
   },
   {
     Icon: SendToBack,
-    name: "Active Cycles",
+    name: "Active cycles",
     href: `/${workspaceSlug}/active-cycles`,
   },
 ];
@@ -75,6 +75,17 @@ export const WorkspaceSidebarMenu = observer(() => {
                 >
                   {<link.Icon className="h-4 w-4" />}
                   {!themeStore?.sidebarCollapsed && link.name}
+                  {link.name === "Active Cycles" && (
+                    <span
+                      className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl"
+                      style={{
+                        color: "#F59E0B",
+                        backgroundColor: "#F59E0B20",
+                      }}
+                    >
+                      Beta
+                    </span>
+                  )}
                 </div>
               </Tooltip>
             </span>

@@ -20,6 +20,7 @@
     "@nivo/core": "0.80.0",
     "@nivo/legends": "0.80.0",
     "@nivo/line": "0.80.0",
+    "@nivo/marimekko": "0.80.0",
     "@nivo/pie": "0.80.0",
     "@nivo/scatterplot": "0.80.0",
     "@plane/document-editor": "*",

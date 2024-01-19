@@ -17,6 +17,17 @@
     "lint": "eslint src/",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
+  "dependencies": {
+    "@blueprintjs/core": "^4.16.3",
+    "@blueprintjs/popover2": "^1.13.3",
+    "@headlessui/react": "^1.7.17",
+    "@popperjs/core": "^2.11.8",
+    "clsx": "^2.0.0",
+    "react-color": "^2.19.3",
+    "react-dom": "^18.2.0",
+    "react-popper": "^2.3.0",
+    "tailwind-merge": "^2.0.0"
+  },
   "devDependencies": {
     "@types/node": "^20.5.2",
     "@types/react": "^18.2.42",
@@ -29,14 +40,5 @@
     "tsconfig": "*",
     "tsup": "^5.10.1",
     "typescript": "4.7.4"
-  },
-  "dependencies": {
-    "@blueprintjs/core": "^4.16.3",
-    "@blueprintjs/popover2": "^1.13.3",
-    "@headlessui/react": "^1.7.17",
-    "@popperjs/core": "^2.11.8",
-    "react-color": "^2.19.3",
-    "react-dom": "^18.2.0",
-    "react-popper": "^2.3.0"
   }
 }

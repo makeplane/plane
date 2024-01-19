@@ -14,7 +14,7 @@ type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  issues: TIssue[] | undefined;
+  issueIds: string[] | undefined;
   quickActions: (
     issue: TIssue,
     customActionButton?: React.ReactElement,
@@ -39,7 +39,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
-    issues,
+    issueIds,
     quickActions,
     handleIssues,
     quickAddCallback,
@@ -91,7 +91,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     };
   }, []);
 
-  if (!issues || issues.length === 0)
+  if (!issueIds || issueIds.length === 0)
     return (
       <div className="grid h-full w-full place-items-center">
         <Spinner />
@@ -106,7 +106,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           displayProperties={displayProperties}
           displayFilters={displayFilters}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-          issues={issues}
+          issueIds={issueIds}
           isEstimateEnabled={isEstimateEnabled}
           portalElement={portalRef}
           quickActions={quickActions}

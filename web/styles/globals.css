@@ -78,6 +78,7 @@
       0px 1px 32px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
 
     --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
     --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
@@ -102,6 +103,7 @@
     --color-sidebar-shadow-xl: var(--color-shadow-xl);
     --color-sidebar-shadow-2xl: var(--color-shadow-2xl);
     --color-sidebar-shadow-3xl: var(--color-shadow-3xl);
+    --color-sidebar-shadow-4xl: var(--color-shadow-4xl);
   }
 
   [data-theme="light"],
@@ -127,10 +129,10 @@
     --color-border-400: 185, 185, 185; /* strong border- 2 */
 
     /* onboarding colors */
-    --gradient-onboarding-100: linear-gradient(106deg, #F2F6FF 29.8%, #E1EAFF 99.34%);
-    --gradient-onboarding-200: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
-    --gradient-onboarding-300: linear-gradient(164deg, #FFF 4.25%, rgba(255, 255, 255, 0.06) 93.5%);
-    --gradient-onboarding-400: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
+    --gradient-onboarding-100: linear-gradient(106deg, #f2f6ff 29.8%, #e1eaff 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
+    --gradient-onboarding-300: linear-gradient(164deg, #fff 4.25%, rgba(255, 255, 255, 0.06) 93.5%);
+    --gradient-onboarding-400: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
 
     --color-onboarding-text-100: 23, 23, 23;
     --color-onboarding-text-200: 58, 58, 58;
@@ -140,14 +142,13 @@
     --color-onboarding-background-100: 236, 241, 255;
     --color-onboarding-background-200: 255, 255, 255;
     --color-onboarding-background-300: 236, 241, 255;
-    --color-onboarding-background-400: 177, 206, 250; 
+    --color-onboarding-background-400: 177, 206, 250;
 
     --color-onboarding-border-100: 229, 229, 229;
     --color-onboarding-border-200: 217, 228, 255;
     --color-onboarding-border-300: 229, 229, 229, 0.5;
 
-    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.10);
-    
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.1);
   }
 
   [data-theme="light-contrast"] {
@@ -196,11 +197,9 @@
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
 
-
-
     /* onboarding colors */
-    --gradient-onboarding-100: linear-gradient(106deg, #18191B 25.17%, #18191B 99.34%);
-    --gradient-onboarding-200: linear-gradient(129deg, rgba(47, 49, 53, 0.80) -22.23%, rgba(33, 34, 37, 0.80) 62.98%);
+    --gradient-onboarding-100: linear-gradient(106deg, #18191b 25.17%, #18191b 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(47, 49, 53, 0.8) -22.23%, rgba(33, 34, 37, 0.8) 62.98%);
     --gradient-onboarding-300: linear-gradient(167deg, rgba(47, 49, 53, 0.45) 19.22%, #212225 98.48%);
 
     --color-onboarding-text-100: 237, 238, 240;
@@ -208,17 +207,16 @@
     --color-onboarding-text-300: 118, 123, 132;
     --color-onboarding-text-400: 105, 110, 119;
 
-    --color-onboarding-background-100: 54, 58, 64; 
-    --color-onboarding-background-200: 40, 42, 45; 
-    --color-onboarding-background-300: 40, 42, 45; 
+    --color-onboarding-background-100: 54, 58, 64;
+    --color-onboarding-background-200: 40, 42, 45;
+    --color-onboarding-background-300: 40, 42, 45;
     --color-onboarding-background-400: 67, 72, 79;
 
     --color-onboarding-border-100: 54, 58, 64;
     --color-onboarding-border-200: 54, 58, 64;
     --color-onboarding-border-300: 34, 35, 38, 0.5;
 
-    --color-onboarding-shadow-sm:  0px 4px 20px 0px rgba(39, 44, 56, 0.10);
-    
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(39, 44, 56, 0.1);
   }
 
   [data-theme="dark-contrast"] {
@@ -540,4 +538,3 @@ div.web-view-spinner div.bar12 {
   animation-delay: -0.0833s;
   -webkit-animation-delay: -0.0833s;
 }
-
