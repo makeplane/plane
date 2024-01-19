@@ -19,10 +19,9 @@ import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
-  updateEmail: (email: string) => void;
   handleStepChange: (step: ESignInSteps) => void;
-  handleSignInRedirection: () => Promise<void>;
   handleEmailClear: () => void;
+  onSubmit: () => Promise<void>;
 };
 
 type TPasswordFormValues = {
@@ -38,7 +37,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const SignInPasswordForm: React.FC<Props> = observer((props) => {
-  const { email, updateEmail, handleStepChange, handleSignInRedirection, handleEmailClear } = props;
+  const { email, handleStepChange, handleEmailClear, onSubmit } = props;
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   // toast alert
@@ -49,7 +48,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   // form info
   const {
     control,
-    formState: { dirtyFields, errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid },
     getValues,
     handleSubmit,
     setError,
@@ -64,8 +63,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   });
 
   const handleFormSubmit = async (formData: TPasswordFormValues) => {
-    updateEmail(formData.email);
-
     const payload: IPasswordSignInData = {
       email: formData.email,
       password: formData.password,
@@ -73,7 +70,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
 
     await authService
       .passwordSignIn(payload)
-      .then(async () => await handleSignInRedirection())
+      .then(async () => await onSubmit())
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -157,7 +154,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             control={control}
             name="password"
             rules={{
-              required: dirtyFields.email ? false : "Password is required",
+              required: "Password is required",
             }}
             render={({ field: { value, onChange } }) => (
               <Input
@@ -171,7 +168,10 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             )}
           />
           <div className="w-full text-right mt-2 pb-3">
-            <Link href="/accounts/forgot-password" className="text-xs font-medium text-custom-primary-100">
+            <Link
+              href={`/accounts/forgot-password?email=${email}`}
+              className="text-xs font-medium text-custom-primary-100"
+            >
               Forgot your password?
             </Link>
           </div>

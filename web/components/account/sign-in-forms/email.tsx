@@ -6,18 +6,15 @@ import { observer } from "mobx-react-lite";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData } from "@plane/types";
-// constants
-import { ESignInSteps } from "components/account";
 
 type Props = {
-  handleStepChange: (step: ESignInSteps) => void;
+  onSubmit: (isPasswordAutoset: boolean) => void;
   updateEmail: (email: string) => void;
 };
 
@@ -28,12 +25,9 @@ type TEmailFormValues = {
 const authService = new AuthService();
 
 export const SignInEmailForm: React.FC<Props> = observer((props) => {
-  const { handleStepChange, updateEmail } = props;
+  const { onSubmit, updateEmail } = props;
   // hooks
   const { setToastAlert } = useToast();
-  const {
-    config: { envConfig },
-  } = useApplication();
   const {
     control,
     formState: { errors, isSubmitting, isValid },
@@ -56,12 +50,7 @@ export const SignInEmailForm: React.FC<Props> = observer((props) => {
 
     await authService
       .emailCheck(payload)
-      .then((res) => {
-        // if the password has been auto set, send the user to magic sign-in
-        if (envConfig?.is_smtp_configured && res.is_password_autoset) handleStepChange(ESignInSteps.UNIQUE_CODE);
-        // if the password has not been auto set, send them to password sign-in
-        else handleStepChange(ESignInSteps.PASSWORD);
-      })
+      .then((res) => onSubmit(res.is_password_autoset))
       .catch((err) =>
         setToastAlert({
           type: "error",

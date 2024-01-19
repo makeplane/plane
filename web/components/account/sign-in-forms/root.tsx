@@ -33,6 +33,23 @@ export const SignInRoot = observer(() => {
     config: { envConfig },
   } = useApplication();
 
+  // step 1 submit handler- email verification
+  const handleEmailVerification = (isPasswordAutoset: boolean) => {
+    if (envConfig?.is_smtp_configured && isPasswordAutoset) setSignInStep(ESignInSteps.UNIQUE_CODE);
+    else setSignInStep(ESignInSteps.PASSWORD);
+  };
+
+  // step 2 submit handler- unique code sign in
+  const handleUniqueCodeSignIn = async (isPasswordAutoset: boolean) => {
+    if (isPasswordAutoset) setSignInStep(ESignInSteps.OPTIONAL_SET_PASSWORD);
+    else await handleRedirection();
+  };
+
+  // step 3 submit handler- password sign in
+  const handlePasswordSignIn = async () => {
+    await handleRedirection();
+  };
+
   const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
 
   return (
@@ -40,53 +57,43 @@ export const SignInRoot = observer(() => {
       <div className="mx-auto flex flex-col">
         <>
           {signInStep === ESignInSteps.EMAIL && (
-            <SignInEmailForm
-              handleStepChange={(step) => setSignInStep(step)}
-              updateEmail={(newEmail) => setEmail(newEmail)}
-            />
+            <SignInEmailForm onSubmit={handleEmailVerification} updateEmail={(newEmail) => setEmail(newEmail)} />
           )}
           {signInStep === ESignInSteps.UNIQUE_CODE && (
             <SignInUniqueCodeForm
               email={email}
-              handleStepChange={(step) => setSignInStep(step)}
-              handleSignInRedirection={handleRedirection}
               handleEmailClear={() => {
                 setEmail("");
                 setSignInStep(ESignInSteps.EMAIL);
               }}
+              onSubmit={handleUniqueCodeSignIn}
               submitButtonText="Continue"
             />
           )}
           {signInStep === ESignInSteps.PASSWORD && (
             <SignInPasswordForm
               email={email}
-              updateEmail={(newEmail) => setEmail(newEmail)}
+              onSubmit={handlePasswordSignIn}
               handleStepChange={(step) => setSignInStep(step)}
               handleEmailClear={() => {
                 setEmail("");
                 setSignInStep(ESignInSteps.EMAIL);
               }}
-              handleSignInRedirection={handleRedirection}
             />
           )}
           {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
             <SignInUniqueCodeForm
               email={email}
-              handleStepChange={(step) => setSignInStep(step)}
-              handleSignInRedirection={handleRedirection}
               handleEmailClear={() => {
                 setEmail("");
                 setSignInStep(ESignInSteps.EMAIL);
               }}
+              onSubmit={handleUniqueCodeSignIn}
               submitButtonText="Go to workspace"
             />
           )}
           {signInStep === ESignInSteps.OPTIONAL_SET_PASSWORD && (
-            <SignInOptionalSetPasswordForm
-              email={email}
-              handleStepChange={(step) => setSignInStep(step)}
-              handleSignInRedirection={handleRedirection}
-            />
+            <SignInOptionalSetPasswordForm email={email} handleSignInRedirection={handleRedirection} />
           )}
         </>
       </div>

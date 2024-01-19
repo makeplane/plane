@@ -31,6 +31,23 @@ export const SignUpRoot = observer(() => {
     config: { envConfig },
   } = useApplication();
 
+  // step 1 submit handler- email verification
+  const handleEmailVerification = () => {
+    if (envConfig?.is_smtp_configured) setSignInStep(ESignUpSteps.UNIQUE_CODE);
+    else setSignInStep(ESignUpSteps.PASSWORD);
+  };
+
+  // step 2 submit handler- unique code sign in
+  const handleUniqueCodeSignIn = async (isPasswordAutoset: boolean) => {
+    if (isPasswordAutoset) setSignInStep(ESignUpSteps.OPTIONAL_SET_PASSWORD);
+    else await handleRedirection();
+  };
+
+  // step 3 submit handler- password sign in
+  const handlePasswordSignIn = async () => {
+    await handleRedirection();
+  };
+
   const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
 
   return (
@@ -38,23 +55,26 @@ export const SignUpRoot = observer(() => {
       <div className="mx-auto flex flex-col">
         <>
           {signInStep === ESignUpSteps.EMAIL && (
-            <SignUpEmailForm
-              handleStepChange={(step) => setSignInStep(step)}
-              updateEmail={(newEmail) => setEmail(newEmail)}
-            />
+            <SignUpEmailForm onSubmit={handleEmailVerification} updateEmail={(newEmail) => setEmail(newEmail)} />
           )}
           {signInStep === ESignUpSteps.UNIQUE_CODE && (
             <SignUpUniqueCodeForm
               email={email}
-              handleSignInRedirection={handleRedirection}
-              handleStepChange={(step) => setSignInStep(step)}
+              handleEmailClear={() => {
+                setEmail("");
+                setSignInStep(ESignUpSteps.EMAIL);
+              }}
+              onSubmit={handleUniqueCodeSignIn}
             />
           )}
           {signInStep === ESignUpSteps.PASSWORD && (
             <SignUpPasswordForm
               email={email}
-              handleEmailClear={() => setSignInStep(ESignUpSteps.EMAIL)}
-              handleSignInRedirection={handleRedirection}
+              handleEmailClear={() => {
+                setEmail("");
+                setSignInStep(ESignUpSteps.EMAIL);
+              }}
+              onSubmit={handlePasswordSignIn}
             />
           )}
           {signInStep === ESignUpSteps.OPTIONAL_SET_PASSWORD && (

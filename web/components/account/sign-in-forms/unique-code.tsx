@@ -13,13 +13,10 @@ import { Button, Input } from "@plane/ui";
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
-// constants
-import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
-  handleStepChange: (step: ESignInSteps) => void;
-  handleSignInRedirection: () => Promise<void>;
+  onSubmit: (isPasswordAutoset: boolean) => Promise<void>;
   handleEmailClear: () => void;
   submitButtonText: string;
 };
@@ -39,7 +36,7 @@ const authService = new AuthService();
 const userService = new UserService();
 
 export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, handleStepChange, handleSignInRedirection, handleEmailClear, submitButtonText } = props;
+  const { email, onSubmit, handleEmailClear, submitButtonText } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
@@ -75,8 +72,7 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
       .then(async () => {
         const currentUser = await userService.currentUser();
 
-        if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
-        else await handleSignInRedirection();
+        await onSubmit(currentUser.is_password_autoset);
       })
       .catch((err) =>
         setToastAlert({

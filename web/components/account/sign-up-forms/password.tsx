@@ -16,8 +16,8 @@ import { IPasswordSignInData } from "@plane/types";
 
 type Props = {
   email: string;
-  handleSignInRedirection: () => Promise<void>;
   handleEmailClear: () => void;
+  onSubmit: () => Promise<void>;
 };
 
 type TPasswordFormValues = {
@@ -33,13 +33,13 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
-  const { email, handleSignInRedirection, handleEmailClear } = props;
+  const { email, handleEmailClear, onSubmit } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
     control,
-    formState: { dirtyFields, errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
     setFocus,
   } = useForm<TPasswordFormValues>({
@@ -59,7 +59,7 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
 
     await authService
       .passwordSignIn(payload)
-      .then(async () => await handleSignInRedirection())
+      .then(async () => await onSubmit())
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -78,9 +78,7 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
       <h1 className="sm:text-2.5xl text-center text-2xl font-semibold text-onboarding-text-100">
         Moving to the runway
       </h1>
-      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Let{"'"}s set a password so you can do away with codes.
-      </p>
+      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">Can{"'"}t wait to have you on board.</p>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>
           <Controller
@@ -118,7 +116,7 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
             control={control}
             name="password"
             rules={{
-              required: dirtyFields.email ? false : "Password is required",
+              required: "Password is required",
             }}
             render={({ field: { value, onChange } }) => (
               <Input

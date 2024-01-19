@@ -6,18 +6,15 @@ import { observer } from "mobx-react-lite";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData } from "@plane/types";
-// constants
-import { ESignUpSteps } from "components/account";
 
 type Props = {
-  handleStepChange: (step: ESignUpSteps) => void;
+  onSubmit: () => void;
   updateEmail: (email: string) => void;
 };
 
@@ -28,12 +25,9 @@ type TEmailFormValues = {
 const authService = new AuthService();
 
 export const SignUpEmailForm: React.FC<Props> = observer((props) => {
-  const { handleStepChange, updateEmail } = props;
+  const { onSubmit, updateEmail } = props;
   // hooks
   const { setToastAlert } = useToast();
-  const {
-    config: { envConfig },
-  } = useApplication();
   const {
     control,
     formState: { errors, isSubmitting, isValid },
@@ -56,12 +50,7 @@ export const SignUpEmailForm: React.FC<Props> = observer((props) => {
 
     await authService
       .emailCheck(payload)
-      .then(() => {
-        // if SMTP is configured, send the user to unique code form
-        if (envConfig?.is_smtp_configured) handleStepChange(ESignUpSteps.UNIQUE_CODE);
-        // if SMTP is not configured, send the user to password form
-        else handleStepChange(ESignUpSteps.PASSWORD);
-      })
+      .then(() => onSubmit())
       .catch((err) =>
         setToastAlert({
           type: "error",

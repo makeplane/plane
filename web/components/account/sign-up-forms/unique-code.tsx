@@ -14,13 +14,11 @@ import { Button, Input } from "@plane/ui";
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
-// constants
-import { ESignUpSteps } from "components/account";
 
 type Props = {
   email: string;
-  handleStepChange: (step: ESignUpSteps) => void;
-  handleSignInRedirection: () => Promise<void>;
+  handleEmailClear: () => void;
+  onSubmit: (isPasswordAutoset: boolean) => Promise<void>;
 };
 
 type TUniqueCodeFormValues = {
@@ -38,7 +36,7 @@ const authService = new AuthService();
 const userService = new UserService();
 
 export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, handleStepChange, handleSignInRedirection } = props;
+  const { email, handleEmailClear, onSubmit } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
@@ -74,8 +72,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
       .then(async () => {
         const currentUser = await userService.currentUser();
 
-        if (currentUser.is_password_autoset) handleStepChange(ESignUpSteps.OPTIONAL_SET_PASSWORD);
-        else await handleSignInRedirection();
+        await onSubmit(currentUser.is_password_autoset);
       })
       .catch((err) =>
         setToastAlert({
@@ -162,7 +159,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
                 {value.length > 0 && (
                   <XCircle
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => handleStepChange(ESignUpSteps.EMAIL)}
+                    onClick={handleEmailClear}
                   />
                 )}
               </div>

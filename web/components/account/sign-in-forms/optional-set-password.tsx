@@ -8,12 +8,9 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
-// constants
-import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
-  handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
