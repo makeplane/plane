@@ -132,7 +132,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@frstflt.com"
+                  placeholder="name@company.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                   disabled={isSmtpConfigured}
                 />
