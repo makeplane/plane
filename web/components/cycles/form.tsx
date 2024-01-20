@@ -126,6 +126,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                         onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                         buttonVariant="border-with-text"
                         placeholder="Start date"
+                        minDate={new Date()}
                         maxDate={maxDate ?? undefined}
                         tabIndex={3}
                       />

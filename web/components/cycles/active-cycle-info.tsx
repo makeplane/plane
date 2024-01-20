@@ -1,30 +1,19 @@
-import { FC, MouseEvent, useCallback } from "react";
+import { FC, useCallback } from "react";
 import Link from "next/link";
-// ui
-import {
-  AvatarGroup,
-  Tooltip,
-  LinearProgressIndicator,
-  ContrastIcon,
-  RunningIcon,
-  LayersIcon,
-  StateGroupIcon,
-  Avatar,
-} from "@plane/ui";
-// components
-import { SingleProgressStats } from "components/core";
-import { ActiveCycleProgressStats } from "./active-cycle-stats";
 // hooks
-import { useCycle } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
-// icons
-import { ArrowRight, CalendarDays, Star, Target } from "lucide-react";
+// ui
+import { Tooltip, LinearProgressIndicator, Loader, PriorityIcon, Button, CycleGroupIcon } from "@plane/ui";
+import { CalendarCheck } from "lucide-react";
+// components
+import ProgressChart from "components/core/sidebar/progress-chart";
+import { StateDropdown } from "components/dropdowns";
 // types
-import { ICycle, TCycleLayout, TCycleView } from "@plane/types";
+import { ICycle, TCycleGroups, TCycleLayout, TCycleView } from "@plane/types";
 // helpers
-import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { STATE_GROUPS_DETAILS } from "constants/cycle";
 
@@ -36,29 +25,11 @@ export type ActiveCycleInfoProps = {
 
 export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
-
-  // store
-  const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   // local storage
   const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
   const { setValue: setCycleLayout } = useLocalStorage<TCycleLayout>("cycle_layout", "list");
-  // toast alert
-  const { setToastAlert } = useToast();
 
-  const groupedIssues: any = {
-    backlog: cycle.backlog_issues,
-    unstarted: cycle.unstarted_issues,
-    started: cycle.started_issues,
-    completed: cycle.completed_issues,
-    cancelled: cycle.cancelled_issues,
-  };
-
-  const progressIndicatorData = STATE_GROUPS_DETAILS.map((group, index) => ({
-    id: index,
-    name: group.title,
-    value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
-    color: group.color,
-  }));
+  const cycleIssues = cycle.issues ?? [];
 
   const handleCurrentLayout = useCallback(
     (_layout: TCycleLayout) => {
@@ -75,93 +46,70 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
     [handleCurrentLayout, setCycleTab]
   );
 
-  const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (!workspaceSlug || !projectId) return;
-
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
-    });
+  const groupedIssues: any = {
+    completed: cycle.completed_issues,
+    started: cycle.started_issues,
+    unstarted: cycle.unstarted_issues,
+    backlog: cycle.backlog_issues,
   };
 
-  const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (!workspaceSlug || !projectId) return;
+  const progressIndicatorData = STATE_GROUPS_DETAILS.map((group, index) => ({
+    id: index,
+    name: group.title,
+    value: cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
+    color: group.color,
+  }));
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
-    });
-  };
+  const cuurentCycle = cycle.status.toLowerCase() as TCycleGroups;
+
+  const daysLeft = findHowManyDaysLeft(cycle.end_date ?? new Date());
 
   return (
-    <div className="grid-row-2 grid divide-y rounded-[10px] border border-custom-border-200 bg-custom-background-100 shadow">
-      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-        <div className="flex flex-col text-xs">
-          <div className="h-full w-full">
-            <div className="flex h-60 flex-col justify-between gap-5 rounded-b-[10px] p-4">
-              <div className="flex items-center justify-between gap-1">
-                <span className="flex items-center gap-1">
-                  <span className="h-5 w-5">
-                    <ContrastIcon className="h-5 w-5" color="#09A953" />
-                  </span>
-                  <Tooltip tooltipContent={cycle.name} position="top-left">
-                    <h3 className="break-words text-lg font-semibold">{truncateText(cycle.name, 70)}</h3>
-                  </Tooltip>
-                </span>
-                <span className="flex items-center gap-1 capitalize">
-                  <span className="rounded-full px-1.5 py-0.5 bg-green-600/5 text-green-600">
-                    <span className="flex gap-1 whitespace-nowrap">
-                      <RunningIcon className="h-4 w-4" />
-                      {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
-                    </span>
-                  </span>
-                  {cycle.is_favorite ? (
-                    <button
-                      onClick={(e) => {
-                        handleRemoveFromFavorites(e);
-                      }}
-                    >
-                      <Star className="h-4 w-4 fill-orange-400 text-orange-400" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        handleAddToFavorites(e);
-                      }}
-                    >
-                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
-                    </button>
-                  )}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-start gap-5 text-custom-text-200">
-                <div className="flex items-start gap-1">
-                  <CalendarDays className="h-4 w-4" />
-                  {cycle?.start_date && <span>{renderFormattedDate(cycle?.start_date)}</span>}
-                </div>
-                <ArrowRight className="h-4 w-4 text-custom-text-200" />
-                <div className="flex items-start gap-1">
-                  <Target className="h-4 w-4" />
-                  {cycle?.end_date && <span>{renderFormattedDate(cycle?.end_date)}</span>}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2.5 text-custom-text-200">
+    <>
+      <div className="flex items-center gap-1.5 px-3 py-1.5">
+        {cycle.project_detail.emoji ? (
+          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+            {renderEmoji(cycle.project_detail.emoji)}
+          </span>
+        ) : cycle.project_detail.icon_prop ? (
+          <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
+            {renderEmoji(cycle.project_detail.icon_prop)}
+          </div>
+        ) : (
+          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+            {cycle.project_detail?.name.charAt(0)}
+          </span>
+        )}
+        <h2 className="text-xl font-semibold">{cycle.project_detail.name}</h2>
+      </div>
+      <div className="flex flex-col gap-2 rounded border border-custom-border-200">
+        <div className="flex items-center justify-between px-3 pt-3 pb-1">
+          <div className="flex items-center gap-2 cursor-default">
+            <CycleGroupIcon cycleGroup={cuurentCycle} className="h-4 w-4" />
+            <Tooltip tooltipContent={cycle.name} position="top-left">
+              <h3 className="break-words text-lg font-medium">{truncateText(cycle.name, 70)}</h3>
+            </Tooltip>
+            <Tooltip
+              tooltipContent={`Start date: ${renderFormattedDate(
+                cycle.start_date ?? ""
+              )} Due Date: ${renderFormattedDate(cycle.end_date ?? "")}`}
+              position="top-left"
+            >
+              <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
+                {`${daysLeft} ${daysLeft > 1 ? "Days" : "Day"} Left`}
+              </span>
+            </Tooltip>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <span className="rounded-sm text-sm px-3 py-1 bg-custom-background-80">
+              <span className="flex gap-2 text-sm whitespace-nowrap font-medium">
+                <span>Lead:</span>
+                <div className="flex items-center gap-1.5">
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                     <img
                       src={cycle.owned_by.avatar}
-                      height={16}
-                      width={16}
+                      height={18}
+                      width={18}
                       className="rounded-full"
                       alt={cycle.owned_by.display_name}
                     />
@@ -170,85 +118,143 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
                       {cycle.owned_by.display_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-custom-text-200">{cycle.owned_by.display_name}</span>
+                  <span>{cycle.owned_by.display_name}</span>
                 </div>
-
-                {cycle.assignees.length > 0 && (
-                  <div className="flex items-center gap-1 text-custom-text-200">
-                    <AvatarGroup>
-                      {cycle.assignees.map((assignee: any) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
-                    </AvatarGroup>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-4 text-custom-text-200">
-                <div className="flex gap-2">
-                  <LayersIcon className="h-4 w-4 flex-shrink-0" />
-                  {cycle.total_issues} issues
-                </div>
-                <div className="flex items-center gap-2">
-                  <StateGroupIcon stateGroup="completed" height="14px" width="14px" />
-                  {cycle.completed_issues} issues
-                </div>
-              </div>
-              <div className="flex item-center gap-2">
-                <Link
-                  href={`/${workspaceSlug}/projects/${projectId}/cycles`}
-                  onClick={() => {
-                    handleCurrentView("active");
-                  }}
-                >
-                  <span className="w-full rounded-md bg-custom-primary px-4 py-2 text-center text-sm font-medium text-white hover:bg-custom-primary/90">
-                    View Cycle
-                  </span>
-                </Link>
-
-                <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-                  <span className="w-full rounded-md bg-custom-primary px-4 py-2 text-center text-sm font-medium text-white hover:bg-custom-primary/90">
-                    View Cycle Issues
-                  </span>
-                </Link>
-              </div>
-            </div>
+              </span>
+            </span>
+            <Link href={`/${workspaceSlug}/projects/${projectId}/cycles`}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  handleCurrentView("active");
+                }}
+              >
+                View Cycle
+              </Button>
+            </Link>
           </div>
         </div>
-        <div className="col-span-2 grid grid-cols-1 divide-y border-custom-border-200 md:grid-cols-2 md:divide-x md:divide-y-0">
-          <div className="flex h-60 flex-col border-custom-border-200">
-            <div className="flex h-full w-full flex-col p-4 text-custom-text-200">
-              <div className="flex w-full items-center gap-2 py-1">
-                <span>Progress</span>
-                <LinearProgressIndicator data={progressIndicatorData} />
-              </div>
-              <div className="mt-2 flex flex-col items-center gap-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="flex flex-col gap-4 px-3 pt-2 min-h-52 border-r-0 border-t border-custom-border-300 lg:border-r">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-xl font-medium">Progress</h3>
+              <span className="flex gap-1 text-sm whitespace-nowrap rounded-sm px-3 py-1 ">
+                {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
+                  cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
+                } closed`}
+              </span>
+            </div>
+            <LinearProgressIndicator data={progressIndicatorData} />
+            <div>
+              <div className="flex flex-col gap-2">
                 {Object.keys(groupedIssues).map((group, index) => (
-                  <SingleProgressStats
-                    key={index}
-                    title={
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="block h-3 w-3 rounded-full "
-                          style={{
-                            backgroundColor: STATE_GROUPS_DETAILS[index].color,
-                          }}
-                        />
-                        <span className="text-xs capitalize">{group}</span>
+                  <>
+                    {groupedIssues[group] > 0 && (
+                      <div className="flex items-center justify-start gap-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="block h-3 w-3 rounded-full"
+                            style={{
+                              backgroundColor: STATE_GROUPS_DETAILS[index].color,
+                            }}
+                          />
+                          <span className="capitalize font-medium w-16">{group}</span>
+                        </div>
+                        <span>{`: ${groupedIssues[group]} ${groupedIssues[group] > 1 ? "Issues" : "Issue"}`}</span>
                       </div>
-                    }
-                    completed={groupedIssues[group]}
-                    total={cycle.total_issues}
-                  />
+                    )}
+                  </>
                 ))}
+                {cycle.cancelled_issues > 0 && (
+                  <span className="flex items-center gap-2 text-sm text-custom-text-300">
+                    <span>
+                      {`${cycle.cancelled_issues} cancelled ${
+                        cycle.cancelled_issues > 1 ? "issues are" : "issue is"
+                      } excluded from this report.`}{" "}
+                    </span>
+                  </span>
+                )}
               </div>
             </div>
           </div>
-          <div className="h-60 overflow-y-scroll border-custom-border-200">
-            <ActiveCycleProgressStats cycle={cycle} />
+
+          <div className="flex flex-col gap-4 px-3 pt-2 min-h-52 border-r-0 border-t border-custom-border-300 lg:border-r">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-xl font-medium">Issue Burndown</h3>
+            </div>
+
+            <div className="relative ">
+              <ProgressChart
+                distribution={cycle.distribution?.completion_chart ?? {}}
+                startDate={cycle.start_date ?? ""}
+                endDate={cycle.end_date ?? ""}
+                totalIssues={cycle.total_issues}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 px-3 pt-2 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border-t border-custom-border-300">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-xl font-medium">Priority</h3>
+            </div>
+            <div className="flex flex-col gap-4 h-full w-full max-h-40 overflow-y-auto pb-3">
+              {cycleIssues ? (
+                cycleIssues.length > 0 ? (
+                  cycleIssues.map((issue: any) => (
+                    <Link
+                      key={issue.id}
+                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+                      className="flex cursor-pointer items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5"
+                    >
+                      <div className="flex items-center gap-1.5 flex-grow w-full truncate">
+                        <PriorityIcon priority={issue.priority} withContainer size={12} />
+                        <Tooltip
+                          tooltipHeading="Issue ID"
+                          tooltipContent={`${cycle.project_detail?.identifier}-${issue.sequence_id}`}
+                        >
+                          <span className="flex-shrink-0 text-xs text-custom-text-200">
+                            {cycle.project_detail?.identifier}-{issue.sequence_id}
+                          </span>
+                        </Tooltip>
+                        <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                          <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                        </Tooltip>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <StateDropdown
+                          value={issue.state_id ?? undefined}
+                          onChange={() => {}}
+                          projectId={projectId?.toString() ?? ""}
+                          disabled={true}
+                          buttonVariant="background-with-text"
+                        />
+                        {issue.target_date && (
+                          <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
+                            <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                              <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                              <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
+                            </div>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center h-full text-sm text-custom-text-200">
+                    <span>There are no high priority issues present in this cycle.</span>
+                  </div>
+                )
+              ) : (
+                <Loader className="space-y-3">
+                  <Loader.Item height="50px" />
+                  <Loader.Item height="50px" />
+                  <Loader.Item height="50px" />
+                </Loader>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

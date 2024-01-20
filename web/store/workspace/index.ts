@@ -12,12 +12,9 @@ import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 export interface IWorkspaceRootStore {
   // observables
   workspaces: Record<string, IWorkspace>;
-  workspaceActiveCyclesSearchQuery: string;
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
-  // actions
-  setWorkspaceActiveCyclesSearchQuery: (query: string) => void;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
@@ -34,7 +31,6 @@ export interface IWorkspaceRootStore {
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
   // observables
-  workspaceActiveCyclesSearchQuery: string = "";
   workspaces: Record<string, IWorkspace> = {};
   // services
   workspaceService;
@@ -49,7 +45,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     makeObservable(this, {
       // observables
       workspaces: observable,
-      workspaceActiveCyclesSearchQuery: observable.ref,
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
@@ -57,7 +52,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
       // actions
-      setWorkspaceActiveCyclesSearchQuery: action,
       fetchWorkspaces: action,
       createWorkspace: action,
       updateWorkspace: action,
@@ -107,14 +101,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param workspaceId
    */
   getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null; // TODO: use undefined instead of null
-
-  /**
-   * Sets search query
-   * @param query
-   */
-  setWorkspaceActiveCyclesSearchQuery = (query: string) => {
-    this.workspaceActiveCyclesSearchQuery = query;
-  };
 
   /**
    * fetch user workspaces from API

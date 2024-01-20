@@ -1,57 +1,90 @@
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import isEqual from "lodash/isEqual";
 // components
 import { ActiveCycleInfo } from "components/cycles";
+import { Button, ContrastIcon, Spinner } from "@plane/ui";
 // services
 import { CycleService } from "services/cycle.service";
 const cycleService = new CycleService();
-// hooks
-import { useWorkspace } from "hooks/store";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
+// constants
+import { WORKSPACE_ACTIVE_CYCLES_LIST } from "constants/fetch-keys";
+// types
+import { ICycle } from "@plane/types";
+
+const per_page = 3;
 
 export const WorkspaceActiveCyclesList = observer(() => {
+  // state
+  const [cursor, setCursor] = useState<string | undefined>(`3:0:0`);
+  const [allCyclesData, setAllCyclesData] = useState<ICycle[]>([]);
+  const [hasMoreResults, setHasMoreResults] = useState(true);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
   // fetching active cycles in workspace
-  const { data } = useSWR("WORKSPACE_ACTIVE_CYCLES", () => cycleService.workspaceActiveCycles(workspaceSlug as string));
-  // store
-  const { workspaceActiveCyclesSearchQuery } = useWorkspace();
-  // filter cycles based on search query
-  const filteredCycles = data?.filter(
-    (cycle) =>
-      cycle.project_detail.name.toLowerCase().includes(workspaceActiveCyclesSearchQuery.toLowerCase()) ||
-      cycle.project_detail.identifier?.toLowerCase().includes(workspaceActiveCyclesSearchQuery.toLowerCase()) ||
-      cycle.name.toLowerCase().includes(workspaceActiveCyclesSearchQuery.toLowerCase())
+  const { data: workspaceActiveCycles, isLoading } = useSWR(
+    workspaceSlug && cursor ? WORKSPACE_ACTIVE_CYCLES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
+    workspaceSlug && cursor
+      ? () => cycleService.workspaceActiveCycles(workspaceSlug.toString(), cursor, per_page)
+      : null
   );
 
+  useEffect(() => {
+    if (workspaceActiveCycles && !isEqual(workspaceActiveCycles.results, allCyclesData)) {
+      setAllCyclesData((prevData) => [...prevData, ...workspaceActiveCycles.results]);
+      setHasMoreResults(workspaceActiveCycles.next_page_results);
+    }
+  }, [workspaceActiveCycles]);
+
+  const handleLoadMore = () => {
+    if (hasMoreResults) {
+      setCursor(workspaceActiveCycles?.next_cursor);
+    }
+  };
+
+  if (allCyclesData.length === 0 && !workspaceActiveCycles) {
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {workspaceSlug &&
-        filteredCycles &&
-        filteredCycles.map((cycle) => (
-          <div key={cycle.id} className="px-5 py-7">
-            <div className="flex items-center gap-1.5 px-3 py-1.5">
-              {cycle.project_detail.emoji ? (
-                <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                  {renderEmoji(cycle.project_detail.emoji)}
-                </span>
-              ) : cycle.project_detail.icon_prop ? (
-                <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                  {renderEmoji(cycle.project_detail.icon_prop)}
-                </div>
-              ) : (
-                <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                  {cycle.project_detail?.name.charAt(0)}
-                </span>
-              )}
-              <h2 className="text-xl font-semibold">{cycle.project_detail.name}</h2>
+    <div className="h-full w-full">
+      {allCyclesData.length > 0 ? (
+        <>
+          {workspaceSlug &&
+            allCyclesData.map((cycle) => (
+              <div key={cycle.id} className="px-5 py-5">
+                <ActiveCycleInfo workspaceSlug={workspaceSlug?.toString()} projectId={cycle.project} cycle={cycle} />
+              </div>
+            ))}
+
+          {hasMoreResults && (
+            <div className="flex items-center justify-center gap-4 text-xs w-full py-5">
+              <Button variant="outline-primary" size="sm" onClick={handleLoadMore}>
+                {isLoading ? "Loading..." : "Load More"}
+              </Button>
             </div>
-            <ActiveCycleInfo workspaceSlug={workspaceSlug?.toString()} projectId={cycle.project} cycle={cycle} />
+          )}
+        </>
+      ) : (
+        <div className="grid h-full place-items-center text-center">
+          <div className="space-y-2">
+            <div className="mx-auto flex justify-center">
+              <ContrastIcon className="h-40 w-40 text-custom-text-300" />
+            </div>
+            <h4 className="text-base text-custom-text-200">
+              No ongoing cycles are currently active in any of the projects.
+            </h4>
           </div>
-        ))}
+        </div>
+      )}
     </div>
   );
 });
