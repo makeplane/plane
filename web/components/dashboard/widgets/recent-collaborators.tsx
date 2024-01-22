@@ -53,10 +53,8 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
 export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[
-    WIDGET_KEY
-  ] as TRecentCollaboratorsWidgetResponse[];
+  const { fetchWidgetStats, getWidgetStats } = useDashboard();
+  const widgetStats = getWidgetStats<TRecentCollaboratorsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   useEffect(() => {
     if (!widgetStats)

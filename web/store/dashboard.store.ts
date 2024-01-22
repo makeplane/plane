@@ -35,6 +35,7 @@ export interface IDashboardStore {
   homeDashboardWidgets: TWidget[] | undefined;
   // computed actions
   getWidgetDetails: (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => TWidget | undefined;
+  getWidgetStats: <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => T | undefined;
   // actions
   fetchHomeDashboardWidgets: (workspaceSlug: string) => Promise<THomeDashboardResponse>;
   fetchWidgetStats: (
@@ -113,6 +114,16 @@ export class DashboardStore implements IDashboardStore {
     if (!widgets) return undefined;
     return widgets.find((widget) => widget.key === widgetKey);
   });
+
+  /**
+   * @description get widget stats
+   * @param workspaceSlug
+   * @param dashboardId
+   * @param widgetKey
+   * @returns widget stats
+   */
+  getWidgetStats = <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys): T | undefined =>
+    (this.widgetStats?.[workspaceSlug]?.[dashboardId]?.[widgetKey] as unknown as T) ?? undefined;
 
   /**
    * @description fetch home dashboard details and widgets
