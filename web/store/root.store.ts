@@ -9,7 +9,6 @@ import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IStateStore, StateStore } from "./state.store";
-import { ILabelRootStore, LabelRootStore } from "./label";
 import { IMemberRootStore, MemberRootStore } from "./member";
 import { IInboxRootStore, InboxRootStore } from "./inbox";
 import { IEstimateStore, EstimateStore } from "./estimate.store";
@@ -17,6 +16,7 @@ import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IMentionStore, MentionStore } from "./mention.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
+import { ILabelStore, LabelStore } from "./label.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -25,7 +25,6 @@ export class RootStore {
   user: IUserRootStore;
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
-  labelRoot: ILabelRootStore;
   memberRoot: IMemberRootStore;
   inboxRoot: IInboxRootStore;
   cycle: ICycleStore;
@@ -34,6 +33,7 @@ export class RootStore {
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
   state: IStateStore;
+  label: ILabelStore;
   estimate: IEstimateStore;
   mention: IMentionStore;
   dashboard: IDashboardStore;
@@ -44,7 +44,6 @@ export class RootStore {
     this.user = new UserRootStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.labelRoot = new LabelRootStore(this);
     this.memberRoot = new MemberRootStore(this);
     this.inboxRoot = new InboxRootStore(this);
     // independent stores
@@ -54,6 +53,7 @@ export class RootStore {
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
+    this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);

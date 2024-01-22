@@ -53,13 +53,15 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const {
     router: { workspaceSlug },
   } = useApplication();
-  const {
-    project: { fetchProjectLabels, projectLabels: storeLabels },
-  } = useLabel();
+  const { fetchProjectLabels, getProjectLabels } = useLabel();
 
-  const fetchLabels = () => {
-    setIsLoading(true);
-    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+  const storeLabels = getProjectLabels(projectId);
+
+  const openDropDown = () => {
+    if (!storeLabels && workspaceSlug && projectId) {
+      setIsLoading(true);
+      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    }
   };
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -182,7 +184,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => !storeLabels && fetchLabels()}
+          onClick={openDropDown}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

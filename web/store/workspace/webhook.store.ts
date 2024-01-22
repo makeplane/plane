@@ -1,5 +1,6 @@
 // mobx
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { IWebhook } from "@plane/types";
 import { WebhookService } from "services/webhook.service";
 import { RootStore } from "../root.store";
@@ -46,8 +47,6 @@ export class WebhookStore implements IWebhookStore {
       webhookSecretKey: observable.ref,
       // computed
       currentWebhook: computed,
-      // computed actions
-      getWebhookById: action,
       // fetch actions
       fetchWebhooks: action,
       fetchWebhookById: action,
@@ -80,7 +79,7 @@ export class WebhookStore implements IWebhookStore {
    * get webhook info from the object of webhooks in the store using webhook id
    * @param webhookId
    */
-  getWebhookById = (webhookId: string) => this.webhooks?.[webhookId] || null;
+  getWebhookById = computedFn((webhookId: string) => this.webhooks?.[webhookId] || null);
 
   /**
    * fetch all the webhooks for a workspace
