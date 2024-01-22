@@ -33,7 +33,7 @@ export const PROFILE_ACTION_LINKS: {
   {
     key: "preferences",
     label: "Preferences",
-    href: `/profile/preferences`,
+    href: `/profile/preferences/theme`,
     highlight: (pathname: string) => pathname.includes("/profile/preferences"),
     Icon: Settings2,
   },
