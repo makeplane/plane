@@ -27,11 +27,20 @@ type IPageRenderer = {
   }) => void;
   editorClassNames: string;
   editorContentCustomClassNames?: string;
+  hideDragHandle?: () => void;
   readonly: boolean;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { documentDetails, editor, editorClassNames, editorContentCustomClassNames, updatePageTitle, readonly } = props;
+  const {
+    documentDetails,
+    editor,
+    editorClassNames,
+    editorContentCustomClassNames,
+    updatePageTitle,
+    readonly,
+    hideDragHandle,
+  } = props;
 
   const [pageTitle, setPagetitle] = useState(documentDetails.title);
 
@@ -63,14 +72,6 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   const closeLinkView = () => {
     setIsOpen(false);
-  };
-
-  const switchLinkView = (view: "LinkPreview" | "LinkEditView" | "LinkInputView") => {
-    if (!linkViewProps) return;
-    setLinkViewProps({
-      ...linkViewProps,
-      view: view,
-    });
   };
 
   const handleLinkHover = useCallback(
@@ -167,7 +168,7 @@ export const PageRenderer = (props: IPageRenderer) => {
         />
       )}
       <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>
-        <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+        <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
         </EditorContainer>
       </div>
