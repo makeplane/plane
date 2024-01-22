@@ -1,4 +1,5 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { computedFn } from "mobx-utils";
 import { set } from "lodash";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -37,9 +38,6 @@ export class GlobalViewStore implements IGlobalViewStore {
       globalViewMap: observable,
       // computed
       currentWorkspaceViews: computed,
-      // computed actions
-      getSearchedViews: action,
-      getViewDetailsById: action,
       // actions
       fetchAllGlobalViews: action,
       fetchGlobalViewDetails: action,
@@ -73,7 +71,7 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param searchQuery
    * @returns
    */
-  getSearchedViews = (searchQuery: string) => {
+  getSearchedViews = computedFn((searchQuery: string) => {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     if (!currentWorkspaceDetails) return null;
 
@@ -84,13 +82,13 @@ export class GlobalViewStore implements IGlobalViewStore {
           this.globalViewMap[viewId]?.name?.toLowerCase().includes(searchQuery.toLowerCase())
       ) ?? null
     );
-  };
+  });
 
   /**
    * @description returns view details for given viewId
    * @param viewId
    */
-  getViewDetailsById = (viewId: string): IWorkspaceView | null => this.globalViewMap[viewId] ?? null;
+  getViewDetailsById = computedFn((viewId: string): IWorkspaceView | null => this.globalViewMap[viewId] ?? null);
 
   /**
    * @description fetch all global views for given workspace

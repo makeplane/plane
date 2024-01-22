@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // services
@@ -67,11 +68,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       // computed
       workspaceMemberIds: computed,
       workspaceMemberInvitationIds: computed,
-      // computed actions
-      getSearchedWorkspaceMemberIds: action,
-      getSearchedWorkspaceInvitationIds: action,
-      getWorkspaceMemberDetails: action,
-      getWorkspaceInvitationDetails: action,
       // actions
       fetchWorkspaceMembers: action,
       updateMember: action,
@@ -114,7 +110,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @description get the list of all the user ids that match the search query of all the members of the current workspace
    * @param searchQuery
    */
-  getSearchedWorkspaceMemberIds = (searchQuery: string) => {
+  getSearchedWorkspaceMemberIds = computedFn((searchQuery: string) => {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     const workspaceMemberIds = this.workspaceMemberIds;
@@ -128,13 +124,13 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       return memberSearchQuery.toLowerCase()?.includes(searchQuery.toLowerCase());
     });
     return searchedWorkspaceMemberIds;
-  };
+  });
 
   /**
    * @description get the list of all the invitation ids that match the search query of all the member invitations of the current workspace
    * @param searchQuery
    */
-  getSearchedWorkspaceInvitationIds = (searchQuery: string) => {
+  getSearchedWorkspaceInvitationIds = computedFn((searchQuery: string) => {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     const workspaceMemberInvitationIds = this.workspaceMemberInvitationIds;
@@ -146,13 +142,13 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       return invitationSearchQuery.toLowerCase()?.includes(searchQuery.toLowerCase());
     });
     return searchedWorkspaceMemberInvitationIds;
-  };
+  });
 
   /**
    * @description get the details of a workspace member
    * @param userId
    */
-  getWorkspaceMemberDetails = (userId: string) => {
+  getWorkspaceMemberDetails = computedFn((userId: string) => {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
@@ -164,14 +160,14 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       member: this.memberRoot?.memberMap?.[workspaceMember.member],
     };
     return memberDetails;
-  };
+  });
 
   /**
    * @description get the details of a workspace member invitation
    * @param workspaceSlug
    * @param memberId
    */
-  getWorkspaceInvitationDetails = (invitationId: string) => {
+  getWorkspaceInvitationDetails = computedFn((invitationId: string) => {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     const invitationsList = this.workspaceMemberInvitations?.[workspaceSlug];
@@ -179,7 +175,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
 
     const invitation = invitationsList.find((inv) => inv.id === invitationId);
     return invitation ?? null;
-  };
+  });
 
   /**
    * @description fetch all the members of a workspace

@@ -1,4 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { isFuture, isPast } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
@@ -74,10 +75,6 @@ export class CycleStore implements ICycleStore {
       currentProjectIncompleteCycleIds: computed,
       currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
-      // computed actions
-      getCycleById: action,
-      getActiveCycleById: action,
-      getProjectCycleIds: action,
       // actions
       fetchAllCycles: action,
       fetchActiveCycle: action,
@@ -184,28 +181,29 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    * @returns
    */
-  getCycleById = (cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null;
+  getCycleById = computedFn((cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null);
 
   /**
    * @description returns active cycle details by cycle id
    * @param cycleId
    * @returns
    */
-  getActiveCycleById = (cycleId: string): ICycle | null =>
-    this.activeCycleIdMap?.[cycleId] && this.cycleMap?.[cycleId] ? this.cycleMap?.[cycleId] : null;
+  getActiveCycleById = computedFn((cycleId: string): ICycle | null =>
+    this.activeCycleIdMap?.[cycleId] && this.cycleMap?.[cycleId] ? this.cycleMap?.[cycleId] : null
+  );
 
   /**
    * @description returns list of cycle ids of the project id passed as argument
    * @param projectId
    */
-  getProjectCycleIds = (projectId: string): string[] | null => {
+  getProjectCycleIds = computedFn((projectId: string): string[] | null => {
     if (!this.fetchedMap[projectId]) return null;
 
     let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project === projectId);
     cycles = sortBy(cycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds || null;
-  };
+  });
 
   /**
    * @description validates cycle dates
