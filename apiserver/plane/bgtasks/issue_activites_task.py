@@ -24,6 +24,7 @@ from plane.db.models import (
     IssueReaction,
     CommentReaction,
     IssueComment,
+    IssueSubscriber,
 )
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
@@ -361,6 +362,7 @@ def track_assignees(
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
 
+    bulk_subscribers = []
     for added_asignee in added_assignees:
         assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
@@ -580,7 +582,6 @@ def update_issue_activity(
 
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key)
-        print(key, func)
         if func is not None:
             func(
                 requested_data=requested_data,

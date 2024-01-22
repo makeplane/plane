@@ -156,9 +156,9 @@ def send_email_notification(
 
     summary = ""
     if len(template_data) == 1:
-        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} made {total_changes} to the issue"
+        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} made {total_changes} changes to the issue"
     else:
-        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} and others made {total_changes} to the issue"
+        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} and others made {total_changes} changes to the issue"
 
     # Send the mail
     subject = f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
