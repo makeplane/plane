@@ -45,9 +45,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     project: { fetchProjectMembers },
   } = useMember();
   const { fetchProjectStates } = useProjectState();
-  const {
-    project: { fetchProjectLabels },
-  } = useLabel();
+  const { fetchProjectLabels } = useLabel();
   const { fetchProjectEstimates } = useEstimate();
   // router
   const router = useRouter();

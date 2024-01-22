@@ -28,9 +28,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    project: { updateLabel },
-  } = useLabel();
+  const { updateLabel } = useLabel();
 
   const removeFromGroup = (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
