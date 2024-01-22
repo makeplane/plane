@@ -58,9 +58,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const storeLabels = getProjectLabels(projectId);
 
   const openDropDown = () => {
-    setIsLoading(true);
-    if (!storeLabels && workspaceSlug && projectId)
+    if (!storeLabels && workspaceSlug && projectId) {
+      setIsLoading(true);
       fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    }
   };
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
