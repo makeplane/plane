@@ -110,10 +110,9 @@ export type IssuePriorities = {
 export interface IIssueLabel {
   id: string;
   name: string;
-  description: string;
   color: string;
   project_id: string;
-  workspace_slug: string;
+  workspace__slug: string;
   parent: string | null;
   sort_order: number;
 }

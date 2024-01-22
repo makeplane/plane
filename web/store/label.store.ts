@@ -82,7 +82,7 @@ export class LabelStore implements ILabelStore {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!currentWorkspaceDetails || !this.fetchedMap[worksapceSlug]) return;
-    return Object.values(this.labelMap).filter((label) => label.workspace_slug === currentWorkspaceDetails.slug);
+    return Object.values(this.labelMap).filter((label) => label.workspace__slug === currentWorkspaceDetails.slug);
   }
 
   /**
