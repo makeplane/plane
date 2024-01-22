@@ -101,6 +101,7 @@ export class IssueCommentStore implements IIssueCommentStore {
           return uniq(concat(_commentIds, commentIds));
         });
         comments.forEach((comment) => {
+          this.rootIssueDetail.commentReaction.applyCommentReactions(comment.id, comment?.comment_reactions || []);
           set(this.commentMap, comment.id, comment);
         });
         this.loader = undefined;

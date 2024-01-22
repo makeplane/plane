@@ -9,32 +9,33 @@ import useToast from "hooks/use-toast";
 import { IUser } from "@plane/types";
 import { renderEmoji } from "helpers/emoji.helper";
 
-export type TIssueReaction = {
+export type TIssueCommentReaction = {
   workspaceSlug: string;
   projectId: string;
-  issueId: string;
+  commentId: string;
   currentUser: IUser;
 };
 
-export const IssueReaction: FC<TIssueReaction> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, currentUser } = props;
+export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) => {
+  const { workspaceSlug, projectId, commentId, currentUser } = props;
+
   // hooks
   const {
-    reaction: { getReactionsByIssueId, reactionsByUser },
-    createReaction,
-    removeReaction,
+    commentReaction: { getCommentReactionsByCommentId, commentReactionsByUser },
+    createCommentReaction,
+    removeCommentReaction,
   } = useIssueDetail();
   const { setToastAlert } = useToast();
 
-  const reactionIds = getReactionsByIssueId(issueId);
-  const userReactions = reactionsByUser(issueId, currentUser.id).map((r) => r.reaction);
+  const reactionIds = getCommentReactionsByCommentId(commentId);
+  const userReactions = commentReactionsByUser(commentId, currentUser.id).map((r) => r.reaction);
 
-  const issueReactionOperations = useMemo(
+  const issueCommentReactionOperations = useMemo(
     () => ({
       create: async (reaction: string) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
-          await createReaction(workspaceSlug, projectId, issueId, reaction);
+          if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
+          await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
           setToastAlert({
             title: "Reaction created successfully",
             type: "success",
@@ -50,8 +51,8 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
       },
       remove: async (reaction: string) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId || !currentUser?.id) throw new Error("Missing fields");
-          await removeReaction(workspaceSlug, projectId, issueId, reaction, currentUser.id);
+          if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
+          removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
           setToastAlert({
             title: "Reaction removed successfully",
             type: "success",
@@ -66,16 +67,30 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
         }
       },
       react: async (reaction: string) => {
-        if (userReactions.includes(reaction)) await issueReactionOperations.remove(reaction);
-        else await issueReactionOperations.create(reaction);
+        if (userReactions.includes(reaction)) await issueCommentReactionOperations.remove(reaction);
+        else await issueCommentReactionOperations.create(reaction);
       },
     }),
-    [workspaceSlug, projectId, issueId, currentUser, createReaction, removeReaction, setToastAlert, userReactions]
+    [
+      workspaceSlug,
+      projectId,
+      commentId,
+      currentUser,
+      createCommentReaction,
+      removeCommentReaction,
+      setToastAlert,
+      userReactions,
+    ]
   );
 
   return (
     <div className="mt-4 relative flex items-center gap-1.5">
-      <ReactionSelector size="md" position="top" value={userReactions} onSelect={issueReactionOperations.react} />
+      <ReactionSelector
+        size="md"
+        position="top"
+        value={userReactions}
+        onSelect={issueCommentReactionOperations.react}
+      />
 
       {reactionIds &&
         Object.keys(reactionIds || {}).map(
@@ -84,7 +99,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
               <>
                 <button
                   type="button"
-                  onClick={() => issueReactionOperations.react(reaction)}
+                  onClick={() => issueCommentReactionOperations.react(reaction)}
                   key={reaction}
                   className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                     userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-custom-background-80"

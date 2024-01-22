@@ -6,6 +6,7 @@ import { useIssueDetail, useMention, useUser } from "hooks/store";
 // components
 import { IssueCommentBlock } from "./comment-block";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+import { IssueCommentReaction } from "../../reactions/issue-comment";
 // ui
 import { CustomMenu } from "@plane/ui";
 // services
@@ -17,6 +18,7 @@ import { TActivityOperations } from "../root";
 const fileService = new FileService();
 
 type TIssueCommentCard = {
+  workspaceSlug: string;
   commentId: string;
   activityOperations: TActivityOperations;
   ends: "top" | "bottom" | undefined;
@@ -24,7 +26,7 @@ type TIssueCommentCard = {
 };
 
 export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
-  const { commentId, activityOperations, ends, showAccessSpecifier = false } = props;
+  const { workspaceSlug, commentId, activityOperations, ends, showAccessSpecifier = true } = props;
   // hooks
   const {
     comment: { getCommentById },
@@ -63,7 +65,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
     isEditing && setFocus("comment_html");
   }, [isEditing, setFocus]);
 
-  if (!comment) return <></>;
+  if (!comment || !currentUser) return <></>;
   return (
     <IssueCommentBlock
       commentId={commentId}
@@ -157,7 +159,13 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
             customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             mentionHighlights={mentionHighlights}
           />
-          {/* <CommentReaction projectId={comment.project} commentId={comment.id} /> */}
+
+          <IssueCommentReaction
+            workspaceSlug={workspaceSlug}
+            projectId={comment?.project_detail?.id}
+            commentId={comment.id}
+            currentUser={currentUser}
+          />
         </div>
       </>
     </IssueCommentBlock>

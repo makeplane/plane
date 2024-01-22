@@ -16,7 +16,7 @@ import {
   IIssueCommentReactionStoreActions,
 } from "./comment_reaction.store";
 
-import { TIssue, TIssueComment, TIssueLink, TIssueRelationTypes } from "@plane/types";
+import { TIssue, TIssueComment, TIssueCommentReaction, TIssueLink, TIssueRelationTypes } from "@plane/types";
 
 export type TPeekIssue = {
   workspaceSlug: string;
@@ -238,8 +238,15 @@ export class IssueDetail implements IIssueDetail {
   // comment reaction
   fetchCommentReactions = async (workspaceSlug: string, projectId: string, commentId: string) =>
     this.commentReaction.fetchCommentReactions(workspaceSlug, projectId, commentId);
+  applyCommentReactions = async (commentId: string, commentReactions: TIssueCommentReaction[]) =>
+    this.commentReaction.applyCommentReactions(commentId, commentReactions);
   createCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) =>
     this.commentReaction.createCommentReaction(workspaceSlug, projectId, commentId, reaction);
-  removeCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) =>
-    this.commentReaction.removeCommentReaction(workspaceSlug, projectId, commentId, reaction);
+  removeCommentReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    commentId: string,
+    reaction: string,
+    userId: string
+  ) => this.commentReaction.removeCommentReaction(workspaceSlug, projectId, commentId, reaction, userId);
 }
