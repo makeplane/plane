@@ -209,7 +209,7 @@
                             </td>
                           </tr>
                           <!-- Only assignee changed -->
-                          {% if update.changes.assignee %}
+                          {% if update.changes.assignees %}
                           <tr>
                             <td
                               style="padding-left: 15px; padding-bottom: 20px"
@@ -228,7 +228,7 @@
                                       Assignee:
                                     </p>
                                   </td>
-                                  {% for assignee in update.changes.assignee.new_value %}
+                                  {% for assignee in update.changes.assignees.old_value %}
                                   <td>
                                     <p
                                       style="
@@ -245,6 +245,7 @@
                                     </p>
                                   </td>
                                   {% endfor %}
+                                  {% if update.changes.assignees.old_value and update.changes.assignee.new_value %}
                                   <td>
                                     <i
                                       data-lucide="move-right"
@@ -257,6 +258,8 @@
                                       "
                                     ></i>
                                   </td>
+                                  {% endif %}
+                                  {% for assignee in update.changes.assignees.new_value %}
                                   <td>
                                     <p
                                       style="
@@ -267,9 +270,10 @@
                                         padding: 3px;
                                       "
                                     >
-                                      {{ assginee.name }}
+                                      {{ assginee }}
                                     </p>
                                   </td>
+                                  {% endfor %}
                                 </tr>
                               </table>
                             </td>
@@ -754,8 +758,7 @@
                                         margin-left: 8px;
                                       "
                                     >
-                                      {{ comment.actor_detail.first_name }} {{
-                                      comment.actor_detail.last_name }}
+                                      {{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }}
                                     </p>
                                   </td>
                                 </tr>
@@ -777,7 +780,7 @@
                                         border-radius: 4px;
                                       "
                                     >
-                                    {{ actor_comment.comment }}
+                                    {{ actor_comment.new_value }}
                                     </div>
                                   </td>
                                 </tr>
