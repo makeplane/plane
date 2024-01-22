@@ -11,7 +11,15 @@ from django.contrib.auth.models import (
     UserManager,
     PermissionsMixin,
 )
+from django.db.models.signals import post_save
+from django.conf import settings
+from django.dispatch import receiver
 from django.utils import timezone
+
+# Third party imports
+from sentry_sdk import capture_exception
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 
 def get_default_onboarding():

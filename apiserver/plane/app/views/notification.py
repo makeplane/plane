@@ -15,8 +15,9 @@ from plane.db.models import (
     IssueSubscriber,
     Issue,
     WorkspaceMember,
+    UserNotificationPreference,
 )
-from plane.app.serializers import NotificationSerializer
+from plane.app.serializers import NotificationSerializer, UserNotificationPreferenceSerializer
 
 
 class NotificationViewSet(BaseViewSet, BasePaginator):

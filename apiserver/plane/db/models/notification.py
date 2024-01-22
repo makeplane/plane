@@ -67,26 +67,43 @@ def get_default_preference():
 
 
 class UserNotificationPreference(BaseModel):
-    created = models.JSONField(default=get_default_preference)
-    assigned = models.JSONField(default=get_default_preference)
-    subscribed = models.JSONField(default=get_default_preference)
+    # user it is related to
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="notification_preferences",
     )
+    # workspace if it is applicable
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_notification_preferences",
+        null=True,
+    )
+    # project
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="project_notification_preferences",
+        null=True,
+    )
+
+    # preference fields
+    property_change = models.BooleanField(default=True)
+    state_change = models.BooleanField(default=True)
+    comment = models.BooleanField(default=True)
+    mention = models.BooleanField(default=True)
+    issue_completed = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ["project", "user"]
-
-        verbose_name = "Notification Preference"
-        verbose_name_plural = "Notification Preferences"
+        verbose_name = "UserNotificationPreference"
+        verbose_name_plural = "UserNotificationPreferences"
         db_table = "user_notification_preferences"
         ordering = ("-created_at",)
 
     def __str__(self):
-        """Return name of the notifications"""
-        return f"{self.user.email} <{self.workspace.name}>"
+        """Return the user"""
+        return f"<{self.user}>"
 
 class EmailNotificationLog(BaseModel):
     # receiver
