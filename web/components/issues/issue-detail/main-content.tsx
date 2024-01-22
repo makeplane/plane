@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // components
 import { IssueDescriptionForm, IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
 import { IssueParentDetail } from "./parent";
@@ -32,13 +32,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { getProjectById } = useProject();
 
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
-
-  const project = getProjectById(projectId);
-  if (!project) return <></>;
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
@@ -109,7 +105,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         projectId={projectId}
         issueId={issueId}
         disabled={!is_editable}
-        showAccessSpecifier={project.is_deployed}
       />
     </>
   );
