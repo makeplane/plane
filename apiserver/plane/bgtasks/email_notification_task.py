@@ -120,7 +120,7 @@ def send_email_notification(
     issue_id, notification_data, receiver_id, email_notification_ids
 ):
     base_api = "http://localhost:3000"
-    data = create_payload(payload=notification_data)
+    data = create_payload(notification_data=notification_data)
 
     # Get email configurations
     (
