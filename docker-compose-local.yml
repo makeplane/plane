@@ -76,6 +76,8 @@ services:
       - web
 
   api:
+    deploy:
+      replicas: 3
     build:
       context: ./apiserver
       dockerfile: Dockerfile.dev
@@ -86,7 +88,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    # command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
+    command: ./bin/takeoff.local
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -104,7 +106,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: /bin/sh -c "celery -A plane worker -l info"
+    command: ./bin/worker
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -123,7 +125,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: /bin/sh -c "celery -A plane beat -l info"
+    command: ./bin/beat
     env_file:
       - ./apiserver/.env
     depends_on:
