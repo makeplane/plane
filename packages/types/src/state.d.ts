@@ -11,7 +11,7 @@ export interface IState {
   name: string;
   project_id: string;
   sequence: number;
-  workspace__slug: string;
+  workspace_id: string;
 }
 
 export interface IStateLite {
