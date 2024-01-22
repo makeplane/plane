@@ -14,7 +14,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
   const {
     activity: { getActivityById },
   } = useIssueDetail();
-  const { workspaceLabels } = useLabel();
+  const { projectLabels } = useLabel();
 
   const activity = getActivityById(activityId);
 
@@ -32,7 +32,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
             <span
               className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
               style={{
-                backgroundColor: workspaceLabels?.find((l) => l.id === activity.new_identifier)?.color ?? "#000000",
+                backgroundColor: projectLabels?.find((l) => l.id === activity.new_identifier)?.color ?? "#000000",
               }}
               aria-hidden="true"
             />
@@ -43,7 +43,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
             <span
               className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
               style={{
-                backgroundColor: workspaceLabels?.find((l) => l.id === activity.old_identifier)?.color ?? "#000000",
+                backgroundColor: projectLabels?.find((l) => l.id === activity.old_identifier)?.color ?? "#000000",
               }}
               aria-hidden="true"
             />
@@ -51,7 +51,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
           </span>
         )}
         {showIssue && (activity.old_value === "" ? ` to ` : ` from `)}
-        {showIssue && <IssueLink activityId={activityId} />}.
+        {showIssue && <IssueLink activityId={activityId} />}
       </>
     </IssueActivityBlockComponent>
   );
