@@ -322,7 +322,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   setIsSubmitting={setIsSubmitting}
                   updatePageTitle={updatePageTitle}
                   onActionCompleteHandler={actionCompleteAlert}
-                  customClassName="tracking-tight self-center px-0 h-full w-full"
+                  customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
                   onChange={(_description_json: Object, description_html: string) => {
                     setShowAlert(true);
                     onChange(description_html);
