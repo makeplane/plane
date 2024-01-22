@@ -709,6 +709,15 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
+    def list(self, request, slug, project_id):
+        labels = Label.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id
+        ).values(
+            "parent", "name", "color", "id", "project_id", "workspace__slug"
+        )
+        return Response(labels, status=status.HTTP_200_OK)
+
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
     permission_classes = [
