@@ -64,7 +64,15 @@ const aiService = new AIService();
 const fileService = new FileService();
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
-  const { data, onChange, onClose, onSubmit, projectId, isCreateMoreToggleEnabled, onCreateMoreToggleChange } = props;
+  const {
+    data,
+    onChange,
+    onClose,
+    onSubmit,
+    projectId: defaultProjectId,
+    isCreateMoreToggleEnabled,
+    onCreateMoreToggleChange,
+  } = props;
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -99,9 +107,29 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     getValues,
     setValue,
   } = useForm<TIssue>({
-    defaultValues: { ...defaultValues, project_id: projectId, ...data },
+    defaultValues: { ...defaultValues, project_id: defaultProjectId, ...data },
     reValidateMode: "onChange",
   });
+
+  const projectId = watch("project_id");
+
+  //reset few fields on projectId change
+  useEffect(() => {
+    if (isDirty) {
+      const formData = getValues();
+
+      reset({
+        ...defaultValues,
+        project_id: projectId,
+        name: formData.name,
+        description_html: formData.description_html,
+        priority: formData.priority,
+        start_date: formData.start_date,
+        target_date: formData.target_date,
+        parent_id: formData.parent_id,
+      });
+    }
+  }, [projectId]);
 
   const issueName = watch("name");
 
@@ -130,7 +158,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug.toString(), projectId.toString(), {
+      .createGptTask(workspaceSlug.toString(), projectId, {
         prompt: issueName,
         task: "Generate a proper description for this issue.",
       })
@@ -325,7 +353,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   {envConfig?.has_openai_configured && (
                     <GptAssistantPopover
                       isOpen={gptAssistantModal}
-                      projectId={watch("project_id")}
+                      projectId={projectId}
                       handleClose={() => {
                         setGptAssistantModal((prevData) => !prevData);
                         // this is done so that the title do not reset after gpt popover closed
@@ -389,7 +417,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(stateId);
                           handleFormChange();
                         }}
-                        projectId={watch("project_id")}
+                        projectId={projectId}
                         buttonVariant="border-with-text"
                         tabIndex={6}
                       />
@@ -419,7 +447,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <ProjectMemberDropdown
-                        projectId={watch("project_id")}
+                        projectId={projectId}
                         value={value}
                         onChange={(assigneeIds) => {
                           onChange(assigneeIds);
@@ -446,7 +474,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(labelIds);
                           handleFormChange();
                         }}
-                        projectId={watch("project_id")}
+                        projectId={projectId}
                         tabIndex={9}
                       />
                     </div>
@@ -497,7 +525,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
                         <CycleDropdown
-                          projectId={watch("project_id")}
+                          projectId={projectId}
                           onChange={(cycleId) => {
                             onChange(cycleId);
                             handleFormChange();
@@ -517,7 +545,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
                         <ModuleDropdown
-                          projectId={watch("project_id")}
+                          projectId={projectId}
                           value={value}
                           onChange={(moduleId) => {
                             onChange(moduleId);
@@ -530,7 +558,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                {areEstimatesEnabledForProject(watch("project_id")) && (
+                {areEstimatesEnabledForProject(projectId) && (
                   <Controller
                     control={control}
                     name="estimate_point"
@@ -542,7 +570,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(estimatePoint);
                             handleFormChange();
                           }}
-                          projectId={watch("project_id")}
+                          projectId={projectId}
                           buttonVariant="border-with-text"
                           tabIndex={14}
                         />
@@ -609,7 +637,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                         setSelectedParentIssue(issue);
                       }}
-                      projectId={watch("project_id")}
+                      projectId={projectId}
                     />
                   )}
                 />
