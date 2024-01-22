@@ -24,7 +24,7 @@ export const IssueNameActivity: FC<TIssueNameActivity> = observer((props) => {
       activityId={activityId}
       ends={ends}
     >
-      <>set the name to &quot;{activity.new_value}&quot;.</>
+      <>set the name to {activity.new_value}.</>
     </IssueActivityBlockComponent>
   );
 });

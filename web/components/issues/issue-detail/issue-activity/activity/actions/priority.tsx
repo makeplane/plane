@@ -25,7 +25,7 @@ export const IssuePriorityActivity: FC<TIssuePriorityActivity> = observer((props
       ends={ends}
     >
       <>
-        set the priority to &quot;<span className="font-medium text-custom-text-100">{activity.new_value}</span>&quot;
+        set the priority to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
         {showIssue ? ` for ` : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

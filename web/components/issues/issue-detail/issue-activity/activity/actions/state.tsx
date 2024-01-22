@@ -26,7 +26,7 @@ export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
       ends={ends}
     >
       <>
-        set the state to &quot;<span className="font-medium text-custom-text-100">{activity.new_value}</span>&quot;
+        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
         {showIssue ? ` for ` : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

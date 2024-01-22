@@ -5,6 +5,8 @@ import { CalendarDays } from "lucide-react";
 import { useIssueDetail } from "hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+// helpers
+import { renderFormattedDate } from "helpers/date-time.helper";
 
 type TIssueTargetDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
@@ -28,7 +30,7 @@ export const IssueTargetDateActivity: FC<TIssueTargetDateActivity> = observer((p
         {activity.new_value ? `set the due date to ` : `removed the due date `}
         {activity.new_value && (
           <>
-            &quot;<span className="font-medium text-custom-text-100">{activity.new_value}</span>&quot;
+            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
         {showIssue && (activity.new_value ? ` for ` : ` from `)}

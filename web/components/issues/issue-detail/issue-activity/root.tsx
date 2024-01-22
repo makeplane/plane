@@ -45,7 +45,7 @@ export type TActivityOperations = {
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled } = props;
   // hooks
-  const { createComment, updateComment, removeComment, createCommentReaction, removeCommentReaction } =
+  const { createComment, updateComment, removeComment } =
     useIssueDetail();
   const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
