@@ -1469,7 +1469,15 @@ class WorkspaceStatesEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
         ).values(
-            "id", "project_id", "workspace__slug", "name", "color", "group"
+            "id",
+            "project_id",
+            "workspace__slug",
+            "name",
+            "color",
+            "group",
+            "default",
+            "description",
+            "sequence",
         )
         return Response(states, status=status.HTTP_200_OK)
 

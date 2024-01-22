@@ -49,8 +49,18 @@ class StateViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
-        states = State.objects.filter(workspace__slug=slug, project_id=project_id).values(
-            "id", "project_id", "workspace__slug", "name", "color", "group"
+        states = State.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).values(
+            "id",
+            "project_id",
+            "workspace__slug",
+            "name",
+            "color",
+            "group",
+            "default",
+            "description",
+            "sequence",
         )
         grouped = request.GET.get("grouped", False)
         if grouped == "true":
