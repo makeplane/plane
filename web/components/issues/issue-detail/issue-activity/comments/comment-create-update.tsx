@@ -25,7 +25,6 @@ export const IssueCommentCreateUpdate: FC<TIssueCommentCreateUpdate> = (props) =
   const {
     handleSubmit,
     control,
-    watch,
     formState: { isSubmitting },
     reset,
   } = useForm<Partial<TIssueComment>>({ defaultValues: { comment_html: "<p></p>" } });

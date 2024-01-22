@@ -3,7 +3,7 @@ import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import update from "lodash/update";
 import concat from "lodash/concat";
-import merge from "lodash/merge";
+import uniq from "lodash/uniq";
 // services
 import { IssueActivityService } from "services/issue";
 // types
@@ -122,7 +122,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       runInAction(() => {
         update(this.activities, issueId, (_activityIds) => {
           if (!_activityIds) return activityIds;
-          return merge(_activityIds, activityIds);
+          return uniq(concat(_activityIds, activityIds));
         });
         activities.forEach((activity) => {
           set(this.activityMap, activity.id, activity);

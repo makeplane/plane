@@ -191,7 +191,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         <div className="min-h-[200px]">
           {activityTab === "all" ? (
             <>
-              <IssueActivityCommentRoot {...componentCommonProps} />
+              <IssueActivityCommentRoot {...componentCommonProps} activityOperations={activityOperations} />
               <IssueCommentCreateUpdate
                 workspaceSlug={workspaceSlug}
                 activityOperations={activityOperations}

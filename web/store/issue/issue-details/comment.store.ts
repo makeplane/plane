@@ -2,7 +2,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
-import merge from "lodash/merge";
+import uniq from "lodash/uniq";
+import pull from "lodash/pull";
 // services
 import { IssueCommentService } from "services/issue";
 // types
@@ -97,7 +98,7 @@ export class IssueCommentStore implements IIssueCommentStore {
       runInAction(() => {
         update(this.comments, issueId, (_commentIds) => {
           if (!_commentIds) return commentIds;
-          return merge(_commentIds, commentIds);
+          return uniq(concat(_commentIds, commentIds));
         });
         comments.forEach((comment) => {
           set(this.commentMap, comment.id, comment);
@@ -116,8 +117,11 @@ export class IssueCommentStore implements IIssueCommentStore {
       const response = await this.issueCommentService.createIssueComment(workspaceSlug, projectId, issueId, data);
 
       runInAction(() => {
-        this.comments[issueId].push(response.id);
-        set(this.rootIssueDetail.activity.activityMap, response.id, response);
+        update(this.comments, issueId, (_commentIds) => {
+          if (!_commentIds) return [response.id];
+          return uniq(concat(_commentIds, [response.id]));
+        });
+        set(this.commentMap, response.id, response);
       });
 
       return response;
@@ -159,12 +163,10 @@ export class IssueCommentStore implements IIssueCommentStore {
     try {
       const response = await this.issueCommentService.deleteIssueComment(workspaceSlug, projectId, issueId, commentId);
 
-      const reactionIndex = this.comments[issueId].findIndex((_comment) => _comment === commentId);
-      if (reactionIndex >= 0)
-        runInAction(() => {
-          this.comments[issueId].splice(reactionIndex, 1);
-          delete this.commentMap[commentId];
-        });
+      runInAction(() => {
+        pull(this.comments[issueId], commentId);
+        delete this.commentMap[commentId];
+      });
 
       return response;
     } catch (error) {

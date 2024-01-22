@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
+import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // hooks
 import { useIssueDetail, useMention, useUser } from "hooks/store";
 // components
@@ -101,9 +101,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
                 </>
               )}
               <CustomMenu.MenuItem
-                onClick={() => {
-                  activityOperations.removeComment(comment.id);
-                }}
+                onClick={() => activityOperations.removeComment(comment.id)}
                 className="flex items-center gap-1"
               >
                 <Trash2 className="h-3 w-3" />

@@ -5,11 +5,19 @@ import { useIssueDetail } from "hooks/store";
 // components
 import { IssueActivityList } from "./activity/activity-list";
 import { IssueCommentCard } from "./comments/comment-card";
+// types
+import { TActivityOperations } from "./root";
 
-type TIssueActivityCommentRoot = { workspaceSlug: string; projectId: string; issueId: string; disabled: boolean };
+type TIssueActivityCommentRoot = {
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  activityOperations: TActivityOperations;
+  disabled: boolean;
+};
 
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled } = props;
+  const { workspaceSlug, projectId, issueId, activityOperations, disabled } = props;
   // hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -28,6 +36,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             projectId={projectId}
             issueId={issueId}
             commentId={activityComment.id}
+            activityOperations={activityOperations}
             disabled={disabled}
             ends={index === 0 ? "top" : index === activityComments.length - 1 ? "bottom" : undefined}
           />

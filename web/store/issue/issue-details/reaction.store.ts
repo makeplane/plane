@@ -126,6 +126,8 @@ export class IssueReactionStore implements IIssueReactionStore {
         set(this.reactionMap, response.id, response);
       });
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
@@ -152,6 +154,8 @@ export class IssueReactionStore implements IIssueReactionStore {
 
       const response = await this.issueReactionService.deleteIssueReaction(workspaceSlug, projectId, issueId, reaction);
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
