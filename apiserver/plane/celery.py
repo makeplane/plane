@@ -31,7 +31,7 @@ app.conf.beat_schedule = {
     },
     "check-every-five-minutes-to-send-email-notifications": {
         "task": "plane.bgtasks.email_notification_task.stack_email_notification",
-        "schedule": timedelta(seconds=10)
+        "schedule": crontab(minute='*/5')
     },
 }
 
