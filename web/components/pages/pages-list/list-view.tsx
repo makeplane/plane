@@ -1,11 +1,9 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 // components
-import { PagesListItem } from "./list-item";
 import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
@@ -13,14 +11,17 @@ import { Loader } from "@plane/ui";
 import emptyPage from "public/empty-state/empty_page.png";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { PagesListItem } from "./list-item";
 
 type IPagesListView = {
   pageIds: string[];
 };
 
-export const PagesListView: FC<IPagesListView> = observer((props) => {
-  const { pageIds } = props;
+export const PagesListView: FC<IPagesListView> = (props) => {
+  const { pageIds: projectPageIds } = props;
   // store hooks
+  // trace(true);
+
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
@@ -31,21 +32,18 @@ export const PagesListView: FC<IPagesListView> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
+
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
-      {pageIds && workspaceSlug && projectId ? (
+      {projectPageIds && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
-          {pageIds.length > 0 ? (
+          {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pageIds.map((pageId) => (
-                <PagesListItem
-                  key={pageId}
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  pageId={pageId}
-                />
+              {projectPageIds.map((pageId: string) => (
+                <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />
               ))}
             </ul>
           ) : (
@@ -77,4 +75,4 @@ export const PagesListView: FC<IPagesListView> = observer((props) => {
       )}
     </>
   );
-});
+};

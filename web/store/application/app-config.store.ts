@@ -5,8 +5,9 @@ import { IAppConfig } from "@plane/types";
 import { AppConfigService } from "services/app_config.service";
 
 export interface IAppConfigStore {
+  // observables
   envConfig: IAppConfig | null;
-  // action
+  // actions
   fetchAppConfig: () => Promise<any>;
 }
 

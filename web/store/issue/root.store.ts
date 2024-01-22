@@ -123,6 +123,7 @@ export class IssueRootStore implements IIssueRootStore {
       moduleId: observable.ref,
       viewId: observable.ref,
       userId: observable.ref,
+      globalViewId: observable.ref,
       states: observable,
       stateDetails: observable,
       labels: observable,

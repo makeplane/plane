@@ -15,8 +15,7 @@ export const IssueWidgetCard = (props) => {
         setIssueDetails(issue);
         setLoading(0);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setLoading(-1);
       });
   }, []);
@@ -30,7 +29,9 @@ export const IssueWidgetCard = (props) => {
       {loading == 0 ? (
         <div
           onClick={completeIssueEmbedAction}
-          className="w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs"
+          className={`${
+            props.selected ? "border-custom-primary-200 border-[2px]" : ""
+          } w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs`}
         >
           <h5 className="text-xs text-custom-text-300">
             {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}

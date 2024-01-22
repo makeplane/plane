@@ -18,7 +18,7 @@ import {
 
 type IPageRenderer = {
   documentDetails: DocumentDetails;
-  updatePageTitle: (title: string) => Promise<void>;
+  updatePageTitle: (title: string) => void;
   editor: Editor;
   onActionCompleteHandler: (action: {
     title: string;
@@ -28,18 +28,6 @@ type IPageRenderer = {
   editorClassNames: string;
   editorContentCustomClassNames?: string;
   readonly: boolean;
-};
-
-const debounce = (func: (...args: any[]) => void, wait: number) => {
-  let timeout: NodeJS.Timeout | null = null;
-  return function executedFunction(...args: any[]) {
-    const later = () => {
-      if (timeout) clearTimeout(timeout);
-      func(...args);
-    };
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
@@ -64,11 +52,26 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   const { getFloatingProps } = useInteractions([dismiss]);
 
-  const debouncedUpdatePageTitle = debounce(updatePageTitle, 300);
+  const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState<{ x: number; y: number }>();
+
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [flip(), shift(), hide({ strategy: "referenceHidden" })],
+    whileElementsMounted: autoUpdate,
+  });
+
+  const dismiss = useDismiss(context, {
+    ancestorScroll: true,
+  });
+
+  const { getFloatingProps } = useInteractions([dismiss]);
 
   const handlePageTitleChange = (title: string) => {
     setPagetitle(title);
-    debouncedUpdatePageTitle(title);
+    updatePageTitle(title);
   };
 
   const [cleanup, setcleanup] = useState(() => () => {});

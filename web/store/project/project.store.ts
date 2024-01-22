@@ -92,24 +92,26 @@ export class ProjectStore implements IProjectStore {
    * Returns searched projects based on search query
    */
   get searchedProjects() {
-    if (!this.rootStore.app.router.workspaceSlug) return [];
-    const projectIds = Object.keys(this.projectMap);
-    return this.searchQuery === ""
-      ? projectIds
-      : projectIds?.filter((projectId) => {
-          this.projectMap[projectId].name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            this.projectMap[projectId].identifier.toLowerCase().includes(this.searchQuery.toLowerCase());
-        });
+    const workspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!workspaceDetails) return [];
+    const workspaceProjects = Object.values(this.projectMap).filter(
+      (p) =>
+        p.workspace === workspaceDetails.id &&
+        (p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          p.identifier.toLowerCase().includes(this.searchQuery.toLowerCase()))
+    );
+    return workspaceProjects.map((p) => p.id);
   }
 
   /**
    * Returns project IDs belong to the current workspace
    */
   get workspaceProjectIds() {
-    if (!this.rootStore.app.router.workspaceSlug) return null;
-    const projectIds = Object.keys(this.projectMap);
-    if (!projectIds) return null;
-    return projectIds;
+    const workspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!workspaceDetails) return null;
+    const workspaceProjects = Object.values(this.projectMap).filter((p) => p.workspace === workspaceDetails.id);
+    const projectIds = workspaceProjects.map((p) => p.id);
+    return projectIds ?? null;
   }
 
   /**

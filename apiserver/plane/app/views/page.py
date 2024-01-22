@@ -1,5 +1,5 @@
 # Python imports
-from datetime import timedelta, date, datetime
+from datetime import date, datetime, timedelta
 
 # Django imports
 from django.db import connection
@@ -7,30 +7,19 @@ from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from .base import BaseViewSet, BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import (
-    Page,
-    PageFavorite,
-    Issue,
-    IssueAssignee,
-    IssueActivity,
-    PageLog,
-    ProjectMember,
-)
-from plane.app.serializers import (
-    PageSerializer,
-    PageFavoriteSerializer,
-    PageLogSerializer,
-    IssueLiteSerializer,
-    SubPageSerializer,
-)
+from plane.app.serializers import (IssueLiteSerializer, PageFavoriteSerializer,
+                                   PageLogSerializer, PageSerializer,
+                                   SubPageSerializer)
+from plane.db.models import (Issue, IssueActivity, IssueAssignee, Page,
+                             PageFavorite, PageLog, ProjectMember)
+
+# Module imports
+from .base import BaseAPIView, BaseViewSet
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -175,7 +164,7 @@ class PageViewSet(BaseViewSet):
                 project_id=project_id,
                 member=request.user,
                 is_active=True,
-                role__gt=20,
+                role__gte=20,
             ).exists()
             or request.user.id != page.owned_by_id
         ):

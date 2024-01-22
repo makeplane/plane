@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, usePage, useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 // components
 import { PagesListView } from "components/pages/pages-list";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -14,6 +14,7 @@ import emptyPage from "public/empty-state/empty_page.png";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks
@@ -21,7 +22,7 @@ export const RecentPagesList: FC = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { recentProjectPages } = usePage();
+  const { recentProjectPages } = useProjectPages();
 
   // FIXME: replace any with proper type
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);

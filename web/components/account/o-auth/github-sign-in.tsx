@@ -12,10 +12,11 @@ import githubDarkModeImage from "/public/logos/github-dark.svg";
 type Props = {
   handleSignIn: React.Dispatch<string>;
   clientId: string;
+  type: "sign_in" | "sign_up";
 };
 
 export const GitHubSignInButton: FC<Props> = (props) => {
-  const { handleSignIn, clientId } = props;
+  const { handleSignIn, clientId, type } = props;
   // states
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
   const [gitCode, setGitCode] = useState<null | string>(null);
@@ -53,7 +54,7 @@ export const GitHubSignInButton: FC<Props> = (props) => {
             width={20}
             alt="GitHub Logo"
           />
-          <span className="text-onboarding-text-200">Sign-in with GitHub</span>
+          <span className="text-onboarding-text-200">{type === "sign_in" ? "Sign-in" : "Sign-up"} with GitHub</span>
         </button>
       </Link>
     </div>

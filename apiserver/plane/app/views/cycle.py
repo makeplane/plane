@@ -39,7 +39,6 @@ from plane.app.serializers import (
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
-    WorkspaceUserPermission
 )
 from plane.db.models import (
     User,

@@ -5,7 +5,7 @@ import { Tab } from "@headlessui/react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { usePage, useUser } from "hooks/store";
+import { useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -17,6 +17,7 @@ import { PagesHeader } from "components/headers";
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
+import { useProjectPages } from "hooks/store/use-project-page";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -45,8 +46,9 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store
-  const { fetchProjectPages, fetchArchivedProjectPages } = usePage();
   const { currentUser, currentUserLoader } = useUser();
+
+  const { fetchProjectPages, fetchArchivedProjectPages } = useProjectPages();
   // hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
   // local storage

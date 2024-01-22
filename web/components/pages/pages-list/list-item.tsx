@@ -13,10 +13,6 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-// hooks
-import { useMember, usePage, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
@@ -25,142 +21,120 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useRouter } from "next/router";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import { useMember, usePage, useUser } from "hooks/store";
+import { IIssueLabel } from "@plane/types";
 
 export interface IPagesListItem {
-  workspaceSlug: string;
-  projectId: string;
   pageId: string;
+  projectId: string;
 }
 
-export const PagesListItem: FC<IPagesListItem> = observer((props) => {
-  const { workspaceSlug, projectId, pageId } = props;
+export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }: IPagesListItem) => {
+  const projectPageStore = useProjectPages();
+  // Now, I am observing only the projectPages, out of the projectPageStore.
+  const { archivePage, restorePage } = projectPageStore;
+
+  const pageStore = usePage(pageId);
+
   // states
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
+
   const [deletePageModal, setDeletePageModal] = useState(false);
-  // store hooks
+
   const {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    getArchivedPageById,
-    getUnArchivedPageById,
-    archivePage,
-    removeFromFavorites,
-    addToFavorites,
-    makePrivate,
-    makePublic,
-    restorePage,
-  } = usePage();
+
   const {
     project: { getProjectMemberDetails },
   } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
-  // derived values
-  const pageDetails = getUnArchivedPageById(pageId) ?? getArchivedPageById(pageId);
 
-  const handleCopyUrl = (e: any) => {
+  if (!pageStore) return null;
+
+  const {
+    archived_at,
+    label_details,
+    access,
+    is_favorite,
+    owned_by,
+    name,
+    created_at,
+    updated_at,
+    makePublic,
+    makePrivate,
+    addToFavorites,
+    removeFromFavorites,
+  } = pageStore;
+
+  const handleCopyUrl = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Page link copied to clipboard.",
-      });
-    });
+    await copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageId}`);
   };
 
-  const handleAddToFavorites = (e: any) => {
+  const handleAddToFavorites = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToFavorites();
+  };
+
+  const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    addToFavorites(workspaceSlug, projectId, pageId)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully added the page to favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the page to favorites. Please try again.",
-        });
-      });
+    removeFromFavorites();
   };
 
-  const handleRemoveFromFavorites = (e: any) => {
+  const handleMakePublic = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    removeFromFavorites(workspaceSlug, projectId, pageId)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully removed the page from favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the page from favorites. Please try again.",
-        });
-      });
+    makePublic();
   };
 
-  const handleMakePublic = (e: any) => {
+  const handleMakePrivate = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    makePublic(workspaceSlug, projectId, pageId);
+    makePrivate();
   };
 
-  const handleMakePrivate = (e: any) => {
+  const handleArchivePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    makePrivate(workspaceSlug, projectId, pageId);
+    await archivePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
-  const handleArchivePage = (e: any) => {
+  const handleRestorePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    archivePage(workspaceSlug, projectId, pageId);
+    await restorePage(workspaceSlug as string, projectId as string, pageId as string);
   };
 
-  const handleRestorePage = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    restorePage(workspaceSlug, projectId, pageId);
-  };
-
-  const handleDeletePage = (e: any) => {
+  const handleDeletePage = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     setDeletePageModal(true);
   };
 
-  const handleEditPage = (e: any) => {
+  const handleEditPage = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     setCreateUpdatePageModal(true);
   };
 
-  if (!pageDetails) return null;
-
-  const ownerDetails = getProjectMemberDetails(pageDetails.owned_by);
-  const isCurrentUserOwner = pageDetails.owned_by === currentUser?.id;
+  const ownerDetails = getProjectMemberDetails(owned_by);
+  const isCurrentUserOwner = owned_by === currentUser?.id;
 
   const userCanEdit =
     isCurrentUserOwner ||
@@ -173,22 +147,21 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   return (
     <>
       <CreateUpdatePageModal
+        pageStore={pageStore}
         isOpen={createUpdatePageModal}
         handleClose={() => setCreateUpdatePageModal(false)}
-        data={pageDetails}
         projectId={projectId}
       />
-      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} data={pageDetails} />
+      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
       <li>
-        <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageDetails.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}>
           <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 overflow-hidden">
                 <FileText className="h-4 w-4 shrink-0" />
-                <p className="mr-2 truncate text-sm text-custom-text-100">{pageDetails.name}</p>
-                {/* FIXME: replace any with proper type */}
-                {pageDetails.label_details.length > 0 &&
-                  pageDetails.label_details.map((label: any) => (
+                <p className="mr-2 truncate text-sm text-custom-text-100">{name}</p>
+                {label_details.length > 0 &&
+                  label_details.map((label: IIssueLabel) => (
                     <div
                       key={label.id}
                       className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs"
@@ -207,26 +180,26 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                   ))}
               </div>
               <div className="flex items-center gap-2.5">
-                {pageDetails.archived_at ? (
+                {archived_at ? (
                   <Tooltip
-                    tooltipContent={`Archived at ${renderFormattedTime(
-                      pageDetails.archived_at
-                    )} on ${renderFormattedDate(pageDetails.archived_at)}`}
+                    tooltipContent={`Archived at ${renderFormattedTime(archived_at)} on ${renderFormattedDate(
+                      archived_at
+                    )}`}
                   >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(pageDetails.archived_at)}</p>
+                    <p className="text-sm text-custom-text-200">{renderFormattedTime(archived_at)}</p>
                   </Tooltip>
                 ) : (
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderFormattedTime(
-                      pageDetails.updated_at
-                    )} on ${renderFormattedDate(pageDetails.updated_at)}`}
+                    tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
+                      updated_at
+                    )}`}
                   >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(pageDetails.updated_at)}</p>
+                    <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
                   </Tooltip>
                 )}
                 {isEditingAllowed && (
-                  <Tooltip tooltipContent={`${pageDetails.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
-                    {pageDetails.is_favorite ? (
+                  <Tooltip tooltipContent={`${is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
+                    {is_favorite ? (
                       <button type="button" onClick={handleRemoveFromFavorites}>
                         <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
                       </button>
@@ -240,12 +213,10 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 {userCanChangeAccess && (
                   <Tooltip
                     tooltipContent={`${
-                      pageDetails.access
-                        ? "This page is only visible to you"
-                        : "This page can be viewed by anyone in the project"
+                      access ? "This page is only visible to you" : "This page can be viewed by anyone in the project"
                     }`}
                   >
-                    {pageDetails.access ? (
+                    {access ? (
                       <button type="button" onClick={handleMakePublic}>
                         <Lock className="h-3.5 w-3.5" />
                       </button>
@@ -259,13 +230,13 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 <Tooltip
                   position="top-right"
                   tooltipContent={`Created by ${ownerDetails?.member.display_name} on ${renderFormattedDate(
-                    pageDetails.created_at
+                    created_at
                   )}`}
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
                 </Tooltip>
                 <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
-                  {pageDetails.archived_at ? (
+                  {archived_at ? (
                     <>
                       {userCanArchive && (
                         <CustomMenu.MenuItem onClick={handleRestorePage}>

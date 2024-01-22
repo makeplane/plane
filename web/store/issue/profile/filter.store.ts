@@ -1,6 +1,8 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
+import pickBy from "lodash/pickBy";
+import isArray from "lodash/isArray";
 // base class
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
@@ -150,13 +152,16 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             });
           });
 
+          const appliedFilters = _filters.filters || {};
+          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
           this.rootIssueStore.profileIssues.fetchIssues(
             workspaceSlug,
             undefined,
-            "mutation",
+            isEmpty(filteredFilters) ? "init-loader" : "mutation",
             userId,
             this.rootIssueStore.profileIssues.currentView
           );
+
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
             filters: _filters.filters,
           });
@@ -178,10 +183,10 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to state if layout is switched to kanban and group_by is null
+          // set group_by to priority if layout is switched to kanban and group_by is null
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
-            _filters.displayFilters.group_by = "state";
-            updatedDisplayFilters.group_by = "state";
+            _filters.displayFilters.group_by = "priority";
+            updatedDisplayFilters.group_by = "priority";
           }
 
           runInAction(() => {

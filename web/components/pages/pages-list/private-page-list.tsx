@@ -1,14 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { usePage } from "hooks/store";
 // components
 import { PagesListView } from "components/pages/pages-list";
 // ui
 import { Loader } from "@plane/ui";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const PrivatePagesList: FC = observer(() => {
-  const { privateProjectPageIds } = usePage();
+  const projectPageStore = useProjectPages();
+  const { privateProjectPageIds } = projectPageStore;
 
   if (!privateProjectPageIds)
     return (

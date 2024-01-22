@@ -9,25 +9,32 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IPage } from "@plane/types";
+import { useProjectPages } from "hooks/store/use-project-page";
 
 type TConfirmPageDeletionProps = {
-  data?: IPage | null;
+  pageId: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { data, isOpen, onClose } = props;
+  const { pageId, isOpen, onClose } = props;
+
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { deletePage } = usePage();
+  const { deletePage } = useProjectPages();
+  const pageStore = usePage(pageId);
+
   // toast alert
   const { setToastAlert } = useToast();
+
+  if (!pageStore) return null;
+
+  const { name } = pageStore;
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -35,11 +42,12 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   };
 
   const handleDelete = async () => {
-    if (!data || !workspaceSlug || !projectId) return;
+    if (!pageId || !workspaceSlug || !projectId) return;
 
     setIsDeleting(true);
 
-    await deletePage(workspaceSlug.toString(), data.project, data.id)
+    // Delete Page will only delete the page from the archive page map, at this point only archived pages can be deleted
+    await deletePage(workspaceSlug.toString(), projectId as string, pageId)
       .then(() => {
         handleClose();
         setToastAlert({
@@ -99,8 +107,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? The Page
-                          will be deleted permanently. This action cannot be undone.
+                          <span className="break-words font-medium text-custom-text-100">{name}</span>? The Page will be
+                          deleted permanently. This action cannot be undone.
                         </p>
                       </div>
                     </div>

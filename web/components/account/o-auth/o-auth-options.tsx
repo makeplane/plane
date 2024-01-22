@@ -9,19 +9,22 @@ import { GitHubSignInButton, GoogleSignInButton } from "components/account";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;
+  type: "sign_in" | "sign_up";
 };
 
 // services
 const authService = new AuthService();
 
 export const OAuthOptions: React.FC<Props> = observer((props) => {
-  const { handleSignInRedirection } = props;
+  const { handleSignInRedirection, type } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // mobx store
   const {
     config: { envConfig },
   } = useApplication();
+  // derived values
+  const areBothOAuthEnabled = envConfig?.google_client_id && envConfig?.github_client_id;
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -72,12 +75,14 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">Or continue with</p>
         <hr className="w-full border-onboarding-border-100" />
       </div>
-      <div className="mx-auto mt-7 space-y-4 overflow-hidden sm:w-96">
+      <div className={`mx-auto mt-7 grid gap-4 overflow-hidden sm:w-96 ${areBothOAuthEnabled ? "grid-cols-2" : ""}`}>
         {envConfig?.google_client_id && (
-          <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
+          <div className="h-[42px] flex items-center !overflow-hidden">
+            <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} type={type} />
+          </div>
         )}
         {envConfig?.github_client_id && (
-          <GitHubSignInButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
+          <GitHubSignInButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} type={type} />
         )}
       </div>
     </>
