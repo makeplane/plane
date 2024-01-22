@@ -17,18 +17,14 @@ import { TActivityOperations } from "../root";
 const fileService = new FileService();
 
 type TIssueCommentCard = {
-  workspaceSlug: string;
-  projectId: string;
-  issueId: string;
   commentId: string;
   activityOperations: TActivityOperations;
-  disabled: boolean;
   ends: "top" | "bottom" | undefined;
   showAccessSpecifier?: boolean;
 };
 
 export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
-  const { commentId, activityOperations, ends, showAccessSpecifier = true } = props;
+  const { commentId, activityOperations, ends, showAccessSpecifier = false } = props;
   // hooks
   const {
     comment: { getCommentById },

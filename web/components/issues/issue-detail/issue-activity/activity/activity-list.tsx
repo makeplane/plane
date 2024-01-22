@@ -24,11 +24,7 @@ import {
 } from "./actions";
 
 type TIssueActivityList = {
-  workspaceSlug: string;
-  projectId: string;
-  issueId: string;
   activityId: string;
-  disabled: boolean;
   ends: "top" | "bottom" | undefined;
 };
 

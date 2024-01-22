@@ -5,7 +5,7 @@ import { History, LucideIcon, MessageSquare, Network } from "lucide-react";
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreateUpdate } from "./";
+import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // types
 import { TIssueComment } from "@plane/types";
 
@@ -14,6 +14,7 @@ type TIssueActivity = {
   projectId: string;
   issueId: string;
   disabled: boolean;
+  showAccessSpecifier?: boolean;
 };
 
 type TActivityTabs = "all" | "activity" | "comments";
@@ -45,7 +46,7 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled } = props;
+  const { workspaceSlug, projectId, issueId, disabled, showAccessSpecifier } = props;
   // hooks
   const { createComment, updateComment, removeComment, createCommentReaction, removeCommentReaction } =
     useIssueDetail();
@@ -154,13 +155,6 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     ]
   );
 
-  const componentCommonProps = {
-    workspaceSlug,
-    projectId,
-    issueId,
-    disabled,
-  };
-
   return (
     <div className="space-y-3 pt-3">
       {/* header */}
@@ -191,22 +185,32 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         <div className="min-h-[200px]">
           {activityTab === "all" ? (
             <>
-              <IssueActivityCommentRoot {...componentCommonProps} activityOperations={activityOperations} />
-              <IssueCommentCreateUpdate
+              <IssueActivityCommentRoot
+                issueId={issueId}
+                activityOperations={activityOperations}
+                showAccessSpecifier={showAccessSpecifier}
+              />
+              <IssueCommentCreate
                 workspaceSlug={workspaceSlug}
                 activityOperations={activityOperations}
                 disabled={disabled}
+                showAccessSpecifier={showAccessSpecifier}
               />
             </>
           ) : activityTab === "activity" ? (
-            <IssueActivityRoot {...componentCommonProps} />
+            <IssueActivityRoot issueId={issueId} />
           ) : (
             <>
-              <IssueCommentRoot {...componentCommonProps} activityOperations={activityOperations} />
-              <IssueCommentCreateUpdate
+              <IssueCommentRoot
+                issueId={issueId}
+                activityOperations={activityOperations}
+                showAccessSpecifier={showAccessSpecifier}
+              />
+              <IssueCommentCreate
                 workspaceSlug={workspaceSlug}
                 activityOperations={activityOperations}
                 disabled={disabled}
+                showAccessSpecifier={showAccessSpecifier}
               />
             </>
           )}

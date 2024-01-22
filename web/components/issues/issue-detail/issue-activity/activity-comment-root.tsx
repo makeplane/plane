@@ -9,15 +9,13 @@ import { IssueCommentCard } from "./comments/comment-card";
 import { TActivityOperations } from "./root";
 
 type TIssueActivityCommentRoot = {
-  workspaceSlug: string;
-  projectId: string;
   issueId: string;
   activityOperations: TActivityOperations;
-  disabled: boolean;
+  showAccessSpecifier?: boolean;
 };
 
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, activityOperations, disabled } = props;
+  const { issueId, activityOperations, showAccessSpecifier } = props;
   // hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -32,21 +30,14 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
       {activityComments.map((activityComment, index) =>
         activityComment.activity_type === "COMMENT" ? (
           <IssueCommentCard
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
             commentId={activityComment.id}
             activityOperations={activityOperations}
-            disabled={disabled}
             ends={index === 0 ? "top" : index === activityComments.length - 1 ? "bottom" : undefined}
+            showAccessSpecifier={showAccessSpecifier}
           />
         ) : activityComment.activity_type === "ACTIVITY" ? (
           <IssueActivityList
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
             activityId={activityComment.id}
-            disabled={disabled}
             ends={index === 0 ? "top" : index === activityComments.length - 1 ? "bottom" : undefined}
           />
         ) : (
