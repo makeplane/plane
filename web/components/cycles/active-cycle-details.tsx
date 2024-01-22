@@ -32,7 +32,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { STATE_GROUPS_DETAILS } from "constants/cycle";
+import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -147,7 +147,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     });
   };
 
-  const progressIndicatorData = STATE_GROUPS_DETAILS.map((group, index) => ({
+  const progressIndicatorData = CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value:
@@ -274,7 +274,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         <span
                           className="block h-3 w-3 rounded-full "
                           style={{
-                            backgroundColor: STATE_GROUPS_DETAILS[index].color,
+                            backgroundColor: CYCLE_STATE_GROUPS_DETAILS[index].color,
                           }}
                         />
                         <span className="text-xs capitalize">{group}</span>

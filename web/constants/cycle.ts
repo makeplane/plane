@@ -87,7 +87,7 @@ export const CYCLE_STATUS: {
   },
 ];
 
-export const STATE_GROUPS_DETAILS = [
+export const CYCLE_STATE_GROUPS_DETAILS = [
   {
     key: "backlog_issues",
     title: "Backlog",
