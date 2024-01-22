@@ -77,6 +77,9 @@ export class IssueStore implements IIssueStore {
       // fetch issue activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
+      // fetch issue comments
+      this.rootIssueDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
+
       // fetch issue subscription
       this.rootIssueDetailStore.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
 

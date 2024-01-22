@@ -1,6 +1,6 @@
 import { APIService } from "services/api.service";
 // types
-import { IIssueActivity } from "@plane/types";
+import { TIssueComment } from "@plane/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -9,7 +9,7 @@ export class IssueCommentService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueComment[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -21,7 +21,7 @@ export class IssueCommentService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssueActivity>
+    data: Partial<TIssueComment>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`, data)
       .then((response) => response?.data)
@@ -35,7 +35,7 @@ export class IssueCommentService extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    data: Partial<IIssueActivity>
+    data: Partial<TIssueComment>
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
