@@ -90,13 +90,13 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <Link
-      href={`/${workspaceSlug}/projects`}
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300"
-    >
-      <div className="flex items-center justify-between gap-2 px-7">
-        <h4 className="text-lg font-semibold text-custom-text-300">My projects</h4>
-      </div>
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300">
+      <Link
+        href={`/${workspaceSlug}/projects`}
+        className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline"
+      >
+        My projects
+      </Link>
       <div className="space-y-8 mt-4 mx-7">
         {canCreateProject && (
           <button
@@ -120,6 +120,6 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}
       </div>
-    </Link>
+    </div>
   );
 });

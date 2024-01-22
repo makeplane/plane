@@ -60,14 +60,16 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
 
   const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "upcoming");
-  const redirectionLink = `/${workspaceSlug}/workspace-views/created/${filterParams}`;
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col">
       <div className="flex items-center justify-between gap-2 p-6 pl-7">
-        <Link href={redirectionLink} className="flex-grow text-lg font-semibold text-custom-text-300">
+        <Link
+          href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
+          className="text-lg font-semibold text-custom-text-300 hover:underline"
+        >
           All issues created
         </Link>
         <DurationFilterDropdown

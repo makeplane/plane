@@ -129,12 +129,13 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
     );
   };
 
-  const redirectionLink = `/${workspaceSlug}/workspace-views/assigned`;
-
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden">
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
-        <Link href={redirectionLink} className="flex-grow text-lg font-semibold text-custom-text-300">
+        <Link
+          href={`/${workspaceSlug}/workspace-views/assigned`}
+          className="text-lg font-semibold text-custom-text-300 hover:underline"
+        >
           Priority of assigned issues
         </Link>
         <DurationFilterDropdown
@@ -146,61 +147,59 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           }
         />
       </div>
-      <Link href={redirectionLink} className="block h-full">
-        {totalCount > 0 ? (
-          <div className="flex items-center px-11 h-full">
-            <div className="w-full -mt-[11px]">
-              <MarimekkoGraph
-                data={chartData}
-                id="priority"
-                value="percentage"
-                dimensions={ISSUE_PRIORITIES.map((p) => ({
+      {totalCount > 0 ? (
+        <div className="flex items-center px-11 h-full">
+          <div className="w-full -mt-[11px]">
+            <MarimekkoGraph
+              data={chartData}
+              id="priority"
+              value="percentage"
+              dimensions={ISSUE_PRIORITIES.map((p) => ({
+                id: p.key,
+                value: p.key,
+              }))}
+              axisBottom={null}
+              axisLeft={null}
+              height="119px"
+              margin={{
+                top: 11,
+                right: 0,
+                bottom: 0,
+                left: 0,
+              }}
+              defs={PRIORITY_GRAPH_GRADIENTS}
+              fill={ISSUE_PRIORITIES.map((p) => ({
+                match: {
                   id: p.key,
-                  value: p.key,
-                }))}
-                axisBottom={null}
-                axisLeft={null}
-                height="119px"
-                margin={{
-                  top: 11,
-                  right: 0,
-                  bottom: 0,
-                  left: 0,
-                }}
-                defs={PRIORITY_GRAPH_GRADIENTS}
-                fill={ISSUE_PRIORITIES.map((p) => ({
-                  match: {
-                    id: p.key,
-                  },
-                  id: `gradient${p.title}`,
-                }))}
-                tooltip={() => <></>}
-                enableGridX={false}
-                enableGridY={false}
-                layers={[CustomBarsLayer]}
-              />
-              <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
-                {chartData.map((item) => (
-                  <p
-                    key={item.priority}
-                    className="flex items-center gap-1 flex-shrink-0"
-                    style={{
-                      width: `${item.percentage}%`,
-                    }}
-                  >
-                    <PriorityIcon priority={item.priority} withContainer />
-                    {item.percentage.toFixed(0)}%
-                  </p>
-                ))}
-              </div>
+                },
+                id: `gradient${p.title}`,
+              }))}
+              tooltip={() => <></>}
+              enableGridX={false}
+              enableGridY={false}
+              layers={[CustomBarsLayer]}
+            />
+            <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
+              {chartData.map((item) => (
+                <p
+                  key={item.priority}
+                  className="flex items-center gap-1 flex-shrink-0"
+                  style={{
+                    width: `${item.percentage}%`,
+                  }}
+                >
+                  <PriorityIcon priority={item.priority} withContainer />
+                  {item.percentage.toFixed(0)}%
+                </p>
+              ))}
             </div>
           </div>
-        ) : (
-          <div className="h-full grid items-end">
-            <IssuesByPriorityEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
-          </div>
-        )}
-      </Link>
+        </div>
+      ) : (
+        <div className="h-full grid items-end">
+          <IssuesByPriorityEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
+        </div>
+      )}
     </div>
   );
 });
