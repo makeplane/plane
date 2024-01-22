@@ -187,109 +187,6 @@ const activityDetails: {
     },
     icon: <PaperclipIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
-  blocking: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue is blocking issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
-  },
-  blocked_by: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue is being blocked by{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed this issue being blocked by issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
-  },
-  cycles: {
-    message: (activity, showIssue, workspaceSlug) => {
-      if (activity.verb === "created")
-        return (
-          <>
-            <span className="flex-shrink-0">added this issue to the cycle </span>
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
-            >
-              <span className="truncate">{activity.new_value}</span>
-            </a>
-          </>
-        );
-      else if (activity.verb === "updated")
-        return (
-          <>
-            <span className="flex-shrink-0">set the cycle to </span>
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
-            >
-              <span className="truncate">{activity.new_value}</span>
-            </a>
-          </>
-        );
-      else
-        return (
-          <>
-            removed the issue from the cycle{" "}
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
-            >
-              <span className="truncate">{activity.old_value}</span>
-            </a>
-          </>
-        );
-    },
-    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
-  },
-  duplicate: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue as duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed this issue as a duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <CopyPlus size={12} color="#6b7280" />,
-  },
   description: {
     message: (activity, showIssue) => (
       <>
@@ -448,6 +345,53 @@ const activityDetails: {
     },
     icon: <Link2Icon size={12} color="#6b7280" aria-hidden="true" />,
   },
+  cycles: {
+    message: (activity, showIssue, workspaceSlug) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            <span className="flex-shrink-0">added this issue to the cycle </span>
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+            >
+              <span className="truncate">{activity.new_value}</span>
+            </a>
+          </>
+        );
+      else if (activity.verb === "updated")
+        return (
+          <>
+            <span className="flex-shrink-0">set the cycle to </span>
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+            >
+              <span className="truncate">{activity.new_value}</span>
+            </a>
+          </>
+        );
+      else
+        return (
+          <>
+            removed the issue from the cycle{" "}
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+            >
+              <span className="truncate">{activity.old_value}</span>
+            </a>
+          </>
+        );
+    },
+    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
+  },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.verb === "created")
@@ -577,6 +521,77 @@ const activityDetails: {
     },
     icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
   },
+  blocking: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue is blocking issue{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
+  },
+  blocked_by: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue is being blocked by{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed this issue being blocked by issue{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+  },
+  duplicate: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue as duplicate of{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed this issue as a duplicate of{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <CopyPlus size={12} color="#6b7280" />,
+  },
+  state: {
+    message: (activity, showIssue) => (
+      <>
+        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        {showIssue && (
+          <>
+            {" "}
+            for <IssueLink activity={activity} />
+          </>
+        )}
+        .
+      </>
+    ),
+    icon: <LayoutGridIcon size={12} color="#6b7280" aria-hidden="true" />,
+  },
   start_date: {
     message: (activity, showIssue) => {
       if (!activity.new_value)
@@ -596,9 +611,7 @@ const activityDetails: {
         return (
           <>
             set the start date to{" "}
-            <span className="font-medium text-custom-text-100">
-              {renderFormattedDate(activity.new_value)}
-            </span>
+            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
             {showIssue && (
               <>
                 {" "}
@@ -610,21 +623,6 @@ const activityDetails: {
         );
     },
     icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
-  },
-  state: {
-    message: (activity, showIssue) => (
-      <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
-        {showIssue && (
-          <>
-            {" "}
-            for <IssueLink activity={activity} />
-          </>
-        )}
-        .
-      </>
-    ),
-    icon: <LayoutGridIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -645,9 +643,7 @@ const activityDetails: {
         return (
           <>
             set the due date to{" "}
-            <span className="font-medium text-custom-text-100">
-              {renderFormattedDate(activity.new_value)}
-            </span>
+            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
             {showIssue && (
               <>
                 {" "}

@@ -77,6 +77,9 @@ export class IssueStore implements IIssueStore {
       // fetch issue activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
+      // fetch issue comments
+      this.rootIssueDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
+
       // fetch issue subscription
       this.rootIssueDetailStore.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
 
@@ -92,8 +95,16 @@ export class IssueStore implements IIssueStore {
     }
   };
 
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+    const issue = await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
+      workspaceSlug,
+      projectId,
+      issueId,
+      data
+    );
+    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    return issue;
+  };
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);

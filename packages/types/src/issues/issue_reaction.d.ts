@@ -13,7 +13,7 @@ export type TIssueReaction = {
 };
 
 export type TIssueReactionMap = {
-  [issue_id: string]: TIssueReaction;
+  [reaction_id: string]: TIssueReaction;
 };
 
 export type TIssueReactionIdMap = {

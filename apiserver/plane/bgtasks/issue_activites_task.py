@@ -111,15 +111,15 @@ def track_parent(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("parent") != requested_data.get("parent"):
+    if current_instance.get("parent_id") != requested_data.get("parent_id"):
         old_parent = (
-            Issue.objects.filter(pk=current_instance.get("parent")).first()
-            if current_instance.get("parent") is not None
+            Issue.objects.filter(pk=current_instance.get("parent_id")).first()
+            if current_instance.get("parent_id") is not None
             else None
         )
         new_parent = (
-            Issue.objects.filter(pk=requested_data.get("parent")).first()
-            if requested_data.get("parent") is not None
+            Issue.objects.filter(pk=requested_data.get("parent_id")).first()
+            if requested_data.get("parent_id") is not None
             else None
         )
 
@@ -188,9 +188,9 @@ def track_state(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("state") != requested_data.get("state"):
-        new_state = State.objects.get(pk=requested_data.get("state", None))
-        old_state = State.objects.get(pk=current_instance.get("state", None))
+    if current_instance.get("state_id") != requested_data.get("state_id"):
+        new_state = State.objects.get(pk=requested_data.get("state_id", None))
+        old_state = State.objects.get(pk=current_instance.get("state_id", None))
 
         issue_activities.append(
             IssueActivity(
@@ -288,10 +288,10 @@ def track_labels(
     epoch,
 ):
     requested_labels = set(
-        [str(lab) for lab in requested_data.get("labels", [])]
+        [str(lab) for lab in requested_data.get("label_ids", [])]
     )
     current_labels = set(
-        [str(lab) for lab in current_instance.get("labels", [])]
+        [str(lab) for lab in current_instance.get("label_ids", [])]
     )
 
     added_labels = requested_labels - current_labels
@@ -350,10 +350,10 @@ def track_assignees(
     epoch,
 ):
     requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignees", [])]
+        [str(asg) for asg in requested_data.get("assignee_ids", [])]
     )
     current_assignees = set(
-        [str(asg) for asg in current_instance.get("assignees", [])]
+        [str(asg) for asg in current_instance.get("assignee_ids", [])]
     )
 
     added_assignees = requested_assignees - current_assignees
@@ -541,14 +541,14 @@ def update_issue_activity(
 ):
     ISSUE_ACTIVITY_MAPPER = {
         "name": track_name,
-        "parent": track_parent,
+        "parent_id": track_parent,
         "priority": track_priority,
-        "state": track_state,
+        "state_id": track_state,
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
-        "labels": track_labels,
-        "assignees": track_assignees,
+        "label_ids": track_labels,
+        "assignee_ids": track_assignees,
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,

@@ -87,6 +87,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           <MessageSquare className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
         </span>
       </div>
+
       <div className="min-w-0 flex-1">
         <div>
           <div className="text-xs">
@@ -146,6 +147,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
+
       {currentUser?.id === comment.actor && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
