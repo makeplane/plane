@@ -145,11 +145,11 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
         isSubmitting={isSubmitting}
       />
-      <div className="flex h-full w-full overflow-y-auto">
+      <div className="flex h-full w-full overflow-y-auto frame-renderer">
         <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
             onActionCompleteHandler={onActionCompleteHandler}
             readonly={false}
