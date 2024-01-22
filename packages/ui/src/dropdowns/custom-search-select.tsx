@@ -153,6 +153,9 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                                 }
                               )
                             }
+                            onClick={() => {
+                              if (!multiple) closeDropdown();
+                            }}
                           >
                             {({ selected }) => (
                               <>
