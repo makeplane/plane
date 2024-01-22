@@ -117,12 +117,13 @@ export class DashboardStore implements IDashboardStore {
 
   /**
    * @description get widget stats
+   * @param workspaceSlug
    * @param dashboardId
    * @param widgetKey
    * @returns widget stats
    */
   getWidgetStats = <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys): T | undefined =>
-    (this.widgetStats?.[workspaceSlug]?.[dashboardId]?.[widgetKey] as T) ?? undefined;
+    (this.widgetStats?.[workspaceSlug]?.[dashboardId]?.[widgetKey] as unknown as T) ?? undefined;
 
   /**
    * @description fetch home dashboard details and widgets
