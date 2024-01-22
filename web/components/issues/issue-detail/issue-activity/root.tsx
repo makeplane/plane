@@ -145,12 +145,14 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 activityOperations={activityOperations}
                 showAccessSpecifier={showAccessSpecifier}
               />
-              <IssueCommentCreate
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                disabled={disabled}
-                showAccessSpecifier={showAccessSpecifier}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  disabled={disabled}
+                  showAccessSpecifier={showAccessSpecifier}
+                />
+              )}
             </div>
           ) : activityTab === "activity" ? (
             <IssueActivityRoot issueId={issueId} />
@@ -162,12 +164,14 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 activityOperations={activityOperations}
                 showAccessSpecifier={showAccessSpecifier}
               />
-              <IssueCommentCreate
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                disabled={disabled}
-                showAccessSpecifier={showAccessSpecifier}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  disabled={disabled}
+                  showAccessSpecifier={showAccessSpecifier}
+                />
+              )}
             </div>
           )}
         </div>

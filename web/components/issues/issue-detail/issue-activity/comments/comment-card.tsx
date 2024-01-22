@@ -26,7 +26,7 @@ type TIssueCommentCard = {
 };
 
 export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
-  const { workspaceSlug, commentId, activityOperations, ends, showAccessSpecifier = true } = props;
+  const { workspaceSlug, commentId, activityOperations, ends, showAccessSpecifier = false } = props;
   // hooks
   const {
     comment: { getCommentById },
