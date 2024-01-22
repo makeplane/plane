@@ -1,11 +1,16 @@
 # Third party imports
 from celery import shared_task
+import os
 
 # Django imports
 from django.utils import timezone
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Module imports
 from plane.db.models import EmailNotificationLog, User, Issue
+from plane.license.utils.instance_value import get_email_configuration
 
 
 @shared_task
@@ -17,7 +22,8 @@ def stack_email_notification():
         .values()
     )
 
-    # {"issue_id" : { "actor_id": [ { data }, { data } ] }}
+    # Create the below format for each of the issues
+    # {"issue_id" : { "actor_id1": [ { data }, { data } ], "actor_id2": [ { data }, { data } ] }}
 
     # Convert to unique receivers list
     receivers = list(
@@ -43,7 +49,9 @@ def stack_email_notification():
         for receiver_notification in receiver_notifications:
             payload.setdefault(
                 receiver_notification.get("entity_identifier"), {}
-            ).setdefault(str(receiver_notification.get("triggered_by_id")), []).append(
+            ).setdefault(
+                str(receiver_notification.get("triggered_by_id")), []
+            ).append(
                 receiver_notification.get("data")
             )
             # append processed notifications
@@ -51,10 +59,10 @@ def stack_email_notification():
             email_notification_ids.append(receiver_notification.get("id"))
 
         # Create emails for all the issues
-        for issue_id, issue_data in payload.items():
+        for issue_id, notification_data in payload.items():
             send_email_notification.delay(
                 issue_id=issue_id,
-                issue_data=issue_data,
+                notification_data=notification_data,
                 receiver_id=receiver_id,
                 email_notification_ids=email_notification_ids,
             )
@@ -65,10 +73,10 @@ def stack_email_notification():
     )
 
 
-def create_payload(payload):
-    # {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
+def create_payload(notification_data):
+    # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
     data = {}
-    for actor_id, changes in payload.items():
+    for actor_id, changes in notification_data.items():
         for change in changes:
             issue_activity = change.get("issue_activity")
             if issue_activity:  # Ensure issue_activity is not None
@@ -78,9 +86,11 @@ def create_payload(payload):
 
                 # Append old_value if it's not empty and not already in the list
                 if old_value:
-                    data.setdefault(actor_id, {}).setdefault(field, {}).setdefault(
-                        "old_value", []
-                    ).append(old_value) if old_value not in data.setdefault(
+                    data.setdefault(actor_id, {}).setdefault(
+                        field, {}
+                    ).setdefault("old_value", []).append(
+                        old_value
+                    ) if old_value not in data.setdefault(
                         actor_id, {}
                     ).setdefault(
                         field, {}
@@ -90,9 +100,11 @@ def create_payload(payload):
 
                 # Append new_value if it's not empty and not already in the list
                 if new_value:
-                    data.setdefault(actor_id, {}).setdefault(field, {}).setdefault(
-                        "new_value", []
-                    ).append(new_value) if new_value not in data.setdefault(
+                    data.setdefault(actor_id, {}).setdefault(
+                        field, {}
+                    ).setdefault("new_value", []).append(
+                        new_value
+                    ) if new_value not in data.setdefault(
                         actor_id, {}
                     ).setdefault(
                         field, {}
@@ -104,17 +116,32 @@ def create_payload(payload):
 
 
 @shared_task
-def send_email_notification(issue_id, issue_data, receiver_id, email_notification_ids):
-    data = create_payload(payload=issue_data)
+def send_email_notification(
+    issue_id, notification_data, receiver_id, email_notification_ids
+):
+    base_api = "http://localhost:3000"
+    data = create_payload(payload=notification_data)
+
+    # Get email configurations
+    (
+        EMAIL_HOST,
+        EMAIL_HOST_USER,
+        EMAIL_HOST_PASSWORD,
+        EMAIL_PORT,
+        EMAIL_USE_TLS,
+        EMAIL_FROM,
+    ) = get_email_configuration()
 
     receiver = User.objects.get(pk=receiver_id)
     issue = Issue.objects.get(pk=issue_id)
     template_data = []
+    total_changes = 0
     for actor_id, changes in data.items():
         actor = User.objects.get(pk=actor_id)
+        total_changes = total_changes + len(changes)
         template_data.append(
             {
-                "actor_details": {
+                "actor_detail": {
                     "avatar": actor.avatar,
                     "first_name": actor.first_name,
                     "last_name": actor.last_name,
@@ -126,7 +153,57 @@ def send_email_notification(issue_id, issue_data, receiver_id, email_notificatio
                 },
             }
         )
-    
-    EmailNotificationLog.objects.filter(pk__in=email_notification_ids).update(
-        sent_at=timezone.now()
+
+    summary = ""
+    if len(template_data) == 1:
+        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} made {total_changes} to the issue"
+    else:
+        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} and others made {total_changes} to the issue"
+
+    # Send the mail
+    subject = f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
+    context = {
+        "data": template_data,
+        "summary": summary,
+        "issue": {
+            "issue_identifier": f"{str(issue.project.identifier)}-{str(issue.sequence_id)}",
+            "name": issue.name,
+        },
+        "receiver": {
+            "email": receiver.email,
+        },
+        "issue_unsubscribe": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
+        "user_preference": f"{base_api}/profile/preferences/email"
+    }
+    html_content = render_to_string(
+        "emails/notifications/issue-updates.html", context
     )
+    text_content = strip_tags(html_content)
+
+    try:
+        connection = get_connection(
+            host=EMAIL_HOST,
+            port=int(EMAIL_PORT),
+            username=EMAIL_HOST_USER,
+            password=EMAIL_HOST_PASSWORD,
+            use_tls=EMAIL_USE_TLS == "1",
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=EMAIL_FROM,
+            to=[receiver.email],
+            connection=connection,
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        EmailNotificationLog.objects.filter(
+            pk__in=email_notification_ids
+        ).update(sent_at=timezone.now())
+        print("Email Sent")
+        return
+    except Exception as e:
+        print(e)
+        return

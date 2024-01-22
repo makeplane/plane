@@ -59,10 +59,10 @@
                                     <tr>
                                         <td>
                                             <p style="font-size: 1rem;font-weight: 600; ">
-                                                PLW-1 updates
+                                                {{ issue.issue_identifier }} updates
                                             </p>
                                             <p style="font-size: 1rem;font-weight: 500;line-height: 28px;">
-                                                workspacename/projectname/issueId: Sign up flow
+                                                {{ issue.name }}
                                             </p>
                                         </td>
                                     </tr>
@@ -71,11 +71,7 @@
                                     style="background-color: #F0F0F3; height: 1px; border: 0;margin-top: 15px; margin-bottom: 15px;" />
 
                                 <p style="font-size: 1rem; line-height: 28px;">
-                                    updates were made to the issue by
-                                    <span style="font-size: 1rem; font-weight: 700; line-height: 28px;">
-                                        Srinivas Pendem
-                                    </span>
-
+                                    {{ summary }}
                                 </p>
 
                                 <!-- Outer update/comment Box -->
@@ -87,12 +83,13 @@
                                     <tr>
                                         <td style="padding-bottom:20px;">
                                             <p style="font-size: 0.8rem; font-weight: 600; color:#121A26">
-                                                {{ Updates / Comments }}
+                                               Updates
                                             </p>
                                         </td>
                                     </tr>
 
                                     <!-- Property Updates -->
+                                    {% for update in data %}
                                     <tr>
                                         <td>
                                             <table cellspacing="0" style="background-color: white; width: 100%;">
@@ -103,14 +100,14 @@
                                                             <tr
                                                                 style="background-color: #FFFFFF; border-radius: 8px; margin-top: 20px;">
                                                                 <td style="padding-left:15px;">
-                                                                    <img src="https://docs.plane.so/logos/logo.svg"
+                                                                    <img src="{{ update.actor_detail.avatar }}"
                                                                         width="15" height="15" border="0" />
                                                                 </td>
                                                                 <td style=" padding-top: 20px;padding-bottom:20px">
 
                                                                     <p
                                                                         style="font-weight: 500; font-size: 0.8rem;color:#1C2024; margin-left: 8px;">
-                                                                        Srinivas Pendem
+                                                                        {{ update.actor_detail.first_name }} {{ change.actor_detail.last_name }}
                                                                     </p>
                                                                 </td>
                                                                 <td style="width:fit-content;">
@@ -123,8 +120,9 @@
                                                         </table>
                                                     </td>
                                                 </tr>
-
+                                                
                                                 <!-- Only assignee changed -->
+                                                {%  %}
                                                 <tr>
                                                     <td style=" padding-left: 15px; padding-bottom: 20px;">
                                                         <table>
@@ -140,25 +138,30 @@
                                                                         Assignee : </p>
                                                                 </td>
                                                                 <td>
+                                                                    
+                                                                    {% for assignee in update.changes.assignees.old_value %}
                                                                     <p
                                                                         style="font-size: 0.8rem; font-weight: 500;text-decoration: line-through; color: #641723; background-color: #FEEBEC; margin-left: 5px; padding: 3px;">
-                                                                        {{ assginee.name }}</p>
+                                                                        {{ assginee }}</p> {% endfor %} 
                                                                 </td>
                                                                 <td>
                                                                     <i data-lucide="move-right"
                                                                         style="color: #525252; height: 15px; width: 15px;margin-left: 10px; margin-right: 10px;"></i>
                                                                 </td>
                                                                 <td>
+                                                                    {% for assignee in update.changes.assignees.new_value %}
                                                                     <p
                                                                         style="font-size: 0.8rem; font-weight: 500; color: #0D74CE; background-color: #E6F4FE; padding: 3px;">
-                                                                        {{ assginee.name }}</p>
+                                                                        {{ assginee }}</p> {% endfor %}
                                                                 </td>
                                                             </tr>
                                                         </table>
 
                                                     </td>
                                                 </tr>
-
+                                                {% endif %}
+                                                
+                                                {% if update.changes.target_date %}
                                                 <!-- due date changed -->
                                                 <tr>
                                                     <td style="padding-bottom: 20px;">
@@ -176,14 +179,15 @@
                                                                 <td>
                                                                     <p
                                                                         style="font-size: 0.8rem; font-weight: 500; color: #171717; margin-left: 5px;">
-                                                                        28 Jun, 2023</p>
+                                                                        { update.changes.target_date.new_value[0] }</p>
                                                                 </td>
                                                             </tr>
                                                         </table>
                                                     </td>
                                                 </tr>
-
+                                                {% endif %}
                                                 <!-- duplicate changed -->
+                                                {% if update.changes.duplicate %}
                                                 <tr>
                                                     <td style="padding-bottom: 20px;">
                                                         <table style="padding-left: 15px;">
@@ -198,85 +202,18 @@
                                                                         Duplicate : </p>
                                                                 </td>
                                                                 <td>
-                                                                    <p
+                                                                   {% for new_value in update.changes.duplicate.new_value %} 
+                                                                   <span
                                                                         style="font-size: 0.8rem; font-weight: 500; color: #3A5BC7; margin-left: 5px;">
-                                                                        PLW-2</p>
+                                                                        {{ new_value }}</span>
+                                                                        {% endfor %}
                                                                 </td>
                                                             </tr>
                                                         </table>
                                                     </td>
                                                 </tr>
-
-                                                <!-- only assignee added -->
-                                                <tr>
-                                                    <td style="padding-bottom: 20px;">
-                                                        <table style="padding-left: 15px;">
-                                                            <tr>
-                                                                <td>
-                                                                    <i data-lucide="users"
-                                                                        style="color: #525252; height: 12px; width: 12px; margin-right: 5px;"></i>
-                                                                </td>
-                                                                <td>
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500; color: #525252;">
-                                                                        Assignee : </p>
-                                                                </td>
-                                                                <td>
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500; color: #0D74CE; background-color: #E6F4FE; margin-left: 5px; padding: 3px;">
-                                                                        {{ assginee.name }}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500; color: #0D74CE; margin-left: 5px;">
-                                                                        +{{length}} more</p>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- assignee changed and more assignee added -->
-                                                <tr>
-                                                    <td
-                                                        style="padding-left: 15px;padding-right:15px; padding-bottom: 20px;">
-                                                        <table>
-                                                            <tr>
-                                                                <td> <i data-lucide="users"
-                                                                        style="color: #525252; height: 12px; width: 12px; margin-right: 5px;"></i>
-                                                                </td>
-
-                                                                <td>
-
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500; color: #525252;">
-                                                                        Assignee : </p>
-                                                                </td>
-                                                                <td>
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500;text-decoration: line-through; color: #641723; background-color: #FEEBEC; margin-left: 5px; padding: 3px;">
-                                                                        {{ assginee.name }}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <i data-lucide="move-right"
-                                                                        style="color: #525252; height: 15px; width: 15px;margin-left: 10px; margin-right: 10px;"></i>
-                                                                </td>
-                                                                <td>
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500; color: #0D74CE; background-color: #E6F4FE; padding: 3px;">
-                                                                        {{ assginee.name }}</p>
-                                                                </td>
-
-                                                                <td>
-                                                                    <p
-                                                                        style="font-size: 0.8rem; font-weight: 500; color: #0D74CE; margin-left: 5px;">
-                                                                        +{{length}} more</p>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-
+                                                {% endif %}
+                                                {% if update.changes.labels %}
                                                 <!-- Labels -->
                                                 <tr>
                                                     <td>
@@ -338,7 +275,8 @@
                                             </table>
                                         </td>
                                     </tr>
-
+                                    {% endif %}
+                                    {% endfor %}
                                     <!-- Comments -->
                                     <tr>
                                         <td>
@@ -408,12 +346,12 @@
                     <td>
                         <div style="font-size: 0.8rem; color: #1C2024;">
                             This email was sent to <a href="mailto:"
-                                style="color: #3A5BC7; font-weight: 500; text-decoration: none;">akhil@plane.so.</a>
+                                style="color: #3A5BC7; font-weight: 500; text-decoration: none;">{{ receiver.email }}</a>
                             If you'd rather not
                             receive this
                             kind of
-                            email, <a href="" style="color: #3A5BC7;  text-decoration: none;">you can unsubscribe to
-                                the issue</a> or <a href="" style="color: #3A5BC7; text-decoration: none;">manage
+                            email, <a href="{{ issue_unsubscribe }}" style="color: #3A5BC7;  text-decoration: none;">you can unsubscribe to
+                                the issue</a> or <a href="{{ user_preference }}" style="color: #3A5BC7; text-decoration: none;">manage
                                 your email
                                 preferences</a>.
 
