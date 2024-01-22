@@ -5,21 +5,25 @@ import { ProjectEstimateService } from "services/project";
 // types
 import { RootStore } from "store/root.store";
 import { IEstimate, IEstimateFormData } from "@plane/types";
+import { computedFn } from "mobx-utils";
 
 export interface IEstimateStore {
+  //Loaders
+  fetchedMap: Record<string, boolean>;
   // observables
-  estimates: Record<string, IEstimate[] | null>;
+  estimateMap: Record<string, IEstimate>;
   // computed
   areEstimatesEnabledForCurrentProject: boolean;
   projectEstimates: IEstimate[] | null;
   activeEstimateDetails: IEstimate | null;
   // computed actions
   areEstimatesEnabledForProject: (projectId: string) => boolean;
-  getEstimatePointValue: (estimateKey: number | null) => string;
+  getEstimatePointValue: (estimateKey: number | null, projectId?: string) => string;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
   getProjectActiveEstimateDetails: (projectId: string) => IEstimate | null;
   // fetch actions
   fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<IEstimate[]>;
+  fetchWorskpaceEstimates: (workspaceSlug: string) => Promise<IEstimate[]>;
   // crud actions
   createEstimate: (workspaceSlug: string, projectId: string, data: IEstimateFormData) => Promise<IEstimate>;
   updateEstimate: (
@@ -33,7 +37,9 @@ export interface IEstimateStore {
 
 export class EstimateStore implements IEstimateStore {
   // observables
-  estimates: Record<string, IEstimate[] | null> = {};
+  estimateMap: Record<string, IEstimate> = {};
+  //loaders
+  fetchedMap: Record<string, boolean> = {};
   // root store
   rootStore;
   // services
@@ -42,18 +48,15 @@ export class EstimateStore implements IEstimateStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      estimates: observable,
+      estimateMap: observable,
+      fetchedMap: observable,
       // computed
       areEstimatesEnabledForCurrentProject: computed,
       projectEstimates: computed,
       activeEstimateDetails: computed,
-      // computed actions
-      areEstimatesEnabledForProject: action,
-      getProjectEstimateById: action,
-      getEstimatePointValue: action,
-      getProjectActiveEstimateDetails: action,
       // actions
       fetchProjectEstimates: action,
+      fetchWorskpaceEstimates: action,
       createEstimate: action,
       updateEstimate: action,
       deleteEstimate: action,
@@ -79,8 +82,9 @@ export class EstimateStore implements IEstimateStore {
    */
   get projectEstimates() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId) return null;
-    return this.estimates?.[projectId] || null;
+    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return null;
+    return Object.values(this.estimateMap).filter((estimate) => estimate.project === projectId);
   }
 
   /**
@@ -89,47 +93,49 @@ export class EstimateStore implements IEstimateStore {
   get activeEstimateDetails() {
     const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
     if (!currentProjectDetails || !currentProjectDetails?.estimate) return null;
-    return this.projectEstimates?.find((estimate) => estimate.id === currentProjectDetails?.estimate) || null;
+    return this.estimateMap?.[currentProjectDetails?.estimate || ""] || null;
   }
 
   /**
    * @description returns true if estimates are enabled for a project using project id
    * @param projectId
    */
-  areEstimatesEnabledForProject = (projectId: string) => {
+  areEstimatesEnabledForProject = computedFn((projectId: string) => {
     const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
     if (!projectDetails) return false;
     return Boolean(projectDetails.estimate) ?? false;
-  };
+  });
 
   /**
    * @description returns the point value for the given estimate key to display in the UI
    */
-  getEstimatePointValue = (estimateKey: number | null) => {
+  getEstimatePointValue = computedFn((estimateKey: number | null, projectId?: string) => {
     if (estimateKey === null) return "None";
-    const activeEstimate = this.activeEstimateDetails;
+    const activeEstimate = projectId ? this.getProjectActiveEstimateDetails(projectId) : this.activeEstimateDetails;
     return activeEstimate?.points?.find((point) => point.key === estimateKey)?.value || "None";
-  };
+  });
 
   /**
    * @description returns the estimate details for the given estimate id
    * @param estimateId
    */
-  getProjectEstimateById = (estimateId: string) => {
+  getProjectEstimateById = computedFn((estimateId: string) => {
     if (!this.projectEstimates) return null;
-    const estimateInfo = this.projectEstimates?.find((estimate) => estimate.id === estimateId) || null;
+    const estimateInfo = this.estimateMap?.[estimateId] || null;
     return estimateInfo;
-  };
+  });
 
   /**
    * @description returns the estimate details for the given estimate id
    * @param projectId
    */
-  getProjectActiveEstimateDetails = (projectId: string) => {
-    const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
-    if (!projectDetails || !projectDetails?.estimate) return null;
-    return this.projectEstimates?.find((estimate) => estimate.id === projectDetails?.estimate) || null;
-  };
+  getProjectActiveEstimateDetails = computedFn((projectId: string) => {
+    const projectDetails = this.rootStore.projectRoot.project?.getProjectById(projectId);
+    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!projectDetails || !projectDetails?.estimate || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug]))
+      return null;
+    return this.estimateMap?.[projectDetails?.estimate || ""] || null;
+  });
 
   /**
    * @description fetches the list of estimates for the given project
@@ -139,7 +145,26 @@ export class EstimateStore implements IEstimateStore {
   fetchProjectEstimates = async (workspaceSlug: string, projectId: string) =>
     await this.estimateService.getEstimatesList(workspaceSlug, projectId).then((response) => {
       runInAction(() => {
-        set(this.estimates, projectId, response);
+        response.forEach((estimate) => {
+          set(this.estimateMap, estimate.id, estimate);
+        });
+        this.fetchedMap[projectId] = true;
+      });
+      return response;
+    });
+
+  /**
+   * @description fetches the list of estimates for the given project
+   * @param workspaceSlug
+   * @param projectId
+   */
+  fetchWorskpaceEstimates = async (workspaceSlug: string) =>
+    await this.estimateService.getWorkspaceEstimatesList(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((estimate) => {
+          set(this.estimateMap, estimate.id, estimate);
+        });
+        this.fetchedMap[workspaceSlug] = true;
       });
       return response;
     });
@@ -157,7 +182,7 @@ export class EstimateStore implements IEstimateStore {
         points: response.estimate_points,
       };
       runInAction(() => {
-        set(this.estimates, projectId, [responseEstimate, ...(this.estimates?.[projectId] || [])]);
+        set(this.estimateMap, [responseEstimate.id], responseEstimate);
       });
       return response.estimate;
     });
@@ -171,11 +196,12 @@ export class EstimateStore implements IEstimateStore {
    */
   updateEstimate = async (workspaceSlug: string, projectId: string, estimateId: string, data: IEstimateFormData) =>
     await this.estimateService.patchEstimate(workspaceSlug, projectId, estimateId, data).then((response) => {
-      const updatedEstimates = (this.estimates?.[projectId] ?? []).map((estimate) =>
-        estimate.id === estimateId ? { ...estimate, ...data.estimate, points: [...data.estimate_points] } : estimate
-      );
       runInAction(() => {
-        set(this.estimates, projectId, updatedEstimates);
+        set(this.estimateMap, estimateId, {
+          ...this.estimateMap[estimateId],
+          ...data.estimate,
+          points: [...data.estimate_points],
+        });
       });
       return response;
     });
@@ -188,9 +214,8 @@ export class EstimateStore implements IEstimateStore {
    */
   deleteEstimate = async (workspaceSlug: string, projectId: string, estimateId: string) =>
     await this.estimateService.deleteEstimate(workspaceSlug, projectId, estimateId).then(() => {
-      const updatedEstimates = (this.estimates?.[projectId] ?? []).filter((estimate) => estimate.id !== estimateId);
       runInAction(() => {
-        set(this.estimates, projectId, updatedEstimates);
+        delete this.estimateMap[estimateId];
       });
     });
 }

@@ -93,14 +93,10 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
   };
   if (multiple) comboboxProps.multiple = true;
 
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (!projectMemberIds) fetchProjectMembers(workspaceSlug, projectId);
-  }, [fetchProjectMembers, projectId, projectMemberIds, workspaceSlug]);
-
   const openDropdown = () => {
     setIsOpen(true);
+
+    if (!projectMemberIds && workspaceSlug) fetchProjectMembers(workspaceSlug, projectId);
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);

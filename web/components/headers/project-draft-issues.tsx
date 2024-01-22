@@ -22,9 +22,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   } = useIssues(EIssuesStoreType.DRAFT);
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();

@@ -2,10 +2,10 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "contexts/store-context";
 // types
-import { ILabelRootStore } from "store/label";
+import { ILabelStore } from "store/label.store";
 
-export const useLabel = (): ILabelRootStore => {
+export const useLabel = (): ILabelStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useLabel must be used within StoreProvider");
-  return context.labelRoot;
+  return context.label;
 };
