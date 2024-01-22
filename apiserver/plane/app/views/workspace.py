@@ -46,10 +46,14 @@ from plane.app.serializers import (
     WorkspaceMemberMeSerializer,
     ProjectMemberRoleSerializer,
     WorkspaceUserPropertiesSerializer,
+    WorkspaceEstimateSerializer,
+    StateSerializer,
+    LabelSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
 from plane.db.models import (
+    State,
     User,
     Workspace,
     WorkspaceMemberInvite,
@@ -67,6 +71,8 @@ from plane.db.models import (
     CycleIssue,
     IssueReaction,
     WorkspaceUserProperties,
+    Estimate,
+    EstimatePoint,
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -1358,7 +1364,9 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -1441,10 +1449,46 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         labels = Label.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
-        ).values(
-            "parent", "name", "color", "id", "project_id", "workspace__slug"
         )
-        return Response(labels, status=status.HTTP_200_OK)
+        serializer = LabelSerializer(labels, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+class WorkspaceStatesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        states = State.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+        )
+        serializer = StateSerializer(states, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+class WorkspaceEstimatesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        estimate_ids = Project.objects.filter(
+            workspace__slug=slug, estimate__isnull=False
+        ).values_list("estimate_id", flat=True)
+        estimates = Estimate.objects.filter(
+            pk__in=estimate_ids
+        ).prefetch_related(
+            Prefetch(
+                "points",
+                queryset=EstimatePoint.objects.select_related(
+                    "estimate", "workspace", "project"
+                ),
+            )
+        )
+        serializer = WorkspaceEstimateSerializer(estimates, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class WorkspaceUserPropertiesEndpoint(BaseAPIView):

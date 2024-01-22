@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 // services
 import { DashboardService } from "services/dashboard.service";
@@ -74,8 +75,6 @@ export class DashboardStore implements IDashboardStore {
       widgetStats: observable,
       // computed
       homeDashboardWidgets: computed,
-      // computed actions
-      getWidgetDetails: action,
       // fetch actions
       fetchHomeDashboardWidgets: action,
       fetchWidgetStats: action,
@@ -109,11 +108,11 @@ export class DashboardStore implements IDashboardStore {
    * @param widgetId
    * @returns widget details
    */
-  getWidgetDetails = (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => {
+  getWidgetDetails = computedFn((workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => {
     const widgets = this.widgetDetails?.[workspaceSlug]?.[dashboardId];
     if (!widgets) return undefined;
     return widgets.find((widget) => widget.key === widgetKey);
-  };
+  });
 
   /**
    * @description fetch home dashboard details and widgets

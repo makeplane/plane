@@ -20,9 +20,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const {
-    project: { fetchProjectLabels, projectLabels },
-  } = useLabel();
+  const { fetchProjectLabels, getProjectLabels } = useLabel();
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -30,10 +28,12 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [query, setQuery] = useState("");
 
   const issue = getIssueById(issueId);
+  const projectLabels = getProjectLabels(projectId);
 
   const fetchLabels = () => {
     setIsLoading(true);
-    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    if (!projectLabels && workspaceSlug && projectId)
+      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const options = (projectLabels ?? []).map((label) => ({

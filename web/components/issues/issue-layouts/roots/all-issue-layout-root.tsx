@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
 import { useGlobalView, useIssues, useUser } from "hooks/store";
+import { useWorskspaceIssueProperties } from "hooks/use-worskspace-issue-properties";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
@@ -20,7 +21,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
-
+  //swr hook for fetching issue properties
+  useWorskspaceIssueProperties(workspaceSlug);
   // store
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },

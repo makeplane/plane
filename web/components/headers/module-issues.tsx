@@ -77,9 +77,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const {
     project: { projectMemberIds },

@@ -5,20 +5,13 @@ export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "
 export interface IState {
   readonly id: string;
   color: string;
-  readonly created_at: Date;
-  readonly created_by: string;
   default: boolean;
   description: string;
   group: TStateGroups;
   name: string;
-  project: string;
-  readonly project_detail: IProjectLite;
+  project_id: string;
   sequence: number;
-  readonly slug: string;
-  readonly updated_at: Date;
-  readonly updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
+  workspace_id: string;
 }
 
 export interface IStateLite {

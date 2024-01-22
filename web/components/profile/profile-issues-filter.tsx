@@ -18,9 +18,7 @@ export const ProfileIssuesFilter = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROFILE);
 
-  const {
-    workspace: { workspaceLabels },
-  } = useLabel();
+  const { workspaceLabels } = useLabel();
   // derived values
   const states = undefined;
   const members = undefined;
