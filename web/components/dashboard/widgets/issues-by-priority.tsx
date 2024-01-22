@@ -72,14 +72,9 @@ const WIDGET_KEY = "issues_by_priority";
 export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const {
-    fetchWidgetStats,
-    widgetDetails: allWidgetDetails,
-    widgetStats: allWidgetStats,
-    updateDashboardWidgetFilters,
-  } = useDashboard();
-  const widgetDetails = allWidgetDetails?.[workspaceSlug]?.[dashboardId]?.find((w) => w.key === WIDGET_KEY);
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TIssuesByPriorityWidgetResponse[];
+  const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
+  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = getWidgetStats<TIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
     if (!widgetDetails) return;

@@ -21,9 +21,9 @@ const WIDGET_KEY = "overview_stats";
 export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
+  const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TOverviewStatsWidgetResponse;
+  const widgetStats = getWidgetStats<TOverviewStatsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   const today = renderFormattedPayloadDate(new Date());
   const STATS_LIST = [

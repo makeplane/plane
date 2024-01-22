@@ -75,9 +75,9 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
+  const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TRecentProjectsWidgetResponse;
+  const widgetStats = getWidgetStats<TRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
   const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   useEffect(() => {

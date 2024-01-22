@@ -26,15 +26,10 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // states
   const [fetching, setFetching] = useState(false);
   // store hooks
-  const {
-    fetchWidgetStats,
-    widgetDetails: allWidgetDetails,
-    widgetStats: allWidgetStats,
-    updateDashboardWidgetFilters,
-  } = useDashboard();
+  const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
   // derived values
-  const widgetDetails = allWidgetDetails?.[workspaceSlug]?.[dashboardId]?.find((w) => w.key === WIDGET_KEY);
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TCreatedIssuesWidgetResponse;
+  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = getWidgetStats<TCreatedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   const handleUpdateFilters = async (filters: Partial<TCreatedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;

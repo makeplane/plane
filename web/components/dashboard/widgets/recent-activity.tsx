@@ -21,8 +21,8 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   // store hooks
   const { currentUser } = useUser();
   // derived values
-  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TRecentActivityWidgetResponse[];
+  const { fetchWidgetStats, getWidgetStats } = useDashboard();
+  const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   useEffect(() => {
     if (!widgetStats)
