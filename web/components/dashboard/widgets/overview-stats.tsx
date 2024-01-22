@@ -76,11 +76,14 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
             )}
             <Link
               href={stat.link}
-              className={cn(`py-4 hover:bg-custom-background-80 duration-300 rounded-[10px] w-full break-words`, {
-                "pl-11 pr-[4.725rem] mr-0.5": isFirst,
-                "px-[4.725rem] mx-0.5": isMiddle,
-                "px-[4.725rem] ml-0.5": isLast,
-              })}
+              className={cn(
+                `py-4 hover:bg-custom-background-80 duration-300 rounded-[10px] w-full break-words flex flex-col justify-center`,
+                {
+                  "pl-11 pr-[4.725rem] mr-0.5": isFirst,
+                  "px-[4.725rem] mx-0.5": isMiddle,
+                  "px-[4.725rem] ml-0.5": isLast,
+                }
+              )}
             >
               <h5 className="font-semibold text-xl">{stat.count}</h5>
               <p className="text-custom-text-300">{stat.title}</p>

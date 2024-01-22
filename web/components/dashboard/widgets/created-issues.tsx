@@ -48,8 +48,8 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
+      issue_type: filters.tab ?? widgetDetails.widget_filters.tab ?? "upcoming",
+      target_date: getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "this_week"),
     }).finally(() => setFetching(false));
   };
 
@@ -71,8 +71,10 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col">
-      <Link href={redirectionLink} className="flex items-center justify-between gap-2 p-6 pl-7">
-        <h4 className="text-lg font-semibold text-custom-text-300">All issues created</h4>
+      <div className="flex items-center justify-between gap-2 p-6 pl-7">
+        <Link href={redirectionLink} className="flex-grow text-lg font-semibold text-custom-text-300">
+          All issues created
+        </Link>
         <DurationFilterDropdown
           value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
@@ -81,7 +83,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
             })
           }
         />
-      </Link>
+      </div>
       <Tab.Group
         as="div"
         defaultIndex={ISSUES_TABS_LIST.findIndex((t) => t.key === widgetDetails.widget_filters.tab ?? "upcoming")}

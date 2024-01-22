@@ -25,7 +25,8 @@ const WIDGET_KEY = "issues_by_state_groups";
 export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // states
-  const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups>("started");
+  const [defaultStateGroup, setDefaultStateGroup] = useState<TStateGroups | null>(null);
+  const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups | null>(null);
   // router
   const router = useRouter();
   // store hooks
@@ -51,10 +52,11 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
+      target_date: getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "this_week"),
     });
   };
 
+  // fetch widget stats
   useEffect(() => {
     if (!widgetDetails) return;
 
@@ -64,6 +66,33 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
         target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+
+  // set active group for center metric
+  useEffect(() => {
+    if (!widgetStats) return;
+
+    const startedCount = widgetStats?.find((item) => item?.state === "started")?.count ?? 0;
+    const unStartedCount = widgetStats?.find((item) => item?.state === "unstarted")?.count ?? 0;
+    const backlogCount = widgetStats?.find((item) => item?.state === "backlog")?.count ?? 0;
+    const completedCount = widgetStats?.find((item) => item?.state === "completed")?.count ?? 0;
+    const canceledCount = widgetStats?.find((item) => item?.state === "cancelled")?.count ?? 0;
+
+    const stateGroup =
+      startedCount > 0
+        ? "started"
+        : unStartedCount > 0
+        ? "unstarted"
+        : backlogCount > 0
+        ? "backlog"
+        : completedCount > 0
+        ? "completed"
+        : canceledCount > 0
+        ? "cancelled"
+        : null;
+
+    setActiveStateGroup(stateGroup);
+    setDefaultStateGroup(stateGroup);
+  }, [widgetStats]);
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
@@ -106,13 +135,14 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
     );
   };
 
+  const redirectionLink = `/${workspaceSlug}/workspace-views/assigned`;
+
   return (
-    <Link
-      href={`/${workspaceSlug?.toString()}/workspace-views/assigned`}
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden"
-    >
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden">
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
-        <h4 className="text-lg font-semibold text-custom-text-300">State of assigned issues</h4>
+        <Link href={redirectionLink} className="flex-grow text-lg font-semibold text-custom-text-300">
+          State of assigned issues
+        </Link>
         <DurationFilterDropdown
           value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
@@ -122,67 +152,70 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           }
         />
       </div>
-      {totalCount > 0 ? (
-        <div className="flex items-center pl-20 md:pl-11 lg:pl-14 pr-11 mt-11">
-          <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-8 w-full">
-            <div className="w-full flex justify-center">
-              <PieGraph
-                data={chartData}
-                height="220px"
-                width="220px"
-                innerRadius={0.6}
-                cornerRadius={5}
-                colors={(datum) => datum.data.color}
-                padAngle={1}
-                enableArcLinkLabels={false}
-                enableArcLabels={false}
-                activeOuterRadiusOffset={5}
-                tooltip={() => <></>}
-                margin={{
-                  top: 0,
-                  right: 5,
-                  bottom: 0,
-                  left: 5,
-                }}
-                defs={STATE_GROUP_GRAPH_GRADIENTS}
-                fill={Object.values(STATE_GROUPS).map((p) => ({
-                  match: {
-                    id: p.key,
-                  },
-                  id: `gradient${p.label}`,
-                }))}
-                onClick={(datum, e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  router.push(`/${workspaceSlug}/workspace-views/assigned/?state_group=${datum.id}`);
-                }}
-                onMouseEnter={(datum) => setActiveStateGroup(datum.id as TStateGroups)}
-                layers={["arcs", CenteredMetric]}
-              />
-            </div>
-            <div className="justify-self-end space-y-6 w-min whitespace-nowrap">
-              {chartData.map((item) => (
-                <div key={item.id} className="flex items-center justify-between gap-6">
-                  <div className="flex items-center gap-2.5 w-24">
-                    <div
-                      className="h-3 w-3 rounded-full"
-                      style={{
-                        backgroundColor: item.color,
-                      }}
-                    />
-                    <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>
+      <Link href={`/${workspaceSlug}/workspace-views/assigned`} className="block h-full">
+        {totalCount > 0 ? (
+          <div className="flex items-center pl-20 md:pl-11 lg:pl-14 pr-11 mt-11">
+            <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-8 w-full">
+              <div className="w-full flex justify-center">
+                <PieGraph
+                  data={chartData}
+                  height="220px"
+                  width="220px"
+                  innerRadius={0.6}
+                  cornerRadius={5}
+                  colors={(datum) => datum.data.color}
+                  padAngle={1}
+                  enableArcLinkLabels={false}
+                  enableArcLabels={false}
+                  activeOuterRadiusOffset={5}
+                  tooltip={() => <></>}
+                  margin={{
+                    top: 0,
+                    right: 5,
+                    bottom: 0,
+                    left: 5,
+                  }}
+                  defs={STATE_GROUP_GRAPH_GRADIENTS}
+                  fill={Object.values(STATE_GROUPS).map((p) => ({
+                    match: {
+                      id: p.key,
+                    },
+                    id: `gradient${p.label}`,
+                  }))}
+                  onClick={(datum, e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    router.push(`/${workspaceSlug}/workspace-views/assigned/?state_group=${datum.id}`);
+                  }}
+                  onMouseEnter={(datum) => setActiveStateGroup(datum.id as TStateGroups)}
+                  onMouseLeave={() => setActiveStateGroup(defaultStateGroup)}
+                  layers={["arcs", CenteredMetric]}
+                />
+              </div>
+              <div className="justify-self-end space-y-6 w-min whitespace-nowrap">
+                {chartData.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-6">
+                    <div className="flex items-center gap-2.5 w-24">
+                      <div
+                        className="h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: item.color,
+                        }}
+                      />
+                      <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>
+                    </div>
+                    <span className="text-custom-text-400 text-sm">{item.value.toFixed(0)}%</span>
                   </div>
-                  <span className="text-custom-text-400 text-sm">{item.value.toFixed(0)}%</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="h-full grid items-end">
-          <IssuesByStateGroupEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
-        </div>
-      )}
-    </Link>
+        ) : (
+          <div className="h-full grid items-end">
+            <IssuesByStateGroupEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
+          </div>
+        )}
+      </Link>
+    </div>
   );
 });
