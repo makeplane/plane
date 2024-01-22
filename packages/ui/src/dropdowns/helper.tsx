@@ -13,7 +13,6 @@ export interface IDropdownProps {
   noChevron?: boolean;
   onOpen?: () => void;
   optionsClassName?: string;
-  width?: "auto" | string;
   placement?: Placement;
   tabIndex?: number;
 }

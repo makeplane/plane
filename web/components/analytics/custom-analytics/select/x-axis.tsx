@@ -24,7 +24,6 @@ export const SelectXAxis: React.FC<Props> = (props) => {
       value={value}
       label={<span>{ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label}</span>}
       onChange={onChange}
-      width="w-full"
       maxHeight="lg"
     >
       {ANALYTICS_X_AXIS_VALUES.map((item) => {

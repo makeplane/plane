@@ -200,7 +200,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 )}
                               </div>
                             }
-                            width="w-full"
+                            optionsClassName="w-full"
                             input
                           >
                             <div className="mb-2 flex h-9 w-full overflow-hidden rounded">
