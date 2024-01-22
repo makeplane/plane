@@ -64,7 +64,7 @@ export class ProjectStore implements IProjectStore {
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
       // actions
-      setSearchQuery: action,
+      setSearchQuery: action.bound,
       // fetch actions
       fetchProjects: action,
       fetchProjectDetails: action,

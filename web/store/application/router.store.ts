@@ -29,7 +29,7 @@ export class RouterStore implements IRouterStore {
       // observables
       query: observable,
       // actions
-      setQuery: action,
+      setQuery: action.bound,
       //computed
       workspaceSlug: computed,
       projectId: computed,

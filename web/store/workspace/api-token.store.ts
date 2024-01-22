@@ -1,5 +1,6 @@
 // mobx
 import { action, observable, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { APITokenService } from "services/api_token.service";
 import { RootStore } from "../root.store";
 // types
@@ -30,8 +31,6 @@ export class ApiTokenStore implements IApiTokenStore {
     makeObservable(this, {
       // observables
       apiTokens: observable,
-      // computed actions
-      getApiTokenById: action,
       // fetch actions
       fetchApiTokens: action,
       fetchApiTokenDetails: action,
@@ -49,10 +48,10 @@ export class ApiTokenStore implements IApiTokenStore {
    * get API token by id
    * @param apiTokenId
    */
-  getApiTokenById = (apiTokenId: string) => {
+  getApiTokenById = computedFn((apiTokenId: string) => {
     if (!this.apiTokens) return null;
     return this.apiTokens[apiTokenId] || null;
-  };
+  });
 
   /**
    * fetch all the API tokens for a workspace
