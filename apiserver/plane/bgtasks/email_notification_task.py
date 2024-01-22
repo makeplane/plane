@@ -1,12 +1,15 @@
+import json
+from datetime import datetime
+
 # Third party imports
 from celery import shared_task
-import os
 
 # Django imports
 from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Module imports
 from plane.db.models import EmailNotificationLog, User, Issue
@@ -81,8 +84,8 @@ def create_payload(notification_data):
             issue_activity = change.get("issue_activity")
             if issue_activity:  # Ensure issue_activity is not None
                 field = issue_activity.get("field")
-                old_value = issue_activity.get("old_value")
-                new_value = issue_activity.get("new_value")
+                old_value = str(issue_activity.get("old_value"))
+                new_value = str(issue_activity.get("new_value"))
 
                 # Append old_value if it's not empty and not already in the list
                 if old_value:
@@ -112,6 +115,13 @@ def create_payload(notification_data):
                         "new_value", []
                     ) else None
 
+                if not data.get("actor_id", {}).get("activity_time", False):
+                    data[actor_id]["activity_time"] = str(
+                        datetime.fromisoformat(
+                            issue_activity.get("activity_time").rstrip("Z")
+                        ).strftime("%Y-%m-%d %H:%M:%S")
+                    )
+
     return data
 
 
@@ -119,7 +129,7 @@ def create_payload(notification_data):
 def send_email_notification(
     issue_id, notification_data, receiver_id, email_notification_ids
 ):
-    base_api = "http://localhost:3000"
+    base_api = "https://app.plane.so"
     data = create_payload(notification_data=notification_data)
 
     # Get email configurations
@@ -136,13 +146,28 @@ def send_email_notification(
     issue = Issue.objects.get(pk=issue_id)
     template_data = []
     total_changes = 0
+    comments = []
     for actor_id, changes in data.items():
         actor = User.objects.get(pk=actor_id)
         total_changes = total_changes + len(changes)
+        comment = changes.pop("comment", False)
+        if comment:
+            comments.append(
+                {
+                    "actor_comments": comment,
+                    "actor_detail": {
+                        "avatar_url": actor.avatar,
+                        "first_name": actor.first_name,
+                        "last_name": actor.last_name,
+                    },
+                    "activity_time": str(activity_time),
+                }
+            )
+        activity_time = changes.pop("activity_time")
         template_data.append(
             {
                 "actor_detail": {
-                    "avatar": actor.avatar,
+                    "avatar_url": actor.avatar,
                     "first_name": actor.first_name,
                     "last_name": actor.last_name,
                 },
@@ -151,14 +176,20 @@ def send_email_notification(
                     "name": issue.name,
                     "identifier": f"{issue.project.identifier}-{issue.sequence_id}",
                 },
+                "activity_time": str(activity_time),
             }
         )
 
-    summary = ""
-    if len(template_data) == 1:
-        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} made {total_changes} changes to the issue"
-    else:
-        summary = f"{template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']} and others made {total_changes} changes to the issue"
+    span = f"""<span style='
+                        font-size: 1rem;
+                        font-weight: 700;
+                        line-height: 28px;
+                      "
+                    >
+                      {template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']}
+                    </span>"""
+
+    summary = "updates were made to the issue by"
 
     # Send the mail
     subject = f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
@@ -168,13 +199,16 @@ def send_email_notification(
         "issue": {
             "issue_identifier": f"{str(issue.project.identifier)}-{str(issue.sequence_id)}",
             "name": issue.name,
+            "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
         },
         "receiver": {
             "email": receiver.email,
         },
         "issue_unsubscribe": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
-        "user_preference": f"{base_api}/profile/preferences/email"
+        "user_preference": f"{base_api}/profile/preferences/email",
+        "comments": comments,
     }
+    print(json.dumps(context))
     html_content = render_to_string(
         "emails/notifications/issue-updates.html", context
     )

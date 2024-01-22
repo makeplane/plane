@@ -467,6 +467,7 @@ def notifications(
                                             if issue_comment is not None
                                             else ""
                                         ),
+                                        "activity_time": issue_activity.get("created_at"),
                                     },
                                 },
                             )
