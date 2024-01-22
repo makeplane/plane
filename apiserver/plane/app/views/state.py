@@ -25,9 +25,6 @@ class StateViewSet(BaseViewSet):
         ProjectEntityPermission,
     ]
 
-    def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
-
     def get_queryset(self):
         return self.filter_queryset(
             super()
@@ -49,19 +46,7 @@ class StateViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
-        states = State.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).values(
-            "id",
-            "project_id",
-            "workspace__slug",
-            "name",
-            "color",
-            "group",
-            "default",
-            "description",
-            "sequence",
-        )
+        states = StateSerializer(self.get_queryset(), many=True).data
         grouped = request.GET.get("grouped", False)
         if grouped == "true":
             state_dict = {}

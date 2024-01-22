@@ -47,6 +47,8 @@ from plane.app.serializers import (
     ProjectMemberRoleSerializer,
     WorkspaceUserPropertiesSerializer,
     WorkspaceEstimateSerializer,
+    StateSerializer,
+    LabelSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
@@ -1447,16 +1449,9 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         labels = Label.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
-        ).values(
-            "parent",
-            "name",
-            "color",
-            "id",
-            "project_id",
-            "workspace__slug",
-            "sort_order",
         )
-        return Response(labels, status=status.HTTP_200_OK)
+        serializer = LabelSerializer(labels, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class WorkspaceStatesEndpoint(BaseAPIView):
@@ -1468,18 +1463,9 @@ class WorkspaceStatesEndpoint(BaseAPIView):
         states = State.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
-        ).values(
-            "id",
-            "project_id",
-            "workspace__slug",
-            "name",
-            "color",
-            "group",
-            "default",
-            "description",
-            "sequence",
         )
-        return Response(states, status=status.HTTP_200_OK)
+        serializer = StateSerializer(states, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class WorkspaceEstimatesEndpoint(BaseAPIView):
