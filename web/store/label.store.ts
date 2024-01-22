@@ -1,6 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // services
 import { IssueLabelService } from "services/issue";
 // helpers
@@ -82,7 +83,10 @@ export class LabelStore implements ILabelStore {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!currentWorkspaceDetails || !this.fetchedMap[worksapceSlug]) return;
-    return Object.values(this.labelMap).filter((label) => label.workspace_id === currentWorkspaceDetails.id);
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.workspace_id === currentWorkspaceDetails.id),
+      "sort_order"
+    );
   }
 
   /**
@@ -92,7 +96,10 @@ export class LabelStore implements ILabelStore {
     const projectId = this.rootStore.app.router.projectId;
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
-    return Object.values(this.labelMap ?? {}).filter((label) => label.project_id === projectId);
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.project_id === projectId),
+      "sort_order"
+    );
   }
 
   /**
@@ -106,7 +113,10 @@ export class LabelStore implements ILabelStore {
   getProjectLabels = computedFn((projectId: string | null) => {
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
-    return Object.values(this.labelMap ?? {}).filter((label) => label.project_id === projectId);
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.project_id === projectId),
+      "sort_order"
+    );
   });
 
   /**
