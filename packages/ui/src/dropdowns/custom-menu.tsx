@@ -1,6 +1,6 @@
 import * as React from "react";
 import ReactDOM from "react-dom";
-// react-poppper
+// react-popper
 import { usePopper } from "react-popper";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";

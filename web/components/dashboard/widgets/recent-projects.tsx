@@ -39,7 +39,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         className={`h-[3.375rem] w-[3.375rem] grid place-items-center rounded border border-transparent flex-shrink-0 ${randomBgColor}`}
       >
         {projectDetails.emoji ? (
-          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+          <span className="grid h-7 w-7 flex-shrink-0 text-2xl place-items-center rounded uppercase">
             {renderEmoji(projectDetails.emoji)}
           </span>
         ) : projectDetails.icon_prop ? (
