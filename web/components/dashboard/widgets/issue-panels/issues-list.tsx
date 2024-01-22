@@ -114,7 +114,10 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
       {issues.length > 0 && (
         <Link
           href={`/${workspaceSlug}/workspace-views/${type}/${filterParams}`}
-          className={cn(getButtonStyling("accent-primary", "sm"), "w-min my-3 mx-auto py-1 px-2 text-xs")}
+          className={cn(
+            getButtonStyling("link-primary", "sm"),
+            "w-min my-3 mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
+          )}
         >
           View all issues
         </Link>
