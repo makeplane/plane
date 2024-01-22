@@ -72,9 +72,7 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 
 const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
   // store hooks
-  const {
-    workspace: { workspaceLabels, fetchWorkspaceLabels },
-  } = useLabel();
+  const { workspaceLabels, fetchWorkspaceLabels } = useLabel();
 
   useEffect(() => {
     if (!workspaceLabels) fetchWorkspaceLabels(workspaceSlug);

@@ -2,6 +2,7 @@ import set from "lodash/set";
 import isEmpty from "lodash/isEmpty";
 // store
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // types
 import { TIssue } from "@plane/types";
 
@@ -80,17 +81,17 @@ export class IssueStore implements IIssueStore {
    * @param {string} issueId
    * @returns {TIssue | undefined}
    */
-  getIssueById = (issueId: string) => {
+  getIssueById = computedFn((issueId: string) => {
     if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
     return this.issuesMap[issueId];
-  };
+  });
 
   /**
    * @description This method will return the issues from the issuesMap
    * @param {string[]} issueIds
    * @returns {Record<string, TIssue> | undefined}
    */
-  getIssuesByIds = (issueIds: string[]) => {
+  getIssuesByIds = computedFn((issueIds: string[]) => {
     if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return undefined;
     const filteredIssues: { [key: string]: TIssue } = {};
     Object.values(this.issuesMap).forEach((issue) => {
@@ -99,5 +100,5 @@ export class IssueStore implements IIssueStore {
       }
     });
     return isEmpty(filteredIssues) ? undefined : filteredIssues;
-  };
+  });
 }

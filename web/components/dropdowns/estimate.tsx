@@ -158,17 +158,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  // fetch cycles of the project if not already present in the store
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (!activeEstimate) fetchProjectEstimates(workspaceSlug, projectId);
-  }, [activeEstimate, fetchProjectEstimates, projectId, workspaceSlug]);
-
-  const selectedEstimate = value !== null ? getEstimatePointValue(value) : null;
+  const selectedEstimate = value !== null ? getEstimatePointValue(value, projectId) : null;
 
   const openDropdown = () => {
     setIsOpen(true);
+
+    if (!activeEstimate && workspaceSlug) fetchProjectEstimates(workspaceSlug, projectId);
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);

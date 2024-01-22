@@ -20,9 +20,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const {
-    workspace: { fetchWorkspaceLabels },
-  } = useLabel();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -40,11 +37,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
-  );
-  // fetch workspace labels
-  useSWR(
-    workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
   // fetch workspace user projects role
   useSWR(

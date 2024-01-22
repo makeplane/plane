@@ -42,7 +42,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await deleteState(workspaceSlug.toString(), data.project, data.id)
+    await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
         postHogEventTracker("STATE_DELETE", {
           state: "SUCCESS",

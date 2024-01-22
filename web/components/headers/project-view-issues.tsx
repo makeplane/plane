@@ -49,9 +49,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();

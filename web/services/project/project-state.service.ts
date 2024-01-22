@@ -65,4 +65,12 @@ export class ProjectStateService extends APIService {
         throw error?.response;
       });
   }
+
+  async getWorkspaceStates(workspaceSlug: string): Promise<IState[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/states/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

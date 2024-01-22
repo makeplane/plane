@@ -25,9 +25,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    project: { projectLabels, fetchProjectLabels, updateLabel },
-  } = useLabel();
+  const { projectLabels, fetchProjectLabels, updateLabel } = useLabel();
 
   // api call to fetch project details
   useSWR(

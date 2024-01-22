@@ -25,9 +25,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
