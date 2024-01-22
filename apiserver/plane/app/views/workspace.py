@@ -1362,7 +1362,9 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -1446,7 +1448,13 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
         ).values(
-            "parent", "name", "color", "id", "project_id", "workspace__slug"
+            "parent",
+            "name",
+            "color",
+            "id",
+            "project_id",
+            "workspace__slug",
+            "sort_order",
         )
         return Response(labels, status=status.HTTP_200_OK)
 

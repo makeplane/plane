@@ -83,6 +83,7 @@ from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
 
+
 class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
         return (
@@ -711,10 +712,15 @@ class LabelViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         labels = Label.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id
+            workspace__slug=slug, project_id=project_id
         ).values(
-            "parent", "name", "color", "id", "project_id", "workspace__slug"
+            "parent",
+            "name",
+            "color",
+            "id",
+            "project_id",
+            "workspace__slug",
+            "sort_order",
         )
         return Response(labels, status=status.HTTP_200_OK)
 
@@ -830,7 +836,9 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(state_group=F("state__group"))
+        updated_sub_issues = Issue.issue_objects.filter(
+            id__in=sub_issue_ids
+        ).annotate(state_group=F("state__group"))
 
         # Track the issue
         _ = [
@@ -845,7 +853,7 @@ class SubIssuesEndpoint(BaseAPIView):
             )
             for sub_issue_id in sub_issue_ids
         ]
-    
+
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
         for sub_issue in updated_sub_issues:
@@ -862,7 +870,6 @@ class SubIssuesEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-    
 
 
 class IssueLinkViewSet(BaseViewSet):
