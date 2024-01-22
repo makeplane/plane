@@ -19,9 +19,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     projectId: string;
   };
   // store hooks
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);

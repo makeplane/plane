@@ -142,17 +142,12 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  // fetch states of the project if not already present in the store
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (!statesList) fetchProjectStates(workspaceSlug, projectId);
-  }, [fetchProjectStates, projectId, statesList, workspaceSlug]);
 
   const selectedState = getStateById(value);
 
   const openDropdown = () => {
     setIsOpen(true);
+    if (!statesList && workspaceSlug) fetchProjectStates(workspaceSlug, projectId);
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);

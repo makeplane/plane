@@ -28,9 +28,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
   // store hooks
   const { projectStates } = useProjectState();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();

@@ -71,10 +71,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   const member = useMember();
   const project = useProject();
-  const projectLabel = useLabel();
+  const label = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
 
   if (!list) return null;
 

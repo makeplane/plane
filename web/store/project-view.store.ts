@@ -1,5 +1,6 @@
 import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
 import { ViewService } from "services/view.service";
 import { RootStore } from "store/root.store";
@@ -49,8 +50,6 @@ export class ProjectViewStore implements IProjectViewStore {
       fetchedMap: observable,
       // computed
       projectViewIds: computed,
-      // computed actions
-      getViewById: action,
       // fetch actions
       fetchViews: action,
       fetchViewDetails: action,
@@ -81,7 +80,7 @@ export class ProjectViewStore implements IProjectViewStore {
   /**
    * Returns view details by id
    */
-  getViewById = (viewId: string) => this.viewMap?.[viewId] ?? null;
+  getViewById = computedFn((viewId: string) => this.viewMap?.[viewId] ?? null);
 
   /**
    * Fetches views for current project

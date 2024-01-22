@@ -75,9 +75,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   } = useUser();
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();

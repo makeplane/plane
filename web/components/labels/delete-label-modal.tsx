@@ -25,9 +25,7 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    project: { deleteLabel },
-  } = useLabel();
+  const { deleteLabel } = useLabel();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // hooks

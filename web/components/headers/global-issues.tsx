@@ -45,9 +45,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const {
-    workspace: { workspaceLabels },
-  } = useLabel();
+  const { workspaceLabels } = useLabel();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();

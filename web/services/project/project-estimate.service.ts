@@ -61,4 +61,12 @@ export class ProjectEstimateService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getWorkspaceEstimatesList(workspaceSlug: string): Promise<IEstimate[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/estimates/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

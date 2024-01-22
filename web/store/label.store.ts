@@ -1,5 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // services
 import { IssueLabelService } from "services/issue";
 // helpers
@@ -7,17 +9,21 @@ import { buildTree } from "helpers/array.helper";
 // types
 import { RootStore } from "store/root.store";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
-import { ILabelRootStore } from "store/label";
 
-export interface IProjectLabelStore {
+export interface ILabelStore {
   //Loaders
   fetchedMap: Record<string, boolean>;
+  //Observable
+  labelMap: Record<string, IIssueLabel>;
   // computed
   projectLabels: IIssueLabel[] | undefined;
   projectLabelsTree: IIssueLabelTree[] | undefined;
+  workspaceLabels: IIssueLabel[] | undefined;
   //computed actions
-  getProjectLabels: (projectId: string) => IIssueLabel[] | undefined;
+  getProjectLabels: (projectId: string | null) => IIssueLabel[] | undefined;
+  getLabelById: (labelId: string) => IIssueLabel | null;
   // fetch actions
+  fetchWorkspaceLabels: (workspaceSlug: string) => Promise<IIssueLabel[]>;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<IIssueLabel[]>;
   // crud actions
   createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
@@ -39,7 +45,7 @@ export interface IProjectLabelStore {
   deleteLabel: (workspaceSlug: string, projectId: string, labelId: string) => Promise<void>;
 }
 
-export class ProjectLabelStore implements IProjectLabelStore {
+export class LabelStore implements ILabelStore {
   // root store
   rootStore;
   // root store labelMap
@@ -49,15 +55,13 @@ export class ProjectLabelStore implements IProjectLabelStore {
   // services
   issueLabelService;
 
-  constructor(_labelRoot: ILabelRootStore, _rootStore: RootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       labelMap: observable,
       fetchedMap: observable,
       // computed
       projectLabels: computed,
       projectLabelsTree: computed,
-      // actions
-      getProjectLabels: action,
 
       fetchProjectLabels: action,
       createLabel: action,
@@ -68,9 +72,21 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
     // root store
     this.rootStore = _rootStore;
-    this.labelMap = _labelRoot?.labelMap;
     // services
     this.issueLabelService = new IssueLabelService();
+  }
+
+  /**
+   * Returns the labelMap belongs to a specific workspace
+   */
+  get workspaceLabels() {
+    const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
+    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!currentWorkspaceDetails || !this.fetchedMap[worksapceSlug]) return;
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.workspace_id === currentWorkspaceDetails.id),
+      "sort_order"
+    );
   }
 
   /**
@@ -78,8 +94,12 @@ export class ProjectLabelStore implements IProjectLabelStore {
    */
   get projectLabels() {
     const projectId = this.rootStore.app.router.projectId;
-    if (!projectId || !this.fetchedMap[projectId] || !this.labelMap) return;
-    return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
+    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.project_id === projectId),
+      "sort_order"
+    );
   }
 
   /**
@@ -90,10 +110,20 @@ export class ProjectLabelStore implements IProjectLabelStore {
     return buildTree(this.projectLabels);
   }
 
-  getProjectLabels = (projectId: string) => {
-    if (!this.fetchedMap[projectId] || !this.labelMap) return;
-    return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
-  };
+  getProjectLabels = computedFn((projectId: string | null) => {
+    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.project_id === projectId),
+      "sort_order"
+    );
+  });
+
+  /**
+   * get label info from the map of labels in the store using label id
+   * @param labelId
+   */
+  getLabelById = computedFn((labelId: string): IIssueLabel | null => this.labelMap?.[labelId] || null);
 
   /**
    * Fetches all the labelMap belongs to a specific project
@@ -108,6 +138,23 @@ export class ProjectLabelStore implements IProjectLabelStore {
           set(this.labelMap, [label.id], label);
         });
         set(this.fetchedMap, projectId, true);
+      });
+      return response;
+    });
+
+  /**
+   * Fetches all the labelMap belongs to a specific project
+   * @param workspaceSlug
+   * @param projectId
+   * @returns Promise<IIssueLabel[]>
+   */
+  fetchWorkspaceLabels = async (workspaceSlug: string) =>
+    await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((label) => {
+          set(this.labelMap, [label.id], label);
+        });
+        set(this.fetchedMap, workspaceSlug, true);
       });
       return response;
     });
