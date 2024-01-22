@@ -82,7 +82,7 @@ export class LabelStore implements ILabelStore {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!currentWorkspaceDetails || !this.fetchedMap[worksapceSlug]) return;
-    return Object.values(this.labelMap).filter((label) => label.workspace === currentWorkspaceDetails.id);
+    return Object.values(this.labelMap).filter((label) => label.workspace_slug === currentWorkspaceDetails.slug);
   }
 
   /**
@@ -92,7 +92,7 @@ export class LabelStore implements ILabelStore {
     const projectId = this.rootStore.app.router.projectId;
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
-    return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
+    return Object.values(this.labelMap ?? {}).filter((label) => label.project_id === projectId);
   }
 
   /**
@@ -106,7 +106,7 @@ export class LabelStore implements ILabelStore {
   getProjectLabels = computedFn((projectId: string | null) => {
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
-    return Object.values(this.labelMap ?? {}).filter((label) => label.project === projectId);
+    return Object.values(this.labelMap ?? {}).filter((label) => label.project_id === projectId);
   });
 
   /**
