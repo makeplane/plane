@@ -3,7 +3,7 @@ export interface IEmbedConfig {
 }
 
 export interface IIssueEmbedConfig {
-  fetchIssue: (issueId: string) => Promise<any>;
+  fetchIssue: (issueId: string) => any;
   clickAction: (issueId: string, issueTitle: string) => void;
   issues: Array<any>;
 }

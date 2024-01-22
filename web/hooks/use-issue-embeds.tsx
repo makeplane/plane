@@ -19,7 +19,7 @@ export const useIssueEmbeds = () => {
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
 
-  const { data: issuesResponse } = useSWR(
+  const { data: issuesResponse, isLoading: issuesLoading } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
     workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
   );
@@ -32,7 +32,7 @@ export const useIssueEmbeds = () => {
     assignee_details: issue.assignee_ids.map((assigneeid) => toJS(getUserDetails(assigneeid))),
   }));
 
-  const fetchIssue = async (issueId: string) => issuesWithStateAndProject.find((issue) => issue.id === issueId);
+  const fetchIssue = (issueId: string) => issuesWithStateAndProject.find((issue) => issue.id === issueId);
 
   const issueWidgetClickAction = (issueId: string) => {
     if (!workspaceSlug || !projectId) return;
@@ -42,6 +42,7 @@ export const useIssueEmbeds = () => {
 
   return {
     issues: issuesWithStateAndProject,
+    issuesLoading,
     fetchIssue,
     issueWidgetClickAction,
   };
