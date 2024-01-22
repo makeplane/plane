@@ -12,7 +12,6 @@ on:
       - master
       - preview
       - develop
-      - fix-*
   release:
     types: [released, prereleased]
 
