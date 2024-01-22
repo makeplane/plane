@@ -3,7 +3,6 @@ import { Popover } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
-// import "react-datepicker/dist/react-datepicker.css";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -11,24 +10,17 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
-import { TButtonVariants } from "./types";
-import { Placement } from "@popperjs/core";
+import { TDropdownProps } from "./types";
 
-type Props = {
-  buttonClassName?: string;
-  buttonContainerClassName?: string;
-  buttonVariant: TButtonVariants;
-  disabled?: boolean;
+type Props = TDropdownProps & {
   icon?: React.ReactNode;
   isClearable?: boolean;
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
   placeholder: string;
-  placement?: Placement;
   value: Date | string | null;
   closeOnSelect?: boolean;
-  tabIndex?: number;
 };
 
 type ButtonProps = {
@@ -118,6 +110,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonClassName = "",
     buttonContainerClassName,
     buttonVariant,
+    className = "",
     disabled = false,
     icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
     isClearable = true,
@@ -160,7 +153,12 @@ export const DateDropdown: React.FC<Props> = (props) => {
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   return (
-    <Popover ref={dropdownRef} tabIndex={tabIndex} className="h-full flex-shrink-0" onKeyDown={handleKeyDown}>
+    <Popover
+      ref={dropdownRef}
+      tabIndex={tabIndex}
+      className={cn("h-full flex-shrink-0", className)}
+      onKeyDown={handleKeyDown}
+    >
       {({ close }) => (
         <>
           <Popover.Button as={React.Fragment}>

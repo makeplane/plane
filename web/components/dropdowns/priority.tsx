@@ -1,7 +1,6 @@
 import { Fragment, ReactNode, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Placement } from "@popperjs/core";
 import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
@@ -12,23 +11,16 @@ import { PriorityIcon } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
 import { TIssuePriorities } from "@plane/types";
-import { TButtonVariants } from "./types";
+import { TDropdownProps } from "./types";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
 
-type Props = {
+type Props = TDropdownProps & {
   button?: ReactNode;
-  buttonClassName?: string;
-  buttonContainerClassName?: string;
-  buttonVariant: TButtonVariants;
-  className?: string;
-  disabled?: boolean;
   dropdownArrow?: boolean;
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
-  placement?: Placement;
   value: TIssuePriorities;
-  tabIndex?: number;
 };
 
 type ButtonProps = {
@@ -237,42 +229,16 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     ],
   });
 
-  const options = ISSUE_PRIORITIES.map((priority) => {
-    const priorityClasses = {
-      urgent: "bg-red-500/20 text-red-950 border-red-500",
-      high: "bg-orange-500/20 text-orange-950 border-orange-500",
-      medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
-      low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-      none: "bg-custom-background-80 border-custom-border-300",
-    };
-
-    return {
-      value: priority.key,
-      query: priority.key,
-      content: (
-        <div className="flex items-center gap-2">
-          <div
-            className={cn("grid place-items-center border rounded p-0.5 flex-shrink-0", priorityClasses[priority.key], {
-              "bg-red-500 border-red-500": priority.key === "urgent" && highlightUrgent,
-            })}
-          >
-            <PriorityIcon
-              priority={priority.key}
-              size={14}
-              className={cn({
-                "text-white": priority.key === "urgent" && highlightUrgent,
-                // centre align the icons if text is hidden
-                "translate-x-[0.0625rem]": priority.key === "high",
-                "translate-x-0.5": priority.key === "medium",
-                "translate-x-1": priority.key === "low",
-              })}
-            />
-          </div>
-          <span className="flex-grow truncate">{priority.title}</span>
-        </div>
-      ),
-    };
-  });
+  const options = ISSUE_PRIORITIES.map((priority) => ({
+    value: priority.key,
+    query: priority.key,
+    content: (
+      <div className="flex items-center gap-2">
+        <PriorityIcon priority={priority.key} size={14} withContainer />
+        <span className="flex-grow truncate">{priority.title}</span>
+      </div>
+    ),
+  }));
 
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
@@ -400,6 +366,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                         active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
+                    onClick={closeDropdown}
                   >
                     {({ selected }) => (
                       <>

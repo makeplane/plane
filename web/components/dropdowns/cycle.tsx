@@ -2,7 +2,6 @@ import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Placement } from "@popperjs/core";
 import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
 import { useApplication, useCycle } from "hooks/store";
@@ -14,21 +13,14 @@ import { ContrastIcon } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
 import { ICycle } from "@plane/types";
-import { TButtonVariants } from "./types";
+import { TDropdownProps } from "./types";
 
-type Props = {
+type Props = TDropdownProps & {
   button?: ReactNode;
-  buttonClassName?: string;
-  buttonContainerClassName?: string;
-  buttonVariant: TButtonVariants;
-  className?: string;
-  disabled?: boolean;
   dropdownArrow?: boolean;
   onChange: (val: string | null) => void;
-  placement?: Placement;
   projectId: string;
   value: string | null;
-  tabIndex?: number;
 };
 
 type ButtonProps = {
@@ -291,6 +283,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
+                      onClick={closeDropdown}
                     >
                       {({ selected }) => (
                         <>
