@@ -5,7 +5,9 @@ import { History, LucideIcon, MessageSquare, Network } from "lucide-react";
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreateUpdate } from ".";
+import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreateUpdate } from "./";
+// types
+import { TIssueComment } from "@plane/types";
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -35,8 +37,9 @@ const activityTabs: { key: TActivityTabs; title: string; icon: LucideIcon }[] = 
 ];
 
 export type TActivityOperations = {
-  createComment: (data: any) => Promise<void>;
-  updateComment: (commentId: string, data: any) => Promise<void>;
+  createComment: (data: Partial<TIssueComment>) => Promise<void>;
+  updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
+  removeComment: (commentId: string) => Promise<void>;
   createCommentReaction: (commentId: string, reaction: string) => Promise<void>;
   removeCommentReaction: (commentId: string, reaction: string) => Promise<void>;
 };
@@ -44,14 +47,15 @@ export type TActivityOperations = {
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled } = props;
   // hooks
-  const { createComment, updateComment, createCommentReaction, removeCommentReaction } = useIssueDetail();
+  const { createComment, updateComment, removeComment, createCommentReaction, removeCommentReaction } =
+    useIssueDetail();
   const { setToastAlert } = useToast();
   // state
-  const [activityTab, setActivityTab] = useState<TActivityTabs>("comments");
+  const [activityTab, setActivityTab] = useState<TActivityTabs>("all");
 
   const activityOperations: TActivityOperations = useMemo(
     () => ({
-      createComment: async (data: any) => {
+      createComment: async (data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await createComment(workspaceSlug, projectId, issueId, data);
@@ -68,7 +72,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           });
         }
       },
-      updateComment: async (commentId: string, data: any) => {
+      updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
@@ -82,6 +86,23 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             title: "Comment update failed.",
             type: "error",
             message: "Comment update failed. Please try again later.",
+          });
+        }
+      },
+      removeComment: async (commentId: string) => {
+        try {
+          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
+          await removeComment(workspaceSlug, projectId, issueId, commentId);
+          setToastAlert({
+            title: "Comment removed successfully.",
+            type: "success",
+            message: "Comment removed successfully.",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Comment remove failed.",
+            type: "error",
+            message: "Comment remove failed. Please try again later.",
           });
         }
       },
@@ -126,6 +147,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       issueId,
       createComment,
       updateComment,
+      removeComment,
       createCommentReaction,
       removeCommentReaction,
       setToastAlert,
@@ -168,17 +190,28 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
 
         <div className="min-h-[200px]">
           {activityTab === "all" ? (
-            <IssueActivityCommentRoot {...componentCommonProps} />
+            <>
+              <IssueActivityCommentRoot {...componentCommonProps} />
+              <IssueCommentCreateUpdate
+                workspaceSlug={workspaceSlug}
+                activityOperations={activityOperations}
+                disabled={disabled}
+              />
+            </>
           ) : activityTab === "activity" ? (
             <IssueActivityRoot {...componentCommonProps} />
           ) : (
-            <IssueCommentRoot {...componentCommonProps} />
+            <>
+              <IssueCommentRoot {...componentCommonProps} activityOperations={activityOperations} />
+              <IssueCommentCreateUpdate
+                workspaceSlug={workspaceSlug}
+                activityOperations={activityOperations}
+                disabled={disabled}
+              />
+            </>
           )}
         </div>
       </div>
-
-      {/* rendering issue comment editor */}
-      <IssueCommentCreateUpdate activityOperations={activityOperations} />
     </div>
   );
 });

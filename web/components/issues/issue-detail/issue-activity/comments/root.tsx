@@ -4,16 +4,19 @@ import { observer } from "mobx-react-lite";
 import { useIssueDetail } from "hooks/store";
 // components
 import { IssueCommentCard } from "./comment-card";
+// types
+import { TActivityOperations } from "../root";
 
 type TIssueCommentRoot = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  activityOperations: TActivityOperations;
   disabled: boolean;
 };
 
 export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled } = props;
+  const { workspaceSlug, projectId, issueId, disabled, activityOperations } = props;
   // hooks
   const {
     comment: { getCommentsByIssueId },
@@ -32,6 +35,7 @@ export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
           commentId={commentId}
           disabled={disabled}
           ends={index === 0 ? "top" : index === commentIds.length - 1 ? "bottom" : undefined}
+          activityOperations={activityOperations}
         />
       ))}
     </div>

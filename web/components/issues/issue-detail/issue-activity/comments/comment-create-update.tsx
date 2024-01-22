@@ -1,27 +1,26 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-// hooks
-import { useIssueDetail } from "hooks/store";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 import { Button } from "@plane/ui";
+// services
+import { FileService } from "services/file.service";
 // types
 import { TActivityOperations } from "../root";
+import { TIssueComment } from "@plane/types";
+
+const fileService = new FileService();
 
 type TIssueCommentCreateUpdate = {
+  workspaceSlug: string;
   activityOperations: TActivityOperations;
-};
-
-type TComment = {
-  comment_html: string;
-};
-
-const defaultValues: TComment = {
-  comment_html: "",
+  disabled: boolean;
 };
 
 export const IssueCommentCreateUpdate: FC<TIssueCommentCreateUpdate> = (props) => {
-  const { activityOperations } = props;
+  const { workspaceSlug, activityOperations, disabled } = props;
+  // refs
+  const editorRef = useRef<any>(null);
   // react hook form
   const {
     handleSubmit,
@@ -29,30 +28,31 @@ export const IssueCommentCreateUpdate: FC<TIssueCommentCreateUpdate> = (props) =
     watch,
     formState: { isSubmitting },
     reset,
-  } = useForm<TComment>({ defaultValues });
+  } = useForm<Partial<TIssueComment>>({ defaultValues: { comment_html: "<p></p>" } });
+
+  const onSubmit = async (formData: Partial<TIssueComment>) => {
+    await activityOperations.createComment(formData).finally(() => {
+      reset({ comment_html: "" });
+      editorRef.current?.clearEditor();
+    });
+  };
 
   return (
     <div>
-      {/* <Controller
+      <Controller
         name="comment_html"
         control={control}
         render={({ field: { value, onChange } }) => (
           <LiteTextEditorWithRef
             onEnterKeyPress={(e) => {
-              userStore.requiredLogin(() => {
-                handleSubmit(onSubmit)(e);
-              });
+              handleSubmit(onSubmit)(e);
             }}
             cancelUploadImage={fileService.cancelUpload}
-            uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
+            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
             deleteFile={fileService.deleteImage}
             restoreFile={fileService.restoreImage}
             ref={editorRef}
-            value={
-              !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                ? watch("comment_html")
-                : value
-            }
+            value={!value ? "<p></p>" : value}
             customClassName="p-2"
             editorContentCustomClassNames="min-h-[35px]"
             debouncedUpdatesEnabled={false}
@@ -66,9 +66,7 @@ export const IssueCommentCreateUpdate: FC<TIssueCommentCreateUpdate> = (props) =
                 type="submit"
                 className="!px-2.5 !py-1.5 !text-xs"
                 onClick={(e) => {
-                  userStore.requiredLogin(() => {
-                    handleSubmit(onSubmit)(e);
-                  });
+                  handleSubmit(onSubmit)(e);
                 }}
               >
                 {isSubmitting ? "Adding..." : "Comment"}
@@ -76,7 +74,7 @@ export const IssueCommentCreateUpdate: FC<TIssueCommentCreateUpdate> = (props) =
             }
           />
         )}
-      /> */}
+      />
     </div>
   );
 };
