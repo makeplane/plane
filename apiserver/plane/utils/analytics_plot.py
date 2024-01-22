@@ -4,6 +4,7 @@ from datetime import timedelta
 
 # Django import
 from django.db import models
+from django.utils import timezone
 from django.db.models.functions import TruncDate
 from django.db.models import Count, F, Sum, Value, Case, When, CharField
 from django.db.models.functions import (
@@ -168,6 +169,9 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             if item["date"] is not None and item["date"] <= date
         )
         cumulative_pending_issues -= total_completed
-        chart_data[str(date)] = cumulative_pending_issues
+        if date > timezone.now().date():
+            chart_data[str(date)] = None
+        else:
+            chart_data[str(date)] = cumulative_pending_issues
 
     return chart_data
