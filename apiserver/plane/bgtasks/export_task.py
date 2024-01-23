@@ -97,7 +97,7 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
         )
         # Create the new url with updated domain and protocol
         presigned_url = presigned_url.replace(
-            "http://plane-minio:9000/uploads/",
+            f"{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/",
             f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/",
         )
     else:
