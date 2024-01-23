@@ -30,7 +30,6 @@
   "dependencies": {
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
-    "@tiptap/extension-code": "^2.1.13",
     "@tiptap/extension-code-block-lowlight": "^2.1.13",
     "@tiptap/extension-color": "^2.1.13",
     "@tiptap/extension-image": "^2.1.13",
