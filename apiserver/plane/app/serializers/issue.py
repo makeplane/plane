@@ -259,14 +259,17 @@ class IssuePropertySerializer(BaseSerializer):
 
 
 class LabelSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(
-        source="workspace", read_only=True
-    )
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-
     class Meta:
         model = Label
-        fields = "__all__"
+        fields = [
+            "parent",
+            "name",
+            "color",
+            "id",
+            "project_id",
+            "workspace_id",
+            "sort_order",
+        ]
         read_only_fields = [
             "workspace",
             "project",
@@ -295,8 +298,12 @@ class IssueLabelSerializer(BaseSerializer):
 
 class IssueRelationSerializer(BaseSerializer):
     id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
-    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        source="related_issue.project_id", read_only=True
+    )
+    sequence_id = serializers.IntegerField(
+        source="related_issue.sequence_id", read_only=True
+    )
     relation_type = serializers.CharField(read_only=True)
 
     class Meta:
@@ -315,8 +322,12 @@ class IssueRelationSerializer(BaseSerializer):
 
 class RelatedIssueSerializer(BaseSerializer):
     id = serializers.UUIDField(source="issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
-    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        source="issue.project_id", read_only=True
+    )
+    sequence_id = serializers.IntegerField(
+        source="issue.sequence_id", read_only=True
+    )
     relation_type = serializers.CharField(read_only=True)
 
     class Meta:

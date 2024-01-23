@@ -1,4 +1,11 @@
-import type { IUser, TIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "@plane/types";
+import type {
+  IUser,
+  TIssue,
+  IProjectLite,
+  IWorkspaceLite,
+  IIssueFilterOptions,
+  IUserLite,
+} from "@plane/types";
 
 export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
 
@@ -54,7 +61,7 @@ export type TAssigneesDistribution = {
 };
 
 export type TCompletionChartDistribution = {
-  [key: string]: number;
+  [key: string]: number | null;
 };
 
 export type TLabelsDistribution = {
@@ -80,9 +87,13 @@ export interface CycleIssueResponse {
   sub_issues_count: number;
 }
 
-export type SelectCycleType = (ICycle & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
+export type SelectCycleType =
+  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
+  | undefined;
 
-export type SelectIssue = (TIssue & { actionType: "edit" | "delete" | "create" }) | null;
+export type SelectIssue =
+  | (TIssue & { actionType: "edit" | "delete" | "create" })
+  | null;
 
 export type CycleDateCheckData = {
   start_date: string;

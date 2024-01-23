@@ -1,4 +1,5 @@
 import { makeObservable, observable, computed, action, runInAction } from "mobx";
+import { computedFn } from "mobx-utils"
 import groupBy from "lodash/groupBy";
 import set from "lodash/set";
 // store
@@ -21,6 +22,7 @@ export interface IStateStore {
   getProjectStates: (projectId: string) => IState[] | undefined;
   // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
+  fetchWorkspaceStates: (workspaceSlug: string) => Promise<IState[]>;
   // crud actions
   createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
   updateState: (
@@ -55,9 +57,6 @@ export class StateStore implements IStateStore {
       // computed
       projectStates: computed,
       groupedProjectStates: computed,
-      // computed actions
-      getStateById: action,
-      getProjectStates: action,
       // fetch action
       fetchProjectStates: action,
       // CRUD actions
@@ -76,9 +75,10 @@ export class StateStore implements IStateStore {
    * Returns the stateMap belongs to a specific project
    */
   get projectStates() {
-    const projectId = this.router.query?.projectId?.toString();
-    if (!projectId || !this.fetchedMap[projectId]) return;
-    return Object.values(this.stateMap).filter((state) => state.project === this.router.query.projectId);
+    const projectId = this.router.projectId;
+    const worksapceSlug = this.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    return Object.values(this.stateMap).filter((state) => state.project_id === projectId);
   }
 
   /**
@@ -93,20 +93,21 @@ export class StateStore implements IStateStore {
    * @description returns state details using state id
    * @param stateId
    */
-  getStateById = (stateId: string) => {
+  getStateById = computedFn((stateId: string) => {
     if (!this.stateMap) return;
     return this.stateMap[stateId] ?? undefined;
-  };
+  });
 
   /**
    * Returns the stateMap belongs to a project by projectId
    * @param projectId
    * @returns IState[]
    */
-  getProjectStates = (projectId: string) => {
-    if (!projectId || !this.fetchedMap[projectId]) return;
-    return Object.values(this.stateMap).filter((state) => state.project === projectId);
-  };
+  getProjectStates = computedFn((projectId: string) => {
+    const worksapceSlug = this.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    return Object.values(this.stateMap).filter((state) => state.project_id === projectId);
+  });
 
   /**
    * fetches the stateMap of a project
@@ -121,6 +122,22 @@ export class StateStore implements IStateStore {
         set(this.stateMap, [state.id], state);
       });
       set(this.fetchedMap, projectId, true);
+    });
+    return statesResponse;
+  };
+
+  /**
+   * fetches the stateMap of all the states in workspace
+   * @param workspaceSlug
+   * @returns
+   */
+  fetchWorkspaceStates = async (workspaceSlug: string) => {
+    const statesResponse = await this.stateService.getWorkspaceStates(workspaceSlug);
+    runInAction(() => {
+      statesResponse.forEach((state) => {
+        set(this.stateMap, [state.id], state);
+      });
+      set(this.fetchedMap, workspaceSlug, true);
     });
     return statesResponse;
   };
@@ -191,7 +208,7 @@ export class StateStore implements IStateStore {
   markStateAsDefault = async (workspaceSlug: string, projectId: string, stateId: string) => {
     const originalStates = this.stateMap;
     const currentDefaultState = Object.values(this.stateMap).find(
-      (state) => state.project === projectId && state.default
+      (state) => state.project_id === projectId && state.default
     );
     try {
       runInAction(() => {

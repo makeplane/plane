@@ -19,7 +19,7 @@ export class EventTrackerStore implements IEventTrackerStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       trackElement: observable,
-      setTrackElement: action,
+      setTrackElement: action.bound,
       postHogEventTracker: action,
     });
     this.rootStore = _rootStore;

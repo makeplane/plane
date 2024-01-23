@@ -1,4 +1,5 @@
 import { observable, action, makeObservable, runInAction, autorun, computed } from "mobx";
+import { computedFn } from "mobx-utils";
 import { set } from "lodash";
 // services
 import { InboxService } from "services/inbox.service";
@@ -61,8 +62,6 @@ export class InboxIssuesStore implements IInboxIssuesStore {
       issueMap: observable,
       // computed
       currentInboxIssueIds: computed,
-      // computed actions
-      getIssueById: action,
       // fetch actions
       fetchIssues: action,
       fetchIssueDetails: action,
@@ -99,7 +98,9 @@ export class InboxIssuesStore implements IInboxIssuesStore {
   /**
    * Returns the issue details belongs to a specific inbox issue
    */
-  getIssueById = (inboxId: string, issueId: string): IInboxIssue | null => this.issueMap?.[inboxId]?.[issueId] ?? null;
+  getIssueById = computedFn(
+    (inboxId: string, issueId: string): IInboxIssue | null => this.issueMap?.[inboxId]?.[issueId] ?? null
+  );
 
   /**
    * Fetches issues of a specific inbox and adds it to the store

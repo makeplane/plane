@@ -34,9 +34,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    project: { createLabel },
-  } = useLabel();
+  const { createLabel } = useLabel();
   // form info
   const {
     formState: { errors, isSubmitting },

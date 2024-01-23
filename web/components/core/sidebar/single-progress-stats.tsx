@@ -30,7 +30,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
           <CircularProgressIndicator percentage={(completed / total) * 100} size={14} strokeWidth={2} />
         </span>
         <span className="w-8 text-right">
-          {isNaN(Math.floor((completed / total) * 100)) ? "0" : Math.floor((completed / total) * 100)}%
+          {isNaN(Math.round((completed / total) * 100)) ? "0" : Math.round((completed / total) * 100)}%
         </span>
       </div>
       <span>of {total}</span>

@@ -9,9 +9,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    WorkspaceEntityPermission,
+)
 from plane.db.models import State, Issue
 
 
@@ -21,9 +24,6 @@ class StateViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
     ]
-
-    def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
 
     def get_queryset(self):
         return self.filter_queryset(

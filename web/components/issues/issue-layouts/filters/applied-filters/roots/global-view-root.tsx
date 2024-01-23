@@ -25,9 +25,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const {
-    workspace: { workspaceLabels },
-  } = useLabel();
+  const { workspaceLabels } = useLabel();
   const { globalViewMap, updateGlobalView } = useGlobalView();
   const {
     membership: { currentWorkspaceRole },
