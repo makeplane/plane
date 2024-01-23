@@ -123,7 +123,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                       </button>
                     ))}
 
-                  <CustomMenu width="auto" ellipsis>
+                  <CustomMenu ellipsis>
                     {isEditingAllowed && (
                       <>
                         <CustomMenu.MenuItem

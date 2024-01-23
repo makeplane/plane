@@ -236,7 +236,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       onChange(val);
                                     }}
                                     options={options}
-                                    width="w-full min-w-[12rem]"
+                                    optionsClassName="w-full"
                                   />
                                 );
                               }}
@@ -266,7 +266,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       </div>
                                     }
                                     input
-                                    width="w-full"
+                                    optionsClassName="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
                                       if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;

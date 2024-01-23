@@ -70,7 +70,6 @@ export const HeaderGroupByCard = observer(
           {!disableIssueCreation &&
             (renderExistingIssueModal ? (
               <CustomMenu
-                width="auto"
                 customButton={
                   <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
                     <Plus className="h-3.5 w-3.5" strokeWidth={2} />

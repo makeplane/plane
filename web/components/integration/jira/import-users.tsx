@@ -82,7 +82,7 @@ export const JiraImportUsers: FC = () => {
                         input
                         value={value}
                         onChange={onChange}
-                        width="w-full"
+                        optionsClassName="w-full"
                         label={<span className="capitalize">{Boolean(value) ? value : ("Ignore" as any)}</span>}
                       >
                         <CustomSelect.Option value="invite">Invite by email</CustomSelect.Option>

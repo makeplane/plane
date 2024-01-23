@@ -15,7 +15,7 @@ export const SelectYAxis: React.FC<Props> = ({ value, onChange }) => (
     value={value}
     label={<span>{ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === value)?.label ?? "None"}</span>}
     onChange={onChange}
-    width="w-full"
+    maxHeight="lg"
   >
     {ANALYTICS_Y_AXIS_VALUES.map((item) => (
       <CustomSelect.Option key={item.value} value={item.value}>
