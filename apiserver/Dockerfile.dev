@@ -33,15 +33,10 @@ RUN pip install -r requirements/local.txt --compile --no-cache-dir
 RUN addgroup -S plane && \
     adduser -S captain -G plane
 
+COPY . .
+
 RUN chown captain.plane /code
-
-USER captain
-
-# Add in Django deps and generate Django's static files
-
-USER root
-
-# RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
+RUN chmod +x -R /code/bin
 RUN chmod -R 777 /code
 
 USER captain
