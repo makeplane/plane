@@ -200,6 +200,7 @@ class InboxIssueViewSet(BaseViewSet):
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         # create an inbox issue
         InboxIssue.objects.create(
@@ -277,6 +278,7 @@ class InboxIssueViewSet(BaseViewSet):
                             cls=DjangoJSONEncoder,
                         ),
                         epoch=int(timezone.now().timestamp()),
+                        notification=True,
                     )
                 issue_serializer.save()
             else:

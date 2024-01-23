@@ -260,6 +260,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             issue = (
                 self.get_queryset().filter(pk=serializer.data["id"]).first()
@@ -298,6 +299,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             issue = self.get_queryset().filter(pk=pk).first()
             return Response(
@@ -321,6 +323,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -580,6 +583,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -609,6 +613,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -633,6 +638,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -833,6 +839,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=json.dumps({"parent": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             for sub_issue_id in sub_issue_ids
         ]
@@ -893,6 +900,7 @@ class IssueLinkViewSet(BaseViewSet):
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -922,6 +930,7 @@ class IssueLinkViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -945,6 +954,7 @@ class IssueLinkViewSet(BaseViewSet):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1001,6 +1011,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                     cls=DjangoJSONEncoder,
                 ),
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1017,6 +1028,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1195,6 +1207,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 IssueSerializer(issue).data, cls=DjangoJSONEncoder
             ),
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         issue.archived_at = None
         issue.save()
@@ -1340,6 +1353,7 @@ class IssueReactionViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1365,6 +1379,7 @@ class IssueReactionViewSet(BaseViewSet):
                 }
             ),
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         issue_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1405,6 +1420,7 @@ class CommentReactionViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1431,6 +1447,7 @@ class CommentReactionViewSet(BaseViewSet):
                 }
             ),
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         comment_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1559,6 +1576,7 @@ class IssueRelationViewSet(BaseViewSet):
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
 
         if relation_type == "blocking":
@@ -1603,6 +1621,7 @@ class IssueRelationViewSet(BaseViewSet):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1774,6 +1793,7 @@ class IssueDraftViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1804,6 +1824,7 @@ class IssueDraftViewSet(BaseViewSet):
                     cls=DjangoJSONEncoder,
                 ),
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1830,5 +1851,6 @@ class IssueDraftViewSet(BaseViewSet):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -530,6 +530,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         # Delete the cycle
         cycle.delete()
@@ -721,6 +722,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 }
             ),
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
 
         # Return all Cycle Issues
@@ -753,6 +755,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
         )
         cycle_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1562,6 +1562,7 @@ def issue_activity(
     project_id,
     epoch,
     subscriber=True,
+    notification=False,
 ):
     try:
         issue_activities = []
@@ -1642,22 +1643,24 @@ def issue_activity(
                         )
             except Exception as e:
                 capture_exception(e)
+        
 
-        notifications.delay(
-            type=type,
-            issue_id=issue_id,
-            actor_id=actor_id,
-            project_id=project_id,
-            subscriber=subscriber,
-            issue_activities_created=json.dumps(
-                IssueActivitySerializer(
-                    issue_activities_created, many=True
-                ).data,
-                cls=DjangoJSONEncoder,
-            ),
-            requested_data=requested_data,
-            current_instance=current_instance,
-        )
+        if notification:
+            notifications.delay(
+                type=type,
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                subscriber=subscriber,
+                issue_activities_created=json.dumps(
+                    IssueActivitySerializer(
+                        issue_activities_created, many=True
+                    ).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                requested_data=requested_data,
+                current_instance=current_instance,
+            )
 
         return
     except Exception as e:
