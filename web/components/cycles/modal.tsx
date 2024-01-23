@@ -5,10 +5,11 @@ import { CycleService } from "services/cycle.service";
 // hooks
 import { useApplication, useCycle } from "hooks/store";
 import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CycleForm } from "components/cycles";
 // types
-import type { CycleDateCheckData, ICycle } from "@plane/types";
+import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { createCycle, updateCycleDetails } = useCycle();
   // toast alert
   const { setToastAlert } = useToast();
+
+  const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
 
   const handleCreateCycle = async (payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
@@ -117,7 +120,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
     if (isDateValid) {
       if (data) await handleUpdateCycle(data.id, payload);
-      else await handleCreateCycle(payload);
+      else {
+        await handleCreateCycle(payload).then(() => {
+          setCycleTab("all");
+        });
+      }
       handleClose();
     } else
       setToastAlert({
