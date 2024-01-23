@@ -36,7 +36,7 @@ RUN addgroup -S plane && \
 COPY . .
 
 RUN chown captain.plane /code
-RUN chmod +x -R /code/bin
+RUN chmod -R +x /code/bin
 RUN chmod -R 777 /code
 
 USER captain
