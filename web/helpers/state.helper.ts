@@ -8,7 +8,7 @@ export const orderStateGroups = (unorderedStateGroups: IStateResponse | undefine
 };
 
 export const sortStates = (states: IState[]) => {
-  if (!states || states.length === 0) return null;
+  if (!states || states.length === 0) return;
 
   return states.sort((stateA, stateB) => {
     if (stateA.group === stateB.group) {

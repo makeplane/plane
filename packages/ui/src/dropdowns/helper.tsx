@@ -36,6 +36,7 @@ export interface ICustomSelectProps extends IDropdownProps {
 interface CustomSearchSelectProps {
   footerOption?: JSX.Element;
   onChange: any;
+  onClose?: () => void;
   options:
     | {
         value: any;

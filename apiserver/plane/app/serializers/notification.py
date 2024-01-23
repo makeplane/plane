@@ -1,7 +1,7 @@
 # Module imports
 from .base import BaseSerializer
 from .user import UserLiteSerializer
-from plane.db.models import Notification
+from plane.db.models import Notification, UserNotificationPreference
 
 
 class NotificationSerializer(BaseSerializer):
@@ -11,4 +11,11 @@ class NotificationSerializer(BaseSerializer):
 
     class Meta:
         model = Notification
+        fields = "__all__"
+
+
+class UserNotificationPreferenceSerializer(BaseSerializer):
+
+    class Meta:
+        model = UserNotificationPreference
         fields = "__all__"

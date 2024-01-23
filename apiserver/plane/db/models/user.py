@@ -11,6 +11,9 @@ from django.contrib.auth.models import (
     UserManager,
     PermissionsMixin,
 )
+from django.db.models.signals import post_save
+from django.conf import settings
+from django.dispatch import receiver
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -20,6 +23,7 @@ from django.conf import settings
 from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+
 
 def get_default_onboarding():
     return {
@@ -161,3 +165,15 @@ def send_welcome_slack(sender, instance, created, **kwargs):
     except Exception as e:
         capture_exception(e)
         return
+
+
+@receiver(post_save, sender=User)
+def create_user_notification(sender, instance, created, **kwargs):
+    # create preferences
+    if created and not instance.is_bot:
+        # Module imports
+        from plane.db.models import UserNotificationPreference
+
+        UserNotificationPreference.objects.create(
+            user=instance,
+        )

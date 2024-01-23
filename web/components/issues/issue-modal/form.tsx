@@ -194,7 +194,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const handleFormChange = () => {
     if (!onChange) return;
 
-    if (isDirty) onChange(watch());
+    if (isDirty && (watch("name") || watch("description_html"))) onChange(watch());
     else onChange(null);
   };
 

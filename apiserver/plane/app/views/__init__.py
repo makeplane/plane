@@ -168,6 +168,7 @@ from .notification import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     MarkAllReadNotificationViewSet,
+    UserNotificationPreferenceEndpoint,
 )
 
 from .exporter import ExportIssuesEndpoint
