@@ -10,7 +10,7 @@ import type {
   IUserProfileProjectSegregation,
   IUserSettings,
   IUserWorkspaceDashboard,
-  TIssueMap,
+  IUserEmailNotificationSettings,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
@@ -69,6 +69,14 @@ export class UserService extends APIService {
       });
   }
 
+  async currentUserEmailNotificationSettings(): Promise<IUserEmailNotificationSettings> {
+    return this.get("/api/users/me/notification-preferences/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async updateUser(data: Partial<IUser>): Promise<any> {
     return this.patch("/api/users/me/", data)
       .then((response) => response?.data)
@@ -91,6 +99,14 @@ export class UserService extends APIService {
     return this.patch("/api/users/me/tour-completed/", {
       is_tour_completed: true,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateCurrentUserEmailNotificationSettings(data: Partial<IUserEmailNotificationSettings>): Promise<any> {
+    return this.patch("/api/users/me/notification-preferences/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

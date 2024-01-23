@@ -24,6 +24,7 @@ from plane.db.models import (
     Label,
     User,
     IssueProperty,
+    UserNotificationPreference,
 )
 
 
@@ -50,9 +51,23 @@ def service_importer(service, importer_id):
                     for user in users
                     if user.get("import", False) == "invite"
                 ],
-                batch_size=10,
+                batch_size=100,
                 ignore_conflicts=True,
             )
+
+            _ = UserNotificationPreference.objects.bulk_create(
+                [UserNotificationPreference(user=user) for user in new_users],
+                batch_size=100,
+            )
+
+            _ = [
+                send_welcome_slack.delay(
+                    str(user.id),
+                    True,
+                    f"{user.email} was imported to Plane from {service}",
+                )
+                for user in new_users
+            ]
 
             workspace_users = User.objects.filter(
                 email__in=[

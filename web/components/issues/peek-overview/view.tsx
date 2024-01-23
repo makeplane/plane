@@ -188,12 +188,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
                   {currentUser && !is_archived && (
-                    <IssueSubscription
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      issueId={issueId}
-                      currentUserId={currentUser?.id}
-                    />
+                    <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                   )}
                   <button onClick={handleCopyText}>
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
