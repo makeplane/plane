@@ -15,6 +15,7 @@ from sentry_sdk import capture_exception
 from plane.db.models import Project, User, ProjectMemberInvite
 from plane.license.utils.instance_value import get_email_configuration
 
+
 @shared_task
 def project_invitation(email, project_id, token, current_site, invitor):
     try:

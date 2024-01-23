@@ -4,14 +4,13 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IWorkspace } from "types";
+import type { IWorkspace } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -26,16 +25,16 @@ const defaultValues = {
 
 export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   const { isOpen, data, onClose } = props;
-
+  // router
   const router = useRouter();
-
+  // store hooks
   const {
-    workspace: workspaceStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { deleteWorkspace } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     control,
     formState: { errors, isSubmitting },
@@ -58,8 +57,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   const onSubmit = async () => {
     if (!data || !canDelete) return;
 
-    await workspaceStore
-      .deleteWorkspace(data.slug)
+    await deleteWorkspace(data.slug)
       .then((res) => {
         handleClose();
         router.push("/");

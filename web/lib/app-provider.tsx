@@ -4,8 +4,8 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
-// mobx store provider
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // constants
 import { THEMES } from "constants/themes";
 // layouts
@@ -32,11 +32,14 @@ export interface IAppProvider {
 
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
   const {
-    user: { currentUser, currentWorkspaceRole, currentProjectRole },
-    appConfig: { envConfig },
-  } = useMobxStore();
+    currentUser,
+    membership: { currentProjectRole, currentWorkspaceRole },
+  } = useUser();
+  const {
+    config: { envConfig },
+  } = useApplication();
 
   return (
     <ThemeProvider themes={THEMES} defaultTheme="system">

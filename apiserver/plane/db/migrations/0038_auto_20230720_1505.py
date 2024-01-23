@@ -15,14 +15,12 @@ def restructure_theming(apps, schema_editor):
             "text": current_theme.get("textBase", ""),
             "sidebarText": current_theme.get("textBase", ""),
             "palette": f"""{current_theme.get("bgBase","")},{current_theme.get("textBase", "")},{current_theme.get("accent", "")},{current_theme.get("sidebar","")},{current_theme.get("textBase", "")}""",
-            "darkPalette": current_theme.get("darkPalette", "")
+            "darkPalette": current_theme.get("darkPalette", ""),
         }
         obj.theme = updated_theme
         updated_user.append(obj)
 
-    Model.objects.bulk_update(
-        updated_user, ["theme"], batch_size=100
-    )
+    Model.objects.bulk_update(updated_user, ["theme"], batch_size=100)
 
 
 class Migration(migrations.Migration):
@@ -30,6 +28,4 @@ class Migration(migrations.Migration):
         ("db", "0037_issue_archived_at_project_archive_in_and_more"),
     ]
 
-    operations = [
-        migrations.RunPython(restructure_theming)
-    ]
+    operations = [migrations.RunPython(restructure_theming)]

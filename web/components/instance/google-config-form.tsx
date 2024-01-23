@@ -1,15 +1,13 @@
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { Copy } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "types/instance";
+import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
-import { Copy } from "lucide-react";
 
 export interface IInstanceGoogleConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -22,8 +20,8 @@ export interface GoogleConfigFormValues {
 
 export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) => {
   const { config } = props;
-  // store
-  const { instance: instanceStore } = useMobxStore();
+  // store hooks
+  const { instance: instanceStore } = useApplication();
   // toast
   const { setToastAlert } = useToast();
   // form data

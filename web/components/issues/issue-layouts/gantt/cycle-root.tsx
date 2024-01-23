@@ -1,55 +1,47 @@
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useCycle, useIssues } from "hooks/store";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
-import { useRouter } from "next/router";
-// types
+import { EIssuesStoreType } from "constants/issue";
 import { EIssueActions } from "../types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 export const CycleGanttLayout: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { cycleId, workspaceSlug } = router.query;
-
-  const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    cycle: { fetchCycleWithId },
-  } = useMobxStore();
+  const { workspaceSlug, cycleId } = router.query;
+  // store hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { fetchCycleDetails } = useCycle();
 
   const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (issue: TIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
+      await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, cycleId.toString());
+      fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId.toString());
     },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
+    [EIssueActions.DELETE]: async (issue: TIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      await cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
+      await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, cycleId.toString());
+      fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId.toString());
     },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+    [EIssueActions.REMOVE]: async (issue: TIssue) => {
+      if (!workspaceSlug || !cycleId || !issue.id) return;
 
-      await cycleIssueStore.removeIssueFromCycle(
-        workspaceSlug.toString(),
-        issue.project,
-        cycleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
+      await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, cycleId.toString(), issue.id);
+      fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId.toString());
     },
   };
 
   return (
     <BaseGanttRoot
       issueActions={issueActions}
-      issueFiltersStore={cycleIssueFilterStore}
-      issueStore={cycleIssueStore}
+      issueFiltersStore={issuesFilter}
+      issueStore={issues}
       viewId={cycleId?.toString()}
     />
   );

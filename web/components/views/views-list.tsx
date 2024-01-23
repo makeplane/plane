@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Plus, Search } from "lucide-react";
+// hooks
+import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
 import { ProjectViewListItem } from "components/views";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -11,28 +10,24 @@ import { NewEmptyState } from "components/common/new-empty-state";
 import { Input, Loader } from "@plane/ui";
 // assets
 import emptyView from "public/empty-state/empty_view.webp";
-// icons
-import { Plus, Search } from "lucide-react";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewsList = observer(() => {
+  // states
   const [query, setQuery] = useState("");
-
-  const router = useRouter();
-  const { projectId } = router.query;
-
+  // store hooks
   const {
-    projectViews: projectViewsStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    commandPalette: { toggleCreateViewModal },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectViewIds, getViewById } = useProjectView();
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  if (!viewsList)
+  if (!projectViewIds)
     return (
       <Loader className="space-y-4 p-4">
         <Loader.Item height="72px" />
@@ -42,7 +37,9 @@ export const ProjectViewsList = observer(() => {
       </Loader>
     );
 
-  const filteredViewsList = viewsList.filter((v) => v.name.toLowerCase().includes(query.toLowerCase()));
+  const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
+
+  const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <>
@@ -76,15 +73,11 @@ export const ProjectViewsList = observer(() => {
             description: "You can create a view from here with as many properties as filters as you see fit.",
             direction: "right",
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  icon: <Plus size={14} strokeWidth={2} />,
-                  text: "Build your first view",
-                  onClick: () => commandPaletteStore.toggleCreateViewModal(true),
-                }
-              : null
-          }
+          primaryButton={{
+            icon: <Plus size={14} strokeWidth={2} />,
+            text: "Build your first view",
+            onClick: () => toggleCreateViewModal(true),
+          }}
           disabled={!isEditingAllowed}
         />
       )}

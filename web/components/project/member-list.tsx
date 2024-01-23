@@ -1,49 +1,37 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Search } from "lucide-react";
+// hooks
+import { useApplication, useMember } from "hooks/store";
 // components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
-// icons
-import { Search } from "lucide-react";
 
 export const ProjectMemberList: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    projectMember: { projectMembers, fetchProjectMembers },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  // store hooks
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    project: { projectMemberIds, getProjectMemberDetails },
+  } = useMember();
 
-  const searchedMembers = (projectMembers ?? []).filter((member) => {
-    const fullName = `${member.member.first_name} ${member.member.last_name}`.toLowerCase();
-    const displayName = member.member.display_name.toLowerCase();
+  const searchedMembers = (projectMemberIds ?? []).filter((userId) => {
+    const memberDetails = getProjectMemberDetails(userId);
 
-    return displayName.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
+    const fullName = `${memberDetails?.member.first_name} ${memberDetails?.member.last_name}`.toLowerCase();
+    const displayName = memberDetails?.member.display_name.toLowerCase();
+
+    return displayName?.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
   });
 
   return (
     <>
-      <SendProjectInvitationModal
-        isOpen={inviteModal}
-        members={projectMembers ?? []}
-        onClose={() => setInviteModal(false)}
-        onSuccess={() => {
-          mutate(`PROJECT_INVITATIONS_${projectId?.toString()}`);
-          fetchProjectMembers(workspaceSlug?.toString()!, projectId?.toString()!);
-        }}
-      />
+      <SendProjectInvitationModal isOpen={inviteModal} onClose={() => setInviteModal(false)} />
 
       <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5">
         <h4 className="text-xl font-medium">Members</h4>
@@ -64,10 +52,10 @@ export const ProjectMemberList: React.FC = observer(() => {
             setInviteModal(true);
           }}
         >
-          Add Member
+          Add member
         </Button>
       </div>
-      {!projectMembers ? (
+      {!projectMemberIds ? (
         <Loader className="space-y-5">
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
@@ -76,11 +64,11 @@ export const ProjectMemberList: React.FC = observer(() => {
         </Loader>
       ) : (
         <div className="divide-y divide-custom-border-100">
-          {projectMembers.length > 0
-            ? searchedMembers.map((member) => <ProjectMemberListItem key={member.id} member={member} />)
+          {projectMemberIds.length > 0
+            ? searchedMembers.map((userId) => <ProjectMemberListItem key={userId} userId={userId} />)
             : null}
           {searchedMembers.length === 0 && (
-            <h4 className="text-md mt-20 text-center text-custom-text-400">No matching member</h4>
+            <h4 className="text-sm mt-16 text-center text-custom-text-400">No matching members</h4>
           )}
         </div>
       )}

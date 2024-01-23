@@ -1,23 +1,26 @@
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // components
 import { NewEmptyState } from "components/common/new-empty-state";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
-import { EProjectStore } from "store/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectEmptyState: React.FC = observer(() => {
+  // store hooks
   const {
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <div className="grid h-full w-full place-items-center">
@@ -31,18 +34,14 @@ export const ProjectEmptyState: React.FC = observer(() => {
           description:
             "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
         }}
-        primaryButton={
-          isEditingAllowed
-            ? {
-                text: "Create your first issue",
-                icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-                onClick: () => {
-                  setTrackElement("PROJECT_EMPTY_STATE");
-                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
-                },
-              }
-            : null
-        }
+        primaryButton={{
+          text: "Create your first issue",
+          icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
+          onClick: () => {
+            setTrackElement("PROJECT_EMPTY_STATE");
+            commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+          },
+        }}
         disabled={!isEditingAllowed}
       />
     </div>

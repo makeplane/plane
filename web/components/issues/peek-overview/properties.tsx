@@ -1,91 +1,41 @@
-import { FC, useState } from "react";
-
-import { useRouter } from "next/router";
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { CalendarDays, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
+// hooks
+import { useIssueDetail, useProject } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
-import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 import {
-  SidebarAssigneeSelect,
-  SidebarCycleSelect,
-  SidebarEstimateSelect,
-  SidebarLabelSelect,
-  SidebarModuleSelect,
-  SidebarParentSelect,
-  SidebarPrioritySelect,
-  SidebarStateSelect,
-} from "../sidebar-select";
+  IssueLinkRoot,
+  IssueCycleSelect,
+  IssueModuleSelect,
+  IssueParentSelect,
+  IssueLabel,
+  TIssueOperations,
+} from "components/issues";
+import { EstimateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { CustomDatePicker } from "components/ui";
-import { LinkModal, LinksList } from "components/core";
-// types
-import { IIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IPeekOverviewProperties {
-  issue: IIssue;
-  issueUpdate: (issue: Partial<IIssue>) => void;
-  issueLinkCreate: (data: IIssueLink) => Promise<ILinkDetails>;
-  issueLinkUpdate: (data: IIssueLink, linkId: string) => Promise<ILinkDetails>;
-  issueLinkDelete: (linkId: string) => Promise<void>;
-  disableUserActions: boolean;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  disabled: boolean;
+  issueOperations: TIssueOperations;
 }
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { issue, issueUpdate, issueLinkCreate, issueLinkUpdate, issueLinkDelete, disableUserActions } = props;
-  // states
-  const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-
+  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+  // store hooks
+  const { getProjectById } = useProject();
   const {
-    user: { currentProjectRole },
-    issueDetail: { fetchPeekIssueDetails },
-    project: { getProjectById },
-  } = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug, peekProjectId: projectId } = router.query;
-
-  const handleState = (_state: string) => {
-    issueUpdate({ ...issue, state: _state });
-  };
-  const handlePriority = (_priority: TIssuePriorities) => {
-    issueUpdate({ ...issue, priority: _priority });
-  };
-  const handleAssignee = (_assignees: string[]) => {
-    issueUpdate({ ...issue, assignees: _assignees });
-  };
-  const handleEstimate = (_estimate: number | null) => {
-    issueUpdate({ ...issue, estimate_point: _estimate });
-  };
-  const handleStartDate = (_startDate: string | null) => {
-    issueUpdate({ ...issue, start_date: _startDate });
-  };
-  const handleTargetDate = (_targetDate: string | null) => {
-    issueUpdate({ ...issue, target_date: _targetDate });
-  };
-  const handleParent = (_parent: string) => {
-    issueUpdate({ ...issue, parent: _parent });
-  };
-  const handleLabels = (formData: Partial<IIssue>) => {
-    issueUpdate({ ...issue, ...formData });
-  };
-
-  const handleCycleOrModuleChange = async () => {
-    if (!workspaceSlug || !projectId) return;
-
-    await fetchPeekIssueDetails(workspaceSlug.toString(), projectId.toString(), issue.id);
-  };
-
-  const handleEditLink = (link: ILinkDetails) => {
-    setSelectedLinkToUpdate(link);
-    setLinkModal(true);
-  };
-
-  const projectDetails = workspaceSlug ? getProjectById(workspaceSlug.toString(), issue.project) : null;
+    issue: { getIssueById },
+  } = useIssueDetail();
+  // derived values
+  const issue = getIssueById(issueId);
+  if (!issue) return <></>;
+  const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
@@ -96,19 +46,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   return (
     <>
-      <LinkModal
-        isOpen={linkModal}
-        handleClose={() => {
-          setLinkModal(false);
-          setSelectedLinkToUpdate(null);
-        }}
-        data={selectedLinkToUpdate}
-        status={selectedLinkToUpdate ? true : false}
-        createIssueLink={issueLinkCreate}
-        updateIssueLink={issueLinkUpdate}
-      />
       <div className="flex flex-col">
-        <div className="flex w-full flex-col gap-5 py-5">
+        <div className={`flex w-full flex-col gap-5 py-5 ${disabled ? "opacity-60" : ""}`}>
           {/* state */}
           <div className="flex w-full items-center gap-2">
             <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
@@ -116,11 +55,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>State</p>
             </div>
             <div>
-              <SidebarStateSelect
-                value={issue?.state || ""}
-                projectId={projectId as string}
-                onChange={handleState}
-                disabled={disableUserActions}
+              <StateDropdown
+                value={issue?.state_id ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                projectId={projectId?.toString() ?? ""}
+                disabled={disabled}
+                buttonVariant="background-with-text"
               />
             </div>
           </div>
@@ -131,12 +71,16 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
-            <div>
-              <SidebarAssigneeSelect
-                value={issue.assignees || []}
-                projectId={projectId as string}
-                onChange={handleAssignee}
-                disabled={disableUserActions}
+            <div className="h-5 sm:w-1/2">
+              <ProjectMemberDropdown
+                value={issue?.assignee_ids ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                disabled={disabled}
+                projectId={projectId?.toString() ?? ""}
+                placeholder="Assignees"
+                multiple
+                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                buttonClassName={issue?.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
               />
             </div>
           </div>
@@ -147,11 +91,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
-            <div>
-              <SidebarPrioritySelect
-                value={issue.priority || ""}
-                onChange={handlePriority}
-                disabled={disableUserActions}
+            <div className="h-5">
+              <PriorityDropdown
+                value={issue?.priority || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                disabled={disabled}
+                buttonVariant="background-with-text"
               />
             </div>
           </div>
@@ -164,10 +109,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 <p>Estimate</p>
               </div>
               <div>
-                <SidebarEstimateSelect
-                  value={issue.estimate_point}
-                  onChange={handleEstimate}
-                  disabled={disableUserActions}
+                <EstimateDropdown
+                  value={issue?.estimate_point || null}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
+                  projectId={projectId}
+                  disabled={disabled}
+                  buttonVariant="background-with-text"
                 />
               </div>
             </div>
@@ -182,11 +129,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <CustomDatePicker
                 placeholder="Start date"
-                value={issue.start_date}
-                onChange={handleStartDate}
-                className="!rounded border-none bg-custom-background-80 !px-2.5 !py-0.5"
+                value={issue.start_date || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { start_date: val })}
+                className="border-none bg-custom-background-80"
                 maxDate={maxDate ?? undefined}
-                disabled={disableUserActions}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -200,11 +147,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <CustomDatePicker
                 placeholder="Due date"
-                value={issue.target_date}
-                onChange={handleTargetDate}
-                className="!rounded border-none bg-custom-background-80 !px-2.5 !py-0.5"
+                value={issue.target_date || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { target_date: val })}
+                className="border-none bg-custom-background-80"
                 minDate={minDate ?? undefined}
-                disabled={disableUserActions}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -216,11 +163,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Parent</p>
             </div>
             <div>
-              <SidebarParentSelect
-                onChange={handleParent}
-                issueDetails={issue}
-                projectId={projectId as string}
-                disabled={disableUserActions}
+              <IssueParentSelect
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                issueOperations={issueOperations}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -228,94 +176,58 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <span className="border-t border-custom-border-200" />
 
-        <div className="flex w-full flex-col gap-5 py-5">
-          <div className="flex w-full items-center gap-2">
-            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
-              <ContrastIcon className="h-4 w-4 flex-shrink-0" />
-              <p>Cycle</p>
+        <div className={`flex w-full flex-col gap-5 py-5 ${disabled ? "opacity-60" : ""}`}>
+          {projectDetails?.cycle_view && (
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
+                <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+                <p>Cycle</p>
+              </div>
+              <div>
+                <IssueCycleSelect
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  issueOperations={issueOperations}
+                  disabled={disabled}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarCycleSelect
-                issueDetail={issue}
-                projectId={projectId as string}
-                disabled={disableUserActions}
-                handleIssueUpdate={handleCycleOrModuleChange}
-              />
-            </div>
-          </div>
+          )}
 
-          <div className="flex w-full items-center gap-2">
-            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
-              <DiceIcon className="h-4 w-4 flex-shrink-0" />
-              <p>Module</p>
+          {projectDetails?.module_view && (
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
+                <DiceIcon className="h-4 w-4 flex-shrink-0" />
+                <p>Module</p>
+              </div>
+              <div>
+                <IssueModuleSelect
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  issueOperations={issueOperations}
+                  disabled={disabled}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarModuleSelect
-                issueDetail={issue}
-                projectId={projectId as string}
-                disabled={disableUserActions}
-                handleIssueUpdate={handleCycleOrModuleChange}
-              />
-            </div>
-          </div>
+          )}
+
           <div className="flex w-full items-start gap-2">
             <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <Tag className="h-4 w-4 flex-shrink-0" />
               <p>Label</p>
             </div>
             <div className="flex w-full flex-col gap-3">
-              <SidebarLabelSelect
-                issueDetails={issue}
-                projectId={projectId as string}
-                labelList={issue.labels}
-                submitChanges={handleLabels}
-                isNotAllowed={disableUserActions}
-                uneditable={disableUserActions}
-              />
+              <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
             </div>
           </div>
         </div>
 
         <span className="border-t border-custom-border-200" />
 
-        <div className="flex w-full flex-col gap-5 pt-5">
-          <div className="flex w-full flex-col gap-2">
-            <div className="flex w-80 items-center gap-2">
-              <div className="flex w-40 items-center gap-2 text-sm">
-                <Link2 className="h-4 w-4 flex-shrink-0" />
-                <p>Links</p>
-              </div>
-              <div>
-                {!disableUserActions && (
-                  <button
-                    type="button"
-                    className={`flex ${
-                      disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-                    } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
-                    onClick={() => setLinkModal(true)}
-                    disabled={false}
-                  >
-                    <Plus className="h-3 w-3" /> New
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              {issue?.issue_link && issue.issue_link.length > 0 ? (
-                <LinksList
-                  links={issue.issue_link}
-                  handleDeleteLink={issueLinkDelete}
-                  handleEditLink={handleEditLink}
-                  userAuth={{
-                    isGuest: currentProjectRole === EUserWorkspaceRoles.GUEST,
-                    isViewer: currentProjectRole === EUserWorkspaceRoles.VIEWER,
-                    isMember: currentProjectRole === EUserWorkspaceRoles.MEMBER,
-                    isOwner: currentProjectRole === EUserWorkspaceRoles.ADMIN,
-                  }}
-                />
-              ) : null}
-            </div>
-          </div>
+        <div className="w-full pt-3">
+          <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
         </div>
       </div>
     </>

@@ -1,6 +1,11 @@
 import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+// types
+import { TCycleLayout, TCycleView } from "@plane/types";
 
-export const CYCLE_TAB_LIST = [
+export const CYCLE_TAB_LIST: {
+  key: TCycleView;
+  name: string;
+}[] = [
   {
     key: "all",
     name: "All",
@@ -23,7 +28,11 @@ export const CYCLE_TAB_LIST = [
   },
 ];
 
-export const CYCLE_VIEW_LAYOUTS = [
+export const CYCLE_VIEW_LAYOUTS: {
+  key: TCycleLayout;
+  icon: any;
+  title: string;
+}[] = [
   {
     key: "list",
     icon: List,
@@ -75,5 +84,33 @@ export const CYCLE_STATUS: {
     color: "#525252",
     textColor: "text-custom-text-300",
     bgColor: "bg-custom-background-90",
+  },
+];
+
+export const CYCLE_STATE_GROUPS_DETAILS = [
+  {
+    key: "backlog_issues",
+    title: "Backlog",
+    color: "#F0F0F3",
+  },
+  {
+    key: "unstarted_issues",
+    title: "Unstarted",
+    color: "#FB923C",
+  },
+  {
+    key: "started_issues",
+    title: "Started",
+    color: "#FFC53D",
+  },
+  {
+    key: "cancelled_issues",
+    title: "Cancelled",
+    color: "#d687ff",
+  },
+  {
+    key: "completed_issues",
+    title: "Completed",
+    color: "#ef4444",
   },
 ];

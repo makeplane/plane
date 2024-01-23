@@ -11,17 +11,19 @@ import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
 // types
-import { IWebhook, IWorkspace, TWebhookEventTypes } from "types";
+import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 
-interface WebhookWithKey {
-  webHook: IWebhook;
-  secretKey: string | undefined;
-}
 interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;
   isOpen: boolean;
   clearSecretKey: () => void;
-  createWebhook: (workspaceSlug: string, data: Partial<IWebhook>) => Promise<WebhookWithKey>;
+  createWebhook: (
+    workspaceSlug: string,
+    data: Partial<IWebhook>
+  ) => Promise<{
+    webHook: IWebhook;
+    secretKey: string | null;
+  }>;
   onClose: () => void;
 }
 
@@ -71,7 +73,7 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
 
         setGeneratedKey(webHook);
 
-        const csvData = getCurrentHookAsCSV(currentWorkspace, webHook, secretKey);
+        const csvData = getCurrentHookAsCSV(currentWorkspace, webHook, secretKey ?? undefined);
         csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
       })
       .catch((error) => {

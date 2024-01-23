@@ -1,61 +1,30 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
-import { IssuePropertyState } from "../../properties";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { StateDropdown } from "components/dropdowns";
 // types
-import { IIssue, IState } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
-  states: IState[] | undefined;
-  expandedIssues: string[];
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, states, expandedIssues, disabled } = props;
-
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
+  const { issue, onChange, disabled } = props;
 
   return (
-    <>
-      <IssuePropertyState
-        projectId={issue.project_detail?.id ?? null}
-        value={issue.state}
-        defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
-        onChange={(data) => {
-          onChange(issue, { state: data.id, state_detail: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { state: data.id, state_detail: data });
-          }
-        }}
-        className="w-full !h-11 border-b-[0.5px] border-custom-border-200"
-        buttonClassName="!shadow-none !border-0 h-full w-full"
-        hideDropdownArrow
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <StateDropdown
+        projectId={issue.project_id}
+        value={issue.state_id}
+        onChange={(data) => onChange(issue, { state_id: data })}
         disabled={disabled}
+        buttonVariant="transparent-with-text"
+        buttonClassName="rounded-none text-left"
+        buttonContainerClassName="w-full"
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue) => (
-          <div className="h-11">
-            <SpreadsheetStateColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              states={states}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
-        ))}
-    </>
+    </div>
   );
-};
+});

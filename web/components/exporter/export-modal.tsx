@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject } from "hooks/store";
 // services
 import { ProjectExportService } from "services/project";
 // hooks
@@ -11,13 +11,13 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSearchSelect } from "@plane/ui";
 // types
-import { IUser, IImporterService } from "types";
+import { IUser, IImporterService } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: IUser | undefined;
+  user: IUser | null;
   provider: string | string[];
   mutateServices: () => void;
 };
@@ -26,28 +26,30 @@ const projectExportService = new ProjectExportService();
 
 export const Exporter: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, user, provider, mutateServices } = props;
-
+  // states
   const [exportLoading, setExportLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
-
+  // store hooks
+  const { workspaceProjectIds, getProjectById } = useProject();
+  // toast alert
   const { setToastAlert } = useToast();
 
-  const options = projects?.map((project) => ({
-    value: project.id,
-    query: project.name + project.identifier,
-    content: (
-      <div className="flex items-center gap-2">
-        <span className="text-[0.65rem] text-custom-text-200">{project.identifier}</span>
-        {project.name}
-      </div>
-    ),
-  }));
+  const options = workspaceProjectIds?.map((projectId) => {
+    const projectDetails = getProjectById(projectId);
+
+    return {
+      value: projectDetails?.id,
+      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <span className="text-[0.65rem] text-custom-text-200">{projectDetails?.identifier}</span>
+          {projectDetails?.name}
+        </div>
+      ),
+    };
+  });
 
   const [value, setValue] = React.useState<string[]>([]);
   const [multiple, setMultiple] = React.useState<boolean>(false);
@@ -131,10 +133,12 @@ export const Exporter: React.FC<Props> = observer((props) => {
                       input
                       label={
                         value && value.length > 0
-                          ? projects &&
-                            projects
-                              .filter((p) => value.includes(p.id))
-                              .map((p) => p.identifier)
+                          ? value
+                              .map((projectId) => {
+                                const projectDetails = getProjectById(projectId);
+
+                                return projectDetails?.identifier;
+                              })
                               .join(", ")
                           : "All projects"
                       }

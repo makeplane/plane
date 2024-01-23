@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProjectState } from "hooks/store";
 // ui
 import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
@@ -10,7 +10,7 @@ import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 
 type Props = {
   index: number;
@@ -20,22 +20,18 @@ type Props = {
   handleDeleteState: () => void;
 };
 
-export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
+export const StatesListItem: React.FC<Props> = observer((props) => {
   const { index, state, statesList, handleEditState, handleDeleteState } = props;
-
+  // states
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
+  // store hooks
   const {
-    projectState: { markStateAsDefault, moveStatePosition },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-
-  // states
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { markStateAsDefault, moveStatePosition } = useProjectState();
   // derived values
   const groupStates = statesList.filter((s) => s.group === state.group);
   const groupLength = groupStates.length;

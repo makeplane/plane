@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { AlertTriangle } from "lucide-react";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IUserLite } from "types";
+import { IUserLite } from "@plane/types";
 
 type Props = {
   data: IUserLite;
@@ -19,13 +18,10 @@ type Props = {
 
 export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
   const { data, onSubmit, isOpen, onClose } = props;
-
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const {
-    user: { currentUser },
-  } = useMobxStore();
+  // store hooks
+  const { currentUser } = useUser();
 
   const handleClose = () => {
     onClose();
@@ -98,8 +94,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                        ? "Removing..."
-                        : "Remove"}
+                      ? "Removing..."
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

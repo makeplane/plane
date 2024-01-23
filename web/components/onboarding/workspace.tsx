@@ -3,13 +3,12 @@ import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue 
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
+import { useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { RESTRICTED_URLS } from "constants/workspace";
 
@@ -28,14 +27,13 @@ const workspaceService = new WorkspaceService();
 
 export const Workspace: React.FC<Props> = (props) => {
   const { stepChange, user, control, handleSubmit, setValue, errors, isSubmitting } = props;
+  // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-
-  const {
-    workspace: workspaceStore,
-    user: { updateCurrentUser },
-  } = useMobxStore();
-
+  // store hooks
+  const { updateCurrentUser } = useUser();
+  const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
@@ -47,15 +45,14 @@ export const Workspace: React.FC<Props> = (props) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceStore
-            .createWorkspace(formData)
+          await createWorkspace(formData)
             .then(async () => {
               setToastAlert({
                 type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
-              await workspaceStore.fetchWorkspaces();
+              await fetchWorkspaces();
               await completeStep();
             })
             .catch(() =>
@@ -77,7 +74,9 @@ export const Workspace: React.FC<Props> = (props) => {
   };
 
   const completeStep = async () => {
-    if (!user || !workspaceStore.workspaces) return;
+    if (!user || !workspaces) return;
+
+    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
 
     const payload: Partial<TOnboardingSteps> = {
       workspace_create: true,
@@ -86,7 +85,7 @@ export const Workspace: React.FC<Props> = (props) => {
 
     await stepChange(payload);
     await updateCurrentUser({
-      last_workspace_id: workspaceStore.workspaces[0]?.id,
+      last_workspace_id: firstWorkspace?.id,
     });
   };
 

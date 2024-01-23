@@ -1,39 +1,40 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { EIssueActions } from "../../types";
-import { IIssue } from "types";
-import { useRouter } from "next/router";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+// types
+import { EIssueActions } from "../../types";
+import { TIssue } from "@plane/types";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
-export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
-
-  const { viewIssues: projectViewIssuesStore, viewIssuesFilter: projectViewIssueFiltersStore } = useMobxStore();
-
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await projectViewIssuesStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await projectViewIssuesStore.removeIssue(workspaceSlug, issue.project, issue.id);
-    },
+export interface IViewSpreadsheetLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
+}
+
+export const ProjectViewSpreadsheetLayout: React.FC<IViewSpreadsheetLayout> = observer((props) => {
+  const { issueActions } = props;
+  // router
+  const router = useRouter();
+  const { viewId } = router.query;
+
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   return (
     <BaseSpreadsheetRoot
-      issueStore={projectViewIssuesStore}
-      issueFiltersStore={projectViewIssueFiltersStore}
+      issueStore={issues}
+      issueFiltersStore={issuesFilter}
       issueActions={issueActions}
       QuickActions={ProjectIssueQuickActions}
+      viewId={viewId?.toString()}
     />
   );
 });

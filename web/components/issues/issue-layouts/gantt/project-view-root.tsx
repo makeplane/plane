@@ -1,35 +1,37 @@
-import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useIssues } from "hooks/store";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 // types
 import { EIssueActions } from "../types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
-export const ProjectViewGanttLayout: React.FC = observer(() => {
-  const { viewIssues: projectIssueViewStore, viewIssuesFilter: projectIssueViewFiltersStore } = useMobxStore();
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await projectIssueViewStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await projectIssueViewStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
+export interface IViewGanttLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
+}
+
+export const ProjectViewGanttLayout: React.FC<IViewGanttLayout> = observer((props) => {
+  const { issueActions } = props;
+  // store
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  // router
+  const router = useRouter();
+  const { viewId } = router.query;
+
   return (
     <BaseGanttRoot
+      issueFiltersStore={issuesFilter}
+      issueStore={issues}
       issueActions={issueActions}
-      issueFiltersStore={projectIssueViewFiltersStore}
-      issueStore={projectIssueViewStore}
+      viewId={viewId?.toString()}
     />
   );
 });

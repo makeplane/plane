@@ -2,7 +2,7 @@ import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
@@ -13,14 +13,13 @@ import { Spinner } from "@plane/ui";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
-  const {
-    user: { currentUser, updateCurrentUserTheme },
-  } = useMobxStore();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
+  // store hooks
+  const { currentUser, updateCurrentUserTheme } = useUser();
   // computed
   const userTheme = currentUser?.theme;
   // hooks
@@ -49,7 +48,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {currentUser ? (
-        <div className="mx-auto pt-16 h-full w-full overflow-y-auto px-8 pb-8 lg:w-3/5">
+        <div className="mx-auto mt-16 h-full w-full overflow-y-auto px-8 pb-8 lg:w-3/5">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>

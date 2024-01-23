@@ -2,14 +2,14 @@ import { FC } from "react";
 // components
 import { IssueActivityCard, IssueCommentEditor } from "components/issues";
 // types
-import { IIssueActivity, IUser } from "types";
+import { IUser } from "@plane/types";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   user: IUser | null;
-  issueActivity: IIssueActivity[] | null;
+  issueActivity: string[] | undefined;
   issueCommentCreate: (comment: any) => void;
   issueCommentUpdate: (comment: any) => void;
   issueCommentRemove: (commentId: string) => void;

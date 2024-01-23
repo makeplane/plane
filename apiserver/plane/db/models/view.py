@@ -3,7 +3,51 @@ from django.db import models
 from django.conf import settings
 
 # Module import
-from . import ProjectBaseModel, BaseModel
+from . import ProjectBaseModel, BaseModel, WorkspaceBaseModel
+
+
+def get_default_filters():
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
+
+
+def get_default_display_filters():
+    return {
+        "group_by": None,
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
+    }
+
+
+def get_default_display_properties():
+    return {
+        "assignee": True,
+        "attachment_count": True,
+        "created_on": True,
+        "due_date": True,
+        "estimate": True,
+        "key": True,
+        "labels": True,
+        "link": True,
+        "priority": True,
+        "start_date": True,
+        "state": True,
+        "sub_issue_count": True,
+        "updated_on": True,
+    }
 
 
 class GlobalView(BaseModel):
@@ -24,7 +68,7 @@ class GlobalView(BaseModel):
         verbose_name_plural = "Global Views"
         db_table = "global_views"
         ordering = ("-created_at",)
-    
+
     def save(self, *args, **kwargs):
         if self._state.adding:
             largest_sort_order = GlobalView.objects.filter(
@@ -40,14 +84,19 @@ class GlobalView(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
-class IssueView(ProjectBaseModel):
+class IssueView(WorkspaceBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")
+    filters = models.JSONField(default=dict)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
     access = models.PositiveSmallIntegerField(
         default=1, choices=((0, "Private"), (1, "Public"))
     )
-    query_data = models.JSONField(default=dict)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Issue View"

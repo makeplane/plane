@@ -5,65 +5,69 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0019_auto_20230131_0049'),
+        ("db", "0019_auto_20230131_0049"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='label',
-            old_name='colour',
-            new_name='color',
+            model_name="label",
+            old_name="colour",
+            new_name="color",
         ),
         migrations.AddField(
-            model_name='apitoken',
-            name='workspace',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='api_tokens', to='db.workspace'),
+            model_name="apitoken",
+            name="workspace",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="api_tokens",
+                to="db.workspace",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='completed_at',
+            model_name="issue",
+            name="completed_at",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='sort_order',
+            model_name="issue",
+            name="sort_order",
             field=models.FloatField(default=65535),
         ),
         migrations.AddField(
-            model_name='project',
-            name='cycle_view',
+            model_name="project",
+            name="cycle_view",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='project',
-            name='module_view',
+            model_name="project",
+            name="module_view",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='state',
-            name='default',
+            model_name="state",
+            name="default",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='description',
+            model_name="issue",
+            name="description",
             field=models.JSONField(blank=True, default=dict),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='description_html',
-            field=models.TextField(blank=True, default='<p></p>'),
+            model_name="issue",
+            name="description_html",
+            field=models.TextField(blank=True, default="<p></p>"),
         ),
         migrations.AlterField(
-            model_name='issuecomment',
-            name='comment_html',
-            field=models.TextField(blank=True, default='<p></p>'),
+            model_name="issuecomment",
+            name="comment_html",
+            field=models.TextField(blank=True, default="<p></p>"),
         ),
         migrations.AlterField(
-            model_name='issuecomment',
-            name='comment_json',
+            model_name="issuecomment",
+            name="comment_json",
             field=models.JSONField(blank=True, default=dict),
         ),
     ]

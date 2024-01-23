@@ -1,50 +1,49 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // components
-import { PagesListItem } from "./list-item";
 import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/empty_page.png";
-// types
-import { IPage } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
+import { PagesListItem } from "./list-item";
 
 type IPagesListView = {
-  pages: IPage[];
+  pageIds: string[];
 };
 
-export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
-  // store
+export const PagesListView: FC<IPagesListView> = (props) => {
+  const { pageIds: projectPageIds } = props;
+  // store hooks
+  // trace(true);
+
   const {
-    user: { currentProjectRole },
     commandPalette: { toggleCreatePageModal },
-  } = useMobxStore();
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
-      {pages && workspaceSlug && projectId ? (
+      {projectPageIds && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
-          {pages.length > 0 ? (
+          {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pages.map((page) => (
-                <PagesListItem
-                  key={page.id}
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  page={page}
-                />
+              {projectPageIds.map((pageId: string) => (
+                <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />
               ))}
             </ul>
           ) : (
@@ -58,15 +57,11 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
                   "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
                 direction: "right",
               }}
-              primaryButton={
-                isEditingAllowed
-                  ? {
-                      icon: <Plus className="h-4 w-4" />,
-                      text: "Create your first page",
-                      onClick: () => toggleCreatePageModal(true),
-                    }
-                  : null
-              }
+              primaryButton={{
+                icon: <Plus className="h-4 w-4" />,
+                text: "Create your first page",
+                onClick: () => toggleCreatePageModal(true),
+              }}
               disabled={!isEditingAllowed}
             />
           )}
@@ -80,4 +75,4 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
       )}
     </>
   );
-});
+};

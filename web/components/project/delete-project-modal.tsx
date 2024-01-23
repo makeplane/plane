@@ -2,16 +2,14 @@ import React from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import useToast from "hooks/use-toast";
-// icons
 import { AlertTriangle } from "lucide-react";
+// hooks
+import { useApplication, useProject, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "types";
-// fetch-keys
-import { useMobxStore } from "lib/mobx/store-provider";
+import type { IProject } from "@plane/types";
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -26,16 +24,16 @@ const defaultValues = {
 
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    workspace: { currentWorkspace },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
+  const { deleteProject } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast
+  // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
@@ -60,8 +58,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const onSubmit = async () => {
     if (!workspaceSlug || !canDelete) return;
 
-    await projectStore
-      .deleteProject(workspaceSlug.toString(), project.id)
+    await deleteProject(workspaceSlug.toString(), project.id)
       .then(() => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
@@ -74,7 +71,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({
@@ -92,7 +89,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({

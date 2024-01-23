@@ -29,7 +29,7 @@
 .react-datepicker {
   font-family: "Inter" !important;
   background-color: rgba(var(--color-background-100)) !important;
-  border: 1px solid rgba(var(--color-background-80)) !important;
+  border: 0.5px solid rgba(var(--color-border-300)) !important;
 }
 
 .react-datepicker__month-container {
@@ -136,9 +136,7 @@
   color: white !important;
 }
 
-.react-datepicker__day--in-range:not(.react-datepicker__day--in-range-start):not(
-    .react-datepicker__day--in-range-end
-  ) {
+.react-datepicker__day--in-range:not(.react-datepicker__day--in-range-start):not(.react-datepicker__day--in-range-end) {
   background-color: rgba(var(--color-primary-100)) !important;
   color: white !important;
 }

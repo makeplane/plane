@@ -3,7 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { IntegrationService } from "services/integrations";
@@ -14,7 +16,7 @@ import { Button, Loader } from "@plane/ui";
 // icons
 import { RefreshCw } from "lucide-react";
 // types
-import { IImporterService } from "types";
+import { IImporterService } from "@plane/types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
@@ -23,15 +25,18 @@ import { IMPORTERS_LIST } from "constants/workspace";
 // services
 const integrationService = new IntegrationService();
 
-const IntegrationGuide = () => {
+const IntegrationGuide = observer(() => {
+  // states
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
   const [importToDelete, setImportToDelete] = useState<IImporterService | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { user } = useUserAuth();
+  // store hooks
+  const { currentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
@@ -49,7 +54,7 @@ const IntegrationGuide = () => {
         isOpen={deleteImportModal}
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
-        user={user}
+        user={currentUser}
       />
       <div className="h-full">
         {(!provider || provider === "csv") && (
@@ -144,11 +149,11 @@ const IntegrationGuide = () => {
           </>
         )}
 
-        {provider && provider === "github" && <GithubImporterRoot user={user} />}
-        {provider && provider === "jira" && <JiraImporterRoot user={user} />}
+        {provider && provider === "github" && <GithubImporterRoot />}
+        {provider && provider === "jira" && <JiraImporterRoot />}
       </div>
     </>
   );
-};
+});
 
 export default IntegrationGuide;

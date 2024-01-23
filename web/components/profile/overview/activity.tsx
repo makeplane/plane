@@ -10,7 +10,7 @@ import { Loader } from "@plane/ui";
 // image
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // fetch-keys
 import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
 
@@ -71,7 +71,7 @@ export const ProfileActivity = () => {
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-custom-text-200">{timeAgo(activity.created_at)}</p>
+                    <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}

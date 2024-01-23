@@ -3,10 +3,10 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IInstance, IInstanceAdmin } from "types/instance";
+import { IInstance, IInstanceAdmin } from "@plane/types";
 // hooks
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IInstanceGeneralForm {
   instance: IInstance;
@@ -20,8 +20,8 @@ export interface GeneralFormValues {
 
 export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
   const { instance, instanceAdmins } = props;
-  // store
-  const { instance: instanceStore } = useMobxStore();
+  // store hooks
+  const { instance: instanceStore } = useApplication();
   // toast
   const { setToastAlert } = useToast();
   // form data

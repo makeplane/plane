@@ -37,7 +37,7 @@ export const WorkspaceDashboardHeader = () => {
             className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"
           >
             <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
-            {"What's New?"}
+            {"What's new?"}
           </a>
           <a
             className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"

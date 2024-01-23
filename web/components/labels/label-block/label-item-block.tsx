@@ -4,7 +4,7 @@ import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 //ui
 import { CustomMenu } from "@plane/ui";
 //types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 //hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 //components
@@ -17,6 +17,7 @@ export interface ICustomMenuItem {
   onClick: (label: IIssueLabel) => void;
   isVisible: boolean;
   text: string;
+  key: string;
 }
 
 interface ILabelItemBlock {
@@ -30,11 +31,9 @@ interface ILabelItemBlock {
 
 export const LabelItemBlock = (props: ILabelItemBlock) => {
   const { label, isDragging, customMenuItems, dragHandleProps, handleLabelDelete, isLabelGroup } = props;
-
-  //state
+  // states
   const [isMenuActive, setIsMenuActive] = useState(false);
-
-  //refs
+  // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
@@ -56,9 +55,9 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
       >
         <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-custom-sidebar-text-400">
           {customMenuItems.map(
-            ({ isVisible, onClick, CustomIcon, text }) =>
+            ({ isVisible, onClick, CustomIcon, text, key }) =>
               isVisible && (
-                <CustomMenu.MenuItem onClick={() => onClick(label)}>
+                <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
                   <span className="flex items-center justify-start gap-2">
                     <CustomIcon className="h-4 w-4" />
                     <span>{text}</span>

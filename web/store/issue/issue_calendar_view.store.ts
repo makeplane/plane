@@ -1,88 +1,113 @@
-import { action, makeObservable, runInAction } from "mobx";
-// types
-import { RootStore } from "../root";
-import { IIssueType } from "./issue.store";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 
-export interface IIssueCalendarViewStore {
-  // actions
-  handleDragDrop: (source: any, destination: any) => void;
+// helpers
+import { generateCalendarData } from "helpers/calendar.helper";
+// types
+import { ICalendarPayload, ICalendarWeek } from "components/issues";
+import { getWeekNumberOfDate } from "helpers/date-time.helper";
+
+export interface ICalendarStore {
+  calendarFilters: {
+    activeMonthDate: Date;
+    activeWeekDate: Date;
+  };
+  calendarPayload: ICalendarPayload | null;
+
+  // action
+  updateCalendarFilters: (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => void;
+  updateCalendarPayload: (date: Date) => void;
+
+  // computed
+  allWeeksOfActiveMonth:
+    | {
+        [weekNumber: string]: ICalendarWeek;
+      }
+    | undefined;
+  activeWeekNumber: number;
+  allDaysOfActiveWeek: ICalendarWeek | undefined;
 }
 
-export class IssueCalendarViewStore implements IIssueCalendarViewStore {
-  // root store
-  rootStore;
+export class CalendarStore implements ICalendarStore {
+  loader: boolean = false;
+  error: any | null = null;
 
-  constructor(_rootStore: RootStore) {
+  // observables
+  calendarFilters: { activeMonthDate: Date; activeWeekDate: Date } = {
+    activeMonthDate: new Date(),
+    activeWeekDate: new Date(),
+  };
+  calendarPayload: ICalendarPayload | null = null;
+
+  constructor() {
     makeObservable(this, {
+      loader: observable.ref,
+      error: observable.ref,
+
+      // observables
+      calendarFilters: observable.ref,
+      calendarPayload: observable.ref,
+
       // actions
-      handleDragDrop: action,
+      updateCalendarFilters: action,
+      updateCalendarPayload: action,
+
+      //computed
+      allWeeksOfActiveMonth: computed,
+      activeWeekNumber: computed,
+      allDaysOfActiveWeek: computed,
     });
 
-    this.rootStore = _rootStore;
+    this.initCalendar();
   }
 
-  handleDragDrop = async (source: any, destination: any) => {
-    const workspaceSlug = this.rootStore?.workspace?.workspaceSlug;
-    const projectId = this.rootStore?.project?.projectId;
-    const issueType: IIssueType | null = this.rootStore?.issue?.getIssueType;
-    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const currentIssues: any = this.rootStore.issue.getIssues;
+  get allWeeksOfActiveMonth() {
+    if (!this.calendarPayload) return undefined;
 
-    if (workspaceSlug && projectId && issueType && issueLayout === "calendar" && currentIssues) {
-      // update issue payload
-      let updateIssue: any = {
-        workspaceSlug: workspaceSlug,
-        projectId: projectId,
+    const { activeMonthDate } = this.calendarFilters;
+
+    return this.calendarPayload[`y-${activeMonthDate.getFullYear()}`][`m-${activeMonthDate.getMonth()}`];
+  }
+
+  get activeWeekNumber() {
+    return getWeekNumberOfDate(this.calendarFilters.activeWeekDate);
+  }
+
+  get allDaysOfActiveWeek() {
+    if (!this.calendarPayload) return undefined;
+
+    const { activeWeekDate } = this.calendarFilters;
+
+    return this.calendarPayload[`y-${activeWeekDate.getFullYear()}`][`m-${activeWeekDate.getMonth()}`][
+      `w-${this.activeWeekNumber}`
+    ];
+  }
+
+  updateCalendarFilters = (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => {
+    this.updateCalendarPayload(filters.activeMonthDate || filters.activeWeekDate || new Date());
+
+    runInAction(() => {
+      this.calendarFilters = {
+        ...this.calendarFilters,
+        ...filters,
       };
+    });
+  };
 
-      const droppableSourceColumnId = source?.droppableId || null;
-      const droppableDestinationColumnId = destination?.droppableId || null;
+  updateCalendarPayload = (date: Date) => {
+    if (!this.calendarPayload) return null;
 
-      if (droppableSourceColumnId === droppableDestinationColumnId) return;
+    const nextDate = new Date(date);
 
-      // horizontal
-      if (droppableSourceColumnId != droppableDestinationColumnId) {
-        const _sourceIssues = currentIssues[droppableSourceColumnId];
-        let _destinationIssues = currentIssues[droppableDestinationColumnId] || [];
+    runInAction(() => {
+      this.calendarPayload = generateCalendarData(this.calendarPayload, nextDate);
+    });
+  };
 
-        const [removed] = _sourceIssues.splice(source.index, 1);
+  initCalendar = () => {
+    const newCalendarPayload = generateCalendarData(null, new Date());
 
-        if (_destinationIssues && _destinationIssues.length > 0)
-          _destinationIssues.splice(destination.index, 0, {
-            ...removed,
-            target_date: droppableDestinationColumnId,
-          });
-        else _destinationIssues = [..._destinationIssues, { ...removed, target_date: droppableDestinationColumnId }];
-
-        updateIssue = { ...updateIssue, issueId: removed?.id, target_date: droppableDestinationColumnId };
-
-        currentIssues[droppableSourceColumnId] = _sourceIssues;
-        currentIssues[droppableDestinationColumnId] = _destinationIssues;
-      }
-
-      const reorderedIssues = {
-        ...this.rootStore?.issue.issues,
-        [projectId]: {
-          ...this.rootStore?.issue.issues?.[projectId],
-          [issueType]: {
-            ...this.rootStore?.issue.issues?.[projectId]?.[issueType],
-            [issueType]: currentIssues,
-          },
-        },
-      };
-
-      runInAction(() => {
-        this.rootStore.issue.issues = { ...reorderedIssues };
-      });
-
-      this.rootStore.projectIssues.updateIssue(
-        updateIssue.workspaceSlug,
-        updateIssue.projectId,
-        updateIssue.issueId,
-        updateIssue
-      );
-    }
-
-    return;
+    runInAction(() => {
+      this.calendarPayload = newCalendarPayload;
+    });
   };
 }

@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useUser } from "hooks/store";
 // components
 import { InstanceAdminRestriction } from "components/instance";
 
@@ -10,13 +10,11 @@ export interface IAdminAuthWrapper {
 }
 
 export const AdminAuthWrapper: FC<IAdminAuthWrapper> = observer(({ children }) => {
-  // store
+  // store hooks
   const {
-    user: { isUserInstanceAdmin },
-    workspace: { workspaceSlug },
-    user: { currentUserSettings },
-  } = useMobxStore();
-
+    router: { workspaceSlug },
+  } = useApplication();
+  const { isUserInstanceAdmin, currentUserSettings } = useUser();
   // redirect url
   const redirectWorkspaceSlug =
     workspaceSlug ||

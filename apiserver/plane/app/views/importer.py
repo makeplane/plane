@@ -35,7 +35,10 @@ from plane.app.serializers import (
     ModuleSerializer,
 )
 from plane.utils.integrations.github import get_github_repo_details
-from plane.utils.importers.jira import jira_project_issue_summary, is_allowed_hostname
+from plane.utils.importers.jira import (
+    jira_project_issue_summary,
+    is_allowed_hostname,
+)
 from plane.bgtasks.importer_task import service_importer
 from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
@@ -93,7 +96,8 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
             for key, error_message in params.items():
                 if not request.GET.get(key, False):
                     return Response(
-                        {"error": error_message}, status=status.HTTP_400_BAD_REQUEST
+                        {"error": error_message},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
             project_key = request.GET.get("project_key", "")
@@ -236,7 +240,9 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(serializer.data)
 
     def delete(self, request, slug, service, pk):
-        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
+        importer = Importer.objects.get(
+            pk=pk, service=service, workspace__slug=slug
+        )
 
         if importer.imported_data is not None:
             # Delete all imported Issues
@@ -254,8 +260,12 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, service, pk):
-        importer = Importer.objects.get(pk=pk, service=service, workspace__slug=slug)
-        serializer = ImporterSerializer(importer, data=request.data, partial=True)
+        importer = Importer.objects.get(
+            pk=pk, service=service, workspace__slug=slug
+        )
+        serializer = ImporterSerializer(
+            importer, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -291,9 +301,9 @@ class BulkImportIssuesEndpoint(BaseAPIView):
             ).first()
 
         # Get the maximum sequence_id
-        last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(
-            largest=Max("sequence")
-        )["largest"]
+        last_id = IssueSequence.objects.filter(
+            project_id=project_id
+        ).aggregate(largest=Max("sequence"))["largest"]
 
         last_id = 1 if last_id is None else last_id + 1
 
@@ -326,7 +336,9 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                     if issue_data.get("state", False)
                     else default_state.id,
                     name=issue_data.get("name", "Issue Created through Bulk"),
-                    description_html=issue_data.get("description_html", "<p></p>"),
+                    description_html=issue_data.get(
+                        "description_html", "<p></p>"
+                    ),
                     description_stripped=(
                         None
                         if (
@@ -438,15 +450,21 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                 for comment in comments_list
             ]
 
-        _ = IssueComment.objects.bulk_create(bulk_issue_comments, batch_size=100)
+        _ = IssueComment.objects.bulk_create(
+            bulk_issue_comments, batch_size=100
+        )
 
         # Attach Links
         _ = IssueLink.objects.bulk_create(
             [
                 IssueLink(
                     issue=issue,
-                    url=issue_data.get("link", {}).get("url", "https://github.com"),
-                    title=issue_data.get("link", {}).get("title", "Original Issue"),
+                    url=issue_data.get("link", {}).get(
+                        "url", "https://github.com"
+                    ),
+                    title=issue_data.get("link", {}).get(
+                        "title", "Original Issue"
+                    ),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -483,14 +501,18 @@ class BulkImportModulesEndpoint(BaseAPIView):
             ignore_conflicts=True,
         )
 
-        modules = Module.objects.filter(id__in=[module.id for module in modules])
+        modules = Module.objects.filter(
+            id__in=[module.id for module in modules]
+        )
 
         if len(modules) == len(modules_data):
             _ = ModuleLink.objects.bulk_create(
                 [
                     ModuleLink(
                         module=module,
-                        url=module_data.get("link", {}).get("url", "https://plane.so"),
+                        url=module_data.get("link", {}).get(
+                            "url", "https://plane.so"
+                        ),
                         title=module_data.get("link", {}).get(
                             "title", "Original Issue"
                         ),
@@ -529,6 +551,8 @@ class BulkImportModulesEndpoint(BaseAPIView):
 
         else:
             return Response(
-                {"message": "Modules created but issues could not be imported"},
+                {
+                    "message": "Modules created but issues could not be imported"
+                },
                 status=status.HTTP_200_OK,
             )

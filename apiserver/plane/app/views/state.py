@@ -9,9 +9,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    WorkspaceEntityPermission,
+)
 from plane.db.models import State, Issue
 
 
@@ -21,9 +24,6 @@ class StateViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
     ]
-
-    def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -77,14 +77,19 @@ class StateViewSet(BaseViewSet):
         )
 
         if state.default:
-            return Response({"error": "Default state cannot be deleted"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Default state cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check for any issues in the state
         issue_exist = Issue.issue_objects.filter(state=pk).exists()
 
         if issue_exist:
             return Response(
-                {"error": "The state is not empty, only empty states can be deleted"},
+                {
+                    "error": "The state is not empty, only empty states can be deleted"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

@@ -1,43 +1,17 @@
+import { useState } from "react";
 import { mutate } from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
-import { Activity, ChevronLeft, CircleUser, KeyRound, LogOut, MoveLeft, Plus, Settings2, UserPlus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Tooltip } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
-import { useState } from "react";
-
-const PROFILE_ACTION_LINKS = [
-  {
-    key: "profile",
-    label: "Profile",
-    href: `/profile`,
-    Icon: CircleUser,
-  },
-  {
-    key: "change-password",
-    label: "Change password",
-    href: `/profile/change-password`,
-    Icon: KeyRound,
-  },
-  {
-    key: "activity",
-    label: "Activity",
-    href: `/profile/activity`,
-    Icon: Activity,
-  },
-  {
-    key: "preferences",
-    label: "Preferences",
-    href: `/profile/preferences`,
-    Icon: Settings2,
-  },
-];
+// constants
+import { PROFILE_ACTION_LINKS } from "constants/profile";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -63,12 +37,14 @@ export const ProfileLayoutSidebar = observer(() => {
   const { setTheme } = useTheme();
   // toast
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
     theme: { sidebarCollapsed, toggleSidebar },
-    workspace: { workspaces },
-    user: { currentUser, currentUserSettings, signOut },
-  } = useMobxStore();
+  } = useApplication();
+  const { currentUser, currentUserSettings, signOut } = useUser();
+  const { workspaces } = useWorkspace();
+
+  const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
   const redirectWorkspaceSlug =
@@ -129,7 +105,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                        router.pathname === link.href
+                        link.highlight(router.pathname)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
@@ -147,9 +123,9 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
-          {workspaces && workspaces.length > 0 && (
+          {workspacesList && workspacesList.length > 0 && (
             <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
-              {workspaces.map((workspace) => (
+              {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}
                   href={`/${workspace.slug}`}

@@ -53,7 +53,7 @@ const IssueSuggestionList = ({
   const commandListContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let newDisplayedItems: { [key: string]: IssueSuggestionProps[] } = {};
+    const newDisplayedItems: { [key: string]: IssueSuggestionProps[] } = {};
     let totalLength = 0;
     sections.forEach((section) => {
       newDisplayedItems[section] = items.filter((item) => item.state === section).slice(0, 5);
@@ -65,8 +65,8 @@ const IssueSuggestionList = ({
   }, [items]);
 
   const selectItem = useCallback(
-    (index: number) => {
-      const item = displayedItems[currentSection][index];
+    (section: string, index: number) => {
+      const item = displayedItems[section][index];
       if (item) {
         command(item);
       }
@@ -87,6 +87,7 @@ const IssueSuggestionList = ({
           setSelectedIndex(
             (selectedIndex + displayedItems[currentSection].length - 1) % displayedItems[currentSection].length
           );
+          e.stopPropagation();
           return true;
         }
         if (e.key === "ArrowDown") {
@@ -101,10 +102,12 @@ const IssueSuggestionList = ({
               [currentSection]: [...prevItems[currentSection], ...nextItems],
             }));
           }
+          e.stopPropagation();
           return true;
         }
         if (e.key === "Enter") {
-          selectItem(selectedIndex);
+          selectItem(currentSection, selectedIndex);
+          e.stopPropagation();
           return true;
         }
         if (e.key === "Tab") {
@@ -112,6 +115,7 @@ const IssueSuggestionList = ({
           const nextSectionIndex = (currentSectionIndex + 1) % sections.length;
           setCurrentSection(sections[nextSectionIndex]);
           setSelectedIndex(0);
+          e.stopPropagation();
           return true;
         }
         return false;
@@ -172,7 +176,7 @@ const IssueSuggestionList = ({
                       }
                     )}
                     key={item.identifier}
-                    onClick={() => selectItem(index)}
+                    onClick={() => selectItem(section, index)}
                   >
                     <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item.identifier}</h5>
                     <PriorityIcon priority={item.priority} />
@@ -195,7 +199,7 @@ export const IssueListRenderer = () => {
   let popup: any | null = null;
 
   return {
-    onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(IssueSuggestionList, {
         props,
         // @ts-ignore
@@ -210,10 +214,10 @@ export const IssueListRenderer = () => {
         showOnCreate: true,
         interactive: true,
         trigger: "manual",
-        placement: "right",
+        placement: "bottom-start",
       });
     },
-    onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component?.updateProps(props);
 
       popup &&

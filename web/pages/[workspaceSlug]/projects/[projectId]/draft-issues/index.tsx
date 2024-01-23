@@ -1,16 +1,13 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
+import { X, PenSquare } from "lucide-react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-// contexts
-import { IssueViewContextProvider } from "contexts/issue-view.context";
-// ui
-import { ProjectDraftIssueHeader } from "components/headers";
-// icons
-import { X, PenSquare } from "lucide-react";
-// types
-import { NextPageWithLayout } from "types/app";
+// components
 import { DraftIssueLayoutRoot } from "components/issues/issue-layouts/roots/draft-issue-layout-root";
+import { ProjectDraftIssueHeader } from "components/headers";
+// types
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectDraftIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -36,11 +33,9 @@ const ProjectDraftIssuesPage: NextPageWithLayout = () => {
 
 ProjectDraftIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <IssueViewContextProvider>
-      <AppLayout header={<ProjectDraftIssueHeader />} withProjectWrapper>
-        {page}
-      </AppLayout>
-    </IssueViewContextProvider>
+    <AppLayout header={<ProjectDraftIssueHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 

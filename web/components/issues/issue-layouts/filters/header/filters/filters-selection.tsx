@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // components
@@ -15,7 +15,7 @@ import {
   FilterTargetDate,
 } from "components/issues";
 // types
-import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
@@ -24,14 +24,13 @@ type Props = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
   labels?: IIssueLabel[] | undefined;
-  members?: IUserLite[] | undefined;
-  projects?: IProject[] | undefined;
+  memberIds?: string[] | undefined;
   states?: IState[] | undefined;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, projects, states } = props;
-
+  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, memberIds, states } = props;
+  // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
@@ -97,7 +96,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterAssignees
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
-              members={members}
+              memberIds={memberIds}
               searchQuery={filtersSearchQuery}
             />
           </div>
@@ -109,7 +108,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterMentions
               appliedFilters={filters.mentions ?? null}
               handleUpdate={(val) => handleFiltersUpdate("mentions", val)}
-              members={members}
+              memberIds={memberIds}
               searchQuery={filtersSearchQuery}
             />
           </div>
@@ -121,7 +120,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterCreatedBy
               appliedFilters={filters.created_by ?? null}
               handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
-              members={members}
+              memberIds={memberIds}
               searchQuery={filtersSearchQuery}
             />
           </div>
@@ -144,7 +143,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           <div className="py-2">
             <FilterProjects
               appliedFilters={filters.project ?? null}
-              projects={projects}
               handleUpdate={(val) => handleFiltersUpdate("project", val)}
               searchQuery={filtersSearchQuery}
             />

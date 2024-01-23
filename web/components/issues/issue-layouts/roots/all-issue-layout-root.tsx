@@ -1,58 +1,54 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useGlobalView, useIssues, useUser } from "hooks/store";
+import { useWorskspaceIssueProperties } from "hooks/use-worskspace-issue-properties";
 // components
-import { GlobalViewsAppliedFiltersRoot } from "components/issues";
+import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
-import { IIssueUnGroupedStructure } from "store/issue";
+import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssueActions } from "../types";
+import { EUserProjectRoles } from "constants/project";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
-import { EFilterType, TUnGroupedIssues } from "store/issues/types";
-import { EUserWorkspaceRoles } from "constants/workspace";
-
-type Props = {
-  type?: TStaticViewTypes | null;
-};
-
-export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
-  const { type = null } = props;
-
+export const AllIssueLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
-
-  const currentIssueView = type ?? globalViewId;
-
+  const { workspaceSlug, globalViewId } = router.query;
+  //swr hook for fetching issue properties
+  useWorskspaceIssueProperties(workspaceSlug);
+  // store
   const {
-    workspaceMember: { workspaceMembers },
-    workspace: { workspaceLabels },
-    globalViews: { fetchAllGlobalViews },
-    workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
-    workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
-  } = useMobxStore();
+    issuesFilter: { filters, fetchFilters, updateFilters },
+    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
+  } = useIssues(EIssuesStoreType.GLOBAL);
+
+  const { dataViewId, issueIds } = groupedIssueIds;
+  const {
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
+  const { fetchAllGlobalViews } = useGlobalView();
+  // derived values
 
   useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
     if (workspaceSlug) {
-      await fetchAllGlobalViews(workspaceSlug);
+      await fetchAllGlobalViews(workspaceSlug.toString());
     }
   });
 
   useSWR(
-    workspaceSlug && currentIssueView ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${currentIssueView}` : null,
+    workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
     async () => {
-      if (workspaceSlug && currentIssueView) {
-        setCurrentView(currentIssueView);
-        await fetchAllGlobalViews(workspaceSlug);
-        await fetchFilters(workspaceSlug, currentIssueView);
-        await fetchIssues(workspaceSlug, currentIssueView, getIssues ? "mutation" : "init-loader");
+      if (workspaceSlug && globalViewId) {
+        await fetchAllGlobalViews(workspaceSlug.toString());
+        await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
+        await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
       }
     }
   );
@@ -60,32 +56,34 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
   const canEditProperties = (projectId: string | undefined) => {
     if (!projectId) return false;
 
-    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
-    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   };
 
-  const issuesResponse = getIssues;
-  const issueIds = (getIssuesIds ?? []) as TUnGroupedIssues;
-  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
+  const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      const projectId = issue.project;
-      if (!workspaceSlug || !projectId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
+        if (!workspaceSlug || !projectId || !globalViewId) return;
 
-      await updateIssue(workspaceSlug, projectId, issue.id, issue, currentIssueView);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      const projectId = issue.project;
-      if (!workspaceSlug || !projectId) return;
+        await updateIssue(workspaceSlug.toString(), projectId, issue.id, issue, globalViewId.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
+        if (!workspaceSlug || !projectId || !globalViewId) return;
 
-      await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
-    },
-  };
+        await removeIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateIssue, removeIssue, workspaceSlug]
+  );
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
       if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
     },
@@ -97,22 +95,22 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
 
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
     },
     [updateFilters, workspaceSlug]
   );
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {currentView != currentIssueView && (loader === "init-loader" || !getIssues) ? (
+      {!globalViewId || globalViewId !== dataViewId || loader === "init-loader" || !issueIds ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <GlobalViewsAppliedFiltersRoot />
+          <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
 
-          {Object.keys(getIssues ?? {}).length == 0 ? (
+          {(issueIds ?? {}).length == 0 ? (
             <>{/* <GlobalViewEmptyState /> */}</>
           ) : (
             <div className="relative h-full w-full overflow-auto">
@@ -120,7 +118,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-                issues={issues as IIssueUnGroupedStructure}
+                issueIds={issueIds}
                 quickActions={(issue) => (
                   <AllIssueQuickActions
                     issue={issue}
@@ -128,16 +126,17 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                     handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
                   />
                 )}
-                members={workspaceMembers?.map((m) => m.member)}
-                labels={workspaceLabels || undefined}
                 handleIssues={handleIssues}
                 canEditProperties={canEditProperties}
-                viewId={currentIssueView}
+                viewId={globalViewId}
               />
             </div>
           )}
         </>
       )}
+
+      {/* peek overview */}
+      <IssuePeekOverview />
     </div>
   );
 });
