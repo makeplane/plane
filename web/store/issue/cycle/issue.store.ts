@@ -182,13 +182,6 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id]);
 
-      runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds) => {
-          if (!cycleIssueIds) return [response.id];
-          else return concat(cycleIssueIds, [response.id]);
-        });
-      });
-
       return response;
     } catch (error) {
       throw error;
@@ -272,8 +265,11 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
         issues: issueIds,
       });
 
-      issueIds.map((issueId) => {
-        this.rootIssueStore.issues.updateIssue(issueId, { cycle_id: cycleId });
+      runInAction(() => {
+        update(this.issues, cycleId, (cycleIssueIds) => {
+          if (!cycleIssueIds) return [...issueIds];
+          else return concat(cycleIssueIds, [...issueIds]);
+        });
       });
 
       return issueToCycle;

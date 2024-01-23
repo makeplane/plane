@@ -250,10 +250,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 </div>
               </div>
 
-              <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${activeCycle.id}`}>
-                <span className="w-full rounded-md bg-custom-primary px-4 py-2 text-center text-sm font-medium text-white hover:bg-custom-primary/90">
-                  View Cycle
-                </span>
+              <Link
+                href={`/${workspaceSlug}/projects/${projectId}/cycles/${activeCycle.id}`}
+                className="w-min text-nowrap rounded-md bg-custom-primary px-4 py-2 text-center text-sm font-medium text-white hover:bg-custom-primary/90"
+              >
+                View Cycle
               </Link>
             </div>
           </div>
