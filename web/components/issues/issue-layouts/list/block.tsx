@@ -73,7 +73,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           {!issue?.tempId ? (
             <>
               <IssueProperties
-                className="relative flex items-center gap-2 overflow-x-auto whitespace-nowrap"
+                className="relative flex items-center gap-2 whitespace-nowrap"
                 issue={issue}
                 isReadOnly={!canEditIssueProperties}
                 handleIssues={updateIssue}
