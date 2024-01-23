@@ -5,7 +5,7 @@ import { History } from "lucide-react";
 // hooks
 import { useDashboard, useUser } from "hooks/store";
 // components
-import { ActivityIcon, ActivityMessage } from "components/core";
+import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
@@ -75,15 +75,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                     <ActivityMessage activity={activity} showIssue />
                   ) : (
                     <span>
-                      created this{" "}
-                      <a
-                        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
-                      >
-                        Issue.
-                      </a>
+                      created <IssueLink activity={activity} />
                     </span>
                   )}
                 </p>

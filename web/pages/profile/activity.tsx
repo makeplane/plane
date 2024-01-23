@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 import useSWR from "swr";
 import Link from "next/link";
+import { observer } from "mobx-react";
+//hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // layouts
@@ -21,8 +24,10 @@ import { NextPageWithLayout } from "lib/types";
 
 const userService = new UserService();
 
-const ProfileActivityPage: NextPageWithLayout = () => {
+const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
+  // store hooks
+  const { currentUser } = useUser();
 
   return (
     <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
@@ -158,7 +163,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                   href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
                                 >
                                   <span className="text-gray font-medium">
-                                    {activityItem.actor_detail.display_name}
+                                    {currentUser?.id === activityItem.actor_detail.id
+                                      ? "You"
+                                      : activityItem.actor_detail.display_name}
                                   </span>
                                 </Link>
                               )}{" "}
@@ -189,7 +196,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
       )}
     </section>
   );
-};
+});
 
 ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
