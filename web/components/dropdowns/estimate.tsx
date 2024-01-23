@@ -2,7 +2,6 @@ import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Placement } from "@popperjs/core";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 import sortBy from "lodash/sortBy";
 // hooks
@@ -12,21 +11,14 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { TButtonVariants } from "./types";
+import { TDropdownProps } from "./types";
 
-type Props = {
+type Props = TDropdownProps & {
   button?: ReactNode;
-  buttonClassName?: string;
-  buttonContainerClassName?: string;
-  buttonVariant: TButtonVariants;
-  className?: string;
-  disabled?: boolean;
   dropdownArrow?: boolean;
   onChange: (val: number | null) => void;
-  placement?: Placement;
   projectId: string;
   value: number | null;
-  tabIndex?: number;
 };
 
 type ButtonProps = {
@@ -158,17 +150,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  // fetch cycles of the project if not already present in the store
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (!activeEstimate) fetchProjectEstimates(workspaceSlug, projectId);
-  }, [activeEstimate, fetchProjectEstimates, projectId, workspaceSlug]);
-
-  const selectedEstimate = value !== null ? getEstimatePointValue(value) : null;
+  const selectedEstimate = value !== null ? getEstimatePointValue(value, projectId) : null;
 
   const openDropdown = () => {
     setIsOpen(true);
+
+    if (!activeEstimate && workspaceSlug) fetchProjectEstimates(workspaceSlug, projectId);
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);
@@ -285,6 +272,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
+                      onClick={closeDropdown}
                     >
                       {({ selected }) => (
                         <>

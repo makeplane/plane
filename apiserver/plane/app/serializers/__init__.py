@@ -104,6 +104,7 @@ from .estimate import (
     EstimateSerializer,
     EstimatePointSerializer,
     EstimateReadSerializer,
+    WorkspaceEstimateSerializer,
 )
 
 from .inbox import (

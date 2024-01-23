@@ -106,7 +106,6 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                         handleChange({ close_in: val });
                       }}
                       input
-                      width="w-full"
                       disabled={!isAdmin}
                     >
                       <>
@@ -161,7 +160,6 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                       }}
                       options={options}
                       disabled={!multipleOptions}
-                      width="w-full"
                       input
                     />
                   </div>

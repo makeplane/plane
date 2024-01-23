@@ -50,7 +50,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
       },
       remove: async (reaction: string) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
+          if (!workspaceSlug || !projectId || !issueId || !currentUser?.id) throw new Error("Missing fields");
           await removeReaction(workspaceSlug, projectId, issueId, reaction, currentUser.id);
           setToastAlert({
             title: "Reaction removed successfully",

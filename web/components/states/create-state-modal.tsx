@@ -160,7 +160,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                               value={value}
                               label={GROUP_CHOICES[value as keyof typeof GROUP_CHOICES]}
                               onChange={onChange}
-                              width="w-full"
+                              optionsClassName="w-full"
                               input
                             >
                               {Object.keys(GROUP_CHOICES).map((key) => (

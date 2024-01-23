@@ -62,7 +62,6 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
           </div>
         </div>
       }
-      width="xl"
       placement="bottom-end"
     >
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>

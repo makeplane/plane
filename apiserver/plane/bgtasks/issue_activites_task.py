@@ -191,6 +191,7 @@ def track_state(
 ):
     if current_instance.get("state_id") != requested_data.get("state_id"):
         new_state = State.objects.get(pk=requested_data.get("state_id", None))
+
         old_state = State.objects.get(
             pk=current_instance.get("state_id", None)
         )

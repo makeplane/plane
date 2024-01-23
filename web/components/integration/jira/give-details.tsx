@@ -161,7 +161,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               <CustomSelect
                 value={value}
                 input
-                width="w-full"
                 onChange={onChange}
                 label={
                   <span>
@@ -172,6 +171,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     )}
                   </span>
                 }
+                optionsClassName="w-full"
               >
                 {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
                   workspaceProjectIds.map((projectId) => {

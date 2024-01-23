@@ -1,4 +1,5 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 // types
 import { RootStore } from "../root.store";
@@ -6,7 +7,6 @@ import { IProject } from "@plane/types";
 // services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
-
 export interface IProjectStore {
   // observables
   searchQuery: string;
@@ -64,7 +64,7 @@ export class ProjectStore implements IProjectStore {
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
       // actions
-      setSearchQuery: action,
+      setSearchQuery: action.bound,
       // fetch actions
       fetchProjects: action,
       fetchProjectDetails: action,
@@ -199,10 +199,10 @@ export class ProjectStore implements IProjectStore {
    * @param projectId
    * @returns IProject | null
    */
-  getProjectById = (projectId: string) => {
+  getProjectById = computedFn((projectId: string) => {
     const projectInfo = this.projectMap[projectId] || null;
     return projectInfo;
-  };
+  });
 
   /**
    * Adds project to favorites and updates project favorite status in the store
@@ -317,6 +317,7 @@ export class ProjectStore implements IProjectStore {
       const response = await this.projectService.createProject(workspaceSlug, data);
       runInAction(() => {
         set(this.projectMap, [response.id], response);
+        set(this.rootStore.user.membership.workspaceProjectsRole, [workspaceSlug, response.id], response.member_role);
       });
       return response;
     } catch (error) {

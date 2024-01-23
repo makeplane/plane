@@ -4,7 +4,7 @@ import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";
-import { Draggable } from "@hello-pangea/dnd";
+import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
@@ -43,8 +43,8 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
             if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
             return (
-              <Draggable key={draggableId} draggableId={draggableId} index={index}>
-                {(provided, snapshot) => (
+              <Draggable key={draggableId} draggableId={draggableId} index={index} isDragDisabled={isDragDisabled}>
+                {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                   <KanbanIssueBlock
                     key={`kanban-issue-block-${issueId}`}
                     issueId={issueId}

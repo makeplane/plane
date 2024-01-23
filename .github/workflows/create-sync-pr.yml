@@ -1,25 +1,23 @@
 name: Create Sync Action
 
 on:
-  pull_request:
+  workflow_dispatch:
+  push: 
     branches:
       - preview
-    types:
-      - closed
+
 env:
-  SOURCE_BRANCH_NAME: ${{github.event.pull_request.base.ref}}
+  SOURCE_BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
   sync_changes:
-    # Only run the job when a PR is merged
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.1.1 
         with:
           persist-credentials: false
           fetch-depth: 0

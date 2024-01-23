@@ -86,6 +86,14 @@ const DocumentEditor = ({
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const router = useRouter();
 
+  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
+
+  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
+  // loads such that we can invoke it from react when the cursor leaves the container
+  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
+    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
+  };
+
   const editor = useEditor({
     onChange(json, html) {
       updateMarkings(json);
@@ -104,7 +112,12 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, embedConfig?.issueEmbedConfig, setIsSubmitting),
+    extensions: DocumentEditorExtensions(
+      uploadFile,
+      embedConfig?.issueEmbedConfig,
+      setIsSubmitting,
+      setHideDragHandleFunction
+    ),
   });
 
   if (!editor) {
@@ -152,6 +165,7 @@ const DocumentEditor = ({
         <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             onActionCompleteHandler={onActionCompleteHandler}
+            hideDragHandle={hideDragHandleOnMouseLeave}
             readonly={false}
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}

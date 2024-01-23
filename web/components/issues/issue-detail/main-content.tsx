@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // components
 import { IssueDescriptionForm, IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
 import { SubIssuesRoot } from "../sub-issues";
+import { IssueActivity } from "./issue-activity";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // types
@@ -27,7 +28,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
   const { currentUser } = useUser();
-  const { getProjectById } = useProject();
   const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },
@@ -36,7 +36,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
-  const projectDetails = projectId ? getProjectById(projectId) : null;
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
   return (
@@ -94,7 +93,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      {/* issue attachments */}
       <IssueAttachmentRoot
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -102,20 +100,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         disabled={!is_editable}
       />
 
-      {/* <div className="space-y-5 pt-3">
-        <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
-        <IssueActivitySection
-          activity={issueActivity}
-          handleCommentUpdate={handleCommentUpdate}
-          handleCommentDelete={handleCommentDelete}
-          showAccessSpecifier={Boolean(projectDetails && projectDetails.is_deployed)}
-        />
-        <AddComment
-          onSubmit={handleAddComment}
-          disabled={is_editable}
-          showAccessSpecifier={Boolean(projectDetails && projectDetails.is_deployed)}
-        />
-      </div> */}
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!is_editable} />
     </>
   );
 });

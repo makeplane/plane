@@ -77,9 +77,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const {
     project: { projectMemberIds },
@@ -185,7 +183,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     </>
                   }
                   className="ml-1.5 flex-shrink-0"
-                  width="auto"
                   placement="bottom-start"
                 >
                   {projectModuleIds?.map((moduleId) => (

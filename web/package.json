@@ -40,6 +40,7 @@
     "lucide-react": "^0.294.0",
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.0",
+    "mobx-utils": "^6.0.8",
     "next": "^14.0.3",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.2.1",
