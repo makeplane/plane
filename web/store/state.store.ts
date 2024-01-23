@@ -8,6 +8,8 @@ import { RootStore } from "./root.store";
 import { IState } from "@plane/types";
 // services
 import { ProjectStateService } from "services/project";
+// helpers
+import { sortStates } from "helpers/state.helper";
 
 export interface IStateStore {
   //Loaders
@@ -78,7 +80,7 @@ export class StateStore implements IStateStore {
     const projectId = this.router.projectId;
     const worksapceSlug = this.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
-    return Object.values(this.stateMap).filter((state) => state.project_id === projectId);
+    return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
   }
 
   /**
@@ -106,7 +108,7 @@ export class StateStore implements IStateStore {
   getProjectStates = computedFn((projectId: string) => {
     const worksapceSlug = this.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
-    return Object.values(this.stateMap).filter((state) => state.project_id === projectId);
+    return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
   });
 
   /**

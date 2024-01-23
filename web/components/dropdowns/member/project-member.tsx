@@ -217,6 +217,9 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
+                      onClick={() => {
+                        if (!multiple) closeDropdown();
+                      }}
                     >
                       {({ selected }) => (
                         <>

@@ -232,7 +232,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                     </button>
                   ))}
 
-                <CustomMenu width="auto" ellipsis className="z-10">
+                <CustomMenu ellipsis className="z-10">
                   {isEditingAllowed && (
                     <>
                       <CustomMenu.MenuItem onClick={handleEditModule}>

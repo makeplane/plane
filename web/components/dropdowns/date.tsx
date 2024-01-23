@@ -3,7 +3,6 @@ import { Popover } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
-// import "react-datepicker/dist/react-datepicker.css";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -11,24 +10,17 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
-import { TButtonVariants } from "./types";
-import { Placement } from "@popperjs/core";
+import { TDropdownProps } from "./types";
 
-type Props = {
-  buttonClassName?: string;
-  buttonContainerClassName?: string;
-  buttonVariant: TButtonVariants;
-  disabled?: boolean;
+type Props = TDropdownProps & {
   icon?: React.ReactNode;
   isClearable?: boolean;
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
   placeholder: string;
-  placement?: Placement;
   value: Date | string | null;
   closeOnSelect?: boolean;
-  tabIndex?: number;
 };
 
 type ButtonProps = {
@@ -118,6 +110,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonClassName = "",
     buttonContainerClassName,
     buttonVariant,
+    className = "",
     disabled = false,
     icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
     isClearable = true,
@@ -160,102 +153,103 @@ export const DateDropdown: React.FC<Props> = (props) => {
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   return (
-    <Popover ref={dropdownRef} tabIndex={tabIndex} className="h-full flex-shrink-0" onKeyDown={handleKeyDown}>
-      {({ close }) => (
-        <>
-          <Popover.Button as={React.Fragment}>
-            <button
-              ref={setReferenceElement}
-              type="button"
-              className={cn(
-                "block h-full max-w-full outline-none",
-                {
-                  "cursor-not-allowed text-custom-text-200": disabled,
-                  "cursor-pointer": !disabled,
-                },
-                buttonContainerClassName
-              )}
-              onClick={openDropdown}
-            >
-              {buttonVariant === "border-with-text" ? (
-                <BorderButton
-                  date={value}
-                  className={buttonClassName}
-                  icon={icon}
-                  placeholder={placeholder}
-                  isClearable={isClearable && isDateSelected}
-                  onClear={() => onChange(null)}
-                />
-              ) : buttonVariant === "border-without-text" ? (
-                <BorderButton
-                  date={value}
-                  className={buttonClassName}
-                  icon={icon}
-                  placeholder={placeholder}
-                  isClearable={isClearable && isDateSelected}
-                  onClear={() => onChange(null)}
-                  hideText
-                />
-              ) : buttonVariant === "background-with-text" ? (
-                <BackgroundButton
-                  date={value}
-                  className={buttonClassName}
-                  icon={icon}
-                  placeholder={placeholder}
-                  isClearable={isClearable && isDateSelected}
-                  onClear={() => onChange(null)}
-                />
-              ) : buttonVariant === "background-without-text" ? (
-                <BackgroundButton
-                  date={value}
-                  className={buttonClassName}
-                  icon={icon}
-                  placeholder={placeholder}
-                  isClearable={isClearable && isDateSelected}
-                  onClear={() => onChange(null)}
-                  hideText
-                />
-              ) : buttonVariant === "transparent-with-text" ? (
-                <TransparentButton
-                  date={value}
-                  className={buttonClassName}
-                  icon={icon}
-                  placeholder={placeholder}
-                  isClearable={isClearable && isDateSelected}
-                  onClear={() => onChange(null)}
-                />
-              ) : buttonVariant === "transparent-without-text" ? (
-                <TransparentButton
-                  date={value}
-                  className={buttonClassName}
-                  icon={icon}
-                  placeholder={placeholder}
-                  isClearable={isClearable && isDateSelected}
-                  onClear={() => onChange(null)}
-                  hideText
-                />
-              ) : null}
-            </button>
-          </Popover.Button>
-          {isOpen && (
-            <Popover.Panel className="fixed z-10" static>
-              <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
-                <DatePicker
-                  selected={value ? new Date(value) : null}
-                  onChange={(val) => {
-                    onChange(val);
-                    if (closeOnSelect) close();
-                  }}
-                  dateFormat="dd-MM-yyyy"
-                  minDate={minDate}
-                  maxDate={maxDate}
-                  calendarClassName="shadow-custom-shadow-rg rounded"
-                  inline
-                />
-              </div>
-            </Popover.Panel>
+    <Popover
+      ref={dropdownRef}
+      tabIndex={tabIndex}
+      className={cn("h-full flex-shrink-0", className)}
+      onKeyDown={handleKeyDown}
+    >
+      <Popover.Button as={React.Fragment}>
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "block h-full max-w-full outline-none",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
           )}
-        </>
+          onClick={openDropdown}
+        >
+          {buttonVariant === "border-with-text" ? (
+            <BorderButton
+              date={value}
+              className={buttonClassName}
+              icon={icon}
+              placeholder={placeholder}
+              isClearable={isClearable && isDateSelected}
+              onClear={() => onChange(null)}
+            />
+          ) : buttonVariant === "border-without-text" ? (
+            <BorderButton
+              date={value}
+              className={buttonClassName}
+              icon={icon}
+              placeholder={placeholder}
+              isClearable={isClearable && isDateSelected}
+              onClear={() => onChange(null)}
+              hideText
+            />
+          ) : buttonVariant === "background-with-text" ? (
+            <BackgroundButton
+              date={value}
+              className={buttonClassName}
+              icon={icon}
+              placeholder={placeholder}
+              isClearable={isClearable && isDateSelected}
+              onClear={() => onChange(null)}
+            />
+          ) : buttonVariant === "background-without-text" ? (
+            <BackgroundButton
+              date={value}
+              className={buttonClassName}
+              icon={icon}
+              placeholder={placeholder}
+              isClearable={isClearable && isDateSelected}
+              onClear={() => onChange(null)}
+              hideText
+            />
+          ) : buttonVariant === "transparent-with-text" ? (
+            <TransparentButton
+              date={value}
+              className={buttonClassName}
+              icon={icon}
+              placeholder={placeholder}
+              isClearable={isClearable && isDateSelected}
+              onClear={() => onChange(null)}
+            />
+          ) : buttonVariant === "transparent-without-text" ? (
+            <TransparentButton
+              date={value}
+              className={buttonClassName}
+              icon={icon}
+              placeholder={placeholder}
+              isClearable={isClearable && isDateSelected}
+              onClear={() => onChange(null)}
+              hideText
+            />
+          ) : null}
+        </button>
+      </Popover.Button>
+      {isOpen && (
+        <Popover.Panel className="fixed z-10" static>
+          <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+            <DatePicker
+              selected={value ? new Date(value) : null}
+              onChange={(val) => {
+                onChange(val);
+                if (closeOnSelect) closeDropdown();
+              }}
+              dateFormat="dd-MM-yyyy"
+              minDate={minDate}
+              maxDate={maxDate}
+              calendarClassName="shadow-custom-shadow-rg rounded"
+              inline
+            />
+          </div>
+        </Popover.Panel>
       )}
     </Popover>
   );

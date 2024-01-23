@@ -1,17 +1,15 @@
 import * as React from "react";
 import ReactDOM from "react-dom";
-// react-popper
+import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "../hooks/use-outside-click-detector";
-// headless ui
-import { Menu } from "@headlessui/react";
-// type
-import { ICustomMenuDropdownProps, ICustomMenuItemProps } from "./helper";
-// icons
-import { ChevronDown, MoreHorizontal } from "lucide-react";
+// helpers
 import { cn } from "../../helpers";
+// types
+import { ICustomMenuDropdownProps, ICustomMenuItemProps } from "./helper";
 
 const CustomMenu = (props: ICustomMenuDropdownProps) => {
   const {
@@ -29,7 +27,6 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     noChevron = false,
     optionsClassName = "",
     verticalEllipsis = false,
-    width = "auto",
     portalElement,
     menuButtonOnClick,
     tabIndex,
@@ -63,17 +60,16 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       static
     >
       <div
-        className={`my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${
-          maxHeight === "lg"
-            ? "max-h-60"
-            : maxHeight === "md"
-              ? "max-h-48"
-              : maxHeight === "rg"
-                ? "max-h-36"
-                : maxHeight === "sm"
-                  ? "max-h-28"
-                  : ""
-        } ${width === "auto" ? "min-w-[12rem] whitespace-nowrap" : width} ${optionsClassName}`}
+        className={cn(
+          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+          {
+            "max-h-60": maxHeight === "lg",
+            "max-h-48": maxHeight === "md",
+            "max-h-36": maxHeight === "rg",
+            "max-h-28": maxHeight === "sm",
+          },
+          optionsClassName
+        )}
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
@@ -92,7 +88,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
-      className={`relative w-min text-left ${className}`}
+      className={cn("relative w-min text-left", className)}
       onKeyDown={handleKeyDown}
     >
       {({ open }) => (

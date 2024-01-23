@@ -43,7 +43,7 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
         }`}
         target={activity.issue === null ? "_self" : "_blank"}
         rel={activity.issue === null ? "" : "noopener noreferrer"}
-        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline whitespace-nowrap"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}{" "}
         <span className="font-normal">{activity.issue_detail?.name}</span>
@@ -123,7 +123,6 @@ const activityDetails: {
                 to <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -136,7 +135,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -181,7 +179,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -197,7 +194,6 @@ const activityDetails: {
             of <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <MessageSquareIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -214,7 +210,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -227,7 +222,6 @@ const activityDetails: {
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -297,7 +291,6 @@ const activityDetails: {
                 to <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else if (activity.verb === "updated")
@@ -318,7 +311,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -339,7 +331,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -449,7 +440,6 @@ const activityDetails: {
             of <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <MessageSquareIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -466,7 +456,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -479,7 +468,6 @@ const activityDetails: {
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -498,7 +486,6 @@ const activityDetails: {
             for <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <SignalMediumIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -587,7 +574,6 @@ const activityDetails: {
             for <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <LayoutGridIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -604,7 +590,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -618,7 +603,6 @@ const activityDetails: {
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -636,7 +620,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -650,7 +633,6 @@ const activityDetails: {
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },

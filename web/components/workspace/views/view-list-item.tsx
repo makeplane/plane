@@ -54,7 +54,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                   <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
-                  <CustomMenu width="auto" ellipsis>
+                  <CustomMenu ellipsis>
                     <CustomMenu.MenuItem
                       onClick={(e) => {
                         e.preventDefault();

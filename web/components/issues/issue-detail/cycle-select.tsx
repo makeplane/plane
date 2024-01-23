@@ -93,7 +93,6 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
             </Tooltip>
           </div>
         }
-        width="max-w-[10rem]"
         noChevron
         disabled={disableSelect}
       />

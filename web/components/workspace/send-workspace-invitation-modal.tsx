@@ -165,7 +165,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                   value={value}
                                   label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
                                   onChange={onChange}
-                                  width="w-full"
+                                  optionsClassName="w-full"
                                   input
                                 >
                                   {Object.entries(ROLE).map(([key, value]) => {
