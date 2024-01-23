@@ -271,6 +271,11 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
         issues: issueIds,
       });
+
+      issueIds.map((issueId) => {
+        this.rootIssueStore.issues.updateIssue(issueId, { cycle_id: cycleId });
+      });
+
       return issueToCycle;
     } catch (error) {
       throw error;

@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 # Module imports
 from . import ProjectBaseModel
@@ -181,6 +182,17 @@ class Issue(ProjectBaseModel):
                     self.state = random_state
                 else:
                     self.state = default_state
+            except ImportError:
+                pass
+        else:
+            try:
+                from plane.db.models import State
+
+                # Check if the current issue state group is completed or not
+                if self.state.group == "completed":
+                    self.completed_at = timezone.now()
+                else:
+                    self.completed_at = None
             except ImportError:
                 pass
 

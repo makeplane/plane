@@ -264,6 +264,10 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
         issues: issueIds,
       });
 
+      issueIds.map((issueId) => {
+        this.rootIssueStore.issues.updateIssue(issueId, { module_id: moduleId });
+      });
+
       return issueToModule;
     } catch (error) {
       throw error;

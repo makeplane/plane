@@ -25,21 +25,15 @@ const WIDGET_KEY = "issues_by_state_groups";
 export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // states
-  const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups>("started");
+  const [defaultStateGroup, setDefaultStateGroup] = useState<TStateGroups | null>(null);
+  const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups | null>(null);
   // router
   const router = useRouter();
   // store hooks
-  const {
-    fetchWidgetStats,
-    widgetDetails: allWidgetDetails,
-    widgetStats: allWidgetStats,
-    updateDashboardWidgetFilters,
-  } = useDashboard();
+  const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
   // derived values
-  const widgetDetails = allWidgetDetails?.[workspaceSlug]?.[dashboardId]?.find((w) => w.key === WIDGET_KEY);
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[
-    WIDGET_KEY
-  ] as TIssuesByStateGroupsWidgetResponse[];
+  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = getWidgetStats<TIssuesByStateGroupsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByStateGroupsWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -51,10 +45,11 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
+      target_date: getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "this_week"),
     });
   };
 
+  // fetch widget stats
   useEffect(() => {
     if (!widgetDetails) return;
 
@@ -64,6 +59,33 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
         target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
       });
   }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+
+  // set active group for center metric
+  useEffect(() => {
+    if (!widgetStats) return;
+
+    const startedCount = widgetStats?.find((item) => item?.state === "started")?.count ?? 0;
+    const unStartedCount = widgetStats?.find((item) => item?.state === "unstarted")?.count ?? 0;
+    const backlogCount = widgetStats?.find((item) => item?.state === "backlog")?.count ?? 0;
+    const completedCount = widgetStats?.find((item) => item?.state === "completed")?.count ?? 0;
+    const canceledCount = widgetStats?.find((item) => item?.state === "cancelled")?.count ?? 0;
+
+    const stateGroup =
+      startedCount > 0
+        ? "started"
+        : unStartedCount > 0
+        ? "unstarted"
+        : backlogCount > 0
+        ? "backlog"
+        : completedCount > 0
+        ? "completed"
+        : canceledCount > 0
+        ? "cancelled"
+        : null;
+
+    setActiveStateGroup(stateGroup);
+    setDefaultStateGroup(stateGroup);
+  }, [widgetStats]);
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
@@ -107,12 +129,14 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   };
 
   return (
-    <Link
-      href={`/${workspaceSlug?.toString()}/workspace-views/assigned`}
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden"
-    >
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden">
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
-        <h4 className="text-lg font-semibold text-custom-text-300">State of assigned issues</h4>
+        <Link
+          href={`/${workspaceSlug}/workspace-views/assigned`}
+          className="text-lg font-semibold text-custom-text-300 hover:underline"
+        >
+          State of assigned issues
+        </Link>
         <DurationFilterDropdown
           value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
@@ -157,6 +181,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
                   router.push(`/${workspaceSlug}/workspace-views/assigned/?state_group=${datum.id}`);
                 }}
                 onMouseEnter={(datum) => setActiveStateGroup(datum.id as TStateGroups)}
+                onMouseLeave={() => setActiveStateGroup(defaultStateGroup)}
                 layers={["arcs", CenteredMetric]}
               />
             </div>
@@ -183,6 +208,6 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           <IssuesByStateGroupEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
         </div>
       )}
-    </Link>
+    </div>
   );
 });

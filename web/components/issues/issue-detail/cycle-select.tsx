@@ -69,7 +69,7 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
   return (
     <div className="flex items-center gap-1">
       <CustomSearchSelect
-        value={issue?.cycle_id}
+        value={issue?.cycle_id || undefined}
         onChange={(value: any) => handleIssueCycleChange(value)}
         options={options}
         customButton={

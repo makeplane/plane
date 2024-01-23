@@ -115,7 +115,15 @@ export class IssueActivityStore implements IIssueActivityStore {
   ) => {
     try {
       this.loader = loaderType;
-      const activities = await this.issueActivityService.getIssueActivities(workspaceSlug, projectId, issueId);
+
+      let props = {};
+      const _activityIds = this.getActivitiesByIssueId(issueId);
+      if (_activityIds && _activityIds.length > 0) {
+        const _activity = this.getActivityById(_activityIds[_activityIds.length - 1]);
+        if (_activity) props = { created_at__gt: _activity.created_at };
+      }
+
+      const activities = await this.issueActivityService.getIssueActivities(workspaceSlug, projectId, issueId, props);
 
       const activityIds = activities.map((activity) => activity.id);
 
