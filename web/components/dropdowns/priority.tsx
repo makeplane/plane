@@ -14,6 +14,7 @@ import { TIssuePriorities } from "@plane/types";
 import { TDropdownProps } from "./types";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
+import { useTheme } from "next-themes";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -228,6 +229,9 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
+  // next-themes
+  // TODO: remove this after new theming implementation
+  const { resolvedTheme } = useTheme();
 
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
@@ -291,14 +295,18 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             {buttonVariant === "border-with-text" ? (
               <BorderButton
                 priority={value}
-                className={buttonClassName}
+                className={cn(buttonClassName, {
+                  "text-white": resolvedTheme === "dark",
+                })}
                 highlightUrgent={highlightUrgent}
                 dropdownArrow={dropdownArrow && !disabled}
               />
             ) : buttonVariant === "border-without-text" ? (
               <BorderButton
                 priority={value}
-                className={buttonClassName}
+                className={cn(buttonClassName, {
+                  "text-white": resolvedTheme === "dark",
+                })}
                 highlightUrgent={highlightUrgent}
                 dropdownArrow={dropdownArrow && !disabled}
                 hideText
@@ -306,14 +314,18 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             ) : buttonVariant === "background-with-text" ? (
               <BackgroundButton
                 priority={value}
-                className={buttonClassName}
+                className={cn(buttonClassName, {
+                  "text-white": resolvedTheme === "dark",
+                })}
                 highlightUrgent={highlightUrgent}
                 dropdownArrow={dropdownArrow && !disabled}
               />
             ) : buttonVariant === "background-without-text" ? (
               <BackgroundButton
                 priority={value}
-                className={buttonClassName}
+                className={cn(buttonClassName, {
+                  "text-white": resolvedTheme === "dark",
+                })}
                 highlightUrgent={highlightUrgent}
                 dropdownArrow={dropdownArrow && !disabled}
                 hideText
@@ -321,14 +333,18 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             ) : buttonVariant === "transparent-with-text" ? (
               <TransparentButton
                 priority={value}
-                className={buttonClassName}
+                className={cn(buttonClassName, {
+                  "text-white": resolvedTheme === "dark",
+                })}
                 highlightUrgent={highlightUrgent}
                 dropdownArrow={dropdownArrow && !disabled}
               />
             ) : buttonVariant === "transparent-without-text" ? (
               <TransparentButton
                 priority={value}
-                className={buttonClassName}
+                className={cn(buttonClassName, {
+                  "text-white": resolvedTheme === "dark",
+                })}
                 highlightUrgent={highlightUrgent}
                 dropdownArrow={dropdownArrow && !disabled}
                 hideText
