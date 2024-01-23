@@ -46,6 +46,11 @@ export const WorkspaceSidebarMenu = observer(() => {
                   >
                     {<link.Icon className="h-4 w-4" />}
                     {!themeStore?.sidebarCollapsed && link.label}
+                    {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
+                      <span className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl text-orange-500 bg-orange-500/20">
+                        Beta
+                      </span>
+                    )}
                   </div>
                 </Tooltip>
               </span>

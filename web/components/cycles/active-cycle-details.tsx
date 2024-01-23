@@ -112,11 +112,10 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const startDate = new Date(activeCycle.start_date ?? "");
 
   const groupedIssues: any = {
-    backlog: activeCycle.backlog_issues,
-    unstarted: activeCycle.unstarted_issues,
-    started: activeCycle.started_issues,
     completed: activeCycle.completed_issues,
-    cancelled: activeCycle.cancelled_issues,
+    started: activeCycle.started_issues,
+    unstarted: activeCycle.unstarted_issues,
+    backlog: activeCycle.backlog_issues,
   };
 
   const cycleStatus = activeCycle.status.toLowerCase() as TCycleGroups;
