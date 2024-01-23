@@ -26,7 +26,7 @@ import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "@plane/types";
 
-const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
+export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

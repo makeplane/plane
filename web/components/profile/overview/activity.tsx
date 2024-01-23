@@ -6,7 +6,7 @@ import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // components
-import { ActivityMessage } from "components/core";
+import { ActivityMessage, IssueLink } from "components/core";
 // ui
 import { ProfileEmptyState } from "components/ui";
 import { Loader } from "@plane/ui";
@@ -66,15 +66,7 @@ export const ProfileActivity = observer(() => {
                         <ActivityMessage activity={activity} showIssue />
                       ) : (
                         <span>
-                          created this{" "}
-                          <a
-                            href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
-                          >
-                            Issue.
-                          </a>
+                          created <IssueLink activity={activity} />
                         </span>
                       )}
                     </p>
