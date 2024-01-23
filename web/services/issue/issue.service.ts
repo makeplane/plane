@@ -3,11 +3,11 @@ import { APIService } from "services/api.service";
 // type
 import type {
   TIssue,
-  IIssueActivity,
   IIssueDisplayProperties,
   ILinkDetails,
   TIssueLink,
   TIssueSubIssues,
+  TIssueActivity,
 } from "@plane/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
@@ -59,7 +59,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssueActivities(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssueActivity[]> {
+  async getIssueActivities(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`)
       .then((response) => response?.data)
       .catch((error) => {

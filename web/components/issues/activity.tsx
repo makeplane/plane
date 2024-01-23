@@ -65,6 +65,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                       aria-hidden="true"
                     />
                   ) : null}
+
                   <div className="relative flex items-start space-x-2">
                     <div>
                       <div className="relative px-1.5">
@@ -97,6 +98,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                         </div>
                       </div>
                     </div>
+
                     <div className="min-w-0 flex-1 py-3">
                       <div className="break-words text-xs text-custom-text-200">
                         {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (

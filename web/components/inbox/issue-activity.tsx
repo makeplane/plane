@@ -88,41 +88,43 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
   const handleAddComment = async (formData: IIssueActivity) => {
     if (!workspaceSlug || !issueDetails || !currentUser) return;
 
-    await issueCommentService
-      .createIssueComment(workspaceSlug.toString(), issueDetails.project_id, issueDetails.id, formData)
-      .then((res) => {
-        mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
-        postHogEventTracker(
-          "COMMENT_ADDED",
-          {
-            ...res,
-            state: "SUCCESS",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Comment could not be posted. Please try again.",
-        })
-      );
+    /* FIXME: Replace this with the new issue activity component --issue-detail--  */
+    // await issueCommentService
+    //   .createIssueComment(workspaceSlug.toString(), issueDetails.project_id, issueDetails.id, formData)
+    //   .then((res) => {
+    //     mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
+    //     postHogEventTracker(
+    //       "COMMENT_ADDED",
+    //       {
+    //         ...res,
+    //         state: "SUCCESS",
+    //       },
+    //       {
+    //         isGrouping: true,
+    //         groupType: "Workspace_metrics",
+    //         groupId: currentWorkspace?.id!,
+    //       }
+    //     );
+    //   })
+    //   .catch(() =>
+    //     setToastAlert({
+    //       type: "error",
+    //       title: "Error!",
+    //       message: "Comment could not be posted. Please try again.",
+    //     })
+    //   );
   };
 
   return (
     <div className="space-y-5">
-      <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
+      {/* FIXME: Replace this with the new issue activity component --issue-detail--  */}
+      {/* <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
       <IssueActivitySection
         activity={issueActivity}
         handleCommentUpdate={handleCommentUpdate}
         handleCommentDelete={handleCommentDelete}
       />
-      <AddComment onSubmit={handleAddComment} />
+      <AddComment onSubmit={handleAddComment} /> */}
     </div>
   );
 });
