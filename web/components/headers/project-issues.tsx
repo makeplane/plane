@@ -42,9 +42,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   } = useUser();
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 

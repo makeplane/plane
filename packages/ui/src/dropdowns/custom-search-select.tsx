@@ -1,14 +1,12 @@
 import React, { useRef, useState } from "react";
-
-// react-popper
 import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "../hooks/use-outside-click-detector";
-// headless ui
-import { Combobox } from "@headlessui/react";
-// icons
-import { Check, ChevronDown, Search } from "lucide-react";
+// helpers
+import { cn } from "../../helpers";
 // types
 import { ICustomSearchSelectProps } from "./helper";
 
@@ -31,7 +29,6 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     onOpen,
     optionsClassName = "",
     value,
-    width = "auto",
     tabIndex,
   } = props;
   const [query, setQuery] = useState("");
@@ -70,7 +67,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
-      className={`relative flex-shrink-0 text-left ${className}`}
+      className={cn("relative flex-shrink-0 text-left", className)}
       onKeyDown={handleKeyDown}
       {...comboboxProps}
     >
@@ -114,37 +111,33 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
               </Combobox.Button>
             )}
             {isOpen && (
-              <Combobox.Options as={React.Fragment} static>
+              <Combobox.Options className="fixed z-10" static>
                 <div
-                  className={`z-10 my-1 min-w-[10rem] rounded-md border border-custom-border-300 bg-custom-background-90 p-2 text-xs shadow-custom-shadow-rg focus:outline-none ${
-                    width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
-                  } ${optionsClassName}`}
+                  className={cn(
+                    "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap",
+                    optionsClassName
+                  )}
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}
                 >
-                  <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                    <Search className="h-3 w-3 text-custom-text-200" />
+                  <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+                    <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
                     <Combobox.Input
-                      className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                      className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Type to search..."
+                      placeholder="Search"
                       displayValue={(assigned: any) => assigned?.name}
                     />
                   </div>
                   <div
-                    className={`mt-2 space-y-1 ${
-                      maxHeight === "lg"
-                        ? "max-h-60"
-                        : maxHeight === "md"
-                          ? "max-h-48"
-                          : maxHeight === "rg"
-                            ? "max-h-36"
-                            : maxHeight === "sm"
-                              ? "max-h-28"
-                              : ""
-                    } overflow-y-scroll`}
+                    className={cn("mt-2 space-y-1 overflow-y-scroll", {
+                      "max-h-60": maxHeight === "lg",
+                      "max-h-48": maxHeight === "md",
+                      "max-h-36": maxHeight === "rg",
+                      "max-h-28": maxHeight === "sm",
+                    })}
                   >
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
@@ -152,37 +145,31 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                           <Combobox.Option
                             key={option.value}
                             value={option.value}
-                            className={({ active, selected }) =>
-                              `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                                active || selected ? "bg-custom-background-80" : ""
-                              } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                            className={({ active }) =>
+                              cn(
+                                "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
+                                {
+                                  "bg-custom-background-80": active,
+                                }
+                              )
                             }
+                            onClick={() => {
+                              if (!multiple) closeDropdown();
+                            }}
                           >
-                            {({ active, selected }) => (
+                            {({ selected }) => (
                               <>
-                                {option.content}
-                                {multiple ? (
-                                  <div
-                                    className={`flex items-center justify-center rounded border border-custom-border-400 p-0.5 ${
-                                      active || selected ? "opacity-100" : "opacity-0"
-                                    }`}
-                                  >
-                                    <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
-                                  </div>
-                                ) : (
-                                  <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
-                                )}
+                                <span className="flex-grow truncate">{option.content}</span>
+                                {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                               </>
                             )}
                           </Combobox.Option>
                         ))
                       ) : (
-                        <span className="flex items-center gap-2 p-1">
-                          <p className="text-left text-custom-text-200 ">No matching results</p>
-                        </span>
+                        <p className="text-custom-text-400 italic py-1 px-1.5">No matches found</p>
                       )
                     ) : (
-                      <p className="text-center text-custom-text-200">Loading...</p>
+                      <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
                     )}
                   </div>
                   {footerOption}

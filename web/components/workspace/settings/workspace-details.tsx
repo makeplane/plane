@@ -247,7 +247,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     value={value}
                     onChange={onChange}
                     label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
-                    width="w-full"
+                    optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
                     disabled={!isAdmin}

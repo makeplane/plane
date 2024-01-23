@@ -59,10 +59,10 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   // store hooks
   const member = useMember();
   const project = useProject();
-  const projectLabel = useLabel();
+  const label = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member, true);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
 
   if (!list) return null;
 

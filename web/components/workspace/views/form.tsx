@@ -27,9 +27,7 @@ const defaultValues: Partial<IWorkspaceView> = {
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
   // store hooks
-  const {
-    workspace: { workspaceLabels },
-  } = useLabel();
+  const { workspaceLabels } = useLabel();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();

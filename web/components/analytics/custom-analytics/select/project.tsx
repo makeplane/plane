@@ -21,9 +21,9 @@ export const SelectProject: React.FC<Props> = observer((props) => {
       value: projectDetails?.id,
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
-        <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200">{projectDetails?.identifier}</span>
-          {projectDetails?.name}
+        <div className="flex items-center gap-2 truncate">
+          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
       ),
     };
@@ -42,7 +42,6 @@ export const SelectProject: React.FC<Props> = observer((props) => {
               .join(", ")
           : "All projects"
       }
-      optionsClassName="min-w-full max-w-[20rem]"
       multiple
     />
   );

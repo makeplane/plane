@@ -246,7 +246,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                       <Star className="h-3.5 w-3.5 text-custom-text-200" />
                     </button>
                   ))}
-                <CustomMenu width="auto" ellipsis className="z-10">
+                <CustomMenu ellipsis className="z-10">
                   {!isCompleted && isEditingAllowed && (
                     <>
                       <CustomMenu.MenuItem onClick={handleEditCycle}>

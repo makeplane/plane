@@ -79,7 +79,6 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                       handleChange({ archive_in: val });
                     }}
                     input
-                    width="w-full"
                     disabled={!isAdmin}
                   >
                     <>

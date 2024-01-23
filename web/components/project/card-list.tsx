@@ -9,7 +9,7 @@ import emptyProject from "public/empty-state/empty_project.webp";
 // icons
 import { NewEmptyState } from "components/common/new-empty-state";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectCardList = observer(() => {
   // store hooks
@@ -18,11 +18,11 @@ export const ProjectCardList = observer(() => {
     eventTracker: { setTrackElement },
   } = useApplication();
   const {
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceRole },
   } = useUser();
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!workspaceProjectIds)
     return (

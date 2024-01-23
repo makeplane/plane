@@ -13,7 +13,7 @@ import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";
 
 export type TRelationObject = { name: string; icon: (size: number) => any; className: string };
 
-const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
+export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
   blocking: {
     name: "Blocking",
     icon: (size: number = 16) => <BlockerIcon height={size} width={size} />,

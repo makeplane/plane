@@ -48,10 +48,8 @@ from plane.app.serializers import (
     ProjectMemberLiteSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
-    IssueVoteSerializer,
     IssueRelationSerializer,
     RelatedIssueSerializer,
-    IssuePublicSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -82,6 +80,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
+
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
@@ -492,17 +491,27 @@ class IssueActivityEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
+        filters = {}
+        if request.GET.get("created_at__gt", None) is not None:
+            filters = {"created_at__gt": request.GET.get("created_at__gt")}
+
         issue_activities = (
             IssueActivity.objects.filter(issue_id=issue_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
             )
+            .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
         issue_comments = (
             IssueComment.objects.filter(issue_id=issue_id)
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+            )
+            .filter(**filters)
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
             .prefetch_related(
@@ -516,6 +525,12 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities, many=True
         ).data
         issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+
+        if request.GET.get("activity_type", None) == "issue-property":
+            return Response(issue_activities, status=status.HTTP_200_OK)
+        
+        if request.GET.get("activity_type", None) == "issue-comment":
+            return Response(issue_comments, status=status.HTTP_200_OK)
 
         result_list = sorted(
             chain(issue_activities, issue_comments),
@@ -821,7 +836,9 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(state_group=F("state__group"))
+        updated_sub_issues = Issue.issue_objects.filter(
+            id__in=sub_issue_ids
+        ).annotate(state_group=F("state__group"))
 
         # Track the issue
         _ = [
@@ -836,7 +853,7 @@ class SubIssuesEndpoint(BaseAPIView):
             )
             for sub_issue_id in sub_issue_ids
         ]
-    
+
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
         for sub_issue in updated_sub_issues:
@@ -853,7 +870,6 @@ class SubIssuesEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-    
 
 
 class IssueLinkViewSet(BaseViewSet):

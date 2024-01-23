@@ -29,9 +29,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    project: { getProjectLabels, fetchProjectLabels },
-  } = useLabel();
+  const { getProjectLabels, fetchProjectLabels } = useLabel();
   // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -50,13 +48,9 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? projectLabels : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_ISSUE_LABELS_${projectId.toUpperCase()}` : null,
-    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId) : null
-  );
-
   const openDropdown = () => {
     setIsDropdownOpen(true);
+    if (!projectLabels && workspaceSlug && projectId) fetchProjectLabels(workspaceSlug.toString(), projectId);
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsDropdownOpen(false);

@@ -17,9 +17,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   // derived values
   const userFilters = issueFilters?.filters;

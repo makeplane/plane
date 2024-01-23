@@ -69,7 +69,6 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
         ]
       }
       maxHeight="md"
-      width="w-full"
       onChange={onChange}
       disabled={isDisabled}
     />

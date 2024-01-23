@@ -64,7 +64,15 @@ const aiService = new AIService();
 const fileService = new FileService();
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
-  const { data, onChange, onClose, onSubmit, projectId, isCreateMoreToggleEnabled, onCreateMoreToggleChange } = props;
+  const {
+    data,
+    onChange,
+    onClose,
+    onSubmit,
+    projectId: defaultProjectId,
+    isCreateMoreToggleEnabled,
+    onCreateMoreToggleChange,
+  } = props;
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -99,9 +107,29 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     getValues,
     setValue,
   } = useForm<TIssue>({
-    defaultValues: { ...defaultValues, project_id: projectId, ...data },
+    defaultValues: { ...defaultValues, project_id: defaultProjectId, ...data },
     reValidateMode: "onChange",
   });
+
+  const projectId = watch("project_id");
+
+  //reset few fields on projectId change
+  useEffect(() => {
+    if (isDirty) {
+      const formData = getValues();
+
+      reset({
+        ...defaultValues,
+        project_id: projectId,
+        name: formData.name,
+        description_html: formData.description_html,
+        priority: formData.priority,
+        start_date: formData.start_date,
+        target_date: formData.target_date,
+        parent_id: formData.parent_id,
+      });
+    }
+  }, [projectId]);
 
   const issueName = watch("name");
 
@@ -130,7 +158,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug.toString(), projectId.toString(), {
+      .createGptTask(workspaceSlug.toString(), projectId, {
         prompt: issueName,
         task: "Generate a proper description for this issue.",
       })

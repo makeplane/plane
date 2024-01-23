@@ -175,13 +175,6 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       await this.addIssueToModule(workspaceSlug, projectId, moduleId, [response.id]);
 
-      runInAction(() => {
-        update(this.issues, moduleId, (moduleIssueIds) => {
-          if (!moduleIssueIds) return [response.id];
-          else return concat(moduleIssueIds, [response.id]);
-        });
-      });
-
       return response;
     } catch (error) {
       throw error;
@@ -262,6 +255,13 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     try {
       const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
         issues: issueIds,
+      });
+
+      runInAction(() => {
+        update(this.issues, moduleId, (moduleIssueIds) => {
+          if (!moduleIssueIds) return [...issueIds];
+          else return concat(moduleIssueIds, [...issueIds]);
+        });
       });
 
       return issueToModule;

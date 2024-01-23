@@ -93,14 +93,10 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
   };
   if (multiple) comboboxProps.multiple = true;
 
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (!projectMemberIds) fetchProjectMembers(workspaceSlug, projectId);
-  }, [fetchProjectMembers, projectId, projectMemberIds, workspaceSlug]);
-
   const openDropdown = () => {
     setIsOpen(true);
+
+    if (!projectMemberIds && workspaceSlug) fetchProjectMembers(workspaceSlug, projectId);
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);
@@ -221,6 +217,9 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
+                      onClick={() => {
+                        if (!multiple) closeDropdown();
+                      }}
                     >
                       {({ selected }) => (
                         <>

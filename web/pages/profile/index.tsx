@@ -284,7 +284,9 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${errors.email ? "border-red-500" : ""}`}
+                      className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${
+                        errors.email ? "border-red-500" : ""
+                      }`}
                       disabled
                     />
                   )}
@@ -306,7 +308,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       label={value ? value.toString() : "Select your role"}
                       buttonClassName={errors.role ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
-                      width="w-full"
+                      optionsClassName="w-full"
                       input
                     >
                       {USER_ROLES.map((item) => (

@@ -41,7 +41,8 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
 
   return (
     <div className="flow-root">
-      <ul role="list" className="-mb-4">
+      {/* FIXME: --issue-detail-- */}
+      {/* <ul role="list" className="-mb-4">
         {issueActivity ? (
           issueActivity.length > 0 &&
           issueActivity.map((activityId, index) => {
@@ -146,7 +147,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
             <Loader.Item height="20px" />
           </Loader>
         )}
-      </ul>
+      </ul> */}
     </div>
   );
 };

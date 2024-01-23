@@ -134,7 +134,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           </div>
 
           <div className="flex-shrink-0 text-sm">
-            <CustomMenu width="auto" placement="bottom-end" ellipsis>
+            <CustomMenu placement="bottom-end" ellipsis>
               {disabled && (
                 <CustomMenu.MenuItem onClick={() => handleIssueCrudState("update", parentIssueId, issue)}>
                   <div className="flex items-center gap-2">

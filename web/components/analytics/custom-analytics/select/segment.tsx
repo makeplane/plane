@@ -28,7 +28,6 @@ export const SelectSegment: React.FC<Props> = ({ value, onChange, params }) => {
         </span>
       }
       onChange={onChange}
-      width="w-full"
       maxHeight="lg"
     >
       <CustomSelect.Option value={null}>No value</CustomSelect.Option>

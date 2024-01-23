@@ -291,7 +291,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LinkIcon className="h-3 w-3 text-custom-text-300" />
             </button>
             {isEditingAllowed && (
-              <CustomMenu width="lg" placement="bottom-end" ellipsis>
+              <CustomMenu placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />

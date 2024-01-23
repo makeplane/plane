@@ -341,7 +341,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LinkIcon className="h-3 w-3 text-custom-text-300" />
             </button>
             {!isCompleted && isEditingAllowed && (
-              <CustomMenu width="lg" placement="bottom-end" ellipsis>
+              <CustomMenu placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem
                   onClick={() => {
                     setTrackElement("CYCLE_PAGE_SIDEBAR");
