@@ -62,8 +62,8 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
-                "key": "OIDC_ISSUER",
-                "value": os.environ.get("OIDC_ISSUER"),
+                "key": "OIDC_DISCOVERY",
+                "value": os.environ.get("OIDC_DISCOVERY"),
                 "category": "OIDC",
                 "is_encrypted": False,
             },
@@ -160,9 +160,9 @@ class Command(BaseCommand):
             },
         ]
 
-        # Autodiscovery of Settings for OIDC based on the OIDC_ISSUER
+        # Autodiscovery of Settings for OIDC based on the OIDC_DISCOVERY
         for item in config_keys:
-            if item.get("key") == "OIDC_ISSUER" and item.get("value"):
+            if item.get("key") == "OIDC_DISCOVERY" and item.get("value"):
                 (
                     OIDC_URL_AUTHORIZATION, 
                     OIDC_URL_TOKEN, 

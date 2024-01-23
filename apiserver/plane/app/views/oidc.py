@@ -29,7 +29,7 @@ from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 
 
-def get_endpoint_information(issuer: str):
+def get_endpoint_information(discovery_url: str):
     """Make a GET request to the url issuer/.well-known/openid-configuration
     Get the properties of authorization_endpoint, token_endpoint, 
     userinfo_endpoint and end_session_endpoint.
@@ -39,12 +39,14 @@ def get_endpoint_information(issuer: str):
     If the response is not a valid JSON, raise an exception.
     """
 
-    if not issuer:
-        raise ValueError("The issuer has to be supplied!")
-    if not isinstance(issuer, str):
-        raise ValueError("The issuer has to be a string!")
+    if not discovery_url:
+        raise ValueError("The discovery url has to be supplied!")
+    if not isinstance(discovery_url, str):
+        raise ValueError("The discovery url has to be a string!")
 
-    url = issuer + "/.well-known/openid-configuration"
+    url = discovery_url
+    if not discovery_url.includes("/.well-known/openid-configuration"):
+        url = discovery_url + "/.well-known/openid-configuration"
     response = requests.get(url=url)
     data = response.json()
 
