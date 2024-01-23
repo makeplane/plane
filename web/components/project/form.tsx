@@ -7,6 +7,8 @@ import useToast from "hooks/use-toast";
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+// icons
+import { Lock } from "lucide-react";
 // types
 import { IProject, IWorkspace } from "@plane/types";
 // helpers
@@ -169,8 +171,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <div className="flex flex-col gap-1 truncate text-white">
               <span className="truncate text-lg font-semibold">{watch("name")}</span>
               <span className="flex items-center gap-2 text-sm">
-                <span>
-                  {watch("identifier")} . {currentNetwork?.label}
+                <span>{watch("identifier")} .</span>
+                <span className="flex items-center gap-1.5">
+                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
+                  {currentNetwork?.label}
                 </span>
               </span>
             </div>
