@@ -11,6 +11,7 @@ export interface IEventTrackerStore {
     payload: object | [] | null,
     group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
   ) => void;
+  captureEvent: (eventName: string, payload?: any) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -75,5 +76,13 @@ export class EventTrackerStore implements IEventTrackerStore {
       throw error;
     }
     this.setTrackElement("");
+  };
+
+  captureEvent = (eventName: string, payload?: any) => {
+    try {
+      posthog?.capture(eventName, payload);
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

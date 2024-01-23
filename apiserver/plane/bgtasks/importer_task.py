@@ -26,6 +26,7 @@ from plane.db.models import (
     IssueProperty,
     UserNotificationPreference,
 )
+from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
 @shared_task
