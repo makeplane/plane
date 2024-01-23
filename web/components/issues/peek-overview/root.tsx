@@ -2,7 +2,7 @@ import { FC, Fragment, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useMember, useUser } from "hooks/store";
+import { useIssueDetail, useIssues, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // types
@@ -37,7 +37,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // hooks
   const { setToastAlert } = useToast();
   const {
-    membership: { currentWorkspaceAllProjectsRole },
+    membership: { currentProjectRole },
   } = useUser();
   const {
     issues: { removeIssue: removeArchivedIssue },
@@ -195,7 +195,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issue = getIssueById(peekIssue.issueId) || undefined;
 
-  const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const isLoading = !issue || loader ? true : false;
