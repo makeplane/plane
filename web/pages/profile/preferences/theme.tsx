@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
 // ui
@@ -15,7 +15,7 @@ import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // type
 import { NextPageWithLayout } from "lib/types";
 
-const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
+const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
   // store hooks
@@ -48,7 +48,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {currentUser ? (
-        <div className="mx-auto mt-16 h-full w-full overflow-y-auto px-8 pb-8 lg:w-3/5">
+        <div className="mx-auto mt-14 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>
@@ -72,8 +72,8 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   );
 });
 
-ProfilePreferencesPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
+ProfilePreferencesThemePage.getLayout = function getLayout(page: ReactElement) {
+  return <ProfilePreferenceSettingsLayout>{page}</ProfilePreferenceSettingsLayout>;
 };
 
-export default ProfilePreferencesPage;
+export default ProfilePreferencesThemePage;

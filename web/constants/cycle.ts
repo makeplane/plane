@@ -104,13 +104,13 @@ export const CYCLE_STATE_GROUPS_DETAILS = [
     color: "#FFC53D",
   },
   {
-    key: "cancelled_issues",
-    title: "Cancelled",
+    key: "completed_issues",
+    title: "Completed",
     color: "#d687ff",
   },
   {
-    key: "completed_issues",
-    title: "Completed",
+    key: "cancelled_issues",
+    title: "Cancelled",
     color: "#ef4444",
   },
 ];

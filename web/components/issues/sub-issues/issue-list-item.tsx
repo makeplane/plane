@@ -32,11 +32,11 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     workspaceSlug,
     projectId,
     parentIssueId,
+    issueId,
     spacingLeft = 10,
     disabled,
     handleIssueCrudState,
     subIssueOperations,
-    issueId,
   } = props;
 
   const {
@@ -81,12 +81,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   <div
                     className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-custom-background-80"
                     onClick={async () => {
-                      if (!subIssueHelpers.issue_visibility.includes(issue.id)) {
-                        setSubIssueHelpers(parentIssueId, "preview_loader", issue.id);
-                        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, issue.id);
-                        setSubIssueHelpers(parentIssueId, "preview_loader", issue.id);
+                      if (!subIssueHelpers.issue_visibility.includes(issueId)) {
+                        setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
+                        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, issueId);
+                        setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
                       }
-                      setSubIssueHelpers(parentIssueId, "issue_visibility", issue.id);
+                      setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                     }}
                   >
                     {subIssueHelpers.issue_visibility.includes(issue.id) ? (
@@ -136,7 +136,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           <div className="flex-shrink-0 text-sm">
             <CustomMenu placement="bottom-end" ellipsis>
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("update", parentIssueId, issue)}>
+                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("update", parentIssueId, { ...issue })}>
                   <div className="flex items-center gap-2">
                     <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Edit issue</span>

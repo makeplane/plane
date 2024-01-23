@@ -236,51 +236,53 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         </div>
       )}
 
-      <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
-        <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-          {/* drag and delete component */}
-          <div
-            className={`fixed left-1/2 -translate-x-1/2 ${
-              isDragStarted ? "z-40" : ""
-            } top-3 mx-3 flex w-72 items-center justify-center`}
-          >
-            <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
-              {(provided, snapshot) => (
-                <div
-                  className={`${
-                    isDragStarted ? `opacity-100` : `opacity-0`
-                  } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-                    snapshot.isDraggingOver ? "bg-red-500 opacity-70 blur-2xl" : ""
-                  } transition duration-300`}
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
-                  Drop here to delete the issue.
-                </div>
-              )}
-            </Droppable>
-          </div>
+      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90">
+        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+          <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            {/* drag and delete component */}
+            <div
+              className={`fixed left-1/2 -translate-x-1/2 ${
+                isDragStarted ? "z-40" : ""
+              } top-3 mx-3 flex w-72 items-center justify-center`}
+            >
+              <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
+                {(provided, snapshot) => (
+                  <div
+                    className={`${
+                      isDragStarted ? `opacity-100` : `opacity-0`
+                    } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+                      snapshot.isDraggingOver ? "bg-red-500 opacity-70 blur-2xl" : ""
+                    } transition duration-300`}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    Drop here to delete the issue.
+                  </div>
+                )}
+              </Droppable>
+            </div>
 
-          <KanBanView
-            issuesMap={issueMap}
-            issueIds={issueIds}
-            displayProperties={displayProperties}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={renderQuickActions}
-            handleKanbanFilters={handleKanbanFilters}
-            kanbanFilters={kanbanFilters}
-            enableQuickIssueCreate={enableQuickAdd}
-            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-            quickAddCallback={issues?.quickAddIssue}
-            viewId={viewId}
-            disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-            canEditProperties={canEditProperties}
-            storeType={storeType}
-            addIssuesToView={addIssuesToView}
-          />
-        </DragDropContext>
+            <KanBanView
+              issuesMap={issueMap}
+              issueIds={issueIds}
+              displayProperties={displayProperties}
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              handleIssues={handleIssues}
+              quickActions={renderQuickActions}
+              handleKanbanFilters={handleKanbanFilters}
+              kanbanFilters={kanbanFilters}
+              enableQuickIssueCreate={enableQuickAdd}
+              showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+              quickAddCallback={issues?.quickAddIssue}
+              viewId={viewId}
+              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+              canEditProperties={canEditProperties}
+              storeType={storeType}
+              addIssuesToView={addIssuesToView}
+            />
+          </DragDropContext>
+        </div>
       </div>
     </>
   );
