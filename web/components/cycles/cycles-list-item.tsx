@@ -240,7 +240,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                 </button>
               ))}
 
-            <CustomMenu width="auto" ellipsis>
+            <CustomMenu ellipsis>
               {!isCompleted && isEditingAllowed && (
                 <>
                   <CustomMenu.MenuItem onClick={handleEditCycle}>

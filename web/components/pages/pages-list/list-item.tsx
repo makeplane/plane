@@ -235,7 +235,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
                 </Tooltip>
-                <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
+                <CustomMenu placement="bottom-end" className="!-m-1" verticalEllipsis>
                   {archived_at ? (
                     <>
                       {userCanArchive && (
