@@ -37,7 +37,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // hooks
   const { setToastAlert } = useToast();
   const {
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   const {
     issues: { removeIssue: removeArchivedIssue },
@@ -195,6 +195,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issue = getIssueById(peekIssue.issueId) || undefined;
 
+  const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const isLoading = !issue || loader ? true : false;
