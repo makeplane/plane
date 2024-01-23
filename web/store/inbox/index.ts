@@ -1,25 +1,26 @@
-import { makeAutoObservable } from "mobx";
 // types
 import { RootStore } from "store/root.store";
+import { IInboxStore, InboxStore } from "./inbox.store";
 import { IInboxIssuesStore, InboxIssuesStore } from "./inbox_issue.store";
 import { IInboxFiltersStore, InboxFiltersStore } from "./inbox_filter.store";
-import { IInboxStore, InboxStore } from "./inbox.store";
 
 export interface IInboxRootStore {
+  rootStore: RootStore;
   inbox: IInboxStore;
-  inboxFilters: IInboxFiltersStore;
   inboxIssues: IInboxIssuesStore;
+  inboxFilters: IInboxFiltersStore;
 }
 
 export class InboxRootStore implements IInboxRootStore {
+  rootStore: RootStore;
   inbox: IInboxStore;
-  inboxFilters: IInboxFiltersStore;
   inboxIssues: IInboxIssuesStore;
+  inboxFilters: IInboxFiltersStore;
 
   constructor(_rootStore: RootStore) {
-    makeAutoObservable(this, {});
+    this.rootStore = _rootStore;
     this.inbox = new InboxStore(_rootStore);
-    this.inboxFilters = new InboxFiltersStore(_rootStore);
     this.inboxIssues = new InboxIssuesStore(_rootStore);
+    this.inboxFilters = new InboxFiltersStore(_rootStore);
   }
 }
