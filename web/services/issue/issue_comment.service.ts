@@ -9,8 +9,22 @@ export class IssueCommentService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueComment[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`)
+  async getIssueComments(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    params:
+      | {
+          created_at__gt: string;
+        }
+      | {} = {}
+  ): Promise<TIssueComment[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`, {
+      params: {
+        activity_type: "issue-comment",
+        ...params,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

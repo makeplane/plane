@@ -21,12 +21,12 @@ type TActivityTabs = "all" | "activity" | "comments";
 const activityTabs: { key: TActivityTabs; title: string; icon: LucideIcon }[] = [
   {
     key: "all",
-    title: "All",
+    title: "All Activity",
     icon: History,
   },
   {
     key: "activity",
-    title: "Activity",
+    title: "Updates",
     icon: Network,
   },
   {
@@ -45,8 +45,7 @@ export type TActivityOperations = {
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled } = props;
   // hooks
-  const { createComment, updateComment, removeComment } =
-    useIssueDetail();
+  const { createComment, updateComment, removeComment } = useIssueDetail();
   const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   // state
@@ -115,7 +114,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   return (
     <div className="space-y-3 pt-3">
       {/* header */}
-      <div className="text-lg text-custom-text-100">Comments/Activity</div>
+      <div className="text-lg text-custom-text-100">Activity</div>
 
       {/* rendering activity */}
       <div className="space-y-3">

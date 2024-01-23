@@ -79,10 +79,11 @@ export class IssueReactionStore implements IIssueReactionStore {
 
     const _userReactions: TIssueReaction[] = [];
     Object.keys(reactions).forEach((reaction) => {
-      reactions[reaction].map((reactionId) => {
-        const currentReaction = this.getReactionById(reactionId);
-        if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
-      });
+      if (reactions?.[reaction])
+        reactions?.[reaction].map((reactionId) => {
+          const currentReaction = this.getReactionById(reactionId);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+        });
     });
 
     return _userReactions;
