@@ -167,7 +167,7 @@ export class IssueHelperStore implements TIssueHelperStore {
     array = reverse(sortBy(array, "created_at"));
     switch (key) {
       case "sort_order":
-        return reverse(sortBy(array, "sort_order"));
+        return sortBy(array, "sort_order");
 
       case "state__name":
         return reverse(sortBy(array, "state"));

@@ -100,6 +100,19 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [updateFilters, workspaceSlug]
   );
 
+  const renderQuickActions = useCallback(
+    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+      <AllIssueQuickActions
+        customActionButton={customActionButton}
+        issue={issue}
+        handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
+        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+        portalElement={portalElement}
+      />
+    ),
+    [handleIssues]
+  );
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       {!globalViewId || globalViewId !== dataViewId || loader === "init-loader" || !issueIds ? (
@@ -119,13 +132,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
                 issueIds={issueIds}
-                quickActions={(issue) => (
-                  <AllIssueQuickActions
-                    issue={issue}
-                    handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
-                    handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-                  />
-                )}
+                quickActions={renderQuickActions}
                 handleIssues={handleIssues}
                 canEditProperties={canEditProperties}
                 viewId={globalViewId}
