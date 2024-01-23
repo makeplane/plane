@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { MessageSquare } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // helpers
@@ -44,7 +44,7 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = (props) => {
           </>
         )}
         <div className="absolute top-2 left-4 w-5 h-5 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-80">
-          <MessageSquare className="w-3 h-3" color="#6b7280" />
+          <MessageCircle className="w-3 h-3" color="#6b7280" />
         </div>
       </div>
       <div className="w-full relative flex ">
