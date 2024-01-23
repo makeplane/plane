@@ -4,12 +4,11 @@ import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "src/ui/components/editor-header";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { SummarySideBar } from "src/ui/components/summary-side-bar";
-import { IssueWidgetExtension } from "src/ui/extensions/widgets/issue-embed-widget";
-import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
 import { DocumentDetails } from "src/types/editor-types";
 import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
 import { getMenuOptions } from "src/utils/menu-options";
+import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
 
 interface IDocumentReadOnlyEditor {
   value: string;
@@ -29,7 +28,6 @@ interface IDocumentReadOnlyEditor {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => void;
-  embedConfig?: IEmbedConfig;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -51,7 +49,6 @@ const DocumentReadOnlyEditor = ({
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig,
   rerenderOnPropsChange,
   onActionCompleteHandler,
 }: DocumentReadOnlyEditorProps) => {
@@ -63,7 +60,7 @@ const DocumentReadOnlyEditor = ({
     value,
     forwardedRef,
     rerenderOnPropsChange,
-    extensions: [IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig })],
+    extensions: [IssueWidgetPlaceholder()],
   });
 
   useEffect(() => {

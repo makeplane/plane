@@ -10,7 +10,6 @@ import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { getMenuOptions } from "src/utils/menu-options";
 import { useRouter } from "next/router";
-import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentEditor {
   // document info
@@ -47,7 +46,6 @@ interface IDocumentEditor {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-  embedConfig?: IEmbedConfig;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -75,13 +73,11 @@ const DocumentEditor = ({
   duplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig,
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
   rerenderOnPropsChange,
 }: IDocumentEditor) => {
-  // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const router = useRouter();
@@ -104,7 +100,7 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, embedConfig?.issueEmbedConfig, setIsSubmitting),
+    extensions: DocumentEditorExtensions(uploadFile, setIsSubmitting),
   });
 
   if (!editor) {
