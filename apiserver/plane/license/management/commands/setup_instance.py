@@ -1,8 +1,10 @@
 # Python imports
 import json
 import secrets
+import uuid
 
 # Django imports
+from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
@@ -32,7 +34,11 @@ class Command(BaseCommand):
 
         user = User.objects.filter(email=admin_email).first()
         if user is None:
-            raise CommandError("User not found")
+            user = User.objects.create(
+                email=admin_email,
+                username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+            )
 
         try:
             # Check if the instance is registered
@@ -40,7 +46,7 @@ class Command(BaseCommand):
 
             if instance is None:
                 instance = Instance.objects.create(
-                    instance_name="Plane Cloud US",
+                    instance_name="Plane Enterprise",
                     instance_id=secrets.token_hex(12),
                     license_key=None,
                     api_key=secrets.token_hex(8),
@@ -53,20 +59,16 @@ class Command(BaseCommand):
                 )
 
             # Get or create an instance admin
-            _ , created = InstanceAdmin.objects.get_or_create(
+            _, created = InstanceAdmin.objects.get_or_create(
                 user=user, instance=instance, role=20, is_verified=True
             )
 
             if not created:
-                raise CommandError("given email is already an instance admin")
-
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Successful"
+                self.stdout.write(
+                    self.style.WARNING("given email is already an instance admin")
                 )
-            )
+
+            self.stdout.write(self.style.SUCCESS(f"Successful"))
         except Exception as e:
             print(e)
-            raise CommandError(
-                "Failure"
-            )
+            raise CommandError("Failure")
