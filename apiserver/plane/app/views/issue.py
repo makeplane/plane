@@ -48,10 +48,8 @@ from plane.app.serializers import (
     ProjectMemberLiteSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
-    IssueVoteSerializer,
     IssueRelationSerializer,
     RelatedIssueSerializer,
-    IssuePublicSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -493,17 +491,27 @@ class IssueActivityEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
+        filters = {}
+        if request.GET.get("created_at__gt", None) is not None:
+            filters = {"created_at__gt": request.GET.get("created_at__gt")}
+
         issue_activities = (
             IssueActivity.objects.filter(issue_id=issue_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
             )
+            .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
         issue_comments = (
             IssueComment.objects.filter(issue_id=issue_id)
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+            )
+            .filter(**filters)
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
             .prefetch_related(
@@ -517,6 +525,12 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities, many=True
         ).data
         issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+
+        if request.GET.get("activity_type", None) == "issue-property":
+            return Response(issue_activities, status=status.HTTP_200_OK)
+        
+        if request.GET.get("activity_type", None) == "issue-comment":
+            return Response(issue_comments, status=status.HTTP_200_OK)
 
         result_list = sorted(
             chain(issue_activities, issue_comments),

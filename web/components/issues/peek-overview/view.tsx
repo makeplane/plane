@@ -12,13 +12,13 @@ import useToast from "hooks/use-toast";
 import {
   DeleteArchivedIssueModal,
   DeleteIssueModal,
-  IssueActivity,
   IssueSubscription,
   IssueUpdateStatus,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
 } from "components/issues";
+import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
 import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // helpers
@@ -240,19 +240,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled}
                         />
 
-                        {/* <IssueActivity
+                        <IssueActivity
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          user={currentUser}
-                          issueActivity={issueActivity}
-                          issueCommentCreate={issueCommentCreate}
-                          issueCommentUpdate={issueCommentUpdate}
-                          issueCommentRemove={issueCommentRemove}
-                          issueCommentReactionCreate={issueCommentReactionCreate}
-                          issueCommentReactionRemove={issueCommentReactionRemove}
-                          showCommentAccessSpecifier={showCommentAccessSpecifier}
-                        /> */}
+                          disabled={disabled}
+                        />
                       </div>
                     ) : (
                       <div className={`flex h-full w-full overflow-auto ${is_archived ? "opacity-60" : ""}`}>
@@ -269,19 +262,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
 
-                            {/* <IssueActivity
+                            <IssueActivity
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
                               issueId={issueId}
-                              user={currentUser}
-                              issueActivity={issueActivity}
-                              issueCommentCreate={issueCommentCreate}
-                              issueCommentUpdate={issueCommentUpdate}
-                              issueCommentRemove={issueCommentRemove}
-                              issueCommentReactionCreate={issueCommentReactionCreate}
-                              issueCommentReactionRemove={issueCommentReactionRemove}
-                              showCommentAccessSpecifier={showCommentAccessSpecifier}
-                            /> */}
+                              disabled={disabled}
+                            />
                           </div>
                         </div>
                         <div

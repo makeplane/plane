@@ -79,10 +79,11 @@ export class IssueReactionStore implements IIssueReactionStore {
 
     const _userReactions: TIssueReaction[] = [];
     Object.keys(reactions).forEach((reaction) => {
-      reactions[reaction].map((reactionId) => {
-        const currentReaction = this.getReactionById(reactionId);
-        if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
-      });
+      if (reactions?.[reaction])
+        reactions?.[reaction].map((reactionId) => {
+          const currentReaction = this.getReactionById(reactionId);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+        });
     });
 
     return _userReactions;
@@ -126,6 +127,8 @@ export class IssueReactionStore implements IIssueReactionStore {
         set(this.reactionMap, response.id, response);
       });
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
@@ -152,6 +155,8 @@ export class IssueReactionStore implements IIssueReactionStore {
 
       const response = await this.issueReactionService.deleteIssueReaction(workspaceSlug, projectId, issueId, reaction);
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
