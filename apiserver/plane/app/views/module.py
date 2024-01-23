@@ -311,6 +311,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         module.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -490,6 +491,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         issues = self.get_queryset().values_list("issue_id", flat=True)
@@ -522,6 +524,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         module_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

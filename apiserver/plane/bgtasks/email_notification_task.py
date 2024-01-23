@@ -14,7 +14,7 @@ from django.conf import settings
 # Module imports
 from plane.db.models import EmailNotificationLog, User, Issue
 from plane.license.utils.instance_value import get_email_configuration
-
+from plane.settings.redis import redis_instance
 
 @shared_task
 def stack_email_notification():
@@ -129,7 +129,8 @@ def create_payload(notification_data):
 def send_email_notification(
     issue_id, notification_data, receiver_id, email_notification_ids
 ):
-    base_api = "https://app.plane.so"
+    ri = redis_instance()
+    base_api = (ri.get(str(issue_id)).decode())
     data = create_payload(notification_data=notification_data)
 
     # Get email configurations
@@ -160,7 +161,6 @@ def send_email_notification(
                         "first_name": actor.first_name,
                         "last_name": actor.last_name,
                     },
-                    "activity_time": str(activity_time),
                 }
             )
         activity_time = changes.pop("activity_time")

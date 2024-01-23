@@ -201,6 +201,7 @@ class InboxIssueViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         # create an inbox issue
         InboxIssue.objects.create(
@@ -279,6 +280,7 @@ class InboxIssueViewSet(BaseViewSet):
                         ),
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
+                        origin=request.META.get("HTTP_ORIGIN"),
                     )
                 issue_serializer.save()
             else:

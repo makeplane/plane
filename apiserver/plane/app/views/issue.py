@@ -260,6 +260,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             issue = (
                 self.get_queryset().filter(pk=serializer.data["id"]).first()
@@ -299,6 +300,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             issue = self.get_queryset().filter(pk=pk).first()
             return Response(
@@ -323,6 +325,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -531,7 +534,7 @@ class IssueActivityEndpoint(BaseAPIView):
 
         if request.GET.get("activity_type", None) == "issue-property":
             return Response(issue_activities, status=status.HTTP_200_OK)
-        
+
         if request.GET.get("activity_type", None) == "issue-comment":
             return Response(issue_comments, status=status.HTTP_200_OK)
 
@@ -599,6 +602,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -629,6 +633,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -654,6 +659,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -857,6 +863,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 current_instance=json.dumps({"parent": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             for sub_issue_id in sub_issue_ids
         ]
@@ -917,6 +924,7 @@ class IssueLinkViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -947,6 +955,7 @@ class IssueLinkViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -971,6 +980,7 @@ class IssueLinkViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1028,6 +1038,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1045,6 +1056,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1224,6 +1236,7 @@ class IssueArchiveViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         issue.archived_at = None
         issue.save()
@@ -1370,6 +1383,7 @@ class IssueReactionViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1396,6 +1410,7 @@ class IssueReactionViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         issue_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1437,6 +1452,7 @@ class CommentReactionViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1464,6 +1480,7 @@ class CommentReactionViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         comment_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1593,6 +1610,7 @@ class IssueRelationViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         if relation_type == "blocking":
@@ -1638,6 +1656,7 @@ class IssueRelationViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1810,6 +1829,7 @@ class IssueDraftViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1841,6 +1861,7 @@ class IssueDraftViewSet(BaseViewSet):
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1868,5 +1889,6 @@ class IssueDraftViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

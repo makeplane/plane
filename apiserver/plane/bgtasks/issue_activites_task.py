@@ -28,7 +28,7 @@ from plane.db.models import (
 )
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
-
+from plane.settings.redis import redis_instance
 
 # Track Changes in name
 def track_name(
@@ -1563,6 +1563,7 @@ def issue_activity(
     epoch,
     subscriber=True,
     notification=False,
+    origin=None,
 ):
     try:
         issue_activities = []
@@ -1571,6 +1572,10 @@ def issue_activity(
         workspace_id = project.workspace_id
 
         if issue_id is not None:
+            if origin:
+                ri = redis_instance()
+                # set the request origin in redis
+                ri.set(str(issue_id), origin, ex=600)
             issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 try:
