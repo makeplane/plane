@@ -1,7 +1,6 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
-import useSWR from "swr";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -34,7 +33,9 @@ export type TSubIssueOperations = {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    data: Partial<TIssue>
+    issueData: Partial<TIssue>,
+    oldIssue?: Partial<TIssue>,
+    fromModal?: boolean
   ) => Promise<void>;
   removeSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
   deleteSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
@@ -83,18 +84,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
       issue: undefined,
     },
   });
-
-  useSWR(
-    workspaceSlug && projectId && parentIssueId
-      ? `ISSUE_DETAIL_SUB_ISSUES_${workspaceSlug}_${projectId}_${parentIssueId}`
-      : null,
-    async () => {
-      workspaceSlug &&
-        projectId &&
-        parentIssueId &&
-        (await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId));
-    }
-  );
 
   const handleIssueCrudState = (
     key: "create" | "existing" | "update" | "delete",
@@ -155,11 +144,13 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         projectId: string,
         parentIssueId: string,
         issueId: string,
-        data: Partial<TIssue>
+        issueData: Partial<TIssue>,
+        oldIssue: Partial<TIssue> = {},
+        fromModal: boolean = false
       ) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, data);
+          await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
           setToastAlert({
             type: "success",
             title: "Sub-issue updated successfully",
@@ -231,7 +222,14 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               <div className="relative flex items-center gap-4 text-xs">
                 <div
                   className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                  onClick={() => setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId)}
+                  onClick={async () => {
+                    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
+                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+                      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+                    }
+                    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+                  }}
                 >
                   <div className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center">
                     {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
@@ -395,7 +393,15 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 }}
                 data={issueCrudState?.update?.issue ?? undefined}
                 onSubmit={async (_issue: TIssue) => {
-                  await subIssueOperations.updateSubIssue(workspaceSlug, projectId, parentIssueId, _issue.id, _issue);
+                  await subIssueOperations.updateSubIssue(
+                    workspaceSlug,
+                    projectId,
+                    parentIssueId,
+                    _issue.id,
+                    _issue,
+                    issueCrudState?.update?.issue,
+                    true
+                  );
                 }}
               />
             </>

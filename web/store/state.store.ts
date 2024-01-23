@@ -1,5 +1,5 @@
 import { makeObservable, observable, computed, action, runInAction } from "mobx";
-import { computedFn } from "mobx-utils"
+import { computedFn } from "mobx-utils";
 import groupBy from "lodash/groupBy";
 import set from "lodash/set";
 // store
