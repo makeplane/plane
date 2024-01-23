@@ -24,10 +24,11 @@ from plane.db.models import (
     IssueReaction,
     CommentReaction,
     IssueComment,
+    IssueSubscriber,
 )
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
-
+from plane.settings.redis import redis_instance
 
 # Track Changes in name
 def track_name(
@@ -190,7 +191,9 @@ def track_state(
 ):
     if current_instance.get("state_id") != requested_data.get("state_id"):
         new_state = State.objects.get(pk=requested_data.get("state_id", None))
-        old_state = State.objects.get(pk=current_instance.get("state_id", None))
+        old_state = State.objects.get(
+            pk=current_instance.get("state_id", None)
+        )
 
         issue_activities.append(
             IssueActivity(
@@ -359,6 +362,7 @@ def track_assignees(
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
 
+    bulk_subscribers = []
     for added_asignee in added_assignees:
         assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
@@ -376,6 +380,21 @@ def track_assignees(
                 epoch=epoch,
             )
         )
+        bulk_subscribers.append(
+            IssueSubscriber(
+                subscriber_id=assignee.id,
+                issue_id=issue_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                created_by_id=assignee.id,
+                updated_by_id=assignee.id,
+            )
+        )
+
+    # Create assignees subscribers to the issue and ignore if already
+    IssueSubscriber.objects.bulk_create(
+        bulk_subscribers, batch_size=10, ignore_conflicts=True
+    )
 
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
@@ -1543,6 +1562,8 @@ def issue_activity(
     project_id,
     epoch,
     subscriber=True,
+    notification=False,
+    origin=None,
 ):
     try:
         issue_activities = []
@@ -1551,6 +1572,10 @@ def issue_activity(
         workspace_id = project.workspace_id
 
         if issue_id is not None:
+            if origin:
+                ri = redis_instance()
+                # set the request origin in redis
+                ri.set(str(issue_id), origin, ex=600)
             issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 try:
@@ -1623,22 +1648,24 @@ def issue_activity(
                         )
             except Exception as e:
                 capture_exception(e)
+        
 
-        notifications.delay(
-            type=type,
-            issue_id=issue_id,
-            actor_id=actor_id,
-            project_id=project_id,
-            subscriber=subscriber,
-            issue_activities_created=json.dumps(
-                IssueActivitySerializer(
-                    issue_activities_created, many=True
-                ).data,
-                cls=DjangoJSONEncoder,
-            ),
-            requested_data=requested_data,
-            current_instance=current_instance,
-        )
+        if notification:
+            notifications.delay(
+                type=type,
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                subscriber=subscriber,
+                issue_activities_created=json.dumps(
+                    IssueActivitySerializer(
+                        issue_activities_created, many=True
+                    ).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                requested_data=requested_data,
+                current_instance=current_instance,
+            )
 
         return
     except Exception as e:

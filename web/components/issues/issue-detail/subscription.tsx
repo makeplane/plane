@@ -11,14 +11,12 @@ export type TIssueSubscription = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  currentUserId: string;
 };
 
 export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, currentUserId } = props;
+  const { workspaceSlug, projectId, issueId } = props;
   // hooks
   const {
-    issue: { getIssueById },
     subscription: { getSubscriptionByIssueId },
     createSubscription,
     removeSubscription,
@@ -27,7 +25,6 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   // state
   const [loading, setLoading] = useState(false);
 
-  const issue = getIssueById(issueId);
   const subscription = getSubscriptionByIssueId(issueId);
 
   const handleSubscription = async () => {
@@ -50,8 +47,6 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       });
     }
   };
-
-  if (issue?.created_by === currentUserId || issue?.assignee_ids?.includes(currentUserId)) return <></>;
 
   return (
     <div>
