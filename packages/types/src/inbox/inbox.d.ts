@@ -1,6 +1,6 @@
 export type TInboxIssueFilterOptions = {
   priority: string[];
-  inbox_status: string[];
+  inbox_status: number[];
 };
 
 export type TInboxIssueQueryParams = "priority" | "inbox_status";

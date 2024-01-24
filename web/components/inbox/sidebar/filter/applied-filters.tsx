@@ -1,48 +1,41 @@
-import { useRouter } from "next/router";
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
-
 // mobx store
-import { useInboxFilters } from "hooks/store";
-
+import { useInboxIssues } from "hooks/store";
 // icons
 import { X } from "lucide-react";
 import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IInboxFilterOptions, TIssuePriorities } from "@plane/types";
+import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
-export const InboxFiltersList = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
+type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string; inboxId: string };
 
-  const { inboxFilters, updateInboxFilters } = useInboxFilters();
+export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((props) => {
+  const { workspaceSlug, projectId, inboxId } = props;
+  // hooks
+  const {
+    filters: { inboxFilters, updateInboxFilters },
+  } = useInboxIssues();
 
-  const filters = inboxId ? inboxFilters[inboxId.toString()]?.filters : undefined;
+  const filters = inboxFilters?.filters;
 
-  const handleUpdateFilter = (filter: Partial<IInboxFilterOptions>) => {
+  const handleUpdateFilter = (filter: Partial<TInboxIssueFilterOptions>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
-
     updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), filter);
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
-
-    const newFilters: IInboxFilterOptions = {};
-    Object.keys(filters ?? {}).forEach((key) => {
-      newFilters[key as keyof IInboxFilterOptions] = null;
-    });
-
+    const newFilters: TInboxIssueFilterOptions = { priority: [], inbox_status: [] };
     updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), newFilters);
   };
 
   let filtersLength = 0;
   Object.keys(filters ?? {}).forEach((key) => {
-    const filterKey = key as keyof IInboxFilterOptions;
-
+    const filterKey = key as keyof TInboxIssueFilterOptions;
     if (filters?.[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
   });
 
@@ -51,8 +44,7 @@ export const InboxFiltersList = observer(() => {
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 text-[0.65rem]">
       {Object.keys(filters).map((key) => {
-        const filterKey = key as keyof IInboxFilterOptions;
-
+        const filterKey = key as keyof TInboxIssueFilterOptions;
         if (filters[filterKey])
           return (
             <div
@@ -81,9 +73,12 @@ export const InboxFiltersList = observer(() => {
                               : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
-                          <span>
-                            <PriorityIcon priority={priority as TIssuePriorities} />
-                          </span>
+                          <div className="relative flex items-center gap-0.5">
+                            <div>
+                              <PriorityIcon priority={priority as TIssuePriorities} size={14} />
+                            </div>
+                            <div>{priority}</div>
+                          </div>
                           <button
                             type="button"
                             className="cursor-pointer"
@@ -101,7 +96,7 @@ export const InboxFiltersList = observer(() => {
                         type="button"
                         onClick={() =>
                           handleUpdateFilter({
-                            priority: null,
+                            priority: [],
                           })
                         }
                       >
@@ -115,7 +110,7 @@ export const InboxFiltersList = observer(() => {
                           key={status}
                           className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-2 py-0.5 capitalize text-custom-text-200"
                         >
-                          <span>{INBOX_STATUS.find((s) => s.value === status)?.label}</span>
+                          <span>{INBOX_STATUS.find((s) => s.status === status)?.title}</span>
                           <button
                             type="button"
                             className="cursor-pointer"
@@ -133,7 +128,7 @@ export const InboxFiltersList = observer(() => {
                         type="button"
                         onClick={() =>
                           handleUpdateFilter({
-                            inbox_status: null,
+                            inbox_status: [],
                           })
                         }
                       >
