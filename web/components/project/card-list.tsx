@@ -63,7 +63,6 @@ export const ProjectCardList = observer(() => {
           description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
           primaryButton={{
             text: "Start your first project",
-            icon: <Plus size={16} />,
             onClick: () => {
               setTrackElement("PROJECTS_EMPTY_STATE");
               commandPaletteStore.toggleCreateProjectModal(true);
