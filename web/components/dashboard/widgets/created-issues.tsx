@@ -69,7 +69,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
             href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
             className="text-lg font-semibold text-custom-text-300 hover:underline"
           >
-            All issues created
+            Created by you
           </Link>
           <p className="mt-3 text-xs font-medium text-custom-text-300">
             Filtered by{" "}

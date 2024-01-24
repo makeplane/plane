@@ -16,9 +16,9 @@ export const IssuesByStateGroupEmptyState = () => {
         <Image src={image} className="w-full h-full" alt="Issues by state group" />
       </div>
       <p className="text-sm font-medium text-custom-text-300">
-        Issue assigned to you, broken down by state, will show up
+        Issue assigned to you, broken down by state,
         <br />
-        here.
+        will show up here.
       </p>
     </div>
   );

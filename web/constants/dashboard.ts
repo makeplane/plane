@@ -165,13 +165,13 @@ export const ISSUES_TABS_LIST: {
   },
   {
     key: "completed",
-    label: "Completed",
+    label: "Marked completed",
   },
 ];
 
 export const ASSIGNED_ISSUES_EMPTY_STATES = {
   upcoming: {
-    title: "Upcoming issues assigned to you will show up here.",
+    title: "Upcoming issues assigned to\nyou will show up here.",
     darkImage: UpcomingIssuesDark,
     lightImage: UpcomingIssuesLight,
   },
@@ -181,7 +181,7 @@ export const ASSIGNED_ISSUES_EMPTY_STATES = {
     lightImage: OverdueIssuesLight,
   },
   completed: {
-    title: "Issues assigned to you that you\nhave marked Completed will show\nup here.",
+    title: "Issues assigned to you that you have\nmarked Completed will show up here.",
     darkImage: CompletedIssuesDark,
     lightImage: CompletedIssuesLight,
   },
@@ -199,7 +199,7 @@ export const CREATED_ISSUES_EMPTY_STATES = {
     lightImage: OverdueIssuesLight,
   },
   completed: {
-    title: "Issues created by you that you have\nmarked completed will show\nup here.",
+    title: "Issues created by you that you have\nmarked completed will show up here.",
     darkImage: CompletedIssuesDark,
     lightImage: CompletedIssuesLight,
   },

@@ -16,7 +16,9 @@ export const RecentActivityEmptyState = () => {
         <Image src={image} className="w-full h-full" alt="Issues by state group" />
       </div>
       <p className="text-sm font-medium text-custom-text-300">
-        All your issue activities across projects will show up here.
+        All your issue activities across
+        <br />
+        projects will show up here.
       </p>
     </div>
   );

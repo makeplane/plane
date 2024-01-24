@@ -73,7 +73,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
             href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
             className="text-lg font-semibold text-custom-text-300 hover:underline"
           >
-            All issues assigned
+            Assigned to you
           </Link>
           <p className="mt-3 text-xs font-medium text-custom-text-300">
             Filtered by{" "}
