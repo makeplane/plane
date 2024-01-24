@@ -204,13 +204,20 @@ export class InboxIssue implements IInboxIssue {
     }
   };
 
-  updateInboxIssueStatus = async (workspaceSlug: string, projectId: string, inboxId: string, inboxIssueId: string) => {
+  updateInboxIssueStatus = async (
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    inboxIssueId: string,
+    data: TInboxDetailedStatus
+  ) => {
     try {
-      const response = await this.inboxIssueService.fetchInboxIssueById(
+      const response = await this.inboxIssueService.updateInboxIssueStatus(
         workspaceSlug,
         projectId,
         inboxId,
-        inboxIssueId
+        inboxIssueId,
+        data
       );
 
       // runInAction(() => {

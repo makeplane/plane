@@ -8,7 +8,7 @@ import { useProject, useInboxIssues } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { ProjectInboxHeader } from "components/headers";
-import { InboxActionsHeader, InboxIssuesListSidebar } from "components/inbox";
+import { InboxSidebarRoot } from "components/inbox";
 // types
 import { NextPageWithLayout } from "lib/types";
 
@@ -35,16 +35,11 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   );
 
   return (
-    <div className="flex h-full flex-col">
-      <InboxActionsHeader />
-      <div className="grid flex-1 grid-cols-4 divide-x divide-custom-border-200 overflow-hidden">
-        <InboxIssuesListSidebar />
-        <div className="col-span-3 h-full overflow-auto">
-          {/* <InboxMainContent /> */}
-          {/* TODO: Update this to Inbox Issue details root. */}
-          Issue Details
-        </div>
+    <div className="relative flex h-full overflow-hidden">
+      <div className="flex-shrink-0 w-[300px] border-r border-custom-border-100">
+        <InboxSidebarRoot />
       </div>
+      <div className="w-full">Content</div>
     </div>
   );
 });

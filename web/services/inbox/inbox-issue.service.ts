@@ -90,7 +90,7 @@ export class InboxIssueService extends APIService {
       });
   }
 
-  async updateInboxStatus(
+  async updateInboxIssueStatus(
     workspaceSlug: string,
     projectId: string,
     inboxId: string,

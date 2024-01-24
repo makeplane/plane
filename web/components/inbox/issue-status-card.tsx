@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
@@ -10,12 +11,12 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
-type Props = {
+type TInboxIssueStatusCard = {
   active: boolean;
   issueId: string;
 };
 
-export const InboxIssueCard: React.FC<Props> = (props) => {
+export const InboxIssueStatusCard: FC<TInboxIssueStatusCard> = (props) => {
   const { active } = props;
   // router
   const router = useRouter();
