@@ -7,7 +7,7 @@ import { useApplication, useProjectView, useUser } from "hooks/store";
 import { ProjectViewListItem } from "components/views";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Input, Loader } from "@plane/ui";
+import { Input, Loader, Spinner } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -22,7 +22,14 @@ export const ProjectViewsList = observer(() => {
     membership: { currentProjectRole },
     currentUser,
   } = useUser();
-  const { projectViewIds, getViewById } = useProjectView();
+  const { projectViewIds, getViewById, loader } = useProjectView();
+
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
   if (!projectViewIds)
     return (

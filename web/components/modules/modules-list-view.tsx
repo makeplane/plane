@@ -7,7 +7,7 @@ import useLocalStorage from "hooks/use-local-storage";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, Spinner } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -21,13 +21,20 @@ export const ModulesListView: React.FC = observer(() => {
     membership: { currentProjectRole },
     currentUser,
   } = useUser();
-  const { projectModuleIds } = useModule();
+  const { projectModuleIds, loader } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
   const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "modules", currentUser?.theme.theme === "light");
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
   if (!projectModuleIds)
     return (

@@ -12,7 +12,7 @@ import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // types
 import { TCycleView, TCycleLayout } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
@@ -27,7 +27,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     membership: { currentProjectRole },
     currentUser,
   } = useUser();
-  const { currentProjectCycleIds } = useCycle();
+  const { currentProjectCycleIds, loader } = useCycle();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -56,6 +56,13 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!workspaceSlug || !projectId) return null;
+
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="w-full h-full">
