@@ -94,7 +94,7 @@ const EstimatePoint = observer((props: { point: string }) => {
   const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
   const currentPoint = Number(point) + 1;
 
-  const estimateValue = getEstimatePointValue(Number(point));
+  const estimateValue = getEstimatePointValue(Number(point), null);
 
   return (
     <span className="font-medium text-custom-text-100">
