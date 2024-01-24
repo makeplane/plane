@@ -18,6 +18,7 @@ import { TDropdownProps } from "./types";
 type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
+  dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;
   projectId: string;
   value: string | null;
@@ -34,12 +35,23 @@ type DropdownOptions =
 type ButtonProps = {
   className?: string;
   dropdownArrow: boolean;
+  dropdownArrowClassName: string;
+  hideIcon?: boolean;
   hideText?: boolean;
   module: IModule | null;
+  placeholder: string;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, dropdownArrow, hideText = false, module } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    module,
+    placeholder,
+  } = props;
 
   return (
     <div
@@ -48,29 +60,49 @@ const BorderButton = (props: ButtonProps) => {
         className
       )}
     >
-      <DiceIcon className="h-3 w-3 flex-shrink-0" />
-      {!hideText && <span className="flex-grow truncate">{module?.name ?? "Module"}</span>}
-      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+      {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+      {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
+      {dropdownArrow && (
+        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+      )}
     </div>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, dropdownArrow, hideText = false, module } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    module,
+    placeholder,
+  } = props;
 
   return (
     <div
       className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
     >
-      <DiceIcon className="h-3 w-3 flex-shrink-0" />
-      {!hideText && <span className="flex-grow truncate">{module?.name ?? "Module"}</span>}
-      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+      {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+      {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
+      {dropdownArrow && (
+        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+      )}
     </div>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, dropdownArrow, hideText = false, module } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    module,
+    placeholder,
+  } = props;
 
   return (
     <div
@@ -79,9 +111,11 @@ const TransparentButton = (props: ButtonProps) => {
         className
       )}
     >
-      <DiceIcon className="h-3 w-3 flex-shrink-0" />
-      {!hideText && <span className="flex-grow truncate">{module?.name ?? "Module"}</span>}
-      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+      {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+      {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
+      {dropdownArrow && (
+        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+      )}
     </div>
   );
 };
@@ -95,7 +129,10 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     className = "",
     disabled = false,
     dropdownArrow = false,
+    dropdownArrowClassName = "",
+    hideIcon = false,
     onChange,
+    placeholder = "Module",
     placement,
     projectId,
     value,
@@ -178,7 +215,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
-      className={cn("h-full flex-shrink-0", className)}
+      className={cn("h-full", className)}
       value={value}
       onChange={onChange}
       disabled={disabled}
@@ -213,39 +250,57 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
                 module={selectedModule}
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
+                dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
+                placeholder={placeholder}
               />
             ) : buttonVariant === "border-without-text" ? (
               <BorderButton
                 module={selectedModule}
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
+                dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
                 hideText
+                placeholder={placeholder}
               />
             ) : buttonVariant === "background-with-text" ? (
               <BackgroundButton
                 module={selectedModule}
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
+                dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
+                placeholder={placeholder}
               />
             ) : buttonVariant === "background-without-text" ? (
               <BackgroundButton
                 module={selectedModule}
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
+                dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
                 hideText
+                placeholder={placeholder}
               />
             ) : buttonVariant === "transparent-with-text" ? (
               <TransparentButton
                 module={selectedModule}
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
+                dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
+                placeholder={placeholder}
               />
             ) : buttonVariant === "transparent-without-text" ? (
               <TransparentButton
                 module={selectedModule}
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
+                dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
                 hideText
+                placeholder={placeholder}
               />
             ) : null}
           </button>

@@ -40,6 +40,7 @@ export interface IIssueDetail
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
+  isRelationModalOpen: TIssueRelationTypes | null;
   // computed
   isAnyModalOpen: boolean;
   // actions
@@ -47,6 +48,7 @@ export interface IIssueDetail
   toggleIssueLinkModal: (value: boolean) => void;
   toggleParentIssueModal: (value: boolean) => void;
   toggleDeleteIssueModal: (value: boolean) => void;
+  toggleRelationModal: (value: TIssueRelationTypes | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -67,6 +69,7 @@ export class IssueDetail implements IIssueDetail {
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
+  isRelationModalOpen: TIssueRelationTypes | null = null;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -87,6 +90,7 @@ export class IssueDetail implements IIssueDetail {
       isIssueLinkModalOpen: observable.ref,
       isParentIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
+      isRelationModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -94,6 +98,7 @@ export class IssueDetail implements IIssueDetail {
       toggleIssueLinkModal: action,
       toggleParentIssueModal: action,
       toggleDeleteIssueModal: action,
+      toggleRelationModal: action,
     });
 
     // store
@@ -112,7 +117,12 @@ export class IssueDetail implements IIssueDetail {
 
   // computed
   get isAnyModalOpen() {
-    return this.isIssueLinkModalOpen || this.isParentIssueModalOpen || this.isDeleteIssueModalOpen;
+    return (
+      this.isIssueLinkModalOpen ||
+      this.isParentIssueModalOpen ||
+      this.isDeleteIssueModalOpen ||
+      Boolean(this.isRelationModalOpen)
+    );
   }
 
   // actions
@@ -120,6 +130,7 @@ export class IssueDetail implements IIssueDetail {
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
   toggleParentIssueModal = (value: boolean) => (this.isParentIssueModalOpen = value);
   toggleDeleteIssueModal = (value: boolean) => (this.isDeleteIssueModalOpen = value);
+  toggleRelationModal = (value: TIssueRelationTypes | null) => (this.isRelationModalOpen = value);
 
   // issue
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

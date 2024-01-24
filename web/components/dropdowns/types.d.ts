@@ -14,6 +14,8 @@ export type TDropdownProps = {
   buttonVariant: TButtonVariants;
   className?: string;
   disabled?: boolean;
+  hideIcon?: boolean;
+  placeholder?: string;
   placement?: Placement;
   tabIndex?: number;
 };
