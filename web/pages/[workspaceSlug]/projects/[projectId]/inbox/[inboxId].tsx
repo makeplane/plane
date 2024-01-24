@@ -7,6 +7,8 @@ import { Inbox } from "lucide-react";
 import { useProject, useInboxIssues } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+// ui
+import { Spinner } from "@plane/ui";
 // components
 import { ProjectInboxHeader } from "components/headers";
 import { InboxSidebarRoot } from "components/inbox";
@@ -45,7 +47,9 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {loader === "fetch" ? (
-        <div>Loading...</div>
+        <div className="flex w-full h-full items-center justify-center">
+          <Spinner />
+        </div>
       ) : (
         <div className="relative flex h-full overflow-hidden">
           <div className="flex-shrink-0 w-[340px] border-r border-custom-border-100">
