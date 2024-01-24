@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
+import { AlertTriangle } from "lucide-react";
+// store hooks
+import { useEstimate } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
-import { IEstimate } from "types";
-// icons
-import { AlertTriangle } from "lucide-react";
+import { IEstimate } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 
@@ -21,18 +19,14 @@ type Props = {
 
 export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, data } = props;
-
+  // states
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const { projectEstimates: projectEstimatesStore } = useMobxStore();
-
-  // states
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  // hooks
+  // store hooks
+  const { deleteEstimate } = useEstimate();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleEstimateDelete = () => {
@@ -40,8 +34,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
 
     const estimateId = data?.id!;
 
-    projectEstimatesStore
-      .deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
+    deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();

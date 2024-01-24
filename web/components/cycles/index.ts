@@ -1,5 +1,6 @@
 export * from "./cycles-view";
 export * from "./active-cycle-details";
+export * from "./active-cycle-info";
 export * from "./active-cycle-stats";
 export * from "./gantt-chart";
 export * from "./cycles-view";

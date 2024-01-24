@@ -1,57 +1,39 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
-// types
-import { IIssue } from "types";
-import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
+// types
+import { TIssue } from "@plane/types";
+import { EIssueActions } from "../../types";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
-export const ProjectViewCalendarLayout: React.FC = observer(() => {
-  const {
-    viewIssues: projectViewIssuesStore,
-    viewIssuesFilter: projectIssueViewFiltersStore,
-    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
-  } = useMobxStore();
+export interface IViewCalendarLayout {
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+  };
+}
 
+export const ProjectViewCalendarLayout: React.FC<IViewCalendarLayout> = observer((props) => {
+  const { issueActions } = props;
+  // store
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await projectViewIssuesStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await projectViewIssuesStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
-  };
-
-  const handleDragDrop = async (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (workspaceSlug && projectId)
-      await handleCalenderDragDrop(
-        source,
-        destination,
-        workspaceSlug.toString(),
-        projectId.toString(),
-        projectViewIssuesStore,
-        issues,
-        issueWithIds
-      );
-  };
+  const { viewId } = router.query;
 
   return (
     <BaseCalendarRoot
-      issueStore={projectViewIssuesStore}
-      issuesFilterStore={projectIssueViewFiltersStore}
+      issueStore={issues}
+      issuesFilterStore={issuesFilter}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
-      handleDragDrop={handleDragDrop}
+      viewId={viewId?.toString()}
     />
   );
 });

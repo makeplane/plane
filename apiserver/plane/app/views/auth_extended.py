@@ -128,7 +128,8 @@ class ForgotPasswordEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         return Response(
-            {"error": "Please check the email"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Please check the email"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -167,7 +168,9 @@ class ResetPasswordEndpoint(BaseAPIView):
                 }
 
                 return Response(data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         except DjangoUnicodeDecodeError as indentifier:
             return Response(
@@ -191,7 +194,8 @@ class ChangePasswordEndpoint(BaseAPIView):
             user.is_password_autoset = False
             user.save()
             return Response(
-                {"message": "Password updated successfully"}, status=status.HTTP_200_OK
+                {"message": "Password updated successfully"},
+                status=status.HTTP_200_OK,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -213,7 +217,8 @@ class SetUserPasswordEndpoint(BaseAPIView):
         # Check password validation
         if not password and len(str(password)) < 8:
             return Response(
-                {"error": "Password is not valid"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Password is not valid"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Set the user password
@@ -281,7 +286,9 @@ class MagicGenerateEndpoint(BaseAPIView):
 
             if data["current_attempt"] > 2:
                 return Response(
-                    {"error": "Max attempts exhausted. Please try again later."},
+                    {
+                        "error": "Max attempts exhausted. Please try again later."
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -339,7 +346,8 @@ class EmailCheckEndpoint(BaseAPIView):
 
         if not email:
             return Response(
-                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # validate the email
@@ -347,7 +355,8 @@ class EmailCheckEndpoint(BaseAPIView):
             validate_email(email)
         except ValidationError:
             return Response(
-                {"error": "Email is not valid"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Email is not valid"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Check if the user exists
@@ -399,13 +408,18 @@ class EmailCheckEndpoint(BaseAPIView):
             key, token, current_attempt = generate_magic_token(email=email)
             if not current_attempt:
                 return Response(
-                    {"error": "Max attempts exhausted. Please try again later."},
+                    {
+                        "error": "Max attempts exhausted. Please try again later."
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             # Trigger the email
             magic_link.delay(email, "magic_" + str(email), token, current_site)
             return Response(
-                {"is_password_autoset": user.is_password_autoset, "is_existing": False},
+                {
+                    "is_password_autoset": user.is_password_autoset,
+                    "is_existing": False,
+                },
                 status=status.HTTP_200_OK,
             )
 
@@ -433,7 +447,9 @@ class EmailCheckEndpoint(BaseAPIView):
                 key, token, current_attempt = generate_magic_token(email=email)
                 if not current_attempt:
                     return Response(
-                        {"error": "Max attempts exhausted. Please try again later."},
+                        {
+                            "error": "Max attempts exhausted. Please try again later."
+                        },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 

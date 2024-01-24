@@ -9,9 +9,9 @@ import { CommentCard } from "components/issues/comment";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // helpers
-import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity } from "types";
+import { IIssueActivity } from "@plane/types";
 import { History } from "lucide-react";
 
 type Props = {
@@ -65,6 +65,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                       aria-hidden="true"
                     />
                   ) : null}
+
                   <div className="relative flex items-start space-x-2">
                     <div>
                       <div className="relative px-1.5">
@@ -97,6 +98,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                         </div>
                       </div>
                     </div>
+
                     <div className="min-w-0 flex-1 py-3">
                       <div className="break-words text-xs text-custom-text-200">
                         {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
@@ -114,11 +116,11 @@ export const IssueActivitySection: React.FC<Props> = ({
                         )}{" "}
                         {message}{" "}
                         <Tooltip
-                          tooltipContent={`${renderLongDateFormat(activityItem.created_at)}, ${render24HourFormatTime(
+                          tooltipContent={`${renderFormattedDate(activityItem.created_at)}, ${renderFormattedTime(
                             activityItem.created_at
                           )}`}
                         >
-                          <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
+                          <span className="whitespace-nowrap">{calculateTimeAgo(activityItem.created_at)}</span>
                         </Tooltip>
                       </div>
                     </div>

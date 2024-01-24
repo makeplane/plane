@@ -1,365 +1,277 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
-import isYesterday from "date-fns/isYesterday";
-import isToday from "date-fns/isToday";
-import isThisWeek from "date-fns/isThisWeek";
-// services
-import { ProjectService } from "services/project";
+import { action, makeObservable, observable, reaction, runInAction } from "mobx";
+
+import { IIssueLabel, IPage } from "@plane/types";
 import { PageService } from "services/page.service";
-// helpers
-import { renderDateFormat } from "helpers/date-time.helper";
-// types
-import { RootStore } from "./root";
-import { IPage, IRecentPages } from "types";
+
+import { RootStore } from "./root.store";
 
 export interface IPageStore {
-  loader: boolean;
-  error: any | null;
-  pages: {
-    [project_id: string]: IPage[];
-  };
-  archivedPages: {
-    [project_id: string]: IPage[];
-  };
-  //computed
-  projectPages: IPage[] | undefined;
-  recentProjectPages: IRecentPages | undefined;
-  favoriteProjectPages: IPage[] | undefined;
-  privateProjectPages: IPage[] | undefined;
-  sharedProjectPages: IPage[] | undefined;
-  archivedProjectPages: IPage[] | undefined;
-  // actions
-  fetchPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
-  createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<IPage>;
-  updatePage: (workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>) => Promise<IPage>;
-  deletePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
-  addToFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
-  removeFromFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
-  makePublic: (workspaceSlug: string, projectId: string, pageId: string) => Promise<IPage>;
-  makePrivate: (workspaceSlug: string, projectId: string, pageId: string) => Promise<IPage>;
-  fetchArchivedPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
-  archivePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
-  restorePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  // Page Properties
+  access: number;
+  archived_at: string | null;
+  color: string;
+  created_at: Date;
+  created_by: string;
+  description: string;
+  description_html: string;
+  description_stripped: string | null;
+  id: string;
+  is_favorite: boolean;
+  label_details: IIssueLabel[];
+  is_locked: boolean;
+  labels: string[];
+  name: string;
+  owned_by: string;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+
+  // Actions
+  makePublic: () => Promise<void>;
+  makePrivate: () => Promise<void>;
+  lockPage: () => Promise<void>;
+  unlockPage: () => Promise<void>;
+  addToFavorites: () => Promise<void>;
+  removeFromFavorites: () => Promise<void>;
+  updateName: (name: string) => Promise<void>;
+  updateDescription: (description: string) => Promise<void>;
+
+  // Reactions
+  disposers: Array<() => void>;
+
+  // Helpers
+  oldName: string;
+  cleanup: () => void;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: (isSubmitting: "submitting" | "submitted" | "saved") => void;
 }
 
 export class PageStore implements IPageStore {
-  loader: boolean = false;
-  error: any | null = null;
-  pages: { [project_id: string]: IPage[] } = {};
-  archivedPages: { [project_id: string]: IPage[] } = {};
+  access = 0;
+  isSubmitting: "submitting" | "submitted" | "saved" = "saved";
+  archived_at: string | null;
+  color: string;
+  created_at: Date;
+  created_by: string;
+  description: string;
+  description_html = "";
+  description_stripped: string | null;
+  id: string;
+  is_favorite = false;
+  is_locked = true;
+  labels: string[];
+  name = "";
+  owned_by: string;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+  oldName = "";
+  label_details: IIssueLabel[] = [];
+  disposers: Array<() => void> = [];
+
+  pageService;
   // root store
   rootStore;
-  // service
-  projectService;
-  pageService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(page: IPage, _rootStore: RootStore) {
     makeObservable(this, {
-      // observable
-      loader: observable,
-      error: observable,
-      pages: observable.ref,
-      archivedPages: observable.ref,
-      // computed
-      projectPages: computed,
-      recentProjectPages: computed,
-      favoriteProjectPages: computed,
-      privateProjectPages: computed,
-      sharedProjectPages: computed,
-      archivedProjectPages: computed,
-      // action
-      fetchPages: action,
-      createPage: action,
-      updatePage: action,
-      deletePage: action,
-      addToFavorites: action,
-      removeFromFavorites: action,
+      name: observable.ref,
+      description_html: observable.ref,
+      is_favorite: observable.ref,
+      is_locked: observable.ref,
+      isSubmitting: observable.ref,
+      access: observable.ref,
+
       makePublic: action,
       makePrivate: action,
-      archivePage: action,
-      restorePage: action,
-      fetchArchivedPages: action,
+      addToFavorites: action,
+      removeFromFavorites: action,
+      updateName: action,
+      updateDescription: action,
+      setIsSubmitting: action,
+      cleanup: action,
     });
+    this.created_by = page?.created_by || "";
+    this.created_at = page?.created_at || new Date();
+    this.color = page?.color || "";
+    this.archived_at = page?.archived_at || null;
+    this.name = page?.name || "";
+    this.description = page?.description || "";
+    this.description_stripped = page?.description_stripped || "";
+    this.description_html = page?.description_html || "";
+    this.access = page?.access || 0;
+    this.workspace = page?.workspace || "";
+    this.updated_by = page?.updated_by || "";
+    this.updated_at = page?.updated_at || new Date();
+    this.project = page?.project || "";
+    this.owned_by = page?.owned_by || "";
+    this.labels = page?.labels || [];
+    this.label_details = page?.label_details || [];
+    this.is_locked = page?.is_locked || false;
+    this.id = page?.id || "";
+    this.is_favorite = page?.is_favorite || false;
+    this.oldName = page?.name || "";
 
     this.rootStore = _rootStore;
-    this.projectService = new ProjectService();
     this.pageService = new PageService();
-  }
 
-  get projectPages() {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId || !this.pages[projectId]) return undefined;
-
-    return this.pages?.[projectId] || [];
-  }
-
-  get recentProjectPages() {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId) return undefined;
-
-    if (!this.pages[projectId]) return undefined;
-
-    const data: IRecentPages = { today: [], yesterday: [], this_week: [], older: [] };
-
-    data.today = this.pages[projectId]?.filter((p) => isToday(new Date(p.created_at))) || [];
-    data.yesterday = this.pages[projectId]?.filter((p) => isYesterday(new Date(p.created_at))) || [];
-    data.this_week =
-      this.pages[projectId]?.filter(
-        (p) =>
-          isThisWeek(new Date(p.created_at)) && !isToday(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
-      ) || [];
-    data.older =
-      this.pages[projectId]?.filter(
-        (p) => !isThisWeek(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
-      ) || [];
-
-    return data;
-  }
-
-  get favoriteProjectPages() {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId || !this.pages[projectId]) return undefined;
-
-    return this.pages[projectId]?.filter((p) => p.is_favorite);
-  }
-
-  get privateProjectPages() {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId || !this.pages[projectId]) return undefined;
-
-    return this.pages[projectId]?.filter((p) => p.access === 1);
-  }
-
-  get sharedProjectPages() {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId || !this.pages[projectId]) return undefined;
-
-    return this.pages[projectId]?.filter((p) => p.access === 0);
-  }
-
-  get archivedProjectPages() {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId || !this.archivedPages[projectId]) return undefined;
-
-    return this.archivedPages[projectId];
-  }
-
-  addToFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: this.pages[projectId].map((page) => {
-            if (page.id === pageId) {
-              return { ...page, is_favorite: true };
-            }
-            return page;
-          }),
-        };
-      });
-      await this.pageService.addPageToFavorites(workspaceSlug, projectId, pageId);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  removeFromFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: this.pages[projectId].map((page) => {
-            if (page.id === pageId) {
-              return { ...page, is_favorite: false };
-            }
-            return page;
-          }),
-        };
-      });
-      await this.pageService.removePageFromFavorites(workspaceSlug, projectId, pageId);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  fetchPages = async (workspaceSlug: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const response = await this.pageService.getPagesWithParams(workspaceSlug, projectId, "all");
-
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: response,
-        };
-        this.loader = false;
-        this.error = null;
-      });
-      return response;
-    } catch (error) {
-      console.error("Failed to fetch project pages in project store", error);
-      this.loader = false;
-      this.error = error;
-      throw error;
-    }
-  };
-
-  createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
-    try {
-      const response = await this.pageService.createPage(workspaceSlug, projectId, data);
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: [...this.pages[projectId], response],
-        };
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  updatePage = async (workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>) => {
-    try {
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: this.pages[projectId]?.map((page) => {
-            if (page.id === pageId) {
-              return { ...page, ...data };
-            }
-            return page;
-          }),
-        };
-      });
-
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, data);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  deletePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      runInAction(() => {
-        this.archivedPages = {
-          ...this.archivedPages,
-          [projectId]: this.archivedPages[projectId]?.filter((page) => page.id !== pageId),
-        };
-      });
-
-      const response = await this.pageService.deletePage(workspaceSlug, projectId, pageId);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  makePublic = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: this.pages[projectId]?.map((page) => ({
-            ...page,
-            access: page.id === pageId ? 0 : page.access,
-          })),
-        };
-      });
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  makePrivate = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      runInAction(() => {
-        this.pages = {
-          ...this.pages,
-          [projectId]: this.pages[projectId]?.map((page) => ({
-            ...page,
-            access: page.id === pageId ? 1 : page.access,
-          })),
-        };
-      });
-
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  fetchArchivedPages = async (workspaceSlug: string, projectId: string) => {
-    try {
-      const response = await this.pageService.getArchivedPages(workspaceSlug, projectId);
-      runInAction(() => {
-        this.archivedPages = {
-          ...this.archivedPages,
-          [projectId]: response,
-        };
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  archivePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      const archivedPage = this.pages[projectId]?.find((page) => page.id === pageId);
-
-      if (archivedPage) {
-        runInAction(() => {
-          this.pages = {
-            ...this.pages,
-            [projectId]: [...this.pages[projectId]?.filter((page) => page.id != pageId)],
-          };
-          this.archivedPages = {
-            ...this.archivedPages,
-            [projectId]: [
-              ...this.archivedPages[projectId],
-              { ...archivedPage, archived_at: renderDateFormat(new Date()) },
-            ],
-          };
+    const descriptionDisposer = reaction(
+      () => this.description_html,
+      (description_html) => {
+        //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
+        const { projectId, workspaceSlug } = this.rootStore.app.router;
+        if (!projectId || !workspaceSlug) return;
+        this.isSubmitting = "submitting";
+        this.pageService.patchPage(workspaceSlug, projectId, this.id, { description_html }).finally(() => {
+          runInAction(() => {
+            this.isSubmitting = "submitted";
+          });
         });
-      }
+      },
+      { delay: 3000 }
+    );
 
-      await this.pageService.archivePage(workspaceSlug, projectId, pageId);
-    } catch (error) {
-      throw error;
-    }
-  };
+    const pageTitleDisposer = reaction(
+      () => this.name,
+      (name) => {
+        const { projectId, workspaceSlug } = this.rootStore.app.router;
+        if (!projectId || !workspaceSlug) return;
+        this.isSubmitting = "submitting";
+        this.pageService
+          .patchPage(workspaceSlug, projectId, this.id, { name })
+          .catch(() => {
+            runInAction(() => {
+              this.name = this.oldName;
+            });
+          })
+          .finally(() => {
+            runInAction(() => {
+              this.isSubmitting = "submitted";
+            });
+          });
+      },
+      { delay: 2000 }
+    );
 
-  restorePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
-    try {
-      const restoredPage = this.archivedPages[projectId]?.find((page) => page.id === pageId);
+    this.disposers.push(descriptionDisposer, pageTitleDisposer);
+  }
 
-      if (restoredPage) {
-        runInAction(() => {
-          this.pages = {
-            ...this.pages,
-            [projectId]: [...this.pages[projectId], { ...restoredPage, archived_at: null }],
-          };
-          this.archivedPages = {
-            ...this.archivedPages,
-            [projectId]: [...this.archivedPages[projectId]?.filter((page) => page.id != pageId)],
-          };
-        });
-      }
-      await this.pageService.restorePage(workspaceSlug, projectId, pageId);
-    } catch (error) {
-      throw error;
-    }
-  };
+  updateName = action("updateName", async (name: string) => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.oldName = this.name;
+    this.name = name;
+  });
+
+  updateDescription = action("updateDescription", async (description_html: string) => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.description_html = description_html;
+  });
+
+  cleanup = action("cleanup", () => {
+    this.disposers.forEach((disposer) => {
+      disposer();
+    });
+  });
+
+  setIsSubmitting = action("setIsSubmitting", (isSubmitting: "submitting" | "submitted" | "saved") => {
+    this.isSubmitting = isSubmitting;
+  });
+
+  lockPage = action("lockPage", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.is_locked = true;
+
+    await this.pageService.lockPage(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => {
+        this.is_locked = false;
+      });
+    });
+  });
+
+  unlockPage = action("unlockPage", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.is_locked = false;
+
+    await this.pageService.unlockPage(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => {
+        this.is_locked = true;
+      });
+    });
+  });
+
+  /**
+   * Add Page to users favorites list
+   */
+  addToFavorites = action("addToFavorites", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.is_favorite = true;
+
+    await this.pageService.addPageToFavorites(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => {
+        this.is_favorite = false;
+      });
+    });
+  });
+
+  /**
+   * Remove page from the users favorites list
+   */
+  removeFromFavorites = action("removeFromFavorites", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.is_favorite = false;
+
+    await this.pageService.removePageFromFavorites(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => {
+        this.is_favorite = true;
+      });
+    });
+  });
+
+  /**
+   * make a page public
+   * @returns
+   */
+  makePublic = action("makePublic", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.access = 0;
+
+    this.pageService.patchPage(workspaceSlug, projectId, this.id, { access: 0 }).catch(() => {
+      runInAction(() => {
+        this.access = 1;
+      });
+    });
+  });
+
+  /**
+   * Make a page private
+   * @returns
+   */
+  makePrivate = action("makePrivate", async () => {
+    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    if (!projectId || !workspaceSlug) return;
+
+    this.access = 1;
+
+    this.pageService.patchPage(workspaceSlug, projectId, this.id, { access: 1 }).catch(() => {
+      runInAction(() => {
+        this.access = 0;
+      });
+    });
+  });
 }

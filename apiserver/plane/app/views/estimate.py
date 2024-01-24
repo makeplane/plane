@@ -19,16 +19,16 @@ class ProjectEstimatePointEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-            project = Project.objects.get(workspace__slug=slug, pk=project_id)
-            if project.estimate_id is not None:
-                estimate_points = EstimatePoint.objects.filter(
-                    estimate_id=project.estimate_id,
-                    project_id=project_id,
-                    workspace__slug=slug,
-                )
-                serializer = EstimatePointSerializer(estimate_points, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response([], status=status.HTTP_200_OK)
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
+        if project.estimate_id is not None:
+            estimate_points = EstimatePoint.objects.filter(
+                estimate_id=project.estimate_id,
+                project_id=project_id,
+                workspace__slug=slug,
+            )
+            serializer = EstimatePointSerializer(estimate_points, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
 
 
 class BulkEstimatePointEndpoint(BaseViewSet):
@@ -39,9 +39,13 @@ class BulkEstimatePointEndpoint(BaseViewSet):
     serializer_class = EstimateSerializer
 
     def list(self, request, slug, project_id):
-        estimates = Estimate.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).prefetch_related("points").select_related("workspace", "project")
+        estimates = (
+            Estimate.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            )
+            .prefetch_related("points")
+            .select_related("workspace", "project")
+        )
         serializer = EstimateReadSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -53,14 +57,18 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             )
 
         estimate_points = request.data.get("estimate_points", [])
-        
-        serializer = EstimatePointSerializer(data=request.data.get("estimate_points"), many=True)
+
+        serializer = EstimatePointSerializer(
+            data=request.data.get("estimate_points"), many=True
+        )
         if not serializer.is_valid():
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-        estimate_serializer = EstimateSerializer(data=request.data.get("estimate"))
+        estimate_serializer = EstimateSerializer(
+            data=request.data.get("estimate")
+        )
         if not estimate_serializer.is_valid():
             return Response(
                 estimate_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -135,7 +143,8 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
         estimate_points = EstimatePoint.objects.filter(
             pk__in=[
-                estimate_point.get("id") for estimate_point in estimate_points_data
+                estimate_point.get("id")
+                for estimate_point in estimate_points_data
             ],
             workspace__slug=slug,
             project_id=project_id,
@@ -157,10 +166,14 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 updated_estimate_points.append(estimate_point)
 
         EstimatePoint.objects.bulk_update(
-            updated_estimate_points, ["value"], batch_size=10,
+            updated_estimate_points,
+            ["value"],
+            batch_size=10,
         )
 
-        estimate_point_serializer = EstimatePointSerializer(estimate_points, many=True)
+        estimate_point_serializer = EstimatePointSerializer(
+            estimate_points, many=True
+        )
         return Response(
             {
                 "estimate": estimate_serializer.data,

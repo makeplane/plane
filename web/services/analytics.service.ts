@@ -7,7 +7,7 @@ import {
   IDefaultAnalyticsResponse,
   IExportAnalyticsFormData,
   ISaveAnalyticsFormData,
-} from "types";
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 

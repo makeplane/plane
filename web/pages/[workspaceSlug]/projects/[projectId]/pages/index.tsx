@@ -5,18 +5,20 @@ import { Tab } from "@headlessui/react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { PagesHeader } from "components/headers";
+import { Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
+import { useProjectPages } from "hooks/store/use-project-page";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -39,27 +41,28 @@ const SharedPagesList = dynamic<any>(() => import("components/pages").then((a) =
 });
 
 const ProjectPagesPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store
-  const {
-    page: { fetchPages, fetchArchivedPages },
-  } = useMobxStore();
+  const { currentUser, currentUserLoader } = useUser();
+
+  const { fetchProjectPages, fetchArchivedProjectPages, loader } = useProjectPages();
   // hooks
-  const {} = useUserAuth();
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API
   useSWR(
     workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchPages(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching archived pages from API
   useSWR(
     workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchArchivedPages(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   const currentTabValue = (tab: string | null) => {
@@ -80,6 +83,13 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         return 0;
     }
   };
+
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>

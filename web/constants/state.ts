@@ -1,11 +1,35 @@
-import { TStateGroups } from "types";
+import { TStateGroups } from "@plane/types";
 
-export const STATE_GROUP_COLORS: {
-  [key in TStateGroups]: string;
+export const STATE_GROUPS: {
+  [key in TStateGroups]: {
+    key: TStateGroups;
+    label: string;
+    color: string;
+  };
 } = {
-  backlog: "#d9d9d9",
-  unstarted: "#3f76ff",
-  started: "#f59e0b",
-  completed: "#16a34a",
-  cancelled: "#dc2626",
+  backlog: {
+    key: "backlog",
+    label: "Backlog",
+    color: "#d9d9d9",
+  },
+  unstarted: {
+    key: "unstarted",
+    label: "Unstarted",
+    color: "#3f76ff",
+  },
+  started: {
+    key: "started",
+    label: "Started",
+    color: "#f59e0b",
+  },
+  completed: {
+    key: "completed",
+    label: "Completed",
+    color: "#16a34a",
+  },
+  cancelled: {
+    key: "cancelled",
+    label: "Canceled",
+    color: "#dc2626",
+  },
 };

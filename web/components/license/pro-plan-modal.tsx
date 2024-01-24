@@ -1,7 +1,7 @@
 import { FC, Fragment, useState } from "react";
 import { Dialog, Transition, Tab } from "@headlessui/react";
 import { CheckCircle } from "lucide-react";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication } from "hooks/store";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -36,9 +36,10 @@ export const ProPlanModal: FC<ProPlanModalProps> = (props) => {
   const { isOpen, handleClose } = props;
   // store
   const {
-    trackEvent: { captureEvent },
-  } = useMobxStore();
+    eventTracker: { captureEvent },
+  } = useApplication();
   // states
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
 
   const handleProPlaneMonthRedirection = () => {

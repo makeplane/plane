@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
+// hooks
+import { useUser, useWorkspace } from "hooks/store";
 // ui
 import { Spinner } from "@plane/ui";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -14,17 +14,15 @@ export interface IUserAuthWrapper {
 
 export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
   const {
-    user: {
-      currentUser,
-      currentUserError,
-      fetchCurrentUser,
-      fetchCurrentUserInstanceAdminStatus,
-      fetchCurrentUserSettings,
-    },
-    workspace: { fetchWorkspaces },
-  } = useMobxStore();
+    currentUser,
+    currentUserError,
+    fetchCurrentUser,
+    fetchCurrentUserInstanceAdminStatus,
+    fetchCurrentUserSettings,
+  } = useUser();
+  const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // fetching user information
@@ -40,7 +38,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
-  useSWR(`USER_WORKSPACES_LIST`, () => fetchWorkspaces(), {
+  useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
 

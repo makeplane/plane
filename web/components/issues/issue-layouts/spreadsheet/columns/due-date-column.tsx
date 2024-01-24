@@ -1,54 +1,32 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
-import { ViewDueDateSelect } from "components/issues";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { DateDropdown } from "components/dropdowns";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetDueDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled } = props;
 
   return (
-    <>
-      <ViewDueDateSelect
-        issue={issue}
-        onChange={(val) => {
-          onChange(issue, { target_date: val });
-          if (issue.parent) {
-            mutateSubIssues(issue, { target_date: val });
-          }
-        }}
-        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-        noBorder
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <DateDropdown
+        value={issue.target_date}
+        onChange={(data) => onChange(issue, { target_date: data ? renderFormattedPayloadDate(data) : null })}
         disabled={disabled}
+        placeholder="Due date"
+        buttonVariant="transparent-with-text"
+        buttonClassName="rounded-none text-left"
+        buttonContainerClassName="w-full"
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <div className={`h-11`}>
-            <SpreadsheetDueDateColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
-        ))}
-    </>
+    </div>
   );
-};
+});

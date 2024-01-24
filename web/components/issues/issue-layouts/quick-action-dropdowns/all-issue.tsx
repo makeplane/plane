@@ -9,21 +9,21 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EProjectStore } from "store/command-palette.store";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, customActionButton } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  const { issue, handleDelete, handleUpdate, customActionButton, portalElement } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<IIssue | null>(null);
+  const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
@@ -36,6 +36,12 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
     );
   };
 
+  const duplicateIssuePayload = {
+    ...issue,
+    name: `${issue.name} (copy)`,
+  };
+  delete duplicateIssuePayload.id;
+
   return (
     <>
       <DeleteIssueModal
@@ -46,28 +52,25 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}
-        handleClose={() => {
+        onClose={() => {
           setCreateUpdateIssueModal(false);
-          setIssueToEdit(null);
+          setIssueToEdit(undefined);
         }}
-        // pre-populate date only if not editing
-        prePopulateData={!issueToEdit && createUpdateIssueModal ? { ...issue, name: `${issue.name} (copy)` } : {}}
-        data={issueToEdit}
+        data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
-        currentStore={EProjectStore.PROJECT}
+        storeType={EIssuesStoreType.PROJECT}
       />
       <CustomMenu
         placement="bottom-start"
         customButton={customActionButton}
+        portalElement={portalElement}
+        closeOnSelect
         ellipsis
-        menuButtonOnClick={(e) => e.stopPropagation()}
       >
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             handleCopyIssueLink();
           }}
         >
@@ -77,9 +80,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setIssueToEdit(issue);
             setCreateUpdateIssueModal(true);
           }}
@@ -90,9 +91,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -102,9 +101,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             setDeleteIssueModal(true);
           }}
         >

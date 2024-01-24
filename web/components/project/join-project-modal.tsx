@@ -1,13 +1,12 @@
 import { useState, Fragment } from "react";
 import { useRouter } from "next/router";
 import { Transition, Dialog } from "@headlessui/react";
+// hooks
+import { useProject, useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IProject } from "types";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import type { IProject } from "@plane/types";
 
 // type
 type TJoinProjectModalProps = {
@@ -21,11 +20,11 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   const { handleClose, isOpen, project, workspaceSlug } = props;
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    user: { joinProject },
-  }: RootStore = useMobxStore();
+    membership: { joinProject },
+  } = useUser();
+  const { fetchProjects } = useProject();
   // router
   const router = useRouter();
 
@@ -35,7 +34,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
     joinProject(workspaceSlug, [project.id])
       .then(() => {
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-        projectStore.fetchProjects(workspaceSlug);
+        fetchProjects(workspaceSlug);
         handleClose();
       })
       .finally(() => {

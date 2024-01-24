@@ -9,28 +9,30 @@ import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
+// FIXME: have to replace this once the issue details page is ready --issue-detail--
+// import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 // ui
 import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types
-import { IIssue } from "types";
-import { NextPageWithLayout } from "types/app";
+import { TIssue } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
+import { useProject } from "hooks/store";
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
-  description: "",
+  // description: "",
   description_html: "",
   estimate_point: null,
-  state: "",
+  state_id: "",
   priority: "low",
   target_date: new Date().toString(),
-  issue_cycle: null,
-  issue_module: null,
+  cycle_id: null,
+  module_id: null,
 };
 
 // services
@@ -45,8 +47,9 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   const [isRestoring, setIsRestoring] = useState(false);
   // hooks
   const { setToastAlert } = useToast();
+  const { getProjectById } = useProject();
 
-  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
+  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<TIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -58,15 +61,15 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-  const { reset, control, watch } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<TIssue>({
     defaultValues,
   });
 
   const submitChanges = useCallback(
-    async (formData: Partial<IIssue>) => {
+    async (formData: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
-      mutate<IIssue>(
+      mutate<TIssue>(
         ISSUE_DETAILS(archivedIssueId as string),
         (prevData) => {
           if (!prevData) return prevData;
@@ -79,7 +82,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         false
       );
 
-      const payload: Partial<IIssue> = {
+      const payload: Partial<TIssue> = {
         ...formData,
       };
 
@@ -116,7 +119,11 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         setToastAlert({
           type: "success",
           title: "Success",
-          message: `${issueDetails?.project_detail?.identifier}-${issueDetails?.sequence_id} is restored successfully under the project ${issueDetails?.project_detail?.name}`,
+          message:
+            issueDetails &&
+            `${getProjectById(issueDetails.project_id)?.identifier}-${
+              issueDetails?.sequence_id
+            } is restored successfully under the project ${getProjectById(issueDetails.project_id)?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
@@ -152,11 +159,13 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
                 </button>
               </div>
             )}
-            <div className="pointer-events-none space-y-5 divide-y-2 divide-custom-border-200 opacity-60">
+            {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+            {/* <div className="pointer-events-none space-y-5 divide-y-2 divide-custom-border-200 opacity-60">
               <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} uneditable />
-            </div>
+            </div> */}
           </div>
-          <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 p-5">
+          {/* FIXME: have to replace this once the issue details page is ready --issue-detail-- */}
+          {/* <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
@@ -164,7 +173,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
               watch={watch}
               uneditable
             />
-          </div>
+          </div> */}
         </div>
       ) : (
         <Loader className="flex h-full gap-5 p-5">

@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
-import { IProject } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { IProject } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {};
 
@@ -50,15 +50,18 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
+  // store hooks
   const {
-    workspace: { currentWorkspace },
-    project: { currentProjectDetails, updateProject },
-    user: { currentUser, currentProjectRole },
-    trackEvent: { setTrackElement, postHogEventTracker },
-  } = useMobxStore();
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  // hooks
+    eventTracker: { setTrackElement, postHogEventTracker },
+  } = useApplication();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const { currentProjectDetails, updateProject } = useProject();
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {
@@ -88,9 +91,8 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.[feature.property as keyof IProject]}
+            value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
-              console.log(currentProjectDetails?.[feature.property as keyof IProject]);
               setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
               postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
                 workspace_id: currentWorkspace?.id,

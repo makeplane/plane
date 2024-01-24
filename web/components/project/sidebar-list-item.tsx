@@ -18,20 +18,18 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 // hooks
+import { useApplication, useProject } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// types
-import { IProject } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
-  project: IProject;
+  projectId: string;
   provided?: DraggableProvided;
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
@@ -73,34 +71,37 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
-  // store
+  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  // store hooks
   const {
-    project: projectStore,
     theme: themeStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-  // toast
-  const { setToastAlert } = useToast();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId: URLProjectId } = router.query;
+  // toast alert
+  const { setToastAlert } = useToast();
+  // derived values
+  const project = getProjectById(projectId);
 
-  const isAdmin = project.member_role === 20;
-  const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
+  const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
+  const isViewerOrGuest =
+    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
 
   const isCollapsed = themeStore.sidebarCollapsed;
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleAddToFavorites = () => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !project) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -110,9 +111,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !project) return;
 
-    projectStore.removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -132,11 +133,13 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
+  if (!project) return null;
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
-      <Disclosure key={`${project.id} ${projectId}`} defaultOpen={projectId === project.id}>
+      <Disclosure key={`${project.id} ${URLProjectId}`} defaultOpen={URLProjectId === project.id}>
         {({ open }) => (
           <>
             <div
@@ -213,7 +216,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     </div>
                   }
                   className={`hidden flex-shrink-0 group-hover:block ${isMenuActive ? "!block" : ""}`}
-                  buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
+                  buttonClassName="!text-custom-sidebar-text-400"
                   ellipsis
                   placement="bottom-start"
                 >

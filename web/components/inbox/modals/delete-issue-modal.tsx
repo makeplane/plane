@@ -1,38 +1,27 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useToast from "hooks/use-toast";
+import { useProject } from "hooks/store";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "types";
+import type { TIssue } from "@plane/types";
 
 type Props = {
-  data: IInboxIssue;
+  data: TIssue;
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: () => Promise<void>;
 };
 
-export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
+export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, onSubmit, data }) => {
+  // states
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
-
-  const {
-    inboxIssueDetails: inboxIssueDetailsStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
-
-  const { setToastAlert } = useToast();
+  const { getProjectById } = useProject();
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -40,60 +29,13 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   };
 
   const handleDelete = () => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
-
     setIsDeleting(true);
-
-    inboxIssueDetailsStore
-      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue deleted successfully.",
-        });
-        postHogEventTracker(
-          "ISSUE_DELETED",
-          {
-            state: "SUCCESS",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
-          }
-        );
-        // remove inboxIssueId from the url
-        router.push({
-          pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-        });
-
-        handleClose();
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be deleted. Please try again.",
-        });
-        postHogEventTracker(
-          "ISSUE_DELETED",
-          {
-            state: "FAILED",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
-          }
-        );
-      })
-      .finally(() => setIsDeleting(false));
+    onSubmit().finally(() => setIsDeleting(false));
   };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -131,13 +73,13 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? The issue will only be deleted from the inbox and this action cannot be undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" tabIndex={1} onClick={handleDelete} loading={isDeleting}>

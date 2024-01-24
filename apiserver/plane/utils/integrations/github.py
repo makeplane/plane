@@ -10,7 +10,9 @@ from django.conf import settings
 
 def get_jwt_token():
     app_id = os.environ.get("GITHUB_APP_ID", "")
-    secret = bytes(os.environ.get("GITHUB_APP_PRIVATE_KEY", ""), encoding="utf8")
+    secret = bytes(
+        os.environ.get("GITHUB_APP_PRIVATE_KEY", ""), encoding="utf8"
+    )
     current_timestamp = int(datetime.now().timestamp())
     due_date = datetime.now() + timedelta(minutes=10)
     expiry = int(due_date.timestamp())

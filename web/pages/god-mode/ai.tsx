@@ -4,9 +4,9 @@ import { observer } from "mobx-react-lite";
 // layouts
 import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
-import { NextPageWithLayout } from "types/app";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { NextPageWithLayout } from "lib/types";
+// hooks
+import { useApplication } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // icons
@@ -18,7 +18,7 @@ const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
   // store
   const {
     instance: { fetchInstanceConfigurations, formattedConfig },
-  } = useMobxStore();
+  } = useApplication();
 
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 

@@ -8,7 +8,9 @@ from . import ProjectBaseModel
 
 class Estimate(ProjectBaseModel):
     name = models.CharField(max_length=255)
-    description = models.TextField(verbose_name="Estimate Description", blank=True)
+    description = models.TextField(
+        verbose_name="Estimate Description", blank=True
+    )
 
     def __str__(self):
         """Return name of the estimate"""

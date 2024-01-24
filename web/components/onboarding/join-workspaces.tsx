@@ -1,11 +1,12 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
 // hooks
-import useUser from "hooks/use-user";
+import { useUser } from "hooks/store";
 // components
 import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "components/onboarding";
 // types
-import { IWorkspace, TOnboardingSteps } from "types";
+import { IWorkspace, TOnboardingSteps } from "@plane/types";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -13,8 +14,11 @@ type Props = {
   setTryDiffAccount: () => void;
 };
 
-export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount }) => {
-  const { user } = useUser();
+export const JoinWorkspaces: React.FC<Props> = observer((props) => {
+  const { stepChange, setTryDiffAccount } = props;
+  // store hooks
+  const { currentUser } = useUser();
+  // form info
   const {
     handleSubmit,
     control,
@@ -30,7 +34,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
   });
 
   const handleNextStep = async () => {
-    if (!user) return;
+    if (!currentUser) return;
     await stepChange({ workspace_join: true, workspace_create: true });
   };
 
@@ -59,7 +63,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
           </div>
           <Workspace
             stepChange={stepChange}
-            user={user}
+            user={currentUser ?? undefined}
             control={control}
             handleSubmit={handleSubmit}
             setValue={setValue}
@@ -78,4 +82,4 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
       </div>
     </div>
   );
-};
+});

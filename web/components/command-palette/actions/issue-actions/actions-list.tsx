@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser, useIssues } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -11,11 +11,12 @@ import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   closePalette: () => void;
-  issueDetails: IIssue | undefined;
+  issueDetails: TIssue | undefined;
   pages: string[];
   setPages: (pages: string[]) => void;
   setPlaceholder: (placeholder: string) => void;
@@ -29,14 +30,16 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const {
     commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
-    projectIssues: { updateIssue },
-    user: { currentUser },
-  } = useMobxStore();
+  } = useApplication();
+  const { currentUser } = useUser();
 
   const { setToastAlert } = useToast();
 
-  const handleUpdateIssue = async (formData: Partial<IIssue>) => {
+  const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;
 
     const payload = { ...formData };
@@ -49,12 +52,12 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     if (!issueDetails || !assignee) return;
 
     closePalette();
-    const updatedAssignees = issueDetails.assignees ?? [];
+    const updatedAssignees = issueDetails.assignee_ids ?? [];
 
     if (updatedAssignees.includes(assignee)) updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
     else updatedAssignees.push(assignee);
 
-    handleUpdateIssue({ assignees: updatedAssignees });
+    handleUpdateIssue({ assignee_ids: updatedAssignees });
   };
 
   const deleteIssue = () => {
@@ -130,7 +133,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          {issueDetails?.assignees.includes(currentUser?.id ?? "") ? (
+          {issueDetails?.assignee_ids.includes(currentUser?.id ?? "") ? (
             <>
               <UserMinus2 className="h-3.5 w-3.5" />
               Un-assign from me

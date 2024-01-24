@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0014_alter_workspacememberinvite_unique_together'),
+        ("db", "0014_alter_workspacememberinvite_unique_together"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='issuecomment',
-            old_name='comment',
-            new_name='comment_stripped',
+            model_name="issuecomment",
+            old_name="comment",
+            new_name="comment_stripped",
         ),
         migrations.AddField(
-            model_name='issuecomment',
-            name='comment_html',
+            model_name="issuecomment",
+            name="comment_html",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='issuecomment',
-            name='comment_json',
+            model_name="issuecomment",
+            name="comment_json",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

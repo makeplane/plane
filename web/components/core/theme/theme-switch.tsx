@@ -46,7 +46,6 @@ export const ThemeSwitch: FC<Props> = (props) => {
       }
       onChange={onChange}
       input
-      width="w-full z-20"
     >
       {THEME_OPTIONS.map((themeOption) => (
         <CustomSelect.Option key={themeOption.value} value={themeOption}>

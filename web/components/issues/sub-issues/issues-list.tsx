@@ -1,93 +1,62 @@
-import { useEffect } from "react";
-import useSWR from "swr";
+import { FC } from "react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useIssueDetail } from "hooks/store";
 // components
-import { SubIssues } from "./issue";
+import { IssueListItem } from "./issue-list-item";
 // types
-import { IUser, IIssue } from "types";
-import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-// services
-import { IssueService } from "services/issue";
-// fetch keys
-import { SUB_ISSUES } from "constants/fetch-keys";
+import { TIssue } from "@plane/types";
+import { TSubIssueOperations } from "./root";
 
-export interface ISubIssuesRootList {
+export interface IIssueList {
   workspaceSlug: string;
   projectId: string;
-  parentIssue: IIssue;
-  spacingLeft?: number;
-  user: IUser | undefined;
-  editable: boolean;
-  removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
-  issuesLoader: ISubIssuesRootLoaders;
-  handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
-  copyText: (text: string) => void;
-  handleIssueCrudOperation: (
-    key: "create" | "existing" | "edit" | "delete",
+  parentIssueId: string;
+  spacingLeft: number;
+  disabled: boolean;
+  handleIssueCrudState: (
+    key: "create" | "existing" | "update" | "delete",
     issueId: string,
-    issue?: IIssue | null
+    issue?: TIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
-  handleDeleteIssue: (issue: IIssue) => Promise<void>
+  subIssueOperations: TSubIssueOperations;
 }
 
-const issueService = new IssueService();
+export const IssueList: FC<IIssueList> = observer((props) => {
+  const {
+    workspaceSlug,
+    projectId,
+    parentIssueId,
+    spacingLeft = 10,
+    disabled,
+    handleIssueCrudState,
+    subIssueOperations,
+  } = props;
+  // hooks
+  const {
+    subIssues: { subIssuesByIssueId },
+  } = useIssueDetail();
 
-export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
-  workspaceSlug,
-  projectId,
-  parentIssue,
-  spacingLeft = 10,
-  user,
-  editable,
-  removeIssueFromSubIssues,
-  issuesLoader,
-  handleIssuesLoader,
-  copyText,
-  handleIssueCrudOperation,
-  handleUpdateIssue,
-  handleDeleteIssue
-}) => {
-  const { data: issues, isLoading } = useSWR(
-    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issueService.subIssues(workspaceSlug, projectId, parentIssue.id)
-      : null
-  );
-
-  useEffect(() => {
-    if (isLoading) {
-      handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
-    } else {
-      if (issuesLoader.sub_issues.includes(parentIssue?.id)) {
-        handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
-      }
-    }
-  }, [handleIssuesLoader, isLoading, issuesLoader.sub_issues, parentIssue?.id]);
+  const subIssueIds = subIssuesByIssueId(parentIssueId);
 
   return (
     <>
       <div className="relative">
-        {issues &&
-          issues.sub_issues &&
-          issues.sub_issues.length > 0 &&
-          issues.sub_issues.map((issue: IIssue) => (
-            <SubIssues
-            handleDeleteIssue={handleDeleteIssue}
-              key={`${issue?.id}`}
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              parentIssue={parentIssue}
-              issue={issue}
-              spacingLeft={spacingLeft}
-              user={user}
-              editable={editable}
-              removeIssueFromSubIssues={removeIssueFromSubIssues}
-              issuesLoader={issuesLoader}
-              handleIssuesLoader={handleIssuesLoader}
-              copyText={copyText}
-              handleIssueCrudOperation={handleIssueCrudOperation}
-              handleUpdateIssue={handleUpdateIssue}
-            />
+        {subIssueIds &&
+          subIssueIds.length > 0 &&
+          subIssueIds.map((issueId) => (
+            <>
+              <IssueListItem
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                parentIssueId={parentIssueId}
+                issueId={issueId}
+                spacingLeft={spacingLeft}
+                disabled={disabled}
+                handleIssueCrudState={handleIssueCrudState}
+                subIssueOperations={subIssueOperations}
+              />
+            </>
           ))}
 
         <div
@@ -97,4 +66,4 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
       </div>
     </>
   );
-};
+});

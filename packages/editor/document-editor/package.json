@@ -1,6 +1,6 @@
 {
   "name": "@plane/document-editor",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Package that powers Plane's Pages Editor",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -28,14 +28,17 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.26.4",
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@plane/ui": "*",
+    "@tippyjs/react": "^4.2.6",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-placeholder": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
     "eslint-config-next": "13.2.4",
+    "lucide-react": "^0.309.0",
     "react-popper": "^2.3.0",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.1"

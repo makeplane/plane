@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import { IPage, IPageBlock, RecentPagesResponse, IIssue } from "types";
+import { IPage, IPageBlock, TIssue } from "@plane/types";
 
 export class PageService extends APIService {
   constructor() {
@@ -21,7 +21,7 @@ export class PageService extends APIService {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
-        console.log("error", error?.response?.data);
+        console.error("error", error?.response?.data);
         throw error?.response?.data;
       });
   }
@@ -50,6 +50,14 @@ export class PageService extends APIService {
       });
   }
 
+  async getProjectPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getPagesWithParams(
     workspaceSlug: string,
     projectId: string,
@@ -58,18 +66,6 @@ export class PageService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
       params: {
         page_view: pageType,
-      },
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getRecentPages(workspaceSlug: string, projectId: string): Promise<RecentPagesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
-      params: {
-        page_view: "recent",
       },
     })
       .then((response) => response?.data)
@@ -154,7 +150,7 @@ export class PageService extends APIService {
     projectId: string,
     pageId: string,
     blockId: string
-  ): Promise<IIssue> {
+  ): Promise<TIssue> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
     )

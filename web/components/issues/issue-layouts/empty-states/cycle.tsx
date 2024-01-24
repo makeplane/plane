@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -13,10 +12,10 @@ import { Button } from "@plane/ui";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 // types
-import { ISearchIssueResponse } from "types";
-import { EProjectStore } from "store/command-palette.store";
+import { ISearchIssueResponse } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
+import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -28,13 +27,15 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId } = props;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-
+  // store hooks
+  const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const {
-    cycleIssues: cycleIssueStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole: userRole },
-  } = useMobxStore();
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole: userRole },
+  } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -43,7 +44,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), cycleId.toString(), issueIds).catch(() => {
+    await issues.addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -52,7 +53,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
     });
   };
 
-  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -72,7 +73,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("CYCLE_EMPTY_STATE");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+              toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
             },
           }}
           secondaryButton={

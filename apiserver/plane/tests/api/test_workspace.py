@@ -14,7 +14,6 @@ class WorkSpaceCreateReadUpdateDelete(AuthenticatedAPITest):
         super().setUp()
 
     def test_create_workspace(self):
-
         url = reverse("workspace")
 
         # Test with empty data
@@ -32,7 +31,9 @@ class WorkSpaceCreateReadUpdateDelete(AuthenticatedAPITest):
 
         # Check other values
         workspace = Workspace.objects.get(pk=response.data["id"])
-        workspace_member = WorkspaceMember.objects.get(workspace=workspace, member_id=self.user_id)
+        workspace_member = WorkspaceMember.objects.get(
+            workspace=workspace, member_id=self.user_id
+        )
         self.assertEqual(workspace.owner_id, self.user_id)
         self.assertEqual(workspace_member.role, 20)
 

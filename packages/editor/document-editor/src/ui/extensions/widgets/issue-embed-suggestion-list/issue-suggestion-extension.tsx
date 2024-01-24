@@ -9,6 +9,8 @@ export const IssueEmbedSuggestions = Extension.create({
   addOptions() {
     return {
       suggestion: {
+        char: "#issue_",
+        allowSpaces: true,
         command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
         },
@@ -18,11 +20,8 @@ export const IssueEmbedSuggestions = Extension.create({
   addProseMirrorPlugins() {
     return [
       Suggestion({
-        char: "#issue_",
         pluginKey: new PluginKey("issue-embed-suggestions"),
         editor: this.editor,
-        allowSpaces: true,
-
         ...this.options.suggestion,
       }),
     ];

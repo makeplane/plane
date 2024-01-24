@@ -1,7 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-
+// hooks
+import { useMention, useWorkspace } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // components
@@ -9,10 +10,8 @@ import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
 import { Button } from "@plane/ui";
 import { Globe2, Lock } from "lucide-react";
-
 // types
-import type { IIssueActivity } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import type { IIssueActivity } from "@plane/types";
 
 const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",
@@ -47,13 +46,17 @@ const commentAccess: commentAccessType[] = [
 const fileService = new FileService();
 
 export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
+  // refs
   const editorRef = React.useRef<any>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
-  const editorSuggestions = useEditorSuggestions();
-
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -86,8 +89,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     onEnterKeyPress={handleSubmit(handleAddComment)}
                     cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
+                    deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                    restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"
@@ -99,8 +102,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                         ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
                         : undefined
                     }
-                    mentionSuggestions={editorSuggestions.mentionSuggestions}
-                    mentionHighlights={editorSuggestions.mentionHighlights}
+                    mentionSuggestions={mentionSuggestions}
+                    mentionHighlights={mentionHighlights}
                     submitButton={
                       <Button
                         variant="primary"

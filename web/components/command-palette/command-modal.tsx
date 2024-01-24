@@ -5,8 +5,8 @@ import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { FolderPlus, Search, Settings } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject } from "hooks/store";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
@@ -26,7 +26,7 @@ import {
 } from "components/command-palette";
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // types
-import { IWorkspaceSearchResults } from "types";
+import { IWorkspaceSearchResults } from "@plane/types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -35,6 +35,8 @@ const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
+  // hooks
+  const { getProjectById } = useProject();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -62,8 +64,8 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateIssueModal,
       toggleCreateProjectModal,
     },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   // router
   const router = useRouter();
@@ -135,6 +137,8 @@ export const CommandModal: React.FC = observer(() => {
     [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
   );
 
+  const projectDetails = getProjectById(issueDetails?.project_id ?? "");
+
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
       <Dialog as="div" className="relative z-30" onClose={() => closePalette()}>
@@ -188,7 +192,7 @@ export const CommandModal: React.FC = observer(() => {
                   >
                     {issueDetails && (
                       <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
-                        {issueDetails.project_detail.identifier}-{issueDetails.sequence_id} {issueDetails.name}
+                        {projectDetails?.identifier}-{issueDetails.sequence_id} {issueDetails.name}
                       </div>
                     )}
                     {projectId && (

@@ -65,13 +65,50 @@ export class FileService extends APIService {
 
   getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
     return async (file: File) => {
-      const formData = new FormData();
-      formData.append("asset", file);
-      formData.append("attributes", JSON.stringify({}));
+      try {
+        const formData = new FormData();
+        formData.append("asset", file);
+        formData.append("attributes", JSON.stringify({}));
 
-      const data = await this.uploadFile(workspaceSlug, formData);
-      return data.asset;
+        const data = await this.uploadFile(workspaceSlug, formData);
+        return data.asset;
+      } catch (e) {
+        console.error(e);
+      }
     };
+  }
+
+  getDeleteImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.deleteImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  getRestoreImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.restoreImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  extractAssetIdFromUrl(src: string, workspaceId: string): string {
+    const indexWhereAssetIdStarts = src.indexOf(workspaceId) + workspaceId.length + 1;
+    if (indexWhereAssetIdStarts === -1) {
+      throw new Error("Workspace ID not found in source string");
+    }
+    const assetUrl = src.substring(indexWhereAssetIdStarts);
+    return assetUrl;
   }
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {

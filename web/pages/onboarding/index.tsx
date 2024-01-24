@@ -7,8 +7,9 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // layouts
@@ -21,25 +22,29 @@ import { Avatar, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { IUser, TOnboardingSteps } from "types";
-import { NextPageWithLayout } from "types/app";
+import { IUser, TOnboardingSteps } from "@plane/types";
+import { NextPageWithLayout } from "lib/types";
 
 // services
 const workspaceService = new WorkspaceService();
 
 const OnboardingPage: NextPageWithLayout = observer(() => {
+  // states
   const [step, setStep] = useState<number | null>(null);
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
-
-  const {
-    user: { currentUser, updateCurrentUser, updateUserOnBoard },
-    workspace: workspaceStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+  // router
   const router = useRouter();
+  // store hooks
+  const {
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentUser, currentUserLoader, updateCurrentUser, updateUserOnBoard } = useUser();
+  const { workspaces, fetchWorkspaces } = useWorkspace();
+  // custom hooks
+  const {} = useUserAuth({ routeAuth: "onboarding", user: currentUser, isLoading: currentUserLoader });
 
   const user = currentUser ?? undefined;
-  const workspaces = workspaceStore.workspaces;
+  const workspacesList = Object.values(workspaces ?? {});
 
   const { setTheme } = useTheme();
 
@@ -49,7 +54,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     },
   });
 
-  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces(), {
+  useSWR(`USER_WORKSPACES_LIST`, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
 
@@ -72,7 +77,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   };
   // complete onboarding
   const finishOnboarding = async () => {
-    if (!user || !workspaces) return;
+    if (!user || !workspacesList) return;
 
     await updateUserOnBoard()
       .then(() => {
@@ -87,7 +92,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         console.log(error);
       });
 
-    router.replace(`/${workspaces[0].slug}`);
+    router.replace(`/${workspacesList[0]?.slug}`);
   };
 
   useEffect(() => {
@@ -100,14 +105,19 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
       const onboardingStep = user.onboarding_step;
 
-      if (!onboardingStep.workspace_join && !onboardingStep.workspace_create && workspaces && workspaces?.length > 0) {
+      if (
+        !onboardingStep.workspace_join &&
+        !onboardingStep.workspace_create &&
+        workspacesList &&
+        workspacesList?.length > 0
+      ) {
         await updateCurrentUser({
           onboarding_step: {
             ...user.onboarding_step,
             workspace_join: true,
             workspace_create: true,
           },
-          last_workspace_id: workspaces[0].id,
+          last_workspace_id: workspacesList[0]?.id,
         });
         setStep(2);
         return;
@@ -128,7 +138,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     };
 
     handleStepChange();
-  }, [user, invitations, step, updateCurrentUser, workspaces]);
+  }, [user, invitations, step, updateCurrentUser, workspacesList]);
 
   return (
     <>
@@ -226,7 +236,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                   finishOnboarding={finishOnboarding}
                   stepChange={stepChange}
                   user={user}
-                  workspace={workspaces?.[0]}
+                  workspace={workspacesList?.[0]}
                 />
               )}
             </div>

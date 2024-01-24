@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-
 // icons
 import { CheckCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "types";
+import type { TIssue } from "@plane/types";
+import { useProject } from "hooks/store";
 
 type Props = {
-  data: IInboxIssue;
+  data: TIssue;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -17,6 +17,8 @@ type Props = {
 
 export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSubmit }) => {
   const [isAccepting, setIsAccepting] = useState(false);
+  // hooks
+  const { getProjectById } = useProject();
 
   const handleClose = () => {
     setIsAccepting(false);
@@ -25,7 +27,6 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
 
   const handleAccept = () => {
     setIsAccepting(true);
-
     onSubmit().finally(() => setIsAccepting(false));
   };
 
@@ -69,7 +70,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to accept issue{" "}
                       <span className="break-all font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? Once accepted, this issue will be added to the project issues list.
                     </p>

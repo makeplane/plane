@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-
 // icons
 import { PhotoFilterIcon } from "@plane/ui";
 // helpers
@@ -11,7 +10,7 @@ type Props = { view: { key: string; label: string } };
 
 export const GlobalDefaultViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

@@ -5,19 +5,18 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
+import { CheckCircle2 } from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
 // hooks
-import useUser from "hooks/use-user";
+import { useApplication, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { CheckCircle2 } from "lucide-react";
 // images
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
@@ -25,44 +24,36 @@ import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { NextPageWithLayout } from "types/app";
-import type { IWorkspaceMemberInvitation } from "types";
+import { NextPageWithLayout } from "lib/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { ROLE } from "constants/workspace";
 // components
 import { EmptyState } from "components/common";
-// mobx-store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
 
 const UserInvitationsPage: NextPageWithLayout = observer(() => {
+  // states
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
-
-  // store
+  // store hooks
   const {
-    workspace: { workspaceSlug },
-    user: { currentUserSettings },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentUser, currentUserSettings } = useUser();
+  // router
   const router = useRouter();
-
+  // next-themes
   const { theme } = useTheme();
-
-  const { user } = useUser();
-
+  // toast alert
   const { setToastAlert } = useToast();
 
-  const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>("USER_WORKSPACE_INVITATIONS", () =>
-    workspaceService.userWorkspaceInvitations()
-  );
+  const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
 
   const redirectWorkspaceSlug =
-    workspaceSlug ||
     currentUserSettings?.workspace?.last_workspace_slug ||
     currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
@@ -137,7 +128,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           </div>
         </div>
         <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
-          {user?.email}
+          {currentUser?.email}
         </div>
       </div>
       {invitations ? (
@@ -162,7 +153,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                     >
                       <div className="flex-shrink-0">
                         <div className="grid h-9 w-9 place-items-center rounded">
-                          {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                          {invitation.workspace.logo && invitation.workspace.logo.trim() !== "" ? (
                             <img
                               src={invitation.workspace.logo}
                               height="100%"

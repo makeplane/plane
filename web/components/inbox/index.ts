@@ -1,8 +1,12 @@
 export * from "./modals";
-export * from "./actions-header";
-export * from "./filters-dropdown";
-export * from "./filters-list";
-export * from "./issue-activity";
-export * from "./issue-card";
-export * from "./issues-list-sidebar";
-export * from "./main-content";
+
+export * from "./inbox-issue-actions";
+export * from "./inbox-issue-status";
+
+export * from "./sidebar/root";
+
+export * from "./sidebar/filter/filter-selection";
+export * from "./sidebar/filter/applied-filters";
+
+export * from "./sidebar/inbox-list";
+export * from "./sidebar/inbox-list-item";

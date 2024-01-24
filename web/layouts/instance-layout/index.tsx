@@ -1,12 +1,9 @@
 import { FC, ReactNode } from "react";
-
-import useSWR from "swr";
-
-// route
 import { useRouter } from "next/router";
-// store
+import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // components
 import { Spinner } from "@plane/ui";
 import { InstanceNotReady } from "components/instance";
@@ -19,7 +16,7 @@ const InstanceLayout: FC<Props> = observer(({ children }) => {
   // store
   const {
     instance: { fetchInstanceInfo, instance },
-  } = useMobxStore();
+  } = useApplication();
 
   const router = useRouter();
   const isGodMode = router.pathname.includes("god-mode");

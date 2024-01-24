@@ -1,48 +1,44 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
-
+import { useRouter } from "next/router";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { useRouter } from "next/router";
 import { EIssueActions } from "../../types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ModuleSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, moduleId } = router.query as { workspaceSlug: string; moduleId: string };
 
-  const {
-    moduleIssues: moduleIssueStore,
-    moduleIssuesFilter: moduleIssueFilterStore,
-    module: { fetchModuleDetails },
-  } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
 
-      await moduleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId);
-      fetchModuleDetails(workspaceSlug, issue.project, moduleId);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
-      await moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
-      fetchModuleDetails(workspaceSlug, issue.project, moduleId);
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
-      await moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
-      fetchModuleDetails(workspaceSlug, issue.project, moduleId);
-    },
-  };
+        issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId);
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
+        issues.removeIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
+      },
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
+        issues.removeIssueFromModule(workspaceSlug, issue.project_id, moduleId, issue.id);
+      },
+    }),
+    [issues, workspaceSlug, moduleId]
+  );
 
   return (
     <BaseSpreadsheetRoot
-      issueStore={moduleIssueStore}
-      issueFiltersStore={moduleIssueFilterStore}
+      issueStore={issues}
+      issueFiltersStore={issuesFilter}
       viewId={moduleId}
       issueActions={issueActions}
       QuickActions={ModuleIssueQuickActions}

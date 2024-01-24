@@ -34,8 +34,32 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
 };
 
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
-  else editor.chain().focus().toggleCodeBlock().run();
+  // Check if code block is active then toggle code block
+  if (editor.isActive("codeBlock")) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      return;
+    }
+    editor.chain().focus().toggleCodeBlock().run();
+    return;
+  }
+
+  // Check if user hasn't selected any text
+  const isSelectionEmpty = editor.state.selection.empty;
+
+  if (isSelectionEmpty) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      return;
+    }
+    editor.chain().focus().toggleCodeBlock().run();
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCode().run();
+      return;
+    }
+    editor.chain().focus().toggleCode().run();
+  }
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
@@ -59,8 +83,8 @@ export const toggleStrike = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBlockquote = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run();
-  else editor.chain().focus().toggleNode("paragraph", "paragraph").toggleBlockquote().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleBlockquote().run();
+  else editor.chain().focus().toggleBlockquote().run();
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {

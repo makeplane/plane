@@ -1,6 +1,9 @@
 import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -13,26 +16,21 @@ import {
   ProjectDetailsFormLoader,
 } from "components/project";
 // types
-import { NextPageWithLayout } from "types/app";
-// fetch-keys
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
+import { NextPageWithLayout } from "lib/types";
 
 const GeneralSettingsPage: NextPageWithLayout = observer(() => {
-  // store
-  const { project: projectStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { currentProjectDetails, fetchProjectDetails } = useProject();
   // api call to fetch project details
+  // TODO: removed this API if not necessary
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);

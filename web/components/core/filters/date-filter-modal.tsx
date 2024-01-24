@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import { Dialog, Transition } from "@headlessui/react";
-
 // components
 import { DateFilterSelect } from "./date-filter-select";
 // ui
@@ -10,7 +9,7 @@ import { Button } from "@plane/ui";
 // icons
 import { X } from "lucide-react";
 // helpers
-import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 
 type Props = {
   title: string;
@@ -39,8 +38,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
   const handleFormSubmit = (formData: TFormValues) => {
     const { filterType, date1, date2 } = formData;
 
-    if (filterType === "range") onSelect([`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`]);
-    else onSelect([`${renderDateFormat(date1)};${filterType}`]);
+    if (filterType === "range") onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
+    else onSelect([`${renderFormattedPayloadDate(date1)};${filterType}`]);
 
     handleClose();
   };
@@ -121,9 +120,9 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                   {watch("filterType") === "range" && (
                     <h6 className="flex items-center gap-1 text-xs">
                       <span className="text-custom-text-200">After:</span>
-                      <span>{renderShortDateWithYearFormat(watch("date1"))}</span>
+                      <span>{renderFormattedDate(watch("date1"))}</span>
                       <span className="ml-1 text-custom-text-200">Before:</span>
-                      {!isInvalid && <span>{renderShortDateWithYearFormat(watch("date2"))}</span>}
+                      {!isInvalid && <span>{renderFormattedDate(watch("date2"))}</span>}
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
