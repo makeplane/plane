@@ -135,7 +135,7 @@
           </p>
           {% endif %}
           <!-- Outer update Box start -->
-          {% if data  %}
+          {% if data %}
           <div
             style="
               background-color: #f7f9ff;
@@ -866,41 +866,6 @@
                   {% endfor %}
                 </tr>
               </table>
-              {% endif %} {% if update.changes.description %}
-              <!-- Description changed -->
-              <table
-                role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
-              >
-                <tr>
-                  <td valign="top">
-                    <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #525252;
-                        margin-right: 5px;
-                      "
-                    >
-                      Description:
-                    </p>
-                  </td>
-                  <td valign="top" style="padding-top: 0px">
-                    <span
-                      style="
-                        font-size: 0.8rem;
-                        line-height: 24px;
-                        color: #525252;
-                        padding-right: 30px;
-                      "
-                    >
-                      Email Preferences User Stories The issue created for this
-                      feature is available on the Product+Design project and is
-                      identified as DES-163.
-                    </span>
-                  </td>
-                </tr>
-              </table>
               {% endif %}
             </div>
           </div>
@@ -985,20 +950,20 @@
                       <td>
                         <div
                           style="
-                            padding-left: 10px;
-                            padding-right: 10px;
-                            line-height: 24px;
-                            padding-top: 5px;
+                            padding: 6px 10px;
                             margin-left: 10px;
-                            padding-bottom: 15px;
                             background-color: white;
                             font-size: 0.8rem;
                             color: #525252;
                             margin-top: 5px;
                             border-radius: 4px;
+                            display: flex;
+                            align-items: center;
                           "
                         >
+                        <p>
                           {{ actor_comment|safe }}
+                        </p>
                         </div>
                       </td>
                     </tr>
