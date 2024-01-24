@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMention, useUser } from "hooks/store";
+import { useMention, useUser, useWorkspace } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // icons
@@ -29,6 +29,9 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, handleCommentDeletion, onSubmit, showAccessSpecifier = false, workspaceSlug } = props;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
+
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
@@ -102,8 +105,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 onEnterKeyPress={handleSubmit(onEnter)}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.deleteImage}
-                restoreFile={fileService.restoreImage}
+                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                 ref={editorRef}
                 value={watch("comment_html") ?? ""}
                 debouncedUpdatesEnabled={false}

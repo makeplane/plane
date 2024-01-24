@@ -6,7 +6,7 @@ import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // editor
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // hooks
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject } from "hooks/store";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
@@ -85,6 +85,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store hooks
   const {
     config: { envConfig },
@@ -384,8 +387,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     <RichTextEditorWithRef
                       cancelUploadImage={fileService.cancelUpload}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                      deleteFile={fileService.deleteImage}
-                      restoreFile={fileService.restoreImage}
+                      deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                      restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                       ref={editorRef}
                       debouncedUpdatesEnabled={false}
                       value={
