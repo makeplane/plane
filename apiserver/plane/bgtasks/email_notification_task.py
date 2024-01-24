@@ -163,21 +163,22 @@ def send_email_notification(
                     },
                 }
             )
-        activity_time = changes.pop("activity_time")
-        template_data.append(
-            {
-                "actor_detail": {
-                    "avatar_url": actor.avatar,
-                    "first_name": actor.first_name,
-                    "last_name": actor.last_name,
-                },
-                "changes": changes,
-                "issue_details": {
-                    "name": issue.name,
-                    "identifier": f"{issue.project.identifier}-{issue.sequence_id}",
-                },
-                "activity_time": str(activity_time),
-            }
+        if changes:
+            activity_time = changes.pop("activity_time")
+            template_data.append(
+                {
+                    "actor_detail": {
+                        "avatar_url": actor.avatar,
+                        "first_name": actor.first_name,
+                        "last_name": actor.last_name,
+                    },
+                    "changes": changes,
+                    "issue_details": {
+                        "name": issue.name,
+                        "identifier": f"{issue.project.identifier}-{issue.sequence_id}",
+                    },
+                    "activity_time": str(activity_time),
+                }
         )
 
     span = f"""<span style='
