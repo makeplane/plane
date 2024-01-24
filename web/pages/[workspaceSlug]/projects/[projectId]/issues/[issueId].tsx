@@ -59,6 +59,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
             issueId={issueId.toString()}
+            is_archived={!!issue?.archived_at}
           />
         )
       )}

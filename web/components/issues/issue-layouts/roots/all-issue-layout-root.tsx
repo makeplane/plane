@@ -53,13 +53,16 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     }
   );
 
-  const canEditProperties = (projectId: string | undefined) => {
-    if (!projectId) return false;
+  const canEditProperties = useCallback(
+    (projectId: string | undefined) => {
+      if (!projectId) return false;
 
-    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
+      const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
-    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  };
+      return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+    },
+    [currentWorkspaceAllProjectsRole]
+  );
 
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
 

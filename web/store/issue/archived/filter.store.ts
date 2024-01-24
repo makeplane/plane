@@ -194,6 +194,9 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
             });
           });
 
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.archivedIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+
           this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
             display_filters: _filters.displayFilters,
           });
