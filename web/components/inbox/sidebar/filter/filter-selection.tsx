@@ -1,30 +1,31 @@
-import { useRouter } from "next/router";
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
-
 // mobx store
-import { useInboxFilters } from "hooks/store";
+import { useInboxIssues } from "hooks/store";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
 import { PriorityIcon } from "@plane/ui";
 // types
-import { IInboxFilterOptions } from "@plane/types";
+import { TInboxIssueFilterOptions } from "@plane/types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 import { ISSUE_PRIORITIES } from "constants/issue";
 
-export const FiltersDropdown: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
+type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string; inboxId: string };
 
-  const { inboxFilters, updateInboxFilters } = useInboxFilters();
+export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observer((props) => {
+  const { workspaceSlug, projectId, inboxId } = props;
+  // hooks
+  const {
+    filters: { inboxFilters, updateInboxFilters },
+  } = useInboxIssues();
 
-  const filters = inboxId ? inboxFilters[inboxId.toString()]?.filters : undefined;
+  const filters = inboxFilters?.filters;
 
   let filtersLength = 0;
   Object.keys(filters ?? {}).forEach((key) => {
-    const filterKey = key as keyof IInboxFilterOptions;
-
+    const filterKey = key as keyof TInboxIssueFilterOptions;
     if (filters?.[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
   });
 
@@ -35,7 +36,7 @@ export const FiltersDropdown: React.FC = observer(() => {
         onSelect={(option) => {
           if (!workspaceSlug || !projectId || !inboxId) return;
 
-          const key = option.key as keyof IInboxFilterOptions;
+          const key = option.key as keyof TInboxIssueFilterOptions;
           const currentValue: any[] = filters?.[key] ?? [];
 
           const valueExists = currentValue.includes(option.value);
@@ -74,20 +75,28 @@ export const FiltersDropdown: React.FC = observer(() => {
           {
             id: "inbox_status",
             label: "Status",
-            value: INBOX_STATUS.map((status) => status.value),
+            value: INBOX_STATUS.map((status) => status.status),
             hasChildren: true,
             children: INBOX_STATUS.map((status) => ({
-              id: status.key,
-              label: status.label,
+              id: status.status.toString(),
+              label: (
+                <div className="relative inline-flex gap-2 items-center">
+                  <div className={status.textColor(false)}>
+                    <status.icon size={12} />
+                  </div>
+                  <div>{status.title}</div>
+                </div>
+              ),
               value: {
                 key: "inbox_status",
-                value: status.value,
+                value: status.status,
               },
-              selected: filters?.inbox_status?.includes(status.value),
+              selected: filters?.inbox_status?.includes(status.status),
             })),
           },
         ]}
       />
+
       {filtersLength > 0 && (
         <div className="absolute -right-2 -top-2 z-10 grid h-4 w-4 place-items-center rounded-full border border-custom-border-200 bg-custom-background-80 text-[0.65rem] text-custom-text-100">
           <span>{filtersLength}</span>

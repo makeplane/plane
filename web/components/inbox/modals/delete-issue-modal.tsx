@@ -1,39 +1,27 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useProject } from "hooks/store";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "@plane/types";
-import { useInboxIssues } from "hooks/store/use-inbox-issues";
+import type { TIssue } from "@plane/types";
 
 type Props = {
-  data: IInboxIssue;
+  data: TIssue;
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: () => Promise<void>;
 };
 
-export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
+export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, onSubmit, data }) => {
   // states
   const [isDeleting, setIsDeleting] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
-  // store hooks
-  const { deleteIssue } = useInboxIssues();
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
-  const { currentWorkspace } = useWorkspace();
-  const { getProjectById } = useProject();
 
-  const { setToastAlert } = useToast();
+  const { getProjectById } = useProject();
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -41,59 +29,13 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   };
 
   const handleDelete = () => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
-
     setIsDeleting(true);
-
-    deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue deleted successfully.",
-        });
-        postHogEventTracker(
-          "ISSUE_DELETED",
-          {
-            state: "SUCCESS",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
-        // remove inboxIssueId from the url
-        router.push({
-          pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-        });
-
-        handleClose();
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be deleted. Please try again.",
-        });
-        postHogEventTracker(
-          "ISSUE_DELETED",
-          {
-            state: "FAILED",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
-      })
-      .finally(() => setIsDeleting(false));
+    onSubmit().finally(() => setIsDeleting(false));
   };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -137,7 +79,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" tabIndex={1} onClick={handleDelete} loading={isDeleting}>

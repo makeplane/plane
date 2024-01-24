@@ -111,6 +111,7 @@ from .inbox import (
     InboxSerializer,
     InboxIssueSerializer,
     IssueStateInboxSerializer,
+    InboxIssueLiteSerializer,
 )
 
 from .analytic import AnalyticViewSerializer

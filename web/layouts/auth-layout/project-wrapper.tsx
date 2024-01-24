@@ -30,14 +30,14 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { fetchInboxesList, isInboxEnabled } = useInbox();
+  const { fetchInboxes } = useInbox();
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
-  const { getProjectById, fetchProjectDetails } = useProject();
+  const { getProjectById, fetchProjectDetails, currentProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
   const { fetchViews } = useProjectView();
@@ -96,11 +96,13 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null
   );
-  // fetching project inboxes if inbox is enabled
+  // fetching project inboxes if inbox is enabled in project settings
   useSWR(
-    workspaceSlug && projectId && isInboxEnabled ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId && isInboxEnabled
-      ? () => fetchInboxesList(workspaceSlug.toString(), projectId.toString())
+    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails.inbox_view
+      ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}`
+      : null,
+    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails.inbox_view
+      ? () => fetchInboxes(workspaceSlug.toString(), projectId.toString())
       : null,
     {
       revalidateOnFocus: false,

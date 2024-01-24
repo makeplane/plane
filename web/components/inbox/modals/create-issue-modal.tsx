@@ -58,7 +58,9 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
   // store hooks
-  const { createIssue } = useInboxIssues();
+  const {
+    issues: { createInboxIssue },
+  } = useInboxIssues();
   const {
     config: { envConfig },
     eventTracker: { postHogEventTracker },
@@ -85,10 +87,10 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
-    await createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
+    await createInboxIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
       .then((res) => {
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.id}`);
           handleClose();
         } else reset(defaultValues);
         postHogEventTracker(

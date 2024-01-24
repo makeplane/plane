@@ -27,10 +27,15 @@ export type TIssueOperations = {
     showToast?: boolean
   ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
+  addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  addIssueToModule?: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromModule?: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string
+  ) => Promise<void>;
 };
 
 export type TIssueDetailRoot = {
