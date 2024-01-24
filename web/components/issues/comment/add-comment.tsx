@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 // hooks
-import { useMention } from "hooks/store";
+import { useMention, useWorkspace } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // components
@@ -51,6 +51,9 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
@@ -86,8 +89,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     onEnterKeyPress={handleSubmit(handleAddComment)}
                     cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
+                    deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                    restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"

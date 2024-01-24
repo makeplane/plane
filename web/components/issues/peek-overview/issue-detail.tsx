@@ -10,7 +10,6 @@ interface IPeekOverviewIssueDetails {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  is_archived: boolean;
   disabled: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;

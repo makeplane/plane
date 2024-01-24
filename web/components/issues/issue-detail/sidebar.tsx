@@ -154,12 +154,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
           <div className="flex flex-wrap items-center gap-2">
             {currentUser && !is_archived && (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
-              <IssueSubscription
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                currentUserId={currentUser?.id}
-              />
+              <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
             )}
 
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (

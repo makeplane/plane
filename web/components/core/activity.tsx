@@ -26,7 +26,7 @@ import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "@plane/types";
 
-const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
+export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -94,7 +94,7 @@ const EstimatePoint = observer((props: { point: string }) => {
   const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
   const currentPoint = Number(point) + 1;
 
-  const estimateValue = getEstimatePointValue(Number(point));
+  const estimateValue = getEstimatePointValue(Number(point), null);
 
   return (
     <span className="font-medium text-custom-text-100">
@@ -142,8 +142,18 @@ const activityDetails: {
   },
   archived_at: {
     message: (activity) => {
-      if (activity.new_value === "restore") return "restored the issue.";
-      else return "archived the issue.";
+      if (activity.new_value === "restore")
+        return (
+          <>
+            restored <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            archived <IssueLink activity={activity} />
+          </>
+        );
     },
     icon: <ArchiveIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
@@ -229,8 +239,18 @@ const activityDetails: {
   },
   issue: {
     message: (activity) => {
-      if (activity.verb === "created") return "created the issue.";
-      else return "deleted an issue.";
+      if (activity.verb === "created")
+        return (
+          <>
+            created <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            deleted <IssueLink activity={activity} />
+          </>
+        );
     },
     icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
@@ -341,7 +361,9 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            <span className="flex-shrink-0">added this issue to the cycle </span>
+            <span className="flex-shrink-0">
+              added {showIssue ? <IssueLink activity={activity} /> : "this issue"} to the cycle{" "}
+            </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
@@ -369,7 +391,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the issue from the cycle{" "}
+            removed <IssueLink activity={activity} /> from the cycle{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
@@ -388,7 +410,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            added this issue to the module{" "}
+            added {showIssue ? <IssueLink activity={activity} /> : "this issue"} to the module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -416,7 +438,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the issue from the module{" "}
+            removed <IssueLink activity={activity} /> from the module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
@@ -491,11 +513,11 @@ const activityDetails: {
     icon: <SignalMediumIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   relates_to: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
-            marked that this issue relates to{" "}
+            marked that {showIssue ? <IssueLink activity={activity} /> : "this issue"} relates to{" "}
             <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
           </>
         );
@@ -509,11 +531,11 @@ const activityDetails: {
     icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
   },
   blocking: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
-            marked this issue is blocking issue{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is blocking issue{" "}
             <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
           </>
         );
@@ -527,18 +549,18 @@ const activityDetails: {
     icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
   },
   blocked_by: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
-            marked this issue is being blocked by{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is being blocked by{" "}
             <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed this issue being blocked by issue{" "}
+            removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} being blocked by issue{" "}
             <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );
@@ -546,18 +568,18 @@ const activityDetails: {
     icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
   },
   duplicate: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
-            marked this issue as duplicate of{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} as duplicate of{" "}
             <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed this issue as a duplicate of{" "}
+            removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} as a duplicate of{" "}
             <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );

@@ -27,6 +27,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     onChange,
     options,
     onOpen,
+    onClose,
     optionsClassName = "",
     value,
     tabIndex,
@@ -58,7 +59,10 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
+  const closeDropdown = () => {
+    setIsOpen(false);
+    onClose && onClose();
+  };
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
   useOutsideClickDetector(dropdownRef, closeDropdown);
 

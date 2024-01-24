@@ -6,19 +6,29 @@ import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { IssuePeekOverview } from "components/issues";
-import { DashboardProjectEmptyState, DashboardWidgets } from "components/dashboard";
+import { DashboardWidgets } from "components/dashboard";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Spinner } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
   const {
+    commandPalette: { toggleCreateProjectModal },
     eventTracker: { postHogEventTracker },
     router: { workspaceSlug },
   } = useApplication();
-  const { currentUser, updateTourCompleted } = useUser();
+  const {
+    currentUser,
+    updateTourCompleted,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
+
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "dashboard", currentUser?.theme.theme === "light");
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -41,6 +51,8 @@ export const WorkspaceDashboardView = observer(() => {
     fetchHomeDashboardWidgets(workspaceSlug);
   }, [fetchHomeDashboardWidgets, workspaceSlug]);
 
+  const isEditingAllowed = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
   return (
     <>
       <IssuePeekOverview />
@@ -52,7 +64,27 @@ export const WorkspaceDashboardView = observer(() => {
       {homeDashboardId && joinedProjectIds ? (
         <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
           {currentUser && <UserGreetingsView user={currentUser} />}
-          {joinedProjectIds.length > 0 ? <DashboardWidgets /> : <DashboardProjectEmptyState />}
+          {joinedProjectIds.length > 0 ? (
+            <DashboardWidgets />
+          ) : (
+            <EmptyState
+              image={emptyStateImage}
+              title="Overview of your projects, activity, and metrics"
+              description=" Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this
+            page will transform into a space that helps you progress. Admins will also see items which help their team
+            progress."
+              primaryButton={{
+                text: "Build your first project",
+                onClick: () => toggleCreateProjectModal(true),
+              }}
+              comicBox={{
+                title: "Everything starts with a project in Plane",
+                description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+              }}
+              size="lg"
+              disabled={!isEditingAllowed}
+            />
+          )}
         </div>
       ) : (
         <div className="h-full w-full grid place-items-center">

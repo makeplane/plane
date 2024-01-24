@@ -9,6 +9,7 @@ import { IProjectView } from "@plane/types";
 
 export interface IProjectViewStore {
   //Loaders
+  loader: boolean;
   fetchedMap: Record<string, boolean>;
   // observables
   viewMap: Record<string, IProjectView>;
@@ -17,7 +18,7 @@ export interface IProjectViewStore {
   // computed actions
   getViewById: (viewId: string) => IProjectView;
   // fetch actions
-  fetchViews: (workspaceSlug: string, projectId: string) => Promise<IProjectView[]>;
+  fetchViews: (workspaceSlug: string, projectId: string) => Promise<undefined | IProjectView[]>;
   fetchViewDetails: (workspaceSlug: string, projectId: string, viewId: string) => Promise<IProjectView>;
   // CRUD actions
   createView: (workspaceSlug: string, projectId: string, data: Partial<IProjectView>) => Promise<IProjectView>;
@@ -35,6 +36,7 @@ export interface IProjectViewStore {
 
 export class ProjectViewStore implements IProjectViewStore {
   // observables
+  loader: boolean = false;
   viewMap: Record<string, IProjectView> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
@@ -46,6 +48,7 @@ export class ProjectViewStore implements IProjectViewStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
+      loader: observable.ref,
       viewMap: observable,
       fetchedMap: observable,
       // computed
@@ -88,16 +91,24 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param projectId
    * @returns Promise<IProjectView[]>
    */
-  fetchViews = async (workspaceSlug: string, projectId: string) =>
-    await this.viewService.getViews(workspaceSlug, projectId).then((response) => {
-      runInAction(() => {
-        response.forEach((view) => {
-          set(this.viewMap, [view.id], view);
+  fetchViews = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      await this.viewService.getViews(workspaceSlug, projectId).then((response) => {
+        runInAction(() => {
+          response.forEach((view) => {
+            set(this.viewMap, [view.id], view);
+          });
+          set(this.fetchedMap, projectId, true);
+          this.loader = false;
         });
-        set(this.fetchedMap, projectId, true);
+        return response;
       });
-      return response;
-    });
+    } catch (error) {
+      this.loader = false;
+      return undefined;
+    }
+  };
 
   /**
    * Fetches view details for a specific view

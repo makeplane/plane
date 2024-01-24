@@ -64,14 +64,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { activity, setPeekIssue, isAnyModalOpen, isDeleteIssueModalOpen, toggleDeleteIssueModal } = useIssueDetail();
+  const { setPeekIssue, isAnyModalOpen, isDeleteIssueModalOpen, toggleDeleteIssueModal } = useIssueDetail();
   const { currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { setToastAlert } = useToast();
   // derived values
-  const issueActivity = activity.getActivitiesByIssueId(issueId);
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
   const issue = getIssueById(issueId);
 
@@ -188,12 +187,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
                   {currentUser && !is_archived && (
-                    <IssueSubscription
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      issueId={issueId}
-                      currentUserId={currentUser?.id}
-                    />
+                    <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                   )}
                   <button onClick={handleCopyText}>
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
@@ -218,15 +212,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
                       <div className="relative flex flex-col gap-3 px-8 py-5">
-                        {is_archived && (
-                          <div className="absolute left-0 top-0 z-[9] flex h-full min-h-full w-full items-center justify-center bg-custom-background-100 opacity-60" />
-                        )}
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          is_archived={is_archived}
                           disabled={disabled}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -248,15 +238,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         />
                       </div>
                     ) : (
-                      <div className={`flex h-full w-full overflow-auto ${is_archived ? "opacity-60" : ""}`}>
+                      <div className={`flex h-full w-full overflow-auto`}>
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
-                          <div className={is_archived ? "pointer-events-none" : ""}>
+                          <div>
                             <PeekOverviewIssueDetails
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
                               issueId={issueId}
                               issueOperations={issueOperations}
-                              is_archived={is_archived}
                               disabled={disabled}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}

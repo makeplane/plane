@@ -87,6 +87,7 @@ def archive_old_issues():
                             current_instance=json.dumps({"archived_at": None}),
                             subscriber=False,
                             epoch=int(timezone.now().timestamp()),
+                            notification=True,
                         )
                         for issue in issues_to_update
                     ]
@@ -169,6 +170,7 @@ def close_old_issues():
                             current_instance=None,
                             subscriber=False,
                             epoch=int(timezone.now().timestamp()),
+                            notification=True,
                         )
                         for issue in issues_to_update
                     ]

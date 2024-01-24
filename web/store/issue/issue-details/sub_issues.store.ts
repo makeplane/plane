@@ -28,7 +28,9 @@ export interface IIssueSubIssuesStoreActions {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    data: Partial<TIssue>
+    issueData: Partial<TIssue>,
+    oldIssue?: Partial<TIssue>,
+    fromModal?: boolean
   ) => Promise<void>;
   removeSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
   deleteSubIssue: (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => Promise<void>;
@@ -100,11 +102,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   setSubIssueHelpers = (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => {
     if (!parentIssueId || !key || !value) return;
 
-    update(this.subIssueHelpers, [parentIssueId, key], (subIssueHelpers: string[]) => {
-      if (!subIssueHelpers || subIssueHelpers.length <= 0) return [value];
-      else if (subIssueHelpers.includes(value)) pull(subIssueHelpers, value);
-      else concat(subIssueHelpers, value);
-      return subIssueHelpers;
+    update(this.subIssueHelpers, [parentIssueId, key], (_subIssueHelpers: string[] = []) => {
+      if (_subIssueHelpers.includes(value)) return pull(_subIssueHelpers, value);
+      return concat(_subIssueHelpers, value);
     });
   };
 
@@ -169,16 +169,60 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     projectId: string,
     parentIssueId: string,
     issueId: string,
-    data: Partial<TIssue>
+    issueData: Partial<TIssue>,
+    oldIssue: Partial<TIssue> = {},
+    fromModal: boolean = false
   ) => {
     try {
-      await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+      if (!fromModal)
+        await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
+          workspaceSlug,
+          projectId,
+          issueId,
+          issueData
+        );
 
-      if (data.hasOwnProperty("parent_id") && data.parent_id !== parentIssueId) {
+      // parent update
+      if (issueData.hasOwnProperty("parent_id") && issueData.parent_id !== oldIssue.parent_id) {
         runInAction(() => {
-          pull(this.subIssues[parentIssueId], issueId);
+          if (oldIssue.parent_id) pull(this.subIssues[oldIssue.parent_id], issueId);
+          if (issueData.parent_id)
+            set(this.subIssues, [issueData.parent_id], concat(this.subIssues[issueData.parent_id], issueId));
         });
       }
+
+      // state update
+      if (issueData.hasOwnProperty("state_id") && issueData.state_id !== oldIssue.state_id) {
+        let oldIssueStateGroup: string | undefined = undefined;
+        let issueStateGroup: string | undefined = undefined;
+
+        if (oldIssue.state_id) {
+          const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(oldIssue.state_id);
+          if (state?.group) oldIssueStateGroup = state.group;
+        }
+
+        if (issueData.state_id) {
+          const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(issueData.state_id);
+          if (state?.group) issueStateGroup = state.group;
+        }
+
+        if (oldIssueStateGroup && issueStateGroup && issueStateGroup !== oldIssueStateGroup) {
+          runInAction(() => {
+            if (oldIssueStateGroup)
+              update(this.subIssuesStateDistribution, [parentIssueId, oldIssueStateGroup], (stateDistribution) => {
+                if (!stateDistribution) return;
+                return pull(stateDistribution, issueId);
+              });
+
+            if (issueStateGroup)
+              update(this.subIssuesStateDistribution, [parentIssueId, issueStateGroup], (stateDistribution) => {
+                if (!stateDistribution) return [issueId];
+                return concat(stateDistribution, issueId);
+              });
+          });
+        }
+      }
+
       return;
     } catch (error) {
       throw error;
@@ -190,6 +234,23 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, {
         parent_id: null,
       });
+
+      const issue = this.rootIssueDetailStore.issue.getIssueById(issueId);
+      if (issue && issue.state_id) {
+        let issueStateGroup: string | undefined = undefined;
+        const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(issue.state_id);
+        if (state?.group) issueStateGroup = state.group;
+
+        if (issueStateGroup) {
+          runInAction(() => {
+            if (issueStateGroup)
+              update(this.subIssuesStateDistribution, [parentIssueId, issueStateGroup], (stateDistribution) => {
+                if (!stateDistribution) return;
+                return pull(stateDistribution, issueId);
+              });
+          });
+        }
+      }
 
       runInAction(() => {
         pull(this.subIssues[parentIssueId], issueId);
@@ -204,6 +265,23 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   deleteSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => {
     try {
       await this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+
+      const issue = this.rootIssueDetailStore.issue.getIssueById(issueId);
+      if (issue && issue.state_id) {
+        let issueStateGroup: string | undefined = undefined;
+        const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(issue.state_id);
+        if (state?.group) issueStateGroup = state.group;
+
+        if (issueStateGroup) {
+          runInAction(() => {
+            if (issueStateGroup)
+              update(this.subIssuesStateDistribution, [parentIssueId, issueStateGroup], (stateDistribution) => {
+                if (!stateDistribution) return;
+                return pull(stateDistribution, issueId);
+              });
+          });
+        }
+      }
 
       runInAction(() => {
         pull(this.subIssues[parentIssueId], issueId);

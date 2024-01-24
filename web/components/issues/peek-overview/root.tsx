@@ -2,7 +2,7 @@ import { FC, Fragment, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useMember, useUser } from "hooks/store";
+import { useIssueDetail, useIssues, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // types
@@ -208,7 +208,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issueId={peekIssue.issueId}
         isLoading={isLoading}
         is_archived={is_archived}
-        disabled={!is_editable}
+        disabled={is_archived || !is_editable}
         issueOperations={issueOperations}
       />
     </Fragment>

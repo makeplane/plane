@@ -1,28 +1,28 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 // components
 import { PagesListView } from "components/pages/pages-list";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Loader } from "@plane/ui";
-// assets
-import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     membership: { currentProjectRole },
+    currentUser,
   } = useUser();
   const { recentProjectPages } = useProjectPages();
+
+  const EmptyStateImagePath = getEmptyStateImagePath("pages", "recent", currentUser?.theme.theme === "light");
 
   // FIXME: replace any with proper type
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);
@@ -58,21 +58,15 @@ export const RecentPagesList: FC = observer(() => {
         </>
       ) : (
         <>
-          <NewEmptyState
-            title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started."
-            description="Pages are thoughtspotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
-            image={emptyPage}
-            comicBox={{
-              title: "A page can be a doc or a doc of docs.",
-              description:
-                "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
-              direction: "right",
-            }}
+          <EmptyState
+            title="Write a note, a doc, or a full knowledge base"
+            description="Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated."
+            image={EmptyStateImagePath}
             primaryButton={{
-              icon: <Plus className="h-4 w-4" />,
-              text: "Create your first page",
+              text: "Create new page",
               onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
+            size="sm"
             disabled={!isEditingAllowed}
           />
         </>
