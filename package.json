@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=13",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
