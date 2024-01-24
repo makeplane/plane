@@ -186,6 +186,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
         <div className="h-full w-full overflow-y-auto px-5">
           <h5 className="text-sm font-medium mt-6">Properties</h5>
+          {/* TODO: render properties using a common component */}
           <div className={`mt-3 space-y-2 ${!is_editable ? "opacity-60" : ""}`}>
             {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
               <div className="flex items-center gap-2 h-8">

@@ -245,6 +245,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             )}
             onClick={openDropdown}
           >
+            {/* TODO: move button components to a single file for each dropdown */}
             {buttonVariant === "border-with-text" ? (
               <BorderButton
                 cycle={selectedCycle}
