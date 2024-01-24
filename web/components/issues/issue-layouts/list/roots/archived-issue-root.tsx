@@ -28,6 +28,8 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     [issues, workspaceSlug, projectId]
   );
 
+  const canEditPropertiesBasedOnProject = () => false;
+
   return (
     <BaseListRoot
       issuesFilter={issuesFilter}
@@ -35,6 +37,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
       QuickActions={ArchivedIssueQuickActions}
       issueActions={issueActions}
       storeType={EIssuesStoreType.PROJECT}
+      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );
 });

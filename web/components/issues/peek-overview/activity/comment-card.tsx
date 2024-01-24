@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 // hooks
-import { useMention } from "hooks/store";
+import { useMention, useWorkspace } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // ui
@@ -44,6 +44,9 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
     issueCommentReactionCreate,
     issueCommentReactionRemove,
   } = props;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
+
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
@@ -117,8 +120,8 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
                 onEnterKeyPress={handleSubmit(formSubmit)}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.deleteImage}
-                restoreFile={fileService.restoreImage}
+                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                 ref={editorRef}
                 value={watch("comment_html") ?? ""}
                 debouncedUpdatesEnabled={false}

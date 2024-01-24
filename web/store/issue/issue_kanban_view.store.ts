@@ -9,7 +9,7 @@ export interface IIssueKanBanViewStore {
     subgroupByIssuesVisibility: string[];
   };
   // computed
-  getCanUserDragDrop: (order_by: string | null, group_by: string | null, sub_group_by?: string | null) => boolean;
+  getCanUserDragDrop: (group_by: string | null, sub_group_by: string | null) => boolean;
   canUserDragDropVertically: boolean;
   canUserDragDropHorizontally: boolean;
   // actions
@@ -38,7 +38,7 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
     this.rootStore = _rootStore;
   }
 
-  getCanUserDragDrop = computedFn((group_by: string | null, sub_group_by?: string | null) => {
+  getCanUserDragDrop = computedFn((group_by: string | null, sub_group_by: string | null) => {
     if (group_by && ["state", "priority"].includes(group_by)) {
       if (!sub_group_by) return true;
       if (sub_group_by && ["state", "priority"].includes(sub_group_by)) return true;

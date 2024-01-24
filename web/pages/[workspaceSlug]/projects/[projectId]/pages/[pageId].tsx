@@ -5,7 +5,8 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, usePage, useUser } from "hooks/store";
+
+import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -41,6 +42,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
 
   const { workspaceSlug, projectId, pageId } = router.query;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store hooks
   const {
     config: { envConfig },
@@ -298,10 +302,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     last_updated_by: updated_by,
                   }}
                   uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                  deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                  restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                   value={pageDescription}
                   setShouldShowAlert={setShowAlert}
-                  deleteFile={fileService.deleteImage}
-                  restoreFile={fileService.restoreImage}
                   cancelUploadImage={fileService.cancelUpload}
                   ref={editorRef}
                   debouncedUpdatesEnabled={false}
