@@ -1,9 +1,10 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
 import { Popover } from "@headlessui/react";
 // hooks
-import { useUser, useInboxIssues, useIssueDetail } from "hooks/store";
+import { useApplication, useUser, useInboxIssues, useIssueDetail, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -17,7 +18,7 @@ import { Button } from "@plane/ui";
 // icons
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
-import type { TInboxStatus } from "@plane/types";
+import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 
 type TInboxIssueActionsHeader = {
@@ -27,11 +28,22 @@ type TInboxIssueActionsHeader = {
   inboxIssueId: string | undefined;
 };
 
+type TInboxIssueOperations = {
+  updateInboxIssueStatus: (data: TInboxStatus) => Promise<void>;
+  removeInboxIssue: () => Promise<void>;
+};
+
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = props;
+  // router
+  const router = useRouter();
   // hooks
   const {
-    issues: { getInboxIssuesByInboxId, getInboxIssueByIssueId, updateInboxIssueStatus },
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
+  const {
+    issues: { getInboxIssuesByInboxId, getInboxIssueByIssueId, updateInboxIssueStatus, removeInboxIssue },
   } = useInboxIssues();
   const {
     issue: { getIssueById },
@@ -56,29 +68,82 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const currentIssueIndex = inboxIssues?.findIndex((issue) => issue === inboxIssueId) ?? 0;
 
-  const markInboxStatus = async (data: TInboxStatus) => {
-    if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !issue) return;
-
-    await updateInboxIssueStatus(workspaceSlug, projectId, inboxId, inboxIssueId, data).catch(() =>
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Something went wrong while updating inbox status. Please try again.",
-      })
-    );
-  };
-
-  useEffect(() => {
-    if (!issueStatus || !issueStatus.snoozed_till) return;
-    setDate(new Date(issueStatus.snoozed_till));
-  }, [issueStatus]);
+  const inboxIssueOperations: TInboxIssueOperations = useMemo(
+    () => ({
+      updateInboxIssueStatus: async (data: TInboxDetailedStatus) => {
+        try {
+          if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) throw new Error("Missing required parameters");
+          await updateInboxIssueStatus(workspaceSlug, projectId, inboxId, inboxIssueId, data);
+        } catch (error) {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong while updating inbox status. Please try again.",
+          });
+        }
+      },
+      removeInboxIssue: async () => {
+        try {
+          if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !currentWorkspace)
+            throw new Error("Missing required parameters");
+          await removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
+          postHogEventTracker(
+            "ISSUE_DELETED",
+            {
+              state: "SUCCESS",
+            },
+            {
+              isGrouping: true,
+              groupType: "Workspace_metrics",
+              groupId: currentWorkspace?.id!,
+            }
+          );
+          router.push({
+            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+          });
+        } catch (error) {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong while deleting inbox issue. Please try again.",
+          });
+          postHogEventTracker(
+            "ISSUE_DELETED",
+            {
+              state: "FAILED",
+            },
+            {
+              isGrouping: true,
+              groupType: "Workspace_metrics",
+              groupId: currentWorkspace?.id!,
+            }
+          );
+        }
+      },
+    }),
+    [
+      currentWorkspace,
+      workspaceSlug,
+      projectId,
+      inboxId,
+      inboxIssueId,
+      updateInboxIssueStatus,
+      removeInboxIssue,
+      setToastAlert,
+      postHogEventTracker,
+      router,
+    ]
+  );
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const today = new Date();
   const tomorrow = new Date(today);
-
   tomorrow.setDate(today.getDate() + 1);
+  useEffect(() => {
+    if (!issueStatus || !issueStatus.snoozed_till) return;
+    setDate(new Date(issueStatus.snoozed_till));
+  }, [issueStatus]);
 
   if (!issueStatus || !issue || !inboxIssues) return <></>;
   return (
@@ -90,10 +155,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             onClose={() => setSelectDuplicateIssue(false)}
             value={issueStatus.duplicate_to}
             onSubmit={(dupIssueId) => {
-              markInboxStatus({
-                status: 2,
-                duplicate_to: dupIssueId,
-              }).finally(() => setSelectDuplicateIssue(false));
+              inboxIssueOperations
+                .updateInboxIssueStatus({
+                  status: 2,
+                  duplicate_to: dupIssueId,
+                })
+                .finally(() => setSelectDuplicateIssue(false));
             }}
           />
 
@@ -102,9 +169,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             isOpen={acceptIssueModal}
             onClose={() => setAcceptIssueModal(false)}
             onSubmit={async () => {
-              await markInboxStatus({
-                status: 1,
-              }).finally(() => setAcceptIssueModal(false));
+              await inboxIssueOperations
+                .updateInboxIssueStatus({
+                  status: 1,
+                })
+                .finally(() => setAcceptIssueModal(false));
             }}
           />
 
@@ -113,13 +182,22 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             isOpen={declineIssueModal}
             onClose={() => setDeclineIssueModal(false)}
             onSubmit={async () => {
-              await markInboxStatus({
-                status: -1,
-              }).finally(() => setDeclineIssueModal(false));
+              await inboxIssueOperations
+                .updateInboxIssueStatus({
+                  status: -1,
+                })
+                .finally(() => setDeclineIssueModal(false));
             }}
           />
 
-          <DeleteInboxIssueModal isOpen={deleteIssueModal} onClose={() => setDeleteIssueModal(false)} />
+          <DeleteInboxIssueModal
+            data={issue}
+            isOpen={deleteIssueModal}
+            onClose={() => setDeleteIssueModal(false)}
+            onSubmit={async () => {
+              await inboxIssueOperations.removeInboxIssue().finally(() => setDeclineIssueModal(false));
+            }}
+          />
         </>
       )}
 
@@ -177,7 +255,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                           variant="primary"
                           onClick={() => {
                             close();
-                            markInboxStatus({
+                            inboxIssueOperations.updateInboxIssueStatus({
                               status: 0,
                               snoozed_till: new Date(date),
                             });

@@ -4,6 +4,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
 import uniq from "lodash/uniq";
+import pull from "lodash/pull";
 // services
 import { InboxIssueService } from "services/inbox/inbox-issue.service";
 // types
@@ -155,6 +156,7 @@ export class InboxIssue implements IInboxIssue {
         });
       });
 
+      await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
       return response as any;
     } catch (error) {
       throw error;
@@ -224,13 +226,10 @@ export class InboxIssue implements IInboxIssue {
     try {
       const response = await this.inboxIssueService.removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
 
-      // runInAction(() => {
-      //   set(this.inboxIssueMap, inboxId, response);
-      //   update(this.inboxIssues, projectId, (inboxIds: string[] = []) => {
-      //     if (inboxIds.includes(inboxId)) return inboxIds;
-      //     return uniq(concat(inboxIds, inboxId));
-      //   });
-      // });
+      runInAction(() => {
+        pull(this.inboxIssues[inboxId], inboxIssueId);
+        delete this.inboxIssueMap[inboxId][inboxIssueId];
+      });
 
       return response as any;
     } catch (error) {

@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-
 // icons
 import { CheckCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";
 
 type Props = {
-  data: IInboxIssue;
+  data: TIssue;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -28,7 +27,6 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
 
   const handleAccept = () => {
     setIsAccepting(true);
-
     onSubmit().finally(() => setIsAccepting(false));
   };
 
