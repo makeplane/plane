@@ -83,8 +83,8 @@ export const toggleStrike = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBlockquote = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run();
-  else editor.chain().focus().toggleNode("paragraph", "paragraph").toggleBlockquote().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleBlockquote().run();
+  else editor.chain().focus().toggleBlockquote().run();
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
