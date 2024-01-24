@@ -344,7 +344,7 @@
                         color: #525252;
                       "
                     >
-                      Assignee:
+                      Assignees:
                     </p>
                   </td>
                   {% if update.changes.assignees.new_value.0 %}
@@ -360,7 +360,7 @@
                        padding-top: 2px;
                        padding-bottom: 2px;
                        font-weight: 500;
-                       border-radius: 2px;
+                       border-radius: 4px;
                       "
                     >
                       {{ update.changes.assignees.new_value.0 }}
@@ -390,11 +390,11 @@
                        padding-top: 2px;
                        padding-bottom: 2px;
                        font-weight: 500;
-                       border-radius: 2px;
                        text-decoration: line-through;
                        color: #641723;
                        background-color: #feebec;
                        margin-left: 5px;
+                       border-radius: 4px;
                       "
                     >
                       {{update.changes.assignees.old_value.0}}
@@ -456,7 +456,7 @@
                        padding-top: 2px;
                        padding-bottom: 2px;
                        font-weight: 500;
-                       border-radius: 2px;
+                       border-radius: 4px;
                        "
                        >
                        {{update.changes.labels.new_value.0}}
@@ -486,11 +486,11 @@
                        padding-top: 2px;
                        padding-bottom: 2px;
                        font-weight: 500;
-                       border-radius: 2px;
                        text-decoration: line-through;
                        color: #641723;
                        background-color: #feebec;
                        margin-left: 5px;
+                       border-radius: 4px;
                        "
                        >
                        {{update.changes.labels.old_value.0}}
@@ -572,7 +572,7 @@
                  </td>
                  <td >
                   <img
-                     src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                     src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.webp{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
                      width="12"
                      height="12"
                      border="0"
@@ -713,7 +713,8 @@
                         padding-right: 4px;
                         padding-bottom: 2px;
                         font-weight: 500;
-                        border-radius: 2px;
+                        border-radius: 4px;
+                        text-transform: capitalize;
                         {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
                         {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %}
                         {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %}
@@ -740,7 +741,8 @@
                         padding-right: 4px;
                         padding-bottom: 2px;
                         font-weight: 500;
-                        border-radius: 2px;
+                        border-radius: 4px;
+                        text-transform: capitalize;
                         {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
                         {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %}
                         {% if update.changes.priority.new_value|last == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %}
