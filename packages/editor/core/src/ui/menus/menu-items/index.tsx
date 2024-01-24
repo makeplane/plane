@@ -106,7 +106,7 @@ export const TodoListItem = (editor: Editor): EditorMenuItem => ({
 
 export const CodeItem = (editor: Editor): EditorMenuItem => ({
   name: "code",
-  isActive: () => editor?.isActive("code"),
+  isActive: () => editor?.isActive("code") || editor?.isActive("codeBlock"),
   command: () => toggleCodeBlock(editor),
   icon: CodeIcon,
 });

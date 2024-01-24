@@ -34,8 +34,32 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
 };
 
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleCode().run();
-  else editor.chain().focus().toggleCode().run();
+  // Check if code block is active then toggle code block
+  if (editor.isActive("codeBlock")) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      return;
+    }
+    editor.chain().focus().toggleCodeBlock().run();
+    return;
+  }
+
+  // Check if user hasn't selected any text
+  const isSelectionEmpty = editor.state.selection.empty;
+
+  if (isSelectionEmpty) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      return;
+    }
+    editor.chain().focus().toggleCodeBlock().run();
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCode().run();
+      return;
+    }
+    editor.chain().focus().toggleCode().run();
+  }
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
