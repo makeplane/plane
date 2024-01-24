@@ -176,7 +176,7 @@
                 <tr style="border-radius: 8px; margin-top: 20px">
                   <td style="width: 30px">
                     {% if update.actor_detail.avatar_url %}
-                    <img src="" width="15" height="15" border="0" />
+                    <img src="{{ update.actor_detail.avatar_url }}" width="15" height="15" border="0" />
                     {% else %}
                     <table cellspacing="0" cellpadding="0">
                       <tr>
@@ -323,7 +323,7 @@
               </table>
               {% endif %}
               <!-- Assignee changed-->
-              {% if update.changes.assignee %}
+              {% if update.changes.assignees %}
               <table
                 role="presentation"
                 style="max-width: 100%; padding-bottom: 10px"
@@ -349,22 +349,26 @@
                       Assignee:
                     </p>
                   </td>
-                  {% if update.changes.assignee.new_value.0 %}
+                  {% if update.changes.assignees.new_value.0 %}
                   <td>
                     <p
                       style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #0d74ce;
-                        background-color: #e6f4fe;
-                        margin-left: 5px;
-                        padding: 3px;
+                       font-size: 0.8rem;
+                       color: #0d74ce;
+                       background-color: #e6f4fe;
+                       margin-left: 5px;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 2px;
                       "
                     >
-                      {{update.changes.assignee.new_value.0.first_name}}
+                      {{ update.changes.assignees.new_value.0 }}
                     </p>
                   </td>
-                  {% endif %} {% if update.changes.assignee.new_value.1 %}
+                  {% endif %} {% if update.changes.assignees.new_value.1 %}
                   <td>
                     <p
                       style="
@@ -374,27 +378,31 @@
                         margin-left: 2px;
                       "
                     >
-                      +{{ update.changes.assignee.new_value|length|add:"-1"}}
+                      +{{ update.changes.assignees.new_value|length|add:"-1"}}
                       more
                     </p>
                   </td>
-                  {% endif %} {% if update.changes.assignee.old_value.0 %}
+                  {% endif %} {% if update.changes.assignees.old_value.0 %}
                   <td>
                     <p
                       style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        text-decoration: line-through;
-                        color: #641723;
-                        background-color: #feebec;
-                        margin-left: 10px;
-                        padding: 3px;
+                       font-size: 0.8rem;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 2px;
+                       text-decoration: line-through;
+                       color: #641723;
+                       background-color: #feebec;
+                       margin-left: 5px;
                       "
                     >
-                      {{update.changes.assignee.old_value.0.first_name}}
+                      {{update.changes.assignees.old_value.0}}
                     </p>
                   </td>
-                  {% endif %} {% if update.changes.assignee.old_value.1 %}
+                  {% endif %} {% if update.changes.assignees.old_value.1 %}
                   <td>
                     <p
                       style="
@@ -404,7 +412,7 @@
                         margin-left: 2px;
                       "
                     >
-                      +{{ update.changes.assignee.old_value|length|add:"-1"}}
+                      +{{ update.changes.assignees.old_value|length|add:"-1"}}
                       more
                     </p>
                   </td>
@@ -440,61 +448,71 @@
                   </td>
                   <td>
                     <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #0d74ce;
-                        background-color: #e6f4fe;
-                        margin-left: 5px;
-                        padding: 3px;
-                      "
-                    >
-                      {{update.changes.labels.new_value.0}}
+                       style="
+                       font-size: 0.8rem;
+                       color: #0d74ce;
+                       background-color: #e6f4fe;
+                       margin-left: 5px;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 2px;
+                       "
+                       >
+                       {{update.changes.labels.new_value.0}}
                     </p>
-                  </td>
-                  {% if update.changes.labels.new_value.1 %}
-                  <td>
+                 </td>
+                 {% if update.changes.labels.new_value.1 %}
+                 <td>
                     <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #0d74ce;
-                        margin-left: 2px;
-                      "
-                    >
-                      +{{ update.changes.labels.new_value|length|add:"-1"}} more
+                       style="
+                       font-size: 0.8rem;
+                       font-weight: 500;
+                       color: #0d74ce;
+                       margin-left: 2px;
+                       "
+                       >
+                       +{{ update.changes.labels.new_value|length|add:"-1"}} more
                     </p>
-                  </td>
-                  {% endif %} {% if update.changes.labels.old_value.0 %}
-                  <td>
+                 </td>
+                 {% endif %}
+                 {% if update.changes.labels.old_value.0 %}
+                 <td>
                     <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        text-decoration: line-through;
-                        color: #641723;
-                        background-color: #feebec;
-                        margin-left: 10px;
-                        padding: 3px;
-                      "
-                    >
-                      {{update.changes.labels.old_value.0}}
+                       style="
+                       font-size: 0.8rem;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 2px;
+                       text-decoration: line-through;
+                       color: #641723;
+                       background-color: #feebec;
+                       margin-left: 5px;
+                       "
+                       >
+                       {{update.changes.labels.old_value.0}}
                     </p>
-                  </td>
-                  {% endif %} {% if update.changes.labels.old_value.1 %}
-                  <td>
+                 </td>
+                 {% endif %}
+                 {% if update.changes.labels.old_value.1 %}
+                 <td>
                     <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #641723;
-                        margin-left: 2px;
-                      "
-                    >
-                      +{{ update.changes.labels.old_value|length|add:"-1"}} more
+                       style="
+                       font-size: 0.8rem;
+                       font-weight: 500;
+                       color: #641723;
+                       margin-left: 2px;
+                       "
+                       >
+                       +{{ update.changes.labels.old_value|length|add:"-1"}} more
                     </p>
-                  </td>
-                  {% endif %}
+                 </td>
+                {% endif %}
                 </tr>
               </table>
               {% endif %}
@@ -525,26 +543,44 @@
                       State:
                     </p>
                   </td>
-                  <td>
-                    <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 600;
-                        color: #60646c;
-                      "
-                    >
-                      {{ update.changes.state.old_value.0 }}
-                    </p>
-                  </td>
-                  <td style="padding-left: 10px; padding-right: 10px">
+                  <td >
                     <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
-                      width="16"
-                      height="16"
-                      border="0"
-                      style="display: block"
-                    />
-                  </td>
+                       src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                       width="12"
+                       height="12"
+                       border="0"
+                       style="display: block; margin-left: 5px;"
+                       />
+                 </td>
+                 <td>
+                    <p
+                       style="
+                       font-size: 0.8rem;
+                       font-weight: 600;
+                       color: #60646C;
+                       "
+                       >
+                       {{ update.changes.state.old_value.0 }}
+                    </p>
+                 </td>
+                 <td style="padding-left: 10px; padding-right: 10px;">
+                    <img
+                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
+                       width="16"
+                       height="16"
+                       border="0"
+                       style="display: block;"
+                       />
+                 </td>
+                 <td >
+                  <img
+                     src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                     width="12"
+                     height="12"
+                     border="0"
+                     style="display: block;"
+                     />
+               </td>
                   <td>
                     <p
                       style="
@@ -670,166 +706,56 @@
                       Priority:
                     </p>
                   </td>
-                  {% if update.changes.priority.old_value.0 == "urgent" %}
-                  <td>
-                     <p
-                        href=""
-                        style="
-                        font-size: 0.8rem;
-                        padding: 3px;
-                        font-weight: 500;
-                        background-color: #FEEBEC;
-                        color: #EF4444;
-                        border-radius: 2px;
-                        "
-                        >
-                        Urgent
-                     </p>
-                  </td>
-                  {% elif update.changes.priority.old_value.0 == "high" %}
+    
                   <td>
                     <p
-                      href=""
                       style="
                         font-size: 0.8rem;
-                        padding: 3px;
+                        padding-left: 4px;
+                        padding-right: 4px;
+                        padding-bottom: 2px;
                         font-weight: 500;
-                        background-color: #feebec;
-                        color: #ce2c31;
                         border-radius: 2px;
+                        {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
+                        {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %}
+                        {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %}
+                        {% if update.changes.priority.old_value.0 == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %}
                       "
                     >
-                      High
+                      {{ update.changes.priority.old_value.0 }}
                     </p>
                   </td>
-                  {% elif update.changes.priority.old_value.0 == "low" %}
-                  <td>
-                    <p
-                      href=""
-                      style="
-                        font-size: 0.8rem;
-                        padding: 3px;
-                        font-weight: 500;
-                        background-color: #e9f6e9;
-                        color: #2a7e3b;
-                        border-radius: 2px;
-                      "
-                    >
-                      Low
-                    </p>
-                  </td>
-                  {% elif update.changes.priority.old_value.0 == "medium" %}
-                  <td>
-                    <p
-                      href=""
-                      style="
-                        font-size: 0.8rem;
-                        padding: 3px;
-                        font-weight: 500;
-                        background-color: #fefbe9;
-                        color: #e2a336;
-                        border-radius: 2px;
-                      "
-                    >
-                      Medium
-                    </p>
-                  </td>
-                  {% elif update.changes.priority.old_value.0 == "none" %}
-                  <td>
-                    <p
-                      href=""
-                      style="font-size: 0.8rem; padding: 2px; font-weight: 500"
-                    >
-                      None
-                    </p>
-                  </td>
-                  {% endif %}
-                  <td style="padding-left: 10px; padding-right: 10px">
+                 <td style="padding-left: 10px; padding-right: 10px;">
                     <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
-                      width="16"
-                      height="16"
-                      border="0"
-                      style="display: block"
-                    />
-                  </td>
-                  {% if update.changes.priority.new_value|last == "urgent" %}
-                  <td>
-                     <p
-                        href=""
-                        style="
-                        font-size: 0.8rem;
-                        padding: 3px;
-                        font-weight: 500;
-                        background-color: #FEEBEC;
-                        color: #EF4444;
-                        border-radius: 2px;
-                        "
-                        >
-                        Urgent
-                     </p>
-                  </td>
-                  {% elif update.changes.priority.new_value|last == "high" %}
-                  <td>
+                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
+                       width="16"
+                       height="16"
+                       border="0"
+                       style="display: block;"
+                       />
+                 </td>
+                 <td>
                     <p
-                      href=""
                       style="
                         font-size: 0.8rem;
-                        padding: 3px;
+                        padding-left: 4px;
+                        padding-right: 4px;
+                        padding-bottom: 2px;
                         font-weight: 500;
-                        background-color: #feebec;
-                        color: #ce2c31;
                         border-radius: 2px;
+                        {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
+                        {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %}
+                        {% if update.changes.priority.new_value|last == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %}
+                        {% if update.changes.priority.new_value|last == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %}
                       "
                     >
-                      High
+                      {{ update.changes.priority.new_value|last }}
                     </p>
                   </td>
-                  {% elif update.changes.priority.new_value|last == "low" %}
-                  <td>
-                    <p
-                      href=""
-                      style="
-                        font-size: 0.8rem;
-                        padding: 3px;
-                        font-weight: 500;
-                        background-color: #e9f6e9;
-                        color: #2a7e3b;
-                        border-radius: 2px;
-                      "
-                    >
-                      Low
-                    </p>
-                  </td>
-                  {% elif update.changes.priority.new_value|last == "medium" %}
-                  <td>
-                    <p
-                      href=""
-                      style="
-                        font-size: 0.8rem;
-                        padding: 3px;
-                        font-weight: 500;
-                        background-color: #fefbe9;
-                        color: #e2a336;
-                        border-radius: 2px;
-                      "
-                    >
-                      Medium
-                    </p>
-                  </td>
-                  {% elif update.changes.priority.new_value|last == "none" %}
-                  <td>
-                    <p
-                      href=""
-                      style="font-size: 0.8rem; padding: 2px; font-weight: 500"
-                    >
-                      None
-                    </p>
-                  </td>
-                  {% endif %}
                 </tr>
               </table>
-              {% endif %} {% if update.changes.blocking.new_value %}
+              {% endif %} 
+              {% if update.changes.blocking.new_value %}
               <!-- Blocking changed -->
               <table
                 role="presentation"
@@ -896,7 +822,7 @@
                 <td valign="top">
                   {% if comment.actor_detail.avatar_url %}
                   <img
-                    src="https://docs.plane.so/logos/logo.svg"
+                    src="{{ comment.actor_detail.avatar_url }}"
                     width="15"
                     height="15"
                     border="0"
@@ -1002,9 +928,9 @@
             <div style="font-size: 0.8rem; color: #1c2024">
               This email was sent to
               <a
-                href="mailto:"
+                href="mailto:{{receiver.email}}"
                 style="color: #3a5bc7; font-weight: 500; text-decoration: none"
-                >{{ email }}</a
+                >{{ receiver.email }}.</a
               >
               If you'd rather not receive this kind of email,
               <a
