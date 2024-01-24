@@ -176,7 +176,7 @@
                 <tr style="border-radius: 8px; margin-top: 20px">
                   <td style="width: 30px">
                     {% if update.actor_detail.avatar_url %}
-                    <img src="" width="15" height="15" border="0" />
+                    <img src="{{ update.actor_detail.avatar_url }}" width="15" height="15" border="0" />
                     {% else %}
                     <table cellspacing="0" cellpadding="0">
                       <tr>
@@ -931,7 +931,7 @@
                 <td valign="top">
                   {% if comment.actor_detail.avatar_url %}
                   <img
-                    src="https://docs.plane.so/logos/logo.svg"
+                    src="{{ update.actor_detail.avatar_url }}"
                     width="15"
                     height="15"
                     border="0"
