@@ -1,18 +1,15 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useModule, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
-// assets
-import emptyModule from "public/empty-state/empty_modules.webp";
-import { NewEmptyState } from "components/common/new-empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -22,10 +19,13 @@ export const ModulesListView: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     membership: { currentProjectRole },
+    currentUser,
   } = useUser();
   const { projectModuleIds } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
+
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "modules", currentUser?.theme.theme === "light");
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -84,21 +84,20 @@ export const ModulesListView: React.FC = observer(() => {
           {modulesView === "gantt_chart" && <ModulesListGanttChartView />}
         </>
       ) : (
-        <NewEmptyState
+        <EmptyState
           title="Map your project milestones to Modules and track aggregated work easily."
           description="A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone."
-          image={emptyModule}
+          image={EmptyStateImagePath}
           comicBox={{
             title: "Modules help group work by hierarchy.",
-            direction: "right",
             description:
               "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
           }}
           primaryButton={{
-            icon: <Plus className="h-4 w-4" />,
             text: "Build your first module",
             onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
           }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}
