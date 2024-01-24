@@ -1,77 +1,33 @@
 // @ts-nocheck
-import { useState, useEffect } from "react";
+import { Button } from "@plane/ui";
 import { NodeViewWrapper } from "@tiptap/react";
-import { Avatar, AvatarGroup, Loader, PriorityIcon } from "@plane/ui";
-import { Calendar, AlertTriangle } from "lucide-react";
+import { Crown } from "lucide-react";
 
-export const IssueWidgetCard = (props) => {
-  const [loading, setLoading] = useState<number>(1);
-  const [issueDetails, setIssueDetails] = useState();
-
-  useEffect(() => {
-    props.issueEmbedConfig
-      .fetchIssue(props.node.attrs.entity_identifier)
-      .then((issue) => {
-        setIssueDetails(issue);
-        setLoading(0);
-      })
-      .catch(() => {
-        setLoading(-1);
-      });
-  }, []);
-
-  const completeIssueEmbedAction = () => {
-    props.issueEmbedConfig.clickAction(issueDetails.id, props.node.attrs.title);
-  };
-
-  return (
-    <NodeViewWrapper className="issue-embed-component m-2">
-      {loading == 0 ? (
-        <div
-          onClick={completeIssueEmbedAction}
-          className={`${
-            props.selected ? "border-custom-primary-200 border-[2px]" : ""
-          } w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs`}
-        >
-          <h5 className="text-xs text-custom-text-300">
-            {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
-          </h5>
-          <h4 className="break-words text-sm font-medium">{issueDetails.name}</h4>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <div>
-              <PriorityIcon priority={issueDetails.priority} />
+export const IssueWidgetCard = (props) => (
+  <NodeViewWrapper className="issue-embed-component m-2">
+    <div
+      className={`${
+        props.selected ? "border-custom-primary-200 border-[2px]" : ""
+      } w-full h-[100px] cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 shadow-custom-shadow-2xs`}
+    >
+      <h5 className="h-[20%] text-xs text-custom-text-300 p-2">
+        {props.node.attrs.project_identifier}-{props.node.attrs.sequence_id}
+      </h5>
+      <div className="relative h-[71%]">
+        <div className="h-full backdrop-filter backdrop-blur-[30px] bg-custom-background-80 bg-opacity-30 flex items-center w-full justify-between gap-5 mt-2.5 pl-4 pr-5 py-3 max-md:max-w-full max-md:flex-wrap relative">
+          <div className="flex gap-2 items-center">
+            <div className="rounded">
+              <Crown className="m-2" size={16} color="#FFBA18" />
             </div>
-            <div>
-              <AvatarGroup size="sm">
-                {issueDetails.assignee_details.map((assignee) => (
-                  <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} className={"m-0"} />
-                ))}
-              </AvatarGroup>
+            <div className="text-custom-text text-sm">
+              Embed and access issues in pages seamlessly, upgrade to plane pro now.
             </div>
-            {issueDetails.target_date && (
-              <div className="flex h-5 items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs text-custom-text-100">
-                <Calendar className="h-3 w-3" strokeWidth={1.5} />
-                {new Date(issueDetails.target_date).toLocaleDateString()}
-              </div>
-            )}
           </div>
+          <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
+            <Button>Upgrade</Button>
+          </a>
         </div>
-      ) : loading == -1 ? (
-        <div className="flex items-center gap-[8px] rounded border-2 border-[#D97706] bg-[#FFFBEB] pb-[10px] pl-[13px] pt-[10px] text-[#D97706]">
-          <AlertTriangle color={"#D97706"} />
-          {"This Issue embed is not found in any project. It can no longer be updated or accessed from here."}
-        </div>
-      ) : (
-        <div className="w-full space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs">
-          <Loader className={"px-6"}>
-            <Loader.Item height={"30px"} />
-            <div className={"mt-3 space-y-2"}>
-              <Loader.Item height={"20px"} width={"70%"} />
-              <Loader.Item height={"20px"} width={"60%"} />
-            </div>
-          </Loader>
-        </div>
-      )}
-    </NodeViewWrapper>
-  );
-};
+      </div>
+    </div>
+  </NodeViewWrapper>
+);
