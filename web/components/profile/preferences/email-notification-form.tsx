@@ -104,7 +104,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
                   type="checkbox"
                   checked={value}
                   onChange={() => {
-                    if (!value) setValue("issue_completed", true);
+                    setValue("issue_completed", !value);
                     onChange(!value);
                   }}
                   className="w-3.5 h-3.5 mx-2 cursor-pointer"
