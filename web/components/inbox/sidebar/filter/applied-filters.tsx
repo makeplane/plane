@@ -54,10 +54,9 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
     if (filters?.[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
   });
 
-  if (!filters || filtersLength <= 0) return null;
-
+  if (!filters || filtersLength <= 0) return <></>;
   return (
-    <div className="flex flex-wrap items-center gap-2 p-3 text-[0.65rem]">
+    <div className="relative flex flex-wrap items-center gap-2 p-3 text-[0.65rem] border-b border-custom-border-100">
       {Object.keys(filters).map((key) => {
         const filterKey = key as keyof TInboxIssueFilterOptions;
 

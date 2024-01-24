@@ -11,7 +11,7 @@ import { AppLayout } from "layouts/app-layout";
 import { Spinner } from "@plane/ui";
 // components
 import { ProjectInboxHeader } from "components/headers";
-import { InboxSidebarRoot } from "components/inbox";
+import { InboxSidebarRoot, InboxIssueActionsHeader } from "components/inbox";
 import { InboxIssueDetailRoot } from "components/issues/issue-detail/inbox";
 // types
 import { NextPageWithLayout } from "lib/types";
@@ -44,31 +44,44 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   // inbox issues list
   const inboxIssuesList = inboxId ? getInboxIssuesByInboxId(inboxId?.toString()) : undefined;
 
+  if (!workspaceSlug || !projectId || !inboxId) return <></>;
   return (
     <>
       {loader === "fetch" ? (
-        <div className="flex w-full h-full items-center justify-center">
+        <div className="relative flex w-full h-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <div className="relative flex h-full overflow-hidden">
-          <div className="flex-shrink-0 w-[340px] border-r border-custom-border-100">
+          <div className="flex-shrink-0 w-[340px] h-full border-r border-custom-border-100">
             {workspaceSlug && projectId && inboxId && (
               <InboxSidebarRoot
-                workspaceSlug={workspaceSlug?.toString()}
-                projectId={projectId?.toString()}
-                inboxId={inboxId?.toString()}
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={projectId.toString()}
+                inboxId={inboxId.toString()}
               />
             )}
           </div>
           <div className="w-full">
             {workspaceSlug && projectId && inboxId && inboxIssueId ? (
-              <InboxIssueDetailRoot
-                workspaceSlug={workspaceSlug?.toString()}
-                projectId={projectId?.toString()}
-                inboxId={inboxId?.toString()}
-                issueId={inboxIssueId?.toString()}
-              />
+              <div className="w-full h-full overflow-hidden relative flex flex-col">
+                <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-100">
+                  <InboxIssueActionsHeader
+                    workspaceSlug={workspaceSlug.toString()}
+                    projectId={projectId.toString()}
+                    inboxId={inboxId.toString()}
+                    inboxIssueId={inboxIssueId?.toString() || undefined}
+                  />
+                </div>
+                <div className="w-full h-full">
+                  <InboxIssueDetailRoot
+                    workspaceSlug={workspaceSlug.toString()}
+                    projectId={projectId.toString()}
+                    inboxId={inboxId.toString()}
+                    issueId={inboxIssueId.toString()}
+                  />
+                </div>
+              </div>
             ) : (
               <div className="grid h-full place-items-center p-4 text-custom-text-200">
                 <div className="grid h-full place-items-center">

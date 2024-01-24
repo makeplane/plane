@@ -2,7 +2,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { TInboxQueryParams, TInboxIssueExtendedDetail, TIssue, TInboxDetailedStatus } from "@plane/types";
+import type { TInboxIssueFilterOptions, TInboxIssueExtendedDetail, TIssue, TInboxDetailedStatus } from "@plane/types";
 
 export class InboxIssueService extends APIService {
   constructor() {
@@ -13,7 +13,7 @@ export class InboxIssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    params?: TInboxQueryParams | {}
+    params?: TInboxIssueFilterOptions | {}
   ): Promise<TInboxIssueExtendedDetail[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/?expand=issue_inbox`,
@@ -46,7 +46,10 @@ export class InboxIssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    data: Partial<TIssue>
+    data: {
+      source: string;
+      issue: Partial<TIssue>;
+    }
   ): Promise<TInboxIssueExtendedDetail> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/?expand=issue_inbox`,

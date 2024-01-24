@@ -119,6 +119,7 @@ export class InboxFilter implements IInboxFilter {
         view_props: { filters: _filters },
       });
 
+      this.rootStore.inbox.inboxIssue.fetchInboxIssues(workspaceSlug, projectId, inboxId);
       return response;
     } catch (error) {
       throw error;

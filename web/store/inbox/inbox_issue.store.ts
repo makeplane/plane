@@ -142,10 +142,16 @@ export class InboxIssue implements IInboxIssue {
       );
 
       runInAction(() => {
-        set(this.inboxIssueMap, inboxIssueId, response);
+        const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
+        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
+        set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+      });
+
+      runInAction(() => {
         update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
-          if (inboxIssueIds.includes(inboxIssueId)) return inboxIssueIds;
-          return uniq(concat(inboxIssueIds, inboxIssueId));
+          if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
+          return uniq(concat(inboxIssueIds, response.id));
         });
       });
 
@@ -157,10 +163,19 @@ export class InboxIssue implements IInboxIssue {
 
   createInboxIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TIssue>) => {
     try {
-      const response = await this.inboxIssueService.createInboxIssue(workspaceSlug, projectId, inboxId, data);
+      const response = await this.inboxIssueService.createInboxIssue(workspaceSlug, projectId, inboxId, {
+        source: "in-app",
+        issue: data,
+      });
 
       runInAction(() => {
-        set(this.inboxIssueMap, response.id, response);
+        const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
+        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
+        set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+      });
+
+      runInAction(() => {
         update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
           if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
           return uniq(concat(inboxIssueIds, response.id));
@@ -186,7 +201,13 @@ export class InboxIssue implements IInboxIssue {
       });
 
       runInAction(() => {
-        set(this.inboxIssueMap, response.id, response);
+        const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
+        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
+        set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+      });
+
+      runInAction(() => {
         update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
           if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
           return uniq(concat(inboxIssueIds, response.id));
@@ -233,13 +254,19 @@ export class InboxIssue implements IInboxIssue {
         data
       );
 
-      // runInAction(() => {
-      //   set(this.inboxIssueMap, inboxId, response);
-      //   update(this.inboxIssues, projectId, (inboxIds: string[] = []) => {
-      //     if (inboxIds.includes(inboxId)) return inboxIds;
-      //     return uniq(concat(inboxIds, inboxId));
-      //   });
-      // });
+      runInAction(() => {
+        const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
+        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
+        set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+      });
+
+      runInAction(() => {
+        update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
+          if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
+          return uniq(concat(inboxIssueIds, response.id));
+        });
+      });
 
       return response as any;
     } catch (error) {
