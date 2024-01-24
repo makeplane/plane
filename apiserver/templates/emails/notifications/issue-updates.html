@@ -323,7 +323,7 @@
               </table>
               {% endif %}
               <!-- Assignee changed-->
-              {% if update.changes.assignee %}
+              {% if update.changes.assignees %}
               <table
                 role="presentation"
                 style="max-width: 100%; padding-bottom: 10px"
@@ -349,22 +349,26 @@
                       Assignee:
                     </p>
                   </td>
-                  {% if update.changes.assignee.new_value.0 %}
+                  {% if update.changes.assignees.new_value.0 %}
                   <td>
                     <p
                       style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #0d74ce;
-                        background-color: #e6f4fe;
-                        margin-left: 5px;
-                        padding: 3px;
+                       font-size: 0.8rem;
+                       color: #0d74ce;
+                       background-color: #e6f4fe;
+                       margin-left: 5px;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 2px;
                       "
                     >
-                      {{update.changes.assignee.new_value.0.first_name}}
+                      {{ update.changes.assignees.new_value.0 }}
                     </p>
                   </td>
-                  {% endif %} {% if update.changes.assignee.new_value.1 %}
+                  {% endif %} {% if update.changes.assignees.new_value.1 %}
                   <td>
                     <p
                       style="
@@ -374,27 +378,31 @@
                         margin-left: 2px;
                       "
                     >
-                      +{{ update.changes.assignee.new_value|length|add:"-1"}}
+                      +{{ update.changes.assignees.new_value|length|add:"-1"}}
                       more
                     </p>
                   </td>
-                  {% endif %} {% if update.changes.assignee.old_value.0 %}
+                  {% endif %} {% if update.changes.assignees.old_value.0 %}
                   <td>
                     <p
                       style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        text-decoration: line-through;
-                        color: #641723;
-                        background-color: #feebec;
-                        margin-left: 10px;
-                        padding: 3px;
+                       font-size: 0.8rem;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 2px;
+                       text-decoration: line-through;
+                       color: #641723;
+                       background-color: #feebec;
+                       margin-left: 5px;
                       "
                     >
-                      {{update.changes.assignee.old_value.0.first_name}}
+                      {{update.changes.assignees.old_value.0}}
                     </p>
                   </td>
-                  {% endif %} {% if update.changes.assignee.old_value.1 %}
+                  {% endif %} {% if update.changes.assignees.old_value.1 %}
                   <td>
                     <p
                       style="
@@ -404,7 +412,7 @@
                         margin-left: 2px;
                       "
                     >
-                      +{{ update.changes.assignee.old_value|length|add:"-1"}}
+                      +{{ update.changes.assignees.old_value|length|add:"-1"}}
                       more
                     </p>
                   </td>
