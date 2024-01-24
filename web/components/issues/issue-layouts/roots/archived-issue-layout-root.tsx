@@ -8,7 +8,7 @@ import { useIssues } from "hooks/store";
 import {
   ArchivedIssueListLayout,
   ArchivedIssueAppliedFiltersRoot,
-  ProjectEmptyState,
+  ProjectArchivedEmptyState,
   IssuePeekOverview,
 } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
@@ -48,8 +48,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
       ) : (
         <>
           {!issues?.groupedIssueIds ? (
-            // TODO: Replace this with project view empty state
-            <ProjectEmptyState />
+            <ProjectArchivedEmptyState />
           ) : (
             <>
               <div className="relative h-full w-full overflow-auto">

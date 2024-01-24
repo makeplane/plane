@@ -114,3 +114,27 @@ export const CYCLE_STATE_GROUPS_DETAILS = [
     color: "#ef4444",
   },
 ];
+
+export const CYCLE_EMPTY_STATE_DETAILS = {
+  active: {
+    key: "active",
+    title: "No active cycles",
+    description:
+      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+  },
+  upcoming: {
+    key: "upcoming",
+    title: "No upcoming cycles",
+    description: "Upcoming cycles on deck! Just add dates to cycles in draft, and they'll show up right here.",
+  },
+  completed: {
+    key: "completed",
+    title: "No completed cycles",
+    description: "Any cycle with a past due date is considered completed. Explore all completed cycles here.",
+  },
+  draft: {
+    key: "draft",
+    title: "No draft cycles",
+    description: "No dates added in cycles? Find them here as drafts.",
+  },
+};

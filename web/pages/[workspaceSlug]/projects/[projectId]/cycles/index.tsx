@@ -2,7 +2,6 @@ import { Fragment, useCallback, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
-import { Plus } from "lucide-react";
 // hooks
 import { useCycle, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
@@ -11,11 +10,9 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Tooltip } from "@plane/ui";
-// images
-import emptyCycle from "public/empty-state/empty_cycles.webp";
+import { Spinner, Tooltip } from "@plane/ui";
 // types
 import { TCycleView, TCycleLayout } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
@@ -28,8 +25,9 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // store hooks
   const {
     membership: { currentProjectRole },
+    currentUser,
   } = useUser();
-  const { currentProjectCycleIds } = useCycle();
+  const { currentProjectCycleIds, loader } = useCycle();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -51,12 +49,20 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     },
     [handleCurrentLayout, setCycleTab]
   );
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", currentUser?.theme.theme === "light");
 
   const totalCycles = currentProjectCycleIds?.length ?? 0;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!workspaceSlug || !projectId) return null;
+
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="w-full h-full">
@@ -68,23 +74,22 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
       />
       {totalCycles === 0 ? (
         <div className="h-full place-items-center">
-          <NewEmptyState
+          <EmptyState
             title="Group and timebox your work in Cycles."
             description="Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team."
-            image={emptyCycle}
+            image={EmptyStateImagePath}
             comicBox={{
               title: "Cycles are repetitive time-boxes.",
-              direction: "right",
               description:
                 "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
             }}
             primaryButton={{
-              icon: <Plus className="h-4 w-4" />,
               text: "Set your first cycle",
               onClick: () => {
                 setCreateModal(true);
               },
             }}
+            size="lg"
             disabled={!isEditingAllowed}
           />
         </div>
