@@ -104,10 +104,10 @@ export class InboxIssue implements IInboxIssue {
 
   // actions
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
-    this.loader = "fetch";
-    const queryParams = this.rootStore.inbox.inboxFilter.appliedFilters ?? {};
-
     try {
+      this.loader = "fetch";
+      const queryParams = this.rootStore.inbox.inboxFilter.inboxAppliedFilters ?? {};
+
       const response = await this.inboxIssueService.fetchInboxIssues(workspaceSlug, projectId, inboxId, queryParams);
 
       runInAction(() => {

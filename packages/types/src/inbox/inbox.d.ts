@@ -1,14 +1,11 @@
-export type TInboxFilterOptions = {
-  priority: string[] | undefined;
-  inbox_status: number[] | undefined;
+export type TInboxIssueFilterOptions = {
+  priority: string[];
+  inbox_status: string[];
 };
 
-export type TInboxQueryParams = {
-  priority: string;
-  inbox_status: string;
-};
+export type TInboxIssueQueryParams = "priority" | "inbox_status";
 
-export type TInboxFilters = { filters: TInboxFilterOptions };
+export type TInboxIssueFilters = { filters: TInboxIssueFilterOptions };
 
 export type TInbox = {
   id: string;
@@ -17,7 +14,7 @@ export type TInbox = {
   workspace: string;
   project: string;
   is_default: boolean;
-  view_props: TInboxFilters;
+  view_props: TInboxIssueFilters;
   created_by: string;
   updated_by: string;
   created_at: Date;

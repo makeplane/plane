@@ -32,7 +32,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const { inboxesList, isInboxEnabled, getInboxId } = useInbox();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -43,6 +42,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
+  const { getInboxesByProjectId, getInboxById } = useInbox();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -89,7 +89,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const inboxDetails = projectId ? inboxesList?.[projectId]?.[0] : undefined;
+  const inboxesMap = currentProjectDetails?.inbox_view ? getInboxesByProjectId(currentProjectDetails.id) : undefined;
+  const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
+
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -190,14 +192,15 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          {projectId && isInboxEnabled && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${getInboxId(projectId)}`}>
+
+          {currentProjectDetails?.inbox_view && inboxDetails && (
+            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
               <span>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
-                  {inboxDetails.pending_issue_count > 0 && (
+                  {inboxDetails?.pending_issue_count > 0 && (
                     <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
-                      {inboxDetails.pending_issue_count}
+                      {inboxDetails?.pending_issue_count}
                     </span>
                   )}
                 </Button>

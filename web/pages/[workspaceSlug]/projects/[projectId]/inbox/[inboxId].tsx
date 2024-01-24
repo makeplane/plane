@@ -2,6 +2,7 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react";
+import { Inbox } from "lucide-react";
 // hooks
 import { useProject, useInboxIssues } from "hooks/store";
 // layouts
@@ -12,8 +13,6 @@ import { InboxSidebarRoot } from "components/inbox";
 import { InboxIssueDetailRoot } from "components/issues/issue-detail/inbox";
 // types
 import { NextPageWithLayout } from "lib/types";
-// icons
-import { Inbox } from "lucide-react";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -34,7 +33,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       : null,
     async () => {
       if (workspaceSlug && projectId && inboxId && currentProjectDetails && currentProjectDetails?.inbox_view) {
-        // await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
+        await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
         await fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
       }
     }
