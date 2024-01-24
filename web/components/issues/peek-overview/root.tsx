@@ -208,7 +208,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issueId={peekIssue.issueId}
         isLoading={isLoading}
         is_archived={is_archived}
-        disabled={!is_editable}
+        disabled={is_archived || !is_editable}
         issueOperations={issueOperations}
       />
     </Fragment>
