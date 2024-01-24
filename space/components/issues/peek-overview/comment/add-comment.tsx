@@ -14,6 +14,7 @@ import { Comment } from "types/issue";
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // service
 import fileService from "services/file.service";
+import { RootStore } from "store/root";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -35,6 +36,9 @@ export const AddComment: React.FC<Props> = observer((props) => {
   } = useForm<Comment>({ defaultValues });
 
   const router = useRouter();
+  const { project }: RootStore = useMobxStore();
+  const workspaceId = project.workspace?.id;
+
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
@@ -78,8 +82,8 @@ export const AddComment: React.FC<Props> = observer((props) => {
               }}
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
-              deleteFile={fileService.deleteImage}
-              restoreFile={fileService.restoreImage}
+              deleteFile={fileService.getDeleteImageFunction(workspaceId as string)}
+              restoreFile={fileService.getRestoreImageFunction(workspaceId as string)}
               ref={editorRef}
               value={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

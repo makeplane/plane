@@ -4,10 +4,9 @@ import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
-// images
-import emptyProject from "public/empty-state/empty_project.webp";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // icons
-import { NewEmptyState } from "components/common/new-empty-state";
+import { Plus } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -19,8 +18,11 @@ export const ProjectCardList = observer(() => {
   } = useApplication();
   const {
     membership: { currentWorkspaceRole },
+    currentUser,
   } = useUser();
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
+
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "projects", currentUser?.theme.theme === "light");
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -55,15 +57,10 @@ export const ProjectCardList = observer(() => {
           )}
         </div>
       ) : (
-        <NewEmptyState
-          image={emptyProject}
+        <EmptyState
+          image={emptyStateImage}
           title="Start a Project"
           description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
-          comicBox={{
-            title: "Everything starts with a project in Plane",
-            direction: "right",
-            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
-          }}
           primaryButton={{
             text: "Start your first project",
             onClick: () => {
@@ -71,6 +68,11 @@ export const ProjectCardList = observer(() => {
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}
+          comicBox={{
+            title: "Everything starts with a project in Plane",
+            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+          }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}

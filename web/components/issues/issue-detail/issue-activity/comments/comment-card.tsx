@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // hooks
-import { useIssueDetail, useMention, useUser } from "hooks/store";
+import { useIssueDetail, useMention, useUser, useWorkspace } from "hooks/store";
 // components
 import { IssueCommentBlock } from "./comment-block";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
@@ -40,6 +40,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const comment = getCommentById(commentId);
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(comment?.workspace_detail?.slug as string)?.id as string;
 
   const {
     formState: { isSubmitting },
@@ -118,8 +120,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               onEnterKeyPress={handleSubmit(onEnter)}
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(comment?.workspace_detail?.slug as string)}
-              deleteFile={fileService.deleteImage}
-              restoreFile={fileService.restoreImage}
+              deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+              restoreFile={fileService.getRestoreImageFunction(workspaceId)}
               ref={editorRef}
               value={watch("comment_html") ?? ""}
               debouncedUpdatesEnabled={false}

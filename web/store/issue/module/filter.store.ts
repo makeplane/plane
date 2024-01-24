@@ -204,6 +204,9 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             });
           });
 
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.moduleIssues.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
+
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             display_filters: _filters.displayFilters,
           });

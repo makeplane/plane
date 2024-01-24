@@ -189,6 +189,9 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
             });
           });
 
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.draftIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+
           this.handleIssuesLocalFilters.set(EIssuesStoreType.DRAFT, type, workspaceSlug, projectId, undefined, {
             display_filters: _filters.displayFilters,
           });

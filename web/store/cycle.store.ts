@@ -14,8 +14,9 @@ import { CycleService } from "services/cycle.service";
 
 export interface ICycleStore {
   //Loaders
-  fetchedMap: Record<string, boolean>;
+  loader: boolean;
   // observables
+  fetchedMap: Record<string, boolean>;
   cycleMap: Record<string, ICycle>;
   activeCycleIdMap: Record<string, boolean>;
   // computed
@@ -32,8 +33,8 @@ export interface ICycleStore {
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   // fetch
-  fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<ICycle[]>;
-  fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<ICycle[]>;
+  fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
+  fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   // crud
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
@@ -51,6 +52,7 @@ export interface ICycleStore {
 
 export class CycleStore implements ICycleStore {
   // observables
+  loader: boolean = false;
   cycleMap: Record<string, ICycle> = {};
   activeCycleIdMap: Record<string, boolean> = {};
   //loaders
@@ -65,6 +67,7 @@ export class CycleStore implements ICycleStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
+      loader: observable.ref,
       cycleMap: observable,
       activeCycleIdMap: observable,
       fetchedMap: observable,
@@ -221,16 +224,24 @@ export class CycleStore implements ICycleStore {
    * @param projectId
    * @returns
    */
-  fetchAllCycles = async (workspaceSlug: string, projectId: string) =>
-    await this.cycleService.getCyclesWithParams(workspaceSlug, projectId).then((response) => {
-      runInAction(() => {
-        response.forEach((cycle) => {
-          set(this.cycleMap, [cycle.id], cycle);
+  fetchAllCycles = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      await this.cycleService.getCyclesWithParams(workspaceSlug, projectId).then((response) => {
+        runInAction(() => {
+          response.forEach((cycle) => {
+            set(this.cycleMap, [cycle.id], cycle);
+          });
+          set(this.fetchedMap, projectId, true);
+          this.loader = false;
         });
-        set(this.fetchedMap, projectId, true);
+        return response;
       });
-      return response;
-    });
+    } catch (error) {
+      this.loader = false;
+      return undefined;
+    }
+  };
 
   /**
    * @description fetches active cycle for a project

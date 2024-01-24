@@ -6,10 +6,8 @@
 >
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="format-detection" content="telephone=no" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Updates on Issue</title>
+    <title>Updates on issue</title>
     <style type="text/css" emogrify="no">
       html {
         font-family: system-ui;
@@ -26,6 +24,9 @@
       h-full {
         height: 100%;
       }
+      a:hover {
+        color: #3358d4 !important;
+      }
     </style>
   </head>
   <body
@@ -35,869 +36,943 @@
     yahoo="fix"
     style="background-color: #f7f9ff; margin: 20px"
   >
-    <table
-      cellspacing="0"
-      cellpadding="0"
-      border="0"
+    <div
       style="
-        background-color: #f7f9ff;
-        width: 100%;
+        width: 600px;
+        table-layout: fixed;
         height: 100%;
-        padding-left: calc((100vw - 676px) / 2);
-        padding-right: calc((100vw - 676px) / 2);
+        margin-left: auto;
+        margin-right: auto;
       "
     >
       <!-- Header -->
-      <tr>
-        <td>
-          <table style="width: 600px">
+      <div>
+        <table style="width: 600px" cellspacing="0">
+          <tr>
+            <td>
+              <div
+                style="margin-left: 30px; margin-bottom: 20px; margin-top: 20px"
+              >
+                <img
+                  src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/plane-logo.webp"
+                  width="130"
+                  height="40"
+                  border="0"
+                />
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- Body -->
+      <div
+        style="
+          color: #1f2d5c;
+          padding: 30px;
+          border-radius: 4px;
+          background-color: #fcfcfd;
+          max-width: 100%;
+        "
+      >
+        <div>
+          <table style="width: 100%">
             <tr>
               <td>
-                <div style="margin: 20px">
-                  <!-- TODO: Get Plane logo -->
-                  <img
-                    src="https://docs.plane.so/logos/logo.svg"
-                    width="28"
-                    height="28"
-                    border="0"
-                  />
-                  <span
-                    style="font-weight: 700; font-size: 32px; color: #3f76ff"
-                  >
-                    Plane
-                  </span>
-                </div>
+                <p style="font-size: 1rem; color: #1f2d5c; font-weight: 600">
+                  {{ issue.issue_identifier }} updates
+                </p>
+                <p style="font-size: 1rem; font-weight: 500; color: #1f2d5c; line-height: 28px">
+                  {{ issue.name }}: {{ issue.issue_identifier }}
+                </p>
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-      <!-- Body -->
-      <tr>
-        <td>
-          <table style="width: 600px" celspacing="0">
-            <tr style="background-color: #fcfcfd">
-              <td style="color: #0b0c10; padding: 30px; border-radius: 4px">
-                <div>
+          <hr
+            style="
+              background-color: #f0f0f3;
+              height: 1px;
+              border: 0;
+              margin-top: 15px;
+              margin-bottom: 15px;
+            "
+          />
+
+          <p style="font-size: 1rem;color: #1f2d5c; line-height: 28pxl">
+          {% if data.1 %}{{ data|length }}{% endif %} {{ summary }}
+            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+              {{ data.0.actor_detail.first_name}}
+              {{data.0.actor_detail.last_name }}
+            </span>
+          </p>
+          {% if comments.0 %}
+          <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
+            {{ comments|length }} {% if comments|length == 1 %}comment was{% else %}comments were{% endif %} left by
+            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+              {% if comments|length == 1 %}
+                {{ data.0.actor_detail.first_name }}
+                {{ data.0.actor_detail.last_name }}
+              {% else %}
+                {{ data.0.actor_detail.first_name }}
+                {{ data.0.actor_detail.last_name }} and others
+              {% endif %}
+            </span>
+          </p>
+        {% endif %}
+          {% if mentions and comments.0 and data.0 %}
+          <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
+            There are 3 new updates, added 1 new comment and, you were
+            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+              @{{ data.0.actor_detail.first_name}}
+              {{data.0.actor_detail.last_name }}
+            </span>
+            mentioned a comment of this issue.
+          </p>
+          {% endif %}
+          {% for update in data %} {% if update.changes.name %}
+          <!-- Issue title updated -->
+          <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c">
+            The issue title has been updated from “{{update.changes.user.old_value.0}}“ to "{{update.changes.user.new_value|last}}"
+          </p>
+          {% endif %}
+          <!-- Outer update Box start -->
+          {% if data %}
+          <div
+            style="
+              background-color: #f7f9ff;
+              border-radius: 8px;
+              border-style: solid;
+              border-width: 1px;
+              border-color: #c1d0ff;
+              padding: 20px;
+              margin-top: 15px;
+              max-width: 100%;
+            "
+          >
+            <!-- Block Heading -->
+            <div style="padding-bottom: 20px">
+              <p style="font-size: 0.8rem; font-weight: 600; color: #121a26">
+                Updates
+              </p>
+            </div>
+            <!-- Property Updates -->
+            <div
+              style="
+                background-color: white;
+                max-width: 100%;
+                overflow: hidden;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+                padding-left: 15px;
+                padding-bottom: 15px;
+              "
+            >
+              <!-- action performer -->
+              <table
+                role="presentation"
+                cellspacing="0"
+                cellpadding="0"
+                style="max-width: 100%"
+              >
+                <tr style="border-radius: 8px; margin-top: 20px">
+                  <td style="width: 30px">
+                    {% if update.actor_detail.avatar_url %}
+                    <img src="{{ update.actor_detail.avatar_url }}" width="25" height="25" border="0" />
+                    {% else %}
+                    <table cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td
+                          style="
+                            width: 25px;
+                            height: 25px;
+                            background-color: #4f3422;
+                            border-radius: 50%;
+                            text-align: center;
+                          "
+                        >
+                          <span
+                            style="
+                              color: white;
+                              font-weight: 500;
+                              font-size: 13px;
+                              line-height: 25px;
+                              display: inline-block;
+                            "
+                          >
+                            {{ update.actor_detail.first_name.0 }}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                    {% endif %}
+                  </td>
+                  <td style="padding-top: 20px; padding-bottom: 20px">
+                    <p
+                      style="
+                        font-weight: 500;
+                        font-size: 0.8rem;
+                        color: #1c2024;
+                        width: fit-content;
+                        margin-left: 5px;
+                      "
+                    >
+                      {{ update.actor_detail.first_name }} {{ update.actor_detail.last_name }}
+                    </p>
+                  </td>
+                  <td>
+                    <p
+                      style="
+                        font-weight: 500;
+                        font-size: 0.6rem;
+                        color: #80838d;
+                        margin-left: 10px;
+                      "
+                    >
+                      {{ update.activity_time }}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              {% if update.changes.target_date %}
+              <!-- due date changed -->
+              <table
+                role="presentation"
+                style="max-width: 100%; padding-bottom: 15px"
+              >
+                <tr>
+                  <td>
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/due-date.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: block"
+                    />
+                  </td>
+                  <td style="padding: 0px; text-align: center">
+                    <div>
+                      <p
+                        style="
+                          padding: 0px;
+                          margin: 0px;
+                          font-size: 0.8rem;
+                          font-weight: 500;
+                          color: #525252;
+                        "
+                      >
+                        Due Date:
+                      </p>
+                    </div>
+                  </td>
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #171717;
+                        margin-left: 5px;
+                        padding: 0px;
+                      "
+                    >
+                      {{ update.changes.target_date.new_value.0 }}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.duplicate %}
+              <!-- duplicate changed -->
+              <table
+                role="presentation"
+                style="max-width: 100%; padding-bottom: 15px"
+              >
+                <tr>
+                  <td style="overflow-wrap: break-word;">
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: inline-block"
+                    />
+                    <span
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                      "
+                    >
+                      Duplicate:
+                  </span>
+                  </td>
+                  
+                  <td style="padding-left: 5px;">
+                    {% for duplicate in update.changes.duplicate.new_value %}
+                    <span
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #3a5bc7;
+                        margin-right: 3px;
+                        padding-top: 0px;
+                      "
+                    >
+                      {{ duplicate }}
+                    </span>
+                    {% endfor %}
+                  </td>
+                  
+                </tr>
+              </table>
+              {% endif %}
+              <!-- Assignee changed-->
+              {% if update.changes.assignees %}
+              <table
+                role="presentation"
+                style="max-width: 100%; padding-bottom: 15px"
+              >
+                <tr>
+                  <td>
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: block"
+                    />
+                  </td>
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                      "
+                    >
+                      Assignees:
+                    </p>
+                  </td>
+                  {% if update.changes.assignees.new_value.0 %}
+                  <td>
+                    <p
+                      style="
+                       font-size: 0.8rem;
+                       color: #0d74ce;
+                       background-color: #e6f4fe;
+                       margin-left: 5px;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 4px;
+                      "
+                    >
+                      {{ update.changes.assignees.new_value.0 }}
+                    </p>
+                  </td>
+                  {% endif %} {% if update.changes.assignees.new_value.1 %}
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #0d74ce;
+                        margin-left: 2px;
+                      "
+                    >
+                      +{{ update.changes.assignees.new_value|length|add:"-1"}}
+                      more
+                    </p>
+                  </td>
+                  {% endif %} {% if update.changes.assignees.old_value.0 %}
+                  <td>
+                    <p
+                      style="
+                       font-size: 0.8rem;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       text-decoration: line-through;
+                       color: #641723;
+                       background-color: #feebec;
+                       margin-left: 5px;
+                       border-radius: 4px;
+                      "
+                    >
+                      {{update.changes.assignees.old_value.0}}
+                    </p>
+                  </td>
+                  {% endif %} {% if update.changes.assignees.old_value.1 %}
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #641723;
+                        margin-left: 2px;
+                      "
+                    >
+                      +{{ update.changes.assignees.old_value|length|add:"-1"}}
+                      more
+                    </p>
+                  </td>
+                  {% endif %}
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.labels %}
+              <!-- Labels -->
+              <table
+                role="presentation"
+                style="padding-bottom: 15px; max-width: 100%"
+              >
+                <tr>
+                  <td>
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: block"
+                    />
+                  </td>
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                      "
+                    >
+                      Labels:
+                    </p>
+                  </td>
+                  {% if update.changes.labels.new_value.0 %}
+                  <td>
+                    <p
+                       style="
+                       font-size: 0.8rem;
+                       color: #0d74ce;
+                       background-color: #e6f4fe;
+                       margin-left: 5px;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       border-radius: 4px;
+                       "
+                       >
+                       {{update.changes.labels.new_value.0}}
+                    </p>
+                 </td>
+                  {% endif %}
+                 {% if update.changes.labels.new_value.1 %}
+                 <td>
+                    <p
+                       style="
+                       font-size: 0.8rem;
+                       font-weight: 500;
+                       color: #0d74ce;
+                       margin-left: 2px;
+                       "
+                       >
+                       +{{ update.changes.labels.new_value|length|add:"-1"}} more
+                    </p>
+                 </td>
+                 {% endif %}
+                 {% if update.changes.labels.old_value.0 %}
+                 <td>
+                    <p
+                       style="
+                       font-size: 0.8rem;
+                       padding-left: 4px;
+                       padding-right: 4px;
+                       padding-top: 2px;
+                       padding-bottom: 2px;
+                       font-weight: 500;
+                       text-decoration: line-through;
+                       color: #641723;
+                       background-color: #feebec;
+                       margin-left: 5px;
+                       border-radius: 4px;
+                       "
+                       >
+                       {{update.changes.labels.old_value.0}}
+                    </p>
+                 </td>
+                 {% endif %}
+                 {% if update.changes.labels.old_value.1 %}
+                 <td>
+                    <p
+                       style="
+                       font-size: 0.8rem;
+                       font-weight: 500;
+                       color: #641723;
+                       margin-left: 2px;
+                       "
+                       >
+                       +{{ update.changes.labels.old_value|length|add:"-1"}} more
+                    </p>
+                 </td>
+                {% endif %}
+                </tr>
+              </table>
+              {% endif %}
+              <!-- State changed -->
+              {% if update.changes.state %}
+              <table
+                role="presentation"
+                style="padding-bottom: 15px; max-width: 100%"
+              >
+                <tr>
+                  <td>
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/state.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: block"
+                    />
+                  </td>
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                      "
+                    >
+                      State:
+                    </p>
+                  </td>
+                  <td >
+                    <img
+                       src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                       width="12"
+                       height="12"
+                       border="0"
+                       style="display: block; margin-left: 5px;"
+                       />
+                 </td>
+                 <td>
+                    <p
+                       style="
+                       font-size: 0.8rem;
+                       font-weight: 500;
+                       color: #60646C;
+                       "
+                       >
+                       {{ update.changes.state.old_value.0 }}
+                    </p>
+                 </td>
+                 <td style="padding-left: 10px; padding-right: 10px;">
+                    <img
+                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
+                       width="16"
+                       height="16"
+                       border="0"
+                       style="display: block;"
+                       />
+                 </td>
+                 <td >
+                  <img
+                     src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.webp{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                     width="12"
+                     height="12"
+                     border="0"
+                     style="display: block;"
+                     />
+               </td>
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #60646c;
+                      "
+                    >
+                      {{update.changes.state.new_value|last }}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.link %}
+              <!-- Link Added -->
+              <table
+                role="presentation"
+                style="padding-bottom: 15px; max-width: 100%"
+              >
+                <tr>
+                  <td valign="top">
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: block; margin-top: 3px;"
+                    />
+                  </td>
+                  <td valign="top">
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                        margin-right: 5px;
+                        
+                      "
+                    >
+                      Links:
+                    </p>
+                  </td>
+                  <td>
+                    {% for link in update.changes.link.new_value %}
+                    <a
+                      href="{{link}}"
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        color: #3a5bc7;
+                        display: block;
+                        padding-bottom: 5px;
+                      "
+                    >
+                      {{ link }}
+                    </a>
+                    {% endfor %}
+                    {% if update.changes.link.old_value|length > 0 %}
+                    {% if update.changes.link.old_value.0 != "None" %}
+                    <p
+                    href=""
+                    style="
+                      font-size: 0.8rem;
+                      font-weight: 500;
+                      color: #60646c;
+                    "
+                  >
+                    2 Links were removed
+                  </p>
+                  {% endif %}
+                  {% endif %}
+                  </td>
+                </tr>
+              </table>
+              {% endif %} 
+              {% if update.changes.priority %}
+              <!-- Priority changed -->
+              <table
+                role="presentation"
+                style="padding-bottom: 15px; max-width: 100%"
+              >
+                <tr>
+                  <td>
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/priority.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: block; margin: 0px; padding: 0px"
+                    />
+                  </td>
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                        margin-right: 5px;
+                      "
+                    >
+                      Priority:
+                    </p>
+                  </td>
+    
+                  <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        padding-left: 4px;
+                        padding-right: 4px;
+                        padding-bottom: 2px;
+                        font-weight: 500;
+                        border-radius: 4px;
+                        text-transform: capitalize;
+                        {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
+                        {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %}
+                        {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %}
+                        {% if update.changes.priority.old_value.0 == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %}
+                      "
+                    >
+                      {{ update.changes.priority.old_value.0 }}
+                    </p>
+                  </td>
+                 <td style="padding-left: 10px; padding-right: 10px;">
+                    <img
+                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
+                       width="16"
+                       height="16"
+                       border="0"
+                       style="display: block;"
+                       />
+                 </td>
+                 <td>
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        padding-left: 4px;
+                        padding-right: 4px;
+                        padding-bottom: 2px;
+                        font-weight: 500;
+                        border-radius: 4px;
+                        text-transform: capitalize;
+                        {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
+                        {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %}
+                        {% if update.changes.priority.new_value|last == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %}
+                        {% if update.changes.priority.new_value|last == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %}
+                      "
+                    >
+                      {{ update.changes.priority.new_value|last }}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} 
+              {% if update.changes.blocking.new_value %}
+              <!-- Blocking changed -->
+              <table
+                role="presentation"
+                style="padding-bottom: 15px; max-width: 100%"
+              >
+                <tr style="overflow-wrap: break-word;">
+                  <td> 
+                    <img
+                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.webp"
+                      width="12"
+                      height="12"
+                      border="0"
+                      style="display: inline-block;"
+                    />
+                    <span
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                        margin-right: 5px;
+                      "
+                    >
+                      Blocking:
+                  </span>
+                  </td>
+                  
+                  <td>
+                    {% for blocking in update.changes.blocking.new_value %}
+                    <span href="" style="font-size: 0.8rem; font-weight: 500; margin-right: 5px; color: #3358d4;">
+                      {{blocking}}
+                    </span>
+                    {% endfor %}
+                  </td>
+                  
+                </tr>
+              </table>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          <!-- Outer update Box end -->
+          {% endfor %} {% if comments.0 %}
+          <!-- Comments outer update Box -->
+          <div
+            style="
+              max-width: 100%;
+              background-color: #f7f9ff;
+              border-radius: 8px;
+              border-style: solid;
+              border-width: 1px;
+              border-color: #c1d0ff;
+              padding: 20px;
+              margin-top: 15px;
+            "
+          >
+            <!-- Block Heading -->
+            <p style="font-size: 0.8rem; font-weight: 600; color: #121a26; padding-bottom: 20px;">
+              Comments
+            </p>
+            <!-- Comments -->
+            {% for comment in comments %}
+            <table cellspacing="0">
+              <tr style="border-radius: 8px">
+                <td valign="top">
+                  {% if comment.actor_detail.avatar_url %}
+                  <img
+                    src="{{ comment.actor_detail.avatar_url }}"
+                    width="25"
+                    height="25"
+                    border="0"
+                  />
+                  {% else %}
+                  <table cellspacing="0" cellpadding="0">
+                     <tr>
+                       <td
+                         style="
+                           width: 25px;
+                           height: 25px;
+                           background-color: #4f3422;
+                           border-radius: 50%;
+                           text-align: center;
+                         "
+                       >
+                         <span
+                           style="
+                             color: white;
+                             font-weight: 500;
+                             font-size: 13px;
+                             line-height: 25px;
+                             display: inline-block;
+                           "
+                         >
+                           {{ comment.actor_detail.first_name.0 }}
+                         </span>
+                       </td>
+                     </tr>
+                   </table>
+                  {% endif %}
+                </td>
+                <td style="padding-bottom: 15px">
                   <table>
                     <tr>
                       <td>
-                        <p style="font-size: 1rem; font-weight: 600">
-                          {{ issue.identifier }} updates
-                        </p>
                         <p
                           style="
-                            font-size: 1rem;
                             font-weight: 500;
-                            line-height: 28px;
-                          "
-                        >
-                          {{ issue.name }}
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                  <hr
-                    style="
-                      background-color: #f0f0f3;
-                      height: 1px;
-                      border: 0;
-                      margin-top: 15px;
-                      margin-bottom: 15px;
-                    "
-                  />
-                  <p style="font-size: 1rem; line-height: 28px">
-                    {{ summary }}
-                    <span
-                      style="
-                        font-size: 1rem;
-                        font-weight: 700;
-                        line-height: 28px;
-                      "
-                    >
-                      {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }}
-                    </span>
-                  </p>
-                  <!-- Outer update/comment Box -->
-                  <table
-                    style="
-                      background-color: #f7f9ff;
-                      border-radius: 8px;
-                      border-style: solid;
-                      border-width: 1px;
-                      border-color: #c1d0ff;
-                      padding: 20px;
-                      margin-top: 15px;
-                      width: 100%;
-                      white-space: nowrap;
-                      max-width: 100%;
-                    "
-                    cellspacing="0"
-                  >
-                    <!-- Block Heading -->
-                    <tr>
-                      <td style="padding-bottom: 20px">
-                        <p
-                          style="
                             font-size: 0.8rem;
-                            font-weight: 600;
-                            color: #121a26;
+                            color: #1c2024;
+                            margin-left: 8px;
                           "
                         >
-                          Updates
+                           {{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }}
                         </p>
                       </td>
                     </tr>
-                    <!-- Property Updates -->
-                    {% for update in data %}
+                    {% for actor_comment in  comment.actor_comments.new_value %}
                     <tr>
                       <td>
-                        <table
-                          cellspacing="0"
-                          style="background-color: white; width: 100%"
+                        <div
+                          style="
+                            padding: 6px 10px;
+                            margin-left: 10px;
+                            background-color: white;
+                            font-size: 0.8rem;
+                            color: #525252;
+                            margin-top: 5px;
+                            border-radius: 4px;
+                            display: flex;
+                            align-items: center;
+                          "
                         >
-                          <!-- action performer -->
-                          <tr>
-                            <td>
-                              <table cellspacing="0">
-                                <tr
-                                  style="
-                                    background-color: #ffffff;
-                                    border-radius: 8px;
-                                    margin-top: 20px;
-                                  "
-                                >
-                                  <td style="padding-left: 15px">
-                                    <img
-                                      src="{{ update.actor_detail.avatar_url }}"
-                                      width="15"
-                                      height="15"
-                                      border="0"
-                                    />
-                                  </td>
-                                  <td
-                                    style="
-                                      padding-top: 20px;
-                                      padding-bottom: 20px;
-                                    "
-                                  >
-                                    <p
-                                      style="
-                                        font-weight: 500;
-                                        font-size: 0.8rem;
-                                        color: #1c2024;
-                                        margin-left: 8px;
-                                      "
-                                    >
-                                      {{ update.actor_detail.first_name }} {{ update.actor_detail.last_name }}
-                                    </p>
-                                  </td>
-                                  <td style="width: fit-content">
-                                    <p
-                                      style="
-                                        font-weight: 500;
-                                        font-size: 0.6rem;
-                                        color: #80838d;
-                                        margin-left: 10px;
-                                      "
-                                    >
-                                      {{ update.activity_time }}
-                                    </p>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          <!-- Only assignee changed -->
-                          {% if update.changes.assignees %}
-                          <tr>
-                            <td
-                              style="padding-left: 15px; padding-bottom: 20px"
-                            >
-                              <table>
-                                <tr>
-                                  <td></td>
-                                  <td style="width: 55px">
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                      "
-                                    >
-                                      Assignee:
-                                    </p>
-                                  </td>
-                                  {% for assignee in update.changes.assignees.old_value %}
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        text-decoration: line-through;
-                                        color: #641723;
-                                        background-color: #feebec;
-                                        margin-left: 5px;
-                                        padding: 3px;
-                                      "
-                                    >
-                                      {{ assignee }}
-                                    </p>
-                                  </td>
-                                  {% endfor %}
-                                  {% if update.changes.assignees.old_value and update.changes.assignee.new_value %}
-                                  <td>
-                                    <i
-                                      data-lucide="move-right"
-                                      style="
-                                        color: #525252;
-                                        height: 15px;
-                                        width: 15px;
-                                        margin-left: 10px;
-                                        margin-right: 10px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  {% endif %}
-                                  {% for assignee in update.changes.assignees.new_value %}
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #0d74ce;
-                                        background-color: #e6f4fe;
-                                        padding: 3px;
-                                      "
-                                    >
-                                      {{ assginee }}
-                                    </p>
-                                  </td>
-                                  {% endfor %}
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %}
-                          <!-- due date changed -->
-                           {% if update.changes.target_date %}
-                          <tr>
-                            <td
-                              style="padding-left: 15px; padding-bottom: 20px"
-                            >
-                              <table>
-                                <tr>
-                                  <td>
-                                    <i
-                                      data-lucide="calendar"
-                                      style="
-                                        color: #525252;
-                                        height: 12px;
-                                        width: 12px;
-                                        margin-right: 5px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  <td style="width: 55px">
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                      "
-                                    >
-                                      Due Date:
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #171717;
-                                        margin-left: 5px;
-                                      "
-                                    >
-                                      {{ update.changes.target_date.new_value.0 }}
-                                    </p>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %} -->
-                          <!-- duplicate changed -->
-                          {% if update.changes.duplicate %}
-                          <tr>
-                            <td
-                              style="padding-left: 15px; padding-bottom: 20px"
-                            >
-                              <table>
-                                <tr>
-                                  <td>
-                                    <i
-                                      data-lucide="layout-panel-top"
-                                      style="
-                                        color: #525252;
-                                        height: 12px;
-                                        width: 12px;
-                                        margin-right: 5px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  <td style="width: 55px">
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                      "
-                                    >
-                                      Duplicate:
-                                    </p>
-                                  </td>
-                                  {% for dup in update.changes.duplicate.new_value %}
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #3a5bc7;
-                                        margin-left: 5px;
-                                      "
-                                    >
-                                      {{ dup }}
-                                    </p>
-                                  </td>
-                                  {% endfor %}
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %}
-                          <!-- Labels -->
-                          {% if update.changes.labels %}
-                          <tr>
-                            <td
-                              style="padding-left: 15px; padding-bottom: 20px"
-                            >
-                              <table>
-                                <tr>
-                                  <td valign="top">
-                                    <i
-                                      data-lucide="layout-panel-top"
-                                      style="
-                                        color: #525252;
-                                        height: 12px;
-                                        width: 12px;
-                                        margin-right: 5px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  <td valign="top">
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                        margin-right: 5px;
-                                      "
-                                    >
-                                      Labels:
-                                    </p>
-                                  </td>
-
-                                  <td valign="top">
-                                    <table>
-                                      <tr>
-                                        {% for label in update.changes.labels.new_value %}
-                                        <td>
-                                          <p
-                                            style="
-                                              font-size: 0.8rem;
-                                              font-weight: 500;
-                                              color: #9747ff;
-                                              background-color: #9747ff1a;
-                                              padding: 3px;
-                                              padding-left: 5px;
-                                              padding-right: 5px;
-                                              margin-right: 4px;
-                                              border-radius: 2px;
-                                            "
-                                          >
-                                            {{ label }}
-                                          </p>
-                                        </td>
-                                        {% endfor %}
-                                      </tr>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %}
-                          <!-- State changed -->
-                          {% if update.changes.state %}
-                          <tr>
-                            <td>
-                              <tr>
-                                <td
-                                  style="
-                                    padding-left: 15px;
-                                    padding-bottom: 20px;
-                                  "
-                                >
-                                  <table>
-                                    <tr>
-                                      <td>
-                                        <i
-                                          data-lucide="calendar"
-                                          style="
-                                            color: #525252;
-                                            height: 12px;
-                                            width: 12px;
-                                            margin-right: 5px;
-                                          "
-                                        ></i>
-                                      </td>
-                                      <td>
-                                        <p
-                                          style="
-                                            font-size: 0.8rem;
-                                            font-weight: 500;
-                                            color: #525252;
-                                          "
-                                        >
-                                          State:
-                                        </p>
-                                      </td>
-                                      <td>
-                                        <p
-                                          style="
-                                            font-size: 0.8rem;
-                                            font-weight: 600;
-                                            color: #60646c;
-                                          "
-                                        >
-                                          {{ update.changes.state.old_value.0 }}
-                                        </p>
-                                      </td>
-                                      <td>-></td>
-
-                                      <td>
-                                        <p
-                                          style="
-                                            font-size: 0.8rem;
-                                            font-weight: 600;
-                                            color: #60646c;
-                                          "
-                                        >
-                                          {{ update.changes.state.new_value.0 }}
-                                        </p>
-                                      </td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                            </td>
-                          </tr>
-                          {% endif %}
-                          <!-- Link Added -->
-                          {% if update.changes.link %}
-                          <tr>
-                            <td
-                              style="padding-left: 15px; padding-bottom: 20px"
-                            >
-                              <table>
-                                <tr>
-                                  <td>
-                                    <i
-                                      data-lucide="layout-panel-top"
-                                      style="
-                                        color: #525252;
-                                        height: 12px;
-                                        width: 12px;
-                                        margin-right: 5px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                        margin-right: 5px;
-                                      "
-                                    >
-                                      Link:
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <a
-                                      href=""
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 600;
-                                        color: #3a5bc7;
-                                      "
-                                    >
-                                      {{ update.changes.link.new_value.0 }}
-                                    </a>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %}
-                          <!-- Priority changed -->
-                          {% if update.changes.priority %}
-                          <tr>
-                            <td style="padding-left: 15px; padding-bottom: 20px">
-                              <table>
-                                <tr>
-                                  <td>
-                                    <i
-                                      data-lucide="layout-panel-top"
-                                      style="
-                                        color: #525252;
-                                        height: 12px;
-                                        width: 12px;
-                                        margin-right: 5px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                        margin-right: 5px;
-                                      "
-                                    >
-                                      Priority:
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        padding: 2px;
-                                        font-weight: 500;
-                                        {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #EF4444; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'high' %}background-color: #F97316; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #EAB308; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'low' %}background-color: #3F76FF; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'none' %}background-color: #A3A3A3; color: white;{% endif %}
-                                      "
-                                    >
-                                      {{ update.changes.priority.old_value.0 }}
-                                    </p>
-                                  </td>
-                                  <td
-                                    style="
-                                      padding-left: 10px;
-                                      padding-right: 10px;
-                                    "
-                                  >
-                                    ->
-                                  </td>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        padding: 2px;
-                                        font-weight: 500;
-                                        {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #EF4444; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'high' %}background-color: #F97316; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #EAB308; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'low' %}background-color: #3F76FF; color: white;{% endif %}
-                                        {% if update.changes.priority.old_value.0 == 'none' %}background-color: #A3A3A3; color: white;{% endif %}
-                                      "
-                                    >
-                                      {{ update.changes.priority.new_value.0 }}
-                                    </p>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %}
-                          <!-- Blocking changed -->
-                          {% if update.changes.blocking %}
-                          <tr>
-                            <td
-                              style="padding-left: 15px; padding-bottom: 20px"
-                            >
-                              <table>
-                                <tr>
-                                  <td>
-                                    <i
-                                      data-lucide="layout-panel-top"
-                                      style="
-                                        color: #525252;
-                                        height: 12px;
-                                        width: 12px;
-                                        margin-right: 5px;
-                                      "
-                                    ></i>
-                                  </td>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-size: 0.8rem;
-                                        font-weight: 500;
-                                        color: #525252;
-                                        margin-right: 5px;
-                                      "
-                                    >
-                                      Blocking:
-                                    </p>
-                                  </td>
-                                {% for bl in update.changes.blocking.new_value %}
-                                  <td>
-                                    <a
-                                      href=""
-                                      style="font-size: 0.8rem; color: #3358d4"
-                                    >
-                                      {{ bl }}
-                                    </a>
-                                  </td>
-                                  {% endfor %}
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {% endif %}
-                        </table>
+                        <p>
+                          {{ actor_comment|safe }}
+                        </p>
+                        </div>
                       </td>
                     </tr>
                     {% endfor %}
                   </table>
-                  <!-- Comments outer update Box -->
-                  {% if comments %}
-                  <table
-                    style="
-                      background-color: #f7f9ff;
-                      border-radius: 8px;
-                      border-style: solid;
-                      border-width: 1px;
-                      border-color: #c1d0ff;
-                      padding: 20px;
-                      margin-top: 15px;
-                      width: 600px;
-                      max-width: 600px;
-                    "
-                    cellspacing="0"
-                  >
-                    <!-- Block Heading -->
-                    <tr>
-                      <td>
-                        <p
-                          style="
-                            font-size: 0.8rem;
-                            font-weight: 600;
-                            color: #121a26;
-                          "
-                        >
-                          Comments
-                        </p>
-                      </td>
-                    </tr>
-                    <!-- Comments Updates -->
-                    <tr>
-                      <td>
-                        <table
-                          cellspacing="0"
-                          style="background-color: white; width: 100%"
-                        ></table>
-                      </td>
-                    </tr>
-                    <!-- Comments -->
-                    <tr>
-                      <td>
-                        <table cellspacing="0" style="padding-top: 20px">
-                          <tr style="border-radius: 8px">
-                            <td valign="top">
-                              <div
-                                style="
-                                  height: 25px;
-                                  width: 25px;
-                                  border-radius: 20px;
-                                  background-color: #4f3422;
-                                  text-align: center;
-                                  justify-items: center;
-                                "
-                              >
-                                <span
-                                  style="
-                                    color: white;
-                                    font-weight: 500;
-                                    text-align: center;
-                                    padding-top: 0px;
-                                    font-size: 12px;
-                                  "
-                                  >S</span
-                                >
-                              </div>
-                              <!-- <img src="https://docs.plane.so/logos/logo.svg" width="25"
-                                                height="25" border="0" /> -->
-                            </td>
-                            {% for comment in comments %}
-                            <td style="padding-bottom: 20px">
-                              <table>
-                                <tr>
-                                  <td>
-                                    <p
-                                      style="
-                                        font-weight: 500;
-                                        font-size: 0.8rem;
-                                        color: #1c2024;
-                                        margin-left: 8px;
-                                      "
-                                    >
-                                      {{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }}
-                                    </p>
-                                  </td>
-                                </tr>
-                                {% for actor_comment in comment.actor_comments %}
-                                <tr>
-                                  <td>
-                                    <div
-                                      style="
-                                        padding-left: 10px;
-                                        padding-right: 10px;
-                                        line-height: 24px;
-                                        padding-top: 15px;
-                                        margin-left: 10px;
-                                        padding-bottom: 15px;
-                                        background-color: white;
-                                        font-size: 0.8rem;
-                                        color: #525252;
-                                        margin-top: 5px;
-                                        border-radius: 4px;
-                                      "
-                                    >
-                                    {{ actor_comment.new_value.0 }}
-                                    </div>
-                                  </td>
-                                </tr>
-                                {% endfor %}
-                              </table>
-                            </td>
-                            {% endfor %}
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                  {% endif %}
-                </div>
-                <button
-                  onclick="window.location.href='{{ issue.issue_url }}'"
-                  href="{{ issue.issue_url }}"
-                  style="
-                    background-color: #3e63dd;
-                    padding: 10px 15px;
-                    border: 1px solid #2f4ba8;
-                    border-radius: 4px;
-                    margin-top: 15px;
-                    cursor: pointer;
-                    font-size: 0.8rem;
-                    color: white;
-                  "
-                >
-                  View issue
-                </button>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+                </td>
+              </tr>
+            </table>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <a href="{{ issue_url }}" style="text-decoration: none;">
+          <div
+            style="
+              max-width: min-content;
+              white-space: nowrap;
+              background-color: #3e63dd;
+              padding: 10px 15px;
+              border: 1px solid #2f4ba8;
+              border-radius: 4px;
+              margin-top: 15px;
+              cursor: pointer;
+              font-size: 0.8rem;
+              color: white;
+            "
+          >
+            View issue
+          </div>
+        </a>
+      </div>
       <!-- Footer -->
-      <tr>
-        <td>
-          <table style="width: 100%; padding: 20px; justify-content: center">
-            <tr>
-              <td>
-                <div style="font-size: 0.8rem; color: #1c2024">
-                  This email was sent to
-                  <a
-                    href="mailto:"
-                    style="
-                      color: #3a5bc7;
-                      font-weight: 500;
-                      text-decoration: none;
-                    "
-                    >{{ receiver.email }}.</a
-                  >
-                  If you'd rather not receive this kind of email,
-                  <a
-                    href="{{ issue_unsubscribe }}"
-                    style="color: #3a5bc7; text-decoration: none"
-                    >you can unsubscribe to the issue</a
-                  >
-                  or
-                  <a
-                    href="{{ user_preference }}"
-                    style="color: #3a5bc7; text-decoration: none"
-                    >manage your email preferences</a
-                  >.
-                  <!-- Github | LinkedIn | Twitter -->
-                  <div style="margin-top: 60px; float: right">
-                    <a
-                      href="https://github.com/makeplane"
-                      target="_blank"
-                      style="margin-left: 10px; text-decoration: none"
-                    >
-                      <img
-                        src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/github_32px.png"
-                        width="25"
-                        height="25"
-                        border="0"
-                        style="display: inline-block"
-                      />
-                    </a>
-                    <a
-                      href="https://www.linkedin.com/company/planepowers/"
-                      target="_blank"
-                      style="margin-left: 10px; text-decoration: none"
-                    >
-                      <img
-                        src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/linkedin_32px.png"
-                        width="25"
-                        height="25"
-                        border="0"
-                        style="display: inline-block"
-                      />
-                    </a>
-                    <a
-                      href="https://twitter.com/planepowers"
-                      target="_blank"
-                      style="margin-left: 10px; text-decoration: none"
-                    >
-                      <img
-                        src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/twitter_32px.png"
-                        width="25"
-                        height="25"
-                        border="0"
-                        style="display: inline-block"
-                      />
-                    </a>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <!-- Lucid Icon Scripts -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-      lucide.createIcons();
-    </script>
+      <table style="width: 100%; padding: 20px; justify-content: center">
+        <tr>
+          <td>
+            <div style="font-size: 0.8rem; color: #1c2024">
+              This email was sent to
+              <a
+                href="mailto:{{receiver.email}}"
+                style="color: #3a5bc7; font-weight: 500; text-decoration: none"
+                >{{ receiver.email }}.</a
+              >
+              If you'd rather not receive this kind of email,
+              <a
+                href="{{ issue_url }}"
+                style="color: #3a5bc7; text-decoration: none"
+                >you can unsubscribe to the issue</a
+              >
+              or
+              <a
+                href="{{ user_preference }}"
+                style="color: #3a5bc7; text-decoration: none"
+                >manage your email preferences</a
+              >.
+              <!-- Github | LinkedIn | Twitter -->
+              <div style="margin-top: 60px; float: right">
+                <a
+                  href="https://github.com/makeplane"
+                  target="_blank"
+                  style="margin-left: 10px; text-decoration: none"
+                >
+                  <img
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/github_32px.png"
+                    width="25"
+                    height="25"
+                    border="0"
+                    style="display: inline-block"
+                  />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/planepowers/"
+                  target="_blank"
+                  style="margin-left: 10px; text-decoration: none"
+                >
+                  <img
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/linkedin_32px.png"
+                    width="25"
+                    height="25"
+                    border="0"
+                    style="display: inline-block"
+                  />
+                </a>
+                <a
+                  href="https://twitter.com/planepowers"
+                  target="_blank"
+                  style="margin-left: 10px; text-decoration: none"
+                >
+                  <img
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/twitter_32px.png"
+                    width="25"
+                    height="25"
+                    border="0"
+                    style="display: inline-block"
+                  />
+                </a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
   </body>
 </html>

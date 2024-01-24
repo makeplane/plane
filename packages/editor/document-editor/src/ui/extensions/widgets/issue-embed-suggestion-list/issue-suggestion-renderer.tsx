@@ -92,7 +92,6 @@ const IssueSuggestionList = ({
           setSelectedIndex(
             (selectedIndex + displayedItems[currentSection].length - 1) % displayedItems[currentSection].length
           );
-          e.stopPropagation();
           return true;
         }
         if (e.key === "ArrowDown") {
@@ -107,7 +106,6 @@ const IssueSuggestionList = ({
               [currentSection]: [...prevItems[currentSection], ...nextItems],
             }));
           }
-          e.stopPropagation();
           return true;
         }
         if (e.key === "Enter") {
@@ -119,7 +117,6 @@ const IssueSuggestionList = ({
           const nextSectionIndex = (currentSectionIndex + 1) % sections.length;
           setCurrentSection(sections[nextSectionIndex]);
           setSelectedIndex(0);
-          e.stopPropagation();
           return true;
         }
         return false;

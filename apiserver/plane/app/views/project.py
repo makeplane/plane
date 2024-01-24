@@ -68,18 +68,13 @@ from plane.bgtasks.project_invitation_task import project_invitation
 
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
 
     permission_classes = [
         ProjectBasePermission,
     ]
-
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action in ["update", "partial_update"]:
-            return ProjectSerializer
-        return ProjectDetailSerializer
 
     def get_queryset(self):
         return self.filter_queryset(

@@ -19,10 +19,9 @@ import { Loader, getButtonStyling } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
 // types
-import { TDurationFilterOptions, TIssue, TIssuesListTypes } from "@plane/types";
+import { TIssue, TIssuesListTypes } from "@plane/types";
 
 export type WidgetIssuesListProps = {
-  filter: TDurationFilterOptions | undefined;
   isLoading: boolean;
   issues: TIssue[];
   tab: TIssuesListTypes;
@@ -32,7 +31,7 @@ export type WidgetIssuesListProps = {
 };
 
 export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
-  const { filter, isLoading, issues, tab, totalIssues, type, workspaceSlug } = props;
+  const { isLoading, issues, tab, totalIssues, type, workspaceSlug } = props;
   // store hooks
   const { setPeekIssue } = useIssueDetail();
 
@@ -62,7 +61,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
     <>
       <div className="h-full">
         {isLoading ? (
-          <Loader className="mx-6 mt-2 space-y-4">
+          <Loader className="mt-7 mx-6 space-y-4">
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
@@ -70,7 +69,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           </Loader>
         ) : issues.length > 0 ? (
           <>
-            <div className="mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
+            <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
                 className={cn("pl-1 flex items-center gap-1 col-span-4", {
                   "col-span-6": type === "assigned" && tab === "completed",
@@ -105,9 +104,9 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
             </div>
           </>
         ) : (
-          <div className="h-full grid items-end">
-            {type === "assigned" && <AssignedIssuesEmptyState filter={filter ?? "this_week"} type={tab} />}
-            {type === "created" && <CreatedIssuesEmptyState filter={filter ?? "this_week"} type={tab} />}
+          <div className="h-full grid place-items-center">
+            {type === "assigned" && <AssignedIssuesEmptyState type={tab} />}
+            {type === "created" && <CreatedIssuesEmptyState type={tab} />}
           </div>
         )}
       </div>

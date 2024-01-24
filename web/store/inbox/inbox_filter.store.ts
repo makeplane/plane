@@ -1,34 +1,31 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
+import isEmpty from "lodash/isEmpty";
 // services
 import { InboxService } from "services/inbox.service";
 // types
 import { RootStore } from "store/root.store";
-import { IInbox, IInboxFilterOptions, IInboxQueryParams } from "@plane/types";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { EUserProjectRoles } from "constants/project";
+import { TInboxIssueFilterOptions, TInboxIssueFilters, TInboxIssueQueryParams, TInbox } from "@plane/types";
 
-export interface IInboxFiltersStore {
+export interface IInboxFilter {
   // observables
-  inboxFilters: Record<string, { filters: IInboxFilterOptions }>;
+  filters: Record<string, TInboxIssueFilters>; // inbox_id -> TInboxIssueFilters
   // computed
-  appliedFilters: IInboxQueryParams | null;
-  // fetch action
-  fetchInboxFilters: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInbox>;
-  // update action
+  inboxFilters: TInboxIssueFilters | undefined;
+  inboxAppliedFilters: Partial<Record<TInboxIssueQueryParams, string>> | undefined;
+  // actions
+  fetchInboxFilters: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<TInbox>;
   updateInboxFilters: (
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    filters: Partial<IInboxFilterOptions>
-  ) => Promise<void>;
+    filters: Partial<TInboxIssueFilterOptions>
+  ) => Promise<TInbox>;
 }
 
-export class InboxFiltersStore implements IInboxFiltersStore {
+export class InboxFilter implements IInboxFilter {
   // observables
-  inboxFilters: {
-    [inboxId: string]: { filters: IInboxFilterOptions };
-  } = {};
+  filters: Record<string, TInboxIssueFilters> = {};
   // root store
   rootStore;
   // services
@@ -37,12 +34,12 @@ export class InboxFiltersStore implements IInboxFiltersStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      inboxFilters: observable,
+      filters: observable,
       // computed
-      appliedFilters: computed,
-      // fetch action
+      inboxFilters: computed,
+      inboxAppliedFilters: computed,
+      // actions
       fetchInboxFilters: action,
-      // update action
       updateInboxFilters: action,
     });
     // root store
@@ -51,69 +48,81 @@ export class InboxFiltersStore implements IInboxFiltersStore {
     this.inboxService = new InboxService();
   }
 
-  /**
-   * Returns applied filters to specific inbox
-   */
-  get appliedFilters(): IInboxQueryParams | null {
+  get inboxFilters() {
     const inboxId = this.rootStore.app.router.inboxId;
-    if (!inboxId) return null;
-    const filtersList = this.inboxFilters[inboxId]?.filters;
-    if (!filtersList) return null;
-    const filteredRouteParams: IInboxQueryParams = {
-      priority: filtersList.priority ? filtersList.priority.join(",") : null,
-      inbox_status: filtersList.inbox_status ? filtersList.inbox_status.join(",") : null,
+    if (!inboxId) return undefined;
+
+    const displayFilters = this.filters[inboxId] || undefined;
+    if (isEmpty(displayFilters)) return undefined;
+
+    const _filters: TInboxIssueFilters = {
+      filters: {
+        priority: isEmpty(displayFilters?.filters?.priority) ? [] : displayFilters?.filters?.priority,
+        inbox_status: isEmpty(displayFilters?.filters?.inbox_status) ? [] : displayFilters?.filters?.inbox_status,
+      },
     };
-    return filteredRouteParams;
+    return _filters;
   }
 
-  /**
-   * Fetches filters of a specific inbox and adds it to the store
-   * @param workspaceSlug
-   * @param projectId
-   * @param inboxId
-   * @returns Promise<IInbox[]>
-   *
-   */
+  get inboxAppliedFilters() {
+    const userFilters = this.inboxFilters;
+    if (!userFilters) return undefined;
+
+    const filteredParams = {
+      priority: userFilters?.filters?.priority?.join(",") || undefined,
+      inbox_status: userFilters?.filters?.inbox_status?.join(",") || undefined,
+    };
+    return filteredParams;
+  }
+
   fetchInboxFilters = async (workspaceSlug: string, projectId: string, inboxId: string) => {
-    return await this.inboxService.getInboxById(workspaceSlug, projectId, inboxId).then((issuesResponse) => {
+    try {
+      const response = await this.rootStore.inbox.inbox.fetchInboxById(workspaceSlug, projectId, inboxId);
+
+      const filters: TInboxIssueFilterOptions = {
+        priority: response?.view_props?.filters?.priority || [],
+        inbox_status: response?.view_props?.filters?.inbox_status || [],
+      };
+
       runInAction(() => {
-        set(this.inboxFilters, [inboxId], issuesResponse.view_props);
+        set(this.filters, [inboxId], { filters: filters });
       });
-      return issuesResponse;
-    });
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  /**
-   * Updates filters of a specific inbox and updates it in the store
-   * @param workspaceSlug
-   * @param projectId
-   * @param inboxId
-   * @param filters
-   * @returns Promise<void>
-   *
-   */
   updateInboxFilters = async (
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    filters: Partial<IInboxFilterOptions>
+    filters: Partial<TInboxIssueFilterOptions>
   ) => {
-    const newViewProps = {
-      ...this.inboxFilters[inboxId],
-      filters: {
-        ...this.inboxFilters[inboxId]?.filters,
-        ...filters,
-      },
-    };
-    const userRole = this.rootStore.user.membership?.currentProjectRole || EUserProjectRoles.GUEST;
-    if (userRole > EUserWorkspaceRoles.VIEWER)
-      await this.inboxService
-        .patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps })
-        .then((response) => {
-          runInAction(() => {
-            set(this.inboxFilters, [inboxId], newViewProps);
-          });
-          return response;
+    try {
+      runInAction(() => {
+        Object.keys(filters).forEach((_key) => {
+          const _filterKey = _key as keyof TInboxIssueFilterOptions;
+          set(this.filters, [inboxId, "filters", _key], filters[_filterKey]);
         });
+      });
+
+      const inboxFilters = this.inboxFilters;
+      let _filters: TInboxIssueFilterOptions = {
+        priority: inboxFilters?.filters?.priority || [],
+        inbox_status: inboxFilters?.filters?.inbox_status || [],
+      };
+      _filters = { ..._filters, ...filters };
+
+      const response = await this.rootStore.inbox.inbox.updateInbox(workspaceSlug, projectId, inboxId, {
+        view_props: { filters: _filters },
+      });
+
+      this.rootStore.inbox.inboxIssue.fetchInboxIssues(workspaceSlug, projectId, inboxId);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   };
 }

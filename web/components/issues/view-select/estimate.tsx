@@ -42,7 +42,6 @@ export const ViewEstimateSelect: React.FC<Props> = observer((props) => {
       maxHeight="md"
       noChevron
       disabled={disabled}
-      optionsClassName="w-full"
     >
       <CustomSelect.Option value={null}>
         <>

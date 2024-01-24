@@ -54,8 +54,13 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     projectId: string;
     inboxId: string;
   };
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store hooks
-  const { createIssue } = useInboxIssues();
+  const {
+    issues: { createInboxIssue },
+  } = useInboxIssues();
   const {
     config: { envConfig },
     eventTracker: { postHogEventTracker },
@@ -82,10 +87,10 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
-    await createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
+    await createInboxIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
       .then((res) => {
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.id}`);
           handleClose();
         } else reset(defaultValues);
         postHogEventTracker(
@@ -277,8 +282,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                               <RichTextEditorWithRef
                                 cancelUploadImage={fileService.cancelUpload}
                                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                                deleteFile={fileService.deleteImage}
-                                restoreFile={fileService.restoreImage}
+                                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                                 ref={editorRef}
                                 debouncedUpdatesEnabled={false}
                                 value={!value || value === "" ? "<p></p>" : value}

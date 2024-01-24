@@ -27,10 +27,15 @@ export type TIssueOperations = {
     showToast?: boolean
   ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
+  addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  addIssueToModule?: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromModule?: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string
+  ) => Promise<void>;
 };
 
 export type TIssueDetailRoot = {
@@ -217,8 +222,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              is_archived={is_archived}
-              is_editable={is_editable}
+              is_editable={!is_archived && is_editable}
             />
           </div>
           <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
@@ -228,7 +232,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={is_editable}
+              is_editable={!is_archived && is_editable}
             />
           </div>
         </div>

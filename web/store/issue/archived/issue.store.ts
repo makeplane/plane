@@ -90,11 +90,15 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
       const response = await this.archivedIssueService.getArchivedIssues(workspaceSlug, projectId, params);
 
       runInAction(() => {
-        set(this.issues, [projectId], Object.keys(response));
+        set(
+          this.issues,
+          [projectId],
+          response.map((issue: TIssue) => issue.id)
+        );
         this.loader = undefined;
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(response);
 
       return response;
     } catch (error) {

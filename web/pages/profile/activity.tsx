@@ -9,7 +9,7 @@ import { UserService } from "services/user.service";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
-import { ActivityIcon, ActivityMessage } from "components/core";
+import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
@@ -98,21 +98,13 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                 activityItem.field !== "modules" &&
                 activityItem.field !== "attachment" &&
                 activityItem.field !== "link" &&
-                activityItem.field !== "estimate" ? (
-                  <span className="text-custom-text-200">
-                    created{" "}
-                    <Link
-                      href={`/${activityItem.workspace_detail.slug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
-                    >
-                      <span className="inline-flex items-center hover:underline">
-                        this issue. <ExternalLinkIcon className="ml-1 h-3.5 w-3.5" />
-                      </span>
-                    </Link>
+                activityItem.field !== "estimate" &&
+                !activityItem.field ? (
+                  <span>
+                    created <IssueLink activity={activityItem} />
                   </span>
-                ) : activityItem.field ? (
-                  <ActivityMessage activity={activityItem} showIssue />
                 ) : (
-                  "created the issue."
+                  <ActivityMessage activity={activityItem} showIssue />
                 );
 
               if ("field" in activityItem && activityItem.field !== "updated_by") {

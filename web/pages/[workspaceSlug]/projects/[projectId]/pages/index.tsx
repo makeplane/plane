@@ -13,6 +13,7 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { PagesHeader } from "components/headers";
+import { Spinner } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
@@ -48,7 +49,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // store
   const { currentUser, currentUserLoader } = useUser();
 
-  const { fetchProjectPages, fetchArchivedProjectPages } = useProjectPages();
+  const { fetchProjectPages, fetchArchivedProjectPages, loader } = useProjectPages();
   // hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
   // local storage
@@ -82,6 +83,13 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         return 0;
     }
   };
+
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>

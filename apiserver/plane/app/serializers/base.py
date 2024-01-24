@@ -60,6 +60,7 @@ class DynamicBaseSerializer(BaseSerializer):
                     CycleIssueSerializer,
                     IssueFlatSerializer,
                     IssueRelationSerializer,
+                    InboxIssueLiteSerializer
                 )
 
                 # Expansion mapper
@@ -80,9 +81,10 @@ class DynamicBaseSerializer(BaseSerializer):
                     "issue_cycle": CycleIssueSerializer,
                     "parent": IssueSerializer,
                     "issue_relation": IssueRelationSerializer,
+                    "issue_inbox" : InboxIssueLiteSerializer,
                 }
                 
-                self.fields[field] = expansion[field](many=True if field in ["members", "assignees", "labels", "issue_cycle", "issue_relation"] else False)            
+                self.fields[field] = expansion[field](many=True if field in ["members", "assignees", "labels", "issue_cycle", "issue_relation", "issue_inbox"] else False)            
 
         return self.fields
 
@@ -103,6 +105,7 @@ class DynamicBaseSerializer(BaseSerializer):
                         LabelSerializer,
                         CycleIssueSerializer,
                         IssueRelationSerializer,
+                        InboxIssueLiteSerializer
                     )
 
                     # Expansion mapper
@@ -122,7 +125,8 @@ class DynamicBaseSerializer(BaseSerializer):
                         "labels": LabelSerializer,
                         "issue_cycle": CycleIssueSerializer,
                         "parent": IssueSerializer,
-                        "issue_relation": IssueRelationSerializer
+                        "issue_relation": IssueRelationSerializer,
+                        "issue_inbox" : InboxIssueLiteSerializer,
                     }
                     # Check if field in expansion then expand the field
                     if expand in expansion:

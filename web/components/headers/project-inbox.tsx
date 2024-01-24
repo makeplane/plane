@@ -51,12 +51,14 @@ export const ProjectInboxHeader: FC = observer(() => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-        <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
-          Add Issue
-        </Button>
-      </div>
+      {currentProjectDetails?.inbox_view && (
+        <div className="flex items-center gap-2">
+          <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
+          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
+            Add Issue
+          </Button>
+        </div>
+      )}
     </div>
   );
 });

@@ -164,30 +164,25 @@ def send_email_notification(
                 }
             )
         activity_time = changes.pop("activity_time")
-        template_data.append(
-            {
-                "actor_detail": {
-                    "avatar_url": actor.avatar,
-                    "first_name": actor.first_name,
-                    "last_name": actor.last_name,
-                },
-                "changes": changes,
-                "issue_details": {
-                    "name": issue.name,
-                    "identifier": f"{issue.project.identifier}-{issue.sequence_id}",
-                },
-                "activity_time": str(activity_time),
-            }
-        )
+        # Parse the input string into a datetime object
+        formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
 
-    span = f"""<span style='
-                        font-size: 1rem;
-                        font-weight: 700;
-                        line-height: 28px;
-                      "
-                    >
-                      {template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']}
-                    </span>"""
+        if changes:
+            template_data.append(
+                {
+                    "actor_detail": {
+                        "avatar_url": actor.avatar,
+                        "first_name": actor.first_name,
+                        "last_name": actor.last_name,
+                    },
+                    "changes": changes,
+                    "issue_details": {
+                        "name": issue.name,
+                        "identifier": f"{issue.project.identifier}-{issue.sequence_id}",
+                    },
+                    "activity_time": str(formatted_time),
+                }
+        )
 
     summary = "updates were made to the issue by"
 
@@ -204,11 +199,10 @@ def send_email_notification(
         "receiver": {
             "email": receiver.email,
         },
-        "issue_unsubscribe": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
+        "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
         "user_preference": f"{base_api}/profile/preferences/email",
         "comments": comments,
     }
-    print(json.dumps(context))
     html_content = render_to_string(
         "emails/notifications/issue-updates.html", context
     )
@@ -236,7 +230,6 @@ def send_email_notification(
         EmailNotificationLog.objects.filter(
             pk__in=email_notification_ids
         ).update(sent_at=timezone.now())
-        print("Email Sent")
         return
     except Exception as e:
         print(e)

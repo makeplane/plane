@@ -334,7 +334,11 @@ def notifications(
                     user_id=subscriber
                 )
 
-                for issue_activity in issue_activities_created:
+                for issue_activity in issue_activities_created:   
+                    # If activity done in blocking then blocked by email should not go
+                    if issue_activity.get("issue_detail").get("id") != issue_id:
+                        continue;
+                    
                     # Do not send notification for description update
                     if issue_activity.get("field") == "description":
                         continue

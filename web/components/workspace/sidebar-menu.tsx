@@ -11,6 +11,8 @@ import { Tooltip } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { SIDEBAR_MENU_ITEMS } from "constants/dashboard";
+// helper
+import { cn } from "helpers/common.helper";
 
 export const WorkspaceSidebarMenu = observer(() => {
   // store hooks
@@ -44,7 +46,13 @@ export const WorkspaceSidebarMenu = observer(() => {
                         : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                     } ${themeStore?.sidebarCollapsed ? "justify-center" : ""}`}
                   >
-                    {<link.Icon className="h-4 w-4" />}
+                    {
+                      <link.Icon
+                        className={cn("h-4 w-4", {
+                          "rotate-180": link.key === "active-cycles",
+                        })}
+                      />
+                    }
                     {!themeStore?.sidebarCollapsed && link.label}
                     {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
                       <span className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl text-orange-500 bg-orange-500/20">

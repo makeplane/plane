@@ -48,7 +48,9 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
           issueActivity.map((activityId, index) => {
             // determines what type of action is performed
             const activityItem = activity.getActivityById(activityId) as IIssueActivity;
-            const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
+            const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : <span>
+                          created <IssueLink activity={activity} />
+                        </span>;
 
             if ("field" in activityItem && activityItem.field !== "updated_by") {
               return (

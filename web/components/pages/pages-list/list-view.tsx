@@ -1,17 +1,16 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
 // components
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { PagesListItem } from "./list-item";
 // ui
 import { Loader } from "@plane/ui";
-// images
-import emptyPage from "public/empty-state/empty_page.png";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { PagesListItem } from "./list-item";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/page";
 
 type IPagesListView = {
   pageIds: string[];
@@ -19,18 +18,31 @@ type IPagesListView = {
 
 export const PagesListView: FC<IPagesListView> = (props) => {
   const { pageIds: projectPageIds } = props;
-  // store hooks
-  // trace(true);
 
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
   const {
     membership: { currentProjectRole },
+    currentUser,
   } = useUser();
+  // local storage
+  const { storedValue: pageTab } = useLocalStorage("pageTab", "Recent");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const currentPageTabDetails = pageTab
+    ? PAGE_EMPTY_STATE_DETAILS[pageTab as keyof typeof PAGE_EMPTY_STATE_DETAILS]
+    : PAGE_EMPTY_STATE_DETAILS["All"];
+
+  const emptyStateImage = getEmptyStateImagePath(
+    "pages",
+    currentPageTabDetails.key,
+    currentUser?.theme.theme === "light"
+  );
+
+  const isButtonVisible = currentPageTabDetails.key !== "archived" && currentPageTabDetails.key !== "favorites";
 
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
 
@@ -47,21 +59,18 @@ export const PagesListView: FC<IPagesListView> = (props) => {
               ))}
             </ul>
           ) : (
-            <NewEmptyState
-              title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started."
-              description="Pages are thoughtspotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
-              image={emptyPage}
-              comicBox={{
-                title: "A page can be a doc or a doc of docs.",
-                description:
-                  "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
-                direction: "right",
-              }}
-              primaryButton={{
-                icon: <Plus className="h-4 w-4" />,
-                text: "Create your first page",
-                onClick: () => toggleCreatePageModal(true),
-              }}
+            <EmptyState
+              title={currentPageTabDetails.title}
+              description={currentPageTabDetails.description}
+              image={emptyStateImage}
+              primaryButton={
+                isButtonVisible
+                  ? {
+                      text: "Create new page",
+                      onClick: () => toggleCreatePageModal(true),
+                    }
+                  : undefined
+              }
               disabled={!isEditingAllowed}
             />
           )}

@@ -44,10 +44,10 @@ interface IDocumentEditor {
   isSubmitting: "submitting" | "submitted" | "saved";
 
   // embed configuration
+  embedConfig?: IEmbedConfig;
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-  embedConfig?: IEmbedConfig;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -75,13 +75,12 @@ const DocumentEditor = ({
   duplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig,
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
   rerenderOnPropsChange,
+  embedConfig,
 }: IDocumentEditor) => {
-  // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const router = useRouter();
