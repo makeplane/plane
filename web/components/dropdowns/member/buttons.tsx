@@ -10,7 +10,9 @@ import { cn } from "helpers/common.helper";
 type ButtonProps = {
   className?: string;
   dropdownArrow: boolean;
+  dropdownArrowClassName: string;
   placeholder: string;
+  hideIcon?: boolean;
   hideText?: boolean;
   userIds: string | string[] | null;
 };
@@ -41,7 +43,15 @@ const ButtonAvatars = observer(({ userIds }: { userIds: string | string[] | null
 });
 
 export const BorderButton = observer((props: ButtonProps) => {
-  const { className, dropdownArrow, hideText = false, placeholder, userIds } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    placeholder,
+    userIds,
+  } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -54,19 +64,29 @@ export const BorderButton = observer((props: ButtonProps) => {
         className
       )}
     >
-      <ButtonAvatars userIds={userIds} />
+      {!hideIcon && <ButtonAvatars userIds={userIds} />}
       {!hideText && (
         <span className="flex-grow truncate">
           {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
         </span>
       )}
-      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+      {dropdownArrow && (
+        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+      )}
     </div>
   );
 });
 
 export const BackgroundButton = observer((props: ButtonProps) => {
-  const { className, dropdownArrow, hideText = false, placeholder, userIds } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    placeholder,
+    userIds,
+  } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -76,19 +96,29 @@ export const BackgroundButton = observer((props: ButtonProps) => {
     <div
       className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
     >
-      <ButtonAvatars userIds={userIds} />
+      {!hideIcon && <ButtonAvatars userIds={userIds} />}
       {!hideText && (
         <span className="flex-grow truncate">
           {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
         </span>
       )}
-      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+      {dropdownArrow && (
+        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+      )}
     </div>
   );
 });
 
 export const TransparentButton = observer((props: ButtonProps) => {
-  const { className, dropdownArrow, hideText = false, placeholder, userIds } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    placeholder,
+    userIds,
+  } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -101,13 +131,15 @@ export const TransparentButton = observer((props: ButtonProps) => {
         className
       )}
     >
-      <ButtonAvatars userIds={userIds} />
+      {!hideIcon && <ButtonAvatars userIds={userIds} />}
       {!hideText && (
         <span className="flex-grow truncate">
           {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
         </span>
       )}
-      {dropdownArrow && <ChevronDown className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+      {dropdownArrow && (
+        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+      )}
     </div>
   );
 });
