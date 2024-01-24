@@ -225,7 +225,7 @@
                         margin-left: 10px;
                       "
                     >
-                      {{ update.activity_time }}
+                      {{ update.activity_time|date:"d M Y" }}
                     </p>
                   </td>
                 </tr>
@@ -283,17 +283,15 @@
                 style="max-width: 100%; padding-bottom: 15px"
               >
                 <tr>
-                  <td>
+                  <td style="overflow-wrap: break-word;">
                     <img
                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.webp"
                       width="12"
                       height="12"
                       border="0"
-                      style="display: block"
+                      style="display: inline-block"
                     />
-                  </td>
-                  <td>
-                    <p
+                    <span
                       style="
                         font-size: 0.8rem;
                         font-weight: 500;
@@ -301,22 +299,25 @@
                       "
                     >
                       Duplicate:
-                    </p>
+                  </span>
                   </td>
-                  <td>
+                  
+                  <td style="padding-left: 5px;">
                     {% for duplicate in update.changes.duplicate.new_value %}
-                    <p
+                    <span
                       style="
                         font-size: 0.8rem;
                         font-weight: 500;
                         color: #3a5bc7;
-                        margin-left: 5px;
+                        margin-right: 3px;
+                        padding-top: 0px;
                       "
                     >
                       {{ duplicate }}
-                    </p>
+                    </span>
                     {% endfor %}
                   </td>
+                  
                 </tr>
               </table>
               {% endif %}
@@ -554,7 +555,7 @@
                     <p
                        style="
                        font-size: 0.8rem;
-                       font-weight: 600;
+                       font-weight: 500;
                        color: #60646C;
                        "
                        >
@@ -583,7 +584,7 @@
                     <p
                       style="
                         font-size: 0.8rem;
-                        font-weight: 600;
+                        font-weight: 500;
                         color: #60646c;
                       "
                     >
@@ -592,91 +593,69 @@
                   </td>
                 </tr>
               </table>
-              {% endif %} {% if update.changes.links %}
+              {% endif %} {% if update.changes.link %}
               <!-- Link Added -->
               <table
                 role="presentation"
                 style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
-                  <td>
+                  <td valign="top">
                     <img
                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.webp"
                       width="12"
                       height="12"
                       border="0"
-                      style="display: block"
+                      style="display: block; margin-top: 3px;"
                     />
                   </td>
-                  <td>
+                  <td valign="top">
                     <p
                       style="
                         font-size: 0.8rem;
                         font-weight: 500;
                         color: #525252;
                         margin-right: 5px;
+                        
                       "
                     >
                       Links:
                     </p>
                   </td>
                   <td>
+                    {% for link in update.changes.link.new_value %}
                     <a
-                      href=""
+                      href="{{link}}"
                       style="
                         font-size: 0.8rem;
                         font-weight: 600;
                         color: #3a5bc7;
+                        display: block;
+                        padding-bottom: 5px;
                       "
                     >
-                      Figma Link
+                      {{ link }}
                     </a>
+                    {% endfor %}
+                    {% if update.changes.link.old_value|length > 0 %}
+                    {% if update.changes.link.old_value.0 != "None" %}
+                    <p
+                    href=""
+                    style="
+                      font-size: 0.8rem;
+                      font-weight: 500;
+                      color: #60646c;
+                    "
+                  >
+                    2 Links were removed
+                  </p>
+                  {% endif %}
+                  {% endif %}
                   </td>
                 </tr>
               </table>
-              {% endif %} {% if update.changes.links %}
-              <!-- Links Removed -->
-              <table
-                role="presentation"
-                style="padding-bottom: 15px; max-width: 100%"
-              >
-                <tr>
-                  <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.webp"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
-                  </td>
-                  <td>
-                    <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #525252;
-                        margin-right: 5px;
-                      "
-                    >
-                      Links:
-                    </p>
-                  </td>
-                  <td>
-                    <p
-                      href=""
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #60646c;
-                      "
-                    >
-                      2 Links were removed
-                    </p>
-                  </td>
-                </tr>
-              </table>
-              {% endif %} {% if update.changes.priority %}
+              {% endif %} 
+              {% if update.changes.priority %}
               <!-- Priority changed -->
               <table
                 role="presentation"
@@ -761,18 +740,16 @@
                 role="presentation"
                 style="padding-bottom: 15px; max-width: 100%"
               >
-                <tr>
-                  <td>
+                <tr style="overflow-wrap: break-word;">
+                  <td> 
                     <img
                       src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.webp"
                       width="12"
                       height="12"
                       border="0"
-                      style="display: block; margin: 0px; padding: 0px"
+                      style="display: inline-block;"
                     />
-                  </td>
-                  <td>
-                    <p
+                    <span
                       style="
                         font-size: 0.8rem;
                         font-weight: 500;
@@ -781,15 +758,17 @@
                       "
                     >
                       Blocking:
-                    </p>
+                  </span>
                   </td>
-                  {% for blocking in update.changes.blocking.new_value %}
+                  
                   <td>
-                    <a href="" style="font-size: 0.8rem; color: #3358d4">
+                    {% for blocking in update.changes.blocking.new_value %}
+                    <span href="" style="font-size: 0.8rem; font-weight: 500; margin-right: 5px; color: #3358d4;">
                       {{blocking}}
-                    </a>
+                    </span>
+                    {% endfor %}
                   </td>
-                  {% endfor %}
+                  
                 </tr>
               </table>
               {% endif %} {% if update.changes.description %}
@@ -858,8 +837,8 @@
                   {% if comment.actor_detail.avatar_url %}
                   <img
                     src="{{ comment.actor_detail.avatar_url }}"
-                    width="15"
-                    height="15"
+                    width="25"
+                    height="25"
                     border="0"
                   />
                   {% else %}
@@ -937,7 +916,7 @@
           </div>
           {% endif %}
         </div>
-        <a href="{{ issue_url }}">
+        <a href="{{ issue_url }}" style="text-decoration: none;">
           <div
             style="
               max-width: min-content;
