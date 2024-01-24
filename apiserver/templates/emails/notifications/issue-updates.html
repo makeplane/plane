@@ -561,8 +561,8 @@
                                  font-weight: 600;
                                  color: #60646C;
                                  "
-                                 >   	
-                                 {{ update.changes.state.new_value.0 }}
+                                 >
+                                 {{ update.changes.state.new_value|last }}
                               </p>
                            </td>
                         </tr>
@@ -673,7 +673,23 @@
                                  Priority:
                               </p>
                            </td>
-                           {% if update.changes.priority.old_value.0 == "high" %}
+                           {% if update.changes.priority.old_value.0 == "urgent" %}
+                           <td>
+                              <p
+                                 href=""
+                                 style="
+                                 font-size: 0.8rem;
+                                 padding: 3px;
+                                 font-weight: 500;
+                                 background-color: #FEEBEC;
+                                 color: #EF4444;
+                                 border-radius: 2px;
+                                 "
+                                 >
+                                 Urgent
+                              </p>
+                           </td>
+                           {% elif update.changes.priority.old_value.0 == "high" %}
                            <td>
                               <p
                                  href=""
@@ -744,7 +760,23 @@
                                  style="display: block;"
                                  />
                            </td>
-                           {% if update.changes.priority.new_value.0 == "high" %}
+                           {% if update.changes.priority.new_value|last == "urgent" %}
+                           <td>
+                              <p
+                                 href=""
+                                 style="
+                                 font-size: 0.8rem;
+                                 padding: 3px;
+                                 font-weight: 500;
+                                 background-color: #FEEBEC;
+                                 color: #EF4444;
+                                 border-radius: 2px;
+                                 "
+                                 >
+                                 Urgent
+                              </p>
+                           </td>
+                           {% elif update.changes.priority.new_value|last == "high" %}
                            <td>
                               <p
                                  href=""
@@ -760,7 +792,7 @@
                                  High
                               </p>
                            </td>
-                           {% elif update.changes.priority.new_value.0 == "low" %}
+                           {% elif update.changes.priority.new_value|last == "low" %}
                            <td>
                               <p
                                  href=""
@@ -776,7 +808,7 @@
                                  Low
                               </p>
                            </td>
-                           {% elif update.changes.priority.new_value.0 == "medium" %}
+                           {% elif update.changes.priority.new_value|last == "medium" %}
                            <td>
                               <p
                                  href=""
