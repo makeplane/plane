@@ -1,4 +1,15 @@
-import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+import {
+  GanttChartSquare,
+  LayoutGrid,
+  List,
+  AlertOctagon,
+  BarChart4,
+  CircleDashed,
+  Folder,
+  Microscope,
+  Search,
+} from "lucide-react";
+
 // types
 import { TCycleLayout, TCycleView } from "@plane/types";
 
@@ -114,3 +125,64 @@ export const CYCLE_STATE_GROUPS_DETAILS = [
     color: "#ef4444",
   },
 ];
+
+export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
+  {
+    title: "10,000-feet view of all active cycles.",
+    description:
+      "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
+    icon: Folder,
+  },
+  {
+    title: "Get a snapshot of each active cycle.",
+    description:
+      "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
+    icon: CircleDashed,
+  },
+  {
+    title: "Compare burndowns.",
+    description: "Monitor how each of your teams are performing with a peek into each cycle’s burndown report.",
+    icon: BarChart4,
+  },
+  {
+    title: "Quickly see make-or-break issues. ",
+    description:
+      "Preview high-priority issues for each cycle against due dates. See all of them per cycle in one click.",
+    icon: AlertOctagon,
+  },
+  {
+    title: "Zoom into cycles that need attention. ",
+    description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
+    icon: Search,
+  },
+  {
+    title: "Stay ahead of blockers.",
+    description:
+      "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
+    icon: Microscope,
+  },
+];
+
+export const CYCLE_EMPTY_STATE_DETAILS = {
+  active: {
+    key: "active",
+    title: "No active cycles",
+    description:
+      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+  },
+  upcoming: {
+    key: "upcoming",
+    title: "No upcoming cycles",
+    description: "Upcoming cycles on deck! Just add dates to cycles in draft, and they'll show up right here.",
+  },
+  completed: {
+    key: "completed",
+    title: "No completed cycles",
+    description: "Any cycle with a past due date is considered completed. Explore all completed cycles here.",
+  },
+  draft: {
+    key: "draft",
+    title: "No draft cycles",
+    description: "No dates added in cycles? Find them here as drafts.",
+  },
+};

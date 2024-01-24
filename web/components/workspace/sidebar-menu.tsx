@@ -8,9 +8,12 @@ import { useApplication, useUser } from "hooks/store";
 import { NotificationPopover } from "components/notifications";
 // ui
 import { Tooltip } from "@plane/ui";
+import { Crown } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { SIDEBAR_MENU_ITEMS } from "constants/dashboard";
+// helper
+import { cn } from "helpers/common.helper";
 
 export const WorkspaceSidebarMenu = observer(() => {
   // store hooks
@@ -44,8 +47,17 @@ export const WorkspaceSidebarMenu = observer(() => {
                         : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                     } ${themeStore?.sidebarCollapsed ? "justify-center" : ""}`}
                   >
-                    {<link.Icon className="h-4 w-4" />}
+                    {
+                      <link.Icon
+                        className={cn("h-4 w-4", {
+                          "rotate-180": link.key === "active-cycles",
+                        })}
+                      />
+                    }
                     {!themeStore?.sidebarCollapsed && link.label}
+                    {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
+                      <Crown className="h-3.5 w-3.5 text-amber-400" />
+                    )}
                   </div>
                 </Tooltip>
               </span>

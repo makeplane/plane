@@ -22,13 +22,9 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = ({
-  isOpen,
-  handleClose: onClose,
-  searchParams,
-  handleOnSubmit,
-  workspaceLevelToggle = false,
-}) => {
+export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+  const { isOpen, handleClose: onClose, searchParams, handleOnSubmit, workspaceLevelToggle = false } = props;
+  // states
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -92,7 +88,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
-        <Dialog as="div" className="relative z-20" onClose={handleClose}>
+        <Dialog as="div" className="relative z-20" onClose={() => {}}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -260,16 +256,16 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     )}
                   </Combobox.Options>
                 </Combobox>
-                {selectedIssues.length > 0 && (
-                  <div className="flex items-center justify-end gap-2 p-3">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                      Cancel
-                    </Button>
+                <div className="flex items-center justify-end gap-2 p-3">
+                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  {selectedIssues.length > 0 && (
                     <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
                       {isSubmitting ? "Adding..." : "Add selected issues"}
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

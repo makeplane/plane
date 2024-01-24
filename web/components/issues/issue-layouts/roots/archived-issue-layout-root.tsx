@@ -5,7 +5,12 @@ import useSWR from "swr";
 // mobx store
 import { useIssues } from "hooks/store";
 // components
-import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, ProjectEmptyState } from "components/issues";
+import {
+  ArchivedIssueListLayout,
+  ArchivedIssueAppliedFiltersRoot,
+  ProjectArchivedEmptyState,
+  IssuePeekOverview,
+} from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 // ui
 import { Spinner } from "@plane/ui";
@@ -43,12 +48,16 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
       ) : (
         <>
           {!issues?.groupedIssueIds ? (
-            // TODO: Replace this with project view empty state
-            <ProjectEmptyState />
+            <ProjectArchivedEmptyState />
           ) : (
-            <div className="relative h-full w-full overflow-auto">
-              <ArchivedIssueListLayout />
-            </div>
+            <>
+              <div className="relative h-full w-full overflow-auto">
+                <ArchivedIssueListLayout />
+              </div>
+
+              {/* peek overview */}
+              <IssuePeekOverview is_archived />
+            </>
           )}
         </>
       )}

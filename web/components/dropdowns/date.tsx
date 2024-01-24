@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Popover } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
@@ -13,28 +13,40 @@ import { cn } from "helpers/common.helper";
 import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
+  clearIconClassName?: string;
   icon?: React.ReactNode;
   isClearable?: boolean;
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
-  placeholder: string;
   value: Date | string | null;
   closeOnSelect?: boolean;
 };
 
 type ButtonProps = {
   className?: string;
+  clearIconClassName: string;
   date: string | Date | null;
   icon: React.ReactNode;
   isClearable: boolean;
+  hideIcon?: boolean;
   hideText?: boolean;
   onClear: () => void;
   placeholder: string;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, date, icon, isClearable, hideText = false, onClear, placeholder } = props;
+  const {
+    className,
+    clearIconClassName,
+    date,
+    icon,
+    isClearable,
+    hideIcon = false,
+    hideText = false,
+    onClear,
+    placeholder,
+  } = props;
 
   return (
     <div
@@ -43,11 +55,11 @@ const BorderButton = (props: ButtonProps) => {
         className
       )}
     >
-      {icon}
+      {!hideIcon && icon}
       {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
       {isClearable && (
         <X
-          className="h-2 w-2 flex-shrink-0"
+          className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
           onClick={(e) => {
             e.stopPropagation();
             onClear();
@@ -59,17 +71,27 @@ const BorderButton = (props: ButtonProps) => {
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, date, icon, isClearable, hideText = false, onClear, placeholder } = props;
+  const {
+    className,
+    clearIconClassName,
+    date,
+    icon,
+    isClearable,
+    hideIcon = false,
+    hideText = false,
+    onClear,
+    placeholder,
+  } = props;
 
   return (
     <div
       className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
     >
-      {icon}
+      {!hideIcon && icon}
       {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
       {isClearable && (
         <X
-          className="h-2 w-2 flex-shrink-0"
+          className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
           onClick={(e) => {
             e.stopPropagation();
             onClear();
@@ -81,7 +103,17 @@ const BackgroundButton = (props: ButtonProps) => {
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, date, icon, isClearable, hideText = false, onClear, placeholder } = props;
+  const {
+    className,
+    clearIconClassName,
+    date,
+    icon,
+    isClearable,
+    hideIcon = false,
+    hideText = false,
+    onClear,
+    placeholder,
+  } = props;
 
   return (
     <div
@@ -90,11 +122,11 @@ const TransparentButton = (props: ButtonProps) => {
         className
       )}
     >
-      {icon}
+      {!hideIcon && icon}
       {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
       {isClearable && (
         <X
-          className="h-2 w-2 flex-shrink-0"
+          className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
           onClick={(e) => {
             e.stopPropagation();
             onClear();
@@ -111,13 +143,15 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonContainerClassName,
     buttonVariant,
     className = "",
+    clearIconClassName = "",
     disabled = false,
+    hideIcon = false,
     icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
     isClearable = true,
     minDate,
     maxDate,
     onChange,
-    placeholder,
+    placeholder = "Date",
     placement,
     value,
     closeOnSelect = true,
@@ -153,13 +187,14 @@ export const DateDropdown: React.FC<Props> = (props) => {
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   return (
-    <Popover
+    <Combobox
+      as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
-      className={cn("h-full flex-shrink-0", className)}
+      className={cn("h-full", className)}
       onKeyDown={handleKeyDown}
     >
-      <Popover.Button as={React.Fragment}>
+      <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
@@ -177,6 +212,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <BorderButton
               date={value}
               className={buttonClassName}
+              clearIconClassName={clearIconClassName}
+              hideIcon={hideIcon}
               icon={icon}
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
@@ -186,6 +223,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <BorderButton
               date={value}
               className={buttonClassName}
+              clearIconClassName={clearIconClassName}
+              hideIcon={hideIcon}
               icon={icon}
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
@@ -196,6 +235,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <BackgroundButton
               date={value}
               className={buttonClassName}
+              clearIconClassName={clearIconClassName}
+              hideIcon={hideIcon}
               icon={icon}
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
@@ -205,6 +246,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <BackgroundButton
               date={value}
               className={buttonClassName}
+              clearIconClassName={clearIconClassName}
+              hideIcon={hideIcon}
               icon={icon}
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
@@ -215,6 +258,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <TransparentButton
               date={value}
               className={buttonClassName}
+              clearIconClassName={clearIconClassName}
+              hideIcon={hideIcon}
               icon={icon}
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
@@ -224,6 +269,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <TransparentButton
               date={value}
               className={buttonClassName}
+              clearIconClassName={clearIconClassName}
+              hideIcon={hideIcon}
               icon={icon}
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
@@ -232,9 +279,9 @@ export const DateDropdown: React.FC<Props> = (props) => {
             />
           ) : null}
         </button>
-      </Popover.Button>
+      </Combobox.Button>
       {isOpen && (
-        <Popover.Panel className="fixed z-10" static>
+        <Combobox.Options className="fixed z-10" static>
           <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
             <DatePicker
               selected={value ? new Date(value) : null}
@@ -249,8 +296,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
               inline
             />
           </div>
-        </Popover.Panel>
+        </Combobox.Options>
       )}
-    </Popover>
+    </Combobox>
   );
 };

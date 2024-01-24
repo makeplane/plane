@@ -63,6 +63,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
+  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  maxDate?.setDate(maxDate.getDate());
+
   return (
     <div className={className}>
       {/* basic properties */}
@@ -111,6 +117,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             value={issue.start_date ?? null}
             onChange={handleStartDate}
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            maxDate={maxDate ?? undefined}
             placeholder="Start date"
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
@@ -122,10 +129,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
         <div className="h-5">
           <DateDropdown
-            minDate={issue.start_date ? new Date(issue.start_date) : undefined}
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
             icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            minDate={minDate ?? undefined}
             placeholder="Due date"
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}

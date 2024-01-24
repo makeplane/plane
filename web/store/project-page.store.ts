@@ -10,6 +10,7 @@ import { RootStore } from "./root.store";
 import { isThisWeek, isToday, isYesterday } from "date-fns";
 
 export interface IProjectPageStore {
+  loader: boolean;
   projectPageMap: Record<string, Record<string, IPageStore>>;
   projectArchivedPageMap: Record<string, Record<string, IPageStore>>;
 
@@ -30,6 +31,7 @@ export interface IProjectPageStore {
 }
 
 export class ProjectPageStore implements IProjectPageStore {
+  loader: boolean = false;
   projectPageMap: Record<string, Record<string, IPageStore>> = {}; // { projectId: [page1, page2] }
   projectArchivedPageMap: Record<string, Record<string, IPageStore>> = {}; // { projectId: [page1, page2] }
 
@@ -39,6 +41,7 @@ export class ProjectPageStore implements IProjectPageStore {
   pageService;
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      loader: observable.ref,
       projectPageMap: observable,
       projectArchivedPageMap: observable,
 
@@ -152,15 +155,19 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   fetchProjectPages = async (workspaceSlug: string, projectId: string) => {
     try {
+      this.loader = true;
       await this.pageService.getProjectPages(workspaceSlug, projectId).then((response) => {
         runInAction(() => {
           for (const page of response) {
             set(this.projectPageMap, [projectId, page.id], new PageStore(page, this.rootStore));
           }
+          this.loader = false;
         });
         return response;
       });
     } catch (e) {
+      this.loader = false;
+
       throw e;
     }
   };
@@ -173,15 +180,18 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) => {
     try {
+      this.loader = true;
       await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
         runInAction(() => {
           for (const page of response) {
             set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page, this.rootStore));
           }
+          this.loader = false;
         });
         return response;
       });
     } catch (e) {
+      this.loader = false;
       throw e;
     }
   };

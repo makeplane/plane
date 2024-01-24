@@ -11,6 +11,7 @@ import { RootStore } from "store/root.store";
 
 export interface IModuleStore {
   //Loaders
+  loader: boolean;
   fetchedMap: Record<string, boolean>;
   // observables
   moduleMap: Record<string, IModule>;
@@ -21,7 +22,7 @@ export interface IModuleStore {
   getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
   // fetch
-  fetchModules: (workspaceSlug: string, projectId: string) => Promise<IModule[]>;
+  fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
@@ -53,6 +54,7 @@ export interface IModuleStore {
 
 export class ModulesStore implements IModuleStore {
   // observables
+  loader: boolean = false;
   moduleMap: Record<string, IModule> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
@@ -65,6 +67,7 @@ export class ModulesStore implements IModuleStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
+      loader: observable.ref,
       moduleMap: observable,
       fetchedMap: observable,
       // computed
@@ -128,16 +131,24 @@ export class ModulesStore implements IModuleStore {
    * @param projectId
    * @returns IModule[]
    */
-  fetchModules = async (workspaceSlug: string, projectId: string) =>
-    await this.moduleService.getModules(workspaceSlug, projectId).then((response) => {
-      runInAction(() => {
-        response.forEach((module) => {
-          set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+  fetchModules = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      await this.moduleService.getModules(workspaceSlug, projectId).then((response) => {
+        runInAction(() => {
+          response.forEach((module) => {
+            set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+          });
+          set(this.fetchedMap, projectId, true);
+          this.loader = false;
         });
-        set(this.fetchedMap, projectId, true);
+        return response;
       });
-      return response;
-    });
+    } catch (error) {
+      this.loader = false;
+      return undefined;
+    }
+  };
 
   /**
    * @description fetch module details

@@ -222,8 +222,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              is_archived={is_archived}
-              is_editable={is_editable}
+              is_editable={!is_archived && is_editable}
             />
           </div>
           <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
@@ -233,7 +232,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={is_editable}
+              is_editable={!is_archived && is_editable}
             />
           </div>
         </div>
