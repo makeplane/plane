@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useIssues, usePage, useUser } from "hooks/store";
+import { useApplication, usePage, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -29,13 +29,9 @@ import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { useIssueEmbeds } from "hooks/use-issue-embeds";
 import { IssuePeekOverview } from "components/issues";
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { IssueService } from "services/issue";
-import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
-const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -88,7 +84,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       : null
   );
 
-  const { issues, fetchIssue, issueWidgetClickAction } = useIssueEmbeds();
+  const { issues, fetchIssue, issueLoading, issueWidgetClickAction } = useIssueEmbeds();
 
   const pageStore = usePage(pageId as string);
 
@@ -259,7 +255,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const userCanLock =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  return pageIdMobx && issues ? (
+  return pageIdMobx && issues && !issueLoading ? (
     <div className="flex h-full flex-col justify-between">
       <div className="h-full w-full overflow-hidden">
         {isPageReadOnly ? (

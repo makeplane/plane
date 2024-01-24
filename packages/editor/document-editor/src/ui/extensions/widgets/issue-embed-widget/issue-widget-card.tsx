@@ -9,15 +9,13 @@ export const IssueWidgetCard = (props) => {
   const [issueDetails, setIssueDetails] = useState();
 
   useEffect(() => {
-    props.issueEmbedConfig
-      .fetchIssue(props.node.attrs.entity_identifier)
-      .then((issue) => {
-        setIssueDetails(issue);
-        setLoading(0);
-      })
-      .catch(() => {
-        setLoading(-1);
-      });
+    const issue = props.issueEmbedConfig.fetchIssue(props.node.attrs.entity_identifier);
+    if (issue) {
+      setIssueDetails(issue);
+      setLoading(0);
+    } else {
+      setLoading(-1);
+    }
   }, []);
 
   const completeIssueEmbedAction = () => {

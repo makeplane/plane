@@ -55,11 +55,17 @@ const IssueSuggestionList = ({
   useEffect(() => {
     const newDisplayedItems: { [key: string]: IssueSuggestionProps[] } = {};
     let totalLength = 0;
+    let selectedSection = "Backlog";
+    let selectedCurrentSection = false;
     sections.forEach((section) => {
       newDisplayedItems[section] = items.filter((item) => item.state === section).slice(0, 5);
-
+      if (newDisplayedItems[section].length > 0 && selectedCurrentSection === false) {
+        selectedSection = section;
+        selectedCurrentSection = true;
+      }
       totalLength += newDisplayedItems[section].length;
     });
+    setCurrentSection(selectedSection);
     setDisplayedTotalLength(totalLength);
     setDisplayedItems(newDisplayedItems);
   }, [items]);
