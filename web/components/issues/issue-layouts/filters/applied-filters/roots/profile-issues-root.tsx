@@ -7,19 +7,20 @@ import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { useWorskspaceIssueProperties } from "hooks/use-worskspace-issue-properties";
 
 export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
+  //swr hook for fetching issue properties
+  useWorskspaceIssueProperties(workspaceSlug);
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROFILE);
 
-  const {
-    workspace: { workspaceLabels },
-  } = useLabel();
+  const { workspaceLabels } = useLabel();
   // derived values
   const userFilters = issueFilters?.filters;
 

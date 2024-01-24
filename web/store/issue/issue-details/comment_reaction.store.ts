@@ -1,10 +1,16 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import find from "lodash/find";
+import pull from "lodash/pull";
 // services
 import { IssueReactionService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
 import { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "@plane/types";
+// helpers
+import { groupReactions } from "helpers/emoji.helper";
 
 export interface IIssueCommentReactionStoreActions {
   // actions
@@ -13,6 +19,7 @@ export interface IIssueCommentReactionStoreActions {
     projectId: string,
     commentId: string
   ) => Promise<TIssueCommentReaction[]>;
+  applyCommentReactions: (commentId: string, commentReactions: TIssueCommentReaction[]) => void;
   createCommentReaction: (
     workspaceSlug: string,
     projectId: string,
@@ -23,7 +30,8 @@ export interface IIssueCommentReactionStoreActions {
     workspaceSlug: string,
     projectId: string,
     commentId: string,
-    reaction: string
+    reaction: string,
+    userId: string
   ) => Promise<any>;
 }
 
@@ -32,8 +40,9 @@ export interface IIssueCommentReactionStore extends IIssueCommentReactionStoreAc
   commentReactions: TIssueCommentReactionIdMap;
   commentReactionMap: TIssueCommentReactionMap;
   // helper methods
-  getCommentReactionsByCommentId: (commentId: string) => string[] | undefined;
+  getCommentReactionsByCommentId: (commentId: string) => { [reaction_id: string]: string[] } | undefined;
   getCommentReactionById: (reactionId: string) => TIssueCommentReaction | undefined;
+  commentReactionsByUser: (commentId: string, userId: string) => TIssueCommentReaction[];
 }
 
 export class IssueCommentReactionStore implements IIssueCommentReactionStore {
@@ -52,6 +61,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
       commentReactionMap: observable,
       // actions
       fetchCommentReactions: action,
+      applyCommentReactions: action,
       createCommentReaction: action,
       removeCommentReaction: action,
     });
@@ -72,23 +82,65 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
     return this.commentReactionMap[reactionId] ?? undefined;
   };
 
+  commentReactionsByUser = (commentId: string, userId: string) => {
+    if (!commentId || !userId) return [];
+
+    const reactions = this.getCommentReactionsByCommentId(commentId);
+    if (!reactions) return [];
+
+    const _userReactions: TIssueCommentReaction[] = [];
+    Object.keys(reactions).forEach((reaction) => {
+      if (reactions?.[reaction])
+        reactions?.[reaction].map((reactionId) => {
+          const currentReaction = this.getCommentReactionById(reactionId);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+        });
+    });
+
+    return _userReactions;
+  };
+
   // actions
   fetchCommentReactions = async (workspaceSlug: string, projectId: string, commentId: string) => {
     try {
-      const reactions = await this.issueReactionService.listIssueCommentReactions(workspaceSlug, projectId, commentId);
+      const response = await this.issueReactionService.listIssueCommentReactions(workspaceSlug, projectId, commentId);
 
-      const reactionIds = reactions.map((reaction) => reaction.id);
-      runInAction(() => {
-        set(this.commentReactions, commentId, reactionIds);
-        reactions.forEach((reaction) => {
-          set(this.commentReactionMap, reaction.id, reaction);
-        });
+      const groupedReactions = groupReactions(response || [], "reaction");
+
+      const commentReactionIdsMap: { [reaction: string]: string[] } = {};
+
+      Object.keys(groupedReactions).map((reactionId) => {
+        const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+        commentReactionIdsMap[reactionId] = reactionIds;
       });
 
-      return reactions;
+      runInAction(() => {
+        set(this.commentReactions, commentId, commentReactionIdsMap);
+        response.forEach((reaction) => set(this.commentReactionMap, reaction.id, reaction));
+      });
+
+      return response;
     } catch (error) {
       throw error;
     }
+  };
+
+  applyCommentReactions = (commentId: string, commentReactions: TIssueCommentReaction[]) => {
+    const groupedReactions = groupReactions(commentReactions || [], "reaction");
+
+    const commentReactionIdsMap: { [reaction: string]: string[] } = {};
+
+    Object.keys(groupedReactions).map((reactionId) => {
+      const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+      commentReactionIdsMap[reactionId] = reactionIds;
+    });
+
+    runInAction(() => {
+      set(this.commentReactions, commentId, commentReactionIdsMap);
+      commentReactions.forEach((reaction) => set(this.commentReactionMap, reaction.id, reaction));
+    });
+
+    return;
   };
 
   createCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) => {
@@ -98,7 +150,10 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
       });
 
       runInAction(() => {
-        this.commentReactions[commentId].push(response.id);
+        update(this.commentReactions, [commentId, reaction], (reactionId) => {
+          if (!reactionId) return [response.id];
+          return concat(reactionId, response.id);
+        });
         set(this.commentReactionMap, response.id, response);
       });
 
@@ -108,14 +163,23 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
     }
   };
 
-  removeCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) => {
+  removeCommentReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    commentId: string,
+    reaction: string,
+    userId: string
+  ) => {
     try {
-      const reactionIndex = this.commentReactions[commentId].findIndex((_reaction) => _reaction === reaction);
-      if (reactionIndex >= 0)
+      const userReactions = this.commentReactionsByUser(commentId, userId);
+      const currentReaction = find(userReactions, { actor: userId, reaction: reaction });
+
+      if (currentReaction && currentReaction.id) {
         runInAction(() => {
-          this.commentReactions[commentId].splice(reactionIndex, 1);
+          pull(this.commentReactions[commentId][reaction], currentReaction.id);
           delete this.commentReactionMap[reaction];
         });
+      }
 
       const response = await this.issueReactionService.deleteIssueCommentReaction(
         workspaceSlug,

@@ -208,17 +208,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   const member = useMember();
   const project = useProject();
-  const projectLabel = useLabel();
+  const label = useLabel();
   const projectState = useProjectState();
 
-  const groupByList = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member);
-  const subGroupByList = getGroupByColumns(
-    sub_group_by as GroupByColumnTypes,
-    project,
-    projectLabel,
-    projectState,
-    member
-  );
+  const groupByList = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
+  const subGroupByList = getGroupByColumns(sub_group_by as GroupByColumnTypes, project, label, projectState, member);
 
   if (!groupByList || !subGroupByList) return null;
 

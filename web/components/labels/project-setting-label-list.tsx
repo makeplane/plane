@@ -41,9 +41,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    project: { projectLabels, updateLabelPosition, projectLabelsTree },
-  } = useLabel();
+  const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
   // portal
   const renderDraggable = useDraggableInPortal();
 

@@ -1,4 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // services
@@ -68,9 +69,6 @@ export class ModulesStore implements IModuleStore {
       fetchedMap: observable,
       // computed
       projectModuleIds: computed,
-      // computed actions
-      getModuleById: action,
-      getProjectModuleIds: action,
       // actions
       fetchModules: action,
       fetchModuleDetails: action,
@@ -109,20 +107,20 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @returns IModule | null
    */
-  getModuleById = (moduleId: string) => this.moduleMap?.[moduleId] || null;
+  getModuleById = computedFn((moduleId: string) => this.moduleMap?.[moduleId] || null);
 
   /**
    * @description returns list of module ids of the project id passed as argument
    * @param projectId
    */
-  getProjectModuleIds = (projectId: string) => {
+  getProjectModuleIds = computedFn((projectId: string) => {
     if (!this.fetchedMap[projectId]) return null;
 
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
     projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
-  };
+  });
 
   /**
    * @description fetch all modules

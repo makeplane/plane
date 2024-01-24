@@ -2,6 +2,7 @@ import { autorun, makeObservable, observable } from "mobx";
 import isEmpty from "lodash/isEmpty";
 // root store
 import { RootStore } from "../root.store";
+import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IState } from "@plane/types";
 import { IIssueStore, IssueStore } from "./issue.store";
@@ -38,6 +39,8 @@ export interface IIssueRootStore {
   projects: string[] | undefined;
 
   issues: IIssueStore;
+
+  state: IStateStore;
 
   issueDetail: IIssueDetail;
 
@@ -85,6 +88,8 @@ export class IssueRootStore implements IIssueRootStore {
   projects: string[] | undefined = undefined;
 
   issues: IIssueStore;
+
+  state: IStateStore;
 
   issueDetail: IIssueDetail;
 
@@ -142,7 +147,7 @@ export class IssueRootStore implements IIssueRootStore {
       if (rootStore.app.router.userId) this.userId = rootStore.app.router.userId;
       if (!isEmpty(rootStore?.state?.stateMap)) this.states = Object.keys(rootStore?.state?.stateMap);
       if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
-      if (!isEmpty(rootStore?.labelRoot?.labelMap)) this.labels = Object.keys(rootStore?.labelRoot?.labelMap);
+      if (!isEmpty(rootStore?.label?.labelMap)) this.labels = Object.keys(rootStore?.label?.labelMap);
       if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
         this.members = Object.keys(rootStore?.memberRoot?.workspace?.workspaceMemberMap);
       if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
@@ -150,6 +155,8 @@ export class IssueRootStore implements IIssueRootStore {
     });
 
     this.issues = new IssueStore();
+
+    this.state = new StateStore(rootStore);
 
     this.issueDetail = new IssueDetail(this);
 

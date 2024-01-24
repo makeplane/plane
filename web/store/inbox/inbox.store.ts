@@ -1,4 +1,5 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { computedFn } from "mobx-utils";
 import { set } from "lodash";
 // services
 import { InboxService } from "services/inbox.service";
@@ -43,8 +44,6 @@ export class InboxStore implements IInboxStore {
       inboxDetails: observable,
       // computed
       isInboxEnabled: computed,
-      // computed actions
-      getInboxId: action,
       // actions
       fetchInboxesList: action,
     });
@@ -69,11 +68,11 @@ export class InboxStore implements IInboxStore {
   /**
    * Returns the inbox Id belongs to a specific project
    */
-  getInboxId = (projectId: string) => {
+  getInboxId = computedFn((projectId: string) => {
     const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
     if (!projectDetails || !projectDetails.inbox_view) return null;
     return this.inboxesList[projectId]?.[0]?.id ?? null;
-  };
+  });
 
   /**
    * Fetches the inboxes list belongs to a specific project

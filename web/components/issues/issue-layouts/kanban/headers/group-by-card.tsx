@@ -135,7 +135,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
             <CustomMenu
-              width="auto"
               customButton={
                 <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
                   <Plus height={14} width={14} strokeWidth={2} />

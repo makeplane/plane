@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 // services
 import { DashboardService } from "services/dashboard.service";
@@ -34,6 +35,7 @@ export interface IDashboardStore {
   homeDashboardWidgets: TWidget[] | undefined;
   // computed actions
   getWidgetDetails: (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => TWidget | undefined;
+  getWidgetStats: <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => T | undefined;
   // actions
   fetchHomeDashboardWidgets: (workspaceSlug: string) => Promise<THomeDashboardResponse>;
   fetchWidgetStats: (
@@ -74,8 +76,6 @@ export class DashboardStore implements IDashboardStore {
       widgetStats: observable,
       // computed
       homeDashboardWidgets: computed,
-      // computed actions
-      getWidgetDetails: action,
       // fetch actions
       fetchHomeDashboardWidgets: action,
       fetchWidgetStats: action,
@@ -109,11 +109,21 @@ export class DashboardStore implements IDashboardStore {
    * @param widgetId
    * @returns widget details
    */
-  getWidgetDetails = (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => {
+  getWidgetDetails = computedFn((workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => {
     const widgets = this.widgetDetails?.[workspaceSlug]?.[dashboardId];
     if (!widgets) return undefined;
     return widgets.find((widget) => widget.key === widgetKey);
-  };
+  });
+
+  /**
+   * @description get widget stats
+   * @param workspaceSlug
+   * @param dashboardId
+   * @param widgetKey
+   * @returns widget stats
+   */
+  getWidgetStats = <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys): T | undefined =>
+    (this.widgetStats?.[workspaceSlug]?.[dashboardId]?.[widgetKey] as unknown as T) ?? undefined;
 
   /**
    * @description fetch home dashboard details and widgets

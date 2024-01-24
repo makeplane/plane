@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
@@ -13,6 +13,8 @@ import { Avatar } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
 import { MemberDropdownProps } from "./types";
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((props) => {
   const {
@@ -28,9 +30,13 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
     placeholder = "Members",
     placement,
     value,
+    tabIndex,
   } = props;
   // states
   const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  // refs
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -78,13 +84,24 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
   };
   if (multiple) comboboxProps.multiple = true;
 
+  const openDropdown = () => {
+    setIsOpen(true);
+    if (referenceElement) referenceElement.focus();
+  };
+  const closeDropdown = () => setIsOpen(false);
+  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+  useOutsideClickDetector(dropdownRef, closeDropdown);
+
   return (
     <Combobox
       as="div"
+      ref={dropdownRef}
+      tabIndex={tabIndex}
       className={cn("h-full flex-shrink-0", {
         className,
       })}
       {...comboboxProps}
+      handleKeyDown={handleKeyDown}
     >
       <Combobox.Button as={Fragment}>
         {button ? (
@@ -186,6 +203,9 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                         active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
+                    onClick={() => {
+                      if (!multiple) closeDropdown();
+                    }}
                   >
                     {({ selected }) => (
                       <>

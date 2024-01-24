@@ -24,10 +24,11 @@ from plane.db.models import (
     IssueReaction,
     CommentReaction,
     IssueComment,
+    IssueSubscriber,
 )
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
-
+from plane.settings.redis import redis_instance
 
 # Track Changes in name
 def track_name(
@@ -111,15 +112,15 @@ def track_parent(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("parent") != requested_data.get("parent"):
+    if current_instance.get("parent_id") != requested_data.get("parent_id"):
         old_parent = (
-            Issue.objects.filter(pk=current_instance.get("parent")).first()
-            if current_instance.get("parent") is not None
+            Issue.objects.filter(pk=current_instance.get("parent_id")).first()
+            if current_instance.get("parent_id") is not None
             else None
         )
         new_parent = (
-            Issue.objects.filter(pk=requested_data.get("parent")).first()
-            if requested_data.get("parent") is not None
+            Issue.objects.filter(pk=requested_data.get("parent_id")).first()
+            if requested_data.get("parent_id") is not None
             else None
         )
 
@@ -188,9 +189,11 @@ def track_state(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("state") != requested_data.get("state"):
-        new_state = State.objects.get(pk=requested_data.get("state", None))
-        old_state = State.objects.get(pk=current_instance.get("state", None))
+    if current_instance.get("state_id") != requested_data.get("state_id"):
+        new_state = State.objects.get(pk=requested_data.get("state_id", None))
+        old_state = State.objects.get(
+            pk=current_instance.get("state_id", None)
+        )
 
         issue_activities.append(
             IssueActivity(
@@ -288,10 +291,10 @@ def track_labels(
     epoch,
 ):
     requested_labels = set(
-        [str(lab) for lab in requested_data.get("labels", [])]
+        [str(lab) for lab in requested_data.get("label_ids", [])]
     )
     current_labels = set(
-        [str(lab) for lab in current_instance.get("labels", [])]
+        [str(lab) for lab in current_instance.get("label_ids", [])]
     )
 
     added_labels = requested_labels - current_labels
@@ -350,15 +353,16 @@ def track_assignees(
     epoch,
 ):
     requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignees", [])]
+        [str(asg) for asg in requested_data.get("assignee_ids", [])]
     )
     current_assignees = set(
-        [str(asg) for asg in current_instance.get("assignees", [])]
+        [str(asg) for asg in current_instance.get("assignee_ids", [])]
     )
 
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
 
+    bulk_subscribers = []
     for added_asignee in added_assignees:
         assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
@@ -376,6 +380,21 @@ def track_assignees(
                 epoch=epoch,
             )
         )
+        bulk_subscribers.append(
+            IssueSubscriber(
+                subscriber_id=assignee.id,
+                issue_id=issue_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                created_by_id=assignee.id,
+                updated_by_id=assignee.id,
+            )
+        )
+
+    # Create assignees subscribers to the issue and ignore if already
+    IssueSubscriber.objects.bulk_create(
+        bulk_subscribers, batch_size=10, ignore_conflicts=True
+    )
 
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
@@ -541,14 +560,14 @@ def update_issue_activity(
 ):
     ISSUE_ACTIVITY_MAPPER = {
         "name": track_name,
-        "parent": track_parent,
+        "parent_id": track_parent,
         "priority": track_priority,
-        "state": track_state,
+        "state_id": track_state,
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
-        "labels": track_labels,
-        "assignees": track_assignees,
+        "label_ids": track_labels,
+        "assignee_ids": track_assignees,
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
@@ -1543,6 +1562,8 @@ def issue_activity(
     project_id,
     epoch,
     subscriber=True,
+    notification=False,
+    origin=None,
 ):
     try:
         issue_activities = []
@@ -1551,6 +1572,10 @@ def issue_activity(
         workspace_id = project.workspace_id
 
         if issue_id is not None:
+            if origin:
+                ri = redis_instance()
+                # set the request origin in redis
+                ri.set(str(issue_id), origin, ex=600)
             issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 try:
@@ -1623,22 +1648,24 @@ def issue_activity(
                         )
             except Exception as e:
                 capture_exception(e)
+        
 
-        notifications.delay(
-            type=type,
-            issue_id=issue_id,
-            actor_id=actor_id,
-            project_id=project_id,
-            subscriber=subscriber,
-            issue_activities_created=json.dumps(
-                IssueActivitySerializer(
-                    issue_activities_created, many=True
-                ).data,
-                cls=DjangoJSONEncoder,
-            ),
-            requested_data=requested_data,
-            current_instance=current_instance,
-        )
+        if notification:
+            notifications.delay(
+                type=type,
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                subscriber=subscriber,
+                issue_activities_created=json.dumps(
+                    IssueActivitySerializer(
+                        issue_activities_created, many=True
+                    ).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                requested_data=requested_data,
+                current_instance=current_instance,
+            )
 
         return
     except Exception as e:

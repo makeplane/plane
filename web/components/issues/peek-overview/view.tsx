@@ -12,13 +12,13 @@ import useToast from "hooks/use-toast";
 import {
   DeleteArchivedIssueModal,
   DeleteIssueModal,
-  IssueActivity,
   IssueSubscription,
   IssueUpdateStatus,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
 } from "components/issues";
+import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
 import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // helpers
@@ -109,7 +109,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       {issue && !is_archived && (
         <DeleteIssueModal
           isOpen={isDeleteIssueModalOpen}
-          handleClose={() => toggleDeleteIssueModal(false)}
+          handleClose={() => {
+            toggleDeleteIssueModal(false);
+            removeRoutePeekId();
+          }}
           data={issue}
           onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
         />
@@ -185,12 +188,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
                   {currentUser && !is_archived && (
-                    <IssueSubscription
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      issueId={issueId}
-                      currentUserId={currentUser?.id}
-                    />
+                    <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                   )}
                   <button onClick={handleCopyText}>
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
@@ -237,19 +235,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled}
                         />
 
-                        {/* <IssueActivity
+                        <IssueActivity
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          user={currentUser}
-                          issueActivity={issueActivity}
-                          issueCommentCreate={issueCommentCreate}
-                          issueCommentUpdate={issueCommentUpdate}
-                          issueCommentRemove={issueCommentRemove}
-                          issueCommentReactionCreate={issueCommentReactionCreate}
-                          issueCommentReactionRemove={issueCommentReactionRemove}
-                          showCommentAccessSpecifier={showCommentAccessSpecifier}
-                        /> */}
+                          disabled={disabled}
+                        />
                       </div>
                     ) : (
                       <div className={`flex h-full w-full overflow-auto ${is_archived ? "opacity-60" : ""}`}>
@@ -266,19 +257,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
 
-                            {/* <IssueActivity
+                            <IssueActivity
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
                               issueId={issueId}
-                              user={currentUser}
-                              issueActivity={issueActivity}
-                              issueCommentCreate={issueCommentCreate}
-                              issueCommentUpdate={issueCommentUpdate}
-                              issueCommentRemove={issueCommentRemove}
-                              issueCommentReactionCreate={issueCommentReactionCreate}
-                              issueCommentReactionRemove={issueCommentReactionRemove}
-                              showCommentAccessSpecifier={showCommentAccessSpecifier}
-                            /> */}
+                              disabled={disabled}
+                            />
                           </div>
                         </div>
                         <div

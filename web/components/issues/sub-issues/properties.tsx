@@ -31,9 +31,16 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
           value={issue.state_id}
           projectId={issue.project_id}
           onChange={(val) =>
-            subIssueOperations.updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
-              state_id: val,
-            })
+            subIssueOperations.updateSubIssue(
+              workspaceSlug,
+              issue.project_id,
+              parentIssueId,
+              issueId,
+              {
+                state_id: val,
+              },
+              { ...issue }
+            )
           }
           disabled={!disabled}
           buttonVariant="border-with-text"

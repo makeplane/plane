@@ -72,14 +72,9 @@ const WIDGET_KEY = "issues_by_priority";
 export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const {
-    fetchWidgetStats,
-    widgetDetails: allWidgetDetails,
-    widgetStats: allWidgetStats,
-    updateDashboardWidgetFilters,
-  } = useDashboard();
-  const widgetDetails = allWidgetDetails?.[workspaceSlug]?.[dashboardId]?.find((w) => w.key === WIDGET_KEY);
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TIssuesByPriorityWidgetResponse[];
+  const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
+  const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
+  const widgetStats = getWidgetStats<TIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -91,7 +86,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
+      target_date: getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "this_week"),
     });
   };
 
@@ -135,12 +130,14 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   };
 
   return (
-    <Link
-      href={`/${workspaceSlug}/workspace-views/assigned`}
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden"
-    >
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden">
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
-        <h4 className="text-lg font-semibold text-custom-text-300">Priority of assigned issues</h4>
+        <Link
+          href={`/${workspaceSlug}/workspace-views/assigned`}
+          className="text-lg font-semibold text-custom-text-300 hover:underline"
+        >
+          Priority of assigned issues
+        </Link>
         <DurationFilterDropdown
           value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
@@ -203,6 +200,6 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           <IssuesByPriorityEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
         </div>
       )}
-    </Link>
+    </div>
   );
 });

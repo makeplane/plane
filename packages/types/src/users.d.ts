@@ -166,6 +166,14 @@ export interface IUserProjectsRole {
   [projectId: string]: EUserProjectRoles;
 }
 
+export interface IUserEmailNotificationSettings {
+  property_change: boolean;
+  state_change: boolean;
+  comment: boolean;
+  mention: boolean;
+  issue_completed: boolean;
+}
+
 // export interface ICurrentUser {
 //   id: readonly string;
 //   avatar: string;

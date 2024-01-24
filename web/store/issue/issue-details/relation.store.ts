@@ -124,6 +124,8 @@ export class IssueRelationStore implements IIssueRelationStore {
           });
         });
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
@@ -149,6 +151,8 @@ export class IssueRelationStore implements IIssueRelationStore {
         related_issue,
       });
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       this.fetchRelations(workspaceSlug, projectId, issueId);

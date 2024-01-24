@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // services
@@ -64,9 +65,6 @@ export class ProjectMemberStore implements IProjectMemberStore {
       projectMemberMap: observable,
       // computed
       projectMemberIds: computed,
-      // computed actions
-      getProjectMemberDetails: action,
-      getProjectMemberIds: action,
       // actions
       fetchProjectMembers: action,
       bulkAddMembersToProject: action,
@@ -101,7 +99,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @description get the details of a project member
    * @param userId
    */
-  getProjectMemberDetails = (userId: string) => {
+  getProjectMemberDetails = computedFn((userId: string) => {
     const projectId = this.routerStore.projectId;
     if (!projectId) return null;
     const projectMember = this.projectMemberMap?.[projectId]?.[userId];
@@ -113,13 +111,13 @@ export class ProjectMemberStore implements IProjectMemberStore {
       member: this.memberRoot?.memberMap?.[projectMember.member],
     };
     return memberDetails;
-  };
+  });
 
   /**
    * @description get the list of all the user ids of all the members of a project using projectId
    * @param projectId
    */
-  getProjectMemberIds = (projectId: string): string[] | null => {
+  getProjectMemberIds = computedFn((projectId: string): string[] | null => {
     if (!this.projectMemberMap?.[projectId]) return null;
     let members = Object.values(this.projectMemberMap?.[projectId]);
     members = sortBy(members, [
@@ -128,7 +126,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     ]);
     const memberIds = members.map((m) => m.member);
     return memberIds;
-  };
+  });
 
   /**
    * @description fetch the list of all the members of a project

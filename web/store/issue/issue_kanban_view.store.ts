@@ -1,4 +1,5 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
+import { computedFn } from "mobx-utils";
 import { IssueRootStore } from "./root.store";
 // types
 
@@ -8,7 +9,7 @@ export interface IIssueKanBanViewStore {
     subgroupByIssuesVisibility: string[];
   };
   // computed
-  canUserDragDrop: boolean;
+  getCanUserDragDrop: (order_by: string | null, group_by: string | null, sub_group_by?: string | null) => boolean;
   canUserDragDropVertically: boolean;
   canUserDragDropHorizontally: boolean;
   // actions
@@ -27,7 +28,6 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
     makeObservable(this, {
       kanBanToggle: observable,
       // computed
-      canUserDragDrop: computed,
       canUserDragDropVertically: computed,
       canUserDragDropHorizontally: computed,
 
@@ -38,25 +38,13 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
     this.rootStore = _rootStore;
   }
 
-  get canUserDragDrop() {
-    return true;
-    if (this.rootStore.issueDetail.peekIssue?.issueId) return false;
-    // FIXME: uncomment and fix
-    // if (
-    //   this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&
-    //   this.rootStore?.issueFilter?.userDisplayFilters?.order_by === "sort_order" &&
-    //   this.rootStore?.issueFilter?.userDisplayFilters?.group_by &&
-    //   ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.group_by)
-    // ) {
-    //   if (!this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by) return true;
-    //   if (
-    //     this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by &&
-    //     ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by)
-    //   )
-    //     return true;
-    // }
-    // return false;
-  }
+  getCanUserDragDrop = computedFn((group_by: string | null, sub_group_by?: string | null) => {
+    if (group_by && ["state", "priority"].includes(group_by)) {
+      if (!sub_group_by) return true;
+      if (sub_group_by && ["state", "priority"].includes(sub_group_by)) return true;
+    }
+    return false;
+  });
 
   get canUserDragDropVertically() {
     return false;

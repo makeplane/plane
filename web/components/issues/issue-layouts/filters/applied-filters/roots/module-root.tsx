@@ -20,9 +20,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.MODULE);
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   // derived values
   const userFilters = issueFilters?.filters;

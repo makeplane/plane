@@ -71,10 +71,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   const member = useMember();
   const project = useProject();
-  const projectLabel = useLabel();
+  const label = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, projectLabel, projectState, member);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
 
   if (!list) return null;
 
@@ -199,7 +199,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       group_by={group_by}
       sub_group_by={sub_group_by}
       sub_group_id={sub_group_id}
-      isDragDisabled={!issueKanBanView?.canUserDragDrop}
+      isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
       handleIssues={handleIssues}
       quickActions={quickActions}
       kanbanFilters={kanbanFilters}

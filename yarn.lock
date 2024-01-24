@@ -2406,6 +2406,13 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
+"@tippyjs/react@^4.2.6":
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.2.6.tgz#971677a599bf663f20bb1c60a62b9555b749cc71"
+  integrity sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==
+  dependencies:
+    tippy.js "^6.3.1"
+
 "@tiptap/core@^2.1.13":
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.1.13.tgz#e21f566e81688c826c6f26d2940886734189e193"
@@ -6617,16 +6624,6 @@ mkdirp@^0.5.5:
   dependencies:
     minimist "^1.2.6"
 
-mobx-devtools-mst@^0.9.30:
-  version "0.9.30"
-  resolved "https://registry.yarnpkg.com/mobx-devtools-mst/-/mobx-devtools-mst-0.9.30.tgz#0d1cad8b3d97e1f3f94bb9afb701cd9c8b5b164d"
-  integrity sha512-6fIYeFG4xT4syIeKddmK55zQbc3ZZZr/272/cCbfaAAM5YiuFdteGZGUgdsz8wxf/mGxWZbFOM3WmASAnpwrbw==
-
-mobx-react-devtools@^6.1.1:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/mobx-react-devtools/-/mobx-react-devtools-6.1.1.tgz#a462b944085cf11ff96fc937d12bf31dab4c8984"
-  integrity sha512-nc5IXLdEUFLn3wZal65KF3/JFEFd+mbH4KTz/IG5BOPyw7jo8z29w/8qm7+wiCyqVfUIgJ1gL4+HVKmcXIOgqA==
-
 mobx-react-lite@^4.0.3, mobx-react-lite@^4.0.4:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-4.0.5.tgz#e2cb98f813e118917bcc463638f5bf6ea053a67b"
@@ -6641,10 +6638,10 @@ mobx-react@^9.1.0:
   dependencies:
     mobx-react-lite "^4.0.4"
 
-mobx-state-tree@^5.4.0:
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/mobx-state-tree/-/mobx-state-tree-5.4.0.tgz#d41b7fd90b8d4b063bc32526758417f1100751df"
-  integrity sha512-2VuUhAqFklxgGqFNqaZUXYYSQINo8C2SUEP9YfCQrwatHWHqJLlEC7Xb+5WChkev7fubzn3aVuby26Q6h+JeBg==
+mobx-utils@^6.0.8:
+  version "6.0.8"
+  resolved "https://registry.yarnpkg.com/mobx-utils/-/mobx-utils-6.0.8.tgz#843e222c7694050c2e42842682fd24a84fdb7024"
+  integrity sha512-fPNt0vJnHwbQx9MojJFEnJLfM3EMGTtpy4/qOOW6xueh1mPofMajrbYAUvByMYAvCJnpy1A5L0t+ZVB5niKO4g==
 
 mobx@^6.10.0:
   version "6.12.0"
@@ -8540,7 +8537,7 @@ tinycolor2@^1.4.1:
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.6.0.tgz#f98007460169b0263b97072c5ae92484ce02d09e"
   integrity sha512-XPaBkWQJdsf3pLKJV9p4qN/S+fm2Oj8AIPo1BTUhg5oxkvm9+SVEGFdhyOz7tTdUTfvxMiAs4sp6/eZO2Ew+pw==
 
-tippy.js@^6.3.7:
+tippy.js@^6.3.1, tippy.js@^6.3.7:
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
   integrity sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==

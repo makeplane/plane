@@ -9,7 +9,7 @@ type Props = {
 
 export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 }) => (
   <>
-    {labelDetails.length > 0 ? (
+    {labelDetails?.length > 0 ? (
       labelDetails.length <= maxRender ? (
         <>
           {labelDetails.map((label) => (

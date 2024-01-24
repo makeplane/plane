@@ -5,7 +5,7 @@ import { History } from "lucide-react";
 // hooks
 import { useDashboard, useUser } from "hooks/store";
 // components
-import { ActivityIcon, ActivityMessage } from "components/core";
+import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
 import { Avatar } from "@plane/ui";
@@ -21,8 +21,8 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   // store hooks
   const { currentUser } = useUser();
   // derived values
-  const { fetchWidgetStats, widgetStats: allWidgetStats } = useDashboard();
-  const widgetStats = allWidgetStats?.[workspaceSlug]?.[dashboardId]?.[WIDGET_KEY] as TRecentActivityWidgetResponse[];
+  const { fetchWidgetStats, getWidgetStats } = useDashboard();
+  const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   useEffect(() => {
     if (!widgetStats)
@@ -34,13 +34,10 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <Link
-      href="/profile/activity"
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300"
-    >
-      <div className="flex items-center justify-between gap-2 px-7">
-        <h4 className="text-lg font-semibold text-custom-text-300">My activity</h4>
-      </div>
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300">
+      <Link href="/profile/activity" className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline">
+        My activity
+      </Link>
       {widgetStats.length > 0 ? (
         <div className="space-y-6 mt-4 mx-7">
           {widgetStats.map((activity) => (
@@ -78,15 +75,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                     <ActivityMessage activity={activity} showIssue />
                   ) : (
                     <span>
-                      created this{" "}
-                      <a
-                        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
-                      >
-                        Issue.
-                      </a>
+                      created <IssueLink activity={activity} />
                     </span>
                   )}
                 </p>
@@ -100,6 +89,6 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
           <RecentActivityEmptyState />
         </div>
       )}
-    </Link>
+    </div>
   );
 });

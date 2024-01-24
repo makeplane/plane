@@ -24,9 +24,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { updateIssue } = useIssueDetail();
-  const {
-    project: { createLabel },
-  } = useLabel();
+  const { createLabel } = useLabel();
   const { setToastAlert } = useToast();
 
   const labelOperations: TLabelOperations = useMemo(

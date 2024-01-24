@@ -23,9 +23,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const {
-    project: { projectLabels },
-  } = useLabel();
+  const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
   // derived values

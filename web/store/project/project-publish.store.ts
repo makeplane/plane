@@ -146,7 +146,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
 
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
-          set(this.projectRootStore.project.projectMap, [workspaceSlug, projectId, "is_deployed"], true);
+          set(this.projectRootStore.project.projectMap, [projectId, "is_deployed"], true);
           this.generalLoader = false;
         });
         return response;
@@ -226,7 +226,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       );
       runInAction(() => {
         this.projectPublishSettings = "not-initialized";
-        set(this.projectRootStore.project.projectMap, [workspaceSlug, projectId, "is_deployed"], false);
+        set(this.projectRootStore.project.projectMap, [projectId, "is_deployed"], false);
         this.generalLoader = false;
       });
       return response;

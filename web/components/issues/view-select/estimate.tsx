@@ -21,7 +21,7 @@ export const ViewEstimateSelect: React.FC<Props> = observer((props) => {
   const { issue, onChange, tooltipPosition = "top", customButton = false, disabled } = props;
   const { areEstimatesEnabledForCurrentProject, activeEstimateDetails, getEstimatePointValue } = useEstimate();
 
-  const estimateValue = getEstimatePointValue(issue.estimate_point);
+  const estimateValue = getEstimatePointValue(issue.estimate_point, issue.project_id);
 
   const estimateLabels = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
@@ -42,7 +42,7 @@ export const ViewEstimateSelect: React.FC<Props> = observer((props) => {
       maxHeight="md"
       noChevron
       disabled={disabled}
-      width="w-full min-w-[8rem]"
+      optionsClassName="w-full"
     >
       <CustomSelect.Option value={null}>
         <>

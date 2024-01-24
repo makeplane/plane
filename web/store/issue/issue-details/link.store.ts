@@ -101,6 +101,8 @@ export class IssueLinkStore implements IIssueLinkStore {
         set(this.linkMap, response.id, response);
       });
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
@@ -123,6 +125,8 @@ export class IssueLinkStore implements IIssueLinkStore {
 
       const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       // TODO: fetch issue detail
@@ -141,6 +145,8 @@ export class IssueLinkStore implements IIssueLinkStore {
           delete this.linkMap[linkId];
         });
 
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
       return response;
     } catch (error) {
       throw error;
