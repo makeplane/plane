@@ -14,6 +14,21 @@ import { INBOX_STATUS } from "constants/inbox";
 
 type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string; inboxId: string };
 
+export const IssueStatusLabel = ({ status }: { status: number }) => {
+  const issueStatusDetail = INBOX_STATUS.find((s) => s.status === status);
+
+  if (!issueStatusDetail) return <></>;
+
+  return (
+    <div className="relative flex items-center gap-1">
+      <div className={issueStatusDetail.textColor(false)}>
+        <issueStatusDetail.icon size={12} />
+      </div>
+      <div>{issueStatusDetail.title}</div>
+    </div>
+  );
+};
+
 export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((props) => {
   const { workspaceSlug, projectId, inboxId } = props;
   // hooks
@@ -45,14 +60,15 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
     <div className="flex flex-wrap items-center gap-2 p-3 text-[0.65rem]">
       {Object.keys(filters).map((key) => {
         const filterKey = key as keyof TInboxIssueFilterOptions;
-        if (filters[filterKey])
+
+        if (filters[filterKey].length > 0)
           return (
             <div
               key={key}
               className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
             >
               <span className="capitalize text-custom-text-200">{replaceUnderscoreIfSnakeCase(key)}:</span>
-              {filters[filterKey] === null || (filters[filterKey]?.length ?? 0) <= 0 ? (
+              {filters[filterKey]?.length < 0 ? (
                 <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
               ) : (
                 <div className="space-x-2">
@@ -73,7 +89,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                               : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
-                          <div className="relative flex items-center gap-0.5">
+                          <div className="relative flex items-center gap-1">
                             <div>
                               <PriorityIcon priority={priority as TIssuePriorities} size={14} />
                             </div>
@@ -110,7 +126,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                           key={status}
                           className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-2 py-0.5 capitalize text-custom-text-200"
                         >
-                          <span>{INBOX_STATUS.find((s) => s.status === status)?.title}</span>
+                          <IssueStatusLabel status={status} />
                           <button
                             type="button"
                             className="cursor-pointer"
