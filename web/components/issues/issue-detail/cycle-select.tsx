@@ -33,11 +33,10 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
   const disableSelect = disabled || isUpdating;
 
   const handleIssueCycleChange = async (cycleId: string | null) => {
-    if (!cycleId) return;
+    if (!issue) return;
     setIsUpdating(true);
-    if (issue && issue.cycle_id === cycleId)
-      await issueOperations.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
-    else await issueOperations.addIssueToCycle(workspaceSlug, projectId, cycleId, [issueId]);
+    if (cycleId) await issueOperations.addIssueToCycle(workspaceSlug, projectId, cycleId, [issueId]);
+    else await issueOperations.removeIssueFromCycle(workspaceSlug, projectId, issue.cycle_id ?? "", issueId);
     setIsUpdating(false);
   };
 
