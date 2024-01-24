@@ -771,41 +771,6 @@
                   
                 </tr>
               </table>
-              {% endif %} {% if update.changes.description %}
-              <!-- Description changed -->
-              <table
-                role="presentation"
-                style="padding-bottom: 15px; max-width: 100%"
-              >
-                <tr>
-                  <td valign="top">
-                    <p
-                      style="
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        color: #525252;
-                        margin-right: 5px;
-                      "
-                    >
-                      Description:
-                    </p>
-                  </td>
-                  <td valign="top" style="padding-top: 0px">
-                    <span
-                      style="
-                        font-size: 0.8rem;
-                        line-height: 24px;
-                        color: #525252;
-                        padding-right: 30px;
-                      "
-                    >
-                      Email Preferences User Stories The issue created for this
-                      feature is available on the Product+Design project and is
-                      identified as DES-163.
-                    </span>
-                  </td>
-                </tr>
-              </table>
               {% endif %}
             </div>
           </div>
@@ -826,12 +791,12 @@
             "
           >
             <!-- Block Heading -->
-            <p style="font-size: 0.8rem; font-weight: 600; color: #121a26">
+            <p style="font-size: 0.8rem; font-weight: 600; color: #121a26; padding-bottom: 20px;">
               Comments
             </p>
             <!-- Comments -->
             {% for comment in comments %}
-            <table cellspacing="0" style="padding-top: 20px">
+            <table cellspacing="0">
               <tr style="border-radius: 8px">
                 <td valign="top">
                   {% if comment.actor_detail.avatar_url %}
