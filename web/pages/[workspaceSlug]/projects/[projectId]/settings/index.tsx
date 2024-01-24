@@ -29,7 +29,7 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // api call to fetch project details
   useSWR(
-    workspaceSlug && projectId ? "PROJECT_DETAILS" : null,
+    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
     workspaceSlug && projectId
       ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
       : null

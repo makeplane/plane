@@ -48,7 +48,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
           {Object.keys(getIssues ?? {}).length == 0 ? (
             <ProjectEmptyState />
           ) : (
-            <div className="relative h-full w-full overflow-auto">
+            <div className="relative h-full w-full overflow-auto bg-custom-background-90">
               {activeLayout === "list" ? (
                 <ListLayout />
               ) : activeLayout === "kanban" ? (

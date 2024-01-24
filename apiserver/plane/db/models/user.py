@@ -6,10 +6,10 @@ import pytz
 
 # Django imports
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.conf import settings
 
 # Third party imports
@@ -65,7 +65,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     has_billing_address = models.BooleanField(default=False)
 
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
+    user_timezone = models.CharField(
+        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    )
 
     last_active = models.DateTimeField(default=timezone.now, null=True)
     last_login_time = models.DateTimeField(null=True)

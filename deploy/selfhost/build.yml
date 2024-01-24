@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  web:
+    image: ${DOCKERHUB_USER:-local}/plane-frontend:${APP_RELEASE:-latest}
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile.web
+
+  space:
+    image: ${DOCKERHUB_USER:-local}/plane-space:${APP_RELEASE:-latest}
+    build:
+      context: ./
+      dockerfile: ./space/Dockerfile.space
+
+  api:
+    image: ${DOCKERHUB_USER:-local}/plane-backend:${APP_RELEASE:-latest}
+    build:
+      context: ./apiserver
+      dockerfile: ./Dockerfile.api
+
+  proxy:
+    image: ${DOCKERHUB_USER:-local}/plane-proxy:${APP_RELEASE:-latest}
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
