@@ -16,15 +16,13 @@ import type {
   TInboxIssueExtendedDetail,
   TInboxDetailedStatus,
   TIssue,
+  TLoader,
 } from "@plane/types";
 // constants
-import { INBOX_ISSUE_SOURCE } from "constants/inbox";
-
-type TInboxIssueLoader = "fetch" | undefined;
 
 export interface IInboxIssue {
   // observables
-  loader: TInboxIssueLoader;
+  loader: TLoader;
   inboxIssues: TInboxIssueDetailIdMap;
   inboxIssueMap: TInboxIssueDetailMap;
   // helper methods
@@ -63,7 +61,7 @@ export interface IInboxIssue {
 
 export class InboxIssue implements IInboxIssue {
   // observables
-  loader: TInboxIssueLoader = "fetch";
+  loader: TLoader = "init-loader";
   inboxIssues: TInboxIssueDetailIdMap = {};
   inboxIssueMap: TInboxIssueDetailMap = {};
   // root store
@@ -106,7 +104,7 @@ export class InboxIssue implements IInboxIssue {
   // actions
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
     try {
-      this.loader = "fetch";
+      this.loader = "init-loader";
       const queryParams = this.rootStore.inbox.inboxFilter.inboxAppliedFilters ?? {};
 
       const response = await this.inboxIssueService.fetchInboxIssues(workspaceSlug, projectId, inboxId, queryParams);

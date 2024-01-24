@@ -16,7 +16,7 @@ import {
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 // types
 import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";

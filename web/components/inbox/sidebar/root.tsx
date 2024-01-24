@@ -1,5 +1,9 @@
 import { FC } from "react";
 import { Inbox } from "lucide-react";
+// hooks
+import { useInboxIssues } from "hooks/store";
+// ui
+import { Loader } from "@plane/ui";
 // components
 import { InboxIssueList, InboxIssueFilterSelection, InboxIssueAppliedFilter } from "../";
 
@@ -11,6 +15,10 @@ type TInboxSidebarRoot = {
 
 export const InboxSidebarRoot: FC<TInboxSidebarRoot> = (props) => {
   const { workspaceSlug, projectId, inboxId } = props;
+  // store hooks
+  const {
+    issues: { loader },
+  } = useInboxIssues();
 
   return (
     <div className="relative flex flex-col w-full h-full">
@@ -21,7 +29,7 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = (props) => {
           </div>
           <div className="font-medium">Inbox</div>
         </div>
-        <div className="z-[999999]">
+        <div className="z-20">
           <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
         </div>
       </div>
@@ -30,9 +38,18 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = (props) => {
         <InboxIssueAppliedFilter workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
       </div>
 
-      <div className="w-full h-full overflow-hidden">
-        <InboxIssueList workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
-      </div>
+      {loader === "init-loader" ? (
+        <Loader className="flex flex-col h-full gap-5 p-5">
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+        </Loader>
+      ) : (
+        <div className="w-full h-full overflow-hidden">
+          <InboxIssueList workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
+        </div>
+      )}
     </div>
   );
 };
