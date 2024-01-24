@@ -12,7 +12,7 @@ export const EditorContainer = ({ editor, editorClassNames, hideDragHandle, chil
   <div
     id="editor-container"
     onClick={() => {
-      editor?.chain().focus().run();
+      editor?.chain().focus(undefined, { scrollIntoView: false }).run();
     }}
     onMouseLeave={() => {
       hideDragHandle?.();
