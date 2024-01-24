@@ -49,29 +49,33 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    if (!widgetDetails) return;
-
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-        issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-        target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
-      });
-  }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      issue_type: widgetDetails?.widget_filters.tab ?? "upcoming",
+      target_date: getCustomDates(widgetDetails?.widget_filters.target_date ?? "this_week"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "upcoming");
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col">
-      <div className="flex items-center justify-between gap-2 p-6 pl-7">
-        <Link
-          href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
-          className="text-lg font-semibold text-custom-text-300 hover:underline"
-        >
-          All issues created
-        </Link>
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col min-h-96">
+      <div className="flex items-start justify-between gap-2 p-6 pl-7">
+        <div>
+          <Link
+            href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
+            className="text-lg font-semibold text-custom-text-300 hover:underline"
+          >
+            Created by you
+          </Link>
+          <p className="mt-3 text-xs font-medium text-custom-text-300">
+            Filtered by{" "}
+            <span className="border-[0.5px] border-custom-border-300 rounded py-1 px-2 ml-0.5">Due date</span>
+          </p>
+        </div>
         <DurationFilterDropdown
           value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
@@ -93,11 +97,10 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
         <div className="px-6">
           <TabsList />
         </div>
-        <Tab.Panels as="div" className="mt-7 h-full">
+        <Tab.Panels as="div" className="h-full">
           {ISSUES_TABS_LIST.map((tab) => (
             <Tab.Panel as="div" className="h-full flex flex-col">
               <WidgetIssuesList
-                filter={widgetDetails.widget_filters.target_date}
                 issues={widgetStats.issues}
                 tab={tab.key}
                 totalIssues={widgetStats.count}

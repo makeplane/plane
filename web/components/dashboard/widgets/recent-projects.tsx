@@ -81,21 +81,21 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   useEffect(() => {
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-      });
-  }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
       <Link
         href={`/${workspaceSlug}/projects`}
         className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline"
       >
-        My projects
+        Your projects
       </Link>
       <div className="space-y-8 mt-4 mx-7">
         {canCreateProject && (

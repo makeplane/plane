@@ -51,14 +51,12 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
 
   // fetch widget stats
   useEffect(() => {
-    if (!widgetDetails) return;
-
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-        target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
-      });
-  }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      target_date: getCustomDates(widgetDetails?.widget_filters.target_date ?? "this_week"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // set active group for center metric
   useEffect(() => {
@@ -129,14 +127,20 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   };
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden">
-      <div className="flex items-center justify-between gap-2 pl-7 pr-6">
-        <Link
-          href={`/${workspaceSlug}/workspace-views/assigned`}
-          className="text-lg font-semibold text-custom-text-300 hover:underline"
-        >
-          State of assigned issues
-        </Link>
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96">
+      <div className="flex items-start justify-between gap-2 pl-7 pr-6">
+        <div>
+          <Link
+            href={`/${workspaceSlug}/workspace-views/assigned`}
+            className="text-lg font-semibold text-custom-text-300 hover:underline"
+          >
+            Assigned by state
+          </Link>
+          <p className="mt-3 text-xs font-medium text-custom-text-300">
+            Filtered by{" "}
+            <span className="border-[0.5px] border-custom-border-300 rounded py-1 px-2 ml-0.5">Due date</span>
+          </p>
+        </div>
         <DurationFilterDropdown
           value={widgetDetails.widget_filters.target_date ?? "this_week"}
           onChange={(val) =>
@@ -204,8 +208,8 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           </div>
         </div>
       ) : (
-        <div className="h-full grid items-end">
-          <IssuesByStateGroupEmptyState filter={widgetDetails.widget_filters.target_date ?? "this_week"} />
+        <div className="h-full grid place-items-center">
+          <IssuesByStateGroupEmptyState />
         </div>
       )}
     </div>
