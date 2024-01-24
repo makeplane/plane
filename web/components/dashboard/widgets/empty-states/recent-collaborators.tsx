@@ -1,39 +1,38 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // assets
-import DarkImage from "public/empty-state/dashboard/dark/recent-collaborators.svg";
-import LightImage from "public/empty-state/dashboard/light/recent-collaborators.svg";
-// helpers
-import { cn } from "helpers/common.helper";
+import DarkImage1 from "public/empty-state/dashboard/dark/recent-collaborators-1.svg";
+import DarkImage2 from "public/empty-state/dashboard/dark/recent-collaborators-2.svg";
+import DarkImage3 from "public/empty-state/dashboard/dark/recent-collaborators-3.svg";
+import LightImage1 from "public/empty-state/dashboard/light/recent-collaborators-1.svg";
+import LightImage2 from "public/empty-state/dashboard/light/recent-collaborators-2.svg";
+import LightImage3 from "public/empty-state/dashboard/light/recent-collaborators-3.svg";
 
-type Props = {};
-
-export const RecentCollaboratorsEmptyState: React.FC<Props> = (props) => {
-  const {} = props;
+export const RecentCollaboratorsEmptyState = () => {
   // next-themes
   const { resolvedTheme } = useTheme();
 
+  const image1 = resolvedTheme === "dark" ? DarkImage1 : LightImage1;
+  const image2 = resolvedTheme === "dark" ? DarkImage2 : LightImage2;
+  const image3 = resolvedTheme === "dark" ? DarkImage3 : LightImage3;
+
   return (
-    <div className="mt-7 px-7 flex justify-between gap-16">
-      <p className="text-sm font-medium text-custom-text-300">
-        People are excited to work with you, once they do you will find your frequent collaborators here.
+    <div className="mt-7 mb-16 px-36 flex flex-col lg:flex-row items-center justify-between gap-x-24 gap-y-16">
+      <p className="text-sm font-medium text-custom-text-300 lg:w-2/5 flex-shrink-0 text-center lg:text-left">
+        Compare your activities with the top
+        <br />
+        seven in your project.
       </p>
-      <div
-        className={cn("w-3/5 h-1/3 p-1.5 pb-0 rounded-t-md flex-shrink-0 self-end", {
-          "border border-custom-border-200": resolvedTheme === "dark",
-        })}
-        style={{
-          background:
-            resolvedTheme === "light"
-              ? "linear-gradient(135deg, rgba(235, 243, 255, 0.45) 3.57%, rgba(99, 161, 255, 0.24) 94.16%)"
-              : "",
-        }}
-      >
-        <Image
-          src={resolvedTheme === "dark" ? DarkImage : LightImage}
-          className="w-full h-full"
-          alt="Recent collaborators"
-        />
+      <div className="flex items-center justify-evenly gap-20 lg:w-3/5 flex-shrink-0">
+        <div className="h-24 w-24 flex-shrink-0">
+          <Image src={image1} className="w-full h-full" alt="Recent collaborators" />
+        </div>
+        <div className="h-24 w-24 flex-shrink-0">
+          <Image src={image2} className="w-full h-full" alt="Recent collaborators" />
+        </div>
+        <div className="h-24 w-24 flex-shrink-0 hidden xl:block">
+          <Image src={image3} className="w-full h-full" alt="Recent collaborators" />
+        </div>
       </div>
     </div>
   );

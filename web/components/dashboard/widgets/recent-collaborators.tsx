@@ -57,18 +57,21 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
   const widgetStats = getWidgetStats<TRecentCollaboratorsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   useEffect(() => {
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-      });
-  }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
-      <div className="flex items-center justify-between gap-2 px-7 pt-6">
-        <h4 className="text-lg font-semibold text-custom-text-300">Collaborators</h4>
+      <div className="px-7 pt-6">
+        <h4 className="text-lg font-semibold text-custom-text-300">Most active members</h4>
+        <p className="mt-2 text-xs font-medium text-custom-text-300">
+          Top eight active members in your project by last activity
+        </p>
       </div>
       {widgetStats.length > 1 ? (
         <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
@@ -82,7 +85,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
           ))}
         </div>
       ) : (
-        <div className="h-full grid items-end">
+        <div className="h-full grid place-items-center">
           <RecentCollaboratorsEmptyState />
         </div>
       )}
