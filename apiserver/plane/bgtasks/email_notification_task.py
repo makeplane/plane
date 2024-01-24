@@ -203,7 +203,6 @@ def send_email_notification(
         "user_preference": f"{base_api}/profile/preferences/email",
         "comments": comments,
     }
-    print(json.dumps(context))
     html_content = render_to_string(
         "emails/notifications/issue-updates.html", context
     )
@@ -231,7 +230,6 @@ def send_email_notification(
         EmailNotificationLog.objects.filter(
             pk__in=email_notification_ids
         ).update(sent_at=timezone.now())
-        print("Email Sent")
         return
     except Exception as e:
         print(e)
