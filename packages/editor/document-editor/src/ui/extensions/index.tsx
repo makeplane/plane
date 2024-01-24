@@ -6,7 +6,7 @@ import { UploadImage } from "@plane/editor-core";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
   SlashCommand(uploadFile, setIsSubmitting),
@@ -26,3 +26,4 @@ export const DocumentEditorExtensions = (
   }),
   IssueWidgetPlaceholder(),
 ];
+

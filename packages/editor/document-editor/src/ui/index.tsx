@@ -108,7 +108,7 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, setIsSubmitting, setHideDragHandleFunction),
+    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
   });
 
   if (!editor) {
