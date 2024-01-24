@@ -9,13 +9,19 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { ProjectInboxHeader } from "components/headers";
 import { InboxSidebarRoot } from "components/inbox";
+import { InboxIssueDetailRoot } from "components/issues/issue-detail/inbox";
 // types
 import { NextPageWithLayout } from "lib/types";
+// icons
+import { Inbox } from "lucide-react";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
-
+  // store hooks
+  const {
+    issues: { getInboxIssuesByInboxId },
+  } = useInboxIssues();
   const { currentProjectDetails } = useProject();
   const {
     filters: { fetchInboxFilters },
@@ -34,6 +40,9 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     }
   );
 
+  // inbox issues list
+  const inboxIssuesList = inboxId ? getInboxIssuesByInboxId(inboxId?.toString()) : undefined;
+
   return (
     <>
       {loader === "fetch" ? (
@@ -49,7 +58,31 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
               />
             )}
           </div>
-          <div className="w-full">Content</div>
+          <div className="w-full">
+            {workspaceSlug && projectId && inboxId && inboxIssueId ? (
+              <InboxIssueDetailRoot
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                inboxId={inboxId?.toString()}
+                issueId={inboxIssueId?.toString()}
+              />
+            ) : (
+              <div className="grid h-full place-items-center p-4 text-custom-text-200">
+                <div className="grid h-full place-items-center">
+                  <div className="my-5 flex flex-col items-center gap-4">
+                    <Inbox size={60} strokeWidth={1.5} />
+                    {inboxIssuesList && inboxIssuesList.length > 0 ? (
+                      <span className="text-custom-text-200">
+                        {inboxIssuesList?.length} issues found. Select an issue from the sidebar to view its details.
+                      </span>
+                    ) : (
+                      <span className="text-custom-text-200">No issues found</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

@@ -38,8 +38,8 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
     if (!moduleId) return;
     setIsUpdating(true);
     if (issue && issue.module_id === moduleId)
-      await issueOperations.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
-    else await issueOperations.addIssueToModule(workspaceSlug, projectId, moduleId, [issueId]);
+      await issueOperations.removeIssueFromModule?.(workspaceSlug, projectId, moduleId, issueId);
+    else await issueOperations.addIssueToModule?.(workspaceSlug, projectId, moduleId, [issueId]);
     setIsUpdating(false);
   };
 
