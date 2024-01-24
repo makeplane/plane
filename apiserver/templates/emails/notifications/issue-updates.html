@@ -103,13 +103,15 @@
               {{data.0.actor_detail.last_name }}
             </span>
           </p>
+          {% if comments %}
           <p style="font-size: 1rem; line-height: 28px">
-            2 comments were left by
+            {{ comments.0.actor_comments|length }} comments were left by
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
               {{ data.0.actor_detail.first_name}}
               {{data.0.actor_detail.last_name }}
             </span>
           </p>
+          {% endif %}
           <p style="font-size: 1rem; line-height: 28px">
             There are 3 new updates, added 1 new comment and, you were
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
@@ -119,19 +121,15 @@
             mentioned a comment of this issue.
           </p>
           <p style="font-size: 1rem; line-height: 28px">
-            Srinivas Pendem made 2 updates, added 1 new comment and edited 1
-            comment.
-          </p>
-          <p style="font-size: 1rem; line-height: 28px">
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
               Srinivas Pendem, Bhavesh and 1 more people
             </span>
             made changes to the issue. A total of 25 updates found
           </p>
-          {% for update in data %} {% if update.changes.title %}
+          {% for update in data %} {% if update.changes.name %}
           <!-- Issue title updated -->
           <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c">
-            The issue title has been updated from “{{update.changes.title}}“
+            The issue title has been updated from “{{update.changes.old_value.0}}“ to "{{update.changes.new_value|last}}"
           </p>
           {% endif %}
           <!-- Outer update Box start -->
