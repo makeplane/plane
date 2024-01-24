@@ -19,13 +19,16 @@ import type {
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
+type TInboxIssueLoader = "fetch" | undefined;
+
 export interface IInboxIssue {
   // observables
+  loader: TInboxIssueLoader;
   inboxIssues: TInboxIssueDetailIdMap;
   inboxIssueMap: TInboxIssueDetailMap;
   // helper methods
   getInboxIssuesByInboxId: (inboxId: string) => string[] | undefined;
-  getInboxIssueById: (issueId: string) => TInboxIssueDetail | undefined;
+  getInboxIssueByIssueId: (inboxId: string, issueId: string) => TInboxIssueDetail | undefined;
   // actions
   fetchInboxIssues: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<TInboxIssueExtendedDetail[]>;
   fetchInboxIssueById: (
@@ -59,6 +62,7 @@ export interface IInboxIssue {
 
 export class InboxIssue implements IInboxIssue {
   // observables
+  loader: TInboxIssueLoader = "fetch";
   inboxIssues: TInboxIssueDetailIdMap = {};
   inboxIssueMap: TInboxIssueDetailMap = {};
   // root store
@@ -69,6 +73,7 @@ export class InboxIssue implements IInboxIssue {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
+      loader: observable.ref,
       inboxIssues: observable,
       inboxIssueMap: observable,
       // actions
@@ -92,29 +97,37 @@ export class InboxIssue implements IInboxIssue {
     return this.inboxIssues?.[inboxId] ?? undefined;
   });
 
-  getInboxIssueById = computedFn((inboxIssueId: string) => {
-    if (!inboxIssueId) return undefined;
-    return this.inboxIssueMap[inboxIssueId] ?? undefined;
+  getInboxIssueByIssueId = computedFn((inboxId: string, issueId: string) => {
+    if (!inboxId) return undefined;
+    return this.inboxIssueMap?.[inboxId]?.[issueId] ?? undefined;
   });
 
   // actions
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
+    this.loader = "fetch";
     const queryParams = this.rootStore.inbox.inboxFilter.appliedFilters ?? {};
 
     try {
       const response = await this.inboxIssueService.fetchInboxIssues(workspaceSlug, projectId, inboxId, queryParams);
-      this.rootStore.inbox.rootStore.issue.issues.addIssue(response as TIssue[]);
+
+      runInAction(() => {
+        response.forEach((_inboxIssue) => {
+          const { ["issue_inbox"]: issueInboxDetail, ...issue } = _inboxIssue;
+          this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+          const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
+          set(this.inboxIssueMap, [inboxId, _inboxIssue.id], inboxIssue);
+        });
+      });
 
       const _inboxIssueIds = response.map((inboxIssue) => inboxIssue.id);
       runInAction(() => {
-        response.forEach((inboxIssue) => {
-          set(this.inboxIssueMap, inboxIssue.id, inboxIssue);
-        });
         set(this.inboxIssues, inboxId, _inboxIssueIds);
+        this.loader = undefined;
       });
 
-      return response as TInboxIssueExtendedDetail[];
+      return response;
     } catch (error) {
+      this.loader = undefined;
       throw error;
     }
   };

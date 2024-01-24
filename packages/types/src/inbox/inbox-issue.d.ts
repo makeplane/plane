@@ -8,6 +8,33 @@ export enum EInboxStatus {
   DUPLICATE = 2,
 }
 
+export type TInboxStatus =
+  | EInboxStatus.PENDING
+  | EInboxStatus.REJECT
+  | EInboxStatus.SNOOZED
+  | EInboxStatus.ACCEPTED
+  | EInboxStatus.DUPLICATE;
+
+export type TInboxIssueDetail = {
+  id?: string;
+  source: "in-app";
+  status: TInboxStatus;
+  duplicate_to: string | undefined;
+  snoozed_till: Date | undefined;
+};
+
+export type TInboxIssueDetailMap = Record<
+  string,
+  Record<string, TInboxIssueDetail>
+>; // inbox_id -> issue_id -> TInboxIssueDetail
+
+export type TInboxIssueDetailIdMap = Record<string, string[]>; // inbox_id -> issue_id[]
+
+export type TInboxIssueExtendedDetail = TIssue & {
+  issue_inbox: TInboxIssueDetail[];
+};
+
+// property type checks
 export type TInboxPendingStatus = {
   status: EInboxStatus.PENDING;
 };
@@ -36,27 +63,3 @@ export type TInboxDetailedStatus =
   | TInboxSnoozedStatus
   | TInboxAcceptedStatus
   | TInboxDuplicateStatus;
-
-export type TInboxStatus =
-  | EInboxStatus.PENDING
-  | EInboxStatus.REJECT
-  | EInboxStatus.SNOOZED
-  | EInboxStatus.ACCEPTED
-  | EInboxStatus.DUPLICATE;
-
-export type TInboxIssueDetail = {
-  id: string; // issue_id
-  issue_inbox: {
-    id: string;
-    source: "in-app";
-    status: TInboxStatus;
-    duplicate_to: string | undefined;
-    snoozed_till: Date | undefined;
-  };
-};
-
-export type TInboxIssueExtendedDetail = TIssue & TInboxIssueDetail;
-
-export type TInboxIssueDetailMap = Record<string, TInboxIssueDetail>; // issue_id -> TInboxIssueDetail
-
-export type TInboxIssueDetailIdMap = Record<string, string[]>; // inbox_id -> issue_id[]

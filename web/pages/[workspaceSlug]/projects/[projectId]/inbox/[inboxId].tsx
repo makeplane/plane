@@ -14,12 +14,12 @@ import { NextPageWithLayout } from "lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
+  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
   const { currentProjectDetails } = useProject();
   const {
     filters: { fetchInboxFilters },
-    issues: { fetchInboxIssues },
+    issues: { loader, fetchInboxIssues },
   } = useInboxIssues();
 
   useSWR(
@@ -28,19 +28,31 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       : null,
     async () => {
       if (workspaceSlug && projectId && inboxId && currentProjectDetails && currentProjectDetails?.inbox_view) {
-        await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
+        // await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
         await fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
       }
     }
   );
 
   return (
-    <div className="relative flex h-full overflow-hidden">
-      <div className="flex-shrink-0 w-[300px] border-r border-custom-border-100">
-        <InboxSidebarRoot />
-      </div>
-      <div className="w-full">Content</div>
-    </div>
+    <>
+      {loader === "fetch" ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="relative flex h-full overflow-hidden">
+          <div className="flex-shrink-0 w-[340px] border-r border-custom-border-100">
+            {workspaceSlug && projectId && inboxId && (
+              <InboxSidebarRoot
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                inboxId={inboxId?.toString()}
+              />
+            )}
+          </div>
+          <div className="w-full">Content</div>
+        </div>
+      )}
+    </>
   );
 });
 

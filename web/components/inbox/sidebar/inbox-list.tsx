@@ -1,9 +1,27 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
+// hooks
+import { useInboxIssues } from "hooks/store";
+// components
+import { InboxIssueListItem } from "../";
 
-type TInboxList = {};
+type TInboxIssueList = { workspaceSlug: string; projectId: string; inboxId: string };
 
-export const InboxList: FC<TInboxList> = (props) => {
-  const {} = props;
+export const InboxIssueList: FC<TInboxIssueList> = observer((props) => {
+  const { workspaceSlug, projectId, inboxId } = props;
+  // hooks
+  const {
+    issues: { getInboxIssuesByInboxId },
+  } = useInboxIssues();
 
-  return <div>InboxList</div>;
-};
+  const inboxIssueIds = getInboxIssuesByInboxId(inboxId);
+
+  if (!inboxIssueIds) return <></>;
+  return (
+    <>
+      {inboxIssueIds.map((issueId) => (
+        <InboxIssueListItem workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} issueId={issueId} />
+      ))}
+    </>
+  );
+});
