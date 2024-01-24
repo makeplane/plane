@@ -15,9 +15,12 @@ export class InboxIssueService extends APIService {
     inboxId: string,
     params?: TInboxQueryParams | {}
   ): Promise<TInboxIssueExtendedDetail[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, {
-      params,
-    })
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/?expand=issue_inbox`,
+      {
+        params,
+      }
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -31,7 +34,7 @@ export class InboxIssueService extends APIService {
     inboxIssueId: string
   ): Promise<TInboxIssueExtendedDetail> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/?expand=issue_inbox`
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -43,9 +46,12 @@ export class InboxIssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    data: any
+    data: Partial<TIssue>
   ): Promise<TInboxIssueExtendedDetail> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, data)
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/?expand=issue_inbox`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -60,7 +66,7 @@ export class InboxIssueService extends APIService {
     data: { issue: Partial<TIssue> }
   ): Promise<TInboxIssueExtendedDetail> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/?expand=issue_inbox`,
       data
     )
       .then((response) => response?.data)
@@ -92,7 +98,7 @@ export class InboxIssueService extends APIService {
     data: TInboxDetailedStatus
   ): Promise<TInboxIssueExtendedDetail> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/?expand=issue_inbox`,
       data
     )
       .then((response) => response?.data)

@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import update from "lodash/update";
@@ -10,7 +10,7 @@ import { InboxService } from "services/inbox/inbox.service";
 import { RootStore } from "store/root.store";
 import { TInboxDetailMap, TInboxDetailIdMap, TInbox } from "@plane/types";
 
-export interface IInboxStore {
+export interface IInbox {
   // observables
   inboxes: TInboxDetailIdMap;
   inboxMap: TInboxDetailMap;
@@ -23,7 +23,7 @@ export interface IInboxStore {
   updateInbox: (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TInbox>) => Promise<TInbox>;
 }
 
-export class InboxStore implements IInboxStore {
+export class Inbox implements IInbox {
   // observables
   inboxes: TInboxDetailIdMap = {};
   inboxMap: TInboxDetailMap = {};

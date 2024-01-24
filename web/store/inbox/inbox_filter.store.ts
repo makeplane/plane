@@ -8,7 +8,7 @@ import { IInbox, IInboxFilterOptions, IInboxQueryParams } from "@plane/types";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
 
-export interface IInboxFiltersStore {
+export interface IInboxFilter {
   // observables
   inboxFilters: Record<string, { filters: IInboxFilterOptions }>;
   // computed
@@ -24,7 +24,7 @@ export interface IInboxFiltersStore {
   ) => Promise<void>;
 }
 
-export class InboxFiltersStore implements IInboxFiltersStore {
+export class InboxFilter implements IInboxFilter {
   // observables
   inboxFilters: {
     [inboxId: string]: { filters: IInboxFilterOptions };

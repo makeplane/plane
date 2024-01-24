@@ -1,7 +1,9 @@
-import { observable, action, makeObservable, runInAction, autorun, computed } from "mobx";
+import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import update from "lodash/update";
+import concat from "lodash/concat";
+import uniq from "lodash/uniq";
 // services
 import { InboxIssueService } from "services/inbox/inbox-issue.service";
 // types
@@ -17,7 +19,7 @@ import type {
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
-export interface IInboxIssuesStore {
+export interface IInboxIssue {
   // observables
   inboxIssues: TInboxIssueDetailIdMap;
   inboxIssueMap: TInboxIssueDetailMap;
@@ -55,7 +57,7 @@ export interface IInboxIssuesStore {
   ) => Promise<TInboxIssueExtendedDetail>;
 }
 
-export class InboxIssuesStore implements IInboxIssuesStore {
+export class InboxIssue implements IInboxIssue {
   // observables
   inboxIssues: TInboxIssueDetailIdMap = {};
   inboxIssueMap: TInboxIssueDetailMap = {};
@@ -97,11 +99,11 @@ export class InboxIssuesStore implements IInboxIssuesStore {
 
   // actions
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
-    const queryParams = this.rootStore.inboxRoot.inboxFilters.appliedFilters ?? {};
+    const queryParams = this.rootStore.inbox.inboxFilter.appliedFilters ?? {};
 
     try {
       const response = await this.inboxIssueService.fetchInboxIssues(workspaceSlug, projectId, inboxId, queryParams);
-      this.rootStore.inboxRoot.rootStore.issue.issues.addIssue(response as TIssue[]);
+      this.rootStore.inbox.rootStore.issue.issues.addIssue(response as TIssue[]);
 
       const _inboxIssueIds = response.map((inboxIssue) => inboxIssue.id);
       runInAction(() => {
@@ -126,6 +128,68 @@ export class InboxIssuesStore implements IInboxIssuesStore {
         inboxIssueId
       );
 
+      runInAction(() => {
+        set(this.inboxIssueMap, inboxIssueId, response);
+        update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
+          if (inboxIssueIds.includes(inboxIssueId)) return inboxIssueIds;
+          return uniq(concat(inboxIssueIds, inboxIssueId));
+        });
+      });
+
+      return response as any;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  createInboxIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TIssue>) => {
+    try {
+      const response = await this.inboxIssueService.createInboxIssue(workspaceSlug, projectId, inboxId, data);
+
+      runInAction(() => {
+        set(this.inboxIssueMap, response.id, response);
+        update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
+          if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
+          return uniq(concat(inboxIssueIds, response.id));
+        });
+      });
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateInboxIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    inboxIssueId: string,
+    data: Partial<TIssue>
+  ) => {
+    try {
+      const response = await this.inboxIssueService.updateInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId, {
+        issue: data,
+      });
+
+      runInAction(() => {
+        set(this.inboxIssueMap, response.id, response);
+        update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
+          if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
+          return uniq(concat(inboxIssueIds, response.id));
+        });
+      });
+
+      return response as any;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  removeInboxIssue = async (workspaceSlug: string, projectId: string, inboxId: string, inboxIssueId: string) => {
+    try {
+      const response = await this.inboxIssueService.removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
+
       // runInAction(() => {
       //   set(this.inboxIssueMap, inboxId, response);
       //   update(this.inboxIssues, projectId, (inboxIds: string[] = []) => {
@@ -134,7 +198,30 @@ export class InboxIssuesStore implements IInboxIssuesStore {
       //   });
       // });
 
-      return response;
+      return response as any;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateInboxIssueStatus = async (workspaceSlug: string, projectId: string, inboxId: string, inboxIssueId: string) => {
+    try {
+      const response = await this.inboxIssueService.fetchInboxIssueById(
+        workspaceSlug,
+        projectId,
+        inboxId,
+        inboxIssueId
+      );
+
+      // runInAction(() => {
+      //   set(this.inboxIssueMap, inboxId, response);
+      //   update(this.inboxIssues, projectId, (inboxIds: string[] = []) => {
+      //     if (inboxIds.includes(inboxId)) return inboxIds;
+      //     return uniq(concat(inboxIds, inboxId));
+      //   });
+      // });
+
+      return response as any;
     } catch (error) {
       throw error;
     }
