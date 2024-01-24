@@ -158,18 +158,18 @@ class PageViewSet(BaseViewSet):
             pk=page_id, workspace__slug=slug, project_id=project_id
         )
 
-        # only the owner and admin can archive the page
+        # only the owner or admin can archive the page
         if (
             ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
                 is_active=True,
-                role__gte=20,
+                role__lte=15,
             ).exists()
-            or request.user.id != page.owned_by_id
+            and request.user.id != page.owned_by_id
         ):
             return Response(
-                {"error": "Only the owner and admin can archive the page"},
+                {"error": "Only the owner or admin can archive the page"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -182,18 +182,18 @@ class PageViewSet(BaseViewSet):
             pk=page_id, workspace__slug=slug, project_id=project_id
         )
 
-        # only the owner and admin can un archive the page
+        # only the owner or admin can un archive the page
         if (
             ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
                 is_active=True,
-                role__gt=20,
+                role__lte=15,
             ).exists()
-            or request.user.id != page.owned_by_id
+            and request.user.id != page.owned_by_id
         ):
             return Response(
-                {"error": "Only the owner and admin can un archive the page"},
+                {"error": "Only the owner or admin can un archive the page"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
