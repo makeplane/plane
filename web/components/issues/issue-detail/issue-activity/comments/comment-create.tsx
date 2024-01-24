@@ -10,6 +10,7 @@ import { TActivityOperations } from "../root";
 import { TIssueComment } from "@plane/types";
 // icons
 import { Globe2, Lock } from "lucide-react";
+import { useWorkspace } from "hooks/store";
 
 const fileService = new FileService();
 
@@ -40,6 +41,9 @@ const commentAccess: commentAccessType[] = [
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const { workspaceSlug, activityOperations, disabled, showAccessSpecifier = false } = props;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // refs
   const editorRef = useRef<any>(null);
   // react hook form
@@ -73,8 +77,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 }}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.deleteImage}
-                restoreFile={fileService.restoreImage}
+                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                 ref={editorRef}
                 value={!value ? "<p></p>" : value}
                 customClassName="p-2"

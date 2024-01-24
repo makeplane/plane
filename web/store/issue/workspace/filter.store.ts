@@ -222,6 +222,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
               );
             });
           });
+
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               display_filters: _filters.displayFilters,

@@ -94,7 +94,7 @@ const EstimatePoint = observer((props: { point: string }) => {
   const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
   const currentPoint = Number(point) + 1;
 
-  const estimateValue = getEstimatePointValue(Number(point));
+  const estimateValue = getEstimatePointValue(Number(point), null);
 
   return (
     <span className="font-medium text-custom-text-100">
@@ -142,8 +142,18 @@ const activityDetails: {
   },
   archived_at: {
     message: (activity) => {
-      if (activity.new_value === "restore") return "restored the issue.";
-      else return "archived the issue.";
+      if (activity.new_value === "restore")
+        return (
+          <>
+            restored <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            archived <IssueLink activity={activity} />
+          </>
+        );
     },
     icon: <ArchiveIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
@@ -229,8 +239,18 @@ const activityDetails: {
   },
   issue: {
     message: (activity) => {
-      if (activity.verb === "created") return "created the issue.";
-      else return "deleted an issue.";
+      if (activity.verb === "created")
+        return (
+          <>
+            created <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            deleted <IssueLink activity={activity} />
+          </>
+        );
     },
     icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
@@ -371,7 +391,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the issue from the cycle{" "}
+            removed <IssueLink activity={activity} /> from the cycle{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
@@ -418,7 +438,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the issue from the module{" "}
+            removed <IssueLink activity={activity} /> from the module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"

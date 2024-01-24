@@ -199,6 +199,15 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             });
           });
 
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.profileIssues.fetchIssues(
+              workspaceSlug,
+              undefined,
+              "mutation",
+              userId,
+              this.rootIssueStore.profileIssues.currentView
+            );
+
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
             display_filters: _filters.displayFilters,
           });
