@@ -54,11 +54,11 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   ];
 
   useEffect(() => {
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-      });
-  }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 

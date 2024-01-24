@@ -50,18 +50,16 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    if (!widgetDetails) return;
+    const filterDates = getCustomDates(widgetDetails?.widget_filters.target_date ?? "this_week");
 
-    const filterDates = getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week");
-
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-        issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-        target_date: filterDates,
-        expand: "issue_relation",
-      });
-  }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      issue_type: widgetDetails?.widget_filters.tab ?? "upcoming",
+      target_date: filterDates,
+      expand: "issue_relation",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "upcoming");
 

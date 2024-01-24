@@ -57,11 +57,11 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
   const widgetStats = getWidgetStats<TRecentCollaboratorsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
 
   useEffect(() => {
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-      });
-  }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 

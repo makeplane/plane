@@ -51,14 +51,12 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
 
   // fetch widget stats
   useEffect(() => {
-    if (!widgetDetails) return;
-
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-        target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
-      });
-  }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      target_date: getCustomDates(widgetDetails?.widget_filters.target_date ?? "this_week"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // set active group for center metric
   useEffect(() => {

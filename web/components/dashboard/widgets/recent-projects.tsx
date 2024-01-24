@@ -81,11 +81,11 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   useEffect(() => {
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-      });
-  }, [dashboardId, fetchWidgetStats, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 

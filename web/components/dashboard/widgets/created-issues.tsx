@@ -49,15 +49,13 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    if (!widgetDetails) return;
-
-    if (!widgetStats)
-      fetchWidgetStats(workspaceSlug, dashboardId, {
-        widget_key: WIDGET_KEY,
-        issue_type: widgetDetails.widget_filters.tab ?? "upcoming",
-        target_date: getCustomDates(widgetDetails.widget_filters.target_date ?? "this_week"),
-      });
-  }, [dashboardId, fetchWidgetStats, widgetDetails, widgetStats, workspaceSlug]);
+    fetchWidgetStats(workspaceSlug, dashboardId, {
+      widget_key: WIDGET_KEY,
+      issue_type: widgetDetails?.widget_filters.tab ?? "upcoming",
+      target_date: getCustomDates(widgetDetails?.widget_filters.target_date ?? "this_week"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "upcoming");
 
