@@ -8,3 +8,4 @@ export * from "./send-workspace-invitation-modal";
 export * from "./sidebar-dropdown";
 export * from "./sidebar-menu";
 export * from "./sidebar-quick-action";
+export * from "./workspace-active-cycles-upgrade";

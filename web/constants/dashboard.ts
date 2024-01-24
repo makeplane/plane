@@ -19,6 +19,7 @@ import { Props } from "components/icons/types";
 import { EUserWorkspaceRoles } from "./workspace";
 // icons
 import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { ContrastIcon } from "@plane/ui";
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
@@ -291,5 +292,13 @@ export const SIDEBAR_MENU_ITEMS: {
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/workspace-views/all-issues`,
     Icon: CheckCircle,
+  },
+  {
+    key: "active-cycles",
+    label: "Active Cycles",
+    href: `/active-cycles`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles`,
+    Icon: ContrastIcon,
   },
 ];
