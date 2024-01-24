@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Sparkle, X } from "lucide-react";
 // hooks
-import { useApplication, useEstimate, useMention, useProject } from "hooks/store";
+import { useApplication, useEstimate, useMention, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // services
@@ -115,6 +115,9 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store
   const {
     config: { envConfig },
@@ -434,8 +437,8 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       <RichTextEditorWithRef
                         cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                        deleteFile={fileService.deleteImage}
-                        restoreFile={fileService.restoreImage}
+                        deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                        restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                         ref={editorRef}
                         debouncedUpdatesEnabled={false}
                         value={

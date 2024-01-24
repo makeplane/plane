@@ -17,6 +17,7 @@ import { Comment } from "types/issue";
 import fileService from "services/file.service";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 
+import { RootStore } from "store/root";
 type Props = {
   workspaceSlug: string;
   comment: Comment;
@@ -24,6 +25,9 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, workspaceSlug } = props;
+  const { project }: RootStore = useMobxStore();
+  const workspaceId = project.workspace?.id;
+
   // store
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
@@ -105,8 +109,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
                     cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
+                    deleteFile={fileService.getDeleteImageFunction(workspaceId as string)}
+                    restoreFile={fileService.getRestoreImageFunction(workspaceId as string)}
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}

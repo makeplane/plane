@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, FC, useCallback, useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
@@ -11,7 +11,7 @@ import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
 // services
 import { FileService } from "services/file.service";
-import { useMention } from "hooks/store";
+import { useMention, useWorkspace } from "hooks/store";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -38,6 +38,9 @@ const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
+
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -172,8 +175,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               <RichTextEditor
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                deleteFile={fileService.deleteImage}
-                restoreFile={fileService.restoreImage}
+                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                 value={localIssueDescription.description_html}
                 rerenderOnPropsChange={localIssueDescription}
                 setShouldShowAlert={setShowAlert}
