@@ -82,7 +82,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
           ))}
         </div>
       ) : (
-        <div className="h-full grid items-end">
+        <div className="h-full grid place-items-center">
           <RecentCollaboratorsEmptyState />
         </div>
       )}
