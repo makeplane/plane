@@ -176,7 +176,7 @@
                 <tr style="border-radius: 8px; margin-top: 20px">
                   <td style="width: 30px">
                     {% if update.actor_detail.avatar_url %}
-                    <img src="{{ update.actor_detail.avatar_url }}" width="15" height="15" border="0" />
+                    <img src="{{ update.actor_detail.avatar_url }}" width="25" height="25" border="0" />
                     {% else %}
                     <table cellspacing="0" cellpadding="0">
                       <tr>
@@ -236,7 +236,7 @@
               <!-- due date changed -->
               <table
                 role="presentation"
-                style="max-width: 100%; padding-bottom: 10px"
+                style="max-width: 100%; padding-bottom: 15px"
               >
                 <tr>
                   <td>
@@ -282,7 +282,7 @@
               <!-- duplicate changed -->
               <table
                 role="presentation"
-                style="max-width: 100%; padding-bottom: 10px"
+                style="max-width: 100%; padding-bottom: 15px"
               >
                 <tr>
                   <td>
@@ -326,7 +326,7 @@
               {% if update.changes.assignees %}
               <table
                 role="presentation"
-                style="max-width: 100%; padding-bottom: 10px"
+                style="max-width: 100%; padding-bottom: 15px"
               >
                 <tr>
                   <td>
@@ -423,7 +423,7 @@
               <!-- Labels -->
               <table
                 role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
+                style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
                   <td>
@@ -520,7 +520,7 @@
               {% if update.changes.state %}
               <table
                 role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
+                style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
                   <td>
@@ -598,7 +598,7 @@
               <!-- Link Added -->
               <table
                 role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
+                style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
                   <td>
@@ -640,7 +640,7 @@
               <!-- Links Removed -->
               <table
                 role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
+                style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
                   <td>
@@ -682,7 +682,7 @@
               <!-- Priority changed -->
               <table
                 role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
+                style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
                   <td>
@@ -759,7 +759,7 @@
               <!-- Blocking changed -->
               <table
                 role="presentation"
-                style="padding-bottom: 10px; max-width: 100%"
+                style="padding-bottom: 15px; max-width: 100%"
               >
                 <tr>
                   <td>
@@ -790,6 +790,41 @@
                     </a>
                   </td>
                   {% endfor %}
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.description %}
+              <!-- Description changed -->
+              <table
+                role="presentation"
+                style="padding-bottom: 15px; max-width: 100%"
+              >
+                <tr>
+                  <td valign="top">
+                    <p
+                      style="
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: #525252;
+                        margin-right: 5px;
+                      "
+                    >
+                      Description:
+                    </p>
+                  </td>
+                  <td valign="top" style="padding-top: 0px">
+                    <span
+                      style="
+                        font-size: 0.8rem;
+                        line-height: 24px;
+                        color: #525252;
+                        padding-right: 30px;
+                      "
+                    >
+                      Email Preferences User Stories The issue created for this
+                      feature is available on the Product+Design project and is
+                      identified as DES-163.
+                    </span>
+                  </td>
                 </tr>
               </table>
               {% endif %}
