@@ -18,6 +18,7 @@ export const AssignedIssuesEmptyState: React.FC<Props> = (props) => {
 
   const image = resolvedTheme === "dark" ? typeDetails.darkImage : typeDetails.lightImage;
 
+  // TODO: update empty state logic to use a general component
   return (
     <div className="text-center space-y-6 flex flex-col items-center">
       <div className="h-24 w-24">
