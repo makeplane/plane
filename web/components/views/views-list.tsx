@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 // hooks
 import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
 import { ProjectViewListItem } from "components/views";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Input, Loader } from "@plane/ui";
-// assets
-import emptyView from "public/empty-state/empty_view.webp";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -22,10 +20,9 @@ export const ProjectViewsList = observer(() => {
   } = useApplication();
   const {
     membership: { currentProjectRole },
+    currentUser,
   } = useUser();
   const { projectViewIds, getViewById } = useProjectView();
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!projectViewIds)
     return (
@@ -39,7 +36,11 @@ export const ProjectViewsList = observer(() => {
 
   const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", currentUser?.theme.theme === "light");
+
   const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -64,20 +65,19 @@ export const ProjectViewsList = observer(() => {
           )}
         </div>
       ) : (
-        <NewEmptyState
-          title="Save filtered views for your project. Create as many as you need."
+        <EmptyState
+          title="Save filtered views for your project. Create as many as you need"
           description="Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best."
-          image={emptyView}
+          image={EmptyStateImagePath}
           comicBox={{
             title: "Views work atop Issue properties.",
             description: "You can create a view from here with as many properties as filters as you see fit.",
-            direction: "right",
           }}
           primaryButton={{
-            icon: <Plus size={14} strokeWidth={2} />,
-            text: "Build your first view",
+            text: "Create your first view",
             onClick: () => toggleCreateViewModal(true),
           }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}

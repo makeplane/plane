@@ -4,12 +4,11 @@ import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
-// images
-import emptyProject from "public/empty-state/empty_project.webp";
 // icons
-import { NewEmptyState } from "components/common/new-empty-state";
+import { Plus } from "lucide-react";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { EmptyState } from "components/empty-state";
 
 export const ProjectCardList = observer(() => {
   // store hooks
@@ -18,11 +17,11 @@ export const ProjectCardList = observer(() => {
     eventTracker: { setTrackElement },
   } = useApplication();
   const {
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceRole },
   } = useUser();
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserProjectRoles.MEMBER;
 
   if (!workspaceProjectIds)
     return (
@@ -55,22 +54,23 @@ export const ProjectCardList = observer(() => {
           )}
         </div>
       ) : (
-        <NewEmptyState
-          image={emptyProject}
+        <EmptyState
+          image={`/empty-state/empty_project.webp`}
           title="Start a Project"
           description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
-          comicBox={{
-            title: "Everything starts with a project in Plane",
-            direction: "right",
-            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
-          }}
           primaryButton={{
             text: "Start your first project",
+            icon: <Plus size={16} />,
             onClick: () => {
               setTrackElement("PROJECTS_EMPTY_STATE");
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}
+          comicBox={{
+            title: "Everything starts with a project in Plane",
+            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+          }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}
