@@ -156,7 +156,10 @@ export class InboxIssue implements IInboxIssue {
         });
       });
 
+      // fetching issue activity
       await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
+      // fetching issue reaction
+      await this.rootStore.issue.issueDetail.fetchReactions(workspaceSlug, projectId, inboxIssueId);
       return response as any;
     } catch (error) {
       throw error;
@@ -184,6 +187,7 @@ export class InboxIssue implements IInboxIssue {
         });
       });
 
+      await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, response.id);
       return response;
     } catch (error) {
       throw error;
@@ -216,6 +220,7 @@ export class InboxIssue implements IInboxIssue {
         });
       });
 
+      await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
       return response as any;
     } catch (error) {
       throw error;
@@ -231,6 +236,7 @@ export class InboxIssue implements IInboxIssue {
         delete this.inboxIssueMap[inboxId][inboxIssueId];
       });
 
+      await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
       return response as any;
     } catch (error) {
       throw error;
@@ -267,6 +273,7 @@ export class InboxIssue implements IInboxIssue {
         });
       });
 
+      await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
       return response as any;
     } catch (error) {
       throw error;

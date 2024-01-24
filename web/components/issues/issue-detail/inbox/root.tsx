@@ -1,4 +1,5 @@
 import { FC, useMemo } from "react";
+import useSWR from "swr";
 // components
 import { InboxIssueMainContent } from "./main-content";
 import { InboxIssueDetailsSidebar } from "./sidebar";
@@ -85,6 +86,17 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
       },
     }),
     [inboxId, fetchInboxIssueById, updateInboxIssue, removeInboxIssue, setToastAlert]
+  );
+
+  useSWR(
+    workspaceSlug && projectId && inboxId && issueId
+      ? `INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${inboxId}_${issueId}`
+      : null,
+    async () => {
+      if (workspaceSlug && projectId && inboxId && issueId) {
+        await issueOperations.fetch(workspaceSlug, projectId, issueId);
+      }
+    }
   );
 
   // checking if issue is editable, based on user role
