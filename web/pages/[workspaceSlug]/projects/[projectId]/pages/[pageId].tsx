@@ -18,6 +18,8 @@ import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { Spinner } from "@plane/ui";
+// hooks
+import { useIssueEmbeds } from "hooks/use-issue-embeds";
 // assets
 // helpers
 // types
@@ -61,6 +63,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
+
+  const { issues, fetchIssue, issueWidgetClickAction, issuesLoading } = useIssueEmbeds();
 
   const {
     archivePage: archivePageAction,
@@ -255,7 +259,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const userCanLock =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  return pageIdMobx ? (
+  return pageIdMobx && issues && !issuesLoading ? (
     <div className="flex h-full flex-col justify-between">
       <div className="h-full w-full overflow-hidden">
         {isPageReadOnly ? (
@@ -284,6 +288,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   }
                 : undefined
             }
+            embedConfig={{
+              issueEmbedConfig: {
+                issues: issues,
+                fetchIssue: fetchIssue,
+                clickAction: issueWidgetClickAction,
+              },
+            }}
           />
         ) : (
           <div className="relative h-full w-full overflow-hidden">
@@ -327,6 +338,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       : undefined
                   }
                   pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
+                  embedConfig={{
+                    issueEmbedConfig: {
+                      issues: issues,
+                      fetchIssue: fetchIssue,
+                      clickAction: issueWidgetClickAction,
+                    },
+                  }}
                 />
               )}
             />
