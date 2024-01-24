@@ -145,7 +145,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
             })}
           </div>
         ) : (
-          <span className="text-sm">{issueRelationObject[relationKey].placeholder}</span>
+          <span className="text-sm text-custom-text-400">{issueRelationObject[relationKey].placeholder}</span>
         )}
         {!disabled && <Pencil className="h-4 w-4 flex-shrink-0 hidden group-hover:inline" />}
       </button>

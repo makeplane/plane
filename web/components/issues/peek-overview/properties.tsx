@@ -101,7 +101,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName="text-sm justify-between"
+            buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -144,7 +144,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName="text-sm"
+            buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
@@ -169,7 +169,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName="text-sm"
+            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
@@ -183,14 +183,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <span>Estimate</span>
             </div>
             <EstimateDropdown
-              value={issue?.estimate_point || null}
+              value={issue?.estimate_point !== null ? issue.estimate_point : null}
               onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
               projectId={projectId}
               disabled={disabled}
               buttonVariant="transparent-with-text"
               className="w-3/4 flex-grow group"
               buttonContainerClassName="w-full text-left"
-              buttonClassName="text-sm"
+              buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
               placeholder="None"
               hideIcon
               dropdownArrow

@@ -33,7 +33,7 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
   const disableSelect = disabled || isUpdating;
 
   const handleIssueModuleChange = async (moduleId: string | null) => {
-    if (!issue) return;
+    if (!issue || issue.module_id === moduleId) return;
     setIsUpdating(true);
     if (moduleId) await issueOperations.addIssueToModule(workspaceSlug, projectId, moduleId, [issueId]);
     else await issueOperations.removeIssueFromModule(workspaceSlug, projectId, issue.module_id ?? "", issueId);
@@ -50,7 +50,7 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         disabled={disableSelect}
         className="w-full group"
         buttonContainerClassName="w-full text-left"
-        buttonClassName="text-sm"
+        buttonClassName={`text-sm ${issue?.module_id ? "" : "text-custom-text-400"}`}
         placeholder="No module"
         hideIcon
         dropdownArrow

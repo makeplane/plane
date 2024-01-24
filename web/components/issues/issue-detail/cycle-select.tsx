@@ -33,7 +33,7 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
   const disableSelect = disabled || isUpdating;
 
   const handleIssueCycleChange = async (cycleId: string | null) => {
-    if (!issue) return;
+    if (!issue || issue.cycle_id === cycleId) return;
     setIsUpdating(true);
     if (cycleId) await issueOperations.addIssueToCycle(workspaceSlug, projectId, cycleId, [issueId]);
     else await issueOperations.removeIssueFromCycle(workspaceSlug, projectId, issue.cycle_id ?? "", issueId);
@@ -50,7 +50,7 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
         buttonVariant="transparent-with-text"
         className="w-full group"
         buttonContainerClassName="w-full text-left"
-        buttonClassName="text-sm"
+        buttonClassName={`text-sm ${issue?.cycle_id ? "" : "text-custom-text-400"}`}
         placeholder="No cycle"
         hideIcon
         dropdownArrow

@@ -94,7 +94,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
             )}
           </div>
         ) : (
-          <span className="text-sm">Add parent issue</span>
+          <span className="text-sm text-custom-text-400">Add parent issue</span>
         )}
         {!disabled && <Pencil className="h-4 w-4 flex-shrink-0 hidden group-hover:inline" />}
       </button>
