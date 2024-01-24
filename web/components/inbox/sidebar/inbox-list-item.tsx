@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
 import { CalendarDays } from "lucide-react";
 // hooks
 import { useInboxIssues, useIssueDetail, useProject } from "hooks/store";
@@ -20,6 +22,9 @@ type TInboxIssueListItem = {
 
 export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
   const { workspaceSlug, projectId, inboxId, issueId } = props;
+  // router
+  const router = useRouter();
+  const { inboxIssueId } = router.query;
   // hooks
   const { getProjectById } = useProject();
   const {
@@ -42,7 +47,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
       <div
         id={issue.id}
         className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 border-b border-custom-border-200 px-4 py-2 hover:bg-custom-primary/5 ${
-          false ? "bg-custom-primary/5" : " "
+          inboxIssueId === issueId ? "bg-custom-primary/5" : " "
         } ${inboxIssueDetail.status !== -2 ? "opacity-60" : ""}`}
       >
         <div className="flex items-center gap-x-2">
@@ -61,14 +66,14 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
               <span>{renderFormattedDate(issue.created_at ?? "")}</span>
             </div>
           </Tooltip>
+          <InboxIssueStatus
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            inboxId={inboxId}
+            issueId={issueId}
+            iconSize={14}
+          />
         </div>
-        <InboxIssueStatus
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          inboxId={inboxId}
-          issueId={issueId}
-          iconSize={14}
-        />
       </div>
     </Link>
   );
