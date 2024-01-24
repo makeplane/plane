@@ -10,6 +10,7 @@ import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { getMenuOptions } from "src/utils/menu-options";
 import { useRouter } from "next/router";
+import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentEditor {
   // document info
@@ -43,6 +44,7 @@ interface IDocumentEditor {
   isSubmitting: "submitting" | "submitted" | "saved";
 
   // embed configuration
+  embedConfig?: IEmbedConfig;
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
@@ -77,6 +79,7 @@ const DocumentEditor = ({
   cancelUploadImage,
   onActionCompleteHandler,
   rerenderOnPropsChange,
+  embedConfig,
 }: IDocumentEditor) => {
   const { markings, updateMarkings } = useEditorMarkings();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
@@ -108,7 +111,12 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
+    extensions: DocumentEditorExtensions(
+      uploadFile,
+      embedConfig?.issueEmbedConfig,
+      setIsSubmitting,
+      setHideDragHandleFunction
+    ),
   });
 
   if (!editor) {
