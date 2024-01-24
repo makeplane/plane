@@ -163,8 +163,8 @@ def send_email_notification(
                     },
                 }
             )
+        activity_time = changes.pop("activity_time")
         if changes:
-            activity_time = changes.pop("activity_time")
             template_data.append(
                 {
                     "actor_detail": {
@@ -180,15 +180,6 @@ def send_email_notification(
                     "activity_time": str(activity_time),
                 }
         )
-
-    span = f"""<span style='
-                        font-size: 1rem;
-                        font-weight: 700;
-                        line-height: 28px;
-                      "
-                    >
-                      {template_data[0]['actor_detail']['first_name']} {template_data[0]['actor_detail']['last_name']}
-                    </span>"""
 
     summary = "updates were made to the issue by"
 

@@ -105,13 +105,19 @@
           </p>
           {% if comments %}
           <p style="font-size: 1rem; line-height: 28px">
-            {{ comments.0.actor_comments|length }} comments were left by
+            {{ comments|length }} comments were left by
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
-              {{ data.0.actor_detail.first_name}}
-              {{data.0.actor_detail.last_name }}
+              {% if comments|length == 1 %}
+                {{ data.0.actor_detail.first_name }}
+                {{ data.0.actor_detail.last_name }}
+              {% else %}
+                {{ data.0.actor_detail.first_name }}
+                {{ data.0.actor_detail.last_name }} and others
+              {% endif %}
             </span>
           </p>
-          {% endif %}
+        {% endif %}
+          {% if mentions %}
           <p style="font-size: 1rem; line-height: 28px">
             There are 3 new updates, added 1 new comment and, you were
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
@@ -120,16 +126,11 @@
             </span>
             mentioned a comment of this issue.
           </p>
-          <p style="font-size: 1rem; line-height: 28px">
-            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
-              Srinivas Pendem, Bhavesh and 1 more people
-            </span>
-            made changes to the issue. A total of 25 updates found
-          </p>
+          {% endif %}
           {% for update in data %} {% if update.changes.name %}
           <!-- Issue title updated -->
           <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c">
-            The issue title has been updated from “{{update.changes.old_value.0}}“ to "{{update.changes.new_value|last}}"
+            The issue title has been updated from “{{update.changes.user.old_value.0}}“ to "{{update.changes.user.new_value|last}}"
           </p>
           {% endif %}
           <!-- Outer update Box start -->
