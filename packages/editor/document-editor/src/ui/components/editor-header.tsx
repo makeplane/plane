@@ -76,7 +76,7 @@ export const EditorHeader = (props: IEditorHeader) => {
           />
         )}
 
-        {!isLocked && !isArchived ? (
+        {!isLocked && !isArchived && !readonly ? (
           <div
             className={`absolute right-[120px] flex items-center gap-x-2 transition-all duration-300 ${
               isSubmitting === "saved" ? "fadeOut" : "fadeIn"

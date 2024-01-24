@@ -8,7 +8,8 @@ import { useEditorMarkings } from "src/hooks/use-editor-markings";
 import { DocumentDetails } from "src/types/editor-types";
 import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
 import { getMenuOptions } from "src/utils/menu-options";
-import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
+import { IssueWidgetExtension } from "../extensions/widgets/issue-embed-widget";
+import { IEmbedConfig } from "../extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentReadOnlyEditor {
   value: string;
@@ -28,6 +29,7 @@ interface IDocumentReadOnlyEditor {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => void;
+  embedConfig?: IEmbedConfig;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -43,6 +45,7 @@ const DocumentReadOnlyEditor = ({
   noBorder,
   borderOnFocus,
   customClassName,
+  embedConfig,
   value,
   documentDetails,
   forwardedRef,
@@ -60,7 +63,7 @@ const DocumentReadOnlyEditor = ({
     value,
     forwardedRef,
     rerenderOnPropsChange,
-    extensions: [IssueWidgetPlaceholder()],
+    extensions: [IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig })],
   });
 
   useEffect(() => {
