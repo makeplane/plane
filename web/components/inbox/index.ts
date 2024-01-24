@@ -1,5 +1,6 @@
 export * from "./modals";
 export * from "./actions-header";
+export * from "./inbox-issue-status";
 
 export * from "./sidebar/root";
 

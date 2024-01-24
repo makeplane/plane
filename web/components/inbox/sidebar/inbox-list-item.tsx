@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 // hooks
 import { useInboxIssues, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
-// constants
-import { INBOX_STATUS } from "constants/inbox";
+// components
+import { InboxIssueStatus } from "components/inbox/inbox-issue-status";
 
 type TInboxIssueListItem = {
   workspaceSlug: string;
@@ -31,9 +31,6 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
 
   const inboxIssueDetail = getInboxIssueByIssueId(inboxId, issueId);
   const issue = getIssueById(issueId);
-
-  console.log("inboxIssueDetail", inboxIssueDetail);
-  console.log("issue", issue);
 
   if (!issue || !inboxIssueDetail) return <></>;
 
@@ -65,42 +62,13 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
             </div>
           </Tooltip>
         </div>
-        <div
-          className={`flex w-full items-center justify-end gap-1 text-xs ${
-            inboxIssueDetail.status === 0 && new Date(inboxIssueDetail.snoozed_till ?? "") < new Date()
-              ? "text-red-500"
-              : INBOX_STATUS.find((s) => s.value === inboxIssueDetail.status)?.textColor
-          }`}
-        >
-          {inboxIssueDetail.status === -2 ? (
-            <>
-              <AlertTriangle size={14} strokeWidth={2} />
-              <span>Pending</span>
-            </>
-          ) : inboxIssueDetail.status === -1 ? (
-            <>
-              <XCircle size={14} strokeWidth={2} />
-              <span>Declined</span>
-            </>
-          ) : inboxIssueDetail.status === 0 ? (
-            <>
-              <Clock size={14} strokeWidth={2} />
-              <span>
-                {new Date(inboxIssueDetail.snoozed_till ?? "") < new Date() ? "Snoozed date passed" : "Snoozed"}
-              </span>
-            </>
-          ) : inboxIssueDetail.status === 1 ? (
-            <>
-              <CheckCircle2 size={14} strokeWidth={2} />
-              <span>Accepted</span>
-            </>
-          ) : (
-            <>
-              <Copy size={14} strokeWidth={2} />
-              <span>Duplicate</span>
-            </>
-          )}
-        </div>
+        <InboxIssueStatus
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          inboxId={inboxId}
+          issueId={issueId}
+          iconSize={14}
+        />
       </div>
     </Link>
   );

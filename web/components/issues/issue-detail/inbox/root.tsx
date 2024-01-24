@@ -101,6 +101,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
             <InboxIssueMainContent
               workspaceSlug={workspaceSlug}
               projectId={projectId}
+              inboxId={inboxId}
               issueId={issueId}
               issueOperations={issueOperations}
               is_editable={is_editable}
