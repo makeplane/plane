@@ -203,6 +203,9 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.projectViewIssues.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
+
           await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
             display_filters: _filters.displayFilters,
           });
