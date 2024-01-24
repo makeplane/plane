@@ -94,8 +94,6 @@ class InboxIssueViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 issue_inbox__inbox_id=self.kwargs.get("inbox_id")
             )
-            .filter(Q(issue_inbox__snoozed_till__gte=timezone.now())
-                | Q(issue_inbox__snoozed_till__isnull=True))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("labels", "assignees")
             .prefetch_related(
@@ -134,7 +132,7 @@ class InboxIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, inbox_id):
         filters = issue_filters(request.query_params, "GET")
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = self.get_queryset().filter(**filters).order_by("issue_inbox__snoozed_till", "issue_inbox__status")
         issues_data = IssueSerializer(issue_queryset, expand=self.expand, many=True).data
         return Response(
             issues_data,
@@ -323,8 +321,8 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
-                issue = (self.get_queryset().filter(pk=serializer.data["id"]).first())
-                serializer = IssueSerializer(issue ,expand=self.expand)
+                issue = (self.get_queryset().filter(pk=issue_id).first())
+                serializer = IssueSerializer(issue, expand=self.expand)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -332,6 +330,7 @@ class InboxIssueViewSet(BaseViewSet):
         else:
             issue = (self.get_queryset().filter(pk=issue_id).first())
             serializer = IssueSerializer(issue ,expand=self.expand)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, inbox_id, issue_id):
         issue = self.get_queryset().filter(pk=issue_id).first()
