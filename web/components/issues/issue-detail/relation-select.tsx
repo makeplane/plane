@@ -1,36 +1,40 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { Pencil, X } from "lucide-react";
+import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // ui
-import { Tooltip } from "@plane/ui";
+import { RelatedIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
 import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";
 
-export type TRelationObject = { className: string; placeholder: string };
+export type TRelationObject = { className: string; icon: (size: number) => React.ReactElement; placeholder: string };
 
 export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
+  relates_to: {
+    className: "bg-custom-background-80 text-custom-text-200",
+    icon: (size) => <RelatedIcon height={size} width={size} />,
+    placeholder: "Add related issues",
+  },
   blocking: {
     className: "bg-yellow-500/20 text-yellow-700",
+    icon: (size) => <XCircle size={size} />,
     placeholder: "None",
   },
   blocked_by: {
     className: "bg-red-500/20 text-red-700",
+    icon: (size) => <CircleDot size={size} />,
     placeholder: "None",
   },
   duplicate: {
     className: "bg-custom-background-80 text-custom-text-200",
+    icon: (size) => <CopyPlus size={size} />,
     placeholder: "None",
-  },
-  relates_to: {
-    className: "bg-custom-background-80 text-custom-text-200",
-    placeholder: "Add related issues",
   },
 };
 
