@@ -78,10 +78,7 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
           image: EmptyStateImagePath,
           primaryButton: {
             text: "Set Automation",
-            onClick: () => {
-              console.log("automations");
-              router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
-            },
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`),
           },
           size: "sm",
           disabled: !isEditingAllowed,
