@@ -2,6 +2,7 @@ import os
 from celery import Celery
 from plane.settings.redis import redis_instance
 from celery.schedules import crontab
+from django.utils.timezone import timedelta
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
@@ -27,6 +28,10 @@ app.conf.beat_schedule = {
     "check-every-day-to-delete-file-asset": {
         "task": "plane.bgtasks.file_asset_task.delete_file_asset",
         "schedule": crontab(hour=0, minute=0),
+    },
+    "check-every-five-minutes-to-send-email-notifications": {
+        "task": "plane.bgtasks.email_notification_task.stack_email_notification",
+        "schedule": crontab(minute='*/1')
     },
 }
 

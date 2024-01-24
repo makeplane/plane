@@ -117,7 +117,6 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
                       id="typeDelete"
                       type="text"
                       name="typeDelete"
-                      value=""
                       onChange={(e) => {
                         if (e.target.value === "delete import") setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);

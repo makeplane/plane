@@ -28,6 +28,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, user, provider, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -91,7 +92,13 @@ export const Exporter: React.FC<Props> = observer((props) => {
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog
+        as="div"
+        className="relative z-20"
+        onClose={() => {
+          if (!isSelectOpen) handleClose();
+        }}
+      >
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -142,6 +149,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
                               .join(", ")
                           : "All projects"
                       }
+                      onOpen={() => setIsSelectOpen(true)}
+                      onClose={() => setIsSelectOpen(false)}
                       optionsClassName="min-w-full"
                       multiple
                     />

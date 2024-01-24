@@ -1,9 +1,12 @@
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react";
+//hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // components
-import { ActivityMessage } from "components/core";
+import { ActivityMessage, IssueLink } from "components/core";
 // ui
 import { ProfileEmptyState } from "components/ui";
 import { Loader } from "@plane/ui";
@@ -17,9 +20,11 @@ import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
 // services
 const userService = new UserService();
 
-export const ProfileActivity = () => {
+export const ProfileActivity = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
+  // store hooks
+  const { currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString()) : null,
@@ -54,20 +59,14 @@ export const ProfileActivity = () => {
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
                     <p className="text-sm text-custom-text-200">
-                      <span className="font-medium text-custom-text-100">{activity.actor_detail.display_name} </span>
+                      <span className="font-medium text-custom-text-100">
+                        {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
+                      </span>
                       {activity.field ? (
                         <ActivityMessage activity={activity} showIssue />
                       ) : (
                         <span>
-                          created this{" "}
-                          <a
-                            href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-medium text-custom-text-200 hover:underline"
-                          >
-                            Issue.
-                          </a>
+                          created <IssueLink activity={activity} />
                         </span>
                       )}
                     </p>
@@ -95,4 +94,4 @@ export const ProfileActivity = () => {
       </div>
     </div>
   );
-};
+});

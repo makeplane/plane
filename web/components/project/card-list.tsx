@@ -7,7 +7,7 @@ import { Loader } from "@plane/ui";
 // icons
 import { Plus } from "lucide-react";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { EmptyState } from "components/empty-state";
 
 export const ProjectCardList = observer(() => {
@@ -21,7 +21,7 @@ export const ProjectCardList = observer(() => {
   } = useUser();
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!workspaceProjectIds)
     return (

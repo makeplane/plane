@@ -122,6 +122,18 @@ services:
       - plane-db
       - plane-redis
 
+  migrator:
+    <<: *app-env
+    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-latest}
+    pull_policy: ${PULL_POLICY:-always}
+    restart: no
+    command: >
+        sh -c "python manage.py wait_for_db &&
+             python manage.py migrate"
+    depends_on:
+      - plane-db
+      - plane-redis
+
   plane-db:
     <<: *app-env
     image: postgres:15.2-alpine

@@ -199,7 +199,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       group_by={group_by}
       sub_group_by={sub_group_by}
       sub_group_id={sub_group_id}
-      isDragDisabled={!issueKanBanView?.canUserDragDrop}
+      isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
       handleIssues={handleIssues}
       quickActions={quickActions}
       kanbanFilters={kanbanFilters}
