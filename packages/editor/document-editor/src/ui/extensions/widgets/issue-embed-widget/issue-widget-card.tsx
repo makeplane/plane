@@ -23,7 +23,7 @@ export const IssueWidgetCard = (props) => (
               Embed and access issues in pages seamlessly, upgrade to plane pro now.
             </div>
           </div>
-          <a href="https://plane.so/book-demo" target="_blank" rel="noreferrer">
+          <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
             <Button>Upgrade</Button>
           </a>
         </div>
