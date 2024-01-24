@@ -96,6 +96,7 @@
               margin-bottom: 15px;
             "
           />
+
           <p style="font-size: 1rem;color: #1f2d5c; line-height: 28pxl">
           {% if data.1 %}{{ data|length }}{% endif %} {{ summary }}
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
@@ -103,9 +104,9 @@
               {{data.0.actor_detail.last_name }}
             </span>
           </p>
-          {% if comments %}
+          {% if comments.0 %}
           <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
-            {{ comments|length }} comments were left by
+            {{ comments|length }} {% if comments|length == 1 %}comment was{% else %}comments were{% endif %} left by
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
               {% if comments|length == 1 %}
                 {{ data.0.actor_detail.first_name }}
@@ -117,7 +118,7 @@
             </span>
           </p>
         {% endif %}
-          {% if mentions %}
+          {% if mentions and comments.0 and data.0 %}
           <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
             There are 3 new updates, added 1 new comment and, you were
             <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
@@ -446,6 +447,7 @@
                       Labels:
                     </p>
                   </td>
+                  {% if update.changes.labels.new_value.0 %}
                   <td>
                     <p
                        style="
@@ -464,6 +466,7 @@
                        {{update.changes.labels.new_value.0}}
                     </p>
                  </td>
+                  {% endif %}
                  {% if update.changes.labels.new_value.1 %}
                  <td>
                     <p
