@@ -4,11 +4,11 @@ import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // icons
 import { Plus } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { EmptyState } from "components/empty-state";
 
 export const ProjectCardList = observer(() => {
   // store hooks
@@ -18,8 +18,11 @@ export const ProjectCardList = observer(() => {
   } = useApplication();
   const {
     membership: { currentWorkspaceRole },
+    currentUser,
   } = useUser();
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
+
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "projects", currentUser?.theme.theme === "light");
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -55,7 +58,7 @@ export const ProjectCardList = observer(() => {
         </div>
       ) : (
         <EmptyState
-          image={`/empty-state/empty_project.webp`}
+          image={emptyStateImage}
           title="Start a Project"
           description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
           primaryButton={{
