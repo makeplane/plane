@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Popover } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
@@ -153,13 +153,14 @@ export const DateDropdown: React.FC<Props> = (props) => {
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   return (
-    <Popover
+    <Combobox
+      as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full flex-shrink-0", className)}
       onKeyDown={handleKeyDown}
     >
-      <Popover.Button as={React.Fragment}>
+      <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
@@ -232,9 +233,9 @@ export const DateDropdown: React.FC<Props> = (props) => {
             />
           ) : null}
         </button>
-      </Popover.Button>
+      </Combobox.Button>
       {isOpen && (
-        <Popover.Panel className="fixed z-10" static>
+        <Combobox.Options className="fixed z-10" static>
           <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
             <DatePicker
               selected={value ? new Date(value) : null}
@@ -249,8 +250,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
               inline
             />
           </div>
-        </Popover.Panel>
+        </Combobox.Options>
       )}
-    </Popover>
+    </Combobox>
   );
 };

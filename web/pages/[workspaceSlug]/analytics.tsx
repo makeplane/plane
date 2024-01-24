@@ -8,11 +8,7 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
-import { NewEmptyState } from "components/common/new-empty-state";
-// icons
-import { Plus } from "lucide-react";
-// assets
-import emptyAnalytics from "public/empty-state/empty_analytics.webp";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -26,11 +22,13 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
     eventTracker: { setTrackElement },
   } = useApplication();
   const {
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceRole },
+    currentUser,
   } = useUser();
   const { workspaceProjectIds } = useProject();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", currentUser?.theme.theme === "light");
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -63,29 +61,25 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
           </Tab.Group>
         </div>
       ) : (
-        <>
-          <NewEmptyState
-            title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster."
-            description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
-            image={emptyAnalytics}
-            comicBox={{
-              title: "Analytics works best with Cycles + Modules",
-              description:
-                "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
-              direction: "right",
-              extraPadding: true,
-            }}
-            primaryButton={{
-              icon: <Plus className="h-4 w-4" />,
-              text: "Create Cycles and Modules first",
-              onClick: () => {
-                setTrackElement("ANALYTICS_EMPTY_STATE");
-                toggleCreateProjectModal(true);
-              },
-            }}
-            disabled={!isEditingAllowed}
-          />
-        </>
+        <EmptyState
+          image={EmptyStateImagePath}
+          title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster"
+          description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
+          primaryButton={{
+            text: "Create Cycles and Modules first",
+            onClick: () => {
+              setTrackElement("ANALYTICS_EMPTY_STATE");
+              toggleCreateProjectModal(true);
+            },
+          }}
+          comicBox={{
+            title: "Analytics works best with Cycles + Modules",
+            description:
+              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+          }}
+          size="lg"
+          disabled={!isEditingAllowed}
+        />
       )}
     </>
   );

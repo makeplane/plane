@@ -5,7 +5,8 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useIssues, usePage, useUser } from "hooks/store";
+
+import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -27,15 +28,10 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { useIssueEmbeds } from "hooks/use-issue-embeds";
 import { IssuePeekOverview } from "components/issues";
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { IssueService } from "services/issue";
-import { EIssuesStoreType } from "constants/issue";
 
 // services
 const fileService = new FileService();
-const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -46,6 +42,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
 
   const { workspaceSlug, projectId, pageId } = router.query;
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store hooks
   const {
     config: { envConfig },
@@ -87,8 +86,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString())
       : null
   );
-
-  const { issues, fetchIssue, issueWidgetClickAction } = useIssueEmbeds();
 
   const pageStore = usePage(pageId as string);
 
@@ -259,7 +256,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const userCanLock =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  return pageIdMobx && issues ? (
+  return pageIdMobx ? (
     <div className="flex h-full flex-col justify-between">
       <div className="h-full w-full overflow-hidden">
         {isPageReadOnly ? (
@@ -288,13 +285,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   }
                 : undefined
             }
-            embedConfig={{
-              issueEmbedConfig: {
-                issues: issues,
-                fetchIssue: fetchIssue,
-                clickAction: issueWidgetClickAction,
-              },
-            }}
           />
         ) : (
           <div className="relative h-full w-full overflow-hidden">
@@ -312,10 +302,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     last_updated_by: updated_by,
                   }}
                   uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                  deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                  restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                   value={pageDescription}
                   setShouldShowAlert={setShowAlert}
-                  deleteFile={fileService.deleteImage}
-                  restoreFile={fileService.restoreImage}
                   cancelUploadImage={fileService.cancelUpload}
                   ref={editorRef}
                   debouncedUpdatesEnabled={false}
@@ -338,13 +328,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       : undefined
                   }
                   pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
-                  embedConfig={{
-                    issueEmbedConfig: {
-                      issues: issues,
-                      fetchIssue: fetchIssue,
-                      clickAction: issueWidgetClickAction,
-                    },
-                  }}
                 />
               )}
             />

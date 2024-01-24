@@ -54,6 +54,9 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     projectId: string;
     inboxId: string;
   };
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
   // store hooks
   const { createIssue } = useInboxIssues();
   const {
@@ -277,8 +280,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                               <RichTextEditorWithRef
                                 cancelUploadImage={fileService.cancelUpload}
                                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                                deleteFile={fileService.deleteImage}
-                                restoreFile={fileService.restoreImage}
+                                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                                 ref={editorRef}
                                 debouncedUpdatesEnabled={false}
                                 value={!value || value === "" ? "<p></p>" : value}

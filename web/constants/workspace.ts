@@ -190,3 +190,31 @@ export const WORKSPACE_SETTINGS_LINKS: {
     Icon: SettingIcon,
   },
 ];
+
+export const ALL_ISSUES_EMPTY_STATE_DETAILS = {
+  "all-issues": {
+    key: "all-issues",
+    title: "No issues in the project",
+    description: "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
+  },
+  assigned: {
+    key: "assigned",
+    title: "No issues yet",
+    description: "Issues assigned to you can be tracked from here.",
+  },
+  created: {
+    key: "created",
+    title: "No issues yet",
+    description: "All issues created by you come here, track them here directly.",
+  },
+  subscribed: {
+    key: "subscribed",
+    title: "No issues yet",
+    description: "Subscribe to issues you are interested in, track all of them here.",
+  },
+  "custom-view": {
+    key: "custom-view",
+    title: "No issues yet",
+    description: "Issues that applies to the filters, track all of them here.",
+  },
+};

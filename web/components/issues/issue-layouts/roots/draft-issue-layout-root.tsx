@@ -7,7 +7,7 @@ import { useIssues } from "hooks/store";
 // components
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
 import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
-import { ProjectEmptyState } from "../empty-states";
+import { ProjectDraftEmptyState } from "../empty-states";
 // ui
 import { Spinner } from "@plane/ui";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
@@ -49,8 +49,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
       ) : (
         <>
           {!issues?.groupedIssueIds ? (
-            // TODO: Replace this with project view empty state
-            <ProjectEmptyState />
+            <ProjectDraftEmptyState />
           ) : (
             <div className="relative h-full w-full overflow-auto">
               {activeLayout === "list" ? (

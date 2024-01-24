@@ -3,19 +3,22 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useGlobalView, useIssues, useUser } from "hooks/store";
+import { useApplication, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
 import { useWorskspaceIssueProperties } from "hooks/use-worskspace-issue-properties";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Spinner } from "@plane/ui";
 // types
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssueActions } from "../types";
+// constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { ALL_ISSUES_EMPTY_STATE_DETAILS, EUserWorkspaceRoles } from "constants/workspace";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -24,6 +27,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   //swr hook for fetching issue properties
   useWorskspaceIssueProperties(workspaceSlug);
   // store
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
     issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
@@ -31,10 +35,17 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const { dataViewId, issueIds } = groupedIssueIds;
   const {
-    membership: { currentWorkspaceAllProjectsRole },
+    membership: { currentWorkspaceAllProjectsRole, currentWorkspaceRole },
+    currentUser,
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
-  // derived values
+  const { workspaceProjectIds } = useProject();
+
+  const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
+  const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
+  const currentViewDetails = ALL_ISSUES_EMPTY_STATE_DETAILS[currentView as keyof typeof ALL_ISSUES_EMPTY_STATE_DETAILS];
+
+  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, currentUser?.theme.theme === "light");
 
   useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
     if (workspaceSlug) {
@@ -116,6 +127,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [handleIssues]
   );
 
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       {!globalViewId || globalViewId !== dataViewId || loader === "init-loader" || !issueIds ? (
@@ -127,7 +140,28 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
           <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
 
           {(issueIds ?? {}).length == 0 ? (
-            <>{/* <GlobalViewEmptyState /> */}</>
+            <EmptyState
+              image={emptyStateImage}
+              title={(workspaceProjectIds ?? []).length > 0 ? currentViewDetails.title : "No project"}
+              description={
+                (workspaceProjectIds ?? []).length > 0
+                  ? currentViewDetails.description
+                  : "To create issues or manage your work, you need to create a project or be a part of one."
+              }
+              size="sm"
+              primaryButton={
+                (workspaceProjectIds ?? []).length > 0
+                  ? {
+                      text: "Create new issue",
+                      onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
+                    }
+                  : {
+                      text: "Start your first project",
+                      onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+                    }
+              }
+              disabled={!isEditingAllowed}
+            />
           ) : (
             <div className="relative h-full w-full overflow-auto">
               <SpreadsheetView

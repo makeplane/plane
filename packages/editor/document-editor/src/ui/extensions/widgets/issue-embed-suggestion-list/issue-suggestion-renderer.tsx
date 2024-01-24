@@ -78,7 +78,6 @@ const IssueSuggestionList = ({
     const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
     const onKeyDown = (e: KeyboardEvent) => {
       if (navigationKeys.includes(e.key)) {
-        e.preventDefault();
         // if (editor.isFocused) {
         //   editor.chain().blur();
         //   commandListContainer.current?.focus();
@@ -87,7 +86,6 @@ const IssueSuggestionList = ({
           setSelectedIndex(
             (selectedIndex + displayedItems[currentSection].length - 1) % displayedItems[currentSection].length
           );
-          e.stopPropagation();
           return true;
         }
         if (e.key === "ArrowDown") {
@@ -102,12 +100,10 @@ const IssueSuggestionList = ({
               [currentSection]: [...prevItems[currentSection], ...nextItems],
             }));
           }
-          e.stopPropagation();
           return true;
         }
         if (e.key === "Enter") {
           selectItem(currentSection, selectedIndex);
-          e.stopPropagation();
           return true;
         }
         if (e.key === "Tab") {
@@ -115,7 +111,6 @@ const IssueSuggestionList = ({
           const nextSectionIndex = (currentSectionIndex + 1) % sections.length;
           setCurrentSection(sections[nextSectionIndex]);
           setSelectedIndex(0);
-          e.stopPropagation();
           return true;
         }
         return false;
@@ -150,7 +145,7 @@ const IssueSuggestionList = ({
     <div
       id="issue-list-container"
       ref={commandListContainer}
-      className="fixed z-[10] max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
+      className=" fixed z-[10] max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
     >
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
@@ -193,28 +188,34 @@ const IssueSuggestionList = ({
     </div>
   ) : null;
 };
-
 export const IssueListRenderer = () => {
   let component: ReactRenderer | null = null;
   let popup: any | null = null;
 
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
+      const container = document.querySelector(".frame-renderer") as HTMLElement;
       component = new ReactRenderer(IssueSuggestionList, {
         props,
         // @ts-ignore
         editor: props.editor,
       });
-
       // @ts-ignore
-      popup = tippy("body", {
+      popup = tippy(".frame-renderer", {
+        flipbehavior: ["bottom", "top"],
+        appendTo: () => document.querySelector(".frame-renderer") as HTMLElement,
+        flip: true,
+        flipOnUpdate: true,
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector("#editor-container"),
         content: component.element,
         showOnCreate: true,
         interactive: true,
         trigger: "manual",
         placement: "bottom-start",
+      });
+
+      container.addEventListener("scroll", () => {
+        popup?.[0].destroy();
       });
     },
     onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
@@ -230,10 +231,20 @@ export const IssueListRenderer = () => {
         popup?.[0].hide();
         return true;
       }
-      // @ts-ignore
-      return component?.ref?.onKeyDown(props);
+
+      const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
+      if (navigationKeys.includes(props.event.key)) {
+        // @ts-ignore
+        component?.ref?.onKeyDown(props);
+        return true;
+      }
+      return false;
     },
     onExit: (e) => {
+      const container = document.querySelector(".frame-renderer") as HTMLElement;
+      if (container) {
+        container.removeEventListener("scroll", () => {});
+      }
       popup?.[0].destroy();
       setTimeout(() => {
         component?.destroy();

@@ -74,6 +74,39 @@ class FileService extends APIService {
     };
   }
 
+  getDeleteImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.deleteImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  getRestoreImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.restoreImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  extractAssetIdFromUrl(src: string, workspaceId: string): string {
+    const indexWhereAssetIdStarts = src.indexOf(workspaceId) + workspaceId.length + 1;
+    if (indexWhereAssetIdStarts === -1) {
+      throw new Error("Workspace ID not found in source string");
+    }
+    const assetUrl = src.substring(indexWhereAssetIdStarts);
+    return assetUrl;
+  }
+
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
       .then((response) => response?.status)
