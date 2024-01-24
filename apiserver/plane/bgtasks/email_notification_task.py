@@ -164,6 +164,9 @@ def send_email_notification(
                 }
             )
         activity_time = changes.pop("activity_time")
+        # Parse the input string into a datetime object
+        formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
+
         if changes:
             template_data.append(
                 {
@@ -177,7 +180,7 @@ def send_email_notification(
                         "name": issue.name,
                         "identifier": f"{issue.project.identifier}-{issue.sequence_id}",
                     },
-                    "activity_time": str(activity_time),
+                    "activity_time": str(formatted_time),
                 }
         )
 
