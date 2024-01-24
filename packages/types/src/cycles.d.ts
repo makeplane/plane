@@ -47,6 +47,7 @@ export interface ICycle {
   };
   workspace: string;
   workspace_detail: IWorkspaceLite;
+  issues?: TIssue[];
 }
 
 export type TAssigneesDistribution = {

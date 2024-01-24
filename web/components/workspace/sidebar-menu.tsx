@@ -8,7 +8,6 @@ import { useApplication, useUser } from "hooks/store";
 import { NotificationPopover } from "components/notifications";
 // ui
 import { Tooltip } from "@plane/ui";
-import { Crown } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { SIDEBAR_MENU_ITEMS } from "constants/dashboard";
@@ -56,7 +55,9 @@ export const WorkspaceSidebarMenu = observer(() => {
                     }
                     {!themeStore?.sidebarCollapsed && link.label}
                     {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
-                      <Crown className="h-3.5 w-3.5 text-amber-400" />
+                      <span className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl text-orange-500 bg-orange-500/20">
+                        Beta
+                      </span>
                     )}
                   </div>
                 </Tooltip>

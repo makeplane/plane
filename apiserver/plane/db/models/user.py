@@ -15,6 +15,9 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.dispatch import receiver
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
 
 # Third party imports
 from sentry_sdk import capture_exception
@@ -170,6 +173,7 @@ def create_user_notification(sender, instance, created, **kwargs):
     if created and not instance.is_bot:
         # Module imports
         from plane.db.models import UserNotificationPreference
+
         UserNotificationPreference.objects.create(
             user=instance,
         )
