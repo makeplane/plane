@@ -162,14 +162,17 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   ) => {
     try {
       if (!viewId) throw new Error("View id is required");
+      const issueFilters = this.getIssueFilters(viewId);
 
-      if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
+      console.log("issueFilters", issueFilters);
+
+      if (!issueFilters || isEmpty(filters)) return;
 
       const _filters = {
-        filters: this.filters[viewId].filters as IIssueFilterOptions,
-        displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
-        displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
-        kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,
+        filters: issueFilters.filters as IIssueFilterOptions,
+        displayFilters: issueFilters.displayFilters as IIssueDisplayFilterOptions,
+        displayProperties: issueFilters.displayProperties as IIssueDisplayProperties,
+        kanbanFilters: issueFilters.kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {

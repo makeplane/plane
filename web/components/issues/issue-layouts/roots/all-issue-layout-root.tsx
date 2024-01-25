@@ -2,9 +2,10 @@ import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import isEmpty from "lodash/isEmpty";
 // hooks
 import { useApplication, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
-import { useWorskspaceIssueProperties } from "hooks/use-worskspace-issue-properties";
+import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
@@ -17,7 +18,7 @@ import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { ALL_ISSUES_EMPTY_STATE_DETAILS, EUserWorkspaceRoles } from "constants/workspace";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
@@ -25,7 +26,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
   //swr hook for fetching issue properties
-  useWorskspaceIssueProperties(workspaceSlug);
+  useWorkspaceIssueProperties(workspaceSlug);
   // store
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
@@ -47,6 +48,40 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, currentUser?.theme.theme === "light");
 
+  // filter init from the query params
+
+  const routerFilterParams = () => {
+    if (
+      workspaceSlug &&
+      globalViewId &&
+      ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
+    ) {
+      const routerQueryParams = { ...router.query };
+      const { ["workspaceSlug"]: _workspaceSlug, ["globalViewId"]: _globalViewId, ...filters } = routerQueryParams;
+
+      let issueFilters: any = {};
+      Object.keys(filters).forEach((key) => {
+        const filterKey: any = key;
+        const filterValue = filters[key]?.toString() || undefined;
+        if (
+          ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
+          filterKey &&
+          filterValue
+        )
+          issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
+      });
+
+      if (!isEmpty(filters))
+        updateFilters(
+          workspaceSlug.toString(),
+          undefined,
+          EIssueFilterType.FILTERS,
+          issueFilters,
+          globalViewId.toString()
+        );
+    }
+  };
+
   useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
     if (workspaceSlug) {
       await fetchAllGlobalViews(workspaceSlug.toString());
@@ -60,6 +95,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchAllGlobalViews(workspaceSlug.toString());
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
+        routerFilterParams();
       }
     }
   );
