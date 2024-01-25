@@ -31,8 +31,9 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
     onChange,
     placeholder = "Members",
     placement,
-    value,
     tabIndex,
+    tooltip = false,
+    value,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -133,6 +134,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                tooltip={tooltip}
               />
             ) : buttonVariant === "border-without-text" ? (
               <BorderButton
@@ -142,6 +144,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                tooltip={tooltip}
                 hideText
               />
             ) : buttonVariant === "background-with-text" ? (
@@ -152,6 +155,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                tooltip={tooltip}
               />
             ) : buttonVariant === "background-without-text" ? (
               <BackgroundButton
@@ -161,6 +165,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                tooltip={tooltip}
                 hideText
               />
             ) : buttonVariant === "transparent-with-text" ? (
@@ -171,6 +176,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                tooltip={tooltip}
               />
             ) : buttonVariant === "transparent-without-text" ? (
               <TransparentButton
@@ -180,6 +186,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                tooltip={tooltip}
                 hideText
               />
             ) : null}
