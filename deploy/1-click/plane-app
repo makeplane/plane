@@ -689,18 +689,6 @@ USE_GLOBAL_IMAGES=1
 
 mkdir -p $PLANE_INSTALL_DIR/{data,log}
 
-if [ -f "$0" ]; then
-    cp "$0" /usr/local/bin/plane-app &> /dev/null
-    chmod +x /usr/local/bin/plane-app > /dev/null &> /dev/null
-    sed -i 's/export BRANCH=${BRANCH:-master}/export BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app &> /dev/null
-else
-    curl -sSL \
-        -o /usr/local/bin/plane-app \
-        https://raw.githubusercontent.com/makeplane/plane/${BRANCH:-master}/deploy/1-click/install.sh?token=$(date +%s) \
-        && chmod +x /usr/local/bin/plane-app \
-        && sed -i 's/export BRANCH=${BRANCH:-master}/export BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
-fi
-
 if [ "$1" == "start" ]; then
     start_server
 elif [ "$1" == "stop" ]; then
