@@ -243,7 +243,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "All Issues",
     href: `/workspace-views/all-issues`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/workspace-views/all-issues`,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views`),
     Icon: CheckCircle,
   },
   {

@@ -110,12 +110,13 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const moduleIssueIds = this.issues[moduleId] ?? [];
+    const moduleIssueIds = this.issues[moduleId];
+    if (!moduleIssueIds) return;
 
     const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
