@@ -65,7 +65,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
           } ${inboxIssueDetail.status !== -2 ? "opacity-60" : ""}`}
         >
           <div className="flex items-center justify-between gap-x-2">
-            <div className="flex items-center gap-x-2">
+            <div className="relative flex items-center gap-x-2 overflow-hidden">
               <p className="flex-shrink-0 text-xs text-custom-text-200">
                 {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
               </p>
