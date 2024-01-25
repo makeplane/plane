@@ -689,6 +689,7 @@ USE_GLOBAL_IMAGES=1
 
 mkdir -p $PLANE_INSTALL_DIR/{data,log}
 
+echo $0
 if [ -f "$0" ]; then
     cp "$0" /usr/local/bin/plane-app &> /dev/null
     chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
