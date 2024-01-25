@@ -24,6 +24,7 @@ export interface IProjectIssues {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
@@ -53,6 +54,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      removeBulkIssues: action,
       quickAddIssue: action,
     });
     // root store
@@ -179,6 +181,24 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
           this.issues[projectId].splice(quickAddIssueIndex, 1);
           this.rootStore.issues.removeIssue(data.id);
         });
+      return response;
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
+      throw error;
+    }
+  };
+
+  removeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          pull(this.issues[projectId], issueId);
+          this.rootStore.issues.removeIssue(issueId);
+        });
+      });
+
+      const response = await this.issueService.bulkDeleteIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
