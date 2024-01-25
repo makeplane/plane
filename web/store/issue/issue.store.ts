@@ -43,7 +43,7 @@ export class IssueStore implements IIssueStore {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        set(this.issuesMap, issue.id, issue);
+        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
       });
     });
   };
