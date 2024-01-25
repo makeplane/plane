@@ -1,17 +1,15 @@
 import React from "react";
-// import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { CalendarDays, Signal, Tag } from "lucide-react";
+import { CalendarCheck2, Signal, Tag } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 // components
 import { IssueLabel, TIssueOperations } from "components/issues";
-import { PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
-// ui
-import { CustomDatePicker } from "components/ui";
+import { DateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
 // icons
 import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
-// types
+// helper
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 
 type Props = {
   workspaceSlug: string;
@@ -23,12 +21,9 @@ type Props = {
 
 export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
-  // router
-  // FIXME: Check if we need this. Previously it was used to render Project Identifier conditionally.
-  // const router = useRouter();
-  // const { inboxIssueId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
+  const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -41,11 +36,15 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
+  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
+
   return (
     <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
       <div className="flex items-center justify-between px-5 pb-3">
         <div className="flex items-center gap-x-2">
-          <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
+          {currentIssueState && (
+            <StateGroupIcon className="h-4 w-4" stateGroup={currentIssueState.group} color={currentIssueState.color} />
+          )}
           <h4 className="text-lg font-medium text-custom-text-300">
             {projectDetails?.identifier}-{issue?.sequence_id}
           </h4>
@@ -53,86 +52,103 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
       </div>
 
       <div className="h-full w-full overflow-y-auto px-5">
+        <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
-          <div className="py-1">
+          <div className="flex flex-col gap-3">
             {/* State */}
-            <div className="flex flex-wrap items-center py-2">
-              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
-                <p>State</p>
+                <span>State</span>
               </div>
-              <div className="h-5 sm:w-1/2">
-                <StateDropdown
-                  value={issue?.state_id ?? undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-                  projectId={projectId?.toString() ?? ""}
-                  disabled={!is_editable}
-                  buttonVariant="background-with-text"
-                />
-              </div>
+              <StateDropdown
+                value={issue?.state_id ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                projectId={projectId?.toString() ?? ""}
+                disabled={!is_editable}
+                buttonVariant="transparent-with-text"
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="text-sm"
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
             </div>
             {/* Assignee */}
-            <div className="flex flex-wrap items-center py-2">
-              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                 <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
-                <p>Assignees</p>
+                <span>Assignees</span>
               </div>
-              <div className="h-5 sm:w-1/2">
-                <ProjectMemberDropdown
-                  value={issue?.assignee_ids ?? undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-                  disabled={!is_editable}
-                  projectId={projectId?.toString() ?? ""}
-                  placeholder="Assignees"
-                  multiple
-                  buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "background-with-text"}
-                  buttonClassName={issue?.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
-                />
-              </div>
+              <ProjectMemberDropdown
+                value={issue?.assignee_ids ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                disabled={!is_editable}
+                projectId={projectId?.toString() ?? ""}
+                placeholder="Add assignees"
+                multiple
+                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm justify-between ${
+                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                }`}
+                hideIcon={issue.assignee_ids?.length === 0}
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
             </div>
             {/* Priority */}
-            <div className="flex flex-wrap items-center py-2">
-              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                 <Signal className="h-4 w-4 flex-shrink-0" />
-                <p>Priority</p>
+                <span>Priority</span>
               </div>
-              <div className="h-5 sm:w-1/2">
-                <PriorityDropdown
-                  value={issue?.priority || undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-                  disabled={!is_editable}
-                  buttonVariant="background-with-text"
-                />
-              </div>
+              <PriorityDropdown
+                value={issue?.priority || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                disabled={!is_editable}
+                buttonVariant="border-with-text"
+                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="w-min h-auto whitespace-nowrap"
+              />
             </div>
           </div>
         </div>
-        <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
-          <div className="py-1">
+        <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!is_editable ? "opacity-60" : ""}`}>
+          <div className="flex flex-col gap-3">
             {/* Due Date */}
-            <div className="flex flex-wrap items-center py-2">
-              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                <CalendarDays className="h-4 w-4 flex-shrink-0" />
-                <p>Due date</p>
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+                <span>Due date</span>
               </div>
-              <div className="sm:basis-1/2">
-                <CustomDatePicker
-                  placeholder="Due date"
-                  value={issue.target_date || undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { target_date: val })}
-                  className="border-none bg-custom-background-80"
-                  minDate={minDate ?? undefined}
-                  disabled={!is_editable}
-                />
-              </div>
+              <DateDropdown
+                placeholder="Add due date"
+                value={issue.target_date}
+                onChange={(val) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    target_date: val ? renderFormattedPayloadDate(val) : null,
+                  })
+                }
+                minDate={minDate ?? undefined}
+                disabled={!is_editable}
+                buttonVariant="transparent-with-text"
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
             </div>
             {/* Labels */}
-            <div className={`flex flex-wrap items-start py-2 ${!is_editable ? "opacity-60" : ""}`}>
-              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
+            <div className="flex items-center gap-2 min-h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
-                <p>Label</p>
+                <span>Labels</span>
               </div>
-              <div className="space-y-1 sm:w-1/2">
+              <div className="w-3/5 flex-grow min-h-8 h-full pt-1">
                 <IssueLabel
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
