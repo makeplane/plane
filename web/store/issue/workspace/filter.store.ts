@@ -164,8 +164,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       if (!viewId) throw new Error("View id is required");
       const issueFilters = this.getIssueFilters(viewId);
 
-      console.log("issueFilters", issueFilters);
-
       if (!issueFilters || isEmpty(filters)) return;
 
       const _filters = {
