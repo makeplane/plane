@@ -40,7 +40,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
     workspaceSlug && projectId && archivedIssueId
-      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
+      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString(), true)
       : null
   );
 
@@ -96,7 +96,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         </Loader>
       ) : (
         <div className="flex h-full overflow-hidden">
-          <div className="h-full w-2/3 space-y-2 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+          <div className="h-full w-full space-y-2 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
             {issue?.archived_at && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
                 <div className="flex items-center gap-2">

@@ -128,8 +128,8 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
     try {
       const response = await this.archivedIssueService.unarchiveIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
+      const issueIndex = this.issues[projectId]?.findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex && issueIndex >= 0)
         runInAction(() => {
           this.issues[projectId].splice(issueIndex, 1);
         });

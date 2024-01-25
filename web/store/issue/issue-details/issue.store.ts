@@ -1,13 +1,13 @@
 import { makeObservable } from "mobx";
 // services
-import { IssueService } from "services/issue";
+import { IssueArchiveService, IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
 import { TIssue } from "@plane/types";
 
 export interface IIssueStoreActions {
   // actions
-  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string, isArchived?: boolean) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<TIssue>;
@@ -31,6 +31,7 @@ export class IssueStore implements IIssueStore {
   rootIssueDetailStore: IIssueDetail;
   // services
   issueService;
+  issueArchiveService;
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {});
@@ -38,6 +39,7 @@ export class IssueStore implements IIssueStore {
     this.rootIssueDetailStore = rootStore;
     // services
     this.issueService = new IssueService();
+    this.issueArchiveService = new IssueArchiveService();
   }
 
   // helper methods
@@ -47,12 +49,17 @@ export class IssueStore implements IIssueStore {
   };
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, isArchived = false) => {
     try {
       const query = {
         expand: "state,assignees,labels,parent",
       };
-      const issue = (await this.issueService.retrieve(workspaceSlug, projectId, issueId, query)) as any;
+
+      let issue: any;
+
+      if (isArchived) issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId);
+      else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
+
       if (!issue) throw new Error("Issue not found");
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
