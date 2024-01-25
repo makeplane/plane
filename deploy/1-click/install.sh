@@ -689,10 +689,16 @@ USE_GLOBAL_IMAGES=1
 
 mkdir -p $PLANE_INSTALL_DIR/{data,log}
 
-show_message "Triggering ... $O"
 if [ -f "$0" ]; then
     cp "$0" /usr/local/bin/plane-app &> /dev/null
-    chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
+    chmod +x /usr/local/bin/plane-app > /dev/null &> /dev/null
+    sed -i 's/export BRANCH=${BRANCH:-master}/export BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app &> /dev/null
+else
+    curl -sSL \
+        -o /usr/local/bin/plane-app \
+        https://raw.githubusercontent.com/makeplane/plane/${BRANCH:-master}/deploy/1-click/install.sh?token=$(date +%s) \
+        && chmod +x /usr/local/bin/plane-app \
+        && sed -i 's/export BRANCH=${BRANCH:-master}/export BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
 fi
 
 if [ "$1" == "start" ]; then
@@ -717,5 +723,3 @@ elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
 else
     show_help
 fi
-
-# curl  -o- https://raw.githubusercontent.com/makeplane/plane/mg-1-click-test-1/deploy/1-click/install.sh?token=$(date +%s) | bash -
