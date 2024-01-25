@@ -27,8 +27,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   // states
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<ISearchIssueResponse[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
 
@@ -72,8 +72,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
-
-    setIsSearching(true);
+    if (issues.length <= 0) setIsSearching(true);
 
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
@@ -83,7 +82,16 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       })
       .then((res) => setIssues(res))
       .finally(() => setIsSearching(false));
-  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
+  }, [issues, debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
+
+  useEffect(() => {
+    setSearchTerm("");
+    setIssues([]);
+    setSelectedIssues([]);
+    setIsSearching(false);
+    setIsSubmitting(false);
+    setIsWorkspaceLevel(false);
+  }, [isOpen]);
 
   return (
     <>
