@@ -115,7 +115,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds)
             .then((res) => {
-              console.log(res);
               updateIssue(workspaceSlug, projectId, res.id, res);
               fetchIssue(workspaceSlug, projectId, res.id);
               setToastAlert({
