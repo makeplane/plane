@@ -138,6 +138,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     });
   };
 
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date ?? new Date());
+
   return (
     <div>
       <CycleCreateUpdateModal
@@ -177,7 +179,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                   }}
                 >
                   {currentCycle.value === "current"
-                    ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
+                    ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
                     : `${currentCycle.label}`}
                 </span>
               )}
