@@ -18,4 +18,5 @@ export type TDropdownProps = {
   placeholder?: string;
   placement?: Placement;
   tabIndex?: number;
+  tooltip?: boolean;
 };
