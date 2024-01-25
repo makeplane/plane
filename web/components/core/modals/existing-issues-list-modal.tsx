@@ -88,7 +88,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
-        <Dialog as="div" className="relative z-20" onClose={() => {}}>
+        <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
