@@ -50,38 +50,10 @@ type Props = {
   issueOperations: TIssueOperations;
   is_archived: boolean;
   is_editable: boolean;
-  fieldsToShow?: (
-    | "state"
-    | "assignee"
-    | "priority"
-    | "estimate"
-    | "parent"
-    | "blocker"
-    | "blocked"
-    | "startDate"
-    | "dueDate"
-    | "cycle"
-    | "module"
-    | "label"
-    | "link"
-    | "delete"
-    | "all"
-    | "subscribe"
-    | "duplicate"
-    | "relates_to"
-  )[];
 };
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    issueId,
-    issueOperations,
-    is_archived,
-    is_editable,
-    fieldsToShow = ["all"],
-  } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, is_archived, is_editable } = props;
   // router
   const router = useRouter();
   const { inboxIssueId } = router.query;
@@ -153,21 +125,19 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {currentUser && !is_archived && (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
+            {currentUser && !is_archived && (
               <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
             )}
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-              <button
-                type="button"
-                className="rounded-md border border-custom-border-200 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
-                onClick={handleCopyText}
-              >
-                <LinkIcon className="h-3.5 w-3.5" />
-              </button>
-            )}
+            <button
+              type="button"
+              className="rounded-md border border-custom-border-200 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
+              onClick={handleCopyText}
+            >
+              <LinkIcon className="h-3.5 w-3.5" />
+            </button>
 
-            {is_editable && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
+            {is_editable && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
@@ -183,150 +153,137 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           <h5 className="text-sm font-medium mt-6">Properties</h5>
           {/* TODO: render properties using a common component */}
           <div className={`mt-3 space-y-2 ${!is_editable ? "opacity-60" : ""}`}>
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+                <span>State</span>
+              </div>
+              <StateDropdown
+                value={issue?.state_id ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                projectId={projectId?.toString() ?? ""}
+                disabled={!is_editable}
+                buttonVariant="transparent-with-text"
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="text-sm"
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+                <span>Assignees</span>
+              </div>
+              <ProjectMemberDropdown
+                value={issue?.assignee_ids ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                disabled={!is_editable}
+                projectId={projectId?.toString() ?? ""}
+                placeholder="Add assignees"
+                multiple
+                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm justify-between ${
+                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                }`}
+                hideIcon={issue.assignee_ids?.length === 0}
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <Signal className="h-4 w-4 flex-shrink-0" />
+                <span>Priority</span>
+              </div>
+              <PriorityDropdown
+                value={issue?.priority || undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                disabled={!is_editable}
+                buttonVariant="border-with-text"
+                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="w-min h-auto whitespace-nowrap"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <CalendarClock className="h-4 w-4 flex-shrink-0" />
+                <span>Start date</span>
+              </div>
+              <DateDropdown
+                placeholder="Add start date"
+                value={issue.start_date}
+                onChange={(val) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    start_date: val ? renderFormattedPayloadDate(val) : null,
+                  })
+                }
+                maxDate={maxDate ?? undefined}
+                disabled={!is_editable}
+                buttonVariant="transparent-with-text"
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+                <span>Due date</span>
+              </div>
+              <DateDropdown
+                placeholder="Add due date"
+                value={issue.target_date}
+                onChange={(val) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    target_date: val ? renderFormattedPayloadDate(val) : null,
+                  })
+                }
+                minDate={minDate ?? undefined}
+                disabled={!is_editable}
+                buttonVariant="transparent-with-text"
+                className="w-3/5 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
+            </div>
+
+            {areEstimatesEnabledForCurrentProject && (
               <div className="flex items-center gap-2 h-8">
                 <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>State</span>
+                  <Triangle className="h-4 w-4 flex-shrink-0" />
+                  <span>Estimate</span>
                 </div>
-                <StateDropdown
-                  value={issue?.state_id ?? undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-                  projectId={projectId?.toString() ?? ""}
+                <EstimateDropdown
+                  value={issue?.estimate_point !== null ? issue.estimate_point : null}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
+                  projectId={projectId}
                   disabled={!is_editable}
                   buttonVariant="transparent-with-text"
                   className="w-3/5 flex-grow group"
                   buttonContainerClassName="w-full text-left"
-                  buttonClassName="text-sm"
+                  buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
+                  placeholder="None"
+                  hideIcon
                   dropdownArrow
                   dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
                 />
               </div>
             )}
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
-              <div className="flex items-center gap-2 h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Assignees</span>
-                </div>
-                <ProjectMemberDropdown
-                  value={issue?.assignee_ids ?? undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-                  disabled={!is_editable}
-                  projectId={projectId?.toString() ?? ""}
-                  placeholder="Add assignees"
-                  multiple
-                  buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
-                  className="w-3/5 flex-grow group"
-                  buttonContainerClassName="w-full text-left"
-                  buttonClassName={`text-sm justify-between ${
-                    issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
-                  }`}
-                  hideIcon={issue.assignee_ids?.length === 0}
-                  dropdownArrow
-                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-                />
-              </div>
-            )}
-
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
-              <div className="flex items-center gap-2 h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <Signal className="h-4 w-4 flex-shrink-0" />
-                  <span>Priority</span>
-                </div>
-                <PriorityDropdown
-                  value={issue?.priority || undefined}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-                  disabled={!is_editable}
-                  buttonVariant="border-with-text"
-                  className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
-                  buttonContainerClassName="w-full text-left"
-                  buttonClassName="w-min h-auto whitespace-nowrap"
-                />
-              </div>
-            )}
-
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
-              <div className="flex items-center gap-2 h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <CalendarClock className="h-4 w-4 flex-shrink-0" />
-                  <span>Start date</span>
-                </div>
-                <DateDropdown
-                  placeholder="Add start date"
-                  value={issue.start_date}
-                  onChange={(val) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, {
-                      start_date: val ? renderFormattedPayloadDate(val) : null,
-                    })
-                  }
-                  maxDate={maxDate ?? undefined}
-                  disabled={!is_editable}
-                  buttonVariant="transparent-with-text"
-                  className="w-3/5 flex-grow group"
-                  buttonContainerClassName="w-full text-left"
-                  buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
-                  hideIcon
-                  clearIconClassName="h-3 w-3 hidden group-hover:inline"
-                />
-              </div>
-            )}
-
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
-              <div className="flex items-center gap-2 h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
-                  <span>Due date</span>
-                </div>
-                <DateDropdown
-                  placeholder="Add due date"
-                  value={issue.target_date}
-                  onChange={(val) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, {
-                      target_date: val ? renderFormattedPayloadDate(val) : null,
-                    })
-                  }
-                  minDate={minDate ?? undefined}
-                  disabled={!is_editable}
-                  buttonVariant="transparent-with-text"
-                  className="w-3/5 flex-grow group"
-                  buttonContainerClassName="w-full text-left"
-                  buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
-                  hideIcon
-                  clearIconClassName="h-3 w-3 hidden group-hover:inline"
-                />
-              </div>
-            )}
-
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
-              areEstimatesEnabledForCurrentProject && (
-                <div className="flex items-center gap-2 h-8">
-                  <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                    <Triangle className="h-4 w-4 flex-shrink-0" />
-                    <span>Estimate</span>
-                  </div>
-                  <EstimateDropdown
-                    value={issue?.estimate_point !== null ? issue.estimate_point : null}
-                    onChange={(val) =>
-                      issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
-                    }
-                    projectId={projectId}
-                    disabled={!is_editable}
-                    buttonVariant="transparent-with-text"
-                    className="w-3/5 flex-grow group"
-                    buttonContainerClassName="w-full text-left"
-                    buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
-                    placeholder="None"
-                    hideIcon
-                    dropdownArrow
-                    dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-                  />
-                </div>
-              )}
-
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && projectDetails?.module_view && (
+            {projectDetails?.module_view && (
               <div className="flex items-center gap-2 h-8">
                 <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
@@ -343,7 +300,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             )}
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && projectDetails?.cycle_view && (
+            {projectDetails?.cycle_view && (
               <div className="flex items-center gap-2 h-8">
                 <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                   <ContrastIcon className="h-4 w-4 flex-shrink-0" />
@@ -360,117 +317,103 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             )}
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-              <div className="flex items-center gap-2 h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
-                  <span>Parent</span>
-                </div>
-                <IssueParentSelect
-                  className="w-3/5 flex-grow h-full"
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  issueOperations={issueOperations}
-                  disabled={!is_editable}
-                />
+            <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
+                <span>Parent</span>
               </div>
-            )}
+              <IssueParentSelect
+                className="w-3/5 flex-grow h-full"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                issueOperations={issueOperations}
+                disabled={!is_editable}
+              />
+            </div>
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
-              <div className="flex items-center gap-2 min-h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <RelatedIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Relates to</span>
-                </div>
-                <IssueRelationSelect
-                  className="w-3/5 flex-grow min-h-8 h-full"
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  relationKey="relates_to"
-                  disabled={!is_editable}
-                />
+            <div className="flex items-center gap-2 min-h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <RelatedIcon className="h-4 w-4 flex-shrink-0" />
+                <span>Relates to</span>
               </div>
-            )}
+              <IssueRelationSelect
+                className="w-3/5 flex-grow min-h-8 h-full"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                relationKey="relates_to"
+                disabled={!is_editable}
+              />
+            </div>
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
-              <div className="flex items-center gap-2 min-h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <XCircle className="h-4 w-4 flex-shrink-0" />
-                  <span>Blocking</span>
-                </div>
-                <IssueRelationSelect
-                  className="w-3/5 flex-grow min-h-8 h-full"
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  relationKey="blocking"
-                  disabled={!is_editable}
-                />
+            <div className="flex items-center gap-2 min-h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <XCircle className="h-4 w-4 flex-shrink-0" />
+                <span>Blocking</span>
               </div>
-            )}
+              <IssueRelationSelect
+                className="w-3/5 flex-grow min-h-8 h-full"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                relationKey="blocking"
+                disabled={!is_editable}
+              />
+            </div>
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
-              <div className="flex items-center gap-2 min-h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <CircleDot className="h-4 w-4 flex-shrink-0" />
-                  <span>Blocked by</span>
-                </div>
-                <IssueRelationSelect
-                  className="w-3/5 flex-grow min-h-8 h-full"
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  relationKey="blocked_by"
-                  disabled={!is_editable}
-                />
+            <div className="flex items-center gap-2 min-h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <CircleDot className="h-4 w-4 flex-shrink-0" />
+                <span>Blocked by</span>
               </div>
-            )}
+              <IssueRelationSelect
+                className="w-3/5 flex-grow min-h-8 h-full"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                relationKey="blocked_by"
+                disabled={!is_editable}
+              />
+            </div>
 
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
-              <div className="flex items-center gap-2 min-h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <CopyPlus className="h-4 w-4 flex-shrink-0" />
-                  <span>Duplicate of</span>
-                </div>
-                <IssueRelationSelect
-                  className="w-3/5 flex-grow min-h-8 h-full"
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  relationKey="duplicate"
-                  disabled={!is_editable}
-                />
+            <div className="flex items-center gap-2 min-h-8">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <CopyPlus className="h-4 w-4 flex-shrink-0" />
+                <span>Duplicate of</span>
               </div>
-            )}
+              <IssueRelationSelect
+                className="w-3/5 flex-grow min-h-8 h-full"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                relationKey="duplicate"
+                disabled={!is_editable}
+              />
+            </div>
           </div>
 
-          {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
-            <div className="flex items-center gap-2 min-h-8 py-2">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <Tag className="h-4 w-4 flex-shrink-0" />
-                <span>Labels</span>
-              </div>
-              <div className="w-3/5 flex-grow min-h-8 h-full">
-                <IssueLabel
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  disabled={!is_editable}
-                />
-              </div>
+          <div className="flex items-center gap-2 min-h-8 py-2">
+            <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <Tag className="h-4 w-4 flex-shrink-0" />
+              <span>Labels</span>
             </div>
-          )}
+            <div className="w-3/5 flex-grow min-h-8 h-full">
+              <IssueLabel
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                disabled={!is_editable}
+              />
+            </div>
+          </div>
 
-          {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <IssueLinkRoot
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              disabled={!is_editable}
-            />
-          )}
+          <IssueLinkRoot
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={!is_editable}
+          />
         </div>
       </div>
     </>
