@@ -99,7 +99,7 @@ export const Invitations: React.FC<Props> = (props) => {
                 >
                   <div className="flex-shrink-0">
                     <div className="grid h-9 w-9 place-items-center rounded">
-                      {invitedWorkspace.logo && invitedWorkspace.logo !== "" ? (
+                      {invitedWorkspace?.logo && invitedWorkspace.logo !== "" ? (
                         <img
                           src={invitedWorkspace.logo}
                           height="100%"
@@ -109,13 +109,13 @@ export const Invitations: React.FC<Props> = (props) => {
                         />
                       ) : (
                         <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                          {invitedWorkspace.name[0]}
+                          {invitedWorkspace?.name[0]}
                         </span>
                       )}
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{truncateText(invitedWorkspace.name, 30)}</div>
+                    <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
                     <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                   </div>
                   <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}>
