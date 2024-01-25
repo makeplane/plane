@@ -75,12 +75,13 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const projectIssueIds = this.issues[projectId] ?? [];
+    const projectIssueIds = this.issues[projectId];
+    if (!projectIssueIds) return;
 
     const _issues = this.rootStore.issues.getIssuesByIds(projectIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
