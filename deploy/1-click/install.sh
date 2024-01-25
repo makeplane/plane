@@ -668,7 +668,7 @@ function update_installer() {
     show_message "Updating Plane Installer ✋" >&2
     curl -H 'Cache-Control: no-cache, no-store' \
         -s -o /usr/local/bin/plane-app  \
-        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/1-click/install.sh?$(date +%s) 
+        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/1-click/install.sh?token=$(date +%s) 
 
     chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
     show_message "Plane Installer Updated ✅" "replace_last_line" >&2
