@@ -59,4 +59,23 @@ export class RootStore {
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
   }
+
+  resetOnSignout() {
+    this.workspaceRoot = new WorkspaceRootStore(this);
+    this.projectRoot = new ProjectRootStore(this);
+    this.memberRoot = new MemberRootStore(this);
+    // independent stores
+    this.cycle = new CycleStore(this);
+    this.module = new ModulesStore(this);
+    this.projectView = new ProjectViewStore(this);
+    this.globalView = new GlobalViewStore(this);
+    this.issue = new IssueRootStore(this);
+    this.inbox = new InboxRootStore(this);
+    this.state = new StateStore(this);
+    this.label = new LabelStore(this);
+    this.estimate = new EstimateStore(this);
+    this.mention = new MentionStore(this);
+    this.projectPages = new ProjectPageStore(this);
+    this.dashboard = new DashboardStore(this);
+  }
 }
