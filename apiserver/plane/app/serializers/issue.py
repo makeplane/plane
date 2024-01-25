@@ -558,7 +558,7 @@ class IssueSerializer(DynamicBaseSerializer):
     state_id = serializers.PrimaryKeyRelatedField(read_only=True)
     parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    module_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    module_ids = serializers.SerializerMethodField()
 
     # Many to many
     label_ids = serializers.PrimaryKeyRelatedField(
@@ -593,7 +593,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "project_id",
             "parent_id",
             "cycle_id",
-            "module_id",
+            "module_ids",
             "label_ids",
             "assignee_ids",
             "sub_issues_count",
@@ -608,6 +608,11 @@ class IssueSerializer(DynamicBaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
+
+    def get_module_ids(self, obj):
+        # Access the prefetched modules and extract module IDs
+        module_ids = [module_issue.module.id for module_issue in obj.issue_module.all()]
+        return module_ids
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):

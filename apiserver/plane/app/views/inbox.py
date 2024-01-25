@@ -95,7 +95,7 @@ class InboxIssueViewSet(BaseViewSet):
                 issue_inbox__inbox_id=self.kwargs.get("inbox_id")
             )
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("labels", "assignees")
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(
                 Prefetch(
                     "issue_inbox",
@@ -105,7 +105,6 @@ class InboxIssueViewSet(BaseViewSet):
                 )
             )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
