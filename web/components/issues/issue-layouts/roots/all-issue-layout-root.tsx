@@ -187,10 +187,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               size="sm"
               primaryButton={
                 (workspaceProjectIds ?? []).length > 0
-                  ? {
-                      text: "Create new issue",
-                      onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
-                    }
+                  ? currentView !== "custom-view" && currentView !== "subscribed"
+                    ? {
+                        text: "Create new issue",
+                        onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
+                      }
+                    : undefined
                   : {
                       text: "Start your first project",
                       onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
