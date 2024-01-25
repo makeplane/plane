@@ -3,14 +3,18 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import isEqual from "lodash/isEqual";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import { ActiveCycleInfo } from "components/cycles";
-import { Button, ContrastIcon, Spinner } from "@plane/ui";
+import { Button, Spinner } from "@plane/ui";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // services
 import { CycleService } from "services/cycle.service";
 const cycleService = new CycleService();
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // types
 import { ICycle } from "@plane/types";
 
@@ -24,6 +28,11 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const {
+    membership: { currentWorkspaceRole },
+    currentUser,
+  } = useUser();
 
   // fetching active cycles in workspace
   const { data: workspaceActiveCycles, isLoading } = useSWR(
@@ -54,6 +63,13 @@ export const WorkspaceActiveCyclesList = observer(() => {
     );
   }
 
+  const EmptyStateImagePath = getEmptyStateImagePath(
+    "onboarding",
+    "workspace-active-cycles",
+    currentUser?.theme.theme === "light"
+  );
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <div className="h-full w-full">
       {allCyclesData.length > 0 ? (
@@ -74,17 +90,13 @@ export const WorkspaceActiveCyclesList = observer(() => {
           )}
         </>
       ) : (
-        <div className="grid h-full place-items-center text-center">
-          <div className="space-y-2">
-            <div className="mx-auto flex justify-center">
-              <ContrastIcon className="h-40 w-40 text-custom-text-300" />
-            </div>
-            <h4 className="text-base text-custom-text-200">
-              Cycles running across all your projects can be seen here. Use this to track how the org is delivering
-              value across teams
-            </h4>
-          </div>
-        </div>
+        <EmptyState
+          image={EmptyStateImagePath}
+          title="No active cycles"
+          description="Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here."
+          size="lg"
+          disabled={!isEditingAllowed}
+        />
       )}
     </div>
   );

@@ -15,7 +15,7 @@ import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYea
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
-import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
 
 export type ActiveCycleInfoProps = {
   cycle: ICycle;
@@ -53,7 +53,7 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
     backlog: cycle.backlog_issues,
   };
 
-  const progressIndicatorData = CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
+  const progressIndicatorData = WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
@@ -96,7 +96,7 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
               position="top-left"
             >
               <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
-                {`${daysLeft} ${daysLeft > 1 ? "Days" : "Day"} Left`}
+                {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
               </span>
             </Tooltip>
           </div>
@@ -156,7 +156,7 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
                           <span
                             className="block h-3 w-3 rounded-full"
                             style={{
-                              backgroundColor: CYCLE_STATE_GROUPS_DETAILS[index].color,
+                              backgroundColor: WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS[index].color,
                             }}
                           />
                           <span className="capitalize font-medium w-16">{group}</span>

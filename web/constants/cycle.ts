@@ -186,3 +186,28 @@ export const CYCLE_EMPTY_STATE_DETAILS = {
     description: "No dates added in cycles? Find them here as drafts.",
   },
 };
+
+
+// ee
+export const WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS = [
+  {
+    key: "completed_issues",
+    title: "Completed",
+    color: "#d687ff",
+  },
+  {
+    key: "started_issues",
+    title: "Started",
+    color: "#FFC53D",
+  },
+  {
+    key: "unstarted_issues",
+    title: "Unstarted",
+    color: "#FB923C",
+  },
+  {
+    key: "backlog_issues",
+    title: "Backlog",
+    color: "#F0F0F3",
+  },
+];
