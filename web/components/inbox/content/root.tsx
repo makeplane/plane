@@ -61,7 +61,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             </div>
           ) : (
             <div className="w-full h-full overflow-hidden relative flex flex-col">
-              <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-100">
+              <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
                 <InboxIssueActionsHeader
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
