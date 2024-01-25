@@ -67,13 +67,13 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" ? (
+      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          {!issues?.groupedIssueIds ? (
+          {issues?.groupedIssueIds?.length === 0 ? (
             <ProjectViewEmptyState />
           ) : (
             <>

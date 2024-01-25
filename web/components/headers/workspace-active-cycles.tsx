@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
-import { SendToBack } from "lucide-react";
 // ui
-import { Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs, ContrastIcon } from "@plane/ui";
 
 export const WorkspaceActiveCycleHeader = observer(() => (
   <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -10,7 +9,7 @@ export const WorkspaceActiveCycleHeader = observer(() => (
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            icon={<SendToBack className="h-4 w-4 text-custom-text-300" />}
+            icon={<ContrastIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
             label="Active Cycles"
           />
         </Breadcrumbs>

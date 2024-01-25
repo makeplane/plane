@@ -133,8 +133,8 @@ export class IssueDetail implements IIssueDetail {
   toggleRelationModal = (value: TIssueRelationTypes | null) => (this.isRelationModalOpen = value);
 
   // issue
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.issue.fetchIssue(workspaceSlug, projectId, issueId);
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, isArchived = false) =>
+    this.issue.fetchIssue(workspaceSlug, projectId, issueId, isArchived);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
