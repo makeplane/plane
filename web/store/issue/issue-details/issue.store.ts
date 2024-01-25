@@ -90,6 +90,7 @@ export class IssueStore implements IIssueStore {
       this.rootIssueDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
 
       // fetching states
+      // TODO: check if this function is required
       this.rootIssueDetailStore.rootIssueStore.state.fetchProjectStates(workspaceSlug, projectId);
 
       return issue;

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 // components
 import { ComicBoxButton } from "./comic-box-button";
 // ui
@@ -51,8 +52,6 @@ export const EmptyState: React.FC<Props> = ({
     </>
   );
 
-  const imageElement = <img src={image} sizes="100%" alt={primaryButton?.text || "button image"} />;
-
   const secondaryButtonElement = secondaryButton && (
     <Button
       size={size === "sm" ? "md" : "lg"}
@@ -75,7 +74,14 @@ export const EmptyState: React.FC<Props> = ({
       >
         <div className="flex flex-col gap-1.5 flex-shrink-0">{emptyStateHeader}</div>
 
-        {imageElement}
+        <Image
+          src={image}
+          alt={primaryButton?.text || "button image"}
+          width={384}
+          height={250}
+          layout="responsive"
+          lazyBoundary="100%"
+        />
 
         <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
           {primaryButton && (
