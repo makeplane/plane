@@ -78,7 +78,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!is_editable} />
+      <div className="pb-12">
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!is_editable} />
+      </div>
     </>
   );
 });

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -29,6 +29,8 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.MODULE);
+  const { updateIssue, fetchIssue } = useIssueDetail();
+
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -43,9 +45,12 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
 
     const issueIds = data.map((i) => i.id);
-
     await issues
       .addIssueToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
+      .then((res) => {
+        updateIssue(workspaceSlug, projectId, res.id, res);
+        fetchIssue(workspaceSlug, projectId, res.id);
+      })
       .catch(() =>
         setToastAlert({
           type: "error",
