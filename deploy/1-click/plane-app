@@ -1,0 +1,713 @@
+#!/bin/bash
+
+function print_header() {
+clear
+
+cat <<"EOF"
+---------------------------------------
+ ____  _                  
+|  _ \| | __ _ _ __   ___ 
+| |_) | |/ _` | '_ \ / _ \
+|  __/| | (_| | | | |  __/
+|_|   |_|\__,_|_| |_|\___|
+
+---------------------------------------
+Project management tool from the future
+---------------------------------------
+
+EOF
+}
+function update_env_files() {
+    config_file=$1
+    key=$2
+    value=$3
+
+    # Check if the config file exists
+    if [ ! -f "$config_file" ]; then
+        echo "Config file not found. Creating a new one..." >&2
+        touch "$config_file"
+    fi
+
+    # Check if the key already exists in the config file
+    if grep -q "^$key=" "$config_file"; then
+        awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && mv "$config_file.tmp" "$config_file"
+    else
+        echo "$key=$value" >> "$config_file"
+    fi
+}
+function read_env_file() {
+    config_file=$1
+    key=$2
+
+    # Check if the config file exists
+    if [ ! -f "$config_file" ]; then
+        echo "Config file not found. Creating a new one..." >&2
+        touch "$config_file"
+    fi
+
+    # Check if the key already exists in the config file
+    if grep -q "^$key=" "$config_file"; then
+        value=$(awk -v key="$key" -F '=' '{if ($1 == key) print $2}' "$config_file")
+        echo "$value"
+    else
+        echo ""
+    fi
+}
+function update_config() {
+    config_file="$PLANE_INSTALL_DIR/config.env"
+    update_env_files "$config_file" "$1" "$2"
+}
+function read_config() {
+    config_file="$PLANE_INSTALL_DIR/config.env"
+    read_env_file "$config_file" "$1"
+}
+function update_env() {
+    config_file="$PLANE_INSTALL_DIR/.env"
+    update_env_files "$config_file" "$1" "$2"
+}
+function read_env() {
+    config_file="$PLANE_INSTALL_DIR/.env"
+    read_env_file "$config_file" "$1"
+}
+function show_message() {
+    print_header
+
+    if [ "$2" == "replace_last_line" ]; then
+        PROGRESS_MSG[-1]="$1"
+    else
+        PROGRESS_MSG+=("$1")
+    fi
+
+    for statement in "${PROGRESS_MSG[@]}"; do
+        echo "$statement"
+    done
+
+}
+function prepare_environment() {
+    show_message "Prepare Environment..." >&2
+
+    show_message "- Updating OS with required tools ✋"  >&2
+    sudo apt-get update -y &> /dev/null
+    sudo apt-get upgrade -y &> /dev/null
+
+    required_tools=("curl" "awk" "wget" "nano" "dialog" "git")
+
+    for tool in "${required_tools[@]}"; do
+        if ! command -v $tool &> /dev/null; then
+            sudo apt install -y $tool &> /dev/null
+        fi
+    done
+
+    show_message "- OS Updated ✅" "replace_last_line"  >&2
+
+    # Install Docker if not installed
+    if ! command -v docker &> /dev/null; then
+        show_message "- Installing Docker ✋"  >&2
+        sudo curl -o- https://get.docker.com | bash - 
+
+        if [ "$EUID" -ne 0 ]; then
+            dockerd-rootless-setuptool.sh install &> /dev/null
+        fi
+        show_message "- Docker Installed ✅" "replace_last_line"  >&2
+    else
+        show_message "- Docker is already installed ✅"  >&2
+    fi
+
+    update_config "PLANE_ARCH" "$CPU_ARCH"
+    update_config "DOCKER_VERSION" "$(docker -v | awk '{print $3}' | sed 's/,//g')"
+    update_config "PLANE_DATA_DIR" "$DATA_DIR"
+    update_config "PLANE_LOG_DIR" "$LOG_DIR"
+
+    # echo "TRUE"
+    echo "Environment prepared successfully ✅"
+    show_message "Environment prepared successfully ✅" >&2
+    show_message "" >&2
+    return 0
+}
+function download_plane() {
+    # Download Docker Compose File from github url 
+    show_message "Downloading Plane Setup Files ✋"  >&2
+    curl -H 'Cache-Control: no-cache, no-store' \
+        -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  \
+        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s) 
+
+    curl -H 'Cache-Control: no-cache, no-store' \
+        -s -o $PLANE_INSTALL_DIR/variables-upgrade.env \
+        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s) 
+
+    # if .env does not exists rename variables-upgrade.env to .env
+    if [ ! -f "$PLANE_INSTALL_DIR/.env" ]; then
+        mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
+    fi
+
+    show_message "Plane Setup Files Downloaded ✅" "replace_last_line"  >&2
+    show_message ""  >&2
+
+    echo "PLANE_DOWNLOADED"
+    return 0
+}
+function printUsageInstructions() {
+    show_message ""  >&2
+    show_message "----------------------------------" >&2
+    show_message "Usage Instructions" >&2
+    show_message "----------------------------------" >&2
+    show_message ""  >&2
+    show_message "To use the Plane Setup utility, use below commands" >&2
+    show_message "" >&2
+
+    show_message "Usage: plane-app [OPTION]" >&2
+    show_message "" >&2
+    show_message "  start                       Start Server" >&2
+    show_message "  stop                        Stop Server" >&2
+    show_message "  restart                     Restart Server" >&2
+    show_message "" >&2
+    show_message "other options" >&2
+    show_message "  -i, --install               Install Plane" >&2
+    show_message "  -c, --configure             Configure Plane" >&2
+    show_message "  -up, --upgrade              Upgrade Plane" >&2
+    show_message "  -un, --uninstall            Uninstall Plane" >&2
+    show_message "  -ui, --update-installer     Update Plane Installer" >&2
+    show_message "  -h, --help                  Show help" >&2
+    show_message "" >&2
+    show_message ""  >&2
+    show_message "Application Data is stored in mentioned folders" >&2
+    show_message "  - DB Data: $DATA_DIR/postgres" >&2
+    show_message "  - Redis Data: $DATA_DIR/redis" >&2
+    show_message "  - Minio Data: $DATA_DIR/minio" >&2
+    show_message "" >&2
+    show_message "" >&2
+    show_message "----------------------------------" >&2
+    show_message ""  >&2
+}
+function build_local_image() {
+    show_message "- Downloading Plane Source Code ✋" >&2
+    REPO=https://github.com/makeplane/plane.git
+    CURR_DIR=$PWD
+    PLANE_TEMP_CODE_DIR=$PLANE_INSTALL_DIR/temp
+    sudo rm -rf $PLANE_TEMP_CODE_DIR > /dev/null
+
+    sudo git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch -q > /dev/null
+
+    sudo cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
+
+    show_message "- Plane Source Code Downloaded ✅" "replace_last_line" >&2
+    
+    show_message "- Building Docker Images ✋" >&2
+    sudo docker compose --env-file=$PLANE_INSTALL_DIR/.env -f $PLANE_TEMP_CODE_DIR/build.yml build --no-cache
+}
+function check_for_docker_images() {
+    show_message "" >&2
+    # show_message "Building Plane Images" >&2
+    
+    update_env "DOCKERHUB_USER" "makeplane"
+    update_env "PULL_POLICY" "always"
+    CURR_DIR=$(pwd)
+    
+    if [ "$BRANCH" == "master" ]; then
+        update_env "APP_RELEASE" "latest"
+        export APP_RELEASE=latest
+    else
+        update_env "APP_RELEASE" "$BRANCH"
+        export APP_RELEASE=$BRANCH    
+    fi
+
+    if [ $CPU_ARCH == "amd64" ] || [ $CPU_ARCH == "x86_64" ]; then
+        # show_message "Building Plane Images for $CPU_ARCH is not required. Skipping... ✅" "replace_last_line" >&2
+        echo "Building Plane Images for $CPU_ARCH is not required. Skipping..."
+    else
+        export DOCKERHUB_USER=myplane
+        show_message "Building Plane Images for $CPU_ARCH " >&2
+        update_env "DOCKERHUB_USER" "myplane"
+        update_env "PULL_POLICY" "never"
+
+        build_local_image
+
+        sudo rm -rf $PLANE_INSTALL_DIR/temp > /dev/null
+
+        show_message "- Docker Images Built ✅" "replace_last_line" >&2
+        sudo cd $CURR_DIR
+    fi
+
+    sudo sed -i "s|- pgdata:|- $DATA_DIR/postgres:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
+    sudo sed -i "s|- redisdata:|- $DATA_DIR/redis:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
+    sudo sed -i "s|- uploads:|- $DATA_DIR/minio:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
+
+    show_message "Downloading Plane Images for $CPU_ARCH ✋" >&2
+    docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file=$PLANE_INSTALL_DIR/.env pull
+    show_message "Plane Images Downloaded ✅" "replace_last_line" >&2
+}
+function configure_plane() {
+    show_message "" >&2
+    show_message "Configuring Plane" >&2
+    show_message "" >&2
+
+    exec 3>&1
+
+    nginx_port=$(read_env "NGINX_PORT")
+    domain_name=$(read_env "DOMAIN_NAME")
+    upload_limit=$(read_env "FILE_SIZE_LIMIT")
+
+    NGINX_SETTINGS=$(dialog \
+        --ok-label "Next" \
+        --cancel-label "Skip" \
+        --backtitle "Plane Configuration" \
+        --title "Nginx Settings" \
+        --form "" \
+        0 0 0 \
+        "Port:"                   1 1	        "${nginx_port:-80}"            1 10 50 0 \
+        "Domain:"                 2 1	        "${domain_name:-localhost}"     2 10 50 0 \
+        "Upload Limit:"           3 1	        "${upload_limit:-5242880}"       3 10 15 0 \
+    2>&1 1>&3)
+
+    save_nginx_settings=0
+    if [ $? -eq 0 ]; then
+        save_nginx_settings=1
+        nginx_port=$(echo "$NGINX_SETTINGS" | sed -n 1p)
+        domain_name=$(echo "$NGINX_SETTINGS" | sed -n 2p)
+        upload_limit=$(echo "$NGINX_SETTINGS" | sed -n 3p)
+    fi
+
+
+    smtp_host=$(read_env "EMAIL_HOST")
+    smtp_user=$(read_env "EMAIL_HOST_USER")
+    smtp_password=$(read_env "EMAIL_HOST_PASSWORD")
+    smtp_port=$(read_env "EMAIL_PORT")
+    smtp_from=$(read_env "EMAIL_FROM")
+    smtp_tls=$(read_env "EMAIL_USE_TLS")
+    smtp_ssl=$(read_env "EMAIL_USE_SSL")
+
+    SMTP_SETTINGS=$(dialog \
+        --ok-label "Next" \
+        --cancel-label "Skip" \
+        --backtitle "Plane Configuration" \
+        --title "SMTP Settings" \
+        --form "" \
+        0 0 0 \
+        "Host:"        1 1	  "$smtp_host" 	              1 10 80 0 \
+        "User:"        2 1	  "$smtp_user" 	              2 10 80 0 \
+        "Password:"    3 1	  "$smtp_password" 	              3 10 80 0 \
+        "Port:"        4 1	  "${smtp_port:-587}"               4 10 5 0 \
+        "From:"        5 1	  "${smtp_from:-Mailer <mailer@example.com>}"               5 10 80 0 \
+        "TLS:"         6 1	  "${smtp_tls:-1}"                 6 10 1 1 \
+        "SSL:"         7 1	  "${smtp_ssl:-0}"                 7 10 1 1 \
+    2>&1 1>&3)
+
+    save_smtp_settings=0
+    if [ $? -eq 0 ]; then
+        save_smtp_settings=1
+        smtp_host=$(echo "$SMTP_SETTINGS" | sed -n 1p)
+        smtp_user=$(echo "$SMTP_SETTINGS" | sed -n 2p)
+        smtp_password=$(echo "$SMTP_SETTINGS" | sed -n 3p)
+        smtp_port=$(echo "$SMTP_SETTINGS" | sed -n 4p)
+        smtp_from=$(echo "$SMTP_SETTINGS" | sed -n 5p)
+        smtp_tls=$(echo "$SMTP_SETTINGS" | sed -n 6p)
+    fi
+    external_pgdb_url=$(dialog \
+                    --backtitle "Plane Configuration" \
+                    --title "Using External Postgres Database ?" \
+                    --ok-label "Next" \
+                    --cancel-label "Skip" \
+                    --inputbox "Enter your external database url" \
+                    8 60 3>&1 1>&2 2>&3)
+
+
+    external_redis_url=$(dialog \
+                    --backtitle "Plane Configuration" \
+                    --title "Using External Redis Database ?" \
+                    --ok-label "Next" \
+                    --cancel-label "Skip" \
+                    --inputbox "Enter your external redis url" \
+                    8 60 3>&1 1>&2 2>&3)
+
+    
+    aws_region=$(read_env "AWS_REGION")
+    aws_access_key=$(read_env "AWS_ACCESS_KEY_ID")
+    aws_secret_key=$(read_env "AWS_SECRET_ACCESS_KEY")
+    aws_bucket=$(read_env "AWS_S3_BUCKET_NAME")
+    
+
+    AWS_S3_SETTINGS=$(dialog \
+        --ok-label "Next" \
+        --cancel-label "Skip" \
+        --backtitle "Plane Configuration" \
+        --title "AWS S3 Bucket Configuration" \
+        --form "" \
+        0 0 0 \
+        "Region:"         1 1	        "$aws_region"       1 10 50 0 \
+        "Access Key:"     2 1	        "$aws_access_key"   2 10 50 0 \
+        "Secret Key:"     3 1	        "$aws_secret_key"   3 10 50 0 \
+        "Bucket:"         4 1	        "$aws_bucket"       4 10 50 0 \
+    2>&1 1>&3)
+
+    save_aws_settings=0
+    if [ $? -eq 0 ]; then
+        save_aws_settings=1
+        aws_region=$(echo "$AWS_S3_SETTINGS" | sed -n 1p)
+        aws_access_key=$(echo "$AWS_S3_SETTINGS" | sed -n 2p)
+        aws_secret_key=$(echo "$AWS_S3_SETTINGS" | sed -n 3p)
+        aws_bucket=$(echo "$AWS_S3_SETTINGS" | sed -n 4p)
+    fi
+
+    # display dialogbox asking for confirmation to continue
+    CONFIRM_CONFIG=$(dialog \
+            --title "Confirm Configuration" \
+            --backtitle "Plane Configuration" \
+            --yes-label "Confirm" \
+            --no-label "Cancel" \
+            --yesno \
+            "
+            save_ngnix_settings:  $save_nginx_settings
+            nginx_port:           $nginx_port
+            domain_name:          $domain_name
+            upload_limit:         $upload_limit
+
+            save_smtp_settings:   $save_smtp_settings
+            smtp_host:            $smtp_host
+            smtp_user:            $smtp_user
+            smtp_password:        $smtp_password
+            smtp_port:            $smtp_port
+            smtp_from:            $smtp_from
+            smtp_tls:             $smtp_tls
+            smtp_ssl:             $smtp_ssl
+
+            save_aws_settings:    $save_aws_settings
+            aws_region:           $aws_region
+            aws_access_key:       $aws_access_key
+            aws_secret_key:       $aws_secret_key
+            aws_bucket:           $aws_bucket
+
+            pdgb_url:             $external_pgdb_url
+            redis_url:            $external_redis_url
+            " \
+            0 0 3>&1 1>&2 2>&3)
+    
+    if [ $? -eq 0 ]; then
+        if [ $save_nginx_settings == 1 ]; then
+            update_env "NGINX_PORT" "$nginx_port"
+            update_env "DOMAIN_NAME" "$domain_name"
+            update_env "WEB_URL" "http://$domain_name"
+            update_env "CORS_ALLOWED_ORIGINS" "http://$domain_name"
+            update_env "FILE_SIZE_LIMIT" "$upload_limit"
+        fi
+
+        # check enable smpt settings value
+        if [ $save_smtp_settings == 1 ]; then
+            update_env "EMAIL_HOST" "$smtp_host"
+            update_env "EMAIL_HOST_USER" "$smtp_user"
+            update_env "EMAIL_HOST_PASSWORD" "$smtp_password"
+            update_env "EMAIL_PORT" "$smtp_port"
+            update_env "EMAIL_FROM" "$smtp_from"
+            update_env "EMAIL_USE_TLS" "$smtp_tls"
+            update_env "EMAIL_USE_SSL" "$smtp_ssl"
+        fi
+
+        # check enable aws settings value
+        if [[ $save_aws_settings == 1 &&  $aws_access_key != ""  &&  $aws_secret_key != "" ]] ; then
+            update_env "USE_MINIO" "0"
+            update_env "AWS_REGION" "$aws_region"
+            update_env "AWS_ACCESS_KEY_ID" "$aws_access_key"
+            update_env "AWS_SECRET_ACCESS_KEY" "$aws_secret_key"
+            update_env "AWS_S3_BUCKET_NAME" "$aws_bucket"
+        elif [[ -z $aws_access_key || -z $aws_secret_key  ]] ; then
+            update_env "USE_MINIO" "1"
+            update_env "AWS_REGION" ""
+            update_env "AWS_ACCESS_KEY_ID" ""
+            update_env "AWS_SECRET_ACCESS_KEY" ""
+            update_env "AWS_S3_BUCKET_NAME" "uploads"
+        fi
+
+        if [ "$external_pgdb_url" != "" ]; then
+            update_env "DATABASE_URL" "$external_pgdb_url"
+        fi
+        if [ "$external_redis_url" != "" ]; then
+            update_env "REDIS_URL" "$external_redis_url"
+        fi
+    fi
+
+    exec 3>&-
+}
+function upgrade_configuration() {
+    upg_env_file="$PLANE_INSTALL_DIR/variables-upgrade.env"
+    # Check if the file exists
+    if [ -f "$upg_env_file" ]; then
+        # Read each line from the file
+        while IFS= read -r line; do
+            # Skip comments and empty lines
+            if [[ "$line" =~ ^\s*#.*$ ]] || [[ -z "$line" ]]; then
+                continue
+            fi
+
+            # Split the line into key and value
+            key=$(echo "$line" | cut -d'=' -f1)
+            value=$(echo "$line" | cut -d'=' -f2-)
+
+            current_value=$(read_env "$key")
+
+            if [ -z "$current_value" ]; then
+                update_env "$key" "$value"
+            fi
+        done < "$upg_env_file"
+    fi
+}
+function install() {
+    show_message ""
+    if [ "$(uname)" == "Linux" ]; then
+        OS="linux"
+        OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+        # check the OS 
+        if [ "$OS_NAME" == "ubuntu" ]; then
+            OS_SUPPORTED=true
+            show_message "******** Installing Plane ********"
+            show_message ""
+
+            prepare_environment
+
+            if [ $? -eq 0 ]; then
+                download_plane
+                if [ $? -eq 0 ]; then
+                    # create_service
+                    check_for_docker_images
+
+                    last_installed_on=$(read_config "INSTALLATION_DATE")
+                    if [ "$last_installed_on" == "" ]; then
+                        configure_plane
+                    fi
+                    printUsageInstructions
+
+                    update_config "INSTALLATION_DATE" "$(date)"
+                    
+                    show_message "Plane Installed Successfully ✅"
+                    show_message ""
+                else
+                    show_message "Download Failed ❌"
+                    exit 1
+                fi
+            else
+                show_message "Initialization Failed ❌"
+                exit 1
+            fi
+            
+        else
+            PROGRESS_MSG="❌❌❌ Unsupported OS Detected ❌❌❌"
+            show_message ""
+            exit 1
+        fi
+    else
+        PROGRESS_MSG="❌❌❌ Unsupported OS Detected : $(uname) ❌❌❌"
+        show_message ""
+        exit 1
+    fi
+}
+function upgrade() {
+    if [ "$(uname)" == "Linux" ]; then
+        OS="linux"
+        OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+        # check the OS 
+        if [ "$OS_NAME" == "ubuntu" ]; then
+            OS_SUPPORTED=true
+
+            prepare_environment
+
+            if [ $? -eq 0 ]; then
+                download_plane
+                if [ $? -eq 0 ]; then
+                    check_for_docker_images
+                    upgrade_configuration
+                    update_config "UPGRADE_DATE" "$(date)"
+                
+                    show_message ""
+                    show_message "Plane Upgraded Successfully ✅"
+                    show_message ""
+                    printUsageInstructions
+                else
+                    show_message "Download Failed ❌"
+                    exit 1
+                fi
+            else
+                show_message "Initialization Failed ❌"
+                exit 1
+            fi
+        else
+            PROGRESS_MSG="Unsupported OS Detected"
+            show_message ""
+            exit 1
+        fi
+    else
+        PROGRESS_MSG="Unsupported OS Detected : $(uname)"
+        show_message ""
+        exit 1
+    fi
+}
+function uninstall() {
+    if [ "$(uname)" == "Linux" ]; then
+        OS="linux"
+        OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+        # check the OS 
+        if [ "$OS_NAME" == "ubuntu" ]; then
+            OS_SUPPORTED=true
+            show_message "******** Uninstalling Plane ********"
+            show_message ""
+
+            stop_server
+            # CHECK IF PLANE SERVICE EXISTS
+            # if [ -f "/etc/systemd/system/plane.service" ]; then
+            #     sudo systemctl stop plane.service &> /dev/null
+            #     sudo systemctl disable plane.service &> /dev/null
+            #     sudo rm /etc/systemd/system/plane.service &> /dev/null
+            #     sudo systemctl daemon-reload &> /dev/null
+            # fi
+            # show_message "- Plane Service removed ✅"
+
+            if ! [ -x "$(command -v docker)" ]; then
+                echo "DOCKER_NOT_INSTALLED" &> /dev/null
+            else
+                # Ask of user input to confirm uninstall docker ?
+                CONFIRM_DOCKER_PURGE=$(dialog --title "Uninstall Docker" --yesno "Are you sure you want to uninstall docker ?" 8 60 3>&1 1>&2 2>&3)
+                if [ $? -eq 0 ]; then
+                    show_message "- Uninstalling Docker ✋"
+                    sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
+                    sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
+                    show_message "- Docker Uninstalled ✅" "replace_last_line" >&2
+                fi
+            fi
+
+            rm $PLANE_INSTALL_DIR/.env &> /dev/null
+            rm $PLANE_INSTALL_DIR/variables-upgrade.env &> /dev/null
+            rm $PLANE_INSTALL_DIR/config.env &> /dev/null
+            rm $PLANE_INSTALL_DIR/docker-compose.yaml &> /dev/null
+            
+            # rm -rf $PLANE_INSTALL_DIR &> /dev/null
+            show_message "- Configuration Cleaned ✅"
+
+            show_message ""
+            show_message "******** Plane Uninstalled ********"
+            show_message ""
+            show_message ""
+            show_message "Plane Configuration Cleaned with some exceptions"
+            show_message "- DB Data: $DATA_DIR/postgres"
+            show_message "- Redis Data: $DATA_DIR/redis"
+            show_message "- Minio Data: $DATA_DIR/minio"
+            show_message ""
+            show_message ""
+            show_message "Thank you for using Plane. We hope to see you again soon."
+            show_message ""
+            show_message ""
+        else
+            PROGRESS_MSG="Unsupported OS Detected : $(uname) ❌"
+            show_message ""
+            exit 1
+        fi
+    else
+        PROGRESS_MSG="Unsupported OS Detected : $(uname) ❌"
+        show_message ""
+        exit 1
+    fi
+}
+function start_server() {
+    docker_compose_file="$PLANE_INSTALL_DIR/docker-compose.yaml"
+    env_file="$PLANE_INSTALL_DIR/.env"
+    # check if both the files exits 
+    if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
+        show_message "Starting Plane Server ✋"
+        docker compose -f $docker_compose_file --env-file=$env_file up -d
+
+        # Wait for containers to be running
+        echo "Waiting for containers to start..."
+        while ! docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
+            sleep 1
+        done
+        show_message "Plane Server Started ✅" "replace_last_line" >&2
+    else
+        show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
+    fi
+}
+function stop_server() {
+    docker_compose_file="$PLANE_INSTALL_DIR/docker-compose.yaml"
+    env_file="$PLANE_INSTALL_DIR/.env"
+    # check if both the files exits 
+    if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
+        show_message "Stopping Plane Server ✋"
+        docker compose -f $docker_compose_file --env-file=$env_file down
+        show_message "Plane Server Stopped ✅" "replace_last_line" >&2
+    else
+        show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
+    fi
+}
+function restart_server() {
+    docker_compose_file="$PLANE_INSTALL_DIR/docker-compose.yaml"
+    env_file="$PLANE_INSTALL_DIR/.env"
+    # check if both the files exits 
+    if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
+        show_message "Restarting Plane Server ✋"
+        docker compose -f $docker_compose_file --env-file=$env_file restart
+        show_message "Plane Server Restarted ✅" "replace_last_line" >&2
+    else
+        show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
+    fi
+}
+function show_help() {
+    # print_header
+    show_message "Usage: plane-app [OPTION]" >&2
+    show_message "" >&2
+    show_message "  start                       Start Server" >&2
+    show_message "  stop                        Stop Server" >&2
+    show_message "  restart                     Restart Server" >&2
+    show_message "" >&2
+    show_message "other options" >&2
+    show_message "  -i, --install               Install Plane" >&2
+    show_message "  -c, --configure             Configure Plane" >&2
+    show_message "  -up, --upgrade              Upgrade Plane" >&2
+    show_message "  -un, --uninstall            Uninstall Plane" >&2
+    show_message "  -ui, --update-installer     Update Plane Installer" >&2
+    show_message "  -h, --help                  Show help" >&2
+    show_message "" >&2
+    exit 1
+    
+}
+function update_installer() {
+    show_message "Updating Plane Installer ✋" >&2
+    curl -H 'Cache-Control: no-cache, no-store' \
+        -s -o /usr/local/bin/plane-app  \
+        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/1-click/install.sh?token=$(date +%s) 
+
+    chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
+    show_message "Plane Installer Updated ✅" "replace_last_line" >&2
+}
+
+export BRANCH=${BRANCH:-master}
+export APP_RELEASE=$BRANCH
+export DOCKERHUB_USER=makeplane
+export PULL_POLICY=always
+
+PLANE_INSTALL_DIR=/opt/plane
+DATA_DIR=$PLANE_INSTALL_DIR/data
+LOG_DIR=$PLANE_INSTALL_DIR/log
+OS_SUPPORTED=false
+CPU_ARCH=$(uname -m)
+PROGRESS_MSG=""
+USE_GLOBAL_IMAGES=1
+
+mkdir -p $PLANE_INSTALL_DIR/{data,log}
+
+if [ "$1" == "start" ]; then
+    start_server
+elif [ "$1" == "stop" ]; then
+    stop_server
+elif [ "$1" == "restart" ]; then
+    restart_server
+elif [ "$1" == "--install" ] || [ "$1" == "-i" ]; then
+    install
+elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
+    configure_plane
+    printUsageInstructions
+elif [ "$1" == "--upgrade" ] || [ "$1" == "-up" ]; then
+    upgrade
+elif [ "$1" == "--uninstall" ] || [ "$1" == "-un" ]; then
+    uninstall
+elif [ "$1" == "--update-installer" ] || [ "$1" == "-ui" ] ; then
+    update_installer
+elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    show_help
+else
+    show_help
+fi
