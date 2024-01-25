@@ -115,11 +115,12 @@ export class InboxFilter implements IInboxFilter {
       };
       _filters = { ..._filters, ...filters };
 
+      this.rootStore.inbox.inboxIssue.fetchInboxIssues(workspaceSlug, projectId, inboxId, "mutation");
+
       const response = await this.rootStore.inbox.inbox.updateInbox(workspaceSlug, projectId, inboxId, {
         view_props: { filters: _filters },
       });
 
-      this.rootStore.inbox.inboxIssue.fetchInboxIssues(workspaceSlug, projectId, inboxId);
       return response;
     } catch (error) {
       throw error;

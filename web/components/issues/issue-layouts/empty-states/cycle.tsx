@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -29,6 +29,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
+  const { updateIssue, fetchIssue } = useIssueDetail();
   const {
     commandPalette: { toggleCreateIssueModal },
     eventTracker: { setTrackElement },
@@ -44,13 +45,19 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await issues.addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Selected issues could not be added to the cycle. Please try again.",
+    await issues
+      .addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds)
+      .then((res) => {
+        updateIssue(workspaceSlug, projectId, res.id, res);
+        fetchIssue(workspaceSlug, projectId, res.id);
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
+        });
       });
-    });
   };
 
   const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;

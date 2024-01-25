@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
 import { useInboxIssues } from "hooks/store";
 // ui
@@ -16,6 +17,9 @@ type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string; in
 
 export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observer((props) => {
   const { workspaceSlug, projectId, inboxId } = props;
+  // router
+  const router = useRouter();
+  const { inboxIssueId } = router.query;
   // hooks
   const {
     filters: { inboxFilters, updateInboxFilters },
@@ -49,6 +53,12 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
             updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
               [option.key]: [...currentValue, option.value],
             });
+
+          if (inboxIssueId) {
+            router.push({
+              pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+            });
+          }
         }}
         direction="right"
         height="rg"

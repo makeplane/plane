@@ -11,6 +11,7 @@ import { isThisWeek, isToday, isYesterday } from "date-fns";
 
 export interface IProjectPageStore {
   loader: boolean;
+  archivedProjectLoader: boolean;
   projectPageMap: Record<string, Record<string, IPageStore>>;
   projectArchivedPageMap: Record<string, Record<string, IPageStore>>;
 
@@ -32,6 +33,7 @@ export interface IProjectPageStore {
 
 export class ProjectPageStore implements IProjectPageStore {
   loader: boolean = false;
+  archivedProjectLoader: boolean = false;
   projectPageMap: Record<string, Record<string, IPageStore>> = {}; // { projectId: [page1, page2] }
   projectArchivedPageMap: Record<string, Record<string, IPageStore>> = {}; // { projectId: [page1, page2] }
 
@@ -42,6 +44,7 @@ export class ProjectPageStore implements IProjectPageStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       loader: observable.ref,
+      archivedProjectLoader: observable.ref,
       projectPageMap: observable,
       projectArchivedPageMap: observable,
 
@@ -180,18 +183,18 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   fetchArchivedProjectPages = async (workspaceSlug: string, projectId: string) => {
     try {
-      this.loader = true;
+      this.archivedProjectLoader = true;
       await this.pageService.getArchivedPages(workspaceSlug, projectId).then((response) => {
         runInAction(() => {
           for (const page of response) {
             set(this.projectArchivedPageMap, [projectId, page.id], new PageStore(page, this.rootStore));
           }
-          this.loader = false;
+          this.archivedProjectLoader = false;
         });
         return response;
       });
     } catch (e) {
-      this.loader = false;
+      this.archivedProjectLoader = false;
       throw e;
     }
   };
