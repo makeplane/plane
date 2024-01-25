@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 // hooks
 import { useMember } from "hooks/store";
 // ui
-import { Avatar, AvatarGroup, UserGroupIcon } from "@plane/ui";
+import { Avatar, AvatarGroup, Tooltip, UserGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 
@@ -14,16 +14,17 @@ type ButtonProps = {
   placeholder: string;
   hideIcon?: boolean;
   hideText?: boolean;
+  tooltip: boolean;
   userIds: string | string[] | null;
 };
 
-const ButtonAvatars = observer(({ userIds }: { userIds: string | string[] | null }) => {
+const ButtonAvatars = observer(({ tooltip, userIds }: { tooltip: boolean; userIds: string | string[] | null }) => {
   const { getUserDetails } = useMember();
 
   if (Array.isArray(userIds)) {
     if (userIds.length > 0)
       return (
-        <AvatarGroup size="md">
+        <AvatarGroup size="md" showTooltip={!tooltip}>
           {userIds.map((userId) => {
             const userDetails = getUserDetails(userId);
 
@@ -35,7 +36,7 @@ const ButtonAvatars = observer(({ userIds }: { userIds: string | string[] | null
   } else {
     if (userIds) {
       const userDetails = getUserDetails(userIds);
-      return <Avatar src={userDetails?.avatar} name={userDetails?.display_name} size="md" />;
+      return <Avatar src={userDetails?.avatar} name={userDetails?.display_name} size="md" showTooltip={!tooltip} />;
     }
   }
 
@@ -51,6 +52,7 @@ export const BorderButton = observer((props: ButtonProps) => {
     hideText = false,
     placeholder,
     userIds,
+    tooltip,
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -58,22 +60,28 @@ export const BorderButton = observer((props: ButtonProps) => {
   const isMultiple = Array.isArray(userIds);
 
   return (
-    <div
-      className={cn(
-        "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-        className
-      )}
+    <Tooltip
+      tooltipHeading={placeholder}
+      tooltipContent={`${userIds?.length ?? 0} assignee${userIds?.length !== 1 ? "s" : ""}`}
+      disabled={!tooltip}
     >
-      {!hideIcon && <ButtonAvatars userIds={userIds} />}
-      {!hideText && (
-        <span className="flex-grow truncate">
-          {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
-        </span>
-      )}
-      {dropdownArrow && (
-        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-      )}
-    </div>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          className
+        )}
+      >
+        {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
+        {!hideText && (
+          <span className="flex-grow truncate">
+            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          </span>
+        )}
+        {dropdownArrow && (
+          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </div>
+    </Tooltip>
   );
 });
 
@@ -86,6 +94,7 @@ export const BackgroundButton = observer((props: ButtonProps) => {
     hideText = false,
     placeholder,
     userIds,
+    tooltip,
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -93,19 +102,28 @@ export const BackgroundButton = observer((props: ButtonProps) => {
   const isMultiple = Array.isArray(userIds);
 
   return (
-    <div
-      className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
+    <Tooltip
+      tooltipHeading={placeholder}
+      tooltipContent={`${userIds?.length ?? 0} assignee${userIds?.length !== 1 ? "s" : ""}`}
+      disabled={!tooltip}
     >
-      {!hideIcon && <ButtonAvatars userIds={userIds} />}
-      {!hideText && (
-        <span className="flex-grow truncate">
-          {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
-        </span>
-      )}
-      {dropdownArrow && (
-        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-      )}
-    </div>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          className
+        )}
+      >
+        {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
+        {!hideText && (
+          <span className="flex-grow truncate">
+            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          </span>
+        )}
+        {dropdownArrow && (
+          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </div>
+    </Tooltip>
   );
 });
 
@@ -118,6 +136,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
     hideText = false,
     placeholder,
     userIds,
+    tooltip,
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -125,21 +144,27 @@ export const TransparentButton = observer((props: ButtonProps) => {
   const isMultiple = Array.isArray(userIds);
 
   return (
-    <div
-      className={cn(
-        "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-        className
-      )}
+    <Tooltip
+      tooltipHeading={placeholder}
+      tooltipContent={`${userIds?.length ?? 0} assignee${userIds?.length !== 1 ? "s" : ""}`}
+      disabled={!tooltip}
     >
-      {!hideIcon && <ButtonAvatars userIds={userIds} />}
-      {!hideText && (
-        <span className="flex-grow truncate">
-          {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
-        </span>
-      )}
-      {dropdownArrow && (
-        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-      )}
-    </div>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          className
+        )}
+      >
+        {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
+        {!hideText && (
+          <span className="flex-grow truncate">
+            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          </span>
+        )}
+        {dropdownArrow && (
+          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </div>
+    </Tooltip>
   );
 });
