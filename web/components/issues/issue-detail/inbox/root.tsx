@@ -9,8 +9,6 @@ import useToast from "hooks/use-toast";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "../root";
-// ui
-import { Loader } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -25,7 +23,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   const { workspaceSlug, projectId, inboxId, issueId } = props;
   // hooks
   const {
-    issues: { loader, fetchInboxIssueById, updateInboxIssue, removeInboxIssue },
+    issues: { fetchInboxIssueById, updateInboxIssue, removeInboxIssue },
   } = useInboxIssues();
   const {
     issue: { getIssueById },
@@ -105,46 +103,28 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   // issue details
   const issue = getIssueById(issueId);
 
+  if (!issue) return <></>;
   return (
-    <>
-      {!issue || loader === "init-loader" ? (
-        <Loader className="flex h-full gap-5 p-5">
-          <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="40%" />
-          </div>
-          <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </div>
-        </Loader>
-      ) : (
-        <div className="flex h-full overflow-hidden">
-          <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
-            <InboxIssueMainContent
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              inboxId={inboxId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              is_editable={is_editable}
-            />
-          </div>
-          <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
-            <InboxIssueDetailsSidebar
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              is_editable={is_editable}
-            />
-          </div>
-        </div>
-      )}
-    </>
+    <div className="flex h-full overflow-hidden">
+      <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+        <InboxIssueMainContent
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          inboxId={inboxId}
+          issueId={issueId}
+          issueOperations={issueOperations}
+          is_editable={is_editable}
+        />
+      </div>
+      <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
+        <InboxIssueDetailsSidebar
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          issueOperations={issueOperations}
+          is_editable={is_editable}
+        />
+      </div>
+    </div>
   );
 };

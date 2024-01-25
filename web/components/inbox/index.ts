@@ -3,6 +3,8 @@ export * from "./modals";
 export * from "./inbox-issue-actions";
 export * from "./inbox-issue-status";
 
+export * from "./content/root";
+
 export * from "./sidebar/root";
 
 export * from "./sidebar/filter/filter-selection";

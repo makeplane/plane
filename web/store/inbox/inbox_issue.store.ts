@@ -16,9 +16,9 @@ import type {
   TInboxIssueExtendedDetail,
   TInboxDetailedStatus,
   TIssue,
-  TLoader,
 } from "@plane/types";
-// constants
+
+type TLoader = "init-loader" | "mutation" | undefined;
 
 export interface IInboxIssue {
   // observables
@@ -29,7 +29,12 @@ export interface IInboxIssue {
   getInboxIssuesByInboxId: (inboxId: string) => string[] | undefined;
   getInboxIssueByIssueId: (inboxId: string, issueId: string) => TInboxIssueDetail | undefined;
   // actions
-  fetchInboxIssues: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<TInboxIssueExtendedDetail[]>;
+  fetchInboxIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    loaderType?: TLoader
+  ) => Promise<TInboxIssueExtendedDetail[]>;
   fetchInboxIssueById: (
     workspaceSlug: string,
     projectId: string,
@@ -102,9 +107,14 @@ export class InboxIssue implements IInboxIssue {
   });
 
   // actions
-  fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
+  fetchInboxIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    loaderType: TLoader = "init-loader"
+  ) => {
     try {
-      this.loader = "init-loader";
+      this.loader = loaderType;
       const queryParams = this.rootStore.inbox.inboxFilter.inboxAppliedFilters ?? {};
 
       const response = await this.inboxIssueService.fetchInboxIssues(workspaceSlug, projectId, inboxId, queryParams);

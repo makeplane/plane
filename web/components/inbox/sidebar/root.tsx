@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { Inbox } from "lucide-react";
+import { observer } from "mobx-react";
 // hooks
 import { useInboxIssues } from "hooks/store";
 // ui
@@ -13,7 +14,7 @@ type TInboxSidebarRoot = {
   inboxId: string;
 };
 
-export const InboxSidebarRoot: FC<TInboxSidebarRoot> = (props) => {
+export const InboxSidebarRoot: FC<TInboxSidebarRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxId } = props;
   // store hooks
   const {
@@ -38,7 +39,7 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = (props) => {
         <InboxIssueAppliedFilter workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
       </div>
 
-      {loader === "init-loader" ? (
+      {loader && ["init-loader", "mutation"].includes(loader) ? (
         <Loader className="flex flex-col h-full gap-5 p-5">
           <Loader.Item height="30px" />
           <Loader.Item height="30px" />
@@ -52,4 +53,4 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = (props) => {
       )}
     </div>
   );
-};
+});
