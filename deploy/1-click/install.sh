@@ -689,7 +689,7 @@ USE_GLOBAL_IMAGES=1
 
 mkdir -p $PLANE_INSTALL_DIR/{data,log}
 
-show_message "Triggering ... $0"
+show_message "Triggering ... $O"
 if [ -f "$0" ]; then
     cp "$0" /usr/local/bin/plane-app &> /dev/null
     chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
@@ -718,4 +718,4 @@ else
     show_help
 fi
 
-# curl -o- https://raw.githubusercontent.com/makeplane/plane/mg-1-click-test-1/deploy/1-click/install.sh | bash -
+# curl  -o- https://raw.githubusercontent.com/makeplane/plane/mg-1-click-test-1/deploy/1-click/install.sh?token=$(date +%s) | bash -
