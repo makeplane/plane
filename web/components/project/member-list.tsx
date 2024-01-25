@@ -23,6 +23,8 @@ export const ProjectMemberList: React.FC = observer(() => {
   const searchedMembers = (projectMemberIds ?? []).filter((userId) => {
     const memberDetails = getProjectMemberDetails(userId);
 
+    if (!memberDetails?.member) return false;
+
     const fullName = `${memberDetails?.member.first_name} ${memberDetails?.member.last_name}`.toLowerCase();
     const displayName = memberDetails?.member.display_name.toLowerCase();
 
