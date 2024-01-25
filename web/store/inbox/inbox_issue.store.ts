@@ -152,7 +152,7 @@ export class InboxIssue implements IInboxIssue {
 
       runInAction(() => {
         const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
-        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        this.rootStore.inbox.rootStore.issue.issues.updateIssue(issue.id, issue);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
       });
@@ -217,7 +217,7 @@ export class InboxIssue implements IInboxIssue {
 
       runInAction(() => {
         const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
-        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        this.rootStore.inbox.rootStore.issue.issues.updateIssue(issue.id, issue);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
       });
@@ -243,6 +243,7 @@ export class InboxIssue implements IInboxIssue {
       runInAction(() => {
         pull(this.inboxIssues[inboxId], inboxIssueId);
         delete this.inboxIssueMap[inboxId][inboxIssueId];
+        this.rootStore.inbox.rootStore.issue.issues.removeIssue(inboxIssueId);
         update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) => count - 1);
       });
 
@@ -275,7 +276,6 @@ export class InboxIssue implements IInboxIssue {
         this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
-
         update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) =>
           data.status === pendingStatus ? count + 1 : count - 1
         );
