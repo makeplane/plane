@@ -117,12 +117,13 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const cycleIssueIds = this.issues[cycleId] ?? [];
+    const cycleIssueIds = this.issues[cycleId];
+    if (!cycleIssueIds) return;
 
     const _issues = this.rootIssueStore.issues.getIssuesByIds(cycleIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
