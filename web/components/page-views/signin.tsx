@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";

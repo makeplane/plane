@@ -4,6 +4,7 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 // constants
@@ -28,10 +29,11 @@ Router.events.on("routeChangeComplete", NProgress.done);
 
 export interface IAppProvider {
   children: ReactNode;
+  session: any;
 }
 
 export const AppProvider: FC<IAppProvider> = observer((props) => {
-  const { children } = props;
+  const { children, session } = props;
   // store hooks
   const {
     currentUser,
@@ -42,24 +44,26 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   } = useApplication();
 
   return (
-    <ThemeProvider themes={THEMES} defaultTheme="system">
-      <ToastContextProvider>
-        <InstanceLayout>
-          <StoreWrapper>
-            <CrispWrapper user={currentUser}>
-              <PosthogWrapper
-                user={currentUser}
-                workspaceRole={currentWorkspaceRole}
-                projectRole={currentProjectRole}
-                posthogAPIKey={envConfig?.posthog_api_key || null}
-                posthogHost={envConfig?.posthog_host || null}
-              >
-                <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PosthogWrapper>
-            </CrispWrapper>
-          </StoreWrapper>
-        </InstanceLayout>
-      </ToastContextProvider>
-    </ThemeProvider>
+    <SessionProvider session={session}>
+      <ThemeProvider themes={THEMES} defaultTheme="system">
+        <ToastContextProvider>
+          <InstanceLayout>
+            <StoreWrapper>
+              <CrispWrapper user={currentUser}>
+                <PosthogWrapper
+                  user={currentUser}
+                  workspaceRole={currentWorkspaceRole}
+                  projectRole={currentProjectRole}
+                  posthogAPIKey={envConfig?.posthog_api_key || null}
+                  posthogHost={envConfig?.posthog_host || null}
+                >
+                  <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+                </PosthogWrapper>
+              </CrispWrapper>
+            </StoreWrapper>
+          </InstanceLayout>
+        </ToastContextProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
 });
