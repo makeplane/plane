@@ -2,6 +2,7 @@
 import os
 import uuid
 import json
+from datetime import datetime
 
 # Django imports
 from django.utils import timezone
@@ -25,6 +26,8 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMemberInvite,
     ProjectMember,
+    Account,
+    Profile,
 )
 from plane.settings.redis import redis_instance
 from plane.license.models import Instance
@@ -444,3 +447,116 @@ class MagicSignInEndpoint(BaseAPIView):
                 {"error": "The magic code/link has expired please try again"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class GoogleAuthEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        email = request.data.get("email", False)
+        # Check email
+        if not email:
+            return Response({"error": "email is requrired"})
+
+        # Validate email
+        email = email.strip().lower()
+        try:
+            validate_email(email)
+        except ValidationError as e:
+            return Response(
+                {"error": "Please provide a valid email address."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Filter the user
+        user = User.objects.filter(email=email).first()
+
+        # Sign In
+        if user:
+            # Get or create the user account
+            account, created = Account.objects.get_or_create(
+                user=user,
+                provider="google",
+                defaults={
+                    "provider_account_id": request.data.get(
+                        "provider_account_id"
+                    ),
+                    "access_token": request.data.get("access_token"),
+                    "refresh_token": request.data.get("refresh_token", None),
+                    "access_token_expired_at": datetime.fromtimestamp(
+                        request.data.get("access_token_expired_at")
+                    )
+                    if request.data.get("access_token_expired_at")
+                    else None,
+                    "refresh_token_expired_at": datetime.fromtimestamp(
+                        request.data.get("refresh_token_expired_at")
+                    )
+                    if request.data.get("refresh_token_expired_at")
+                    else None,
+                },
+            )
+            if not created:
+                # account access and refresh token
+                account.access_token = request.data.get("access_token")
+                account.access_token_expired_at = (
+                    datetime.fromtimestamp(
+                        request.data.get("access_token_expired_at")
+                    )
+                    if request.data.get("access_token_expired_at")
+                    else None
+                )
+                account.metadata = request.data.get("metadata", {})
+
+            # last connected at
+            account.last_connected_at = timezone.now()
+            account.save()
+
+            # Update user creds
+            user.last_active = timezone.now()
+            user.last_login_time = timezone.now()
+            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+            user.token_updated_at = timezone.now()
+
+            access_token, refresh_token = get_tokens_for_user(user)
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+        # Sign Up
+        else:
+            user = User.objects.create(email=email, username=uuid.uuid4().hex)
+            user.set_password(uuid.uuid4().hex)
+
+            account= Account.objects.create(
+                user=user,
+                provider="google",
+                provider_account_id=request.data.get("provider_account_id"),
+                access_token=request.data.get("access_token"),
+                access_token_expired_at=datetime.fromtimestamp(
+                    request.data.get("access_token_expired_at")
+                )
+                if request.data.get("access_token_expired_at")
+                else None,
+                refresh_token=request.data.get("refresh_token", None),
+                refresh_token_expired_at=datetime.fromtimestamp(
+                    request.data.get("refresh_token_expired_at")
+                )
+                if request.data.get("refresh_token_expired_at")
+                else None,
+                metadata=request.data.get("metadata", {})
+            )
+
+            _ = Profile.objects.create(user=user)
+
+            access_token, refresh_token = get_tokens_for_user(user)
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            }
+
+            return Response(data, status=status.HTTP_200_OK)

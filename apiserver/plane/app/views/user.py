@@ -9,10 +9,19 @@ from plane.app.serializers import (
     IssueActivitySerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
+    ProfileSerializer,
+    AccountSerializer,
 )
 
 from plane.app.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember
+from plane.db.models import (
+    Account,
+    User,
+    IssueActivity,
+    WorkspaceMember,
+    ProjectMember,
+    Profile,
+)
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 
@@ -131,24 +140,29 @@ class UserEndpoint(BaseViewSet):
 
         # Deactivate the user
         user.is_active = False
-        user.last_workspace_id = None
-        user.is_tour_completed = False
-        user.is_onboarded = False
-        user.onboarding_step = {
+
+        # Profile updates
+        profile = Profile.objects.get(user=user)
+
+        profile.last_workspace_id = None
+        profile.is_tour_completed = False
+        profile.is_onboarded = False
+        profile.onboarding_step = {
             "workspace_join": False,
             "profile_complete": False,
             "workspace_create": False,
             "workspace_invite": False,
         }
+        profile.save()
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
     def patch(self, request):
-        user = User.objects.get(pk=request.user.id, is_active=True)
-        user.is_onboarded = request.data.get("is_onboarded", False)
-        user.save()
+        profile = Profile.objects.get(user_id=request.user.id)
+        profile.is_onboarded = request.data.get("is_onboarded", False)
+        profile.save()
         return Response(
             {"message": "Updated successfully"}, status=status.HTTP_200_OK
         )
@@ -156,9 +170,11 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
     def patch(self, request):
-        user = User.objects.get(pk=request.user.id, is_active=True)
-        user.is_tour_completed = request.data.get("is_tour_completed", False)
-        user.save()
+        profile = Profile.objects.get(user_id=request.user.id, is_active=True)
+        profile.is_tour_completed = request.data.get(
+            "is_tour_completed", False
+        )
+        profile.save()
         return Response(
             {"message": "Updated successfully"}, status=status.HTTP_200_OK
         )
@@ -177,3 +193,18 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
+
+
+class ProfileEndpoint(BaseAPIView):
+    def get(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AccountEndpoint(BaseAPIView):
+
+    def get(self, request):
+        accounts = Account.objects.filter(user=request.user)
+        serializer = AccountSerializer(accounts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

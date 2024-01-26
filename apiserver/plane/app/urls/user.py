@@ -3,6 +3,8 @@ from django.urls import path
 from plane.app.views import (
     ## User
     UserEndpoint,
+    ProfileEndpoint,
+    AccountEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
@@ -38,6 +40,16 @@ urlpatterns = [
             }
         ),
         name="users",
+    ),
+    path(
+        "users/me/profile/",
+        ProfileEndpoint.as_view(),
+        name="accounts",
+    ),
+    path(
+        "users/me/accounts/",
+        AccountEndpoint.as_view(),
+        name="accounts",
     ),
     path(
         "users/me/instance-admin/",

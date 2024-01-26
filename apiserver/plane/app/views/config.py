@@ -245,3 +245,50 @@ class MobileConfigurationEndpoint(BaseAPIView):
         )
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class AuthConfigurationEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        # Get all the configuration
+        (
+            GOOGLE_CLIENT_ID,
+            GITHUB_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET,
+            GITHUB_CLIENT_SECRET,
+        ) = get_configuration_value(
+            [
+                {
+                    "key": "GOOGLE_CLIENT_ID",
+                    "default": os.environ.get("GOOGLE_CLIENT_ID", None),
+                },
+                {
+                    "key": "GITHUB_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_CLIENT_ID", None),
+                },
+                {
+                    "key": "GOOGLE_CLIENT_SECRET",
+                    "default": os.environ.get("GOOGLE_CLIENT_SECRET", None),
+                },
+                {
+                    "key": "GITHUB_CLIENT_SECRET",
+                    "default": os.environ.get("GITHUB_CLIENT_SECRET", None),
+                },
+            ]
+        )
+
+        data = {
+            "github": {
+                "client_id": GITHUB_CLIENT_ID,
+                "client_secret": GITHUB_CLIENT_SECRET,
+            },
+            "google": {
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+            },
+        }
+
+        return Response(data, status=status.HTTP_200_OK)

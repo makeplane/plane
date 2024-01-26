@@ -11,6 +11,7 @@ from plane.app.views import (
     MagicSignInEndpoint,
     OauthEndpoint,
     EmailCheckEndpoint,
+    GoogleAuthEndpoint,
     ## End Authentication
     # Auth Extended
     ForgotPasswordEndpoint,
@@ -62,4 +63,7 @@ urlpatterns = [
         "api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"
     ),
     ## End API Tokens
+
+    ## Google
+    path("auth/google/", GoogleAuthEndpoint.as_view(), name="google-auth"),
 ]

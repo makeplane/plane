@@ -73,6 +73,7 @@ from plane.db.models import (
     WorkspaceUserProperties,
     Estimate,
     EstimatePoint,
+    Profile,
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -428,8 +429,10 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                             role=workspace_invite.role,
                         )
 
+
+                    profile = Profile.objects.get(user=user)
                     # Set the user last_workspace_id to the accepted workspace
-                    user.last_workspace_id = workspace_invite.workspace.id
+                    profile.last_workspace_id = workspace_invite.workspace.id
                     user.save()
 
                     # Delete the invitation
@@ -845,9 +848,9 @@ class TeamMemberViewSet(BaseViewSet):
 
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
     def get(self, request):
-        user = User.objects.get(pk=request.user.id)
+        profile = Profile.objects.get(user_id=request.user.id)
 
-        last_workspace_id = user.last_workspace_id
+        last_workspace_id = profile.last_workspace_id
 
         if last_workspace_id is None:
             return Response(

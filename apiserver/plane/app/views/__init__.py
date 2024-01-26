@@ -18,6 +18,8 @@ from .user import (
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
+    ProfileEndpoint,
+    AccountEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -101,6 +103,7 @@ from .authentication import (
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
+    GoogleAuthEndpoint,
 )
 
 from .module import (
@@ -172,7 +175,11 @@ from .notification import (
 
 from .exporter import ExportIssuesEndpoint
 
-from .config import ConfigurationEndpoint, MobileConfigurationEndpoint
+from .config import (
+    ConfigurationEndpoint,
+    MobileConfigurationEndpoint,
+    AuthConfigurationEndpoint,
+)
 
 from .webhook import (
     WebhookEndpoint,
@@ -180,7 +187,4 @@ from .webhook import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .dashboard import (
-    DashboardEndpoint,
-    WidgetsEndpoint
-)
+from .dashboard import DashboardEndpoint, WidgetsEndpoint

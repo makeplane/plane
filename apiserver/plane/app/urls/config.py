@@ -1,7 +1,11 @@
 from django.urls import path
 
 
-from plane.app.views import ConfigurationEndpoint, MobileConfigurationEndpoint
+from plane.app.views import (
+    ConfigurationEndpoint,
+    MobileConfigurationEndpoint,
+    AuthConfigurationEndpoint,
+)
 
 urlpatterns = [
     path(
@@ -12,6 +16,11 @@ urlpatterns = [
     path(
         "mobile-configs/",
         MobileConfigurationEndpoint.as_view(),
-        name="configuration",
+        name="mobile-configuration",
+    ),
+    path(
+        "auth-configs/",
+        AuthConfigurationEndpoint.as_view(),
+        name="auth-configuration",
     ),
 ]
