@@ -50,8 +50,8 @@ export const GitHubSignInButton: FC<Props> = (props) => {
         >
           <Image
             src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
-            height={20}
-            width={20}
+            height={18}
+            width={18}
             alt="GitHub Logo"
           />
           <span className="text-onboarding-text-200">{type === "sign_in" ? "Sign-in" : "Sign-up"} with GitHub</span>
