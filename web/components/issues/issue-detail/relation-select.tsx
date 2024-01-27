@@ -90,6 +90,8 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
   return (
     <>
       <ExistingIssuesListModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
         isOpen={isRelationModalOpen === relationKey}
         handleClose={() => toggleRelationModal(null)}
         searchParams={{ issue_relation: true, issue_id: issueId }}
