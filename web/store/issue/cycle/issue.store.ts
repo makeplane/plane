@@ -3,6 +3,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import uniq from "lodash/uniq";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -165,7 +166,6 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      console.log(error);
       this.loader = undefined;
       throw error;
     }
@@ -267,10 +267,12 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       });
 
       runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds) => {
-          if (!cycleIssueIds) return [...issueIds];
-          else return concat(cycleIssueIds, [...issueIds]);
+        update(this.issues, cycleId, (cycleIssueIds = []) => {
+          uniq(concat(cycleIssueIds, issueIds));
         });
+      });
+      issueIds.forEach((issueId) => {
+        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
       });
 
       return issueToCycle;
@@ -332,7 +334,6 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      console.log(error);
       this.loader = undefined;
       throw error;
     }

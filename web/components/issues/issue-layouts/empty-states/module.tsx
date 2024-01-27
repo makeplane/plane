@@ -65,6 +65,8 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   return (
     <>
       <ExistingIssuesListModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
         searchParams={{ module: true }}
