@@ -120,17 +120,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          console.log("init");
-          console.log("workspaceSlug", workspaceSlug);
-          console.log("projectId", projectId);
-          console.log("cycleId", cycleId);
-          console.log("issueIds", issueIds);
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds)
             .then(() => {
-              issueIds.map((issueId) => {
-                updateIssue(workspaceSlug, projectId, issueId, { cycle_id: cycleId });
-                fetchIssue(workspaceSlug, projectId, issueId, is_archived);
-              });
               setToastAlert({
                 title: "Cycle added to issue successfully",
                 type: "success",
@@ -172,10 +163,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
         try {
           await addIssueToModule(workspaceSlug, projectId, moduleId, issueIds)
             .then(() => {
-              issueIds.map((issueId) => {
-                updateIssue(workspaceSlug, projectId, issueId, { module_id: moduleId });
-                fetchIssue(workspaceSlug, projectId, issueId, is_archived);
-              });
               setToastAlert({
                 title: "Module added to issue successfully",
                 type: "success",
