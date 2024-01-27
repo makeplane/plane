@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
 // services
@@ -13,6 +12,8 @@ import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
 type Props = {
+  workspaceSlug: string | undefined;
+  projectId: string | undefined;
   isOpen: boolean;
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;
@@ -23,7 +24,15 @@ type Props = {
 const projectService = new ProjectService();
 
 export const ExistingIssuesListModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose: onClose, searchParams, handleOnSubmit, workspaceLevelToggle = false } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    isOpen,
+    handleClose: onClose,
+    searchParams,
+    handleOnSubmit,
+    workspaceLevelToggle = false,
+  } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
@@ -33,9 +42,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 

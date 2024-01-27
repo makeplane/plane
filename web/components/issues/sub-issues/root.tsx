@@ -369,6 +369,8 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
 
           {issueCrudState?.existing?.toggle && issueCrudState?.existing?.parentIssueId && (
             <ExistingIssuesListModal
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               isOpen={issueCrudState?.existing?.toggle}
               handleClose={() => handleIssueCrudState("existing", null, null)}
               searchParams={{ sub_issue: true, issue_id: issueCrudState?.existing?.parentIssueId }}
