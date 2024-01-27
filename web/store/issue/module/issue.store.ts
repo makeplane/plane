@@ -260,19 +260,12 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       });
 
       runInAction(() => {
-        update(this.issues, moduleId, (moduleIssueIds) => {
-          if (!moduleIssueIds) return [...issueIds];
-          else return concat(moduleIssueIds, [...issueIds]);
-        });
-      });
-
-      runInAction(() => {
         update(this.issues, moduleId, (moduleIssueIds = []) => {
           uniq(concat(moduleIssueIds, issueIds));
         });
       });
       issueIds.forEach((issueId) => {
-        this.rootStore.issues.updateIssue(issueId, { cycle_id: moduleId });
+        this.rootStore.issues.updateIssue(issueId, { module_id: moduleId });
       });
 
       return issueToModule;
