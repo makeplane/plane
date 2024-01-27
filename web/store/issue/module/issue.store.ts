@@ -3,6 +3,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import uniq from "lodash/uniq";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -259,10 +260,12 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       });
 
       runInAction(() => {
-        update(this.issues, moduleId, (moduleIssueIds) => {
-          if (!moduleIssueIds) return [...issueIds];
-          else return concat(moduleIssueIds, [...issueIds]);
+        update(this.issues, moduleId, (moduleIssueIds = []) => {
+          uniq(concat(moduleIssueIds, issueIds));
         });
+      });
+      issueIds.forEach((issueId) => {
+        this.rootStore.issues.updateIssue(issueId, { module_id: moduleId });
       });
 
       return issueToModule;

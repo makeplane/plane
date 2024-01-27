@@ -120,23 +120,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds)
-            .then((res) => {
-              updateIssue(workspaceSlug, projectId, res.id, res);
-              fetchIssue(workspaceSlug, projectId, res.id);
-              setToastAlert({
-                title: "Cycle added to issue successfully",
-                type: "success",
-                message: "Issue added to issue successfully",
-              });
-            })
-            .catch(() => {
-              setToastAlert({
-                type: "error",
-                title: "Error!",
-                message: "Selected issues could not be added to the cycle. Please try again.",
-              });
-            });
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          setToastAlert({
+            title: "Cycle added to issue successfully",
+            type: "success",
+            message: "Issue added to issue successfully",
+          });
         } catch (error) {
           setToastAlert({
             title: "Cycle add to issue failed",
@@ -163,23 +152,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
       },
       addIssueToModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
         try {
-          await addIssueToModule(workspaceSlug, projectId, moduleId, issueIds)
-            .then((res) => {
-              updateIssue(workspaceSlug, projectId, res.id, res);
-              fetchIssue(workspaceSlug, projectId, res.id);
-              setToastAlert({
-                title: "Module added to issue successfully",
-                type: "success",
-                message: "Module added to issue successfully",
-              });
-            })
-            .catch(() =>
-              setToastAlert({
-                type: "error",
-                title: "Error!",
-                message: "Selected issues could not be added to the module. Please try again.",
-              })
-            );
+          await addIssueToModule(workspaceSlug, projectId, moduleId, issueIds);
+          setToastAlert({
+            title: "Module added to issue successfully",
+            type: "success",
+            message: "Module added to issue successfully",
+          });
         } catch (error) {
           setToastAlert({
             title: "Module add to issue failed",
