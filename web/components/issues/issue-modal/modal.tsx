@@ -108,11 +108,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     fetchCycleDetails(workspaceSlug, activeProjectId, cycleId);
   };
 
-  const addIssueToModule = async (issue: TIssue, moduleId: string) => {
+  const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
     if (!workspaceSlug || !activeProjectId) return;
 
-    await moduleIssues.addIssueToModule(workspaceSlug, activeProjectId, moduleId, [issue.id]);
-    fetchModuleDetails(workspaceSlug, activeProjectId, moduleId);
+    await moduleIssues.addModulesToIssue(workspaceSlug, activeProjectId, issue.id, moduleIds);
+    moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug, activeProjectId, moduleId));
   };
 
   const handleCreateMoreToggleChange = (value: boolean) => {
@@ -139,8 +139,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
-      if (payload.module_id && payload.module_id !== "" && storeType !== EIssuesStoreType.MODULE)
-        await addIssueToModule(response, payload.module_id);
+      if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
+        await addIssueToModule(response, payload.module_ids);
 
       setToastAlert({
         type: "success",
@@ -272,13 +272,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full mx-4 sm:max-w-4xl">
-                {withDraftIssueWrapper ? (
+                {/* TODO: --issue-module_ids-- */}
+                {/* {withDraftIssueWrapper ? (
                   <DraftIssueLayout
                     changesMade={changesMade}
                     data={{
                       ...data,
                       cycle_id: cycleId ?? null,
-                      module_id: moduleId ?? null,
+                      module_ids: [moduleId] ?? null,
                     }}
                     onChange={handleFormChange}
                     onClose={handleClose}
@@ -292,7 +293,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     data={{
                       ...data,
                       cycle_id: cycleId ?? null,
-                      module_id: moduleId ?? null,
+                      module_ids: [moduleId] ?? null,
                     }}
                     onClose={() => handleClose(false)}
                     isCreateMoreToggleEnabled={createMore}
@@ -300,7 +301,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     onSubmit={handleFormSubmit}
                     projectId={activeProjectId}
                   />
-                )}
+                )} */}
               </Dialog.Panel>
             </Transition.Child>
           </div>

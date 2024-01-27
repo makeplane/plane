@@ -46,11 +46,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
     await issues
-      .addIssueToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
-      .then((res) => {
-        updateIssue(workspaceSlug, projectId, res.id, res);
-        fetchIssue(workspaceSlug, projectId, res.id);
-      })
+      .addIssuesToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
       .catch(() =>
         setToastAlert({
           type: "error",
