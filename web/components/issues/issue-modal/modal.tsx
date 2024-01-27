@@ -272,14 +272,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full mx-4 sm:max-w-4xl">
-                {/* TODO: --issue-module_ids-- */}
-                {/* {withDraftIssueWrapper ? (
+                {withDraftIssueWrapper ? (
                   <DraftIssueLayout
                     changesMade={changesMade}
                     data={{
                       ...data,
                       cycle_id: cycleId ?? null,
-                      module_ids: [moduleId] ?? null,
+                      module_ids: moduleId != undefined ? [moduleId] : undefined,
                     }}
                     onChange={handleFormChange}
                     onClose={handleClose}
@@ -293,7 +292,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     data={{
                       ...data,
                       cycle_id: cycleId ?? null,
-                      module_ids: [moduleId] ?? null,
+                      module_ids: moduleId != undefined ? [moduleId] : undefined,
                     }}
                     onClose={() => handleClose(false)}
                     isCreateMoreToggleEnabled={createMore}
@@ -301,7 +300,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     onSubmit={handleFormSubmit}
                     projectId={activeProjectId}
                   />
-                )} */}
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>
