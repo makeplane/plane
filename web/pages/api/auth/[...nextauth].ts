@@ -2,6 +2,10 @@ import axios from "axios";
 import NextAuth from "next-auth/next";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+// services
+import { AuthService } from "services/auth.service";
+const authService = new AuthService();
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL : "";
 
@@ -80,6 +84,25 @@ const authHandler = async (req: any, res: any) => {
       clientId: configs?.google?.client_id || "",
       clientSecret: configs?.google?.client_secret || "",
     }),
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   credentials: {
+    //     username: { label: "Username", type: "text", placeholder: "jsmith" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   authorize: async (credentials, req) => {
+    //     const response: any = await authService.passwordSignIn({
+    //       email: credentials?.username || "",
+    //       password: credentials?.password || "",
+    //     });
+
+    //     if (response?.access_token) {
+    //       return { token: response?.access_token };
+    //     } else {
+    //       return;
+    //     }
+    //   },
+    // }),
   ];
 
   const callbacks = {
