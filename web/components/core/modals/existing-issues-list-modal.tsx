@@ -12,8 +12,8 @@ import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
 type Props = {
-  workspaceSlug: string;
-  projectId: string;
+  workspaceSlug: string | undefined;
+  projectId: string | undefined;
   isOpen: boolean;
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;

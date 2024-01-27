@@ -65,6 +65,8 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   return (
     <>
       <ExistingIssuesListModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
         searchParams={{ cycle: true }}
