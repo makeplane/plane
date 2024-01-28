@@ -52,7 +52,11 @@ export const SignInRoot = observer(() => {
     await handleRedirection();
   };
 
-  const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
+  const isOAuthEnabled =
+    envConfig &&
+    (envConfig.google_client_id ||
+      envConfig.github_client_id ||
+      (envConfig.oidc_client_id && envConfig.oidc_url_authorize));
 
   useEffect(() => {
     if (isSmtpConfigured) setSignInStep(ESignInSteps.EMAIL);
@@ -61,49 +65,53 @@ export const SignInRoot = observer(() => {
 
   return (
     <>
-      <div className="mx-auto flex flex-col">
-        <>
-          {signInStep === ESignInSteps.EMAIL && (
-            <SignInEmailForm onSubmit={handleEmailVerification} updateEmail={(newEmail) => setEmail(newEmail)} />
-          )}
-          {signInStep === ESignInSteps.UNIQUE_CODE && (
-            <SignInUniqueCodeForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              onSubmit={handleUniqueCodeSignIn}
-              submitButtonText="Continue"
-            />
-          )}
-          {signInStep === ESignInSteps.PASSWORD && (
-            <SignInPasswordForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              onSubmit={handlePasswordSignIn}
-              handleStepChange={(step) => setSignInStep(step)}
-            />
-          )}
-          {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
-            <SignInUniqueCodeForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              onSubmit={handleUniqueCodeSignIn}
-              submitButtonText="Go to workspace"
-            />
-          )}
-          {signInStep === ESignInSteps.OPTIONAL_SET_PASSWORD && (
-            <SignInOptionalSetPasswordForm email={email} handleSignInRedirection={handleRedirection} />
-          )}
-        </>
-      </div>
+      {envConfig?.oidc_auto ? (
+        <></>
+      ) : (
+        <div className="mx-auto flex flex-col">
+          <>
+            {signInStep === ESignInSteps.EMAIL && (
+              <SignInEmailForm onSubmit={handleEmailVerification} updateEmail={(newEmail) => setEmail(newEmail)} />
+            )}
+            {signInStep === ESignInSteps.UNIQUE_CODE && (
+              <SignInUniqueCodeForm
+                email={email}
+                handleEmailClear={() => {
+                  setEmail("");
+                  setSignInStep(ESignInSteps.EMAIL);
+                }}
+                onSubmit={handleUniqueCodeSignIn}
+                submitButtonText="Continue"
+              />
+            )}
+            {signInStep === ESignInSteps.PASSWORD && (
+              <SignInPasswordForm
+                email={email}
+                handleEmailClear={() => {
+                  setEmail("");
+                  setSignInStep(ESignInSteps.EMAIL);
+                }}
+                onSubmit={handlePasswordSignIn}
+                handleStepChange={(step) => setSignInStep(step)}
+              />
+            )}
+            {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
+              <SignInUniqueCodeForm
+                email={email}
+                handleEmailClear={() => {
+                  setEmail("");
+                  setSignInStep(ESignInSteps.EMAIL);
+                }}
+                onSubmit={handleUniqueCodeSignIn}
+                submitButtonText="Go to workspace"
+              />
+            )}
+            {signInStep === ESignInSteps.OPTIONAL_SET_PASSWORD && (
+              <SignInOptionalSetPasswordForm email={email} handleSignInRedirection={handleRedirection} />
+            )}
+          </>
+        </div>
+      )}
       {isOAuthEnabled &&
         (signInStep === ESignInSteps.EMAIL || (!isSmtpConfigured && signInStep === ESignInSteps.PASSWORD)) && (
           <>

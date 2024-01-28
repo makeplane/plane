@@ -30,6 +30,7 @@ export const InstanceSidebarDropdown = observer(() => {
   const router = useRouter();
   // store hooks
   const {
+    config: { envConfig },
     theme: { sidebarCollapsed },
     router: { workspaceSlug },
   } = useApplication();
@@ -50,7 +51,8 @@ export const InstanceSidebarDropdown = observer(() => {
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
-        router.push("/");
+        if (envConfig?.oidc_url_endsession) router.push(envConfig.oidc_url_endsession);
+        else router.push("/");
       })
       .catch(() =>
         setToastAlert({

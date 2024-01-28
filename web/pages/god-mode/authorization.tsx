@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
-import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm, InstanceOidcConfigForm } from "components/instance";
 
 const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   // store
@@ -34,7 +34,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   // const enableEmailPassword = formattedConfig?.ENABLE_EMAIL_PASSWORD ?? "0";
 
   const updateConfig = async (
-    key: "ENABLE_SIGNUP" | "ENABLE_MAGIC_LINK_LOGIN" | "ENABLE_EMAIL_PASSWORD",
+    key: "ENABLE_SIGNUP" | "ENABLE_MAGIC_LINK_LOGIN" | "ENABLE_EMAIL_PASSWORD" | "OIDC_AUTO",
     value: string
   ) => {
     setIsSubmitting(true);
@@ -162,6 +162,14 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
               </div>
               <div className="px-2 py-6">
                 <InstanceGithubConfigForm config={formattedConfig} />
+              </div>
+            </div>
+            <div className="w-full">
+              <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
+                <span className="text-lg font-medium tracking-tight">OpenID Connect</span>
+              </div>
+              <div className="px-2 py-6">
+                <InstanceOidcConfigForm config={formattedConfig} updateConfig={updateConfig} isSubmittingAuto={isSubmitting} />
               </div>
             </div>
           </div>

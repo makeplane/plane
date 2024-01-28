@@ -7,6 +7,7 @@ from django.conf import settings
 
 # Module imports
 from plane.license.models import InstanceConfiguration
+from plane.app.views.oidc import get_endpoint_information
 
 
 class Command(BaseCommand):
@@ -53,6 +54,56 @@ class Command(BaseCommand):
                 "category": "GITHUB",
                 "is_encrypted": True,
             },
+            # OIDC Block START - Don't change the order!!!
+            {
+                "key": "OIDC_AUTO",
+                "value": os.environ.get("OIDC_AUTO", "0"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_DISCOVERY",
+                "value": os.environ.get("OIDC_DISCOVERY"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_CLIENT_ID",
+                "value": os.environ.get("OIDC_CLIENT_ID"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_CLIENT_SECRET",
+                "value": os.environ.get("OIDC_CLIENT_SECRET"),
+                "category": "OIDC",
+                "is_encrypted": True,
+            }, 
+            {
+                "key": "OIDC_URL_AUTHORIZATION",
+                "value": os.environ.get("OIDC_URL_AUTHORIZATION"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_URL_TOKEN",
+                "value": os.environ.get("OIDC_URL_TOKEN"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_URL_USERINFO",
+                "value": os.environ.get("OIDC_URL_USERINFO"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_URL_ENDSESSION",
+                "value": os.environ.get("OIDC_URL_ENDSESSION"),
+                "category": "OIDC",
+                "is_encrypted": False,
+            },
+            # OIDC Block END - Don't change the order!!!
             {
                 "key": "EMAIL_HOST",
                 "value": os.environ.get("EMAIL_HOST", ""),
@@ -108,6 +159,22 @@ class Command(BaseCommand):
                 "is_encrypted": True,
             },
         ]
+
+        # Autodiscovery of Settings for OIDC based on the OIDC_DISCOVERY
+        for item in config_keys:
+            if item.get("key") == "OIDC_DISCOVERY" and item.get("value"):
+                (
+                    OIDC_URL_AUTHORIZATION, 
+                    OIDC_URL_TOKEN, 
+                    OIDC_URL_USERINFO, 
+                    OIDC_URL_ENDSESSION
+                ) = get_endpoint_information(item.get("value"))
+                issuer_index = config_keys.index(item)
+                config_keys[issuer_index + 3]["value"] = OIDC_URL_AUTHORIZATION
+                config_keys[issuer_index + 4]["value"] = OIDC_URL_TOKEN
+                config_keys[issuer_index + 5]["value"] = OIDC_URL_USERINFO
+                config_keys[issuer_index + 6]["value"] = OIDC_URL_ENDSESSION
+                config_keys.pop(issuer_index)
 
         for item in config_keys:
             obj, created = InstanceConfiguration.objects.get_or_create(

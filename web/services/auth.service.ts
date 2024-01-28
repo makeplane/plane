@@ -96,6 +96,18 @@ export class AuthService extends APIService {
       });
   }
 
+  async oidcAuth(data: { credential: string, clientId: string }) {
+    return this.post("/api/oidc-auth/", data, { headers: {} })
+      .then((response) => {
+        this.setAccessToken(response?.data?.access_token);
+        this.setRefreshToken(response?.data?.refresh_token);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async generateUniqueCode(data: { email: string }): Promise<any> {
     return this.post("/api/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
