@@ -10,13 +10,13 @@ import {
 // types
 import { ICycle } from "@plane/types";
 
-export type ActiveCycleInfoProps = {
+export type ActiveCycleInfoCardProps = {
   cycle: ICycle;
   workspaceSlug: string;
   projectId: string;
 };
 
-export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
+export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
 
   return (
