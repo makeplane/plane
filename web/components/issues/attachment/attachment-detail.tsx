@@ -38,7 +38,6 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
   const attachment = attachmentId && getAttachmentById(attachmentId);
 
   if (!attachment) return <></>;
-
   return (
     <>
       <IssueAttachmentDeleteModal
