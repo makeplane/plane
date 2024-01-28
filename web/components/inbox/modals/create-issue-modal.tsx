@@ -1,36 +1,34 @@
-import React, { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Sparkle } from "lucide-react";
+// hooks
+import { useApplication, useWorkspace, useInboxIssues, useMention } from "hooks/store";
+import useToast from "hooks/use-toast";
 // services
 import { FileService } from "services/file.service";
+import { AIService } from "services/ai.service";
 // components
-import { IssuePrioritySelect } from "components/issues/select";
+import { PriorityDropdown } from "components/dropdowns";
+import { GptAssistantPopover } from "components/core";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
-import { IIssue } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
-import { GptAssistantModal } from "components/core";
-import { Sparkle } from "lucide-react";
-import useToast from "hooks/use-toast";
-import { AIService } from "services/ai.service";
+import { TIssue } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const defaultValues: Partial<IIssue> = {
-  project: "",
+const defaultValues: Partial<TIssue> = {
+  project_id: "",
   name: "",
   description_html: "<p></p>",
-  parent: null,
+  parent_id: null,
   priority: "none",
 };
 
@@ -40,30 +38,34 @@ const fileService = new FileService();
 
 export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
-
   // states
   const [createMore, setCreateMore] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
+  // refs
   const editorRef = useRef<any>(null);
-
+  // toast alert
   const { setToastAlert } = useToast();
-  const editorSuggestion = useEditorSuggestions();
-
+  const { mentionHighlights, mentionSuggestions } = useMention();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     inboxId: string;
   };
+  const workspaceStore = useWorkspace();
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
+  // store hooks
   const {
-    inboxIssueDetails: inboxIssueDetailsStore,
-    trackEvent: { postHogEventTracker },
-    appConfig: { envConfig },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    issues: { createInboxIssue },
+  } = useInboxIssues();
+  const {
+    config: { envConfig },
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
 
   const {
     control,
@@ -82,14 +84,13 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
 
   const issueName = watch("name");
 
-  const handleFormSubmit = async (formData: Partial<IIssue>) => {
+  const handleFormSubmit = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
 
-    await inboxIssueDetailsStore
-      .createIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
+    await createInboxIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
       .then((res) => {
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.id}`);
           handleClose();
         } else reset(defaultValues);
         postHogEventTracker(
@@ -101,12 +102,12 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         postHogEventTracker(
           "ISSUE_CREATED",
           {
@@ -115,7 +116,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
       });
@@ -124,7 +125,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {});
+    // setValue("description", {});
     setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     editorRef.current?.setEditorValue(`${watch("description_html")}`);
   };
@@ -169,10 +170,10 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -186,7 +187,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -227,7 +228,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                           />
                         </div>
                         <div className="relative">
-                          <div className="flex justify-end">
+                          <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex rounded bg-custom-background-80">
                             {issueName && issueName !== "" && (
                               <button
                                 type="button"
@@ -246,14 +247,33 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 )}
                               </button>
                             )}
-                            <button
-                              type="button"
-                              className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                              onClick={() => setGptAssistantModal((prevData) => !prevData)}
-                            >
-                              <Sparkle className="h-4 w-4" />
-                              AI
-                            </button>
+
+                            {envConfig?.has_openai_configured && (
+                              <GptAssistantPopover
+                                isOpen={gptAssistantModal}
+                                projectId={projectId}
+                                handleClose={() => {
+                                  setGptAssistantModal((prevData) => !prevData);
+                                  // this is done so that the title do not reset after gpt popover closed
+                                  reset(getValues());
+                                }}
+                                onResponse={(response) => {
+                                  handleAiAssistance(response);
+                                }}
+                                button={
+                                  <button
+                                    type="button"
+                                    className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                                    onClick={() => setGptAssistantModal((prevData) => !prevData)}
+                                  >
+                                    <Sparkle className="h-4 w-4" />
+                                    AI
+                                  </button>
+                                }
+                                className="!min-w-[38rem]"
+                                placement="top-end"
+                              />
+                            )}
                           </div>
                           <Controller
                             name="description_html"
@@ -262,8 +282,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                               <RichTextEditorWithRef
                                 cancelUploadImage={fileService.cancelUpload}
                                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                                deleteFile={fileService.deleteImage}
-                                restoreFile={fileService.restoreImage}
+                                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                                 ref={editorRef}
                                 debouncedUpdatesEnabled={false}
                                 value={!value || value === "" ? "<p></p>" : value}
@@ -271,28 +291,11 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 onChange={(description, description_html: string) => {
                                   onChange(description_html);
                                 }}
-                                mentionSuggestions={editorSuggestion.mentionSuggestions}
-                                mentionHighlights={editorSuggestion.mentionHighlights}
+                                mentionSuggestions={mentionSuggestions}
+                                mentionHighlights={mentionHighlights}
                               />
                             )}
                           />
-                          {envConfig?.has_openai_configured && (
-                            <GptAssistantModal
-                              isOpen={gptAssistantModal}
-                              handleClose={() => {
-                                setGptAssistantModal(false);
-                                // this is done so that the title do not reset after gpt popover closed
-                                reset(getValues());
-                              }}
-                              inset="top-2 left-0"
-                              content=""
-                              htmlContent={watch("description_html")}
-                              onResponse={(response) => {
-                                handleAiAssistance(response);
-                              }}
-                              projectId={projectId}
-                            />
-                          )}
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
@@ -300,7 +303,13 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             control={control}
                             name="priority"
                             render={({ field: { value, onChange } }) => (
-                              <IssuePrioritySelect value={value ?? "none"} onChange={onChange} />
+                              <div className="h-5">
+                                <PriorityDropdown
+                                  value={value ?? "none"}
+                                  onChange={onChange}
+                                  buttonVariant="background-with-text"
+                                />
+                              </div>
                             )}
                           />
                         </div>

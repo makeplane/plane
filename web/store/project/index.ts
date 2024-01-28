@@ -1,6 +1,18 @@
-export * from "./project.store";
-export * from "./project-estimates.store";
-export * from "./project-label.store";
-export * from "./project-members.store";
-export * from "./project-publish.store";
-export * from "./project-state.store";
+import { IProjectStore, ProjectStore } from "./project.store";
+import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
+import { RootStore } from "store/root.store";
+
+export interface IProjectRootStore {
+  project: IProjectStore;
+  publish: IProjectPublishStore;
+}
+
+export class ProjectRootStore {
+  project: IProjectStore;
+  publish: IProjectPublishStore;
+
+  constructor(_root: RootStore) {
+    this.project = new ProjectStore(_root);
+    this.publish = new ProjectPublishStore(this);
+  }
+}

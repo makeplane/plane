@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
@@ -10,11 +10,12 @@
     "packages/eslint-config-custom",
     "packages/tailwind-config-custom",
     "packages/tsconfig",
-    "packages/ui"
+    "packages/ui",
+    "packages/types"
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=13",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
@@ -27,7 +28,7 @@
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
-    "turbo": "^1.11.2"
+    "turbo": "^1.11.3"
   },
   "resolutions": {
     "@types/react": "18.2.42"

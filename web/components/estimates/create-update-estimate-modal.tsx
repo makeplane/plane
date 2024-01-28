@@ -2,18 +2,16 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
+// store hooks
+import { useEstimate } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { IEstimate, IEstimateFormData } from "types";
+import { IEstimate, IEstimateFormData } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -36,16 +34,14 @@ type FormValues = typeof defaultValues;
 
 export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   const { handleClose, data, isOpen } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    projectEstimates: { createEstimate, updateEstimate },
-  } = useMobxStore();
-
+  // store hooks
+  const { createEstimate, updateEstimate } = useEstimate();
+  // form info
+  // toast alert
+  const { setToastAlert } = useToast();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -59,8 +55,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     handleClose();
     reset();
   };
-
-  const { setToastAlert } = useToast();
 
   const handleCreateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;

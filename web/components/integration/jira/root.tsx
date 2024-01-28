@@ -24,7 +24,7 @@ import {
 // assets
 import JiraLogo from "public/services/jira.svg";
 // types
-import { IUser, IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "@plane/types";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -53,14 +53,10 @@ const integrationWorkflowData: Array<{
   },
 ];
 
-type Props = {
-  user: IUser | undefined;
-};
-
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC<Props> = () => {
+export const JiraImporterRoot: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -87,7 +83,7 @@ export const JiraImporterRoot: React.FC<Props> = () => {
         router.push(`/${workspaceSlug}/settings/imports`);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

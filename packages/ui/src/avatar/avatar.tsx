@@ -141,6 +141,7 @@ export const Avatar: React.FC<Props> = (props) => {
               }
             : {}
         }
+        tabIndex={-1}
       >
         {src ? (
           <img src={src} className={`h-full w-full ${getBorderRadius(shape)} ${className}`} alt={name} />

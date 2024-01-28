@@ -1,7 +1,8 @@
 export interface IQuickActionProps {
-  issue: IIssue;
+  issue: TIssue;
   handleDelete: () => Promise<void>;
-  handleUpdate?: (data: IIssue) => Promise<void>;
+  handleUpdate?: (data: TIssue) => Promise<void>;
   handleRemoveFromView?: () => Promise<void>;
   customActionButton?: React.ReactElement;
+  portalElement?: HTMLDivElement | null;
 }

@@ -7,107 +7,308 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0023_auto_20230316_0040'),
+        ("db", "0023_auto_20230316_0040"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Page',
+            name="Page",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.JSONField(blank=True, default=dict)),
-                ('description_html', models.TextField(blank=True, default='<p></p>')),
-                ('description_stripped', models.TextField(blank=True, null=True)),
-                ('access', models.PositiveSmallIntegerField(choices=[(0, 'Public'), (1, 'Private')], default=0)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='page_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('owned_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to=settings.AUTH_USER_MODEL)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.JSONField(blank=True, default=dict)),
+                (
+                    "description_html",
+                    models.TextField(blank=True, default="<p></p>"),
+                ),
+                (
+                    "description_stripped",
+                    models.TextField(blank=True, null=True),
+                ),
+                (
+                    "access",
+                    models.PositiveSmallIntegerField(
+                        choices=[(0, "Public"), (1, "Private")], default=0
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="page_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "owned_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="pages",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Page',
-                'verbose_name_plural': 'Pages',
-                'db_table': 'pages',
-                'ordering': ('-created_at',),
+                "verbose_name": "Page",
+                "verbose_name_plural": "Pages",
+                "db_table": "pages",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='project',
-            name='issue_views_view',
+            model_name="project",
+            name="issue_views_view",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='importer',
-            name='service',
-            field=models.CharField(choices=[('github', 'GitHub'), ('jira', 'Jira')], max_length=50),
+            model_name="importer",
+            name="service",
+            field=models.CharField(
+                choices=[("github", "GitHub"), ("jira", "Jira")], max_length=50
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='cover_image',
+            model_name="project",
+            name="cover_image",
             field=models.URLField(blank=True, max_length=800, null=True),
         ),
         migrations.CreateModel(
-            name='PageBlock',
+            name="PageBlock",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.JSONField(blank=True, default=dict)),
-                ('description_html', models.TextField(blank=True, default='<p></p>')),
-                ('description_stripped', models.TextField(blank=True, null=True)),
-                ('completed_at', models.DateTimeField(null=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='pageblock_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='blocks', to='db.issue')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blocks', to='db.page')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_pageblock', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='pageblock_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_pageblock', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.JSONField(blank=True, default=dict)),
+                (
+                    "description_html",
+                    models.TextField(blank=True, default="<p></p>"),
+                ),
+                (
+                    "description_stripped",
+                    models.TextField(blank=True, null=True),
+                ),
+                ("completed_at", models.DateTimeField(null=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="pageblock_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="blocks",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="blocks",
+                        to="db.page",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_pageblock",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="pageblock_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_pageblock",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Page Block',
-                'verbose_name_plural': 'Page Blocks',
-                'db_table': 'page_blocks',
-                'ordering': ('-created_at',),
+                "verbose_name": "Page Block",
+                "verbose_name_plural": "Page Blocks",
+                "db_table": "page_blocks",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='page',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_page', to='db.project'),
+            model_name="page",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_page",
+                to="db.project",
+            ),
         ),
         migrations.AddField(
-            model_name='page',
-            name='updated_by',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='page_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
+            model_name="page",
+            name="updated_by",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="page_updated_by",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Last Modified By",
+            ),
         ),
         migrations.AddField(
-            model_name='page',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_page', to='db.workspace'),
+            model_name="page",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_page",
+                to="db.workspace",
+            ),
         ),
         migrations.CreateModel(
-            name='PageFavorite',
+            name="PageFavorite",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='pagefavorite_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_favorites', to='db.page')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_pagefavorite', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='pagefavorite_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_favorites', to=settings.AUTH_USER_MODEL)),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_pagefavorite', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="pagefavorite_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_favorites",
+                        to="db.page",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_pagefavorite",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="pagefavorite_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_favorites",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_pagefavorite",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Page Favorite',
-                'verbose_name_plural': 'Page Favorites',
-                'db_table': 'page_favorites',
-                'ordering': ('-created_at',),
-                'unique_together': {('page', 'user')},
+                "verbose_name": "Page Favorite",
+                "verbose_name_plural": "Page Favorites",
+                "db_table": "page_favorites",
+                "ordering": ("-created_at",),
+                "unique_together": {("page", "user")},
             },
         ),
     ]

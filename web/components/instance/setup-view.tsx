@@ -4,15 +4,13 @@ import Image from "next/image";
 // components
 import { InstanceSetupFormRoot } from "components/instance";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useUser } from "hooks/store";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export const InstanceSetupView = observer(() => {
-  // store
-  const {
-    user: { fetchCurrentUser },
-  } = useMobxStore();
+  // store hooks
+  const { fetchCurrentUser } = useUser();
 
   const mutateUserInfo = useCallback(() => {
     fetchCurrentUser();

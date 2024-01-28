@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useWebhook } from "hooks/store";
 // components
 import {
   WebhookIndividualEventOptions,
@@ -14,7 +14,7 @@ import {
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IWebhook, TWebhookEventTypes } from "types";
+import { IWebhook, TWebhookEventTypes } from "@plane/types";
 
 type Props = {
   data?: Partial<IWebhook>;
@@ -35,10 +35,8 @@ export const WebhookForm: FC<Props> = observer((props) => {
   const { data, onSubmit, handleClose } = props;
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
-  // mobx store
-  const {
-    webhook: { webhookSecretKey },
-  } = useMobxStore();
+  // store hooks
+  const {webhookSecretKey } = useWebhook();
   // use form
   const {
     handleSubmit,
@@ -94,7 +92,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
             </Button>
           </div>
         ) : (
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="mt-4 flex justify-end gap-2">
             <Button variant="neutral-primary" onClick={handleClose}>
               Discard
             </Button>

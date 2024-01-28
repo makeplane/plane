@@ -6,7 +6,7 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingStateList } from "components/states";
 import { ProjectSettingHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const StatesSettingsPage: NextPageWithLayout = () => (
   <div className="w-full gap-10 overflow-y-auto py-8 pr-9">

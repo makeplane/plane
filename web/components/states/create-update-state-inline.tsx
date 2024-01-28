@@ -1,21 +1,16 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 // types
-import type { IState } from "types";
-// fetch-keys
-import { STATES_LIST } from "constants/fetch-keys";
+import type { IState } from "@plane/types";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 
@@ -37,20 +32,17 @@ const defaultValues: Partial<IState> = {
 
 export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const { data, onClose, selectedGroup, groupLength } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
+  // store hooks
   const {
-    projectState: projectStateStore,
-    trackEvent: { postHogEventTracker, setTrackElement },
-  } = useMobxStore();
-
-  // hooks
+    eventTracker: { postHogEventTracker, setTrackElement },
+  } = useApplication();
+  const { createState, updateState } = useProjectState();
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -88,8 +80,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const handleCreate = async (formData: IState) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await projectStateStore
-      .createState(workspaceSlug.toString(), projectId.toString(), formData)
+    await createState(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         handleClose();
         setToastAlert({
@@ -124,10 +115,8 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const handleUpdate = async (formData: IState) => {
     if (!workspaceSlug || !projectId || !data || isSubmitting) return;
 
-    await projectStateStore
-      .updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
+    await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
-        mutate(STATES_LIST(projectId.toString()));
         handleClose();
         postHogEventTracker("STATE_UPDATE", {
           ...res,
@@ -159,18 +148,14 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   };
 
   const onSubmit = async (formData: IState) => {
-    const payload: IState = {
-      ...formData,
-    };
-
-    if (data) await handleUpdate(payload);
-    else await handleCreate(payload);
+    if (data) await handleUpdate(formData);
+    else await handleCreate(formData);
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">
@@ -280,7 +265,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           />
         )}
       />
-      <Button variant="neutral-primary" onClick={handleClose}>
+      <Button variant="neutral-primary" onClick={handleClose} size="sm">
         Cancel
       </Button>
       <Button
@@ -290,8 +275,9 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
         onClick={() => {
           setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
         }}
+        size="sm"
       >
-        {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
+        {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
       </Button>
     </form>
   );

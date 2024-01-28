@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { AppLayout } from "layouts/app-layout";
@@ -8,14 +8,15 @@ import { AppLayout } from "layouts/app-layout";
 import IntegrationGuide from "components/integration/guide";
 import { WorkspaceSettingHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const ImportsPage: NextPageWithLayout = observer(() => {
+  // store hooks
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 

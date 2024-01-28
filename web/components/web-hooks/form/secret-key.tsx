@@ -4,16 +4,15 @@ import { Button, Tooltip } from "@plane/ui";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useWebhook, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 type Props = {
   data: Partial<IWebhook>;
@@ -27,11 +26,9 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, webhookId } = router.query;
-  // store
-  const {
-    webhook: { currentWebhook, regenerateSecretKey, webhookSecretKey },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
   // hooks
   const { setToastAlert } = useToast();
 
@@ -68,8 +65,10 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
           message: "New key regenerated successfully.",
         });
 
-        const csvData = getCurrentHookAsCSV(currentWorkspace, currentWebhook, webhookSecretKey);
-        csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
+        if (currentWebhook && webhookSecretKey) {
+          const csvData = getCurrentHookAsCSV(currentWorkspace, currentWebhook, webhookSecretKey);
+          csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
+        }
       })
       .catch((err) =>
         setToastAlert({

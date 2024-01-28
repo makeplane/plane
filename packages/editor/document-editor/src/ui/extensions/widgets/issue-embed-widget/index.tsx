@@ -1,5 +1,6 @@
 import { IssueWidget } from "src/ui/extensions/widgets/issue-embed-widget/issue-widget-node";
 import { IIssueEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
+export * from "./issue-widget-card";
 
 interface IssueWidgetExtensionProps {
   issueEmbedConfig?: IIssueEmbedConfig;

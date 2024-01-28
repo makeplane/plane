@@ -1,26 +1,22 @@
-import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase } from "lucide-react";
+// hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectsHeader = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  // store
+  // store hooks
   const {
-    project: projectStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
-
-  const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : [];
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { workspaceProjectIds, searchQuery, setSearchQuery } = useProject();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -38,13 +34,13 @@ export const ProjectsHeader = observer(() => {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        {projectsList?.length > 0 && (
+        {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
           <div className="flex w-full items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
             <Search className="h-3.5 w-3.5" />
             <input
               className="w-full min-w-[234px] border-none bg-transparent text-sm focus:outline-none"
-              value={projectStore.searchQuery}
-              onChange={(e) => projectStore.setSearchQuery(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search"
             />
           </div>

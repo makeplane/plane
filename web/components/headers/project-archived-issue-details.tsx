@@ -3,11 +3,11 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
@@ -18,14 +18,13 @@ import { renderEmoji } from "helpers/emoji.helper";
 const issueArchiveService = new IssueArchiveService();
 
 export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
+  // store hooks
+  const { currentProjectDetails, getProjectById } = useProject();
 
-  const { project: projectStore } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
-
-  const { data: issueDetails } = useSWR<IIssue | undefined>(
+  const { data: issueDetails } = useSWR<TIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -68,7 +67,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={`${issueDetails?.project_detail.identifier}-${issueDetails?.sequence_id}` ?? "..."}
+              label={
+                `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ?? "..."
+              }
             />
           </Breadcrumbs>
         </div>

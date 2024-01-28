@@ -1,25 +1,25 @@
 import { observer } from "mobx-react-lite";
-
-// icons
 import { X } from "lucide-react";
-// types
-import { IProject } from "types";
+// hooks
+import { useProject } from "hooks/store";
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
 
 type Props = {
   handleRemove: (val: string) => void;
-  projects: IProject[] | undefined;
   values: string[];
   editable: boolean | undefined;
 };
 
 export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, projects, values, editable } = props;
+  const { handleRemove, values, editable } = props;
+  // store hooks
+  const { projectMap } = useProject();
 
   return (
     <>
       {values.map((projectId) => {
-        const projectDetails = projects?.find((p) => p.id === projectId);
+        const projectDetails = projectMap?.[projectId] ?? null;
 
         if (!projectDetails) return null;
 

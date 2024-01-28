@@ -7,7 +7,7 @@ import { SingleProgressStats } from "components/core";
 // ui
 import { Avatar } from "@plane/ui";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
 
 type Props = {
   cycle: ICycle;
@@ -127,7 +127,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab.Panels>
       ) : (
         <div className="mt-4 grid place-items-center text-center text-sm text-custom-text-200">
-          No issues present in the cycle.
+          There are no high priority issues present in this cycle.
         </div>
       )}
     </Tab.Group>

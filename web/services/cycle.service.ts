@@ -1,17 +1,33 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { CycleDateCheckData, ICycle, IIssue } from "types";
+import type { CycleDateCheckData, ICycle, IWorkspaceActiveCyclesResponse, TIssue } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "store/issues/types";
 
 export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async workspaceActiveCycles(
+    workspaceSlug: string,
+    cursor: string,
+    per_page: number
+  ): Promise<IWorkspaceActiveCyclesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/active-cycles/`, {
+      params: {
+        per_page,
+        cursor,
+      },
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<ICycle> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -19,11 +35,7 @@ export class CycleService extends APIService {
       });
   }
 
-  async getCyclesWithParams(
-    workspaceSlug: string,
-    projectId: string,
-    cycleType: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
-  ): Promise<ICycle[]> {
+  async getCyclesWithParams(workspaceSlug: string, projectId: string, cycleType?: "current"): Promise<ICycle[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
       params: {
         cycle_view: cycleType,
@@ -43,7 +55,7 @@ export class CycleService extends APIService {
       });
   }
 
-  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<IIssue[]> {
+  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -56,7 +68,7 @@ export class CycleService extends APIService {
     projectId: string,
     cycleId: string,
     queries?: any
-  ): Promise<IIssueResponse> {
+  ): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
       params: queries,
     })

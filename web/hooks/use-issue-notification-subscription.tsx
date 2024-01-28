@@ -4,15 +4,18 @@ import useSWR from "swr";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { NotificationService } from "services/notification.service";
+// types
+import { IUser } from "@plane/types";
 
 const userNotificationServices = new NotificationService();
 
 const useUserIssueNotificationSubscription = (
+  user: IUser | null,
   workspaceSlug?: string | string[] | null,
   projectId?: string | string[] | null,
   issueId?: string | string[] | null
 ) => {
-  const { user } = useUserAuth();
+  const {} = useUserAuth({ user: user, isLoading: false });
 
   const { data, error, mutate } = useSWR(
     workspaceSlug && projectId && issueId ? `SUBSCRIPTION_STATUE_${workspaceSlug}_${projectId}_${issueId}` : null,

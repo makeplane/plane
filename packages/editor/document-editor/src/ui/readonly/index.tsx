@@ -4,12 +4,12 @@ import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "src/ui/components/editor-header";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { SummarySideBar } from "src/ui/components/summary-side-bar";
-import { IssueWidgetExtension } from "src/ui/extensions/widgets/issue-embed-widget";
-import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
 import { DocumentDetails } from "src/types/editor-types";
 import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
 import { getMenuOptions } from "src/utils/menu-options";
+import { IssueWidgetExtension } from "../extensions/widgets/issue-embed-widget";
+import { IEmbedConfig } from "../extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentReadOnlyEditor {
   value: string;
@@ -45,13 +45,13 @@ const DocumentReadOnlyEditor = ({
   noBorder,
   borderOnFocus,
   customClassName,
+  embedConfig,
   value,
   documentDetails,
   forwardedRef,
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig,
   rerenderOnPropsChange,
   onActionCompleteHandler,
 }: DocumentReadOnlyEditorProps) => {
@@ -105,12 +105,13 @@ const DocumentReadOnlyEditor = ({
         documentDetails={documentDetails}
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
       />
-      <div className="flex h-full w-full overflow-y-auto">
+      <div className="flex h-full w-full overflow-y-auto frame-renderer">
         <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-full">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
+            onActionCompleteHandler={onActionCompleteHandler}
             updatePageTitle={() => Promise.resolve()}
             readonly={true}
             editor={editor}

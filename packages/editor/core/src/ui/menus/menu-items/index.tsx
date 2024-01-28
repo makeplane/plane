@@ -106,7 +106,7 @@ export const TodoListItem = (editor: Editor): EditorMenuItem => ({
 
 export const CodeItem = (editor: Editor): EditorMenuItem => ({
   name: "code",
-  isActive: () => editor?.isActive("code"),
+  isActive: () => editor?.isActive("code") || editor?.isActive("codeBlock"),
   command: () => toggleCodeBlock(editor),
   icon: CodeIcon,
 });
@@ -120,7 +120,7 @@ export const NumberedListItem = (editor: Editor): EditorMenuItem => ({
 
 export const QuoteItem = (editor: Editor): EditorMenuItem => ({
   name: "quote",
-  isActive: () => editor?.isActive("quote"),
+  isActive: () => editor?.isActive("blockquote"),
   command: () => toggleBlockquote(editor),
   icon: QuoteIcon,
 });

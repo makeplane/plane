@@ -1,16 +1,15 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
 import { usePopper } from "react-popper";
+import { Check, ChevronDown, Search, Tags } from "lucide-react";
+// hooks
+import { useApplication, useLabel } from "hooks/store";
 // components
 import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
-import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store/root";
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -44,28 +43,42 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
     placeholderText,
   } = props;
-
-  const {
-    workspace: workspaceStore,
-    projectLabel: { fetchProjectLabels, labels },
-  }: RootStore = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
-
+  // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { fetchProjectLabels, getProjectLabels } = useLabel();
 
-  const fetchLabels = () => {
-    setIsLoading(true);
-    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+  const storeLabels = getProjectLabels(projectId);
+
+  const openDropDown = () => {
+    if (!storeLabels && workspaceSlug && projectId) {
+      setIsLoading(true);
+      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    }
   };
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
 
   if (!value) return null;
 
   let projectLabels: IIssueLabel[] = defaultOptions;
-  const storeLabels = projectId && labels ? labels[projectId] : [];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
   const options = projectLabels.map((label) => ({
@@ -87,18 +100,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
-
   const label = (
     <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">
       {value.length > 0 ? (
@@ -107,7 +108,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             {projectLabels
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
-                <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name ?? ""}>
+                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
                   <div
                     key={label.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
@@ -183,10 +184,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            !storeLabels && fetchLabels();
-          }}
+          onClick={openDropDown}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -223,7 +221,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                       selected ? "text-custom-text-100" : "text-custom-text-200"
                     }`
                   }
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>

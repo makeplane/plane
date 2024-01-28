@@ -6,7 +6,7 @@ import { UserService } from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 // types
-import type { IUser } from "types";
+import type { IUser } from "@plane/types";
 
 // services
 const userService = new UserService();

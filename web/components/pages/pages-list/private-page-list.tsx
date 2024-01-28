@@ -1,18 +1,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
+// hooks
 // components
 import { PagesListView } from "components/pages/pages-list";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const PrivatePagesList: FC = observer(() => {
-  const {
-    page: { privateProjectPages },
-  } = useMobxStore();
+  const projectPageStore = useProjectPages();
+  const { privateProjectPageIds } = projectPageStore;
 
-  if (!privateProjectPages)
+  if (!privateProjectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -21,5 +20,5 @@ export const PrivatePagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={privateProjectPages} />;
+  return <PagesListView pageIds={privateProjectPageIds} />;
 });

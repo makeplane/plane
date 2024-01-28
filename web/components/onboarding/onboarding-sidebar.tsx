@@ -17,11 +17,10 @@ import {
   Bell,
 } from "lucide-react";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-
+// hooks
+import { useUser, useWorkspace } from "hooks/store";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // assets
 import projectEmoji from "public/emoji/project-emoji.svg";
 
@@ -92,16 +91,14 @@ var lastWorkspaceName: string = "";
 
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
-  const {
-    workspace: workspaceStore,
-    user: { currentUser },
-  } = useMobxStore();
-  const workspace = workspaceStore.workspaces ? workspaceStore.workspaces[0] : null;
+  // store hooks
+  const { currentUser } = useUser();
+  const { workspaces } = useWorkspace();
+  const workspaceDetails = Object.values(workspaces ?? {})?.[0];
 
   const { resolvedTheme } = useTheme();
 
   const handleZoomWorkspace = (value: string) => {
-    // console.log(lastWorkspaceName,value);
     if (lastWorkspaceName === value) return;
     lastWorkspaceName = value;
     if (timer > 0) {
@@ -170,7 +167,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                 <div className="flex w-full items-center gap-y-2 truncate border border-transparent px-4 pt-6 transition-all">
                   <div className="flex flex-shrink-0">
                     <Avatar
-                      name={value.length > 0 ? value : workspace ? workspace.name : "New Workspace"}
+                      name={value.length > 0 ? value : workspaceDetails ? workspaceDetails.name : "New Workspace"}
                       src={""}
                       size={24}
                       shape="square"
@@ -200,7 +197,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           <div className="flex w-full items-center gap-y-2 truncate px-4 pt-6 transition-all">
             <div className="flex flex-shrink-0">
               <Avatar
-                name={workspace ? workspace.name : "New Workspace"}
+                name={workspaceDetails ? workspaceDetails.name : "New Workspace"}
                 src={""}
                 size={24}
                 shape="square"
@@ -246,7 +243,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           </div>
         </div>
         {workspaceLinks.map((link) => (
-          <a className="block w-full">
+          <a className="block w-full" key={link.name}>
             <div
               className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-onboarding-text-200 
                 outline-none  focus:bg-custom-sidebar-background-80
@@ -274,7 +271,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
               <ChevronDown className="h-4 w-4" />
             </div>
             {projectLinks.map((link) => (
-              <a className="ml-6 block w-full">
+              <a className="ml-6 block w-full" key={link.name}>
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-custom-sidebar-text-200 
                     outline-none  focus:bg-custom-sidebar-background-80

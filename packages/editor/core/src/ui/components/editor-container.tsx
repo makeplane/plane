@@ -5,13 +5,17 @@ interface EditorContainerProps {
   editor: Editor | null;
   editorClassNames: string;
   children: ReactNode;
+  hideDragHandle?: () => void;
 }
 
-export const EditorContainer = ({ editor, editorClassNames, children }: EditorContainerProps) => (
+export const EditorContainer = ({ editor, editorClassNames, hideDragHandle, children }: EditorContainerProps) => (
   <div
     id="editor-container"
     onClick={() => {
-      editor?.chain().focus().run();
+      editor?.chain().focus(undefined, { scrollIntoView: false }).run();
+    }}
+    onMouseLeave={() => {
+      hideDragHandle?.();
     }}
     className={`cursor-text ${editorClassNames}`}
   >

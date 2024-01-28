@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -12,21 +12,22 @@ import useToast from "hooks/use-toast";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 import { ProjectSettingHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IProject } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { NextPageWithLayout } from "lib/types";
+import { IProject } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 const AutomationSettingsPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
-  // store
+  // store hooks
   const {
-    user: { currentProjectRole },
-    project: { currentProjectDetails: projectDetails, updateProject },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails: projectDetails, updateProject } = useProject();
 
   const handleChange = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
@@ -40,7 +41,7 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
     });
   };
 
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
     <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>

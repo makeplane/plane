@@ -20,6 +20,18 @@ from plane.db.models import Workspace, WorkspaceMemberInvite, User
 from plane.license.utils.instance_value import get_email_configuration
 
 
+def push_updated_to_slack(workspace, workspace_member_invite):
+    # Send message on slack as well
+    client = WebClient(token=settings.SLACK_BOT_TOKEN)
+    try:
+        _ = client.chat_postMessage(
+            channel="#trackers",
+            text=f"{workspace_member_invite.email} has been invited to {workspace.name} as a {workspace_member_invite.role}",
+        )
+    except SlackApiError as e:
+        print(f"Got an error: {e.response['error']}")
+
+
 @shared_task
 def workspace_invitation(email, workspace_id, token, current_site, invitor):
     try:
@@ -35,7 +47,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
 
         # The complete url including the domain
         abs_url = str(current_site) + relative_link
-
 
         (
             EMAIL_HOST,
@@ -85,14 +96,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
 
         # Send message on slack as well
         if settings.SLACK_BOT_TOKEN:
-            client = WebClient(token=settings.SLACK_BOT_TOKEN)
-            try:
-                _ = client.chat_postMessage(
-                    channel="#trackers",
-                    text=f"{workspace_member_invite.email} has been invited to {workspace.name} as a {workspace_member_invite.role}",
-                )
-            except SlackApiError as e:
-                print(f"Got an error: {e.response['error']}")
+            push_updated_to_slack(workspace, workspace_member_invite)
 
         return
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:

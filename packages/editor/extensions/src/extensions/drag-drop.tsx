@@ -3,6 +3,7 @@ import { Extension } from "@tiptap/core";
 import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
 // @ts-ignore
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import React from "react";
 
 function createDragHandleElement(): HTMLElement {
   const dragHandleElement = document.createElement("div");
@@ -30,6 +31,7 @@ function createDragHandleElement(): HTMLElement {
 
 export interface DragHandleOptions {
   dragHandleWidth: number;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
 }
 
 function absoluteRect(node: Element) {
@@ -43,22 +45,23 @@ function absoluteRect(node: Element) {
 }
 
 function nodeDOMAtCoords(coords: { x: number; y: number }) {
-  return document.elementsFromPoint(coords.x, coords.y).find((elem: Element) => {
-    return (
-      elem.parentElement?.matches?.(".ProseMirror") ||
-      elem.matches(
-        [
-          "li",
-          "p:not(:first-child)",
-          "pre",
-          "blockquote",
-          "h1, h2, h3",
-          "[data-type=horizontalRule]",
-          ".tableWrapper",
-        ].join(", ")
-      )
+  return document
+    .elementsFromPoint(coords.x, coords.y)
+    .find(
+      (elem: Element) =>
+        elem.parentElement?.matches?.(".ProseMirror") ||
+        elem.matches(
+          [
+            "li",
+            "p:not(:first-child)",
+            "pre",
+            "blockquote",
+            "h1, h2, h3",
+            "[data-type=horizontalRule]",
+            ".tableWrapper",
+          ].join(", ")
+        )
     );
-  });
 }
 
 function nodePosAtDOM(node: Element, view: EditorView) {
@@ -150,6 +153,8 @@ function DragHandle(options: DragHandleOptions) {
     }
   }
 
+  options.setHideDragHandle?.(hideDragHandle);
+
   return new Plugin({
     key: new PluginKey("dragHandle"),
     view: (view) => {
@@ -237,14 +242,16 @@ function DragHandle(options: DragHandleOptions) {
   });
 }
 
-export const DragAndDrop = Extension.create({
-  name: "dragAndDrop",
+export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void) =>
+  Extension.create({
+    name: "dragAndDrop",
 
-  addProseMirrorPlugins() {
-    return [
-      DragHandle({
-        dragHandleWidth: 24,
-      }),
-    ];
-  },
-});
+    addProseMirrorPlugins() {
+      return [
+        DragHandle({
+          dragHandleWidth: 24,
+          setHideDragHandle,
+        }),
+      ];
+    },
+  });

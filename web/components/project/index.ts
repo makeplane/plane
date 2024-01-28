@@ -9,8 +9,6 @@ export * from "./form";
 export * from "./join-project-modal";
 export * from "./leave-project-modal";
 export * from "./member-select";
-export * from "./members-select";
-export * from "./priority-select";
 export * from "./sidebar-list-item";
 export * from "./sidebar-list";
 export * from "./integration-card";

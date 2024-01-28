@@ -2,27 +2,29 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { FileText, Plus } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helper
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const PagesHeader = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // mobx store
+  // store hooks
   const {
-    user: { currentProjectRole },
-    project: { currentProjectDetails },
     commandPalette: { toggleCreatePageModal },
-  } = useMobxStore();
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const canUserCreatePage =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
