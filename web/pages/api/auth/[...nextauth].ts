@@ -20,31 +20,20 @@ type TAuthConfig = {
   };
 };
 
-const googleSignIn = async ({ user, account }: any) => {
-  try {
-    console.log("account", user);
-    const googleResponse = await axios
-      .post(API_BASE_URL + "/api/auth/google/", {
-        provider_account_id: account?.providerAccountId,
-        access_token: account?.access_token,
-        access_token_expired_at: account?.expires_at,
-        meta: {
-          id_token: account?.id_token,
-        },
-        email: user?.email,
-        first_name: user?.name,
-        avatar: user.image,
-      })
-      .then((res) => res.data);
-    if (googleResponse?.access_token) {
-      user.access_token = googleResponse?.access_token;
-      user.refresh_token = googleResponse?.refresh_token;
-    }
-    return true;
-  } catch (err) {
-    return false;
-  }
-};
+const googleSignIn = ({ user, account }: any) =>
+  axios
+    .post(API_BASE_URL + "/api/auth/google/", {
+      provider_account_id: account?.providerAccountId,
+      access_token: account?.access_token,
+      access_token_expired_at: account?.expires_at,
+      meta: {
+        id_token: account?.id_token,
+      },
+      email: user?.email,
+      first_name: user?.name,
+      avatar: user.image,
+    })
+    .then((res) => res.data);
 
 const githubSignIn = async ({ user, account }: any) => {
   try {
@@ -108,22 +97,33 @@ const authHandler = async (req: any, res: any) => {
   const callbacks = {
     async signIn({ account, user }: any) {
       if (account?.provider === "google") {
-        await googleSignIn({ user, account });
+        const { access_token, refresh_token } = await googleSignIn({ user, account });
+        user.access_token = access_token;
+        user.refresh_token = refresh_token;
+        return true;
       }
       if (account?.provider === "github") {
-        await githubSignIn({ user, account });
+        return await githubSignIn({ user, account });
       }
       return false;
     },
     async jwt({ token, user }: any) {
-      token.access_token = user?.accessToken;
-      token.refresh_token = user?.refreshToken;
+      console.log("token", token);
+      console.log("user", user);
+      if (user?.access_token) {
+        token.access_token = user?.access_token;
+      }
+      if (user?.refresh_token) {
+        token.refresh_token = user?.refresh_token;
+      }
       return token;
     },
     async session({ session, token }: any) {
-      session.accessToken = token?.accessToken;
+      console.log("token", token);
+      console.log("session", session);
+      session.access_token = token?.access_token;
       session.user.id = token?.id;
-      return session;
+      return token;
     },
   } as any;
 
