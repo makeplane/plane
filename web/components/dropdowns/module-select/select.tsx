@@ -29,9 +29,9 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
     buttonClassName = "",
     buttonVariant = "transparent-with-text",
     hideIcon = false,
-    dropdownArrow = true,
+    dropdownArrow = false,
     dropdownArrowClassName = "",
-    showTooltip = true,
+    showTooltip = false,
     showCount = false,
     placement,
     tabIndex,
@@ -75,16 +75,17 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
       ),
     };
   });
-  options?.unshift({
-    value: undefined,
-    query: "No module",
-    content: (
-      <div className="flex items-center gap-2">
-        <DiceIcon className="h-3 w-3 flex-shrink-0" />
-        <span className="flex-grow truncate">No module</span>
-      </div>
-    ),
-  });
+  !multiple &&
+    options?.unshift({
+      value: undefined,
+      query: "No module",
+      content: (
+        <div className="flex items-center gap-2">
+          <DiceIcon className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">No module</span>
+        </div>
+      ),
+    });
 
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
@@ -125,7 +126,7 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
             ref={setReferenceElement}
             type="button"
             className={twMerge(
-              "block h-full w-full outline-none",
+              "block h-full max-w-full outline-none",
               disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer",
               buttonContainerClassName
             )}
@@ -138,7 +139,7 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
             ref={setReferenceElement}
             type="button"
             className={twMerge(
-              "block w-full h-full max-w-full outline-none",
+              "block h-full max-w-full outline-none ",
               disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer",
               buttonContainerClassName
             )}

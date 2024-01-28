@@ -558,7 +558,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           buttonVariant="border-with-text"
                           tabIndex={13}
                           multiple={true}
-                          placeholder="No modules"
                           showCount={true}
                         />
                       </div>

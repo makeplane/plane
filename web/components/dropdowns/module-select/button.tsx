@@ -29,7 +29,7 @@ export const ModuleSelectButton: FC<TModuleSelectButton> = observer((props) => {
   return (
     <div
       className={twMerge(
-        `relative overflow-hidden w-full h-full flex justify-between items-center gap-1 rounded text-sm px-2 py-0.5 min-h-8`,
+        `w-full h-full relative overflow-hidden flex justify-between items-center gap-1 rounded text-sm px-2`,
         buttonVariant === "border-with-text"
           ? `border-[0.5px] border-custom-border-300 hover:bg-custom-background-80`
           : ``,
@@ -48,7 +48,7 @@ export const ModuleSelectButton: FC<TModuleSelectButton> = observer((props) => {
           <div className="relative overflow-hidden flex items-center gap-1.5">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
             {!hideText && (
-              <span className="w-full overflow-hidden truncate inline-block line-clamp-1 capitalize text-custom-text-400">
+              <span className="w-full overflow-hidden truncate inline-block line-clamp-1 capitalize">
                 {getModuleById(value)?.name || placeholder}
               </span>
             )}
@@ -97,7 +97,7 @@ export const ModuleSelectButton: FC<TModuleSelectButton> = observer((props) => {
             <div className="relative overflow-hidden flex items-center gap-1.5">
               {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
               {!hideText && (
-                <span className="w-full overflow-hidden truncate inline-block line-clamp-1 capitalize text-custom-text-400">
+                <span className="w-full overflow-hidden truncate inline-block line-clamp-1 capitalize">
                   {placeholder}
                 </span>
               )}
@@ -107,10 +107,7 @@ export const ModuleSelectButton: FC<TModuleSelectButton> = observer((props) => {
       </div>
 
       {dropdownArrow && (
-        <ChevronDown
-          className={twMerge("h-2.5 w-2.5 flex-shrink-0 invisible group-hover:visible", dropdownArrowClassName)}
-          aria-hidden="true"
-        />
+        <ChevronDown className={twMerge("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
       )}
     </div>
   );

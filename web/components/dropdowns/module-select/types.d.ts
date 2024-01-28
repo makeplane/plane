@@ -1,6 +1,20 @@
 import { ReactNode } from "react";
 import { Placement } from "@popperjs/core";
-import { TButtonVariants } from "../types";
+import { TDropdownProps, TButtonVariants } from "../types";
+
+type TModuleSelectDropdownRoot = Omit<
+  TDropdownProps,
+  "buttonClassName",
+  "buttonContainerClassName",
+  "buttonContainerClassName",
+  "className",
+  "disabled",
+  "hideIcon",
+  "placeholder",
+  "placement",
+  "tabIndex",
+  "tooltip"
+>;
 
 export type TModuleSelectDropdownBase = {
   value: string | string[] | undefined;

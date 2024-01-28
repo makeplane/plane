@@ -64,28 +64,26 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
   };
 
   return (
-    <div className={cn(`w-full h-full relative flex items-center`, className)}>
-      <div className="w-full">
-        <ModuleSelectDropdown
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          value={issue?.module_ids?.length ? issue?.module_ids : undefined}
-          onChange={handleIssueModuleChange}
-          multiple={true}
-          placeholder="No modules"
-          disabled={disableSelect}
-          className="group"
-          buttonClassName={issue?.module_ids?.length ? `text-custom-text-200` : `text-custom-text-400`}
-          buttonVariant="transparent-with-text"
-          hideIcon={false}
-          dropdownArrow={true}
-          dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline text-custom-text-400"
-          showTooltip={true}
-          showCount={true}
-        />
-      </div>
+    <div className={cn(`flex items-center gap-1 h-full`, className)}>
+      <ModuleSelectDropdown
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        value={issue?.module_ids?.length ? issue?.module_ids : undefined}
+        onChange={handleIssueModuleChange}
+        multiple={true}
+        placeholder="No module"
+        disabled={disableSelect}
+        className={`w-full h-full group`}
+        buttonContainerClassName="w-full"
+        buttonClassName={`min-h-8 ${issue?.module_ids?.length ? `` : `text-custom-text-400`}`}
+        buttonVariant="transparent-with-text"
+        hideIcon={false}
+        dropdownArrow={true}
+        dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+        showTooltip={true}
+      />
 
-      {isUpdating && <Spinner className="h-4 w-4 flex-shrink-0" />}
+      {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );
 });
