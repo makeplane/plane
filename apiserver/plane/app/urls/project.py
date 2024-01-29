@@ -14,6 +14,7 @@ from plane.app.views import (
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
     UserProjectRolesEndpoint,
+    ProjectFeatureEndpoint,
 )
 
 
@@ -174,5 +175,10 @@ urlpatterns = [
             }
         ),
         name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-features/",
+        ProjectFeatureEndpoint.as_view(),
+        name="project-feature",
     ),
 ]

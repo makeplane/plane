@@ -8,6 +8,7 @@ from plane.db.models import (
     WorkspaceMember,
     State,
     Estimate,
+    ProjectFeature,
 )
 from .base import BaseSerializer
 
@@ -78,6 +79,7 @@ class ProjectSerializer(BaseSerializer):
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]
         )
+
         _ = ProjectIdentifier.objects.create(
             name=project.identifier,
             project=project,

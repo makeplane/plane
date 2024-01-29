@@ -89,11 +89,6 @@ class Project(BaseModel):
     )
     emoji = models.CharField(max_length=255, null=True, blank=True)
     icon_prop = models.JSONField(null=True)
-    module_view = models.BooleanField(default=True)
-    cycle_view = models.BooleanField(default=True)
-    issue_views_view = models.BooleanField(default=True)
-    page_view = models.BooleanField(default=True)
-    inbox_view = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate",
@@ -144,6 +139,36 @@ class ProjectBaseModel(BaseModel):
     def save(self, *args, **kwargs):
         self.workspace = self.project.workspace
         super(ProjectBaseModel, self).save(*args, **kwargs)
+
+
+class ProjectFeature(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="project_features",
+    )
+    project = models.OneToOneField(
+        Project, on_delete=models.CASCADE, related_name="features"
+    )
+    modules = models.BooleanField(default=False)
+    cycles = models.BooleanField(default=False)
+    views = models.BooleanField(default=False)
+    pages = models.BooleanField(default=True)
+    inbox = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        self.workspace = self.project.workspace
+        super(ProjectFeature, self).save(*args, **kwargs)
+
+    def __str__(self):
+        """Return feature of the project"""
+        return f"{self.project.name} <{self.id}>"
+
+    class Meta:
+        verbose_name = "Project Feature"
+        verbose_name_plural = "Project Features"
+        db_table = "project_features"
+        ordering = ("-created_at",)
 
 
 class ProjectMemberInvite(ProjectBaseModel):

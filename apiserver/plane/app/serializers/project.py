@@ -16,6 +16,7 @@ from plane.db.models import (
     ProjectFavorite,
     ProjectDeployBoard,
     ProjectPublicMember,
+    ProjectFeature,
 )
 
 
@@ -47,6 +48,8 @@ class ProjectSerializer(BaseSerializer):
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]
         )
+
+        # Create identifiers
         _ = ProjectIdentifier.objects.create(
             name=project.identifier,
             project=project,
@@ -236,4 +239,15 @@ class ProjectPublicMemberSerializer(BaseSerializer):
             "workspace",
             "project",
             "member",
+        ]
+
+
+class ProjectFeatureSerializer(BaseSerializer):
+
+    class Meta:
+        model = ProjectFeature
+        fields = "__all__"
+        read_only_fields = [
+            "project",
+            "workspace",
         ]

@@ -11,7 +11,6 @@ from rest_framework.serializers import ValidationError
 from plane.db.models import (
     Workspace,
     Project,
-    ProjectFavorite,
     ProjectMember,
     ProjectDeployBoard,
     State,
@@ -19,6 +18,7 @@ from plane.db.models import (
     Module,
     IssueProperty,
     Inbox,
+    ProjectFeature,
 )
 from plane.app.permissions import ProjectBasePermission
 from plane.api.serializers import ProjectSerializer
@@ -148,6 +148,11 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
             )
             if serializer.is_valid():
                 serializer.save()
+
+                # features
+                _ = ProjectFeature.objects.create(
+                    project_id=serializer.data["id"]
+                )
 
                 # Add the user as Administrator to the project
                 project_member = ProjectMember.objects.create(

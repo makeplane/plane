@@ -22,6 +22,7 @@ from .project import (
     ProjectFavorite,
     ProjectDeployBoard,
     ProjectPublicMember,
+    ProjectFeature,
 )
 
 from .issue import (

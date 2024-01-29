@@ -12,6 +12,7 @@ from .project import (
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
     UserProjectRolesEndpoint,
+    ProjectFeatureEndpoint,
 )
 from .user import (
     UserEndpoint,

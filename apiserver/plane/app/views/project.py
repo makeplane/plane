@@ -37,6 +37,7 @@ from plane.app.serializers import (
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectMemberRoleSerializer,
+    ProjectFeatureSerializer,
 )
 
 from plane.app.permissions import (
@@ -62,6 +63,7 @@ from plane.db.models import (
     Inbox,
     ProjectDeployBoard,
     IssueProperty,
+    ProjectFeature,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
@@ -202,6 +204,10 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             )
             if serializer.is_valid():
                 serializer.save()
+
+                _ = ProjectFeature.objects.create(
+                    project_id=serializer.data["id"]
+                )
 
                 # Add the user as Administrator to the project
                 project_member = ProjectMember.objects.create(
@@ -686,9 +692,14 @@ class ProjectMemberViewSet(BaseViewSet):
         )
 
         bulk_project_members = []
-        member_roles = {member.get("member_id"): member.get("role") for member in members}
+        member_roles = {
+            member.get("member_id"): member.get("role") for member in members
+        }
         # Update roles in the members array based on the member_roles dictionary
-        for project_member in  ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members]):
+        for project_member in ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=[member.get("member_id") for member in members],
+        ):
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
             bulk_project_members.append(project_member)
@@ -734,7 +745,10 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_issue_props, batch_size=10, ignore_conflicts=True
         )
 
-        project_members = ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members])
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=[member.get("member_id") for member in members],
+        )
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -1138,3 +1152,29 @@ class UserProjectRolesEndpoint(BaseAPIView):
             for member in project_members
         }
         return Response(project_members, status=status.HTTP_200_OK)
+
+
+class ProjectFeatureEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        project_feature = ProjectFeature.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+        serializer = ProjectFeatureSerializer(project_feature)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, slug, project_id):
+        project_feature = ProjectFeature.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        serializer = ProjectFeatureSerializer(
+            project_feature, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
