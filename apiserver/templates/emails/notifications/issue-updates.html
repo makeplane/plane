@@ -28,6 +28,18 @@
          color: #3358d4 !important;
          }
       </style>
+      <style>
+         *[class="gmail-fix"] {
+         display: none !important;
+         }
+      </style>
+      <style type="text/css" emogrify="no">
+         @media (max-width: 600px) {
+         .gmx-killpill {
+         content: " \03D1";
+         }
+         }
+      </style>
    </head>
    <body
       bgcolor="#ffffff"
@@ -82,7 +94,7 @@
                            {{ issue.issue_identifier }} updates
                         </p>
                         <p style="font-size: 1rem; font-weight: 500; color: #1f2d5c; line-height: 28px">
-                           {{ issue.name }}: {{ issue.issue_identifier }}
+                           {{workspace}}/<a style="color: #1f2d5c;" href="{{project_url}}">{{project}}</a>/<a style="color: #1f2d5c;" href="{{issue_url}}">{{issue.issue_identifier}}</a>: {{ issue.name }}
                         </p>
                      </td>
                   </tr>
@@ -96,44 +108,35 @@
                   margin-bottom: 15px;
                   "
                   />
+               {% if actors_involved > 0 %}
                {% if data|length > 0 and comments|length == 0 %}
-               <p>only changes</p>
-               {% elif data|length == 0 and comments.0 %}
-               <p>only comments</p>
-               {% elif data|length > 0 and comments|length > 0 and mentions|length > 0 %}
-               <p>both changes, comments & mentions</p>
-               {% elif data|length > 0 and comments|length > 0 %}
-               <p>both changes & comments </p>
-               {% endif %}
-               <p style="font-size: 1rem;color: #1f2d5c; line-height: 28pxl">
-                  {% if data.1 %}{{ data|length }}{% endif %} {{ summary }}
+               <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
                   <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
                   {{ data.0.actor_detail.first_name}}
                   {{data.0.actor_detail.last_name }}
                   </span>
+                  made {{data|length}} {% if data|length > 1 %}updates{% else %}update{% endif %} to the issue.
                </p>
-               {% if comments.0 %}
+               {% elif data|length == 0 and comments|length > 0 %}
                <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
-                  {{ comments|length }} {% if comments|length == 1 %}comment was{% else %}comments were{% endif %} left by
                   <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
-                  {% if comments|length == 1 %}
-                  {{ data.0.actor_detail.first_name }}
-                  {{ data.0.actor_detail.last_name }}
-                  {% else %}
-                  {{ data.0.actor_detail.first_name }}
-                  {{ data.0.actor_detail.last_name }} and others
-                  {% endif %}
+                  {{ comments.0.actor_detail.first_name}}
+                  {{comments.0.actor_detail.last_name }}
                   </span>
+                  added {{comments|length}} new {% if comments|length > 1 %}comments{% else %}comment{% endif %}.
                </p>
-               {% endif %}
-               {% if mentions and comments.0 and data.0 %}
+               {% elif data|length > 0 and comments|length > 0 %}
                <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
-                  There are 3 new updates, added 1 new comment and, you were
                   <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
-                  @{{ data.0.actor_detail.first_name}}
+                  {{ data.0.actor_detail.first_name}}
                   {{data.0.actor_detail.last_name }}
                   </span>
-                  mentioned a comment of this issue.
+                  made {{data|length}} {% if data|length > 1 %}updates{% else %}update{% endif %} and added {{comments|length}} new {% if comments|length > 1 %}comments{% else %}comment{% endif %} on the issue.
+               </p>
+               {% endif %}
+               {% else %}
+               <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
+                  There are {{ data|length }} new updates and {{comments|length}} new comments on the issue
                </p>
                {% endif %}
                {% for update in data %} {% if update.changes.name %}
@@ -172,6 +175,7 @@
                      word-wrap: break-word;
                      padding-left: 15px;
                      padding-bottom: 15px;
+                     border-radius: 8px;
                      "
                      >
                      <!-- action performer -->
@@ -388,17 +392,15 @@
                         style="padding-bottom: 15px; max-width: 100%; padding-right: 10px;"
                         >
                         <tr>
-                           <td>
+                           <td valign="top" style="white-space: nowrap; padding: 0px;">
                               <img
                                  src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.webp"
                                  width="12"
                                  height="12"
                                  border="0"
-                                 style="display: block"
+                                 style="display: inline-block"
                                  />
-                           </td>
-                           <td>
-                              <p
+                              <span
                                  style="
                                  font-size: 0.8rem;
                                  font-weight: 500;
@@ -406,8 +408,8 @@
                                  padding-right: 5px;
                                  "
                                  >
-                                 Assignee:
-                              </p>
+                              Assignee:
+                              </span>
                            </td>
                            <td style="overflow-wrap: anywhere;word-break: break-all;">
                               {% if update.changes.assignees.new_value.0 %}
@@ -419,16 +421,16 @@
                                  margin-right: 5px;
                                  padding-left: 4px;
                                  padding-right: 4px;
-                                 padding-top: 2px;
                                  padding-bottom: 2px;
                                  font-weight: 500;
-                                 border-radius: 4px;
+                                 border-radius: 2px;
                                  max-lines: 1;
                                  "
                                  >
                               {{update.changes.assignees.new_value.0}}
                               </span>
                               {% endif %}
+                              {% if update.changes.assignees.new_value.1 %}
                               <span
                                  style="
                                  font-size: 0.8rem;
@@ -436,24 +438,25 @@
                                  color: #0d74ce;
                                  margin-left: 2px;
                                  margin-right: 5px;
+                                 white-space: nowrap;
                                  "
                                  >
                               +{{ update.changes.assignees.new_value|length|add:"-1"}} more
                               </span>
+                              {% endif %}
                               {% if update.changes.assignees.old_value.0 %}
                               <span
                                  style="
                                  font-size: 0.8rem;
                                  padding-left: 4px;
                                  padding-right: 4px;
-                                 padding-top: 2px;
                                  padding-bottom: 2px;
                                  font-weight: 500;
                                  text-decoration: line-through;
                                  color: #641723;
                                  background-color: #feebec;
                                  margin-right: 5px;
-                                 border-radius: 4px;
+                                 border-radius: 2px;
                                  "
                                  >
                               {{update.changes.assignees.old_value.0}}
@@ -466,6 +469,7 @@
                                  font-weight: 500;
                                  color: #641723;
                                  margin-left: 2px;
+                                 white-space: nowrap;
                                  "
                                  >
                                  +{{ update.changes.assignees.old_value|length|add:"-1"}} more
@@ -489,7 +493,7 @@
                                  border="0"
                                  style="display: inline-block;"
                                  />
-                                <span
+                              <span
                                  style="
                                  font-size: 0.8rem;
                                  font-weight: 500;
@@ -497,10 +501,9 @@
                                  padding-right: 5px;
                                  "
                                  >
-                                 Labels:
+                              Labels:
                               </span>
                            </td>
-                          
                            <td style="overflow-wrap: anywhere;word-break: break-all;">
                               {% if update.changes.labels.new_value.0 %}
                               <span
@@ -511,16 +514,16 @@
                                  margin-right: 5px;
                                  padding-left: 4px;
                                  padding-right: 4px;
-                                 padding-top: 2px;
                                  padding-bottom: 2px;
                                  font-weight: 500;
-                                 border-radius: 4px;
+                                 border-radius: 2px;
                                  max-lines: 1;
                                  "
                                  >
                               {{update.changes.labels.new_value.0}}
                               </span>
                               {% endif %}
+                              {% if update.changes.labels.new_value.1 %}
                               <span
                                  style="
                                  font-size: 0.8rem;
@@ -528,40 +531,42 @@
                                  color: #0d74ce;
                                  margin-left: 2px;
                                  margin-right: 5px;
+                                 white-space: nowrap;
                                  "
                                  >
                               +{{ update.changes.labels.new_value|length|add:"-1"}} more
                               </span>
+                              {% endif %}
                               {% if update.changes.labels.old_value.0 %}
                               <span
                                  style="
                                  font-size: 0.8rem;
                                  padding-left: 4px;
                                  padding-right: 4px;
-                                 padding-top: 2px;
                                  padding-bottom: 2px;
                                  font-weight: 500;
                                  text-decoration: line-through;
                                  color: #641723;
                                  background-color: #feebec;
                                  margin-right: 5px;
-                                 border-radius: 4px;
+                                 border-radius: 2px;
                                  "
                                  >
                               {{update.changes.labels.old_value.0}}
                               </span>
                               {% endif %}
                               {% if update.changes.labels.old_value.1 %}
-                              <spanp
+                              <span
                                  style="
                                  font-size: 0.8rem;
                                  font-weight: 500;
                                  color: #641723;
                                  margin-left: 2px;
+                                 white-space: nowrap;
                                  "
                                  >
                                  +{{ update.changes.labels.old_value|length|add:"-1"}} more
-                              </spanp>
+                              </span>
                               {% endif %}
                            </td>
                         </tr>
@@ -740,9 +745,9 @@
                                  font-size: 0.8rem;
                                  padding-left: 4px;
                                  padding-right: 4px;
-                                 padding-bottom: 2px;
+                                 padding-bottom: 1px;
                                  font-weight: 500;
-                                 border-radius: 4px;
+                                 border-radius: 2px;
                                  text-transform: capitalize;
                                  {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
                                  {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %}
@@ -770,7 +775,7 @@
                                  padding-right: 4px;
                                  padding-bottom: 2px;
                                  font-weight: 500;
-                                 border-radius: 4px;
+                                 border-radius: 2px;
                                  text-transform: capitalize;
                                  {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %}
                                  {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %}
