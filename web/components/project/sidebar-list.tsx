@@ -206,7 +206,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               type="button"
                               className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
                             >
-                              Projects
+                              Your projects
                               {open ? (
                                 <ChevronDown className="h-3.5 w-3.5" />
                               ) : (
