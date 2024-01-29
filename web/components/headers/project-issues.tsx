@@ -220,6 +220,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 }}
                 size="sm"
                 prependIcon={<Plus />}
+                variant="accent-primary"
               >
                 Add Issue
               </Button>
