@@ -105,6 +105,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
           {
             "cursor-not-allowed": disabled,
             "hover:bg-custom-background-80": !disabled,
+            "bg-custom-background-80": isRelationModalOpen === relationKey,
           },
           className
         )}

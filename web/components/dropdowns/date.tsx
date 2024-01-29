@@ -33,6 +33,7 @@ type ButtonProps = {
   isClearable: boolean;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   onClear: () => void;
   placeholder: string;
   tooltip: boolean;
@@ -47,6 +48,7 @@ const BorderButton = (props: ButtonProps) => {
     isClearable,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     onClear,
     placeholder,
     tooltip,
@@ -61,6 +63,7 @@ const BorderButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
@@ -131,6 +134,7 @@ const TransparentButton = (props: ButtonProps) => {
     isClearable,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     onClear,
     placeholder,
     tooltip,
@@ -145,6 +149,7 @@ const TransparentButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
@@ -246,6 +251,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
             />
           ) : buttonVariant === "border-without-text" ? (
@@ -258,6 +264,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
               hideText
             />
@@ -296,6 +303,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
             />
           ) : buttonVariant === "transparent-without-text" ? (
@@ -308,6 +316,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
               hideText
             />

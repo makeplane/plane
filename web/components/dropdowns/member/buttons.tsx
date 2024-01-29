@@ -14,6 +14,7 @@ type ButtonProps = {
   placeholder: string;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   tooltip: boolean;
   userIds: string | string[] | null;
 };
@@ -50,6 +51,7 @@ export const BorderButton = observer((props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     placeholder,
     userIds,
     tooltip,
@@ -68,6 +70,7 @@ export const BorderButton = observer((props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
@@ -134,6 +137,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     placeholder,
     userIds,
     tooltip,
@@ -152,6 +156,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
