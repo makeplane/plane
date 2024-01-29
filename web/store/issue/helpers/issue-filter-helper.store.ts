@@ -76,6 +76,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       labels: filters?.labels || undefined,
       start_date: filters?.start_date || undefined,
       target_date: filters?.target_date || undefined,
+      project: filters.project || undefined,
+      subscriber: filters.subscriber || undefined,
       // display filters
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,

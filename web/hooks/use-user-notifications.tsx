@@ -264,6 +264,13 @@ const useUserNotification = () => {
 
     await userNotificationServices
       .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "All Notifications marked as read.",
+        });
+      })
       .catch(() => {
         setToastAlert({
           type: "error",
