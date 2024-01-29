@@ -273,6 +273,44 @@ export const theme = {
       110: "var(--color-orange-110)",
       120: "var(--color-orange-120)",
     },
+    sidebar: {
+      neutral: {
+        page: {
+          "surface-default": "var(--color-neutral-0)",
+          "surface-light": "var(--color-neutral-10)",
+          "surface-medium": "var(--color-neutral-20)",
+        },
+        component: {
+          "surface-light": "var(--color-neutral-30)",
+          "surface-medium": "var(--color-neutral-40)",
+          "surface-dark": "var(--color-neutral-50)",
+        },
+        border: {
+          subtle: "var(--color-neutral-60)",
+          medium: "var(--color-neutral-70)",
+          strong: "var(--color-neutral-80)",
+        },
+        solid: "var(--color-neutral-90)",
+        text: {
+          subtle: "var(--color-neutral-100)",
+          medium: "var(--color-neutral-110)",
+          strong: "var(--color-neutral-120)",
+        },
+        10: "var(--color-neutral-10)",
+        20: "var(--color-neutral-20)",
+        30: "var(--color-neutral-30)",
+        40: "var(--color-neutral-40)",
+        50: "var(--color-neutral-50)",
+        60: "var(--color-neutral-60)",
+        70: "var(--color-neutral-70)",
+        80: "var(--color-neutral-80)",
+        90: "var(--color-neutral-90)",
+        100: "var(--color-neutral-100)",
+        110: "var(--color-neutral-110)",
+        120: "var(--color-neutral-120)",
+        DEFAULT: "var(--color-neutral-90)",
+      },
+    },
   },
   extend: {
     keyframes: {

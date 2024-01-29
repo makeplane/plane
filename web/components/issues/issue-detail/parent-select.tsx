@@ -71,7 +71,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-green-500/20 text-green-700 rounded px-1.5 py-1">
+          <div className="flex items-center gap-1 bg-success-component-surface-light text-success-text-medium rounded px-1.5 py-1">
             <Link
               href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
               className="text-xs font-medium"

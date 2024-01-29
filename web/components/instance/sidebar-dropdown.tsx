@@ -62,7 +62,7 @@ export const InstanceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex max-h-[3.75rem] items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
+    <div className="flex max-h-[3.75rem] items-center gap-x-5 gap-y-2 border-b border-sidebar-neutral-border-medium px-4 py-3.5">
       <div className="h-full w-full truncate">
         <div
           className={`flex flex-grow items-center gap-x-2 truncate rounded py-1 ${
@@ -113,7 +113,7 @@ export const InstanceSidebarDropdown = observer(() => {
           >
             <Menu.Items
               className="absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y
-          divide-custom-sidebar-border-100 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+          divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>

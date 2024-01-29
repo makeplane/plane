@@ -16,7 +16,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
       <div className="flex w-full flex-grow items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         <button
           type="button"
-          className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-custom-sidebar-border-200 text-center text-sm hover:bg-custom-sidebar-background-90"
+          className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-sidebar-neutral-border-medium text-center text-sm hover:bg-custom-sidebar-background-90"
           onClick={() => router.back()}
         >
           <MoveLeft className="h-4 w-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100" />
@@ -45,7 +45,9 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
   <>
     {link ? (
       <Link href={link}>
-        <span className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm ${linkTruncate ? "truncate" : ""}`}>
+        <span
+          className={`border-r-2 border-sidebar-neutral-border-medium px-3 text-sm ${linkTruncate ? "truncate" : ""}`}
+        >
           <p className={`${linkTruncate ? "truncate" : ""}${icon ? "flex items-center gap-2" : ""}`}>
             {icon ?? null}
             {title}

@@ -22,12 +22,12 @@ export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> =
     placeholder: "Add related issues",
   },
   blocking: {
-    className: "bg-yellow-500/20 text-yellow-700",
+    className: "bg-orange-30 text-orange-110",
     icon: (size) => <XCircle size={size} />,
     placeholder: "None",
   },
   blocked_by: {
-    className: "bg-red-500/20 text-red-700",
+    className: "bg-danger-component-surface-light text-danger-text-medium",
     icon: (size) => <CircleDot size={size} />,
     placeholder: "None",
   },
