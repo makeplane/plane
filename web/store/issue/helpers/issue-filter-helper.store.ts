@@ -31,7 +31,10 @@ export interface IIssueFilterHelperStore {
     filteredParams: TIssueParams[]
   ): Partial<Record<TIssueParams, string | boolean>>;
   computedFilters(filters: IIssueFilterOptions): IIssueFilterOptions;
-  computedDisplayFilters(displayFilters: IIssueDisplayFilterOptions): IIssueDisplayFilterOptions;
+  computedDisplayFilters(
+    displayFilters: IIssueDisplayFilterOptions,
+    defaultValues?: IIssueDisplayFilterOptions
+  ): IIssueDisplayFilterOptions;
   computedDisplayProperties(filters: IIssueDisplayProperties): IIssueDisplayProperties;
 }
 
@@ -147,20 +150,27 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @param {IIssueDisplayFilterOptions} displayFilters
    * @returns {IIssueDisplayFilterOptions}
    */
-  computedDisplayFilters = (displayFilters: IIssueDisplayFilterOptions): IIssueDisplayFilterOptions => ({
-    calendar: {
-      show_weekends: displayFilters?.calendar?.show_weekends || false,
-      layout: displayFilters?.calendar?.layout || "month",
-    },
-    layout: displayFilters?.layout || "list",
-    order_by: displayFilters?.order_by || "sort_order",
-    group_by: displayFilters?.group_by || null,
-    sub_group_by: displayFilters?.sub_group_by || null,
-    type: displayFilters?.type || null,
-    sub_issue: displayFilters?.sub_issue || false,
-    show_empty_groups: displayFilters?.show_empty_groups || false,
-    start_target_date: displayFilters?.start_target_date || false,
-  });
+  computedDisplayFilters = (
+    displayFilters: IIssueDisplayFilterOptions,
+    defaultValues?: IIssueDisplayFilterOptions
+  ): IIssueDisplayFilterOptions => {
+    const filters = displayFilters || defaultValues;
+
+    return {
+      calendar: {
+        show_weekends: filters?.calendar?.show_weekends || false,
+        layout: filters?.calendar?.layout || "month",
+      },
+      layout: filters?.layout || "list",
+      order_by: filters?.order_by || "sort_order",
+      group_by: filters?.group_by || null,
+      sub_group_by: filters?.sub_group_by || null,
+      type: filters?.type || null,
+      sub_issue: filters?.sub_issue || false,
+      show_empty_groups: filters?.show_empty_groups || false,
+      start_target_date: filters?.start_target_date || false,
+    };
+  };
 
   /**
    * @description This method is used to apply the display properties on the issues
