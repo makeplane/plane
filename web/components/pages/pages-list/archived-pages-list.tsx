@@ -9,9 +9,9 @@ import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const ArchivedPagesList: FC = observer(() => {
   const projectPageStore = useProjectPages();
-  const { archivedPageIds, archivedProjectLoader } = projectPageStore;
+  const { archivedPageIds, archivedPageLoader } = projectPageStore;
 
-  if (archivedProjectLoader) {
+  if (archivedPageLoader) {
     return (
       <div className="flex items-center justify-center h-full w-full">
         <Spinner />

@@ -68,7 +68,7 @@ export const EmptyState: React.FC<Props> = ({
     <div className="flex items-center justify-center min-h-full min-w-full overflow-y-auto py-10 px-20">
       <div
         className={cn("flex flex-col gap-5", {
-          "min-w-[24rem] max-w-[38rem]": size === "sm",
+          "min-w-[24rem] max-w-[45rem]": size === "sm",
           "min-w-[30rem] max-w-[60rem]": size === "lg",
         })}
       >

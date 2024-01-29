@@ -43,7 +43,7 @@ export const ProjectViewsList = observer(() => {
 
   const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", currentUser?.theme.theme === "light");
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "views", currentUser?.theme.theme === "light");
 
   const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
 

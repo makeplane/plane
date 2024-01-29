@@ -685,6 +685,19 @@ class ProjectMemberViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
+        bulk_project_members = []
+        member_roles = {member.get("member_id"): member.get("role") for member in members}
+        # Update roles in the members array based on the member_roles dictionary
+        for project_member in  ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members]):
+            project_member.role = member_roles[str(project_member.member_id)]
+            project_member.is_active = True
+            bulk_project_members.append(project_member)
+
+        # Update the roles of the existing members
+        ProjectMember.objects.bulk_update(
+            bulk_project_members, ["is_active", "role"], batch_size=100
+        )
+
         for member in members:
             sort_order = [
                 project_member.get("sort_order")
@@ -711,25 +724,6 @@ class ProjectMemberViewSet(BaseViewSet):
                 )
             )
 
-            # Check if the user is already a member of the project and is inactive
-            if ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member_id=member.get("member_id"),
-                is_active=False,
-            ).exists():
-                member_detail = ProjectMember.objects.get(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    member_id=member.get("member_id"),
-                    is_active=False,
-                )
-                # Check if the user has not deactivated the account
-                user = User.objects.filter(pk=member.get("member_id")).first()
-                if user.is_active:
-                    member_detail.is_active = True
-                    member_detail.save(update_fields=["is_active"])
-
         project_members = ProjectMember.objects.bulk_create(
             bulk_project_members,
             batch_size=10,
@@ -740,8 +734,8 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_issue_props, batch_size=10, ignore_conflicts=True
         )
 
-        serializer = ProjectMemberSerializer(project_members, many=True)
-
+        project_members = ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members])
+        serializer = ProjectMemberRoleSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, slug, project_id):

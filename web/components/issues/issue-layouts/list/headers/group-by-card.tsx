@@ -110,6 +110,8 @@ export const HeaderGroupByCard = observer(
 
           {renderExistingIssueModal && (
             <ExistingIssuesListModal
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
               isOpen={openExistingIssueListModal}
               handleClose={() => setOpenExistingIssueListModal(false)}
               searchParams={ExistingIssuesListModalPayload}

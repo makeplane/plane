@@ -95,12 +95,13 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const viewIssueIds = this.issues[viewId] ?? [];
+    const viewIssueIds = this.issues[viewId];
+    if (!viewIssueIds) return;
 
     const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
