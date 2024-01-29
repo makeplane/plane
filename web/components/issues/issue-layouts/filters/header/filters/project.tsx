@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { observer } from "mobx-react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // hooks
@@ -15,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterProjects: React.FC<Props> = (props) => {
+export const FilterProjects: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -93,4 +93,4 @@ export const FilterProjects: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});
