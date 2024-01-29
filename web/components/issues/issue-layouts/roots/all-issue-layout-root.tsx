@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import isEmpty from "lodash/isEmpty";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
 import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
@@ -25,6 +26,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // store
@@ -46,7 +49,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
   const currentViewDetails = ALL_ISSUES_EMPTY_STATE_DETAILS[currentView as keyof typeof ALL_ISSUES_EMPTY_STATE_DETAILS];
 
-  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, isLightMode);
 
   // filter init from the query params
 

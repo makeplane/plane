@@ -147,6 +147,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                isActive={isOpen}
                 tooltip={tooltip}
               />
             ) : buttonVariant === "border-without-text" ? (
@@ -157,6 +158,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                isActive={isOpen}
                 tooltip={tooltip}
                 hideText
               />
@@ -189,6 +191,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                isActive={isOpen}
                 tooltip={tooltip}
               />
             ) : buttonVariant === "transparent-without-text" ? (
@@ -199,6 +202,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
                 placeholder={placeholder}
+                isActive={isOpen}
                 tooltip={tooltip}
                 hideText
               />

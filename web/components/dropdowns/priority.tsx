@@ -31,6 +31,7 @@ type ButtonProps = {
   dropdownArrowClassName: string;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   highlightUrgent: boolean;
   priority: TIssuePriorities;
   tooltip: boolean;
@@ -181,6 +182,7 @@ const TransparentButton = (props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     highlightUrgent,
     priority,
     tooltip,
@@ -207,6 +209,7 @@ const TransparentButton = (props: ButtonProps) => {
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
             "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+            "bg-custom-background-80": isActive,
           },
           className
         )}
@@ -312,7 +315,13 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
-      className={cn("h-full", className)}
+      className={cn(
+        "h-full",
+        {
+          "bg-custom-background-80": isOpen,
+        },
+        className
+      )}
       value={value}
       onChange={onChange}
       disabled={disabled}
@@ -402,6 +411,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
                 tooltip={tooltip}
               />
             ) : buttonVariant === "transparent-without-text" ? (
@@ -414,6 +424,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
                 tooltip={tooltip}
                 hideText
               />
