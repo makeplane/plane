@@ -17,6 +17,7 @@ import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // ui
 import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
 // icons
@@ -149,6 +150,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       />
       <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2">
+          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"

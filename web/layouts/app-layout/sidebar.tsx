@@ -11,7 +11,7 @@ import { ProjectSidebarList } from "components/project";
 // hooks
 import { useApplication } from "hooks/store";
 
-export interface IAppSidebar {}
+export interface IAppSidebar { }
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
@@ -19,10 +19,10 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative ${
-        themStore?.sidebarCollapsed ? "" : "md:w-[280px]"
-      } ${themStore?.sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
-    >
+      className={`inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 overflow-hidden
+        fixed md:relative 
+        -ml-[80px] w-[80px] md:ml-[0px] md:w-[280px]
+      `}    >
       <div className="flex h-full w-full flex-1 flex-col">
         <WorkspaceSidebarDropdown />
         <WorkspaceSidebarQuickAction />
