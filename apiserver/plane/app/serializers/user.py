@@ -3,7 +3,13 @@ from rest_framework import serializers
 
 # Module import
 from .base import BaseSerializer
-from plane.db.models import User, Workspace, WorkspaceMemberInvite, Profile, Account
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMemberInvite,
+    Profile,
+    Account,
+)
 from plane.license.models import InstanceAdmin, Instance
 
 
@@ -54,7 +60,6 @@ class UserMeSerializer(BaseSerializer):
             "mobile_number",
             "user_timezone",
             "username",
-            "theme",
             "is_password_autoset",
             "is_email_verified",
         ]
@@ -194,15 +199,14 @@ class ResetPasswordSerializer(serializers.Serializer):
 
     new_password = serializers.CharField(required=True, min_length=8)
 
-class ProfileSerializer(BaseSerializer):
 
+class ProfileSerializer(BaseSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
 
 
 class AccountSerializer(BaseSerializer):
-
     class Meta:
         model = Account
         fields = "__all__"
