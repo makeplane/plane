@@ -138,8 +138,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               position="top"
               tooltipHeading="Labels"
               tooltipContent={projectLabels
-                ?.filter((l) => value.includes(l.id))
-                .map((l) => l.name)
+                ?.filter((l) => value.includes(l?.id))
+                .map((l) => l?.name)
                 .join(", ")}
             >
               <div className="flex h-full items-center gap-1.5 text-custom-text-200">
