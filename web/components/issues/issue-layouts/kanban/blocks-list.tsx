@@ -4,7 +4,6 @@ import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";
-import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
