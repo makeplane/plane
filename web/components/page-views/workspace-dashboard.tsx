@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
@@ -14,6 +15,8 @@ import { Spinner } from "@plane/ui";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const WorkspaceDashboardView = observer(() => {
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
@@ -28,7 +31,8 @@ export const WorkspaceDashboardView = observer(() => {
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
 
-  const emptyStateImage = getEmptyStateImagePath("onboarding", "dashboard", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "dashboard", isLightMode);
 
   const handleTourCompleted = () => {
     updateTourCompleted()
