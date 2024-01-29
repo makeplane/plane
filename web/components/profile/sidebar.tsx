@@ -5,9 +5,10 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useUser } from "hooks/store";
-import { useCurrentTime } from "hooks/use-current-time";
 // services
 import { UserService } from "services/user.service";
+// components
+import { ProfileSidebarTime } from "./time";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // icons
@@ -27,8 +28,6 @@ export const ProfileSidebar = observer(() => {
   const { workspaceSlug, userId } = router.query;
   // store hooks
   const { currentUser } = useUser();
-  // current time hook
-  const { currentTime } = useCurrentTime();
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
@@ -37,15 +36,6 @@ export const ProfileSidebar = observer(() => {
       : null
   );
 
-  // Create a date object for the current time in the specified timezone
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: userProjectsData?.user_data.user_timezone,
-    hour12: false, // Use 24-hour format
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const timeString = formatter.format(currentTime);
-
   const userDetails = [
     {
       label: "Joined on",
@@ -53,11 +43,7 @@ export const ProfileSidebar = observer(() => {
     },
     {
       label: "Timezone",
-      value: (
-        <span>
-          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
-        </span>
-      ),
+      value: <ProfileSidebarTime timeZone={userProjectsData?.user_data.user_timezone} />,
     },
   ];
 
