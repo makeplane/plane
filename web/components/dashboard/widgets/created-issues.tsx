@@ -99,7 +99,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
         </div>
         <Tab.Panels as="div" className="h-full">
           {ISSUES_TABS_LIST.map((tab) => (
-            <Tab.Panel as="div" className="h-full flex flex-col">
+            <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col">
               <WidgetIssuesList
                 issues={widgetStats.issues}
                 tab={tab.key}
