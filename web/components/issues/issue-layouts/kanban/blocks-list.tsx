@@ -43,22 +43,18 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
             if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
             return (
-              <Draggable key={draggableId} draggableId={draggableId} index={index} isDragDisabled={isDragDisabled}>
-                {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                  <KanbanIssueBlock
-                    key={`kanban-issue-block-${issueId}`}
-                    issueId={issueId}
-                    issuesMap={issuesMap}
-                    displayProperties={displayProperties}
-                    handleIssues={handleIssues}
-                    quickActions={quickActions}
-                    provided={provided}
-                    snapshot={snapshot}
-                    isDragDisabled={isDragDisabled}
-                    canEditProperties={canEditProperties}
-                  />
-                )}
-              </Draggable>
+              <KanbanIssueBlock
+                key={draggableId}
+                issueId={issueId}
+                issuesMap={issuesMap}
+                displayProperties={displayProperties}
+                handleIssues={handleIssues}
+                quickActions={quickActions}
+                draggableId={draggableId}
+                index={index}
+                isDragDisabled={isDragDisabled}
+                canEditProperties={canEditProperties}
+              />
             );
           })}
         </>
