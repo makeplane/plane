@@ -304,7 +304,17 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   my_issues: {
     spreadsheet: {
-      filters: ["priority", "state_group", "labels", "assignees", "created_by", "project", "start_date", "target_date"],
+      filters: [
+        "priority",
+        "state_group",
+        "labels",
+        "assignees",
+        "created_by",
+        "subscriber",
+        "project",
+        "start_date",
+        "target_date",
+      ],
       display_properties: true,
       display_filters: {
         type: [null, "active", "backlog"],
