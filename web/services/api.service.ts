@@ -10,27 +10,29 @@ export abstract class APIService {
   }
 
   setRefreshToken(token: string) {
-    Cookies.set("refreshToken", token, { expires: 30 });
+    Cookies.set("refresh_token", token, { expires: 30 });
   }
 
   getRefreshToken() {
-    return Cookies.get("refreshToken");
+    return Cookies.get("refresh_token");
   }
 
   purgeRefreshToken() {
-    Cookies.remove("refreshToken", { path: "/" });
+    Cookies.remove("refresh_token", { path: "/" });
   }
 
   setAccessToken(token: string) {
-    Cookies.set("accessToken", token, { expires: 30 });
+    Cookies.set("access_token", token, { expires: 30 });
   }
 
   getAccessToken() {
-    return Cookies.get("accessToken");
+    console.log("access_token", Cookies.get("access_token"));
+
+    return Cookies.get("access_token");
   }
 
   purgeAccessToken() {
-    Cookies.remove("accessToken", { path: "/" });
+    Cookies.remove("access_token", { path: "/" });
   }
 
   getHeaders() {

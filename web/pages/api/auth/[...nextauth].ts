@@ -121,6 +121,10 @@ const authHandler = async (req: any, res: any) => {
     async session({ session, token }: any) {
       console.log("token", token);
       console.log("session", session);
+      res.setHeader("Set-Cookie", [
+        `access_token=${token?.access_token};Path=/;Secure;`,
+        `refresh_token=${token?.refresh_token};Path=/;Secure;`,
+      ]);
       session.access_token = token?.access_token;
       session.user.id = token?.id;
       return token;
