@@ -2,6 +2,7 @@ import { Fragment, useCallback, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
+import { useTheme } from "next-themes";
 // hooks
 import { useCycle, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
@@ -22,6 +23,8 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -49,7 +52,9 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     },
     [handleCurrentLayout, setCycleTab]
   );
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", currentUser?.theme.theme === "light");
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", isLightMode);
 
   const totalCycles = currentProjectCycleIds?.length ?? 0;
 

@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // components
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
@@ -27,6 +28,9 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     workspaceSlug: string;
     userId: string;
   };
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
     membership: { currentWorkspaceRole },
     currentUser,
@@ -46,7 +50,8 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     }
   );
 
-  const emptyStateImage = getEmptyStateImagePath("profile", type, currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("profile", type, isLightMode);
 
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
