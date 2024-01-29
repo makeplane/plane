@@ -1,7 +1,11 @@
 import { FC } from "react";
 import Link from "next/link";
+import useSWR from "swr";
+import { observer } from "mobx-react";
 // ui
 import { Tooltip, Loader, PriorityIcon } from "@plane/ui";
+// hooks
+import { useIssues, useProjectState } from "hooks/store";
 // icons
 import { CalendarCheck } from "lucide-react";
 // types
@@ -10,6 +14,9 @@ import { ICycle } from "@plane/types";
 import { StateDropdown } from "components/dropdowns";
 // helpers
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
+// constants
+import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { EIssuesStoreType } from "constants/issue";
 
 export type ActiveCyclePriorityIssuesProps = {
   workspaceSlug: string;
@@ -17,24 +24,39 @@ export type ActiveCyclePriorityIssuesProps = {
   cycle: ICycle;
 };
 
-export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = (props) => {
+export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
 
-  const cycleIssues = cycle.issues ?? [];
+  const {
+    issues: { fetchActiveCycleIssues },
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const { fetchWorkspaceStates } = useProjectState();
+
+  const { data: activeCycleIssues } = useSWR(
+    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
+    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, cycle.id) : null
+  );
+
+  useSWR(
+    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null
+  );
+
+  const cycleIssues = activeCycleIssues ?? [];
 
   return (
-    <div className="flex flex-col gap-4 px-3 pt-2 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border-t border-custom-border-300">
+    <div className="flex flex-col gap-4 p-4 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-lg font-medium">Priority</h3>
+        <h3 className="text-lg text-custom-text-300 font-medium">High-priority issues</h3>
       </div>
-      <div className="flex flex-col gap-4 h-full w-full max-h-40 overflow-y-auto pb-3">
+      <div className="flex flex-col gap-1 h-full w-full max-h-40 overflow-y-auto">
         {cycleIssues ? (
           cycleIssues.length > 0 ? (
             cycleIssues.map((issue: any) => (
               <Link
                 key={issue.id}
                 href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-                className="flex cursor-pointer items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5"
+                className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
               >
                 <div className="flex items-center gap-1.5 flex-grow w-full truncate">
                   <PriorityIcon priority={issue.priority} withContainer size={12} />
@@ -57,10 +79,12 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = (pr
                     projectId={projectId?.toString() ?? ""}
                     disabled={true}
                     buttonVariant="background-with-text"
+                    buttonContainerClassName="cursor-pointer"
+                    buttonClassName="group-hover:bg-custom-background-100"
                   />
                   {issue.target_date && (
                     <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
-                      <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                      <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
                         <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                         <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
                       </div>
@@ -84,4 +108,4 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = (pr
       </div>
     </div>
   );
-};
+});

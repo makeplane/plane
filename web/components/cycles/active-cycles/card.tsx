@@ -20,16 +20,19 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
 
   return (
-    <>
+    <div
+      key={cycle.id}
+      className="flex flex-col gap-4 p-4 rounded-xl border border-custom-border-200 bg-custom-background-100"
+    >
       <ActiveCyclesProjectTitle project={cycle.project_detail} />
-      <div className="flex flex-col gap-2 rounded border border-custom-border-200">
-        <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-          <ActiveCycleProgress cycle={cycle} />
-          <ActiveCycleProductivity cycle={cycle} />
-          <ActiveCyclePriorityIssues cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
-        </div>
+
+      <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
+
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+        <ActiveCycleProgress cycle={cycle} />
+        <ActiveCycleProductivity cycle={cycle} />
+        <ActiveCyclePriorityIssues cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
-    </>
+    </div>
   );
 };
