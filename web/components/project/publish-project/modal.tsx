@@ -198,7 +198,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     return (
       <div
-        className="flex h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded border border-custom-border-100 bg-custom-background-100 px-2 text-xs hover:bg-custom-background-90"
+        className="flex h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded border border-neutral-border-subtle bg-custom-background-100 px-2 text-xs hover:bg-custom-background-90"
         onClick={() => copyText()}
       >
         {status ? "Copied" : "Copy Link"}
@@ -317,7 +317,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     <div className="px-6">
                       {project.is_deployed && (
                         <>
-                          <div className="relative flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 px-3 py-2">
+                          <div className="relative flex items-center gap-2 rounded-md border border-neutral-border-subtle bg-custom-background-80 px-3 py-2">
                             <div className="flex-grow truncate text-sm">
                               {`${plane_deploy_url}/${workspaceSlug}/${project.id}`}
                             </div>
@@ -456,7 +456,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                   )}
 
                   {/* modal handlers */}
-                  <div className="relative flex items-center justify-between border-t border-custom-border-200 px-6 py-5">
+                  <div className="relative flex items-center justify-between border-t border-neutral-border-medium px-6 py-5">
                     <div className="flex items-center gap-1 text-sm text-custom-text-400">
                       <Globe2 className="h-4 w-4" />
                       <div className="text-sm">Anyone with the link can access</div>

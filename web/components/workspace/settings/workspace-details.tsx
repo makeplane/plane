@@ -165,7 +165,7 @@ export const WorkspaceDetails: FC = observer(() => {
         )}
       />
       <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
+        <div className="flex items-center gap-5 border-b border-neutral-border-subtle pb-7">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
@@ -248,7 +248,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     onChange={onChange}
                     label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
                     optionsClassName="w-full"
-                    buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                    buttonClassName="!border-[0.5px] !border-neutral-border-medium !shadow-none"
                     input
                     disabled={!isAdmin}
                   >
@@ -296,7 +296,7 @@ export const WorkspaceDetails: FC = observer(() => {
           )}
         </div>
         {isAdmin && (
-          <Disclosure as="div" className="border-t border-custom-border-100">
+          <Disclosure as="div" className="border-t border-neutral-border-subtle">
             {({ open }) => (
               <div className="w-full">
                 <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

@@ -60,7 +60,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
           ))}
 
         <div
-          className={`absolute bottom-0 top-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
+          className={`absolute bottom-0 top-0  ${spacingLeft > 10 ? `border-l border-neutral-border-subtle` : ``}`}
           style={{ left: `${spacingLeft - 12}px` }}
         />
       </div>

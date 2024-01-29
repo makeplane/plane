@@ -164,7 +164,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                   label_details.map((label: IIssueLabel) => (
                     <div
                       key={label.id}
-                      className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs"
+                      className="group flex items-center gap-1 rounded-2xl border border-neutral-border-medium px-2 py-0.5 text-xs"
                       style={{
                         backgroundColor: `${label?.color}20`,
                       }}

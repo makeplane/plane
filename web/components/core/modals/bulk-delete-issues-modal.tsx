@@ -130,7 +130,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-neutral-border-medium divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {
@@ -158,7 +158,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
 
                     <Combobox.Options
                       static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
+                      className="max-h-80 scroll-py-2 divide-y divide-neutral-border-medium overflow-y-auto"
                     >
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">

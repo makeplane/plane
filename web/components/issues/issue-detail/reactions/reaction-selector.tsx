@@ -48,7 +48,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                 position === "top" ? "-top-12" : "-bottom-12"
               }`}
             >
-              <div className="rounded-md border border-custom-border-200 bg-custom-sidebar-background-100 p-1 shadow-custom-shadow-sm">
+              <div className="rounded-md border border-neutral-border-medium bg-custom-sidebar-background-100 p-1 shadow-custom-shadow-sm">
                 <div className="flex gap-x-1">
                   {reactionEmojis.map((emoji) => (
                     <button

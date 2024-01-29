@@ -55,7 +55,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
                       <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
-                  <div className="flex w-full items-center rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2">
+                  <div className="flex w-full items-center rounded border-[0.5px] border-neutral-border-medium bg-custom-background-90 px-2">
                     <Search className="h-3.5 w-3.5 text-custom-text-200" />
                     <Input
                       id="search"

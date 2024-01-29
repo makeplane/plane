@@ -94,7 +94,7 @@ export const NotificationPopover = observer(() => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute -top-36 left-0 z-10 ml-8 flex h-[50vh] w-[20rem] flex-col rounded-xl border border-custom-border-300 bg-custom-background-100 shadow-lg md:left-full md:w-[36rem]">
+                <Popover.Panel className="absolute -top-36 left-0 z-10 ml-8 flex h-[50vh] w-[20rem] flex-col rounded-xl border border-neutral-border-medium bg-custom-background-100 shadow-lg md:left-full md:w-[36rem]">
                   <NotificationHeader
                     notificationCount={notificationCount}
                     notificationMutate={notificationMutate}
@@ -114,7 +114,7 @@ export const NotificationPopover = observer(() => {
                   {notifications ? (
                     notifications.length > 0 ? (
                       <div className="h-full overflow-y-auto">
-                        <div className="divide-y divide-custom-border-100">
+                        <div className="divide-y divide-neutral-border-subtle">
                           {notifications.map((notification) => (
                             <NotificationCard
                               key={notification.id}

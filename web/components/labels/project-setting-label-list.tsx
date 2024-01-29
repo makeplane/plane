@@ -88,7 +88,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
       />
-      <div className="flex items-center justify-between border-b border-custom-border-100 py-3.5">
+      <div className="flex items-center justify-between border-b border-neutral-border-subtle py-3.5">
         <h3 className="text-xl font-medium">Labels</h3>
         <Button variant="primary" onClick={newLabel} size="sm">
           Add label
@@ -96,7 +96,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
       </div>
       <div className="w-full py-8">
         {showLabelForm && (
-          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2 my-2">
+          <div className="w-full rounded border border-neutral-border-medium px-3.5 py-2 my-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}

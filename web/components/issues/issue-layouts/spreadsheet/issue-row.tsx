@@ -97,7 +97,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     <>
       <tr>
         {/* first column/ issue name and key column */}
-        <td className="sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-custom-border-100 before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-custom-border-100">
+        <td className="sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-neutral-border-subtle before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-neutral-border-subtle">
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <div
               className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
@@ -158,7 +158,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               displayPropertyKey={property}
               shouldRenderProperty={shouldRenderProperty}
             >
-              <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100">
+              <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-neutral-border-subtle border-r-[1px] border-neutral-border-subtle">
                 <Column
                   issue={issueDetail}
                   onChange={(issue: TIssue, data: Partial<TIssue>) =>

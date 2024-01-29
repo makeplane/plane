@@ -55,7 +55,7 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-custom-border-200`,
+    default: `text-custom-text-200 bg-custom-background-100 border border-neutral-border-medium`,
     hover: `hover:bg-custom-background-90`,
     pressed: `focus:text-custom-text-300 focus:bg-custom-background-90`,
     disabled: `cursor-not-allowed !text-custom-text-400`,

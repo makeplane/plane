@@ -63,7 +63,7 @@ export const CoreEditorExtensions = (
     },
   }),
   CustomQuoteExtension.configure({
-    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
+    HTMLAttributes: { className: "border-l-4 border-neutral-border-medium" },
   }),
   CustomKeymap,
   ListKeymap,
@@ -80,7 +80,7 @@ export const CoreEditorExtensions = (
   }),
   ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
     HTMLAttributes: {
-      class: "rounded-lg border border-custom-border-300",
+      class: "rounded-lg border border-neutral-border-medium",
     },
   }),
   TiptapUnderline,

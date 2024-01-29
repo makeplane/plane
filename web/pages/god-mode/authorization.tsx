@@ -65,7 +65,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="mb-2 border-b border-custom-border-100 pb-3">
+      <div className="mb-2 border-b border-neutral-border-subtle pb-3">
         <div className="pb-1 text-xl font-medium text-custom-text-100">Single sign-on and OAuth</div>
         <div className="text-sm font-normal text-custom-text-300">
           Make your teams life easy by letting them sign-up with their Google and GitHub accounts, and below are the
@@ -74,7 +74,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
       </div>
       {formattedConfig ? (
         <>
-          <div className="flex w-full flex-col gap-12 border-b border-custom-border-100 pb-8 lg:w-2/5">
+          <div className="flex w-full flex-col gap-12 border-b border-neutral-border-subtle pb-8 lg:w-2/5">
             <div className="pointer-events-none mr-4 flex items-center gap-14 opacity-50">
               <div className="grow">
                 <div className="text-sm font-medium text-custom-text-100">
@@ -149,7 +149,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
           </div>
           <div className="flex flex-col gap-y-6 py-2">
             <div className="w-full">
-              <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
+              <div className="flex items-center justify-between border-b border-neutral-border-subtle py-2">
                 <span className="text-lg font-medium tracking-tight">Google</span>
               </div>
               <div className="px-2 py-6">
@@ -157,7 +157,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
               </div>
             </div>
             <div className="w-full">
-              <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
+              <div className="flex items-center justify-between border-b border-neutral-border-subtle py-2">
                 <span className="text-lg font-medium tracking-tight">Github</span>
               </div>
               <div className="px-2 py-6">

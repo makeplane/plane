@@ -69,7 +69,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
             className={`relative flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2 ${
               isSidebarCollapsed
                 ? "px-2 hover:bg-custom-sidebar-background-80"
-                : "border-[0.5px] border-custom-border-200 px-3 shadow-custom-sidebar-shadow-2xs"
+                : "border-[0.5px] border-neutral-border-medium px-3 shadow-custom-sidebar-shadow-2xs"
             }`}
           >
             <button
@@ -113,7 +113,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                   <div className="h-full w-full">
                     <button
                       onClick={() => setIsDraftIssueModalOpen(true)}
-                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
+                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
                     >
                       <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
                       Last Drafted Issue
@@ -131,7 +131,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
           } ${
             isSidebarCollapsed
               ? "hover:bg-custom-sidebar-background-80"
-              : "border-[0.5px] border-custom-border-200 shadow-custom-sidebar-shadow-2xs"
+              : "border-[0.5px] border-neutral-border-medium shadow-custom-sidebar-shadow-2xs"
           }`}
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >

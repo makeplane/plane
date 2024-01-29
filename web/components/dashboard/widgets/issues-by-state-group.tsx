@@ -127,7 +127,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   };
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
       <div className="flex items-start justify-between gap-2 pl-7 pr-6">
         <div>
           <Link
@@ -138,7 +138,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           </Link>
           <p className="mt-3 text-xs font-medium text-custom-text-300">
             Filtered by{" "}
-            <span className="border-[0.5px] border-custom-border-300 rounded py-1 px-2 ml-0.5">Due date</span>
+            <span className="border-[0.5px] border-neutral-border-medium rounded py-1 px-2 ml-0.5">Due date</span>
           </p>
         </div>
         <DurationFilterDropdown

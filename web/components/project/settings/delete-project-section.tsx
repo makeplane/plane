@@ -17,7 +17,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
   const { projectDetails, handleDelete } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-100">
+    <Disclosure as="div" className="border-t border-neutral-border-subtle">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

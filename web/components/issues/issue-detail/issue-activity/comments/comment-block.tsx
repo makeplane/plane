@@ -34,7 +34,7 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = (props) => {
             }
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-neutral-border-medium"
           />
         ) : (
           <>

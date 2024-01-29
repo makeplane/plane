@@ -125,7 +125,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                 <Listbox as="div" value={value} onChange={onChange} className="relative flex-shrink-0 text-left">
                   <Listbox.Button
                     type="button"
-                    className={`flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-300 px-3 py-2 text-sm shadow-sm duration-300 focus:outline-none`}
+                    className={`flex w-full items-center justify-between gap-1 rounded-md border border-neutral-border-medium px-3 py-2 text-sm shadow-sm duration-300 focus:outline-none`}
                   >
                     <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
                     <ChevronDown className="h-3 w-3" aria-hidden="true" strokeWidth={2} />
@@ -141,7 +141,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Listbox.Options
-                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none`}
+                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-neutral-border-medium bg-custom-background-90 text-xs shadow-lg focus:outline-none`}
                     >
                       <div className="space-y-1 p-2">
                         {USER_ROLES.map((role) => (

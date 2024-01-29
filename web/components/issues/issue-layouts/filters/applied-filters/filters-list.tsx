@@ -54,7 +54,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         return (
           <div
             key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-neutral-border-medium px-2 py-1 capitalize"
           >
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
@@ -121,7 +121,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         <button
           type="button"
           onClick={handleClearAllFilters}
-          className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
+          className="flex items-center gap-2 rounded-md border border-neutral-border-medium px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
         >
           Clear all
           <X size={12} strokeWidth={2} />

@@ -14,7 +14,7 @@ export const InstanceNotReady = () => {
   return (
     <div className="h-screen w-full overflow-y-auto bg-onboarding-gradient-100">
       <div className="h-full w-full pt-24">
-        <div className="mx-auto h-full rounded-t-md border-x border-t border-custom-border-100 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3">
+        <div className="mx-auto h-full rounded-t-md border-x border-t border-neutral-border-subtle bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3">
           <div className="relative h-full rounded-t-md bg-onboarding-gradient-200 px-7 sm:px-0">
             <div className="flex items-center justify-center py-10">
               <Image src={planeLogo} className="h-[44px] w-full" alt="Plane logo" />

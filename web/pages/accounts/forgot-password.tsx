@@ -83,9 +83,9 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="mx-auto h-full rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3 ">
+      <div className="mx-auto h-full rounded-t-md border-x border-t border-neutral-border-medium bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3 ">
         <div className="h-full overflow-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-56 pt-24 sm:px-0">
-          <div className="mx-auto flex flex-col divide-y divide-custom-border-200 sm:w-96">
+          <div className="mx-auto flex flex-col divide-y divide-neutral-border-medium sm:w-96">
             <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
               Get on your flight deck
             </h1>

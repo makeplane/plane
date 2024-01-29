@@ -132,7 +132,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
             <form
               ref={ref}
               onSubmit={handleSubmit(onSubmitHandler)}
-              className="flex w-full items-center gap-x-3 border-[0.5px] border-custom-border-100 bg-custom-background-100 px-3"
+              className="flex w-full items-center gap-x-3 border-[0.5px] border-neutral-border-subtle bg-custom-background-100 px-3"
             >
               <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail ?? null} />
             </form>

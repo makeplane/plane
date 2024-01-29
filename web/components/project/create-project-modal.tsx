@@ -260,7 +260,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                     />
                   </div>
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)} className="divide-y-[0.5px] divide-custom-border-100 px-3">
+                <form onSubmit={handleSubmit(onSubmit)} className="divide-y-[0.5px] divide-neutral-border-subtle px-3">
                   <div className="mt-9 space-y-6 pb-5">
                     <div className="grid grid-cols-1 gap-x-2 gap-y-3 md:grid-cols-4">
                       <div className="md:col-span-3">

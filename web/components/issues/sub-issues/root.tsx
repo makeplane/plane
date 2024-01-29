@@ -221,7 +221,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
             <>
               <div className="relative flex items-center gap-4 text-xs">
                 <div
-                  className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                  className="flex cursor-pointer select-none items-center gap-1 rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                   onClick={async () => {
                     if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
                       setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
@@ -257,13 +257,13 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 {!disabled && (
                   <div className="ml-auto flex flex-shrink-0 select-none items-center gap-2">
                     <div
-                      className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                      className="cursor-pointer rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                       onClick={() => handleIssueCrudState("create", parentIssueId, null)}
                     >
                       Add sub-issue
                     </div>
                     <div
-                      className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                      className="cursor-pointer rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                       onClick={() => handleIssueCrudState("existing", parentIssueId, null)}
                     >
                       Add an existing issue
@@ -273,7 +273,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               </div>
 
               {subIssueHelpers.issue_visibility.includes(parentIssueId) && (
-                <div className="border border-b-0 border-custom-border-100">
+                <div className="border border-b-0 border-neutral-border-subtle">
                   <IssueList
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}

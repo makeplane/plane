@@ -38,7 +38,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   if (!workspaceSlug || !projectId || !inboxId || !currentProjectDetails?.inbox_view) return <></>;
   return (
     <div className="relative flex h-full overflow-hidden">
-      <div className="flex-shrink-0 w-[340px] h-full border-r border-custom-border-300">
+      <div className="flex-shrink-0 w-[340px] h-full border-r border-neutral-border-medium">
         <InboxSidebarRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}

@@ -167,7 +167,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     <CustomSelect
                       customButton={
                         <div
-                          className={`flex items-center gap-2 rounded border-[0.5px] border-custom-border-200 px-2 py-1 ${
+                          className={`flex items-center gap-2 rounded border-[0.5px] border-neutral-border-medium px-2 py-1 ${
                             neverExpires ? "text-custom-text-400" : ""
                           }`}
                         >
@@ -200,7 +200,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   minDate={tomorrow}
                   customInput={
                     <div
-                      className={`flex cursor-pointer items-center gap-2 !rounded border-[0.5px] border-custom-border-200 px-2 py-1 text-xs !shadow-none !duration-0 ${
+                      className={`flex cursor-pointer items-center gap-2 !rounded border-[0.5px] border-neutral-border-medium px-2 py-1 text-xs !shadow-none !duration-0 ${
                         customDate ? "w-[7.5rem]" : ""
                       } ${neverExpires ? "!cursor-not-allowed text-custom-text-400" : "hover:bg-custom-background-80"}`}
                     >

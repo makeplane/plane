@@ -60,7 +60,7 @@ const BorderButton = (props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] border-neutral-border-medium hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
           className
         )}
       >

@@ -43,7 +43,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {overviewCards.map((card) => (
             <Link key={card.route} href={`/${workspaceSlug}/profile/${userId}/${card.route}`}>
-              <span className="flex items-center gap-3 whitespace-nowrap rounded border border-custom-border-100 p-4">
+              <span className="flex items-center gap-3 whitespace-nowrap rounded border border-neutral-border-subtle p-4">
                 <div className="grid h-11 w-11 place-items-center rounded bg-custom-background-90">
                   <card.icon className="h-5 w-5" />
                 </div>

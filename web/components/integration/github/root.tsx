@@ -167,7 +167,7 @@ export const GithubImporterRoot: React.FC = () => {
           </span>
         </Link>
 
-        <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
+        <div className="space-y-4 rounded-[10px] border border-neutral-border-medium bg-custom-background-100 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
@@ -183,7 +183,7 @@ export const GithubImporterRoot: React.FC = () => {
                               ? "border-opacity-100 bg-opacity-100"
                               : "border-opacity-80 bg-opacity-80"
                           }`
-                        : "border-custom-border-200"
+                        : "border-neutral-border-medium"
                     }`}
                   >
                     <integration.icon
@@ -194,7 +194,7 @@ export const GithubImporterRoot: React.FC = () => {
                     <div
                       key={index}
                       className={`border-b px-7 ${
-                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
+                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-neutral-border-medium`
                       }`}
                     >
                       {" "}

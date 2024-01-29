@@ -55,7 +55,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
 
   return (
     <>
-      <div className="flex gap-2 items-center pt-6 mb-2 pb-6 border-b border-custom-border-100">
+      <div className="flex gap-2 items-center pt-6 mb-2 pb-6 border-b border-neutral-border-subtle">
         <div className="grow">
           <div className="pb-1 text-xl font-medium text-custom-text-100">Email notifications</div>
           <div className="text-sm font-normal text-custom-text-300">
@@ -82,7 +82,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
                   type="checkbox"
                   checked={value}
                   onChange={() => onChange(!value)}
-                  className="w-3.5 h-3.5 mx-2 cursor-pointer !border-custom-border-100"
+                  className="w-3.5 h-3.5 mx-2 cursor-pointer !border-neutral-border-subtle"
                 />
               )}
             />
@@ -113,7 +113,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
             />
           </div>
         </div>
-        <div className="flex gap-2 items-center border-0 border-l-[3px] border-custom-border-300 pl-3">
+        <div className="flex gap-2 items-center border-0 border-l-[3px] border-neutral-border-medium pl-3">
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">Issue completed</div>
             <div className="text-sm font-normal text-custom-text-300">Notify me only when an issue is completed</div>

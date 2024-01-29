@@ -31,7 +31,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
 
   return (
     <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-      <div className="flex items-center border-b border-custom-border-100 pb-3.5">
+      <div className="flex items-center border-b border-neutral-border-subtle pb-3.5">
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (
@@ -81,7 +81,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                         <div className="issue-comments-section p-0">
                           <RichReadOnlyEditor
                             value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
-                            customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+                            customClassName="text-xs border border-neutral-border-medium bg-custom-background-100"
                             noBorder
                             borderOnFocus={false}
                           />
@@ -142,7 +142,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                               </div>
                             </div>
                           </div>
-                          <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
+                          <div className="min-w-0 flex-1 border-b border-neutral-border-subtle py-4">
                             <div className="flex gap-1 break-words text-sm text-custom-text-200">
                               {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                 <span className="text-gray font-medium">Plane</span>

@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyStateMessage, workspaceSlug }) => (
-  <div className="rounded-[10px] border border-custom-border-200 p-3">
+  <div className="rounded-[10px] border border-neutral-border-medium p-3">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
       <div className="mt-3 space-y-3">

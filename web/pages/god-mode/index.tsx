@@ -23,7 +23,7 @@ const InstanceAdminPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="flex h-full w-full flex-col gap-8">
-      <div className="mb-2 border-b border-custom-border-100 pb-3">
+      <div className="mb-2 border-b border-neutral-border-subtle pb-3">
         <div className="pb-1 text-xl font-medium text-custom-text-100">ID your instance easily</div>
         <div className="text-sm font-normal text-custom-text-300">
           Change the name of your instance and instance admin e-mail addresses. If you have a paid subscription, you

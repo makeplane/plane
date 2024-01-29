@@ -27,7 +27,7 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
   };
 
   return (
-    <div className="border-b border-custom-border-200">
+    <div className="border-b border-neutral-border-medium">
       <Link href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}>
         <span className="flex items-center justify-between gap-4 px-3.5 py-[18px]">
           <h5 className="truncate text-base font-medium">{webhook.url}</h5>

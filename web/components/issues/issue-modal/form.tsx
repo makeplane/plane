@@ -396,7 +396,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           ? watch("description_html")
                           : value
                       }
-                      customClassName="min-h-[7rem] border-custom-border-100"
+                      customClassName="min-h-[7rem] border-neutral-border-subtle"
                       onChange={(description: Object, description_html: string) => {
                         onChange(description_html);
                         handleFormChange();
@@ -585,7 +585,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                      className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-neutral-border-medium text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
                     >
                       {watch("parent_id") ? (
                         <div className="flex items-center gap-1 text-custom-text-200">
@@ -648,7 +648,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
+        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-neutral-border-subtle px-5 pt-5">
           <div
             className="flex cursor-default items-center gap-1.5"
             onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}

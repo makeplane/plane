@@ -121,7 +121,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                     <Combobox.Options
                       static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
+                      className="max-h-80 scroll-py-2 divide-y divide-neutral-border-medium overflow-y-auto"
                     >
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">

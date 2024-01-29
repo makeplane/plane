@@ -262,7 +262,7 @@ const activityDetails: {
         return (
           <>
             added a new label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
             </span>
@@ -278,7 +278,7 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
             </span>

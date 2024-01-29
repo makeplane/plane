@@ -60,7 +60,7 @@ export const ProfileSidebar = observer(() => {
   ];
 
   return (
-    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80 border-l border-custom-border-100">
+    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80 border-l border-neutral-border-subtle">
       {userProjectsData ? (
         <>
           <div className="relative h-32">
@@ -109,7 +109,7 @@ export const ProfileSidebar = observer(() => {
                 </div>
               ))}
             </div>
-            <div className="mt-9 divide-y divide-custom-border-100">
+            <div className="mt-9 divide-y divide-neutral-border-subtle">
               {userProjectsData.project_data.map((project, index) => {
                 const totalIssues =
                   project.created_issues + project.assigned_issues + project.pending_issues + project.completed_issues;

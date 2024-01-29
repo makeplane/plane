@@ -43,7 +43,7 @@ export const InfoPopover: React.FC<Props> = (props) => {
       </button>
       {isPopoverOpen && (
         <div
-          className="z-10 w-64 space-y-2.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg"
+          className="z-10 w-64 space-y-2.5 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 p-3 shadow-custom-shadow-rg"
           ref={setPopperElement}
           style={infoPopoverStyles.popper}
           {...infoPopoverAttributes.popper}

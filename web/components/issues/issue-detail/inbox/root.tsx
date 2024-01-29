@@ -106,7 +106,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   if (!issue) return <></>;
   return (
     <div className="flex h-full overflow-hidden">
-      <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+      <div className="h-full w-2/3 space-y-5 divide-y-2 divide-neutral-border-medium overflow-y-auto p-5">
         <InboxIssueMainContent
           workspaceSlug={workspaceSlug}
           projectId={projectId}
@@ -116,7 +116,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
           is_editable={is_editable}
         />
       </div>
-      <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
+      <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-neutral-border-medium py-5">
         <InboxIssueDetailsSidebar
           workspaceSlug={workspaceSlug}
           projectId={projectId}

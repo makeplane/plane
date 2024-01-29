@@ -117,7 +117,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
 
   return (
     <div
-      className={`border-b border-t border-custom-border-200 bg-custom-background-100 ${
+      className={`border-b border-t border-neutral-border-medium bg-custom-background-100 ${
         errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
       }`}
     >
@@ -126,7 +126,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-3"
+            className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-neutral-border-subtle bg-custom-background-100 px-3"
           >
             <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail ?? null} />
           </form>

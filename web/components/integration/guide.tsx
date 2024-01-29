@@ -81,7 +81,7 @@ const IntegrationGuide = observer(() => {
             {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-neutral-border-subtle bg-custom-background-100 px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -102,7 +102,7 @@ const IntegrationGuide = observer(() => {
               </div>
             ))}
             <div>
-              <div className="flex items-center border-b border-custom-border-100 pb-3.5 pt-7">
+              <div className="flex items-center border-b border-neutral-border-subtle pb-3.5 pt-7">
                 <h3 className="flex gap-2 text-xl font-medium">
                   Previous Imports
                   <button
@@ -122,7 +122,7 @@ const IntegrationGuide = observer(() => {
                 {importerServices ? (
                   importerServices.length > 0 ? (
                     <div className="space-y-2">
-                      <div className="divide-y divide-custom-border-200">
+                      <div className="divide-y divide-neutral-border-medium">
                         {importerServices.map((service) => (
                           <SingleImport
                             key={service.id}

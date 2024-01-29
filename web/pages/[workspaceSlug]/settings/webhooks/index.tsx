@@ -67,7 +67,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
       />
       {Object.keys(webhooks).length > 0 ? (
         <div className="flex h-full w-full flex-col">
-          <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
+          <div className="flex items-center justify-between gap-4 border-b border-neutral-border-medium pb-3.5">
             <div className="text-xl font-medium">Webhooks</div>
             <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
               Add webhook

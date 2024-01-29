@@ -290,7 +290,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   value={value}
                   onChange={onChange}
                   label={selectedNetwork?.label ?? "Select network"}
-                  buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
+                  buttonClassName="!border-neutral-border-medium !shadow-none font-medium rounded-md"
                   input
                   disabled={!isAdmin}
                   optionsClassName="w-full"

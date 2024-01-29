@@ -32,7 +32,7 @@ export const InstanceSetupDone = () => {
   return (
     <div className="h-full w-full overflow-hidden">
       <div className="h-full w-full overflow-hidden bg-onboarding-gradient-100 pt-12">
-        <div className="mx-auto h-full overflow-hidden rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3">
+        <div className="mx-auto h-full overflow-hidden rounded-t-md border-x border-t border-neutral-border-medium bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3">
           <div className="relative flex h-full flex-col items-center overflow-y-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-8 sm:px-0">
             <div className="flex justify-center py-10">
               <div className="h-[30px]">

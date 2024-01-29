@@ -71,7 +71,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
   const label = (
     <div
-      className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 py-0.5 text-custom-text-300 hover:text-custom-text-200 border border-custom-border-100`}
+      className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 py-0.5 text-custom-text-300 hover:text-custom-text-200 border border-neutral-border-subtle`}
     >
       <div className="flex-shrink-0">
         <Tag className="h-2.5 w-2.5" />
@@ -104,12 +104,12 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+            <div className="flex w-full items-center justify-start rounded border border-neutral-border-medium bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-300" />
               <Combobox.Input
                 className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"

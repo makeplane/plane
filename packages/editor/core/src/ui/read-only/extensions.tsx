@@ -41,7 +41,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     },
     blockquote: {
       HTMLAttributes: {
-        class: "border-l-4 border-custom-border-300",
+        class: "border-l-4 border-neutral-border-medium",
       },
     },
     code: {
@@ -69,7 +69,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   ReadOnlyImageExtension.configure({
     HTMLAttributes: {
-      class: "rounded-lg border border-custom-border-300",
+      class: "rounded-lg border border-neutral-border-medium",
     },
   }),
   HorizontalRule,

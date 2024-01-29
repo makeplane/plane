@@ -114,7 +114,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           canEditProperties={canEditProperties}
         />
       </div>
-      <div className="border-t border-custom-border-100">
+      <div className="border-t border-neutral-border-subtle">
         <div className="z-5 sticky bottom-0 left-0 mb-3">
           {enableQuickCreateIssue && !disableIssueCreation && (
             <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />

@@ -7,7 +7,7 @@ import { ISSUES_TABS_LIST } from "constants/dashboard";
 export const TabsList = () => (
   <Tab.List
     as="div"
-    className="border-[0.5px] border-custom-border-200 rounded grid grid-cols-3 bg-custom-background-80"
+    className="border-[0.5px] border-neutral-border-medium rounded grid grid-cols-3 bg-custom-background-80"
   >
     {ISSUES_TABS_LIST.map((tab) => (
       <Tab

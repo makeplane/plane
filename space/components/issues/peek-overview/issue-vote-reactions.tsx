@@ -83,7 +83,7 @@ export const IssueVotes: React.FC = observer(() => {
             });
           }}
           className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
+            isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-neutral-border-medium"
           }`}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
@@ -118,7 +118,7 @@ export const IssueVotes: React.FC = observer(() => {
             });
           }}
           className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
+            isDownVotedByUser ? "border-red-600 text-red-600" : "border-neutral-border-medium"
           }`}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>

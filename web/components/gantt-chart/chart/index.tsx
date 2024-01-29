@@ -215,7 +215,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       className={`${
         fullScreenMode ? `fixed bottom-0 left-0 right-0 top-0 z-[999999] bg-custom-background-100` : `relative`
       } ${
-        border ? `border border-custom-border-200` : ``
+        border ? `border border-neutral-border-medium` : ``
       } flex h-full select-none flex-col rounded-sm bg-custom-background-100 shadow`}
     >
       {/* chart header */}
@@ -266,7 +266,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         </div>
 
         <div
-          className="flex cursor-pointer items-center justify-center rounded-sm border border-custom-border-200 p-1 transition-all hover:bg-custom-background-80"
+          className="flex cursor-pointer items-center justify-center rounded-sm border border-neutral-border-medium p-1 transition-all hover:bg-custom-background-80"
           onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
           {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
@@ -276,12 +276,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       {/* content */}
       <div
         id="gantt-container"
-        className={`relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200 ${
+        className={`relative flex h-full w-full flex-1 overflow-hidden border-t border-neutral-border-medium ${
           bottomSpacing ? "mb-8" : ""
         }`}
       >
-        <div id="gantt-sidebar" className="flex h-full w-1/4 flex-col border-r border-custom-border-200">
-          <div className="box-border flex h-[60px] flex-shrink-0 items-end justify-between gap-2 border-b border-custom-border-200 pb-2 pl-10 pr-4 text-sm font-medium text-custom-text-300">
+        <div id="gantt-sidebar" className="flex h-full w-1/4 flex-col border-r border-neutral-border-medium">
+          <div className="box-border flex h-[60px] flex-shrink-0 items-end justify-between gap-2 border-b border-neutral-border-medium pb-2 pl-10 pr-4 text-sm font-medium text-custom-text-300">
             <h6>{title}</h6>
             <h6>Duration</h6>
           </div>

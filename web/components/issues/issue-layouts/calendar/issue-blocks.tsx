@@ -84,7 +84,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     )}
 
                     <div
-                      className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-100 px-1 py-1.5 shadow-custom-shadow-2xs ${
+                      className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-neutral-border-subtle px-1 py-1.5 shadow-custom-shadow-2xs ${
                         snapshot.isDragging
                           ? "bg-custom-background-90 shadow-custom-shadow-rg"
                           : "bg-custom-background-100 hover:bg-custom-background-90"

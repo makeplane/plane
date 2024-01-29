@@ -101,7 +101,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
           if (project.is_member) router.push(`/${workspaceSlug?.toString()}/projects/${project.id}/issues`);
           else setJoinProjectModal(true);
         }}
-        className="flex cursor-pointer flex-col rounded border border-custom-border-200 bg-custom-background-100"
+        className="flex cursor-pointer flex-col rounded border border-neutral-border-medium bg-custom-background-100"
       >
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />

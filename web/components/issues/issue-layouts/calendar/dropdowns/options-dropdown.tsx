@@ -120,7 +120,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 p-1 shadow-custom-shadow-sm"
+                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded border border-neutral-border-medium bg-custom-background-100 p-1 shadow-custom-shadow-sm"
               >
                 <div>
                   {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (

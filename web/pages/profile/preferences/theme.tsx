@@ -49,7 +49,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
     <>
       {currentUser ? (
         <div className="mx-auto mt-14 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
-          <div className="flex items-center border-b border-custom-border-100 pb-3.5">
+          <div className="flex items-center border-b border-neutral-border-subtle pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>
           <div className="grid grid-cols-12 gap-4 py-6 sm:gap-16">

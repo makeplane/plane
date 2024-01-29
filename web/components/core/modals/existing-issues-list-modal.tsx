@@ -153,7 +153,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
                           >
                             {issue.project__identifier}-{issue.sequence_id}
                             <button
@@ -167,7 +167,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
+                      <div className="w-min whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-80 p-2 text-xs">
                         No issues selected
                       </div>
                     )}

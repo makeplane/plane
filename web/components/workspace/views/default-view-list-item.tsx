@@ -15,7 +15,7 @@ export const GlobalDefaultViewListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   return (
-    <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
+    <div className="group border-b border-neutral-border-medium hover:bg-custom-background-90">
       <Link href={`/${workspaceSlug}/workspace-views/${view.key}`}>
         <div className="relative flex w-full items-center justify-between rounded px-5 py-4">
           <div className="flex w-full items-center justify-between">

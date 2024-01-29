@@ -178,7 +178,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-4 shadow-custom-shadow-sm"
+            className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-neutral-border-subtle bg-custom-background-100 px-4 shadow-custom-shadow-sm"
           >
             <Inputs
               formKey={formKey}

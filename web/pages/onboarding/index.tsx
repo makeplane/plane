@@ -219,7 +219,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               </div>
             </div>
           </div>
-          <div className="mx-auto h-full w-full overflow-auto rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 lg:w-4/5 xl:w-3/4">
+          <div className="mx-auto h-full w-full overflow-auto rounded-t-md border-x border-t border-neutral-border-medium bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 lg:w-4/5 xl:w-3/4">
             <div className={`h-full w-full overflow-auto rounded-t-md bg-onboarding-gradient-200`}>
               {step === 1 ? (
                 <JoinWorkspaces

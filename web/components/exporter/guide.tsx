@@ -58,7 +58,7 @@ const IntegrationGuide = observer(() => {
             {EXPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-neutral-border-subtle bg-custom-background-100 px-4 py-6"
               >
                 <div className="flex w-full items-start justify-between gap-4">
                   <div className="item-center flex gap-2.5">
@@ -84,7 +84,7 @@ const IntegrationGuide = observer(() => {
             ))}
           </div>
           <div>
-            <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 pt-7">
+            <div className="flex items-center justify-between border-b border-neutral-border-subtle pb-3.5 pt-7">
               <div className="flex items-center gap-2">
                 <h3 className="flex gap-2 text-xl font-medium">Previous Exports</h3>
 
@@ -133,7 +133,7 @@ const IntegrationGuide = observer(() => {
               {exporterServices && exporterServices?.results ? (
                 exporterServices?.results?.length > 0 ? (
                   <div>
-                    <div className="divide-y divide-custom-border-200">
+                    <div className="divide-y divide-neutral-border-medium">
                       {exporterServices?.results.map((service) => (
                         <SingleExport key={service.id} service={service} refreshing={refreshing} />
                       ))}

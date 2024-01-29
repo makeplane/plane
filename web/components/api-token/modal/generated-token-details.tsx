@@ -41,7 +41,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       <button
         type="button"
         onClick={() => copyApiToken(tokenDetails.token ?? "")}
-        className="mt-4 flex w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
+        className="mt-4 flex w-full items-center justify-between rounded-md border-[0.5px] border-neutral-border-medium px-3 py-2 text-sm font-medium outline-none"
       >
         {tokenDetails.token}
         <Tooltip tooltipContent="Copy secret key">

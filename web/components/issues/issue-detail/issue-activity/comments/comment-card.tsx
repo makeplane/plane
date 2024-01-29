@@ -158,7 +158,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
           <LiteReadOnlyEditorWithRef
             ref={showEditorRef}
             value={comment.comment_html ?? ""}
-            customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+            customClassName="text-xs border border-neutral-border-medium bg-custom-background-100"
             mentionHighlights={mentionHighlights}
           />
 

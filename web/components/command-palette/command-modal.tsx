@@ -165,7 +165,7 @@ export const CommandModal: React.FC = observer(() => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-neutral-border-medium divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <Command
                   filter={(value, search) => {
                     if (value.toLowerCase().includes(search.toLowerCase())) return 1;
@@ -220,7 +220,7 @@ export const CommandModal: React.FC = observer(() => {
                       strokeWidth={2}
                     />
                     <Command.Input
-                      className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                      className="w-full border-0 border-b border-neutral-border-medium bg-transparent p-4 pl-11 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
                       placeholder={placeholder}
                       value={searchTerm}
                       onValueChange={(e) => setSearchTerm(e)}

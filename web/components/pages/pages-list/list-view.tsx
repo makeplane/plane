@@ -53,7 +53,7 @@ export const PagesListView: FC<IPagesListView> = (props) => {
       {projectPageIds && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
           {projectPageIds.length > 0 ? (
-            <ul role="list" className="divide-y divide-custom-border-200">
+            <ul role="list" className="divide-y divide-neutral-border-medium">
               {projectPageIds.map((pageId: string) => (
                 <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />
               ))}

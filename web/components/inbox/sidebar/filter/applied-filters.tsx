@@ -56,7 +56,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
 
   if (!filters || filtersLength <= 0) return <></>;
   return (
-    <div className="relative flex flex-wrap items-center gap-2 p-3 text-[0.65rem] border-b border-custom-border-100">
+    <div className="relative flex flex-wrap items-center gap-2 p-3 text-[0.65rem] border-b border-neutral-border-subtle">
       {Object.keys(filters).map((key) => {
         const filterKey = key as keyof TInboxIssueFilterOptions;
 
@@ -64,7 +64,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
           return (
             <div
               key={key}
-              className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
+              className="flex items-center gap-x-2 rounded-full border border-neutral-border-medium bg-custom-background-80 px-2 py-1"
             >
               <span className="capitalize text-custom-text-200">{replaceUnderscoreIfSnakeCase(key)}:</span>
               {filters[filterKey]?.length < 0 ? (
@@ -161,7 +161,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
       <button
         type="button"
         onClick={handleClearAllFilters}
-        className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
+        className="flex items-center gap-x-1 rounded-full border border-neutral-border-medium bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
         <X className="h-3 w-3" />

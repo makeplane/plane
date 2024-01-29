@@ -29,7 +29,7 @@ const FeaturesSettingsPage: NextPageWithLayout = () => {
 
   return (
     <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-      <div className="flex items-center border-b border-custom-border-100 py-3.5">
+      <div className="flex items-center border-b border-neutral-border-subtle py-3.5">
         <h3 className="text-xl font-medium">Features</h3>
       </div>
       <ProjectFeaturesList />

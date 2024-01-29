@@ -28,7 +28,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
       <>
         {activity.old_value === "" ? `added a new label ` : `removed the label `}
         {activity.old_value === "" ? (
-          <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+          <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
             <span
               className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
               style={{
@@ -39,7 +39,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
             <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
           </span>
         ) : (
-          <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+          <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
             <span
               className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
               style={{

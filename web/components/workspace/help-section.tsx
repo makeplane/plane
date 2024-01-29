@@ -57,7 +57,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-neutral-border-medium bg-custom-sidebar-background-100 px-4 py-2 ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
@@ -124,7 +124,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             <div
               className={`absolute bottom-2 min-w-[10rem] ${
                 isCollapsed ? "left-full" : "-left-[75px]"
-              } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
+              } divide-y divide-neutral-border-medium whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
               ref={helpOptionsRef}
             >
               <div className="space-y-1 pb-2">

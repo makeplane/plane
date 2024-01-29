@@ -95,7 +95,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
   return (
     <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll">
       {props.commentAccessSpecifier && (
-        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
+        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-neutral-border-medium p-1">
           {props?.commentAccessSpecifier.commentAccess?.map((access) => (
             <Tooltip key={access.key} tooltipContent={access.label}>
               <button
@@ -118,9 +118,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
           ))}
         </div>
       )}
-      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 p-1">
+      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-90 p-1">
         <div className="flex items-stretch">
-          <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 pr-2.5">
+          <div className="flex items-stretch gap-0.5 border-r border-neutral-border-medium pr-2.5">
             {basicTextFormattingItems.map((item) => (
               <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button
@@ -143,7 +143,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               </Tooltip>
             ))}
           </div>
-          <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5">
+          <div className="flex items-stretch gap-0.5 border-r border-neutral-border-medium px-2.5">
             {listFormattingItems.map((item) => (
               <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button
@@ -166,7 +166,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               </Tooltip>
             ))}
           </div>
-          <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5">
+          <div className="flex items-stretch gap-0.5 border-r border-neutral-border-medium px-2.5">
             {userActionItems.map((item) => (
               <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
                 <button

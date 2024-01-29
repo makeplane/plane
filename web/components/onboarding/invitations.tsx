@@ -138,7 +138,7 @@ export const Invitations: React.FC<Props> = (props) => {
 
         <div>
           <div
-            className="rounded-md border border-custom-border-200 bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
+            className="rounded-md border border-neutral-border-medium bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
             onClick={setTryDiffAccount}
           >
             Try a different email address
@@ -161,7 +161,7 @@ const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDi
       We couldn’t find any existing workspaces for the email address {email}
     </p>
     <div
-      className="mt-6 rounded-md border border-custom-border-200 bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
+      className="mt-6 rounded-md border border-neutral-border-medium bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
       onClick={setTryDiffAccount}
     >
       Try a different email address

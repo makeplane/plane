@@ -63,7 +63,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full grid grid-cols-4 p-0.5 hover:shadow-custom-shadow-4xl duration-300">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full grid grid-cols-4 p-0.5 hover:shadow-custom-shadow-4xl duration-300">
       {STATS_LIST.map((stat, index) => {
         const isFirst = index === 0;
         const isLast = index === STATS_LIST.length - 1;

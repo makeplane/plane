@@ -97,7 +97,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     ref={ref}
                                     hasError={Boolean(errors.close_in)}
                                     placeholder="Enter Months"
-                                    className="w-full border-custom-border-200"
+                                    className="w-full border-neutral-border-medium"
                                   />
                                   <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>
@@ -129,7 +129,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     ref={ref}
                                     hasError={Boolean(errors.archive_in)}
                                     placeholder="Enter Months"
-                                    className="w-full border-custom-border-200"
+                                    className="w-full border-neutral-border-medium"
                                   />
                                   <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>

@@ -20,7 +20,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
     high: "bg-orange-500/20 text-orange-500 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
-    none: "bg-custom-background-80 text-custom-text-200 border-custom-border-300",
+    none: "bg-custom-background-80 text-custom-text-200 border-neutral-border-medium",
   };
 
   // get priority icon

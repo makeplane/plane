@@ -48,7 +48,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
       </button>
       {isOpen && (
         <div
-          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 animate-in fade-in slide-in-from-top-1"
+          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-neutral-border-medium bg-custom-background-100 animate-in fade-in slide-in-from-top-1"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -60,7 +60,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             ref={inputRef}
             type="url"
             placeholder="Paste a link"
-            className="flex-1 border-r border-custom-border-300 bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
+            className="flex-1 border-r border-neutral-border-medium bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
             defaultValue={editor.getAttributes("link").href || ""}
           />
           {editor.getAttributes("link").href ? (

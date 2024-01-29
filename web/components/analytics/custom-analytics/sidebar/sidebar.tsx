@@ -142,7 +142,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
     <div
       className={`flex items-center justify-between space-y-2 px-5 py-2.5 ${
         fullScreen
-          ? "overflow-hidden border-l border-custom-border-200 md:h-full md:flex-col md:items-start md:space-y-4 md:border-l md:border-custom-border-200 md:py-5"
+          ? "overflow-hidden border-l border-neutral-border-medium md:h-full md:flex-col md:items-start md:space-y-4 md:border-l md:border-neutral-border-medium md:py-5"
           : ""
       }`}
     >

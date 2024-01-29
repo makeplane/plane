@@ -13,7 +13,7 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => (
     <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {stateDistribution.map((group) => (
         <div key={group.state_group}>
-          <a className="flex gap-2 whitespace-nowrap rounded border border-custom-border-100 p-4">
+          <a className="flex gap-2 whitespace-nowrap rounded border border-neutral-border-subtle p-4">
             <div
               className="h-3 w-3 rounded-sm"
               style={{

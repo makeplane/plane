@@ -66,7 +66,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full hover:shadow-custom-shadow-4xl duration-300">
       <div className="px-7 pt-6">
         <h4 className="text-lg font-semibold text-custom-text-300">Most active members</h4>
         <p className="mt-2 text-xs font-medium text-custom-text-300">

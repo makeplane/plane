@@ -15,11 +15,11 @@ const ProjectDraftIssuesPage: NextPageWithLayout = () => {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="ga-1 flex items-center border-b border-custom-border-200 px-4 py-2.5 shadow-sm">
+      <div className="ga-1 flex items-center border-b border-neutral-border-medium px-4 py-2.5 shadow-sm">
         <button
           type="button"
           onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
-          className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
+          className="flex items-center gap-1.5 rounded-full border border-neutral-border-medium px-3 py-1.5 text-xs"
         >
           <PenSquare className="h-4 w-4" />
           <span>Draft Issues</span>

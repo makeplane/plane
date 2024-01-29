@@ -96,15 +96,15 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         </Loader>
       ) : (
         <div className="flex h-full overflow-hidden">
-          <div className="h-full w-full space-y-2 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+          <div className="h-full w-full space-y-2 divide-y-2 divide-neutral-border-medium overflow-y-auto p-5">
             {issue?.archived_at && (
-              <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
+              <div className="flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
                 <div className="flex items-center gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5" />
                   <p>This issue has been archived by Plane.</p>
                 </div>
                 <button
-                  className="flex items-center gap-2 rounded-md border border-custom-border-200 p-1.5 text-sm"
+                  className="flex items-center gap-2 rounded-md border border-neutral-border-medium p-1.5 text-sm"
                   onClick={handleUnArchive}
                   disabled={isRestoring}
                 >

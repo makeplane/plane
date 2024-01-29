@@ -59,13 +59,13 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
       {isHovered && (
         <Popover.Panel
           as="div"
-          className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100 p-5 relative min-w-80"
+          className="flex flex-col rounded border border-neutral-border-medium bg-custom-background-100 p-5 relative min-w-80"
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
           static
         >
-          <div className="absolute w-2 h-2 bg-custom-background-100 border rounded-lb-sm  border-custom-border-200 border-r-0 border-t-0 transform rotate-45 bottom-2 -left-[5px]" />
+          <div className="absolute w-2 h-2 bg-custom-background-100 border rounded-lb-sm  border-neutral-border-medium border-r-0 border-t-0 transform rotate-45 bottom-2 -left-[5px]" />
           <h3 className="text-lg font-semibold w-full">{title}</h3>
           <h4 className="mt-1 text-sm">{description}</h4>
         </Popover.Panel>

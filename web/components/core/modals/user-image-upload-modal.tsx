@@ -122,7 +122,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                         {...getRootProps()}
                         className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-custom-border-200 hover:bg-custom-background-90"
+                            ? "border-2 border-dashed border-neutral-border-medium hover:bg-custom-background-90"
                             : ""
                         }`}
                       >

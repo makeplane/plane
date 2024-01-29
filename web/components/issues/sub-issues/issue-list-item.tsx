@@ -67,7 +67,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     <div key={issueId}>
       {issue && (
         <div
-          className="group relative flex h-full w-full items-center gap-2 border-b border-custom-border-100 px-2 py-1 transition-all hover:bg-custom-background-90"
+          className="group relative flex h-full w-full items-center gap-2 border-b border-neutral-border-subtle px-2 py-1 transition-all hover:bg-custom-background-90"
           style={{ paddingLeft: `${spacingLeft}px` }}
         >
           <div className="h-[22px] w-[22px] flex-shrink-0">

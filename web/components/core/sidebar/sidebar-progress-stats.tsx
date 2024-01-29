@@ -87,7 +87,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full  ${
-              roundedTab ? "rounded-3xl border border-custom-border-200" : "rounded"
+              roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected
                 ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
@@ -100,7 +100,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full ${
-              roundedTab ? "rounded-3xl border border-custom-border-200" : "rounded"
+              roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected
                 ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
@@ -113,7 +113,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full ${
-              roundedTab ? "rounded-3xl border border-custom-border-200" : "rounded"
+              roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
             } px-3 py-1  text-custom-text-100 ${
               selected
                 ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
@@ -162,7 +162,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={`unassigned-${index}`}
                     title={
                       <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                        <div className="h-4 w-4 rounded-full border-2 border-neutral-border-medium bg-custom-background-80">
                           <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                         </div>
                         <span>No assignee</span>

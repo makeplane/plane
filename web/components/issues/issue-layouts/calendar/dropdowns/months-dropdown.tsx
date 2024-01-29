@@ -97,7 +97,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="w-56 divide-y divide-custom-border-200 rounded border border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg"
+            className="w-56 divide-y divide-neutral-border-medium rounded border border-neutral-border-medium bg-custom-background-100 p-3 shadow-custom-shadow-rg"
           >
             <div className="flex items-center justify-between gap-2 pb-3">
               <button

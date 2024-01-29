@@ -36,7 +36,7 @@ export const VerticalDropdownMenu = ({ items }: IVerticalDropdownMenuProps) => (
     maxHeight={"md"}
     className={"h-4.5 mt-1"}
     placement={"bottom-start"}
-    optionsClassName={"border-custom-border border-r border-solid transition-all duration-200 ease-in-out "}
+    optionsClassName="border-neutral-border-medium border-r border-solid transition-all duration-200 ease-in-out"
     customButton={<MoreVertical size={14} />}
   >
     {items.map((item) => (

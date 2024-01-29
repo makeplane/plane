@@ -134,7 +134,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
           </Tooltip>
         </div>
       </div>
-      <div className="mt-5 w-full border-b border-custom-border-300 px-5">
+      <div className="mt-5 w-full border-b border-neutral-border-medium px-5">
         {snoozed || archived || readNotification ? (
           <button
             type="button"

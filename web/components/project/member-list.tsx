@@ -35,9 +35,9 @@ export const ProjectMemberList: React.FC = observer(() => {
     <>
       <SendProjectInvitationModal isOpen={inviteModal} onClose={() => setInviteModal(false)} />
 
-      <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5">
+      <div className="flex items-center justify-between gap-4 border-b border-neutral-border-subtle py-3.5">
         <h4 className="text-xl font-medium">Members</h4>
-        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
+        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
           <Search className="h-3.5 w-3.5" />
           <input
             className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none"
@@ -65,7 +65,7 @@ export const ProjectMemberList: React.FC = observer(() => {
           <Loader.Item height="40px" />
         </Loader>
       ) : (
-        <div className="divide-y divide-custom-border-100">
+        <div className="divide-y divide-neutral-border-subtle">
           {projectMemberIds.length > 0
             ? searchedMembers.map((userId) => <ProjectMemberListItem key={userId} userId={userId} />)
             : null}

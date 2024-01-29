@@ -221,7 +221,7 @@ export const ModuleForm: React.FC<Props> = ({
           </div>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
+      <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-neutral-border-medium pt-5">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={8}>
           Cancel
         </Button>

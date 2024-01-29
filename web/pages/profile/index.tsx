@@ -307,7 +307,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       onChange={onChange}
                       label={value ? value.toString() : "Select your role"}
                       buttonClassName={errors.role ? "border-red-500" : "border-none"}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
+                      className="rounded-md border-[0.5px] !border-neutral-border-medium"
                       optionsClassName="w-full"
                       input
                     >
@@ -379,7 +379,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       onChange={onChange}
                       optionsClassName="w-full"
                       buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
+                      className="rounded-md border-[0.5px] !border-neutral-border-medium"
                       input
                     />
                   )}
@@ -395,7 +395,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             </div>
           </div>
         </form>
-        <Disclosure as="div" className="border-t border-custom-border-100 px-8">
+        <Disclosure as="div" className="border-t border-neutral-border-subtle px-8">
           {({ open }) => (
             <>
               <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

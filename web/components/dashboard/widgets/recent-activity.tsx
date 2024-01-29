@@ -34,7 +34,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
+    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
       <Link href="/profile/activity" className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline">
         Your issue activities
       </Link>

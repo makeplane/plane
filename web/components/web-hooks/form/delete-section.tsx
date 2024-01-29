@@ -10,7 +10,7 @@ export const WebhookDeleteSection: React.FC<Props> = (props) => {
   const { openDeleteModal } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-200">
+    <Disclosure as="div" className="border-t border-neutral-border-medium">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

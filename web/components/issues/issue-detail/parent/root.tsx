@@ -38,7 +38,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
 
   return (
     <>
-      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
+      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-80 px-2.5 py-1 text-xs">
         <Link href={`/${peekIssue?.workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5">
@@ -52,7 +52,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
         </Link>
 
         <CustomMenu ellipsis optionsClassName="p-1.5">
-          <div className="border-b border-custom-border-300 text-xs font-medium text-custom-text-200">
+          <div className="border-b border-neutral-border-medium text-xs font-medium text-custom-text-200">
             Sibling issues
           </div>
 

@@ -34,7 +34,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
               className={`rounded border px-2 py-0.5 text-xs transition-all ${
                 displayProperties?.[displayProperty.key]
                   ? "border-custom-primary-100 bg-custom-primary-100 text-white"
-                  : "border-custom-border-200 hover:bg-custom-background-80"
+                  : "border-neutral-border-medium hover:bg-custom-background-80"
               }`}
               onClick={() =>
                 handleUpdate({

@@ -15,7 +15,7 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props
   const { issue, onChange, disabled } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-neutral-border-medium">
       <PriorityDropdown
         value={issue.priority}
         onChange={(data) => onChange(issue, { priority: data })}

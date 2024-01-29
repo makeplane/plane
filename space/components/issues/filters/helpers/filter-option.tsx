@@ -21,7 +21,7 @@ export const FilterOption: React.FC<Props> = (props) => {
     >
       <div
         className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-custom-background-90 ${
-          isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-custom-border-300"
+          isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-neutral-border-medium"
         } ${multiple ? "rounded-sm" : "rounded-full"}`}
       >
         {isChecked && <Check size={10} strokeWidth={3} />}

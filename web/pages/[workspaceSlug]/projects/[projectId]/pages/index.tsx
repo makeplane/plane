@@ -151,7 +151,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
                         `rounded-full border px-5 py-1.5 text-sm outline-none ${
                           selected
                             ? "border-custom-primary bg-custom-primary text-white"
-                            : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                            : "border-neutral-border-medium bg-custom-background-100 hover:bg-custom-background-90"
                         }`
                       }
                     >

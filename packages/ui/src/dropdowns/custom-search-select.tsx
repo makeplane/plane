@@ -100,7 +100,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <button
                   ref={setReferenceElement}
                   type="button"
-                  className={`flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 ${
+                  className={`flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-neutral-border-medium ${
                     input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
                   } ${
                     disabled
@@ -118,14 +118,14 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
               <Combobox.Options className="fixed z-10" static>
                 <div
                   className={cn(
-                    "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+                    "my-1 overflow-y-scroll rounded-md border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
                     optionsClassName
                   )}
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}
                 >
-                  <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+                  <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-custom-background-90 px-2">
                     <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
                     <Combobox.Input
                       className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"

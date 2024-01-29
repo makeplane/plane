@@ -60,7 +60,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={`group relative flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] border-custom-border-200 ${
+      className={`group relative flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] border-neutral-border-medium ${
         !isChild && combineTargetFor ? "bg-custom-background-80" : ""
       } ${isDragging ? "bg-custom-background-80 shadow-custom-shadow-xs" : ""} bg-custom-background-100 px-1 py-2.5`}
     >

@@ -139,7 +139,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   return (
     <Popover className="relative z-[2]" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
-        className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
+        className="rounded border border-neutral-border-medium bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={openDropdown}
         disabled={disabled}
       >
@@ -148,12 +148,12 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="absolute right-0 z-10 mt-2 rounded-md border border-neutral-border-medium bg-custom-background-100 shadow-custom-shadow-sm"
           static
         >
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
+            className="flex h-96 w-80 flex-col overflow-auto rounded border border-neutral-border-medium bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
           >
             <Tab.Group>
               <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
@@ -282,7 +282,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                         {...getRootProps()}
                         className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-custom-border-200 hover:bg-custom-background-90"
+                            ? "border-2 border-dashed border-neutral-border-medium hover:bg-custom-background-90"
                             : ""
                         }`}
                       >

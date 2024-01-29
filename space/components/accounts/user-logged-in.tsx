@@ -14,11 +14,11 @@ export const UserLoggedIn = () => {
 
   return (
     <div className="flex h-screen w-screen flex-col">
-      <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">
+      <div className="relative flex w-full items-center justify-between gap-4 border-b border-neutral-border-medium px-6 py-5">
         <div>
           <Image src={PlaneLogo} alt="User already logged in" />
         </div>
-        <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
+        <div className="flex items-center gap-2 rounded border border-neutral-border-medium p-2">
           {user.avatar && user.avatar !== "" ? (
             <div className="h-5 w-5 rounded-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}

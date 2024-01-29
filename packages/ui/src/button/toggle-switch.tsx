@@ -21,7 +21,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
       onChange={onChange}
       className={`relative inline-flex flex-shrink-0 ${
         size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10"
-      } flex-shrink-0 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none ${
+      } flex-shrink-0 cursor-pointer rounded-full border border-neutral-border-medium transition-colors duration-200 ease-in-out focus:outline-none ${
         value ? "bg-custom-primary-100" : "bg-gray-700"
       } ${className || ""} ${disabled ? "cursor-not-allowed" : ""}`}
     >

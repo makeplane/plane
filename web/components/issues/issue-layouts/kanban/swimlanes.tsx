@@ -128,7 +128,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   handleKanbanFilters={handleKanbanFilters}
                 />
               </div>
-              <div className="w-full border-b border-dashed border-custom-border-400" />
+              <div className="w-full border-b border-dashed border-neutral-border-strong" />
             </div>
 
             {!kanbanFilters?.sub_group_by.includes(_list.id) && (

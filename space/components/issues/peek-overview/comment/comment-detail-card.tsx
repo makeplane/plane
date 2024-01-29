@@ -72,7 +72,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             }
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-neutral-border-medium"
           />
         ) : (
           <div className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}>
@@ -143,7 +143,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+              customClassName="text-xs border border-neutral-border-medium bg-custom-background-100"
               mentionHighlights={mentionsConfig.mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
@@ -170,7 +170,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
+            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">

@@ -60,7 +60,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
         href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issueId}`}
       >
         <div
-          className={`relative min-h-[5rem]select-none space-y-3 border-b border-custom-border-200 px-4 py-2 hover:bg-custom-primary/5 cursor-pointer ${
+          className={`relative min-h-[5rem]select-none space-y-3 border-b border-neutral-border-medium px-4 py-2 hover:bg-custom-primary/5 cursor-pointer ${
             inboxIssueId === issueId ? "bg-custom-primary/5" : " "
           } ${inboxIssueDetail.status !== -2 ? "opacity-60" : ""}`}
         >
@@ -87,7 +87,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
               <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
             </Tooltip>
             <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}>
-              <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
+              <div className="flex items-center gap-1 rounded border border-neutral-border-medium px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
                 <CalendarDays size={12} strokeWidth={1.5} />
                 <span>{renderFormattedDate(issue.created_at ?? "")}</span>
               </div>

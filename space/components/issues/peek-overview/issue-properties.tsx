@@ -42,7 +42,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
   };
 
   return (
-    <div className={mode === "full" ? "divide-y divide-custom-border-200" : ""}>
+    <div className={mode === "full" ? "divide-y divide-neutral-border-medium" : ""}>
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
@@ -89,7 +89,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
                       ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
                       : priority?.key === "low"
                         ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-custom-border-200 bg-custom-background-80"
+                        : "border-neutral-border-medium bg-custom-background-80"
               }`}
             >
               {priority && (
@@ -108,7 +108,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           </div>
           <div>
             {issueDetails.target_date ? (
-              <div className="flex h-6 items-center gap-1 rounded border border-custom-border-100 bg-custom-background-80 px-2.5 py-1 text-xs text-custom-text-100">
+              <div className="flex h-6 items-center gap-1 rounded border border-neutral-border-subtle bg-custom-background-80 px-2.5 py-1 text-xs text-custom-text-100">
                 <span className={`material-symbols-rounded -my-0.5 text-sm ${dueDateIcon.className}`}>
                   {dueDateIcon.iconName}
                 </span>

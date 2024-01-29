@@ -44,7 +44,7 @@ export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
   };
 
   return (
-    <div className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs">
+    <div className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs">
       {/* id */}
       <div className="break-words text-xs text-custom-text-300">
         {projectStore?.project?.identifier}-{issue?.sequence_id}

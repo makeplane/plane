@@ -33,25 +33,25 @@ export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "high",
     title: "High",
-    className: "text-orange-500 border-custom-border-300",
+    className: "text-orange-500 border-neutral-border-medium",
     icon: "signal_cellular_alt",
   },
   {
     key: "medium",
     title: "Medium",
-    className: "text-yellow-500 border-custom-border-300",
+    className: "text-yellow-500 border-neutral-border-medium",
     icon: "signal_cellular_alt_2_bar",
   },
   {
     key: "low",
     title: "Low",
-    className: "text-green-500 border-custom-border-300",
+    className: "text-green-500 border-neutral-border-medium",
     icon: "signal_cellular_alt_1_bar",
   },
   {
     key: "none",
     title: "None",
-    className: "text-gray-500 border-custom-border-300",
+    className: "text-gray-500 border-neutral-border-medium",
     icon: "block",
   },
 ];

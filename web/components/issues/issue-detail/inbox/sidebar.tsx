@@ -39,7 +39,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
   return (
-    <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
+    <div className="flex h-full w-full flex-col divide-y-2 divide-neutral-border-medium overflow-hidden">
       <div className="flex items-center justify-between px-5 pb-3">
         <div className="flex items-center gap-x-2">
           {currentIssueState && (
@@ -53,7 +53,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
       <div className="h-full w-full overflow-y-auto px-5">
         <h5 className="text-sm font-medium my-4">Properties</h5>
-        <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-neutral-border-medium ${!is_editable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* State */}
             <div className="flex items-center gap-2 h-8">
@@ -116,7 +116,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!is_editable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-neutral-border-medium mt-3 ${!is_editable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Due Date */}
             <div className="flex items-center gap-2 h-8">

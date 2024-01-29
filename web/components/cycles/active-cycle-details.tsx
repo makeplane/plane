@@ -147,8 +147,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const daysLeft = findHowManyDaysLeft(activeCycle.end_date ?? new Date());
 
   return (
-    <div className="grid-row-2 grid divide-y rounded-[10px] border border-custom-border-200 bg-custom-background-100 shadow">
-      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+    <div className="grid-row-2 grid divide-y rounded-[10px] border border-neutral-border-medium bg-custom-background-100 shadow">
+      <div className="grid grid-cols-1 divide-y border-neutral-border-medium lg:grid-cols-3 lg:divide-x lg:divide-y-0">
         <div className="flex flex-col text-xs">
           <div className="h-full w-full">
             <div className="flex h-60 flex-col justify-between gap-5 rounded-b-[10px] p-4">
@@ -246,8 +246,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             </div>
           </div>
         </div>
-        <div className="col-span-2 grid grid-cols-1 divide-y border-custom-border-200 md:grid-cols-2 md:divide-x md:divide-y-0">
-          <div className="flex h-60 flex-col border-custom-border-200">
+        <div className="col-span-2 grid grid-cols-1 divide-y border-neutral-border-medium md:grid-cols-2 md:divide-x md:divide-y-0">
+          <div className="flex h-60 flex-col border-neutral-border-medium">
             <div className="flex h-full w-full flex-col p-4 text-custom-text-200">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
@@ -275,12 +275,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               </div>
             </div>
           </div>
-          <div className="h-60 overflow-y-scroll border-custom-border-200">
+          <div className="h-60 overflow-y-scroll border-neutral-border-medium">
             <ActiveCycleProgressStats cycle={activeCycle} />
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+      <div className="grid grid-cols-1 divide-y border-neutral-border-medium lg:grid-cols-2 lg:divide-x lg:divide-y-0">
         <div className="flex flex-col gap-3 p-4 max-h-60 overflow-hidden">
           <div className="text-custom-primary">High Priority Issues</div>
           <div className="flex flex-col h-full gap-2.5 overflow-y-scroll rounded-md">
@@ -290,7 +290,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   <Link
                     key={issue.id}
                     href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-                    className="flex cursor-pointer flex-wrap items-center justify-between gap-2 rounded-md border border-custom-border-200  px-3 py-1.5"
+                    className="flex cursor-pointer flex-wrap items-center justify-between gap-2 rounded-md border border-neutral-border-medium  px-3 py-1.5"
                   >
                     <div className="flex items-center gap-1.5">
                       <PriorityIcon priority={issue.priority} withContainer size={12} />
@@ -340,7 +340,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             )}
           </div>
         </div>
-        <div className="flex flex-col  border-custom-border-200 p-4 max-h-60">
+        <div className="flex flex-col  border-neutral-border-medium p-4 max-h-60">
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
             <div className="flex items-center gap-3 text-custom-text-100">
               <div className="flex items-center justify-center gap-1">

@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="rounded-[10px] border border-custom-border-200 py-3">
+  <div className="rounded-[10px] border border-neutral-border-medium py-3">
     <h1 className="px-3 text-base font-medium">Issues closed in a year</h1>
     {defaultAnalytics.issue_completed_month_wise.length > 0 ? (
       <LineGraph
@@ -35,7 +35,7 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
         margin={{ top: 20 }}
         enableSlices="x"
         sliceTooltip={(datum) => (
-          <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
+          <div className="rounded-md border border-neutral-border-medium bg-custom-background-80 p-2 text-xs">
             {datum.slice.points[0].data.yFormatted}
             <span className="text-custom-text-200"> issues closed in </span>
             {datum.slice.points[0].data.xFormatted}

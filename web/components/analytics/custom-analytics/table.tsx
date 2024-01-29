@@ -23,9 +23,9 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
   <div className="flow-root">
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full align-middle">
-        <table className="min-w-full divide-y divide-custom-border-200 whitespace-nowrap border-y border-custom-border-200">
+        <table className="min-w-full divide-y divide-neutral-border-medium whitespace-nowrap border-y border-neutral-border-medium">
           <thead className="bg-custom-background-80">
-            <tr className="divide-x divide-custom-border-200 text-sm text-custom-text-100">
+            <tr className="divide-x divide-neutral-border-medium text-sm text-custom-text-100">
               <th scope="col" className="px-2.5 py-3 text-left font-medium">
                 {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}
               </th>
@@ -60,9 +60,12 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-custom-border-200">
+          <tbody className="divide-y divide-neutral-border-medium">
             {barGraphData.data.map((item, index) => (
-              <tr key={`table-row-${index}`} className="divide-x divide-custom-border-200 text-xs text-custom-text-200">
+              <tr
+                key={`table-row-${index}`}
+                className="divide-x divide-neutral-border-medium text-xs text-custom-text-200"
+              >
                 <td
                   className={`flex items-center gap-2 whitespace-nowrap px-2.5 py-2 font-medium ${
                     params.x_axis === "priority" || params.x_axis === "state__group" ? "capitalize" : ""

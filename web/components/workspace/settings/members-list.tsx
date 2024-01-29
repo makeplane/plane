@@ -45,7 +45,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
 
   return (
-    <div className="divide-y-[0.5px] divide-custom-border-100">
+    <div className="divide-y-[0.5px] divide-neutral-border-subtle">
       {searchedInvitationsIds && searchedInvitationsIds.length > 0
         ? searchedInvitationsIds?.map((invitationId) => (
             <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />

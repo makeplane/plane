@@ -50,7 +50,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
       >
         <Tab
           className={({ selected }) =>
-            `rounded-3xl border border-custom-border-200 px-3 py-1 text-custom-text-100 ${
+            `rounded-3xl border border-neutral-border-medium px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -59,7 +59,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab>
         <Tab
           className={({ selected }) =>
-            `rounded-3xl border border-custom-border-200 px-3 py-1 text-custom-text-100 ${
+            `rounded-3xl border border-neutral-border-medium px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -92,7 +92,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                     key={`unassigned-${index}`}
                     title={
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                        <div className="h-5 w-5 rounded-full border-2 border-neutral-border-medium bg-custom-background-80">
                           <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                         </div>
                         <span>No assignee</span>

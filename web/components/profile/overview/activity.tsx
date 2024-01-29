@@ -36,7 +36,7 @@ export const ProfileActivity = observer(() => {
   return (
     <div className="space-y-2">
       <h3 className="text-lg font-medium">Recent Activity</h3>
-      <div className="rounded border border-custom-border-100 p-6">
+      <div className="rounded border border-neutral-border-subtle p-6">
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
             <div className="space-y-5">

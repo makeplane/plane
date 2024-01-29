@@ -18,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       name={name}
       className={`block rounded-md bg-transparent text-sm placeholder-custom-text-400 focus:outline-none ${
         mode === "primary"
-          ? "rounded-md border-[0.5px] border-custom-border-200"
+          ? "rounded-md border-[0.5px] border-neutral-border-medium"
           : mode === "transparent"
             ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary"
             : mode === "true-transparent"
