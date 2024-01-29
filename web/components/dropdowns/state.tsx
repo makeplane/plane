@@ -30,6 +30,7 @@ type ButtonProps = {
   dropdownArrowClassName: string;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   state: IState | undefined;
   tooltip: boolean;
 };
@@ -41,6 +42,7 @@ const BorderButton = (props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     state,
     tooltip,
   } = props;
@@ -50,6 +52,9 @@ const BorderButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          {
+            "bg-custom-background-80": isActive,
+          },
           className
         )}
       >
@@ -111,6 +116,7 @@ const TransparentButton = (props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     state,
     tooltip,
   } = props;
@@ -120,6 +126,9 @@ const TransparentButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          {
+            "bg-custom-background-80": isActive,
+          },
           className
         )}
       >
@@ -251,6 +260,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
                 tooltip={tooltip}
               />
             ) : buttonVariant === "border-without-text" ? (
@@ -260,6 +270,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
                 tooltip={tooltip}
                 hideText
               />
@@ -289,6 +300,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
                 tooltip={tooltip}
               />
             ) : buttonVariant === "transparent-without-text" ? (
@@ -298,6 +310,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
                 tooltip={tooltip}
                 hideText
               />

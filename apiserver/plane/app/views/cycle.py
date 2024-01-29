@@ -925,86 +925,7 @@ class ActiveCycleEndpoint(BaseAPIView):
 
     def get_results_controller(self, results, active_cycles=None):
         for cycle in results:
-            assignee_distribution = (
-                Issue.objects.filter(
-                    issue_cycle__cycle_id=cycle["id"],
-                    project_id=cycle["project"],
-                    workspace__slug=self.kwargs.get("slug"),
-                )
-                .annotate(display_name=F("assignees__display_name"))
-                .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
-                .annotate(
-                    total_issues=Count(
-                        "assignee_id",
-                        filter=Q(archived_at__isnull=True, is_draft=False),
-                    ),
-                )
-                .annotate(
-                    completed_issues=Count(
-                        "assignee_id",
-                        filter=Q(
-                            completed_at__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_issues=Count(
-                        "assignee_id",
-                        filter=Q(
-                            completed_at__isnull=True,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .order_by("display_name")
-            )
-
-            label_distribution = (
-                Issue.objects.filter(
-                    issue_cycle__cycle_id=cycle["id"],
-                    project_id=cycle["project"],
-                    workspace__slug=self.kwargs.get("slug"),
-                )
-                .annotate(label_name=F("labels__name"))
-                .annotate(color=F("labels__color"))
-                .annotate(label_id=F("labels__id"))
-                .values("label_name", "color", "label_id")
-                .annotate(
-                    total_issues=Count(
-                        "label_id",
-                        filter=Q(archived_at__isnull=True, is_draft=False),
-                    )
-                )
-                .annotate(
-                    completed_issues=Count(
-                        "label_id",
-                        filter=Q(
-                            completed_at__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_issues=Count(
-                        "label_id",
-                        filter=Q(
-                            completed_at__isnull=True,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .order_by("label_name")
-            )
             cycle["distribution"] = {
-                "assignees": assignee_distribution,
-                "labels": label_distribution,
                 "completion_chart": {},
             }
             if cycle["start_date"] and cycle["end_date"]:
@@ -1016,19 +937,6 @@ class ActiveCycleEndpoint(BaseAPIView):
                     project_id=cycle["project"],
                     cycle_id=cycle["id"],
                 )
-
-            priority_issues = Issue.objects.filter(issue_cycle__cycle_id=cycle["id"], priority__in=["urgent", "high"])
-            # Priority Ordering
-            priority_order = ["urgent", "high"]
-            priority_issues = priority_issues.annotate(
-                priority_order=Case(
-                    *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")[:5]
-
-            cycle["issues"] = IssueSerializer(priority_issues, many=True).data
-
         return results
     
     def get(self, request, slug):

@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
@@ -18,7 +19,9 @@ type IPagesListView = {
 
 export const PagesListView: FC<IPagesListView> = (props) => {
   const { pageIds: projectPageIds } = props;
-
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
@@ -36,11 +39,8 @@ export const PagesListView: FC<IPagesListView> = (props) => {
     ? PAGE_EMPTY_STATE_DETAILS[pageTab as keyof typeof PAGE_EMPTY_STATE_DETAILS]
     : PAGE_EMPTY_STATE_DETAILS["All"];
 
-  const emptyStateImage = getEmptyStateImagePath(
-    "pages",
-    currentPageTabDetails.key,
-    currentUser?.theme.theme === "light"
-  );
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("pages", currentPageTabDetails.key, isLightMode);
 
   const isButtonVisible = currentPageTabDetails.key !== "archived" && currentPageTabDetails.key !== "favorites";
 

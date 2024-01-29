@@ -66,7 +66,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full bg-custom-background-90">
       {activeCyclesPages}
 
       {pageCount < totalPages && resultsCount !== 0 && (

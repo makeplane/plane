@@ -1,11 +1,11 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import Link from "next/link";
-// hooks
-import useLocalStorage from "hooks/use-local-storage";
 // ui
-import { Tooltip, Button, CycleGroupIcon } from "@plane/ui";
+import { Tooltip, CycleGroupIcon, getButtonStyling } from "@plane/ui";
+// icons
+import { UserCircle2 } from "lucide-react";
 // types
-import { ICycle, TCycleGroups, TCycleLayout, TCycleView } from "@plane/types";
+import { ICycle, TCycleGroups } from "@plane/types";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
@@ -18,30 +18,12 @@ export type ActiveCycleHeaderProps = {
 
 export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
-  // local storage
-  const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
-  const { setValue: setCycleLayout } = useLocalStorage<TCycleLayout>("cycle_layout", "list");
-
-  const handleCurrentLayout = useCallback(
-    (_layout: TCycleLayout) => {
-      setCycleLayout(_layout);
-    },
-    [setCycleLayout]
-  );
-
-  const handleCurrentView = useCallback(
-    (_view: TCycleView) => {
-      setCycleTab(_view);
-      if (_view === "draft") handleCurrentLayout("list");
-    },
-    [handleCurrentLayout, setCycleTab]
-  );
 
   const daysLeft = findHowManyDaysLeft(cycle.end_date ?? new Date());
   const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
 
   return (
-    <div className="flex items-center justify-between px-3 pt-3 pb-1">
+    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg border-[0.5px] border-custom-border-100 bg-custom-background-90">
       <div className="flex items-center gap-2 cursor-default">
         <CycleGroupIcon cycleGroup={currentCycleStatus} className="h-4 w-4" />
         <Tooltip tooltipContent={cycle.name} position="top-left">
@@ -53,15 +35,18 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
           )}`}
           position="top-left"
         >
-          <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
+          <span className="flex gap-1 whitespace-nowrap rounded-sm text-custom-text-400 font-semibold text-sm leading-5">
             {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
           </span>
         </Tooltip>
       </div>
-      <div className="flex items-center gap-2.5">
-        <span className="rounded-sm text-sm px-3 py-1 bg-custom-background-80">
-          <span className="flex gap-2 text-sm whitespace-nowrap font-medium">
-            <span>Lead:</span>
+      <div className="flex items-center gap-4">
+        <div className="rounded-sm text-sm">
+          <div className="flex gap-2 text-sm whitespace-nowrap text-custom-text-300 font-medium">
+            <span className="flex items-center gap-1.5">
+              <UserCircle2 className="h-4 w-4" />
+              <span className="text-base leading-5">Lead</span>
+            </span>
             <div className="flex items-center gap-1.5">
               {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                 <img
@@ -76,20 +61,15 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
                   {cycle.owned_by.display_name.charAt(0)}
                 </span>
               )}
-              <span>{cycle.owned_by.display_name}</span>
+              <span className="text-base leading-5">{cycle.owned_by.display_name}</span>
             </div>
-          </span>
-        </span>
-        <Link href={`/${workspaceSlug}/projects/${projectId}/cycles`}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              handleCurrentView("active");
-            }}
-          >
-            View Cycle
-          </Button>
+          </div>
+        </div>
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
+          className={`${getButtonStyling("primary", "sm")} cursor-pointer`}
+        >
+          View Cycle
         </Link>
       </div>
     </div>

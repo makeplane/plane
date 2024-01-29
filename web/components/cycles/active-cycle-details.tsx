@@ -2,6 +2,7 @@ import { MouseEvent } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import { useTheme } from "next-themes";
 // hooks
 import { useCycle, useIssues, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -43,6 +44,7 @@ interface IActiveCycleDetails {
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser } = useUser();
   const {
@@ -76,7 +78,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["active"];
-  const emptyStateImage = getEmptyStateImagePath("cycle", "active", currentUser?.theme.theme === "light");
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("cycle", "active", isLightMode);
 
   if (!activeCycle && isLoading)
     return (

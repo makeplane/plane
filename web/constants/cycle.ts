@@ -187,23 +187,22 @@ export const CYCLE_EMPTY_STATE_DETAILS = {
   },
 };
 
-
 // ee
 export const WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS = [
   {
     key: "completed_issues",
     title: "Completed",
-    color: "#d687ff",
+    color: "#6490FE",
   },
   {
     key: "started_issues",
     title: "Started",
-    color: "#FFC53D",
+    color: "#FDD97F",
   },
   {
     key: "unstarted_issues",
     title: "Unstarted",
-    color: "#FB923C",
+    color: "#FEB055",
   },
   {
     key: "backlog_issues",

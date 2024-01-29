@@ -11,7 +11,7 @@ export type ActiveCyclesProjectTitleProps = {
 export const ActiveCyclesProjectTitle: FC<ActiveCyclesProjectTitleProps> = (props) => {
   const { project } = props;
   return (
-    <div className="flex items-center gap-1.5 px-3 py-1.5">
+    <div className="flex items-center gap-1.5">
       {project?.emoji ? (
         <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
           {renderEmoji(project.emoji)}
