@@ -16,11 +16,11 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   const priorityClasses = {
-    urgent: "bg-red-500 text-red-500 border-red-500",
-    high: "bg-orange-500/20 text-orange-500 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
-    none: "bg-custom-background-80 text-custom-text-200 border-neutral-border-medium",
+    urgent: "bg-danger-110 text-red-500 border-danger-110",
+    high: "bg-orange-30 text-orange-80 border-orange-80",
+    medium: "bg-warning-20 text-warning-80 border-warning-80",
+    low: "bg-primary-30 text-primary-90 border-primary-90",
+    none: "bg-neutral-40 text-neutral-text-medium border-neutral-border-strong",
   };
 
   // get priority icon
