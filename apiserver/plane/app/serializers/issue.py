@@ -611,8 +611,7 @@ class IssueSerializer(DynamicBaseSerializer):
 
     def get_module_ids(self, obj):
         # Access the prefetched modules and extract module IDs
-        module_ids = [module_issue.module.id for module_issue in obj.issue_module.all()]
-        return module_ids
+        return [module for module in obj.issue_module.values_list("module_id", flat=True)]
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
