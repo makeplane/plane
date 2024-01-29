@@ -277,8 +277,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     changesMade={changesMade}
                     data={{
                       ...data,
-                      cycle_id: cycleId ?? null,
-                      module_id: moduleId ?? null,
+                      cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
+                      module_id: data?.module_id ? data?.module_id : moduleId ? moduleId : null,
                     }}
                     onChange={handleFormChange}
                     onClose={handleClose}
@@ -291,8 +291,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                   <IssueFormRoot
                     data={{
                       ...data,
-                      cycle_id: cycleId ?? null,
-                      module_id: moduleId ?? null,
+                      cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
+                      module_id: data?.module_id ? data?.module_id : moduleId ? moduleId : null,
                     }}
                     onClose={() => handleClose(false)}
                     isCreateMoreToggleEnabled={createMore}
