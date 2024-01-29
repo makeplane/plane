@@ -99,7 +99,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             projectId={projectId}
             placeholder="Add assignees"
             multiple
-            buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+            buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}

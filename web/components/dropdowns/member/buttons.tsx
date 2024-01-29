@@ -59,7 +59,7 @@ export const BorderButton = observer((props: ButtonProps) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const isMultiple = Array.isArray(userIds);
+  const isArray = Array.isArray(userIds);
 
   return (
     <Tooltip
@@ -76,8 +76,12 @@ export const BorderButton = observer((props: ButtonProps) => {
       >
         {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
         {!hideText && (
-          <span className="flex-grow truncate">
-            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          <span className="flex-grow truncate text-sm leading-5">
+            {isArray && userIds.length > 0
+              ? userIds.length === 1
+                ? getUserDetails(userIds[0])?.display_name
+                : ""
+              : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -102,7 +106,7 @@ export const BackgroundButton = observer((props: ButtonProps) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const isMultiple = Array.isArray(userIds);
+  const isArray = Array.isArray(userIds);
 
   return (
     <Tooltip
@@ -118,8 +122,12 @@ export const BackgroundButton = observer((props: ButtonProps) => {
       >
         {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
         {!hideText && (
-          <span className="flex-grow truncate">
-            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          <span className="flex-grow truncate text-sm leading-5">
+            {isArray && userIds.length > 0
+              ? userIds.length === 1
+                ? getUserDetails(userIds[0])?.display_name
+                : ""
+              : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -145,7 +153,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const isMultiple = Array.isArray(userIds);
+  const isArray = Array.isArray(userIds);
 
   return (
     <Tooltip
@@ -162,8 +170,12 @@ export const TransparentButton = observer((props: ButtonProps) => {
       >
         {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
         {!hideText && (
-          <span className="flex-grow truncate">
-            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          <span className="flex-grow truncate text-sm leading-5">
+            {isArray && userIds.length > 0
+              ? userIds.length === 1
+                ? getUserDetails(userIds[0])?.display_name
+                : ""
+              : placeholder}
           </span>
         )}
         {dropdownArrow && (

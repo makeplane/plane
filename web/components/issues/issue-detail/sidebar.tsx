@@ -184,7 +184,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
                 multiple
-                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+                buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
