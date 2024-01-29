@@ -204,8 +204,8 @@ def send_email_notification(
         },
         "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
         "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/",
-        "workspace":{str(issue.project.workspace.slug)},
-        "project": {str(issue.project.name)},
+        "workspace":str(issue.project.workspace.slug),
+        "project": str(issue.project.name),
         "user_preference": f"{base_api}/profile/preferences/email",
         "comments": comments,
     }
