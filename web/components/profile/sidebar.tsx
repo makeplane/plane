@@ -55,8 +55,7 @@ export const ProfileSidebar = observer(() => {
       label: "Timezone",
       value: (
         <span>
-          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>{" "}
-          {currentTime.getSeconds()}
+          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
         </span>
       ),
     },
