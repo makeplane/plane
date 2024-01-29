@@ -89,8 +89,6 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       filteredParams
     );
 
-    if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
-
     return filteredRouteParams;
   }
 

@@ -89,8 +89,6 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
       filteredParams
     );
 
-    if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
-
     return filteredRouteParams;
   }
 

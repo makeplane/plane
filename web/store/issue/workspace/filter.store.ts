@@ -99,8 +99,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       filteredParams
     );
 
-    if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
-
     return filteredRouteParams;
   };
 

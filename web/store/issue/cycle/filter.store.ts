@@ -90,8 +90,6 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       filteredParams
     );
 
-    if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
-
     return filteredRouteParams;
   }
 
@@ -262,5 +260,3 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     }
   };
 }
-
-

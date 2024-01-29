@@ -2,7 +2,7 @@ import { FC } from "react";
 // hooks
 import { useChart } from "../hooks";
 // helpers
-import { ChartDraggable } from "../helpers/draggable";
+import { ChartAddBlock, ChartDraggable } from "components/gantt-chart";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
@@ -15,6 +15,7 @@ export type GanttChartBlocksProps = {
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
+  showAllBlocks: boolean;
 };
 
 export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
@@ -26,6 +27,7 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
+    showAllBlocks,
   } = props;
 
   const { activeBlock, dispatch } = useChart();
@@ -45,6 +47,8 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     totalBlockShifts: number,
     dragDirection: "left" | "right" | "move"
   ) => {
+    if (!block.start_date || !block.target_date) return;
+
     const originalStartDate = new Date(block.start_date);
     const updatedStartDate = new Date(originalStartDate);
 
@@ -75,27 +79,31 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     >
       {blocks &&
         blocks.length > 0 &&
-        blocks.map(
-          (block) =>
-            block.start_date &&
-            block.target_date && (
-              <div
-                key={`block-${block.id}`}
-                className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
-                onMouseEnter={() => updateActiveBlock(block)}
-                onMouseLeave={() => updateActiveBlock(null)}
-              >
-                <ChartDraggable
-                  block={block}
-                  blockToRender={blockToRender}
-                  handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                  enableBlockLeftResize={enableBlockLeftResize}
-                  enableBlockRightResize={enableBlockRightResize}
-                  enableBlockMove={enableBlockMove}
-                />
-              </div>
-            )
-        )}
+        blocks.map((block) => {
+          // hide the block if it doesn't have start and target dates and showAllBlocks is false
+          if (!showAllBlocks && !(block.start_date && block.target_date)) return;
+
+          const isBlockVisibleOnChart = block.start_date && block.target_date;
+
+          return (
+            <div
+              key={`block-${block.id}`}
+              className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
+              onMouseEnter={() => updateActiveBlock(block)}
+              onMouseLeave={() => updateActiveBlock(null)}
+            >
+              {!isBlockVisibleOnChart && <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />}
+              <ChartDraggable
+                block={block}
+                blockToRender={blockToRender}
+                handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                enableBlockLeftResize={enableBlockLeftResize}
+                enableBlockRightResize={enableBlockRightResize}
+                enableBlockMove={enableBlockMove}
+              />
+            </div>
+          );
+        })}
     </div>
   );
 };
