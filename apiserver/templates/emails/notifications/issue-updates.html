@@ -142,7 +142,7 @@
                {% for update in data %} {% if update.changes.name %}
                <!-- Issue title updated -->
                <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c">
-                  The issue title has been updated from “{{update.changes.user.old_value.0}}“ to "{{update.changes.user.new_value|last}}"
+                  The issue title has been updated to {{ issue.name}}
                </p>
                {% endif %}
                <!-- Outer update Box start -->
