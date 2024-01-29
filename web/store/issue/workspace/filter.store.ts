@@ -90,7 +90,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
+    const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "my_issues");
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -126,7 +126,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters);
+      displayFilters = this.computedDisplayFilters(_filters?.display_filters, { layout: "spreadsheet" });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       kanbanFilters = {
         group_by: _filters?.kanban_filters?.group_by || [],
