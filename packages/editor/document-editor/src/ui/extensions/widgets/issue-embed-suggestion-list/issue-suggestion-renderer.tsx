@@ -192,7 +192,21 @@ const IssueSuggestionList = ({
         );
       })}
     </div>
-  ) : null;
+  ) : (
+    <div
+      id="issue-list-container"
+      ref={commandListContainer}
+      className="fixed z-[10] max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
+    >
+      <div className={"flex h-full w-full flex-col"} key={`no-issue-container`} id={`no-issue-container`}>
+        <h6
+          className={"sticky top-0 z-[10] bg-custom-background-100 px-2 py-1 text-xs font-medium text-custom-text-400"}
+        >
+          {"No issues found"}
+        </h6>
+      </div>
+    </div>
+  );
 };
 export const IssueListRenderer = () => {
   let component: ReactRenderer | null = null;
