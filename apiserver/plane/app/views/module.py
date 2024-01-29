@@ -484,7 +484,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=({"module_name": module_issue.module.name}),
+            current_instance=json.dumps({"module_name": module_issue.module.name}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
