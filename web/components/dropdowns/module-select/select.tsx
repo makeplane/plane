@@ -98,8 +98,11 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
   }, [moduleIds, fetchModules, projectId, workspaceSlug]);
 
   const openDropdown = () => {
-    setIsOpen(true);
-    if (referenceElement) referenceElement.focus();
+    if (isOpen) closeDropdown();
+    else {
+      setIsOpen(true);
+      if (referenceElement) referenceElement.focus();
+    }
   };
   const closeDropdown = () => setIsOpen(false);
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);

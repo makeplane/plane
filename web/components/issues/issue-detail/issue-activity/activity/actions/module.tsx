@@ -59,7 +59,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate"> {activity.new_value}</span>
+              <span className="truncate"> {activity.old_value}</span>
             </a>
           </>
         )}

@@ -63,22 +63,7 @@ export class ModuleService extends APIService {
   }
 
   async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string, queries?: any): Promise<TIssue[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
-      params: queries,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getModuleIssuesWithParams(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    queries?: any
-  ): Promise<TIssue[] | { [key: string]: TIssue[] }> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/issues/`, {
       params: queries,
     })
       .then((response) => response?.data)
