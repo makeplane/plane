@@ -14,6 +14,7 @@ type ButtonProps = {
   placeholder: string;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   tooltip: boolean;
   userIds: string | string[] | null;
 };
@@ -50,6 +51,7 @@ export const BorderButton = observer((props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     placeholder,
     userIds,
     tooltip,
@@ -57,7 +59,7 @@ export const BorderButton = observer((props: ButtonProps) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const isMultiple = Array.isArray(userIds);
+  const isArray = Array.isArray(userIds);
 
   return (
     <Tooltip
@@ -68,13 +70,18 @@ export const BorderButton = observer((props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
         {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
         {!hideText && (
-          <span className="flex-grow truncate">
-            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          <span className="flex-grow truncate text-sm leading-5">
+            {isArray && userIds.length > 0
+              ? userIds.length === 1
+                ? getUserDetails(userIds[0])?.display_name
+                : ""
+              : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -99,7 +106,7 @@ export const BackgroundButton = observer((props: ButtonProps) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const isMultiple = Array.isArray(userIds);
+  const isArray = Array.isArray(userIds);
 
   return (
     <Tooltip
@@ -115,8 +122,12 @@ export const BackgroundButton = observer((props: ButtonProps) => {
       >
         {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
         {!hideText && (
-          <span className="flex-grow truncate">
-            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          <span className="flex-grow truncate text-sm leading-5">
+            {isArray && userIds.length > 0
+              ? userIds.length === 1
+                ? getUserDetails(userIds[0])?.display_name
+                : ""
+              : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -134,6 +145,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
     dropdownArrowClassName,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     placeholder,
     userIds,
     tooltip,
@@ -141,7 +153,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const isMultiple = Array.isArray(userIds);
+  const isArray = Array.isArray(userIds);
 
   return (
     <Tooltip
@@ -152,13 +164,18 @@ export const TransparentButton = observer((props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
         {!hideIcon && <ButtonAvatars tooltip={tooltip} userIds={userIds} />}
         {!hideText && (
-          <span className="flex-grow truncate">
-            {userIds ? (isMultiple ? placeholder : getUserDetails(userIds)?.display_name) : placeholder}
+          <span className="flex-grow truncate text-sm leading-5">
+            {isArray && userIds.length > 0
+              ? userIds.length === 1
+                ? getUserDetails(userIds[0])?.display_name
+                : ""
+              : placeholder}
           </span>
         )}
         {dropdownArrow && (
