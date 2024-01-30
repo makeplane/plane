@@ -167,6 +167,8 @@ export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, 
   const { startDate } = chartData.data;
   const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
 
+  if (!itemStartDate || !itemTargetDate) return null;
+
   startDate.setHours(0, 0, 0, 0);
   itemStartDate.setHours(0, 0, 0, 0);
   itemTargetDate.setHours(0, 0, 0, 0);
