@@ -17,6 +17,7 @@ import { IMentionStore, MentionStore } from "./mention.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { ILabelStore, LabelStore } from "./label.store";
+import { IInstanceStore, InstanceStore } from "./instance.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -38,10 +39,14 @@ export class RootStore {
   mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
+  // new store implementation
+  instance: IInstanceStore;
 
   constructor() {
-    this.app = new AppRootStore(this);
+    this.instance = new InstanceStore();
     this.user = new UserRootStore(this);
+    // old implementation
+    this.app = new AppRootStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this);

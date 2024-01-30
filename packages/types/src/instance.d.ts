@@ -14,6 +14,7 @@ export interface IInstance {
   namespace: string | null;
   is_telemetry_enabled: boolean;
   is_support_required: boolean;
+  is_signup_screen_visited: boolean;
   created_by: string | null;
   updated_by: string | null;
   is_activated: boolean;
