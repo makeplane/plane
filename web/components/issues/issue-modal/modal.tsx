@@ -108,11 +108,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     fetchCycleDetails(workspaceSlug, activeProjectId, cycleId);
   };
 
-  const addIssueToModule = async (issue: TIssue, moduleId: string) => {
+  const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
     if (!workspaceSlug || !activeProjectId) return;
 
-    await moduleIssues.addIssueToModule(workspaceSlug, activeProjectId, moduleId, [issue.id]);
-    fetchModuleDetails(workspaceSlug, activeProjectId, moduleId);
+    await moduleIssues.addModulesToIssue(workspaceSlug, activeProjectId, issue.id, moduleIds);
+    moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug, activeProjectId, moduleId));
   };
 
   const handleCreateMoreToggleChange = (value: boolean) => {
@@ -139,8 +139,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
-      if (payload.module_id && payload.module_id !== "" && storeType !== EIssuesStoreType.MODULE)
-        await addIssueToModule(response, payload.module_id);
+      if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
+        await addIssueToModule(response, payload.module_ids);
 
       setToastAlert({
         type: "success",
@@ -278,7 +278,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     data={{
                       ...data,
                       cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
-                      module_id: data?.module_id ? data?.module_id : moduleId ? moduleId : null,
+                      module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
                     }}
                     onChange={handleFormChange}
                     onClose={handleClose}
@@ -292,7 +292,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     data={{
                       ...data,
                       cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
-                      module_id: data?.module_id ? data?.module_id : moduleId ? moduleId : null,
+                      module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
                     }}
                     onClose={() => handleClose(false)}
                     isCreateMoreToggleEnabled={createMore}

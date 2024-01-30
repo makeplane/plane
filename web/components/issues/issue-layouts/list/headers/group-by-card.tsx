@@ -37,7 +37,7 @@ export const HeaderGroupByCard = observer(
     const { setToastAlert } = useToast();
 
     const renderExistingIssueModal = moduleId || cycleId;
-    const ExistingIssuesListModalPayload = moduleId ? { module: true } : { cycle: true };
+    const ExistingIssuesListModalPayload = moduleId ? { module: [moduleId.toString()] } : { cycle: true };
 
     const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
       if (!workspaceSlug || !projectId) return;

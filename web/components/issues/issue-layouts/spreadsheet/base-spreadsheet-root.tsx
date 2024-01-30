@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues, useUser } from "hooks/store";
+import { useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
@@ -36,7 +36,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
-  const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -54,7 +53,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     },
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
-
 
   const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
 

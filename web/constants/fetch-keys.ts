@@ -13,7 +13,6 @@ const paramsToKey = (params: any) => {
     start_date,
     target_date,
     sub_issue,
-    start_target_date,
     project,
     layout,
     subscriber,
@@ -28,7 +27,6 @@ const paramsToKey = (params: any) => {
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
   let subscriberKey = subscriber ? subscriber.split(",") : [];
-  const startTargetDate = start_target_date ? `${start_target_date}`.toUpperCase() : "FALSE";
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
@@ -47,7 +45,7 @@ const paramsToKey = (params: any) => {
   labelsKey = labelsKey.sort().join("_");
   subscriberKey = subscriberKey.sort().join("_");
 
-  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
 const myIssuesParamsToKey = (params: any) => {

@@ -46,11 +46,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
     await issues
-      .addIssueToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
-      .then((res) => {
-        updateIssue(workspaceSlug, projectId, res.id, res);
-        fetchIssue(workspaceSlug, projectId, res.id);
-      })
+      .addIssuesToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -69,7 +65,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
         projectId={projectId}
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        searchParams={{ module: true }}
+        searchParams={{ module: moduleId != undefined ? [moduleId.toString()] : [] }}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <div className="grid h-full w-full place-items-center">

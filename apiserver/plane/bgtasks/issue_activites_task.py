@@ -30,6 +30,7 @@ from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
 from plane.settings.redis import redis_instance
 
+
 # Track Changes in name
 def track_name(
     requested_data,
@@ -852,70 +853,26 @@ def create_module_issue_activity(
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
-
-    # Updated Records:
-    updated_records = current_instance.get("updated_module_issues", [])
-    created_records = json.loads(
-        current_instance.get("created_module_issues", [])
-    )
-
-    for updated_record in updated_records:
-        old_module = Module.objects.filter(
-            pk=updated_record.get("old_module_id", None)
-        ).first()
-        new_module = Module.objects.filter(
-            pk=updated_record.get("new_module_id", None)
-        ).first()
-        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
-
-        issue_activities.append(
-            IssueActivity(
-                issue_id=updated_record.get("issue_id"),
-                actor_id=actor_id,
-                verb="updated",
-                old_value=old_module.name,
-                new_value=new_module.name,
-                field="modules",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"updated module to ",
-                old_identifier=old_module.id,
-                new_identifier=new_module.id,
-                epoch=epoch,
-            )
+    module = Module.objects.filter(pk=requested_data.get("module_id")).first()
+    issue = Issue.objects.filter(pk=issue_id).first()
+    if issue:
+        issue.updated_at = timezone.now()
+        issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="created",
+            old_value="",
+            new_value=module.name,
+            field="modules",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"added module {module.name}",
+            new_identifier=requested_data.get("module_id"),
+            epoch=epoch,
         )
-
-    for created_record in created_records:
-        module = Module.objects.filter(
-            pk=created_record.get("fields").get("module")
-        ).first()
-        issue = Issue.objects.filter(
-            pk=created_record.get("fields").get("issue")
-        ).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
-        issue_activities.append(
-            IssueActivity(
-                issue_id=created_record.get("fields").get("issue"),
-                actor_id=actor_id,
-                verb="created",
-                old_value="",
-                new_value=module.name,
-                field="modules",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"added module {module.name}",
-                new_identifier=module.id,
-                epoch=epoch,
-            )
-        )
+    )
 
 
 def delete_module_issue_activity(
@@ -934,32 +891,26 @@ def delete_module_issue_activity(
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
-
-    module_id = requested_data.get("module_id", "")
-    module_name = requested_data.get("module_name", "")
-    module = Module.objects.filter(pk=module_id).first()
-    issues = requested_data.get("issues")
-
-    for issue in issues:
-        current_issue = Issue.objects.filter(pk=issue).first()
-        if issue:
-            current_issue.updated_at = timezone.now()
-            current_issue.save(update_fields=["updated_at"])
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue,
-                actor_id=actor_id,
-                verb="deleted",
-                old_value=module.name if module is not None else module_name,
-                new_value="",
-                field="modules",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"removed this issue from {module.name if module is not None else module_name}",
-                old_identifier=module_id if module_id is not None else None,
-                epoch=epoch,
-            )
+    module_name = current_instance.get("module_name")
+    current_issue = Issue.objects.filter(pk=issue_id).first()
+    if current_issue:
+        current_issue.updated_at = timezone.now()
+        current_issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="deleted",
+            old_value=module_name,
+            new_value="",
+            field="modules",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"removed this issue from {module_name}",
+            old_identifier=requested_data.get("module_id") if requested_data.get("module_id") is not None else None,
+            epoch=epoch,
         )
+    )
 
 
 def create_link_activity(
@@ -1648,7 +1599,6 @@ def issue_activity(
                         )
             except Exception as e:
                 capture_exception(e)
-        
 
         if notification:
             notifications.delay(

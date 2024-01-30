@@ -20,7 +20,7 @@ import {
   CycleDropdown,
   DateDropdown,
   EstimateDropdown,
-  ModuleDropdown,
+  ModuleSelectDropdown,
   PriorityDropdown,
   ProjectDropdown,
   ProjectMemberDropdown,
@@ -44,7 +44,7 @@ const defaultValues: Partial<TIssue> = {
   assignee_ids: [],
   label_ids: [],
   cycle_id: null,
-  module_id: null,
+  module_ids: null,
   start_date: null,
   target_date: null,
 };
@@ -541,21 +541,24 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                {projectDetails?.module_view && (
+                {projectDetails?.module_view && workspaceSlug && (
                   <Controller
                     control={control}
-                    name="module_id"
+                    name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
-                        <ModuleDropdown
+                        <ModuleSelectDropdown
+                          workspaceSlug={workspaceSlug.toString()}
                           projectId={projectId}
-                          value={value}
+                          value={value || undefined}
                           onChange={(moduleId) => {
                             onChange(moduleId);
                             handleFormChange();
                           }}
                           buttonVariant="border-with-text"
                           tabIndex={13}
+                          multiple={true}
+                          showCount={true}
                         />
                       </div>
                     )}

@@ -28,8 +28,19 @@ export type TIssuePeekOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
+  addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
+  removeIssueFromModule?: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string
+  ) => Promise<void>;
+  removeModulesFromIssue?: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    moduleIds: string[]
+  ) => Promise<void>;
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
@@ -48,7 +59,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     removeIssue,
     issue: { getIssueById, fetchIssue },
   } = useIssueDetail();
-  const { addIssueToCycle, removeIssueFromCycle, addIssueToModule, removeIssueFromModule } = useIssueDetail();
+  const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
+    useIssueDetail();
   // state
   const [loader, setLoader] = useState(false);
 
@@ -143,9 +155,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         }
       },
-      addIssueToModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
+      addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
-          await addIssueToModule(workspaceSlug, projectId, moduleId, issueIds);
+          await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
           setToastAlert({
             title: "Module added to issue successfully",
             type: "success",
@@ -175,6 +187,27 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         }
       },
+      removeModulesFromIssue: async (
+        workspaceSlug: string,
+        projectId: string,
+        issueId: string,
+        moduleIds: string[]
+      ) => {
+        try {
+          await removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
+          setToastAlert({
+            title: "Module removed from issue successfully",
+            type: "success",
+            message: "Module removed from issue successfully",
+          });
+        } catch (error) {
+          setToastAlert({
+            title: "Module remove from issue failed",
+            type: "error",
+            message: "Module remove from issue failed",
+          });
+        }
+      },
     }),
     [
       is_archived,
@@ -184,8 +217,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeArchivedIssue,
       addIssueToCycle,
       removeIssueFromCycle,
-      addIssueToModule,
+      addModulesToIssue,
       removeIssueFromModule,
+      removeModulesFromIssue,
       setToastAlert,
       onIssueUpdate,
     ]
