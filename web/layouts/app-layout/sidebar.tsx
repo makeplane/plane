@@ -1,4 +1,4 @@
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import {
@@ -26,6 +26,19 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       }
     }
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        themStore.toggleSidebar(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [themStore]);
 
   return (
     <div
