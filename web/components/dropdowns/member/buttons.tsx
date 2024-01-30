@@ -67,7 +67,7 @@ export const BorderButton = observer((props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-neutral-border-medium hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] border-neutral-border-medium hover:bg-neutral-component-surface-dark rounded text-xs px-2 py-0.5",
           className
         )}
       >
@@ -109,7 +109,7 @@ export const BackgroundButton = observer((props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-neutral-component-surface-dark",
           className
         )}
       >
@@ -151,7 +151,7 @@ export const TransparentButton = observer((props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-neutral-component-surface-dark",
           className
         )}
       >

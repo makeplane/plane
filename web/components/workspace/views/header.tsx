@@ -88,7 +88,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
         {isAuthorizedUser && (
           <button
             type="button"
-            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-neutral-border-medium hover:text-custom-text-400"
+            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-neutral-component-surface-light py-3 hover:border-neutral-border-medium hover:text-custom-text-400"
             onClick={() => setCreateViewModal(true)}
           >
             <Plus className="h-4 w-4 text-custom-primary-200" />

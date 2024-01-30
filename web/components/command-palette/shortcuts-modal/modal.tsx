@@ -48,14 +48,14 @@ export const ShortcutsModal: FC<Props> = (props) => {
           >
             <Dialog.Panel className="h-full w-full">
               <div className="grid h-full w-full place-items-center p-5">
-                <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
+                <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-neutral-component-surface-light p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
                       <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
-                  <div className="flex w-full items-center rounded border-[0.5px] border-neutral-border-medium bg-custom-background-90 px-2">
+                  <div className="flex w-full items-center rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium px-2">
                     <Search className="h-3.5 w-3.5 text-custom-text-200" />
                     <Input
                       id="search"

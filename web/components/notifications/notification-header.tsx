@@ -174,7 +174,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                     className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
                       tab.value === selectedTab
                         ? "bg-custom-primary-100 text-white"
-                        : "bg-custom-background-80 text-custom-text-200"
+                        : "bg-neutral-component-surface-dark text-custom-text-200"
                     }`}
                   >
                     {getNumberCount(tab.unreadCount)}

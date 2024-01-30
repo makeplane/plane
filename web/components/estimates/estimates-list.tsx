@@ -97,7 +97,7 @@ export const EstimatesList: React.FC = observer(() => {
 
       {projectEstimates ? (
         projectEstimates.length > 0 ? (
-          <section className="h-full overflow-y-auto bg-custom-background-100">
+          <section className="h-full overflow-y-auto bg-neutral-component-surface-light">
             {projectEstimates.map((estimate) => (
               <EstimateListItem
                 key={estimate.id}

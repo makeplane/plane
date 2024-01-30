@@ -73,7 +73,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 duration-300 md:relative ${
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light duration-300 md:relative ${
         sidebarCollapsed ? "" : "md:w-[280px]"
       } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
@@ -107,7 +107,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                         link.highlight(router.pathname)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
-                          : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                          : "text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
                     >
                       {<link.Icon className="h-4 w-4" />}
@@ -134,7 +134,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   }`}
                 >
                   <span
-                    className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-custom-sidebar-background-80 ${
+                    className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-sidebar-neutral-component-surface-dark ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -166,7 +166,7 @@ export const ProfileLayoutSidebar = observer(() => {
               <Link className="block w-full" key={link.key} href={link.href}>
                 <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                   <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
+                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -195,14 +195,14 @@ export const ProfileLayoutSidebar = observer(() => {
             </button>
             <button
               type="button"
-              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
+              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:hidden"
               onClick={() => toggleSidebar()}
             >
               <MoveLeft className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
-              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:grid ${
                 sidebarCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}

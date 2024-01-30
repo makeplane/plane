@@ -61,7 +61,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     >
       <div
         className={cn(
-          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
           {
             "max-h-60": maxHeight === "lg",
             "max-h-48": maxHeight === "md",
@@ -120,7 +120,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     }}
                     disabled={disabled}
                     className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
-                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-neutral-component-surface-dark"
                     } ${buttonClassName}`}
                   >
                     <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
@@ -132,11 +132,11 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     ref={setReferenceElement}
                     type="button"
                     className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 ${
-                      open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
+                      open ? "bg-neutral-component-surface-medium text-custom-text-100" : "text-custom-text-200"
                     } ${noBorder ? "" : "border border-neutral-border-medium shadow-sm focus:outline-none"} ${
                       disabled
                         ? "cursor-not-allowed text-custom-text-200"
-                        : "cursor-pointer hover:bg-custom-background-80"
+                        : "cursor-pointer hover:bg-neutral-component-surface-dark"
                     } ${buttonClassName}`}
                     onClick={() => {
                       openDropdown();
@@ -167,7 +167,7 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
           className={cn(
             "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
             {
-              "bg-custom-background-80": active,
+              "bg-neutral-component-surface-dark": active,
             },
             className
           )}

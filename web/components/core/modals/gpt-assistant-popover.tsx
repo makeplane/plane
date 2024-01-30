@@ -194,7 +194,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       >
         <Popover.Panel
           as="div"
-          className={`fixed z-10 flex flex-col w-full max-w-full min-w-[50rem] space-y-4 overflow-hidden rounded-[10px] border border-neutral-border-medium bg-custom-background-100 p-4 shadow ${className}`}
+          className={`fixed z-10 flex flex-col w-full max-w-full min-w-[50rem] space-y-4 overflow-hidden rounded-[10px] border border-neutral-border-medium bg-neutral-component-surface-light p-4 shadow ${className}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}

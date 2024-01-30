@@ -165,7 +165,7 @@ export const CommandModal: React.FC = observer(() => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-neutral-border-medium divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-neutral-border-medium divide-opacity-10 rounded-lg bg-neutral-component-surface-light shadow-custom-shadow-md transition-all">
                 <Command
                   filter={(value, search) => {
                     if (value.toLowerCase().includes(search.toLowerCase())) return 1;
@@ -191,7 +191,7 @@ export const CommandModal: React.FC = observer(() => {
                     }`}
                   >
                     {issueDetails && (
-                      <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
+                      <div className="overflow-hidden truncate rounded-md bg-neutral-component-surface-dark p-2 text-xs font-medium text-custom-text-200">
                         {projectDetails?.identifier}-{issueDetails.sequence_id} {issueDetails.name}
                       </div>
                     )}
@@ -281,7 +281,7 @@ export const CommandModal: React.FC = observer(() => {
                               setTrackElement("COMMAND_PALETTE");
                               toggleCreateIssueModal(true);
                             }}
-                            className="focus:bg-custom-background-80"
+                            className="focus:bg-neutral-component-surface-dark"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <LayersIcon className="h-3.5 w-3.5" />

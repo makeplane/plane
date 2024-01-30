@@ -63,7 +63,7 @@ const BorderButton = (props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-neutral-border-medium hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] border-neutral-border-medium hover:bg-neutral-component-surface-dark rounded text-xs px-2 py-0.5",
           className
         )}
       >
@@ -99,7 +99,7 @@ const BackgroundButton = (props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-neutral-component-surface-dark",
           className
         )}
       >
@@ -135,7 +135,7 @@ const TransparentButton = (props: ButtonProps) => {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-neutral-component-surface-dark",
           className
         )}
       >
@@ -338,12 +338,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-custom-background-90 px-2">
+            <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-neutral-component-surface-medium px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
@@ -362,7 +362,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                       value={option.value}
                       className={({ active, selected }) =>
                         `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                          active ? "bg-custom-background-80" : ""
+                          active ? "bg-neutral-component-surface-dark" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
                       onClick={closeDropdown}

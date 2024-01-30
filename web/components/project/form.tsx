@@ -152,7 +152,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
         <div className="absolute bottom-4 z-10 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
-            <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
+            <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-neutral-component-surface-medium">
               <div className="grid h-7 w-7 place-items-center">
                 <Controller
                   control={control}

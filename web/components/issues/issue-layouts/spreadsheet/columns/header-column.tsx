@@ -107,7 +107,9 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
         displayFilters?.order_by !== "-created_at" &&
         selectedMenuItem.includes(property) && (
           <CustomMenu.MenuItem
-            className={`mt-0.5 ${selectedMenuItem === `-created_at_${property}` ? "bg-custom-background-80" : ""}`}
+            className={`mt-0.5 ${
+              selectedMenuItem === `-created_at_${property}` ? "bg-neutral-component-surface-dark" : ""
+            }`}
             key={property}
             onClick={() => handleOrderBy("-created_at", property)}
           >

@@ -44,7 +44,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
 
   if (!currentUser && !currentUserError) {
     return (
-      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
+      <div className="grid h-screen place-items-center bg-neutral-component-surface-light p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>

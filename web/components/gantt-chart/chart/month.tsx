@@ -55,7 +55,9 @@ export const MonthChartView: FC<any> = () => {
                     >
                       <div
                         className={`relative flex h-full w-full flex-1 justify-center ${
-                          ["sat", "sun"].includes(monthDay?.dayData?.shortTitle || "") ? `bg-custom-background-90` : ``
+                          ["sat", "sun"].includes(monthDay?.dayData?.shortTitle || "")
+                            ? `bg-neutral-component-surface-medium`
+                            : ``
                         }`}
                       >
                         {/* {monthDay?.today && (

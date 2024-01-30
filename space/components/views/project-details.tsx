@@ -61,7 +61,7 @@ export const ProjectDetailsView = observer(() => {
           {issueStore?.error ? (
             <div className="grid h-full w-full place-items-center p-6">
               <div className="text-center">
-                <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
+                <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-neutral-component-surface-dark">
                   <div className="grid h-32 w-32 place-items-center">
                     <Image src={SomethingWentWrongImage} alt="Oops! Something went wrong" />
                   </div>

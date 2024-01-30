@@ -63,13 +63,13 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
   }));
 
   return props.items && props.items.length !== 0 ? (
-    <div className="mentions absolute max-h-40 w-48 space-y-0.5 overflow-y-auto rounded-md bg-custom-background-100 p-1 text-sm text-custom-text-300 shadow-custom-shadow-sm">
+    <div className="mentions absolute max-h-40 w-48 space-y-0.5 overflow-y-auto rounded-md bg-neutral-component-surface-light p-1 text-sm text-custom-text-300 shadow-custom-shadow-sm">
       {props.items.length ? (
         props.items.map((item, index) => (
           <div
             key={item.id}
-            className={`flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-custom-background-80 ${
-              index === selectedIndex ? "bg-custom-background-80" : ""
+            className={`flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-neutral-component-surface-dark ${
+              index === selectedIndex ? "bg-neutral-component-surface-dark" : ""
             }`}
             onClick={() => selectItem(index)}
           >

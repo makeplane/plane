@@ -14,7 +14,7 @@ export const MODULE_STATUS: {
     value: "backlog",
     color: "#a3a3a2",
     textColor: "text-custom-text-400",
-    bgColor: "bg-custom-background-80",
+    bgColor: "bg-neutral-component-surface-dark",
   },
   {
     label: "Planned",
@@ -35,7 +35,7 @@ export const MODULE_STATUS: {
     value: "paused",
     color: "#525252",
     textColor: "text-custom-text-300",
-    bgColor: "bg-custom-background-90",
+    bgColor: "bg-neutral-component-surface-medium",
   },
   {
     label: "Completed",

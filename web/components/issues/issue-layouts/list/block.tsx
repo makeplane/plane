@@ -47,7 +47,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   return (
     <>
-      <div className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm">
+      <div className="relative flex items-center gap-3 bg-neutral-component-surface-light p-3 text-sm">
         {displayProperties && displayProperties?.key && (
           <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
             {projectDetails?.identifier}-{issue.sequence_id}
@@ -55,7 +55,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         )}
 
         {issue?.tempId !== undefined && (
-          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-neutral-component-surface-light/20" />
         )}
 
         <ControlLink

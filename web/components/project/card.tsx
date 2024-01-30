@@ -101,7 +101,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
           if (project.is_member) router.push(`/${workspaceSlug?.toString()}/projects/${project.id}/issues`);
           else setJoinProjectModal(true);
         }}
-        className="flex cursor-pointer flex-col rounded border border-neutral-border-medium bg-custom-background-100"
+        className="flex cursor-pointer flex-col rounded border border-neutral-border-medium bg-neutral-component-surface-light"
       >
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
@@ -197,7 +197,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             </Tooltip>
             {(isOwner || isMember) && (
               <Link
-                className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark hover:text-custom-text-200"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}

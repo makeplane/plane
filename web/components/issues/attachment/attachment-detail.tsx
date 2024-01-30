@@ -49,7 +49,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
 
       <div
         key={attachmentId}
-        className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-neutral-border-medium bg-custom-background-100 px-4 py-2 text-sm"
+        className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-neutral-border-medium bg-neutral-component-surface-light px-4 py-2 text-sm"
       >
         <Link href={attachment.asset} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">

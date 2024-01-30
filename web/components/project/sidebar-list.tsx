@@ -122,11 +122,11 @@ export const ProjectSidebarList: FC = observer(() => {
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
-                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
+                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
+                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark"
                             >
                               Favorites
                               {open ? (
@@ -200,11 +200,11 @@ export const ProjectSidebarList: FC = observer(() => {
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
-                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
+                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
+                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark"
                             >
                               Projects
                               {open ? (

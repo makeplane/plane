@@ -32,7 +32,7 @@ export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
       }}
       onClick={handleIssuePeekOverview}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-neutral-component-surface-light/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">

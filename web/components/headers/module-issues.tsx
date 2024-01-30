@@ -147,7 +147,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         moduleDetails={moduleDetails ?? undefined}
       />
-      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-neutral-border-medium bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-neutral-border-medium bg-sidebar-neutral-component-surface-light p-4">
         <div className="flex items-center gap-2">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -242,7 +242,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           )}
           <button
             type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-sidebar-neutral-component-surface-dark"
             onClick={toggleSidebar}
           >
             <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />

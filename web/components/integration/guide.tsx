@@ -81,7 +81,7 @@ const IntegrationGuide = observer(() => {
             {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-neutral-border-subtle bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-neutral-border-subtle bg-neutral-component-surface-light px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -107,7 +107,7 @@ const IntegrationGuide = observer(() => {
                   Previous Imports
                   <button
                     type="button"
-                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
+                    className="flex flex-shrink-0 items-center gap-1 rounded bg-neutral-component-surface-dark px-1.5 py-1 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
                       mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));

@@ -109,7 +109,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         {(provided: any, snapshot: any) => (
           <div
             className={`relative h-full w-full transition-all ${
-              snapshot.isDraggingOver ? `bg-custom-background-80` : ``
+              snapshot.isDraggingOver ? `bg-neutral-component-surface-dark` : ``
             }`}
             {...provided.droppableProps}
             ref={provided.innerRef}
@@ -129,7 +129,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
             {provided.placeholder}
 
             {enableQuickIssueCreate && !disableIssueCreation && (
-              <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
+              <div className="w-full bg-neutral-component-surface-medium py-0.5 sticky bottom-0">
                 <KanBanQuickAddIssueForm
                   formKey="name"
                   groupId={groupId}

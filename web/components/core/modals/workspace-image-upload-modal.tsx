@@ -118,7 +118,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-neutral-component-surface-light px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                     Upload Image
@@ -129,7 +129,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                         {...getRootProps()}
                         className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-neutral-border-medium hover:bg-custom-background-90"
+                            ? "border-2 border-dashed border-neutral-border-medium hover:bg-neutral-component-surface-medium"
                             : ""
                         }`}
                       >
@@ -137,7 +137,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                           <>
                             <button
                               type="button"
-                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-neutral-component-surface-medium px-2 py-0.5 text-xs font-medium text-custom-text-200"
                             >
                               Edit
                             </button>

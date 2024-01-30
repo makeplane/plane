@@ -215,8 +215,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="w-full transform rounded-lg bg-custom-background-100 p-3 text-left shadow-custom-shadow-md transition-all sm:w-3/5 lg:w-1/2 xl:w-2/5">
-                <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
+              <Dialog.Panel className="w-full transform rounded-lg bg-neutral-component-surface-light p-3 text-left shadow-custom-shadow-md transition-all sm:w-3/5 lg:w-1/2 xl:w-2/5">
+                <div className="group relative h-44 w-full rounded-lg bg-neutral-component-surface-dark">
                   {watch("cover_image") !== null && (
                     <img
                       src={watch("cover_image")!}
@@ -248,7 +248,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       render={({ field: { value, onChange } }) => (
                         <EmojiIconPicker
                           label={
-                            <div className="grid h-[44px] w-[44px] place-items-center rounded-md bg-custom-background-80 text-lg outline-none">
+                            <div className="grid h-[44px] w-[44px] place-items-center rounded-md bg-neutral-component-surface-dark text-lg outline-none">
                               {value ? renderEmoji(value) : "Icon"}
                             </div>
                           }

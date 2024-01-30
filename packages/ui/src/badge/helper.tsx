@@ -51,7 +51,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100 border border-custom-primary-100`,
+    default: `text-custom-primary-100 bg-neutral-component-surface-light border border-custom-primary-100`,
     hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
@@ -62,12 +62,12 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed bg-custom-border-200 !text-custom-text-400`,
   },
   "accent-neutral": {
-    default: `text-custom-text-200 bg-custom-background-80`,
+    default: `text-custom-text-200 bg-neutral-component-surface-dark`,
     hover: `hover:bg-custom-border-200 hover:text-custom-text-100`,
     disabled: `cursor-not-allowed !text-custom-text-400`,
   },
   "outline-neutral": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-neutral-border-medium`,
+    default: `text-custom-text-200 bg-neutral-component-surface-light border border-neutral-border-medium`,
     hover: `hover:text-custom-text-100 hover:bg-custom-border-200`,
     disabled: `cursor-not-allowed !text-custom-text-400`,
   },
@@ -83,7 +83,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-green-300`,
   },
   "outline-success": {
-    default: `text-green-500 bg-custom-background-100 border border-green-500`,
+    default: `text-green-500 bg-neutral-component-surface-light border border-green-500`,
     hover: `hover:text-green-600 hover:bg-green-50`,
     disabled: `cursor-not-allowed !text-green-300 border-green-300`,
   },
@@ -99,7 +99,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-amber-300`,
   },
   "outline-warning": {
-    default: `text-amber-500 bg-custom-background-100 border border-amber-500`,
+    default: `text-amber-500 bg-neutral-component-surface-light border border-amber-500`,
     hover: `hover:text-amber-600 hover:bg-amber-50`,
     disabled: `cursor-not-allowed !text-amber-300 border-amber-300`,
   },
@@ -115,7 +115,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "outline-destructive": {
-    default: `text-red-500 bg-custom-background-100 border border-red-500`,
+    default: `text-red-500 bg-neutral-component-surface-light border border-red-500`,
     hover: `hover:text-red-600 hover:bg-red-50`,
     disabled: `cursor-not-allowed !text-red-300 border-red-300`,
   },

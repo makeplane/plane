@@ -111,7 +111,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
                   <div
                     key={label.id}
-                    className={`flex overflow-hidden hover:bg-custom-background-80 ${
+                    className={`flex overflow-hidden hover:bg-neutral-component-surface-dark ${
                       !disabled && "cursor-pointer"
                     } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium px-2.5 py-1 text-xs`}
                   >
@@ -152,7 +152,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       ) : (
         <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
           <div
-            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-neutral-component-surface-dark ${
               noLabelBorder ? "" : "border-[0.5px] border-neutral-border-medium"
             }`}
           >
@@ -182,7 +182,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
               ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+              : "cursor-pointer hover:bg-neutral-component-surface-dark"
           }  ${buttonClassName}`}
           onClick={openDropDown}
         >
@@ -193,12 +193,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
       <Combobox.Options className="fixed z-10">
         <div
-          className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+          className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-neutral-border-medium bg-neutral-component-surface-light px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
         >
-          <div className="flex w-full items-center justify-start rounded border border-neutral-border-medium bg-custom-background-90 px-2">
+          <div className="flex w-full items-center justify-start rounded border border-neutral-border-medium bg-neutral-component-surface-medium px-2">
             <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Combobox.Input
               className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
@@ -217,7 +217,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   key={option.value}
                   value={option.value}
                   className={({ selected }) =>
-                    `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
+                    `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-neutral-component-surface-dark ${
                       selected ? "text-custom-text-100" : "text-custom-text-200"
                     }`
                   }

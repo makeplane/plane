@@ -97,7 +97,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="w-56 divide-y divide-neutral-border-medium rounded border border-neutral-border-medium bg-custom-background-100 p-3 shadow-custom-shadow-rg"
+            className="w-56 divide-y divide-neutral-border-medium rounded border border-neutral-border-medium bg-neutral-component-surface-light p-3 shadow-custom-shadow-rg"
           >
             <div className="flex items-center justify-between gap-2 pb-3">
               <button
@@ -127,7 +127,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
                 <button
                   key={month.shortTitle}
                   type="button"
-                  className="rounded py-0.5 text-xs hover:bg-custom-background-80"
+                  className="rounded py-0.5 text-xs hover:bg-neutral-component-surface-dark"
                   onClick={() => {
                     const newDate = new Date(activeMonthDate.getFullYear(), index, 1);
                     handleDateChange(newDate);

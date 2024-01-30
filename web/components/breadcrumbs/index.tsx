@@ -16,7 +16,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
       <div className="flex w-full flex-grow items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         <button
           type="button"
-          className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-sidebar-neutral-border-medium text-center text-sm hover:bg-custom-sidebar-background-90"
+          className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-sidebar-neutral-border-medium text-center text-sm hover:bg-sidebar-neutral-component-surface-medium"
           onClick={() => router.back()}
         >
           <MoveLeft className="h-4 w-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100" />

@@ -130,7 +130,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         {issueId && (
           <div
             ref={issuePeekOverviewRef}
-            className={`fixed z-20 flex flex-col overflow-hidden rounded border border-neutral-border-medium bg-custom-background-100 transition-all duration-300 
+            className={`fixed z-20 flex flex-col overflow-hidden rounded border border-neutral-border-medium bg-neutral-component-surface-light transition-all duration-300 
           ${peekMode === "side-peek" ? `bottom-0 right-0 top-0 w-full md:w-[50%]` : ``}
           ${peekMode === "modal" ? `left-[50%] top-[50%] h-5/6 w-5/6 -translate-x-[50%] -translate-y-[50%]` : ``}
           ${peekMode === "full-screen" ? `bottom-0 left-0 right-0 top-0 m-4` : ``}

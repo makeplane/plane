@@ -24,7 +24,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full align-middle">
         <table className="min-w-full divide-y divide-neutral-border-medium whitespace-nowrap border-y border-neutral-border-medium">
-          <thead className="bg-custom-background-80">
+          <thead className="bg-neutral-component-surface-dark">
             <tr className="divide-x divide-neutral-border-medium text-sm text-custom-text-100">
               <th scope="col" className="px-2.5 py-3 text-left font-medium">
                 {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}

@@ -213,10 +213,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   return (
     <div
       className={`${
-        fullScreenMode ? `fixed bottom-0 left-0 right-0 top-0 z-[999999] bg-custom-background-100` : `relative`
+        fullScreenMode
+          ? `fixed bottom-0 left-0 right-0 top-0 z-[999999] bg-neutral-component-surface-light`
+          : `relative`
       } ${
         border ? `border border-neutral-border-medium` : ``
-      } flex h-full select-none flex-col rounded-sm bg-custom-background-100 shadow`}
+      } flex h-full select-none flex-col rounded-sm bg-neutral-component-surface-light shadow`}
     >
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
@@ -247,7 +249,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               <div
                 key={_chatView?.key}
                 className={`cursor-pointer rounded-sm p-1 px-2 text-xs ${
-                  currentView === _chatView?.key ? `bg-custom-background-80` : `hover:bg-custom-background-90`
+                  currentView === _chatView?.key
+                    ? `bg-neutral-component-surface-dark`
+                    : `hover:bg-neutral-component-surface-medium`
                 }`}
                 onClick={() => handleChartView(_chatView?.key)}
               >
@@ -258,7 +262,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div className="flex items-center gap-1">
           <div
-            className="cursor-pointer rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
+            className="cursor-pointer rounded-sm p-1 px-2 text-xs hover:bg-neutral-component-surface-dark"
             onClick={handleToday}
           >
             Today
@@ -266,7 +270,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         </div>
 
         <div
-          className="flex cursor-pointer items-center justify-center rounded-sm border border-neutral-border-medium p-1 transition-all hover:bg-custom-background-80"
+          className="flex cursor-pointer items-center justify-center rounded-sm border border-neutral-border-medium p-1 transition-all hover:bg-neutral-component-surface-dark"
           onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
           {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}

@@ -125,8 +125,8 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               className={`relative flex items-center px-2 py-1.5 gap-1 cursor-pointer transition-all rounded 
             ${
               tab.key === activityTab
-                ? `text-custom-text-100 bg-custom-background-80`
-                : `text-custom-text-200 hover:bg-custom-background-80`
+                ? `text-custom-text-100 bg-neutral-component-surface-dark`
+                : `text-custom-text-200 hover:bg-neutral-component-surface-dark`
             }`}
               onClick={() => setActivityTab(tab.key)}
             >

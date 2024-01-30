@@ -45,7 +45,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const isEditingAllowed = alwaysAllowEditing || (currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER);
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-neutral-component-surface-light">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof IIssueFilterOptions;
 

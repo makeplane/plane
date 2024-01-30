@@ -87,7 +87,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
                   className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                     reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                       ? "bg-custom-primary-100/10"
-                      : "bg-custom-background-80"
+                      : "bg-neutral-component-surface-dark"
                   }`}
                 >
                   <span>{renderEmoji(reaction)}</span>

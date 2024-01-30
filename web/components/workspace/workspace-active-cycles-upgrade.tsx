@@ -86,7 +86,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
-          <div className="flex flex-col gap-2 p-4 min-h-32 w-full bg-custom-background-80 rounded-md">
+          <div className="flex flex-col gap-2 p-4 min-h-32 w-full bg-neutral-component-surface-dark rounded-md">
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{item.title}</h3>
               <item.icon className="text-blue-500 h-4 w-4" />

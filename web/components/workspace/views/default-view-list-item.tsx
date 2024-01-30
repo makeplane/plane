@@ -15,12 +15,12 @@ export const GlobalDefaultViewListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   return (
-    <div className="group border-b border-neutral-border-medium hover:bg-custom-background-90">
+    <div className="group border-b border-neutral-border-medium hover:bg-neutral-component-surface-medium">
       <Link href={`/${workspaceSlug}/workspace-views/${view.key}`}>
         <div className="relative flex w-full items-center justify-between rounded px-5 py-4">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="grid h-10 w-10 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
+              <div className="grid h-10 w-10 place-items-center rounded bg-neutral-component-surface-medium group-hover:bg-neutral-component-surface-light">
                 <PhotoFilterIcon className="h-3.5 w-3.5" />
               </div>
               <div className="flex flex-col">

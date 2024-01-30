@@ -198,7 +198,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     return (
       <div
-        className="flex h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded border border-neutral-border-subtle bg-custom-background-100 px-2 text-xs hover:bg-custom-background-90"
+        className="flex h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded border border-neutral-border-subtle bg-neutral-component-surface-light px-2 text-xs hover:bg-neutral-component-surface-medium"
         onClick={() => copyText()}
       >
         {status ? "Copied" : "Copy Link"}
@@ -289,7 +289,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="w-full transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:w-3/5 lg:w-1/2 xl:w-2/5">
+              <Dialog.Panel className="w-full transform rounded-lg bg-neutral-component-surface-light text-left shadow-custom-shadow-md transition-all sm:w-3/5 lg:w-1/2 xl:w-2/5">
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                   {/* heading */}
                   <div className="flex items-center justify-between gap-2 px-6 pt-4">
@@ -317,7 +317,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     <div className="px-6">
                       {project.is_deployed && (
                         <>
-                          <div className="relative flex items-center gap-2 rounded-md border border-neutral-border-subtle bg-custom-background-80 px-3 py-2">
+                          <div className="relative flex items-center gap-2 rounded-md border border-neutral-border-subtle bg-neutral-component-surface-dark px-3 py-2">
                             <div className="flex-grow truncate text-sm">
                               {`${plane_deploy_url}/${workspaceSlug}/${project.id}`}
                             </div>
@@ -358,8 +358,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                       key={option.key}
                                       className={`relative m-1 flex cursor-pointer items-center justify-between gap-2 rounded-sm p-1 px-2 text-custom-text-200 ${
                                         value.includes(option.key)
-                                          ? "bg-custom-background-80 text-custom-text-100"
-                                          : "hover:bg-custom-background-80 hover:text-custom-text-100"
+                                          ? "bg-neutral-component-surface-dark text-custom-text-100"
+                                          : "hover:bg-neutral-component-surface-dark hover:text-custom-text-100"
                                       }`}
                                       onClick={() => {
                                         const _views =

@@ -94,7 +94,7 @@ export const CYCLE_STATUS: {
     value: "draft",
     color: "#525252",
     textColor: "text-custom-text-300",
-    bgColor: "bg-custom-background-90",
+    bgColor: "bg-neutral-component-surface-medium",
   },
 ];
 

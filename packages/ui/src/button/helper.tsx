@@ -55,13 +55,13 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-neutral-border-medium`,
-    hover: `hover:bg-custom-background-90`,
-    pressed: `focus:text-custom-text-300 focus:bg-custom-background-90`,
+    default: `text-custom-text-200 bg-neutral-component-surface-light border border-neutral-border-medium`,
+    hover: `hover:bg-neutral-component-surface-medium`,
+    pressed: `focus:text-custom-text-300 focus:bg-neutral-component-surface-medium`,
     disabled: `cursor-not-allowed !text-custom-text-400`,
   },
   "link-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100`,
+    default: `text-custom-primary-100 bg-neutral-component-surface-light`,
     hover: `hover:text-custom-primary-200`,
     pressed: `focus:text-custom-primary-80 `,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
@@ -86,13 +86,13 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-red-300 !border-red-300`,
   },
   "link-danger": {
-    default: `text-red-500 bg-custom-background-100`,
+    default: `text-red-500 bg-neutral-component-surface-light`,
     hover: `hover:text-red-400`,
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "tertiary-danger": {
-    default: `text-red-500 bg-custom-background-100 border border-red-200`,
+    default: `text-red-500 bg-neutral-component-surface-light border border-red-200`,
     hover: `hover:bg-red-50 hover:border-red-300`,
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,

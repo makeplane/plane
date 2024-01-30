@@ -126,7 +126,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex w-full items-center gap-x-3 bg-custom-background-100 p-3"
+            className="flex w-full items-center gap-x-3 bg-neutral-component-surface-light p-3"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetail={projectDetail} />
           </form>

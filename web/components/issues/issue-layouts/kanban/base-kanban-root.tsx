@@ -231,13 +231,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       />
 
       {showLoader && issues?.loader === "init-loader" && (
-        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center rounded bg-custom-background-80 shadow-custom-shadow-sm">
+        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center rounded bg-neutral-component-surface-dark shadow-custom-shadow-sm">
           <Spinner className="h-5 w-5" />
         </div>
       )}
 
-      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90">
-        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-neutral-component-surface-medium">
+        <div className="relative h-full w-max min-w-full bg-neutral-component-surface-medium px-2">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {/* drag and delete component */}
             <div
@@ -250,7 +250,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                   <div
                     className={`${
                       isDragStarted ? `opacity-100` : `opacity-0`
-                    } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+                    } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-neutral-component-surface-light px-3 py-5 text-xs font-medium italic text-red-500 ${
                       snapshot.isDraggingOver ? "bg-red-500 opacity-70 blur-2xl" : ""
                     } transition duration-300`}
                     ref={provided.innerRef}

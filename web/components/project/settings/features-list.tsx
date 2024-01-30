@@ -81,10 +81,12 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       {PROJECT_FEATURES_LIST.map((feature) => (
         <div
           key={feature.property}
-          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-neutral-border-subtle bg-custom-background-100 p-4"
+          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-neutral-border-subtle bg-neutral-component-surface-light p-4"
         >
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">{feature.icon}</div>
+            <div className="flex items-center justify-center rounded bg-neutral-component-surface-medium p-3">
+              {feature.icon}
+            </div>
             <div className="">
               <h4 className="text-sm font-medium">{feature.title}</h4>
               <p className="text-sm tracking-tight text-custom-text-200">{feature.description}</p>

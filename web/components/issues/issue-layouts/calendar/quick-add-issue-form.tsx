@@ -160,7 +160,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="z-50 flex w-full items-center gap-x-2 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-2 shadow-custom-shadow-2xs transition-opacity"
+            className="z-50 flex w-full items-center gap-x-2 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-2 shadow-custom-shadow-2xs transition-opacity"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>

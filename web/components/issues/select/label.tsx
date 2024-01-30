@@ -87,7 +87,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               />
             </span>
           ) : (
-            <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-neutral-border-medium px-2 py-1 text-xs hover:bg-custom-background-80">
+            <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-neutral-border-medium px-2 py-1 text-xs hover:bg-neutral-component-surface-dark">
               <Tag className="h-3 w-3 flex-shrink-0" />
               <span>Labels</span>
             </div>
@@ -98,12 +98,12 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       {isDropdownOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-custom-background-90 px-2">
+            <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-neutral-component-surface-medium px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
@@ -125,7 +125,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                             key={label.id}
                             className={({ active }) =>
                               `${
-                                active ? "bg-custom-background-80" : ""
+                                active ? "bg-neutral-component-surface-dark" : ""
                               } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                             }
                             value={label.id}
@@ -160,7 +160,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                                 key={child.id}
                                 className={({ active }) =>
                                   `${
-                                    active ? "bg-custom-background-80" : ""
+                                    active ? "bg-neutral-component-surface-dark" : ""
                                   } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                                 }
                                 value={child.id}
@@ -195,7 +195,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               )}
               <button
                 type="button"
-                className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-custom-background-80"
+                className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-neutral-component-surface-dark"
                 onClick={() => setIsOpen(true)}
               >
                 <Plus className="h-3 w-3" aria-hidden="true" />

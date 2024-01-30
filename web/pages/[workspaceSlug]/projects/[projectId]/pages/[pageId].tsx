@@ -348,7 +348,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   button={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-neutral-component-surface-medium"
                       onClick={() => setGptModal((prevData) => !prevData)}
                     >
                       <Sparkle className="h-4 w-4" />

@@ -392,7 +392,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="relative flex w-1/2 items-center rounded-sm">
               <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                  className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-neutral-component-surface-dark ${
                     isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={isCompleted || !isEditingAllowed}
@@ -444,7 +444,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full w-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                    className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-neutral-component-surface-dark ${
                       isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={isCompleted || !isEditingAllowed}

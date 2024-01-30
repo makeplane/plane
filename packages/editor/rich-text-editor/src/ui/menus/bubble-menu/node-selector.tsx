@@ -55,7 +55,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
       </button>
 
       {isOpen && (
-        <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded border border-neutral-border-medium bg-custom-background-100 p-1 shadow-xl animate-in fade-in slide-in-from-top-1">
+        <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded border border-neutral-border-medium bg-neutral-component-surface-light p-1 shadow-xl animate-in fade-in slide-in-from-top-1">
           {items.map((item) => (
             <button
               key={item.name}

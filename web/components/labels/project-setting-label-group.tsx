@@ -70,7 +70,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     <Disclosure
       as="div"
       className={`rounded border-[0.5px] border-neutral-border-medium text-custom-text-100 ${
-        groupDragSnapshot.combineTargetFor ? "bg-custom-background-80" : "bg-custom-background-100"
+        groupDragSnapshot.combineTargetFor ? "bg-neutral-component-surface-dark" : "bg-neutral-component-surface-light"
       }`}
       defaultOpen
     >

@@ -117,7 +117,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
               ))}
             </Tab.List>
             {cycleTab !== "active" && (
-              <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+              <div className="flex items-center gap-1 rounded bg-neutral-component-surface-dark p-1">
                 {CYCLE_VIEW_LAYOUTS.map((layout) => {
                   if (layout.key === "gantt" && cycleTab === "draft") return null;
 
@@ -125,8 +125,8 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                     <Tooltip key={layout.key} tooltipContent={layout.title}>
                       <button
                         type="button"
-                        className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                          cycleLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                        className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-neutral-component-surface-light ${
+                          cycleLayout == layout.key ? "bg-neutral-component-surface-light shadow-custom-shadow-2xs" : ""
                         }`}
                         onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
                       >

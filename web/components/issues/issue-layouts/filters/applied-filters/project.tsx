@@ -24,7 +24,10 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
         if (!projectDetails) return null;
 
         return (
-          <div key={projectId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div
+            key={projectId}
+            className="flex items-center gap-1 rounded bg-neutral-component-surface-dark p-1 text-xs"
+          >
             {projectDetails.emoji ? (
               <span className="grid flex-shrink-0 place-items-center">{renderEmoji(projectDetails.emoji)}</span>
             ) : projectDetails.icon_prop ? (

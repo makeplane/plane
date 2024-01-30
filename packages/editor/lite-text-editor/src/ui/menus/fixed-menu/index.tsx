@@ -101,8 +101,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               <button
                 type="button"
                 onClick={() => handleAccessChange(access.key)}
-                className={`grid aspect-square place-items-center rounded-sm p-1 hover:bg-custom-background-90 ${
-                  props.commentAccessSpecifier?.accessValue === access.key ? "bg-custom-background-90" : ""
+                className={`grid aspect-square place-items-center rounded-sm p-1 hover:bg-neutral-component-surface-medium ${
+                  props.commentAccessSpecifier?.accessValue === access.key ? "bg-neutral-component-surface-medium" : ""
                 }`}
               >
                 <access.icon
@@ -118,7 +118,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
           ))}
         </div>
       )}
-      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-90 p-1">
+      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium p-1">
         <div className="flex items-stretch">
           <div className="flex items-stretch gap-0.5 border-r border-neutral-border-medium pr-2.5">
             {basicTextFormattingItems.map((item) => (
@@ -127,9 +127,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
                     }
                   )}
                 >
@@ -150,9 +150,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
                     }
                   )}
                 >
@@ -173,9 +173,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
                     }
                   )}
                 >
@@ -196,9 +196,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
                     }
                   )}
                 >

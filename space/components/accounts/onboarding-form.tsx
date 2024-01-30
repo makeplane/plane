@@ -141,7 +141,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Listbox.Options
-                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-neutral-border-medium bg-custom-background-90 text-xs shadow-lg focus:outline-none`}
+                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium text-xs shadow-lg focus:outline-none`}
                     >
                       <div className="space-y-1 p-2">
                         {USER_ROLES.map((role) => (
@@ -150,7 +150,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                             value={role.value}
                             className={({ active, selected }) =>
                               `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                active || selected ? "bg-custom-background-80" : ""
+                                active || selected ? "bg-neutral-component-surface-dark" : ""
                               } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                             }
                           >

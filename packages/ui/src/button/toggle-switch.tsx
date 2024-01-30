@@ -33,7 +33,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
         } transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
           value
             ? (size === "sm" ? "translate-x-3" : size === "md" ? "translate-x-4" : "translate-x-5") + " bg-white"
-            : "translate-x-0.5 bg-custom-background-90"
+            : "translate-x-0.5 bg-neutral-component-surface-medium"
         } ${disabled ? "cursor-not-allowed" : ""}`}
       />
     </Switch>

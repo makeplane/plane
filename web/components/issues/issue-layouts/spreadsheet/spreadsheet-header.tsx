@@ -21,7 +21,7 @@ export const SpreadsheetHeader = (props: Props) => {
   return (
     <thead className="sticky top-0 left-0 z-[1] border-b-[0.5px] border-neutral-border-subtle">
       <tr>
-        <th className="sticky left-0 z-[1] h-11 w-[28rem] flex items-center bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-neutral-border-subtle">
+        <th className="sticky left-0 z-[1] h-11 w-[28rem] flex items-center bg-neutral-component-surface-medium text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-neutral-border-subtle">
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <span className="flex h-full w-24 flex-shrink-0 items-center px-4 py-2.5">
               <span className="mr-1.5 text-custom-text-400">#</span>ID
@@ -42,7 +42,7 @@ export const SpreadsheetHeader = (props: Props) => {
               displayPropertyKey={property}
               shouldRenderProperty={shouldRenderProperty}
             >
-              <th className="h-11 w-full min-w-[8rem] items-center bg-custom-background-90 text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-neutral-border-subtle">
+              <th className="h-11 w-full min-w-[8rem] items-center bg-neutral-component-surface-medium text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-neutral-border-subtle">
                 <SpreadsheetHeaderColumn
                   displayFilters={displayFilters}
                   handleDisplayFilterUpdate={handleDisplayFilterUpdate}

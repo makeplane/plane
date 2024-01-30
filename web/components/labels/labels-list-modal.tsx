@@ -77,7 +77,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-neutral-component-surface-light shadow-custom-shadow-md transition-all">
               <Combobox>
                 <div className="relative m-1">
                   <Search
@@ -114,7 +114,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                                 }}
                                 className={({ active }) =>
                                   `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
+                                    active ? "bg-neutral-component-surface-dark text-custom-text-100" : ""
                                   }`
                                 }
                                 onClick={() => {

@@ -52,7 +52,7 @@ const DropdownList: React.FC<DropDownListProps> = (props) => {
       >
         <Popover.Panel
           ref={ref}
-          className="absolute left-1/2 z-10 mt-1 max-w-[9rem] origin-top-right -translate-x-full select-none rounded-md border border-neutral-border-medium bg-custom-background-90 text-xs shadow-lg focus:outline-none"
+          className="absolute left-1/2 z-10 mt-1 max-w-[9rem] origin-top-right -translate-x-full select-none rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium text-xs shadow-lg focus:outline-none"
         >
           <div className="w-full rounded-md text-sm shadow-lg">
             {items.map((item, index) => (
@@ -83,8 +83,8 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
             }
             setOpen((prev) => !prev);
           }}
-          className={`flex w-full items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80 ${
-            isSelected ? "bg-custom-background-80" : ""
+          className={`flex w-full items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 hover:bg-neutral-component-surface-dark ${
+            isSelected ? "bg-neutral-component-surface-dark" : ""
           }`}
         >
           {children && <ChevronLeft className="h-4 w-4 transform transition-transform" strokeWidth={2} />}
@@ -109,8 +109,8 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       {({ open }) => (
         <>
           <Popover.Button
-            className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
-              open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
+            className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-neutral-component-surface-medium hover:text-custom-text-100 focus:outline-none ${
+              open ? "bg-neutral-component-surface-medium text-custom-text-100" : "text-custom-text-200"
             }`}
           >
             {typeof button === "function" ? button() : button}
@@ -125,7 +125,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute left-full z-10 mt-1 w-36 origin-top-right -translate-x-full select-none rounded-md border border-neutral-border-medium bg-custom-background-90 text-xs shadow-lg focus:outline-none">
+            <Popover.Panel className="absolute left-full z-10 mt-1 w-36 origin-top-right -translate-x-full select-none rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium text-xs shadow-lg focus:outline-none">
               <div className="w-full">
                 {items.map((item, index) => (
                   <DropdownItem key={index} item={item} />

@@ -14,7 +14,7 @@ interface InstanceAdminRestrictionProps {
 
 export const InstanceAdminRestriction: FC<InstanceAdminRestrictionProps> = ({ redirectWorkspaceSlug }) => (
   <div className={`my-8 flex w-full flex-col items-center justify-center gap-4 overflow-hidden`}>
-    <div className="w-3/5 bg-custom-background-90">
+    <div className="w-3/5 bg-neutral-component-surface-medium">
       <div className="grid h-full place-items-center p-2 pb-0">
         <div className="text-center">
           <Image src={AccessDeniedImg} height="250" width="550" alt="AccessDeniedImg" />

@@ -93,7 +93,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
               >
                 <Popover.Panel>
                   <div
-                    className="z-10 overflow-hidden rounded border border-neutral-border-medium bg-custom-background-100 shadow-custom-shadow-rg"
+                    className="z-10 overflow-hidden rounded border border-neutral-border-medium bg-neutral-component-surface-light shadow-custom-shadow-rg"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}

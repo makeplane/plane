@@ -291,7 +291,7 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="fixed z-50 h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-neutral-border-medium bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="fixed z-50 h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-neutral-border-medium bg-neutral-component-surface-light px-1 py-2 shadow-md transition-all"
     >
       {items.map((item, index) => (
         <button

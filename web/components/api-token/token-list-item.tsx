@@ -34,7 +34,9 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           <h5 className="truncate text-sm font-medium">{token.label}</h5>
           <span
             className={`${
-              token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-custom-text-400"
+              token.is_active
+                ? "bg-green-500/10 text-green-500"
+                : "bg-neutral-component-surface-dark text-custom-text-400"
             } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}

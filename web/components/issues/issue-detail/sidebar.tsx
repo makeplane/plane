@@ -131,7 +131,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <button
               type="button"
-              className="rounded-md border border-neutral-border-medium p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
+              className="rounded-md border border-neutral-border-medium p-2 shadow-sm duration-300 hover:bg-neutral-component-surface-medium focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
               onClick={handleCopyText}
             >
               <LinkIcon className="h-3.5 w-3.5" />
@@ -206,7 +206,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!is_editable}
                 buttonVariant="border-with-text"
-                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                className="w-3/5 flex-grow rounded px-2 hover:bg-neutral-component-surface-dark"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />

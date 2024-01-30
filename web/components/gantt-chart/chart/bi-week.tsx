@@ -37,7 +37,9 @@ export const BiWeekChartView: FC<any> = () => {
                       </div>
                       <div
                         className={`relative flex h-full w-full flex-1 justify-center ${
-                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "") ? `bg-custom-background-80` : ``
+                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "")
+                            ? `bg-neutral-component-surface-dark`
+                            : ``
                         }`}
                       >
                         {_item?.today && <div className="absolute bottom-0 top-0 border border-red-500"> </div>}

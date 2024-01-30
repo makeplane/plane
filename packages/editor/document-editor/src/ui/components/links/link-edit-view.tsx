@@ -22,7 +22,7 @@ const InputView = ({
       onClick={(e) => {
         e.stopPropagation();
       }}
-      className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm"
+      className="w-[280px] outline-none bg-neutral-component-surface-medium text-custom-text-900 text-sm"
       defaultValue={defaultValue}
       onChange={onChange}
     />
@@ -122,7 +122,7 @@ export const LinkEditView = ({
   return (
     <div
       onKeyDown={(e) => e.key === "Enter" && viewProps.closeLinkView()}
-      className="shadow-md rounded p-2 flex flex-col gap-3 bg-custom-background-90 border-neutral-border-subtle border-2"
+      className="shadow-md rounded p-2 flex flex-col gap-3 bg-neutral-component-surface-medium border-neutral-border-subtle border-2"
     >
       <InputView
         label={"URL"}

@@ -24,7 +24,7 @@ export const NotAuthorizedView: React.FC<Props> = observer((props) => {
 
   return (
     <DefaultLayout>
-      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-neutral-component-surface-light text-center">
         <div className="h-44 w-72">
           <Image
             src={type === "project" ? ProjectNotAuthorizedImg : WorkspaceNotAuthorizedImg}

@@ -93,7 +93,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-neutral-component-surface-light shadow-custom-shadow-md transition-all">
                 <Combobox
                   value={value}
                   onChange={(val) => {
@@ -154,7 +154,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                         <LayersIcon height="52" width="52" />
                         <h3 className="text-custom-text-200">
                           No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
+                          <pre className="inline rounded bg-neutral-component-surface-dark px-2 py-1 text-sm">C</pre>.
                         </h3>
                       </div>
                     )}
@@ -174,7 +174,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                             value={issue}
                             className={({ active, selected }) =>
                               `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                active ? "bg-custom-background-80 text-custom-text-100" : ""
+                                active ? "bg-neutral-component-surface-dark text-custom-text-100" : ""
                               } ${selected ? "text-custom-text-100" : ""}`
                             }
                           >

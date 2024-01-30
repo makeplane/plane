@@ -88,7 +88,7 @@ export const ProfileSidebar = observer(() => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100 capitalize">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-neutral-component-surface-medium text-custom-text-100 capitalize">
                   {userProjectsData.user_data.first_name?.[0]}
                 </div>
               )}
@@ -134,7 +134,7 @@ export const ProfileSidebar = observer(() => {
                                 {renderEmoji(project.icon_prop)}
                               </div>
                             ) : (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-custom-background-90 text-xs uppercase text-custom-text-100">
+                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-neutral-component-surface-medium text-xs uppercase text-custom-text-100">
                                 {project?.name.charAt(0)}
                               </div>
                             )}

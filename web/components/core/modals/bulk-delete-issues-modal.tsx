@@ -130,7 +130,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-neutral-border-medium divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-neutral-border-medium divide-opacity-10 rounded-lg bg-neutral-component-surface-light shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {
@@ -183,7 +183,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                           <LayersIcon height="56" width="56" />
                           <h3 className="text-custom-text-200">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
+                            <pre className="inline rounded bg-neutral-component-surface-dark px-2 py-1">C</pre>.
                           </h3>
                         </div>
                       )}

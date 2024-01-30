@@ -92,6 +92,6 @@ Here is an example of how to use the `RichReadOnlyEditor` component
 ```tsx
 <LiteReadOnlyEditor
   value={comment.comment_html}
-  customClassName="text-xs border border-neutral-border-medium bg-custom-background-100"
+  customClassName="text-xs border border-neutral-border-medium bg-neutral-component-surface-light"
 />
 ```

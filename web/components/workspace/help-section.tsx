@@ -57,7 +57,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-neutral-border-medium bg-custom-sidebar-background-100 px-4 py-2 ${
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-neutral-border-medium bg-sidebar-neutral-page-surface-default px-4 py-2 ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
@@ -70,7 +70,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent="Shortcuts">
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 ${
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleShortcutModal(true)}
@@ -81,7 +81,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent="Help">
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 ${
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => setIsNeedHelpOpen((prev) => !prev)}
@@ -92,7 +92,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
           <button
             type="button"
-            className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
+            className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:hidden"
             onClick={() => toggleSidebar()}
           >
             <MoveLeft className="h-3.5 w-3.5" />
@@ -101,7 +101,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`}>
             <button
               type="button"
-              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:grid ${
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}
@@ -124,7 +124,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             <div
               className={`absolute bottom-2 min-w-[10rem] ${
                 isCollapsed ? "left-full" : "-left-[75px]"
-              } divide-y divide-neutral-border-medium whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
+              } divide-y divide-neutral-border-medium whitespace-nowrap rounded bg-neutral-component-surface-light p-1 shadow-custom-shadow-xs`}
               ref={helpOptionsRef}
             >
               <div className="space-y-1 pb-2">
@@ -132,7 +132,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                   if (href)
                     return (
                       <Link href={href} key={name} target="_blank">
-                        <span className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
+                        <span className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-neutral-component-surface-dark">
                           <div className="grid flex-shrink-0 place-items-center">
                             <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
                           </div>
@@ -146,7 +146,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                         key={name}
                         type="button"
                         onClick={onClick ?? undefined}
-                        className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
+                        className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-neutral-component-surface-dark"
                       >
                         <div className="grid flex-shrink-0 place-items-center">
                           <Icon className="h-3.5 w-3.5 text-custom-text-200" />

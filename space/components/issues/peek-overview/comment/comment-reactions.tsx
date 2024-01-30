@@ -108,7 +108,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                     (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
                   )
                     ? "bg-custom-primary-100/10"
-                    : "bg-custom-background-80"
+                    : "bg-neutral-component-surface-dark"
                 }`}
               >
                 <span>{renderEmoji(reaction)}</span>

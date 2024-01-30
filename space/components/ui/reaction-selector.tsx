@@ -28,7 +28,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
           <Popover.Button
             className={`${
               open ? "" : "text-opacity-90"
-            } group inline-flex items-center rounded-md bg-custom-background-80 focus:outline-none`}
+            } group inline-flex items-center rounded-md bg-neutral-component-surface-dark focus:outline-none`}
           >
             <span
               className={`flex items-center justify-center rounded-md px-2 ${
@@ -48,11 +48,11 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className={`absolute -left-2 z-10 bg-custom-sidebar-background-100 ${
+              className={`absolute -left-2 z-10 bg-sidebar-neutral-component-surface-light ${
                 position === "top" ? "-top-12" : "-bottom-12"
               }`}
             >
-              <div className="rounded-md border border-neutral-border-medium bg-custom-sidebar-background-100 p-1 shadow-custom-shadow-sm">
+              <div className="rounded-md border border-neutral-border-medium bg-sidebar-neutral-component-surface-light p-1 shadow-custom-shadow-sm">
                 <div className="flex gap-x-1">
                   {reactionEmojis.map((emoji) => (
                     <button
@@ -63,7 +63,9 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                         closePopover();
                       }}
                       className={`grid select-none place-items-center rounded-md p-1 text-sm ${
-                        selected.includes(emoji) ? "bg-custom-primary-100/10" : "hover:bg-custom-sidebar-background-80"
+                        selected.includes(emoji)
+                          ? "bg-custom-primary-100/10"
+                          : "hover:bg-sidebar-neutral-component-surface-dark"
                       }`}
                     >
                       {renderEmoji(emoji)}

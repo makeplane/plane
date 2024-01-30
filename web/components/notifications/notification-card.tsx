@@ -73,7 +73,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             />
           </div>
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-custom-background-80">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-component-surface-dark">
             <span className="text-lg font-medium text-custom-text-100">
               {notification.triggered_by_details.is_bot ? (
                 notification.triggered_by_details.first_name?.[0]?.toUpperCase()
@@ -199,7 +199,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 item.onClick();
               }}
               key={item.id}
-              className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm outline-none hover:bg-custom-background-100"
+              className="flex w-full items-center gap-x-2 rounded bg-neutral-component-surface-dark p-0.5 text-sm outline-none hover:bg-neutral-component-surface-light"
             >
               {item.icon}
             </button>
@@ -212,7 +212,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               e.stopPropagation();
             }}
             customButton={
-              <div className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm hover:bg-custom-background-100">
+              <div className="flex w-full items-center gap-x-2 rounded bg-neutral-component-surface-dark p-0.5 text-sm hover:bg-neutral-component-surface-light">
                 <Clock className="h-3.5 w-3.5 text-custom-text-300" />
               </div>
             }

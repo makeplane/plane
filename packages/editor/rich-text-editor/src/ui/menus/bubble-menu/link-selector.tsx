@@ -30,8 +30,8 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
       <button
         type="button"
         className={cn(
-          "flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-custom-background-100 active:bg-custom-background-100",
-          { "bg-custom-background-100": isOpen }
+          "flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-neutral-component-surface-light active:bg-neutral-component-surface-light",
+          { "bg-neutral-component-surface-light": isOpen }
         )}
         onClick={() => {
           setIsOpen(!isOpen);
@@ -48,7 +48,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
       </button>
       {isOpen && (
         <div
-          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-neutral-border-medium bg-custom-background-100 animate-in fade-in slide-in-from-top-1"
+          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-neutral-border-medium bg-neutral-component-surface-light animate-in fade-in slide-in-from-top-1"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -60,7 +60,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             ref={inputRef}
             type="url"
             placeholder="Paste a link"
-            className="flex-1 border-r border-neutral-border-medium bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
+            className="flex-1 border-r border-neutral-border-medium bg-neutral-component-surface-light p-1 text-sm outline-none placeholder:text-custom-text-400"
             defaultValue={editor.getAttributes("link").href || ""}
           />
           {editor.getAttributes("link").href ? (
@@ -76,7 +76,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             </button>
           ) : (
             <button
-              className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
+              className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-neutral-component-surface-medium"
               type="button"
               onClick={() => {
                 onLinkSubmit();

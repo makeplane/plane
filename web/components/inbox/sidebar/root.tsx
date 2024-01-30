@@ -25,7 +25,7 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = observer((props) => {
     <div className="relative flex flex-col w-full h-full">
       <div className="flex-shrink-0 w-full h-[50px] relative flex justify-between items-center gap-2 p-2 px-3 border-b border-neutral-border-medium">
         <div className="relative flex items-center gap-1">
-          <div className="relative w-6 h-6 flex justify-center items-center rounded bg-custom-background-80">
+          <div className="relative w-6 h-6 flex justify-center items-center rounded bg-neutral-component-surface-dark">
             <Inbox className="w-4 h-4" />
           </div>
           <div className="font-medium">Inbox</div>

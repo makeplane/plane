@@ -2,7 +2,7 @@
 import { Loader } from "@plane/ui";
 
 export const AssignedIssuesWidgetLoader = () => (
-  <Loader className="bg-custom-background-100 p-6 rounded-xl">
+  <Loader className="bg-neutral-component-surface-light p-6 rounded-xl">
     <div className="flex items-center justify-between gap-2">
       <Loader.Item height="17px" width="35%" />
       <Loader.Item height="17px" width="10%" />

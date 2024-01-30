@@ -96,7 +96,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         }}
         onSubmit={handleRemove}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
+      <div className="group flex items-center justify-between px-3 py-4 hover:bg-neutral-component-surface-medium">
         <div className="flex items-center gap-x-4 gap-y-2">
           {memberDetails.member.avatar && memberDetails.member.avatar.trim() !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${memberDetails.member.id}`}>

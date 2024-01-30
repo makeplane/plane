@@ -33,15 +33,15 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
-        <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
+        <div className="flex h-full flex-col overflow-hidden bg-neutral-component-surface-light">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-neutral-border-medium px-5 py-3">
               {ANALYTICS_TABS.map((tab) => (
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `rounded-3xl border border-neutral-border-medium px-4 py-2 text-xs hover:bg-custom-background-80 ${
-                      selected ? "bg-custom-background-80" : ""
+                    `rounded-3xl border border-neutral-border-medium px-4 py-2 text-xs hover:bg-neutral-component-surface-dark ${
+                      selected ? "bg-neutral-component-surface-dark" : ""
                     }`
                   }
                   onClick={() => {}}

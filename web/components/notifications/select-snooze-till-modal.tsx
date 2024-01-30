@@ -142,7 +142,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-neutral-component-surface-light p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -171,7 +171,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                               setValue("time", null);
                               onChange(val);
                             }}
-                            className="w-full rounded-md border border-neutral-border-medium bg-custom-background-100 px-3 py-2 !text-sm text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none"
+                            className="w-full rounded-md border border-neutral-border-medium bg-neutral-component-surface-light px-3 py-2 !text-sm text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none"
                             wrapperClassName="w-full"
                             noBorder
                             minDate={new Date()}
@@ -211,7 +211,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
                                   watch("period") === "AM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                    : "bg-custom-background-80"
+                                    : "bg-neutral-component-surface-dark"
                                 }`}
                               >
                                 AM
@@ -223,7 +223,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
                                   watch("period") === "PM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                    : "bg-custom-background-80"
+                                    : "bg-neutral-component-surface-dark"
                                 }`}
                               >
                                 PM

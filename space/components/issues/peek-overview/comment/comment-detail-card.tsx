@@ -82,7 +82,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </div>
         )}
 
-        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
+        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-neutral-component-surface-dark px-0.5 py-px">
           <MessageSquare className="h-3 w-3 text-custom-text-200" aria-hidden="true" strokeWidth={2} />
         </span>
       </div>
@@ -143,7 +143,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              customClassName="text-xs border border-neutral-border-medium bg-custom-background-100"
+              customClassName="text-xs border border-neutral-border-medium bg-neutral-component-surface-light"
               mentionHighlights={mentionsConfig.mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
@@ -156,7 +156,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           <Menu.Button
             type="button"
             onClick={() => {}}
-            className="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-custom-background-80 hover:text-custom-text-100"
+            className="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-neutral-component-surface-dark hover:text-custom-text-100"
           >
             <MoreVertical className="h-4 w-4 text-custom-text-200 duration-300" strokeWidth={2} />
           </Menu.Button>
@@ -170,7 +170,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
+            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium p-1 text-xs shadow-lg focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">
@@ -179,8 +179,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-neutral-component-surface-dark ${
+                        active ? "bg-neutral-component-surface-dark" : ""
                       }`}
                     >
                       Edit
@@ -194,8 +194,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-neutral-component-surface-dark ${
+                        active ? "bg-neutral-component-surface-dark" : ""
                       }`}
                     >
                       Delete

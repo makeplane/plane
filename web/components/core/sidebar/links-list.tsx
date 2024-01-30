@@ -34,7 +34,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
   return (
     <>
       {links.map((link) => (
-        <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
+        <div key={link.id} className="relative flex flex-col rounded-md bg-neutral-component-surface-medium p-2.5">
           <div className="flex w-full items-start justify-between gap-2">
             <div className="flex items-start gap-2 truncate">
               <span className="py-1">
@@ -54,7 +54,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
               <div className="z-[1] flex flex-shrink-0 items-center gap-2">
                 <button
                   type="button"
-                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                  className="flex items-center justify-center p-1 hover:bg-neutral-component-surface-dark"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -67,13 +67,13 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                  className="flex items-center justify-center p-1 hover:bg-neutral-component-surface-dark"
                 >
                   <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
                 </a>
                 <button
                   type="button"
-                  className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                  className="flex items-center justify-center p-1 hover:bg-neutral-component-surface-dark"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

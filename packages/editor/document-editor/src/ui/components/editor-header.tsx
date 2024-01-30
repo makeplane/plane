@@ -62,7 +62,7 @@ export const EditorHeader = (props: IEditorHeader) => {
         {isLocked && (
           <AlertLabel
             Icon={Lock}
-            backgroundColor="bg-custom-background-80"
+            backgroundColor="bg-neutral-component-surface-dark"
             textColor="text-custom-text-300"
             label="Locked"
           />

@@ -25,7 +25,7 @@ export const UserLoggedIn = () => {
               <img src={user.avatar} alt={user.display_name ?? ""} className="rounded-full" />
             </div>
           ) : (
-            <div className="grid h-5 w-5 place-items-center rounded-full bg-custom-background-80 text-[10px] capitalize">
+            <div className="grid h-5 w-5 place-items-center rounded-full bg-neutral-component-surface-dark text-[10px] capitalize">
               {(user.display_name ?? "U")[0]}
             </div>
           )}
@@ -35,7 +35,7 @@ export const UserLoggedIn = () => {
 
       <div className="grid h-full w-full place-items-center p-6">
         <div className="text-center">
-          <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
+          <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-neutral-component-surface-dark">
             <div className="h-32 w-32">
               <Image src={UserLoggedInImage} alt="User already logged in" />
             </div>

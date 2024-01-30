@@ -68,7 +68,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
           <div
             className={`relative flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2 ${
               isSidebarCollapsed
-                ? "px-2 hover:bg-custom-sidebar-background-80"
+                ? "px-2 hover:bg-sidebar-neutral-component-surface-dark"
                 : "border-[0.5px] border-neutral-border-medium px-3 shadow-custom-sidebar-shadow-2xs"
             }`}
           >
@@ -89,7 +89,9 @@ export const WorkspaceSidebarQuickAction = observer(() => {
             {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
               <>
                 <div
-                  className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${isSidebarCollapsed ? "hidden" : "block"}`}
+                  className={`h-8 w-0.5 bg-sidebar-neutral-component-surface-dark ${
+                    isSidebarCollapsed ? "hidden" : "block"
+                  }`}
                 />
 
                 <button
@@ -113,7 +115,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                   <div className="h-full w-full">
                     <button
                       onClick={() => setIsDraftIssueModalOpen(true)}
-                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
+                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-3 py-[10px] text-sm text-custom-text-300 shadow"
                     >
                       <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
                       Last Drafted Issue
@@ -130,7 +132,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
             isAuthorizedUser ? "justify-center" : "w-full"
           } ${
             isSidebarCollapsed
-              ? "hover:bg-custom-sidebar-background-80"
+              ? "hover:bg-sidebar-neutral-component-surface-dark"
               : "border-[0.5px] border-neutral-border-medium shadow-custom-sidebar-shadow-2xs"
           }`}
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}

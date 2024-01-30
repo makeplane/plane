@@ -80,8 +80,8 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-neutral-component-surface-dark ${
+        isMenuActive ? "bg-neutral-component-surface-dark text-custom-text-100" : "text-custom-text-200"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -97,7 +97,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     <>
       <tr>
         {/* first column/ issue name and key column */}
-        <td className="sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-neutral-border-subtle before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-neutral-border-subtle">
+        <td className="sticky group left-0 h-11  w-[28rem] flex items-center bg-neutral-component-surface-light text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-neutral-border-subtle before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-neutral-border-subtle">
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <div
               className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
@@ -122,7 +122,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               {issueDetail.sub_issues_count > 0 && (
                 <div className="flex h-6 w-6 items-center justify-center">
                   <button
-                    className="h-5 w-5 cursor-pointer rounded-sm hover:bg-custom-background-90 hover:text-custom-text-100"
+                    className="h-5 w-5 cursor-pointer rounded-sm hover:bg-neutral-component-surface-medium hover:text-custom-text-100"
                     onClick={() => handleToggleExpand()}
                   >
                     <ChevronRight className={`h-3.5 w-3.5 ${isExpanded ? "rotate-90" : ""}`} />
@@ -158,7 +158,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               displayPropertyKey={property}
               shouldRenderProperty={shouldRenderProperty}
             >
-              <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-neutral-border-subtle border-r-[1px] border-neutral-border-subtle">
+              <td className="h-11 w-full min-w-[8rem] bg-neutral-component-surface-light text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-neutral-border-subtle border-r-[1px] border-neutral-border-subtle">
                 <Column
                   issue={issueDetail}
                   onChange={(issue: TIssue, data: Partial<TIssue>) =>

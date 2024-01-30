@@ -225,7 +225,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                <Dialog.Panel className="relative transform rounded-lg bg-neutral-component-surface-light px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">{data ? "Update" : "Create"} Estimate</div>
@@ -273,9 +273,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                           .fill(0)
                           .map((_, i) => (
                             <div className="flex items-center">
-                              <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                              <span className="flex h-full items-center rounded-lg bg-neutral-component-surface-dark">
                                 <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
-                                <span className="rounded-r-lg bg-custom-background-100">
+                                <span className="rounded-r-lg bg-neutral-component-surface-light">
                                   <Controller
                                     control={control}
                                     name={`value${i + 1}` as keyof FormValues}

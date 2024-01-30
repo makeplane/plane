@@ -105,7 +105,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          className={`h-11 ${snapshot.isDragging ? "rounded bg-neutral-component-surface-dark" : ""}`}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -114,7 +114,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
                           <div
                             id={`sidebar-block-${block.id}`}
                             className={`group flex h-full w-full items-center gap-2 rounded-l px-2 pr-4 ${
-                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
+                              activeBlock?.id === block.id ? "bg-neutral-component-surface-dark" : ""
                             }`}
                           >
                             {enableReorder && (

@@ -13,7 +13,7 @@ export const WebhooksEmptyState: React.FC<Props> = (props) => {
   const { onClick } = props;
   return (
     <div
-      className={`mx-auto flex w-full items-center justify-center rounded-sm border border-neutral-border-medium bg-custom-background-90 px-16 py-10 lg:w-3/4`}
+      className={`mx-auto flex w-full items-center justify-center rounded-sm border border-neutral-border-medium bg-neutral-component-surface-medium px-16 py-10 lg:w-3/4`}
     >
       <div className="flex w-full flex-col items-center text-center">
         <Image src={EmptyWebhook} className="w-52 sm:w-60" alt="empty" />

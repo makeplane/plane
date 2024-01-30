@@ -81,7 +81,7 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
             block.target_date && (
               <div
                 key={`block-${block.id}`}
-                className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
+                className={`h-11 ${activeBlock?.id === block.id ? "bg-neutral-component-surface-dark" : ""}`}
                 onMouseEnter={() => updateActiveBlock(block)}
                 onMouseLeave={() => updateActiveBlock(null)}
               >

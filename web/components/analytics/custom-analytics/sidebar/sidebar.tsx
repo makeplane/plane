@@ -147,12 +147,12 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
       }`}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
+        <div className="flex items-center gap-1 rounded-md bg-neutral-component-surface-dark px-3 py-1 text-xs text-custom-text-200">
           <LayersIcon height={14} width={14} />
           {analytics ? analytics.total : "..."} Issues
         </div>
         {isProjectLevel && (
-          <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
+          <div className="flex items-center gap-1 rounded-md bg-neutral-component-surface-dark px-3 py-1 text-xs text-custom-text-200">
             <CalendarDays className="h-3.5 w-3.5" />
             {renderFormattedDate(
               (cycleId

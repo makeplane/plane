@@ -25,8 +25,8 @@ export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props
           <Tab
             key={tab.key}
             className={({ selected }) =>
-              `rounded-3xl border border-neutral-border-medium px-4 py-2 text-xs hover:bg-custom-background-80 ${
-                selected ? "bg-custom-background-80" : ""
+              `rounded-3xl border border-neutral-border-medium px-4 py-2 text-xs hover:bg-neutral-component-surface-dark ${
+                selected ? "bg-neutral-component-surface-dark" : ""
               }`
             }
             onClick={() => {}}

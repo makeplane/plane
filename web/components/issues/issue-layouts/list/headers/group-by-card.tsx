@@ -71,7 +71,7 @@ export const HeaderGroupByCard = observer(
             (renderExistingIssueModal ? (
               <CustomMenu
                 customButton={
-                  <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
+                  <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-neutral-component-surface-dark">
                     <Plus className="h-3.5 w-3.5" strokeWidth={2} />
                   </span>
                 }
@@ -85,7 +85,7 @@ export const HeaderGroupByCard = observer(
               </CustomMenu>
             ) : (
               <div
-                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-neutral-component-surface-dark"
                 onClick={() => setIsOpen(true)}
               >
                 <Plus width={14} strokeWidth={2} />

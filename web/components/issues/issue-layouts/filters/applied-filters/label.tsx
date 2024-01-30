@@ -23,7 +23,7 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
         if (!labelDetails) return null;
 
         return (
-          <div key={labelId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={labelId} className="flex items-center gap-1 rounded bg-neutral-component-surface-dark p-1 text-xs">
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{

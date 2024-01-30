@@ -8,14 +8,14 @@ import IssueNavbar from "components/issues/navbar";
 
 const ProjectLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
-    <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-neutral-border-medium bg-custom-sidebar-background-100">
+    <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-neutral-border-medium bg-sidebar-neutral-component-surface-light">
       <IssueNavbar />
     </div>
-    <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
+    <div className="relative h-full w-full overflow-hidden bg-neutral-component-surface-medium">{children}</div>
 
     <a
       href="https://plane.so"
-      className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded border border-neutral-border-medium bg-custom-background-100 px-2 py-1 shadow-custom-shadow-2xs"
+      className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded border border-neutral-border-medium bg-neutral-component-surface-light px-2 py-1 shadow-custom-shadow-2xs"
       target="_blank"
       rel="noreferrer noopener"
     >

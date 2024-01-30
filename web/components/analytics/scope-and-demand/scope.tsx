@@ -29,7 +29,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
               );
 
               return (
-                <div className="rounded-md border border-neutral-border-medium bg-custom-background-80 p-2 text-xs">
+                <div className="rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark p-2 text-xs">
                   <span className="font-medium text-custom-text-200">
                     {assignee ? assignee.assignees__display_name : "No assignee"}:{" "}
                   </span>

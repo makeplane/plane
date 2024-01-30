@@ -116,7 +116,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-neutral-component-surface-light px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -177,7 +177,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                           {({ open }) => (
                             <>
                               <Popover.Button
-                                className={`group inline-flex items-center rounded-md bg-custom-background-100 text-base font-medium hover:text-custom-text-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                className={`group inline-flex items-center rounded-md bg-neutral-component-surface-light text-base font-medium hover:text-custom-text-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                                   open ? "text-custom-text-100" : "text-custom-text-200"
                                 }`}
                               >

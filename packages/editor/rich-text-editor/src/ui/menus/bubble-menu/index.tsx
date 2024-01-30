@@ -94,7 +94,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   return (
     <BubbleMenu
       {...bubbleMenuProps}
-      className="flex w-fit divide-x divide-neutral-border-medium rounded border border-neutral-border-medium bg-custom-background-100 shadow-xl"
+      className="flex w-fit divide-x divide-neutral-border-medium rounded border border-neutral-border-medium bg-neutral-component-surface-light shadow-xl"
     >
       {isSelecting ? null : (
         <>

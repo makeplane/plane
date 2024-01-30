@@ -35,7 +35,7 @@ export const CustomPopover = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel className="absolute right-0 z-10 mt-1 min-w-[150px]">
-              <div className="mt-1 overflow-hidden overflow-y-auto rounded border border-neutral-border-medium bg-custom-background-90 shadow-custom-shadow-2xs focus:outline-none">
+              <div className="mt-1 overflow-hidden overflow-y-auto rounded border border-neutral-border-medium bg-neutral-component-surface-medium shadow-custom-shadow-2xs focus:outline-none">
                 {children}
               </div>
             </Popover.Panel>

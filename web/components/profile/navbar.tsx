@@ -22,7 +22,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 
   return (
-    <div className="sticky -top-0.5 z-10 flex items-center justify-between gap-4 border-b border-neutral-border-medium bg-custom-background-100 px-4 sm:px-5 md:static">
+    <div className="sticky -top-0.5 z-10 flex items-center justify-between gap-4 border-b border-neutral-border-medium bg-neutral-component-surface-light px-4 sm:px-5 md:static">
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>

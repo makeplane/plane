@@ -143,9 +143,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         {({ open }) => (
           <>
             <div
-              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-custom-sidebar-background-80 ${
+              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-sidebar-neutral-component-surface-dark ${
                 snapshot?.isDragging ? "opacity-60" : ""
-              } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
+              } ${isMenuActive ? "!bg-sidebar-neutral-component-surface-dark" : ""}`}
             >
               {provided && (
                 <Tooltip
@@ -247,7 +247,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {isAdmin && (
                     <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
                       <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
+                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-sidebar-neutral-component-surface-dark">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
                         <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
@@ -324,8 +324,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                           <div
                             className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
-                                ? "bg-custom-primary-100/10 text-custom-primary-100"
-                                : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                                ? "bg-primary-component-surface-light text-primary-text-subtle"
+                                : "text-custom-sidebar-text-300 hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4 stroke-[1.5]" />

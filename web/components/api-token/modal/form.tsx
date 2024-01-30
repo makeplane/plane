@@ -202,7 +202,11 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     <div
                       className={`flex cursor-pointer items-center gap-2 !rounded border-[0.5px] border-neutral-border-medium px-2 py-1 text-xs !shadow-none !duration-0 ${
                         customDate ? "w-[7.5rem]" : ""
-                      } ${neverExpires ? "!cursor-not-allowed text-custom-text-400" : "hover:bg-custom-background-80"}`}
+                      } ${
+                        neverExpires
+                          ? "!cursor-not-allowed text-custom-text-400"
+                          : "hover:bg-neutral-component-surface-dark"
+                      }`}
                     >
                       <Calendar className="h-3 w-3" />
                       {customDate ? renderFormattedDate(customDate) : "Set date"}

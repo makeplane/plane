@@ -16,11 +16,11 @@ export const FilterOption: React.FC<Props> = (props) => {
   return (
     <button
       type="button"
-      className="flex w-full items-center gap-2 rounded p-1.5 hover:bg-custom-background-80"
+      className="flex w-full items-center gap-2 rounded p-1.5 hover:bg-neutral-component-surface-dark"
       onClick={onClick}
     >
       <div
-        className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-custom-background-90 ${
+        className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-neutral-component-surface-medium ${
           isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-neutral-border-medium"
         } ${multiple ? "rounded-sm" : "rounded-full"}`}
       >

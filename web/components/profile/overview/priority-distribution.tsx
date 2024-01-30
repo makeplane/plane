@@ -30,7 +30,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
             padding={0.7}
             customYAxisTickValues={userProfile.priority_distribution.map((p) => p.priority_count)}
             tooltip={(datum) => (
-              <div className="flex items-center gap-2 rounded-md border border-neutral-border-medium bg-custom-background-80 p-2 text-xs">
+              <div className="flex items-center gap-2 rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark p-2 text-xs">
                 <span
                   className="h-3 w-3 rounded"
                   style={{

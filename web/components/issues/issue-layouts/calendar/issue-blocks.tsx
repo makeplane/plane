@@ -44,8 +44,8 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-neutral-component-surface-dark ${
+        isMenuActive ? "bg-neutral-component-surface-dark text-custom-text-100" : "text-custom-text-200"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -80,14 +80,14 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                 >
                   <>
                     {issue?.tempId !== undefined && (
-                      <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+                      <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-neutral-component-surface-light/20" />
                     )}
 
                     <div
                       className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-neutral-border-subtle px-1 py-1.5 shadow-custom-shadow-2xs ${
                         snapshot.isDragging
-                          ? "bg-custom-background-90 shadow-custom-shadow-rg"
-                          : "bg-custom-background-100 hover:bg-custom-background-90"
+                          ? "bg-neutral-component-surface-medium shadow-custom-shadow-rg"
+                          : "bg-neutral-component-surface-light hover:bg-neutral-component-surface-medium"
                       }`}
                     >
                       <div className="flex h-full items-center gap-1.5">

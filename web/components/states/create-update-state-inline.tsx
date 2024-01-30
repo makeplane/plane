@@ -155,7 +155,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-neutral-component-surface-light py-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">

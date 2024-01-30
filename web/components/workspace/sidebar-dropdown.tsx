@@ -94,7 +94,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       <Menu as="div" className="relative h-full flex-grow truncate text-left">
         {({ open }) => (
           <>
-            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none">
+            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark focus:outline-none">
               <div
                 className={`flex items-center  gap-x-2 truncate rounded p-1 ${
                   sidebarCollapsed ? "justify-center" : "justify-between"
@@ -144,9 +144,9 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-neutral-border-subtle outline-none">
+                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light shadow-custom-shadow-rg divide-y divide-neutral-border-subtle outline-none">
                   <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4">
-                    <h6 className="sticky top-0 z-10 h-full w-full bg-custom-background-100 pt-3 text-sm font-medium text-custom-sidebar-text-400">
+                    <h6 className="sticky top-0 z-10 h-full w-full bg-neutral-component-surface-light pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (
@@ -161,7 +161,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                             >
                               <Menu.Item
                                 as="div"
-                                className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
+                                className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 hover:bg-sidebar-neutral-component-surface-dark"
                               >
                                 <div className="flex items-center justify-start gap-2.5 truncate">
                                   <span
@@ -214,7 +214,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     >
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 font-medium"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-sidebar-neutral-component-surface-dark font-medium"
                       >
                         <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
                         Create workspace
@@ -224,7 +224,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       <Link key={link.key} href={link.href} className="w-full">
                         <Menu.Item
                           as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 font-medium"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark font-medium"
                         >
                           <link.icon className="h-4 w-4 flex-shrink-0" />
                           {link.name}
@@ -236,7 +236,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Menu.Item
                       as="button"
                       type="button"
-                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-red-600 hover:bg-custom-sidebar-background-80 font-medium"
+                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-red-600 hover:bg-sidebar-neutral-component-surface-dark font-medium"
                       onClick={handleSignOut}
                     >
                       <LogOut className="h-4 w-4 flex-shrink-0" />
@@ -273,14 +273,14 @@ export const WorkspaceSidebarDropdown = observer(() => {
           >
             <Menu.Items
               className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
-              divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+              divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light px-1 py-2 text-xs shadow-lg outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
                 {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                   <Link key={index} href={link.link}>
                     <Menu.Item key={index} as="div">
-                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-sidebar-neutral-component-surface-dark">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
                       </span>
@@ -292,7 +292,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <Menu.Item
                   as="button"
                   type="button"
-                  className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+                  className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-sidebar-neutral-component-surface-dark"
                   onClick={handleSignOut}
                 >
                   <LogOut className="h-4 w-4 stroke-[1.5]" />

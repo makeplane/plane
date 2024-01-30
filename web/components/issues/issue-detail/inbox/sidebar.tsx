@@ -109,7 +109,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!is_editable}
                 buttonVariant="border-with-text"
-                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                className="w-3/5 flex-grow rounded px-2 hover:bg-neutral-component-surface-dark"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />

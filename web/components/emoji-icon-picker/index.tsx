@@ -71,9 +71,9 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
       >
         <Popover.Panel
           ref={emojiPickerRef}
-          className="fixed z-10 mt-2 w-[250px] rounded-[4px] border border-neutral-border-medium bg-custom-background-80 shadow-lg"
+          className="fixed z-10 mt-2 w-[250px] rounded-[4px] border border-neutral-border-medium bg-neutral-component-surface-dark shadow-lg"
         >
-          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-neutral-border-medium bg-custom-background-80 p-2 shadow-xl">
+          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-neutral-border-medium bg-neutral-component-surface-dark p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (

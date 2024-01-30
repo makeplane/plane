@@ -41,7 +41,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 activeInnerRadiusOffset={5}
                 colors={(datum) => datum.data.color}
                 tooltip={(datum) => (
-                  <div className="flex items-center gap-2 rounded-md border border-neutral-border-medium bg-custom-background-90 p-2 text-xs">
+                  <div className="flex items-center gap-2 rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium p-2 text-xs">
                     <span className="capitalize text-custom-text-200">{datum.datum.label} issues:</span>{" "}
                     {datum.datum.value}
                   </div>

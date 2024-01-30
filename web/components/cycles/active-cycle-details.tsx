@@ -147,7 +147,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const daysLeft = findHowManyDaysLeft(activeCycle.end_date ?? new Date());
 
   return (
-    <div className="grid-row-2 grid divide-y rounded-[10px] border border-neutral-border-medium bg-custom-background-100 shadow">
+    <div className="grid-row-2 grid divide-y rounded-[10px] border border-neutral-border-medium bg-neutral-component-surface-light shadow">
       <div className="grid grid-cols-1 divide-y border-neutral-border-medium lg:grid-cols-3 lg:divide-x lg:divide-y-0">
         <div className="flex flex-col text-xs">
           <div className="h-full w-full">
@@ -208,7 +208,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       alt={activeCycle.owned_by.display_name}
                     />
                   ) : (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-component-surface-light capitalize">
                       {activeCycle.owned_by.display_name.charAt(0)}
                     </span>
                   )}
@@ -317,7 +317,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       />
                       {issue.target_date && (
                         <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
-                          <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                          <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-neutral-component-surface-dark cursor-not-allowed">
                             <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                             <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
                           </div>

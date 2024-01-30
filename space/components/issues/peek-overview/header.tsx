@@ -88,7 +88,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Listbox.Options className="absolute left-0 z-10 mt-1 min-w-[8rem] origin-top-left overflow-y-auto whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-90 text-xs shadow-lg focus:outline-none">
+              <Listbox.Options className="absolute left-0 z-10 mt-1 min-w-[8rem] origin-top-left overflow-y-auto whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium text-xs shadow-lg focus:outline-none">
                 <div className="space-y-1 p-2">
                   {peekModes.map((mode) => (
                     <Listbox.Option
@@ -96,7 +96,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
                       value={mode.key}
                       className={({ active, selected }) =>
                         `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                          active || selected ? "bg-custom-background-80" : ""
+                          active || selected ? "bg-neutral-component-surface-dark" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
                     >

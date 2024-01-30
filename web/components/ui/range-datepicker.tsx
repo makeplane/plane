@@ -45,7 +45,7 @@ export const CustomRangeDatePicker: React.FC<Props> = ({
         ? "block px-3 py-2 text-sm focus:outline-none"
         : renderAs === "button"
         ? `px-3 py-1 text-xs shadow-sm ${
-            disabled ? "" : "hover:bg-custom-background-80"
+            disabled ? "" : "hover:bg-neutral-component-surface-dark"
           } duration-300 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary`
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${

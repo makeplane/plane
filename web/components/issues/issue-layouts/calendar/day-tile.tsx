@@ -52,7 +52,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const totalIssues = issueIdList?.length ?? 0;
   return (
     <>
-      <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
+      <div className="group relative flex h-full w-full flex-col bg-neutral-component-surface-medium">
         {/* header */}
         <div
           className={`flex-shrink-0 px-2 py-1 text-right text-xs ${
@@ -63,8 +63,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               : "font-medium" // if week layout, highlight all days
           } ${
             date.date.getDay() === 0 || date.date.getDay() === 6
-              ? "bg-custom-background-90"
-              : "bg-custom-background-100"
+              ? "bg-neutral-component-surface-medium"
+              : "bg-neutral-component-surface-light"
           }`}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
@@ -78,8 +78,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               <div
                 className={`h-full w-full select-none overflow-y-auto ${
                   snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
-                    ? "bg-custom-background-90"
-                    : "bg-custom-background-100"
+                    ? "bg-neutral-component-surface-medium"
+                    : "bg-neutral-component-surface-light"
                 } ${calendarLayout === "month" ? "min-h-[9rem]" : ""}`}
                 {...provided.droppableProps}
                 ref={provided.innerRef}
@@ -110,7 +110,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   <div className="flex items-center px-2.5 py-1">
                     <button
                       type="button"
-                      className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+                      className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-neutral-component-surface-dark hover:text-custom-text-300"
                       onClick={() => setShowAllIssues((prevData) => !prevData)}
                     >
                       {showAllIssues ? "Hide" : totalIssues - 4 + " more"}

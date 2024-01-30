@@ -15,7 +15,7 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
     <ProfileSettingsLayout>
       <div className="relative flex h-screen w-full overflow-hidden">
         <ProfilePreferenceSettingsSidebar />
-        <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+        <main className="relative flex h-full w-full flex-col overflow-hidden bg-neutral-component-surface-light">
           {header}
           <div className="h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
         </main>

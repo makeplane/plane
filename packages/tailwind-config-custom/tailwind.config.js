@@ -41,11 +41,13 @@ export const theme = {
     "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
   },
   colors: {
-    white: colors.white,
+    inherit: colors.inherit,
+    current: colors.current,
+    transparent: colors.transparent,
     black: colors.black,
+    white: colors.white,
     primary: {
       page: {
-        "surface-default": "var(--color-primary-0)",
         "surface-light": "var(--color-primary-10)",
         "surface-medium": "var(--color-primary-20)",
       },
@@ -117,7 +119,6 @@ export const theme = {
     },
     success: {
       page: {
-        "surface-default": "var(--color-success-0)",
         "surface-light": "var(--color-success-10)",
         "surface-medium": "var(--color-success-20)",
       },
@@ -153,7 +154,6 @@ export const theme = {
     },
     warning: {
       page: {
-        "surface-default": "var(--color-warning-0)",
         "surface-light": "var(--color-warning-10)",
         "surface-medium": "var(--color-warning-20)",
       },
@@ -189,7 +189,6 @@ export const theme = {
     },
     danger: {
       page: {
-        "surface-default": "var(--color-danger-0)",
         "surface-light": "var(--color-danger-10)",
         "surface-medium": "var(--color-danger-20)",
       },
@@ -225,7 +224,6 @@ export const theme = {
     },
     info: {
       page: {
-        "surface-default": "var(--color-info-0)",
         "surface-light": "var(--color-info-10)",
         "surface-medium": "var(--color-info-20)",
       },

@@ -120,7 +120,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <>
-      <div className={`relative h-full w-full bg-custom-background-90`}>
+      <div className="relative h-full w-full bg-neutral-page-surface-default">
         <List
           issuesMap={issueMap}
           displayProperties={displayProperties}

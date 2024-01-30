@@ -85,9 +85,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
               {
-                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
               }
             )}
           >
@@ -102,9 +102,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
               {
-                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
               }
             )}
           >
@@ -123,9 +123,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
               {
-                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
               }
             )}
           >
@@ -144,9 +144,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
               {
-                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
               }
             )}
           >

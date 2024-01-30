@@ -120,7 +120,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
             buttonVariant="border-with-text"
-            className="w-3/4 flex-grow rounded px-2 hover:bg-custom-background-80 group"
+            className="w-3/4 flex-grow rounded px-2 hover:bg-neutral-component-surface-dark group"
             buttonContainerClassName="w-full text-left"
             buttonClassName="w-min h-auto whitespace-nowrap"
           />

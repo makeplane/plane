@@ -122,7 +122,9 @@ export const CreateUpdateLabelInline = observer(
           e.preventDefault();
           handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
         }}
-        className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
+        className={`flex w-full scroll-m-8 items-center gap-2 bg-neutral-component-surface-light ${
+          labelForm ? "" : "hidden"
+        }`}
       >
         <div className="flex-shrink-0">
           <Popover className="relative z-10 flex h-full w-full items-center justify-center">

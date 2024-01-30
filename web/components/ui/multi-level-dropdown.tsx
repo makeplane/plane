@@ -46,8 +46,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             <div>
               <Menu.Button
                 onClick={() => setOpenChildFor(null)}
-                className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
-                  open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
+                className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-neutral-component-surface-medium hover:text-custom-text-100 focus:outline-none ${
+                  open ? "bg-neutral-component-surface-medium text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
                 {label}
@@ -65,7 +65,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             >
               <Menu.Items
                 static
-                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md border border-neutral-border-medium bg-custom-background-90 text-xs shadow-lg focus:outline-none"
+                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium text-xs shadow-lg focus:outline-none"
               >
                 {options.map((option) => (
                   <div className="relative p-1" key={option.id}>
@@ -88,7 +88,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         <>
                           <div
                             className={`${
-                              active || option.selected ? "bg-custom-background-80" : ""
+                              active || option.selected ? "bg-neutral-component-surface-dark" : ""
                             } flex items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 ${
                               direction === "right" ? "justify-between" : ""
                             }`}
@@ -102,7 +102,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     </Menu.Item>
                     {option.hasChildren && option.id === openChildFor && (
                       <div
-                        className={`min-w-36 absolute top-0 origin-top-right select-none overflow-y-scroll whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-90 shadow-lg focus:outline-none ${
+                        className={`min-w-36 absolute top-0 origin-top-right select-none overflow-y-scroll whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium shadow-lg focus:outline-none ${
                           direction === "left" ? "right-full -translate-x-1" : "left-full translate-x-1"
                         } ${
                           height === "sm"
@@ -130,8 +130,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                                       type="button"
                                       onClick={() => onSelect(child.value)}
                                       className={`${
-                                        child.selected ? "bg-custom-background-80" : ""
-                                      } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
+                                        child.selected ? "bg-neutral-component-surface-dark" : ""
+                                      } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-neutral-component-surface-dark`}
                                     >
                                       {child.label}{" "}
                                       <Check

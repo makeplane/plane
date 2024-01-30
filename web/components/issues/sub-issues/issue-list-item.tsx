@@ -67,19 +67,19 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     <div key={issueId}>
       {issue && (
         <div
-          className="group relative flex h-full w-full items-center gap-2 border-b border-neutral-border-subtle px-2 py-1 transition-all hover:bg-custom-background-90"
+          className="group relative flex h-full w-full items-center gap-2 border-b border-neutral-border-subtle px-2 py-1 transition-all hover:bg-neutral-component-surface-medium"
           style={{ paddingLeft: `${spacingLeft}px` }}
         >
           <div className="h-[22px] w-[22px] flex-shrink-0">
             {issue?.sub_issues_count > 0 && (
               <>
                 {subIssueHelpers.preview_loader.includes(issue.id) ? (
-                  <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
+                  <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-neutral-component-surface-dark transition-all">
                     <Loader width={14} strokeWidth={2} className="animate-spin" />
                   </div>
                 ) : (
                   <div
-                    className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-custom-background-80"
+                    className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-neutral-component-surface-dark"
                     onClick={async () => {
                       if (!subIssueHelpers.issue_visibility.includes(issueId)) {
                         setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
@@ -174,7 +174,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 </div>
               ) : (
                 <div
-                  className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
+                  className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-neutral-component-surface-dark group-hover:visible"
                   onClick={() => {
                     subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                   }}

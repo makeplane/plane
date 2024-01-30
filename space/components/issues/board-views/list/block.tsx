@@ -46,7 +46,7 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   };
 
   return (
-    <div className="relative flex items-center gap-10 bg-custom-background-100 p-3">
+    <div className="relative flex items-center gap-10 bg-neutral-component-surface-light p-3">
       <div className="relative flex w-full flex-grow items-center gap-3 overflow-hidden">
         {/* id */}
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">

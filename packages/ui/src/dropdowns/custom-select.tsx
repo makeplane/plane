@@ -65,7 +65,9 @@ const CustomSelect = (props: ICustomSelectProps) => {
               ref={setReferenceElement}
               type="button"
               className={`flex items-center justify-between gap-1 text-xs ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+                disabled
+                  ? "cursor-not-allowed text-custom-text-200"
+                  : "cursor-pointer hover:bg-neutral-component-surface-dark"
               } ${customButtonClassName}`}
               onClick={openDropdown}
             >
@@ -80,7 +82,9 @@ const CustomSelect = (props: ICustomSelectProps) => {
               className={`flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-neutral-border-medium ${
                 input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
               } ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+                disabled
+                  ? "cursor-not-allowed text-custom-text-200"
+                  : "cursor-pointer hover:bg-neutral-component-surface-dark"
               } ${buttonClassName}`}
               onClick={openDropdown}
             >
@@ -94,7 +98,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
         <Listbox.Options className="fixed z-10" onClick={() => closeDropdown()} static>
           <div
             className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
               {
                 "max-h-60": maxHeight === "lg",
                 "max-h-48": maxHeight === "md",
@@ -124,7 +128,7 @@ const Option = (props: ICustomSelectItemProps) => {
         cn(
           "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200",
           {
-            "bg-custom-background-80": active,
+            "bg-neutral-component-surface-dark": active,
           },
           className
         )

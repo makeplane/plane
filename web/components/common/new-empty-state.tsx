@@ -85,7 +85,7 @@ export const NewEmptyState: React.FC<Props> = ({
                   <div className="relative mt-5 h-0 w-0 border-b-[11px] border-r-[11px] border-t-[11px] border-neutral-border-medium border-y-transparent">
                     <div className="absolute right-[-12px] top-[-10px] h-0 w-0 border-b-[10px] border-r-[10px] border-t-[10px] border-custom-background-100 border-y-transparent" />
                   </div>
-                  <div className="rounded-md border border-neutral-border-medium bg-custom-background-100">
+                  <div className="rounded-md border border-neutral-border-medium bg-neutral-component-surface-light">
                     <h1 className="p-5">
                       <h3 className="text-lg font-semibold">{comicBox?.title}</h3>
                       <h4 className="mt-1 text-sm">{comicBox?.description}</h4>
@@ -97,7 +97,7 @@ export const NewEmptyState: React.FC<Props> = ({
                   <div className="relative mt-5 h-0 w-0 border-b-[11px] border-l-[11px] border-t-[11px] border-neutral-border-medium border-y-transparent">
                     <div className="absolute left-[-12px] top-[-10px] h-0 w-0 border-b-[10px] border-l-[10px] border-t-[10px] border-custom-background-100 border-y-transparent" />
                   </div>
-                  <div className="rounded-md border border-neutral-border-medium bg-custom-background-100">
+                  <div className="rounded-md border border-neutral-border-medium bg-neutral-component-surface-light">
                     <h1 className="p-5">
                       <h3 className="text-lg font-semibold">{comicBox?.title}</h3>
                       <h4 className="mt-1 text-sm">{comicBox?.description}</h4>

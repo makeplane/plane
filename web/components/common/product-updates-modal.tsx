@@ -49,7 +49,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative min-w-[100%] overflow-hidden rounded-lg bg-custom-background-100 shadow-custom-shadow-md sm:min-w-[50%] sm:max-w-[50%]">
+              <Dialog.Panel className="relative min-w-[100%] overflow-hidden rounded-lg bg-neutral-component-surface-light shadow-custom-shadow-md sm:min-w-[50%] sm:max-w-[50%]">
                 <div className="flex max-h-[90vh] w-full flex-col p-4">
                   <Dialog.Title as="h3" className="flex items-center justify-between text-lg font-semibold">
                     <span>Product Updates</span>
@@ -64,7 +64,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       {updates.map((item, index) => (
                         <React.Fragment key={item.id}>
                           <div className="flex items-center gap-3 text-xs text-custom-text-200">
-                            <span className="flex items-center rounded-full border border-neutral-border-medium bg-custom-background-90 px-3 py-1.5 text-xs">
+                            <span className="flex items-center rounded-full border border-neutral-border-medium bg-neutral-component-surface-medium px-3 py-1.5 text-xs">
                               {item.tag_name}
                             </span>
                             <span>{renderFormattedDate(item.published_at)}</span>

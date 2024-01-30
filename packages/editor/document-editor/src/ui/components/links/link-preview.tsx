@@ -32,7 +32,7 @@ export const LinkPreview = ({
 
   return (
     <div className="absolute left-0 top-0 max-w-max">
-      <div className="shadow-md items-center rounded p-2 flex gap-3 bg-custom-background-90 border-neutral-border-subtle border-2 text-custom-text-300 text-xs">
+      <div className="shadow-md items-center rounded p-2 flex gap-3 bg-neutral-component-surface-medium border-neutral-border-subtle border-2 text-custom-text-300 text-xs">
         <GlobeIcon size={14} className="inline-block" />
         <p>{url.length > 40 ? url.slice(0, 40) + "..." : url}</p>
         <div className="flex gap-2">

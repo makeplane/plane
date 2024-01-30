@@ -43,7 +43,7 @@ export const AppLayout: FC<IAppLayout> = observer((props) => {
         <WorkspaceAuthWrapper>
           <div className="relative flex h-screen w-full overflow-hidden">
             <AppSidebar />
-            <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+            <main className="relative flex h-full w-full flex-col overflow-hidden bg-neutral-component-surface-light">
               {header}
               <div className="h-full w-full overflow-hidden">
                 <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">

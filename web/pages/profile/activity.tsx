@@ -63,7 +63,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                           </div>
                         )}
 
-                        <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
+                        <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-neutral-component-surface-dark text-custom-text-200 ring-white">
                           <MessageSquare className="h-6 w-6 !text-2xl text-custom-text-200" aria-hidden="true" />
                         </span>
                       </div>
@@ -81,7 +81,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                         <div className="issue-comments-section p-0">
                           <RichReadOnlyEditor
                             value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
-                            customClassName="text-xs border border-neutral-border-medium bg-custom-background-100"
+                            customClassName="text-xs border border-neutral-border-medium bg-neutral-component-surface-light"
                             noBorder
                             borderOnFocus={false}
                           />

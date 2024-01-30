@@ -18,7 +18,7 @@ export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
       style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data?.status)?.color }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/modules/${data?.id}`)}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-neutral-component-surface-light/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">

@@ -17,7 +17,7 @@ export type TRelationObject = { className: string; icon: (size: number) => React
 
 export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
   relates_to: {
-    className: "bg-custom-background-80 text-custom-text-200",
+    className: "bg-neutral-component-surface-dark text-custom-text-200",
     icon: (size) => <RelatedIcon height={size} width={size} />,
     placeholder: "Add related issues",
   },
@@ -32,7 +32,7 @@ export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> =
     placeholder: "None",
   },
   duplicate: {
-    className: "bg-custom-background-80 text-custom-text-200",
+    className: "bg-neutral-component-surface-dark text-custom-text-200",
     icon: (size) => <CopyPlus size={size} />,
     placeholder: "None",
   },
@@ -104,7 +104,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
           "group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-custom-background-80": !disabled,
+            "hover:bg-neutral-component-surface-dark": !disabled,
           },
           className
         )}

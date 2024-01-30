@@ -63,7 +63,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full grid grid-cols-4 p-0.5 hover:shadow-custom-shadow-4xl duration-300">
+    <div className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full grid grid-cols-4 p-0.5 hover:shadow-custom-shadow-4xl duration-300">
       {STATS_LIST.map((stat, index) => {
         const isFirst = index === 0;
         const isLast = index === STATS_LIST.length - 1;
@@ -77,7 +77,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
             <Link
               href={stat.link}
               className={cn(
-                `py-4 hover:bg-custom-background-80 duration-300 rounded-[10px] w-full break-words flex flex-col justify-center`,
+                `py-4 hover:bg-neutral-component-surface-dark duration-300 rounded-[10px] w-full break-words flex flex-col justify-center`,
                 {
                   "pl-11 pr-[4.725rem] mr-0.5": isFirst,
                   "px-[4.725rem] mx-0.5": isMiddle,

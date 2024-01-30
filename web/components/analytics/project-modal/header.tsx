@@ -14,7 +14,7 @@ export const ProjectAnalyticsModalHeader: React.FC<Props> = observer((props) => 
   const { fullScreen, handleClose, setFullScreen, title } = props;
 
   return (
-    <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
+    <div className="flex items-center justify-between gap-4 bg-neutral-component-surface-light px-5 py-4 text-sm">
       <h3 className="break-words">Analytics for {title}</h3>
       <div className="flex items-center gap-2">
         <button

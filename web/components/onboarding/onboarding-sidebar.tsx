@@ -246,7 +246,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           <a className="block w-full" key={link.name}>
             <div
               className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-onboarding-text-200 
-                outline-none  focus:bg-custom-sidebar-background-80
+                outline-none  focus:bg-sidebar-neutral-component-surface-dark
                 `}
             >
               {<link.Icon className="h-4 w-4" />}
@@ -274,7 +274,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
               <a className="ml-6 block w-full" key={link.name}>
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-custom-sidebar-text-200 
-                    outline-none  focus:bg-custom-sidebar-background-80
+                    outline-none  focus:bg-sidebar-neutral-component-surface-dark
                 `}
                 >
                   {<link.Icon className="h-4 w-4" />}

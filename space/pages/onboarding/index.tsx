@@ -21,11 +21,11 @@ const OnBoardingPage = () => {
   }, [userStore]);
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-custom-background-100">
+    <div className="h-screen w-full overflow-hidden bg-neutral-component-surface-light">
       <div className="flex h-full w-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
         <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
           <div className="absolute left-0 top-1/2 z-10 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-neutral-border-medium sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
-          <div className="absolute left-2 top-1/2 z-10 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 py-5 sm:left-1/2 sm:top-12 sm:-translate-x-1/2 sm:translate-y-0 sm:px-0 md:left-1/3">
+          <div className="absolute left-2 top-1/2 z-10 grid -translate-y-1/2 place-items-center bg-neutral-component-surface-light px-3 py-5 sm:left-1/2 sm:top-12 sm:-translate-x-1/2 sm:translate-y-0 sm:px-0 md:left-1/3">
             <div className="h-[30px] w-[30px]">
               <img src={`${imagePrefix}/plane-logos/blue-without-text.png`} alt="Plane logo" />
             </div>

@@ -161,10 +161,10 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
               />
               <div className="absolute -bottom-6 left-8 flex items-end justify-between">
                 <div className="flex gap-3">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-neutral-component-surface-medium">
                     <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                       {!watch("avatar") || watch("avatar") === "" ? (
-                        <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
+                        <div className="h-16 w-16 rounded-md bg-neutral-component-surface-dark p-2">
                           <User2 className="h-full w-full text-custom-text-200" />
                         </div>
                       ) : (
@@ -284,7 +284,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${
+                      className={`w-full rounded-md cursor-not-allowed !bg-neutral-component-surface-dark ${
                         errors.email ? "border-red-500" : ""
                       }`}
                       disabled

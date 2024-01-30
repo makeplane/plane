@@ -11,7 +11,7 @@ export const SpreadsheetLinkColumn: React.FC<Props> = observer((props: Props) =>
   const { issue } = props;
 
   return (
-    <div className="flex h-11 w-full items-center px-2.5 py-1 text-xs border-b-[0.5px] border-neutral-border-medium hover:bg-custom-background-80">
+    <div className="flex h-11 w-full items-center px-2.5 py-1 text-xs border-b-[0.5px] border-neutral-border-medium hover:bg-neutral-component-surface-dark">
       {issue?.link_count} {issue?.link_count === 1 ? "link" : "links"}
     </div>
   );

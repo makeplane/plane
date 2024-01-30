@@ -69,7 +69,7 @@ export const NotificationPopover = observer(() => {
                   className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
-                      : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                      : "text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark"
                   } ${isSidebarCollapsed ? "justify-center" : ""}`}
                 >
                   <Bell className="h-4 w-4" />
@@ -94,7 +94,7 @@ export const NotificationPopover = observer(() => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute -top-36 left-0 z-10 ml-8 flex h-[50vh] w-[20rem] flex-col rounded-xl border border-neutral-border-medium bg-custom-background-100 shadow-lg md:left-full md:w-[36rem]">
+                <Popover.Panel className="absolute -top-36 left-0 z-10 ml-8 flex h-[50vh] w-[20rem] flex-col rounded-xl border border-neutral-border-medium bg-neutral-component-surface-light shadow-lg md:left-full md:w-[36rem]">
                   <NotificationHeader
                     notificationCount={notificationCount}
                     notificationMutate={notificationMutate}

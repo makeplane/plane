@@ -58,7 +58,7 @@ export const WorkspaceDashboardView = observer(() => {
       {homeDashboardId && joinedProjectIds ? (
         <>
           {joinedProjectIds.length > 0 ? (
-            <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
+            <div className="space-y-7 p-7 bg-neutral-component-surface-medium h-full w-full flex flex-col overflow-y-auto">
               <IssuePeekOverview />
               {currentUser && <UserGreetingsView user={currentUser} />}
               {currentUser && !currentUser.is_tour_completed && (

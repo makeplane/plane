@@ -244,14 +244,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           <div className="flex items-center gap-x-2">
             <button
               type="button"
-              className="rounded border border-neutral-border-medium bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
+              className="rounded border border-neutral-border-medium bg-neutral-component-surface-medium p-1.5 hover:bg-neutral-component-surface-dark"
               onClick={() => handleInboxIssueNavigation("prev")}
             >
               <ChevronUp size={14} strokeWidth={2} />
             </button>
             <button
               type="button"
-              className="rounded border border-neutral-border-medium bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
+              className="rounded border border-neutral-border-medium bg-neutral-component-surface-medium p-1.5 hover:bg-neutral-component-surface-dark"
               onClick={() => handleInboxIssueNavigation("next")}
             >
               <ChevronDown size={14} strokeWidth={2} />
@@ -270,7 +270,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                       Snooze
                     </Button>
                   </Popover.Button>
-                  <Popover.Panel className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-custom-background-100 p-2 shadow-lg">
+                  <Popover.Panel className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-neutral-component-surface-light p-2 shadow-lg">
                     {({ close }) => (
                       <div className="flex h-full w-full flex-col gap-y-1">
                         <DatePicker

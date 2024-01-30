@@ -65,7 +65,7 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
             <Tooltip position="left" tooltipContent={`${issueModule?.name ?? "No module"}`}>
               <button
                 type="button"
-                className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
+                className={`flex w-full items-center rounded bg-neutral-component-surface-dark px-2.5 py-0.5 text-xs ${
                   disableSelect ? "cursor-not-allowed" : ""
                 } max-w-[10rem]`}
               >

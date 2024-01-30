@@ -80,7 +80,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
       <Tab.List
         as="div"
         className={`flex w-full items-center justify-between gap-2 rounded-md ${
-          noBackground ? "" : "bg-custom-background-90"
+          noBackground ? "" : "bg-neutral-component-surface-medium"
         } p-0.5
         ${module ? "text-xs" : "text-sm"}`}
       >
@@ -90,7 +90,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
               roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected
-                ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
+                ? "bg-neutral-component-surface-light text-custom-text-300 shadow-custom-shadow-2xs"
                 : "text-custom-text-400 hover:text-custom-text-300"
             }`
           }
@@ -103,7 +103,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
               roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected
-                ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
+                ? "bg-neutral-component-surface-light text-custom-text-300 shadow-custom-shadow-2xs"
                 : "text-custom-text-400 hover:text-custom-text-300"
             }`
           }
@@ -116,7 +116,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
               roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
             } px-3 py-1  text-custom-text-100 ${
               selected
-                ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
+                ? "bg-neutral-component-surface-light text-custom-text-300 shadow-custom-shadow-2xs"
                 : "text-custom-text-400 hover:text-custom-text-300"
             }`
           }
@@ -162,7 +162,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={`unassigned-${index}`}
                     title={
                       <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 rounded-full border-2 border-neutral-border-medium bg-custom-background-80">
+                        <div className="h-4 w-4 rounded-full border-2 border-neutral-border-medium bg-neutral-component-surface-dark">
                           <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                         </div>
                         <span>No assignee</span>
@@ -175,7 +175,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             })
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-2">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-component-surface-dark">
                 <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
               </div>
               <h6 className="text-base text-custom-text-300">No assignees yet</h6>
@@ -215,7 +215,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             ))
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-2">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-component-surface-dark">
                 <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
               </div>
               <h6 className="text-base text-custom-text-300">No labels yet</h6>

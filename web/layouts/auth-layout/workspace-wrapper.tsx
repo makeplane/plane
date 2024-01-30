@@ -47,7 +47,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // while data is being loaded
   if (!membership.currentWorkspaceMemberInfo && membership.hasPermissionToCurrentWorkspace === undefined) {
     return (
-      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
+      <div className="grid h-screen place-items-center bg-neutral-page-surface-default p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>
@@ -60,7 +60,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     membership.hasPermissionToCurrentWorkspace === false
   ) {
     return (
-      <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
+      <div className={`h-screen w-full overflow-hidden bg-neutral-component-surface-light`}>
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">

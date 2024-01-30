@@ -31,13 +31,13 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                   }}
                 />
                 <h6 className="capitalize">{group.state_group}</h6>
-                <span className="ml-1 rounded-3xl bg-custom-background-80 px-2 py-0.5 text-[0.65rem] text-custom-text-200">
+                <span className="ml-1 rounded-3xl bg-neutral-component-surface-dark px-2 py-0.5 text-[0.65rem] text-custom-text-200">
                   {group.state_count}
                 </span>
               </div>
               <p className="text-custom-text-200">{percentage}%</p>
             </div>
-            <div className="bar relative h-1 w-full rounded bg-custom-background-80">
+            <div className="bar relative h-1 w-full rounded bg-neutral-component-surface-dark">
               <div
                 className="absolute left-0 top-0 h-1 rounded duration-300"
                 style={{
@@ -50,7 +50,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
         );
       })}
     </div>
-    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-neutral-border-medium bg-custom-background-80 p-2 text-xs">
+    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark p-2 text-xs">
       <p className="flex items-center gap-1 text-custom-text-200">
         <Triangle className="h-4 w-4" />
         <span>Estimate Demand:</span>
