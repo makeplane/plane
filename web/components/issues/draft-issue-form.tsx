@@ -21,7 +21,7 @@ import {
   CycleDropdown,
   DateDropdown,
   EstimateDropdown,
-  ModuleDropdown,
+  ModuleSelectDropdown,
   PriorityDropdown,
   ProjectDropdown,
   ProjectMemberDropdown,
@@ -152,7 +152,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
     project_id: watch("project_id"),
     parent_id: watch("parent_id"),
     cycle_id: watch("cycle_id"),
-    module_id: watch("module_id"),
+    module_ids: watch("module_ids"),
   };
 
   useEffect(() => {
@@ -570,15 +570,17 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                {projectDetails?.module_view && (
+
+                {projectDetails?.module_view && workspaceSlug && (
                   <Controller
                     control={control}
-                    name="module_id"
+                    name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
-                        <ModuleDropdown
+                        <ModuleSelectDropdown
+                          workspaceSlug={workspaceSlug?.toString()}
                           projectId={projectId}
-                          value={value}
+                          value={value || undefined}
                           onChange={(moduleId) => onChange(moduleId)}
                           buttonVariant="border-with-text"
                         />
@@ -586,6 +588,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
                   areEstimatesEnabledForProject(projectId) && (
                     <Controller

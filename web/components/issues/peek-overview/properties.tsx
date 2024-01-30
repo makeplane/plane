@@ -203,7 +203,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         )}
 
         {projectDetails?.module_view && (
-          <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <span>Module</span>

@@ -286,7 +286,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             )}
 
             {projectDetails?.module_view && (
-              <div className="flex items-center gap-2 h-8">
+              <div className="flex items-center gap-2 min-h-8 h-full">
                 <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Module</span>
