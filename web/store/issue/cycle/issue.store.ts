@@ -268,7 +268,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       runInAction(() => {
         update(this.issues, cycleId, (cycleIssueIds = []) => {
-          uniq(concat(cycleIssueIds, issueIds));
+          return uniq(concat(cycleIssueIds, issueIds));
         });
       });
       issueIds.forEach((issueId) => {
