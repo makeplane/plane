@@ -99,7 +99,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         disabled={!is_editable}
       />
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!is_editable} />
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
     </>
   );
 });
