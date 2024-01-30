@@ -56,7 +56,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    theme: { sidebarCollapsed },
+    theme: { sidebarCollapsed, toggleSidebar },
     eventTracker: { setTrackElement },
   } = useApplication();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
@@ -86,6 +86,13 @@ export const WorkspaceSidebarDropdown = observer(() => {
       );
   };
 
+  const handleItemClick = () => {
+    console.log('CLICKED')
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
+
   const workspacesList = Object.values(workspaces ?? {});
 
   // TODO: fix workspaces list scroll
@@ -96,15 +103,13 @@ export const WorkspaceSidebarDropdown = observer(() => {
           <>
             <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none">
               <div
-                className={`flex items-center  gap-x-2 truncate rounded p-1 ${
-                  sidebarCollapsed ? "justify-center" : "justify-between"
-                }`}
+                className={`flex items-center  gap-x-2 truncate rounded p-1 ${sidebarCollapsed ? "justify-center" : "justify-between"
+                  }`}
               >
                 <div className="flex items-center gap-2 truncate">
                   <div
-                    className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
-                    }`}
+                    className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${!activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
+                      }`}
                   >
                     {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                       <img
@@ -126,9 +131,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
 
                 {!sidebarCollapsed && (
                   <ChevronDown
-                    className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${
-                      open ? "rotate-180" : ""
-                    } text-custom-sidebar-text-400 duration-300`}
+                    className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${open ? "rotate-180" : ""
+                      } text-custom-sidebar-text-400 duration-300`}
                   />
                 )}
               </div>
@@ -156,7 +160,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
                             <Link
                               key={workspace.id}
                               href={`/${workspace.slug}`}
-                              onClick={() => handleWorkspaceNavigation(workspace)}
+                              onClick={() => {
+                                handleWorkspaceNavigation(workspace);
+                                handleItemClick();
+                              }}
                               className="w-full"
                             >
                               <Menu.Item
@@ -165,9 +172,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
                               >
                                 <div className="flex items-center justify-start gap-2.5 truncate">
                                   <span
-                                    className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                                      !workspace?.logo && "rounded bg-custom-primary-500 text-white"
-                                    }`}
+                                    className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${!workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                                      }`}
                                   >
                                     {workspace?.logo && workspace.logo !== "" ? (
                                       <img
@@ -181,9 +187,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
                                   </span>
 
                                   <h5
-                                    className={`truncate text-sm font-medium ${
-                                      workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
-                                    }`}
+                                    className={`truncate text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
+                                      }`}
                                   >
                                     {workspace.name}
                                   </h5>
@@ -220,8 +225,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link) => (
-                      <Link key={link.key} href={link.href} className="w-full">
+                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                      <Link key={link.key} href={link.href} className="w-full" onClick={() => {
+                        if (index > 0) handleItemClick();
+                      }}>
                         <Menu.Item
                           as="div"
                           className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 font-medium"
@@ -278,7 +285,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
                 {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Link key={index} href={link.link}>
+                  <Link key={index} href={link.link} onClick={() => { if (index == 0) handleItemClick(); }}>
                     <Menu.Item key={index} as="div">
                       <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />

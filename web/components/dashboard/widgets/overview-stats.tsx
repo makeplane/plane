@@ -63,34 +63,27 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full grid grid-cols-4 p-0.5 hover:shadow-custom-shadow-4xl duration-300">
-      {STATS_LIST.map((stat, index) => {
-        const isFirst = index === 0;
-        const isLast = index === STATS_LIST.length - 1;
-        const isMiddle = !isFirst && !isLast;
-
-        return (
-          <div key={stat.key} className="flex relative">
-            {!isLast && (
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3/5 w-[0.5px] bg-custom-border-200" />
-            )}
-            <Link
-              href={stat.link}
-              className={cn(
-                `py-4 hover:bg-custom-background-80 duration-300 rounded-[10px] w-full break-words flex flex-col justify-center`,
-                {
-                  "pl-11 pr-[4.725rem] mr-0.5": isFirst,
-                  "px-[4.725rem] mx-0.5": isMiddle,
-                  "px-[4.725rem] ml-0.5": isLast,
-                }
-              )}
-            >
-              <h5 className="font-semibold text-xl">{stat.count}</h5>
-              <p className="text-custom-text-300 text-sm xl:text-base">{stat.title}</p>
-            </Link>
-          </div>
-        );
-      })}
+    <div
+      className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2  p-0.5 hover:shadow-custom-shadow-4xl duration-300
+        [&>div>a>div]:border-r
+        [&>div:last-child>a>div]:border-0
+        [&>div>a>div]:border-custom-border-200
+        [&>div:nth-child(2)>a>div]:border-0
+        [&>div:nth-child(2)>a>div]:lg:border-r
+        "
+    >
+      {STATS_LIST.map((stat) => (
+        <div className="w-full flex flex-col gap-2 hover:bg-custom-background-80 rounded-[10px]">
+          <Link href={stat.link} className="py-4 duration-300 rounded-[10px] w-full ">
+            <div className={`relative flex justify-center items-center`}>
+              <div>
+                <h5 className="font-semibold text-xl">{stat.count}</h5>
+                <p className="text-custom-text-300 text-sm xl:text-base">{stat.title}</p>
+              </div>
+            </div>
+          </Link>
+        </div>
+      ))}
     </div>
   );
 });
