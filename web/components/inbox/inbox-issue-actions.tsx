@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
@@ -16,7 +16,7 @@ import {
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 // types
 import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
@@ -135,6 +135,44 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     ]
   );
 
+  const handleInboxIssueNavigation = useCallback(
+    (direction: "next" | "prev") => {
+      if (!inboxIssues || !inboxIssueId) return;
+      const nextIssueIndex =
+        direction === "next"
+          ? (currentIssueIndex + 1) % inboxIssues.length
+          : (currentIssueIndex - 1 + inboxIssues.length) % inboxIssues.length;
+      const nextIssueId = inboxIssues[nextIssueIndex];
+      if (!nextIssueId) return;
+      router.push({
+        pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+        query: {
+          inboxIssueId: nextIssueId,
+        },
+      });
+    },
+    [workspaceSlug, projectId, inboxId, inboxIssues, inboxIssueId, currentIssueIndex, router]
+  );
+
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp") {
+        handleInboxIssueNavigation("prev");
+      } else if (e.key === "ArrowDown") {
+        handleInboxIssueNavigation("next");
+      }
+    },
+    [handleInboxIssueNavigation]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
+
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const today = new Date();
@@ -207,20 +245,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             <button
               type="button"
               className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", { key: "ArrowUp" });
-                document.dispatchEvent(e);
-              }}
+              onClick={() => handleInboxIssueNavigation("prev")}
             >
               <ChevronUp size={14} strokeWidth={2} />
             </button>
             <button
               type="button"
               className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", { key: "ArrowDown" });
-                document.dispatchEvent(e);
-              }}
+              onClick={() => handleInboxIssueNavigation("next")}
             >
               <ChevronDown size={14} strokeWidth={2} />
             </button>

@@ -57,7 +57,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         <div className="mt-2">
           <AvatarGroup>
             {projectDetails.members?.map((member) => (
-              <Avatar src={member.member__avatar} name={member.member__display_name} />
+              <Avatar key={member.member_id} src={member.member__avatar} name={member.member__display_name} />
             ))}
           </AvatarGroup>
         </div>
@@ -78,7 +78,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
   const widgetStats = getWidgetStats<TRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const canCreateProject = currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   useEffect(() => {
     fetchWidgetStats(workspaceSlug, dashboardId, {

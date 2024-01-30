@@ -2,10 +2,12 @@ import React, { useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
-import { CalendarDays, X } from "lucide-react";
+import { Calendar, CalendarDays, X } from "lucide-react";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// ui
+import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
@@ -21,6 +23,7 @@ type Props = TDropdownProps & {
   onChange: (val: Date | null) => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
+  showPlaceholderIcon?: boolean;
 };
 
 type ButtonProps = {
@@ -31,8 +34,11 @@ type ButtonProps = {
   isClearable: boolean;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   onClear: () => void;
   placeholder: string;
+  tooltip: boolean;
+  showPlaceholderIcon?: boolean;
 };
 
 const BorderButton = (props: ButtonProps) => {
@@ -44,29 +50,38 @@ const BorderButton = (props: ButtonProps) => {
     isClearable,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     onClear,
     placeholder,
+    tooltip,
   } = props;
 
   return (
-    <div
-      className={cn(
-        "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-        className
-      )}
+    <Tooltip
+      tooltipHeading={placeholder}
+      tooltipContent={date ? renderFormattedDate(date) : "None"}
+      disabled={!tooltip}
     >
-      {!hideIcon && icon}
-      {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
-      {isClearable && (
-        <X
-          className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClear();
-          }}
-        />
-      )}
-    </div>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          { "bg-custom-background-80": isActive },
+          className
+        )}
+      >
+        {!hideIcon && icon}
+        {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
+        {isClearable && (
+          <X
+            className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClear();
+            }}
+          />
+        )}
+      </div>
+    </Tooltip>
   );
 };
 
@@ -81,24 +96,34 @@ const BackgroundButton = (props: ButtonProps) => {
     hideText = false,
     onClear,
     placeholder,
+    tooltip,
   } = props;
 
   return (
-    <div
-      className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
+    <Tooltip
+      tooltipHeading={placeholder}
+      tooltipContent={date ? renderFormattedDate(date) : "None"}
+      disabled={!tooltip}
     >
-      {!hideIcon && icon}
-      {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
-      {isClearable && (
-        <X
-          className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClear();
-          }}
-        />
-      )}
-    </div>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          className
+        )}
+      >
+        {!hideIcon && icon}
+        {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
+        {isClearable && (
+          <X
+            className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClear();
+            }}
+          />
+        )}
+      </div>
+    </Tooltip>
   );
 };
 
@@ -111,29 +136,43 @@ const TransparentButton = (props: ButtonProps) => {
     isClearable,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     onClear,
     placeholder,
+    tooltip,
+    showPlaceholderIcon = false,
   } = props;
 
   return (
-    <div
-      className={cn(
-        "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-        className
-      )}
+    <Tooltip
+      tooltipHeading={placeholder}
+      tooltipContent={date ? renderFormattedDate(date) : "None"}
+      disabled={!tooltip}
     >
-      {!hideIcon && icon}
-      {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
-      {isClearable && (
-        <X
-          className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClear();
-          }}
-        />
-      )}
-    </div>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          { "bg-custom-background-80": isActive },
+          className
+        )}
+      >
+        {!hideIcon && icon}
+        {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
+        {showPlaceholderIcon && !date && (
+          <Calendar className="h-2.5 w-2.5 flex-shrink-0 hidden group-hover:inline text-custom-text-400" />
+        )}
+
+        {isClearable && (
+          <X
+            className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClear();
+            }}
+          />
+        )}
+      </div>
+    </Tooltip>
   );
 };
 
@@ -144,6 +183,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonVariant,
     className = "",
     clearIconClassName = "",
+    closeOnSelect = true,
     disabled = false,
     hideIcon = false,
     icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
@@ -153,9 +193,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
     onChange,
     placeholder = "Date",
     placement,
-    value,
-    closeOnSelect = true,
     tabIndex,
+    tooltip = false,
+    showPlaceholderIcon = false,
+    value,
   } = props;
   const [isOpen, setIsOpen] = useState(false);
   // refs
@@ -218,6 +259,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
+              tooltip={tooltip}
             />
           ) : buttonVariant === "border-without-text" ? (
             <BorderButton
@@ -229,6 +272,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
+              tooltip={tooltip}
               hideText
             />
           ) : buttonVariant === "background-with-text" ? (
@@ -241,6 +286,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              tooltip={tooltip}
             />
           ) : buttonVariant === "background-without-text" ? (
             <BackgroundButton
@@ -252,6 +298,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              tooltip={tooltip}
               hideText
             />
           ) : buttonVariant === "transparent-with-text" ? (
@@ -264,6 +311,9 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
+              tooltip={tooltip}
+              showPlaceholderIcon={showPlaceholderIcon}
             />
           ) : buttonVariant === "transparent-without-text" ? (
             <TransparentButton
@@ -275,7 +325,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
+              tooltip={tooltip}
               hideText
+              showPlaceholderIcon={showPlaceholderIcon}
             />
           ) : null}
         </button>

@@ -2,13 +2,18 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // components
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "components/issues";
 import { Spinner } from "@plane/ui";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // hooks
-import { useIssues } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROFILE_EMPTY_STATE_DETAILS } from "constants/profile";
 import { EIssuesStoreType } from "constants/issue";
 
 interface IProfileIssuesPage {
@@ -23,7 +28,13 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     workspaceSlug: string;
     userId: string;
   };
-
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const {
+    membership: { currentWorkspaceRole },
+    currentUser,
+  } = useUser();
   const {
     issues: { loader, groupedIssueIds, fetchIssues },
     issuesFilter: { issueFilters, fetchFilters },
@@ -39,7 +50,12 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     }
   );
 
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("profile", type, isLightMode);
+
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
+
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -49,16 +65,28 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
         </div>
       ) : (
         <>
-          <ProfileIssuesAppliedFiltersRoot />
-          <div className="-z-1 relative h-full w-full overflow-auto">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-          {/* peek overview */}
-          <IssuePeekOverview />
+          {groupedIssueIds ? (
+            <>
+              <ProfileIssuesAppliedFiltersRoot />
+              <div className="-z-1 relative h-full w-full overflow-auto">
+                {activeLayout === "list" ? (
+                  <ProfileIssuesListLayout />
+                ) : activeLayout === "kanban" ? (
+                  <ProfileIssuesKanBanLayout />
+                ) : null}
+              </div>
+              {/* peek overview */}
+              <IssuePeekOverview />
+            </>
+          ) : (
+            <EmptyState
+              image={emptyStateImage}
+              title={PROFILE_EMPTY_STATE_DETAILS[type].title}
+              description={PROFILE_EMPTY_STATE_DETAILS[type].description}
+              size="sm"
+              disabled={!isEditingAllowed}
+            />
+          )}
         </>
       )}
     </>

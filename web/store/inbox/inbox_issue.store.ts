@@ -17,21 +17,24 @@ import type {
   TInboxDetailedStatus,
   TIssue,
 } from "@plane/types";
-// constants
-import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
-type TInboxIssueLoader = "fetch" | undefined;
+type TLoader = "init-loader" | "mutation" | undefined;
 
 export interface IInboxIssue {
   // observables
-  loader: TInboxIssueLoader;
+  loader: TLoader;
   inboxIssues: TInboxIssueDetailIdMap;
   inboxIssueMap: TInboxIssueDetailMap;
   // helper methods
   getInboxIssuesByInboxId: (inboxId: string) => string[] | undefined;
   getInboxIssueByIssueId: (inboxId: string, issueId: string) => TInboxIssueDetail | undefined;
   // actions
-  fetchInboxIssues: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<TInboxIssueExtendedDetail[]>;
+  fetchInboxIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    loaderType?: TLoader
+  ) => Promise<TInboxIssueExtendedDetail[]>;
   fetchInboxIssueById: (
     workspaceSlug: string,
     projectId: string,
@@ -63,7 +66,7 @@ export interface IInboxIssue {
 
 export class InboxIssue implements IInboxIssue {
   // observables
-  loader: TInboxIssueLoader = "fetch";
+  loader: TLoader = "init-loader";
   inboxIssues: TInboxIssueDetailIdMap = {};
   inboxIssueMap: TInboxIssueDetailMap = {};
   // root store
@@ -104,9 +107,14 @@ export class InboxIssue implements IInboxIssue {
   });
 
   // actions
-  fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {
+  fetchInboxIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    loaderType: TLoader = "init-loader"
+  ) => {
     try {
-      this.loader = "fetch";
+      this.loader = loaderType;
       const queryParams = this.rootStore.inbox.inboxFilter.inboxAppliedFilters ?? {};
 
       const response = await this.inboxIssueService.fetchInboxIssues(workspaceSlug, projectId, inboxId, queryParams);
@@ -144,7 +152,7 @@ export class InboxIssue implements IInboxIssue {
 
       runInAction(() => {
         const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
-        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        this.rootStore.inbox.rootStore.issue.issues.updateIssue(issue.id, issue);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
       });
@@ -178,6 +186,7 @@ export class InboxIssue implements IInboxIssue {
         this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+        update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) => count + 1);
       });
 
       runInAction(() => {
@@ -208,7 +217,7 @@ export class InboxIssue implements IInboxIssue {
 
       runInAction(() => {
         const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
-        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
+        this.rootStore.inbox.rootStore.issue.issues.updateIssue(issue.id, issue);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
       });
@@ -234,6 +243,8 @@ export class InboxIssue implements IInboxIssue {
       runInAction(() => {
         pull(this.inboxIssues[inboxId], inboxIssueId);
         delete this.inboxIssueMap[inboxId][inboxIssueId];
+        this.rootStore.inbox.rootStore.issue.issues.removeIssue(inboxIssueId);
+        update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) => count - 1);
       });
 
       await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
@@ -259,11 +270,15 @@ export class InboxIssue implements IInboxIssue {
         data
       );
 
+      const pendingStatus = -2;
       runInAction(() => {
         const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
         this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+        update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) =>
+          data.status === pendingStatus ? count + 1 : count - 1
+        );
       });
 
       runInAction(() => {

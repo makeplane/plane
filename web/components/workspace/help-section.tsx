@@ -7,7 +7,7 @@ import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon, GithubIcon } from "@plane/ui";
+import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 
@@ -67,24 +67,29 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           </div>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
-          <button
-            type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-              isCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => toggleShortcutModal(true)}
-          >
-            <Zap className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-              isCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-          >
-            <HelpCircle className="h-3.5 w-3.5" />
-          </button>
+          <Tooltip tooltipContent="Shortcuts">
+            <button
+              type="button"
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+                isCollapsed ? "w-full" : ""
+              }`}
+              onClick={() => toggleShortcutModal(true)}
+            >
+              <Zap className="h-3.5 w-3.5" />
+            </button>
+          </Tooltip>
+          <Tooltip tooltipContent="Help">
+            <button
+              type="button"
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+                isCollapsed ? "w-full" : ""
+              }`}
+              onClick={() => setIsNeedHelpOpen((prev) => !prev)}
+            >
+              <HelpCircle className="h-3.5 w-3.5" />
+            </button>
+          </Tooltip>
+
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
@@ -92,15 +97,18 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           >
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
-          <button
-            type="button"
-            className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
-              isCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => toggleSidebar()}
-          >
-            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
-          </button>
+
+          <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`}>
+            <button
+              type="button"
+              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+                isCollapsed ? "w-full" : ""
+              }`}
+              onClick={() => toggleSidebar()}
+            >
+              <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
+            </button>
+          </Tooltip>
         </div>
 
         <div className="relative">

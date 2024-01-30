@@ -1,5 +1,5 @@
 import { FC, useState, Fragment, useEffect } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Loader } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
@@ -138,6 +138,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
                 hasError={Boolean(errors.name)}
                 placeholder="Title"
                 className="w-full"
+                disabled={isSubmitting}
               />
             )}
           />
@@ -150,7 +151,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
             <X className="h-4 w-4 text-white" />
           </button>
           <button type="submit" className="grid place-items-center rounded bg-green-500 p-1.5" disabled={isSubmitting}>
-            <Plus className="h-4 w-4 text-white" />
+            {isSubmitting ? <Loader className="h-4 w-4 text-white spin" /> : <Plus className="h-4 w-4 text-white" />}
           </button>
         </form>
       )}

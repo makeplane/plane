@@ -3,6 +3,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import uniq from "lodash/uniq";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -110,12 +111,13 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const moduleIssueIds = this.issues[moduleId] ?? [];
+    const moduleIssueIds = this.issues[moduleId];
+    if (!moduleIssueIds) return;
 
     const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -258,10 +260,12 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       });
 
       runInAction(() => {
-        update(this.issues, moduleId, (moduleIssueIds) => {
-          if (!moduleIssueIds) return [...issueIds];
-          else return concat(moduleIssueIds, [...issueIds]);
+        update(this.issues, moduleId, (moduleIssueIds = []) => {
+          uniq(concat(moduleIssueIds, issueIds));
         });
+      });
+      issueIds.forEach((issueId) => {
+        this.rootStore.issues.updateIssue(issueId, { module_id: moduleId });
       });
 
       return issueToModule;

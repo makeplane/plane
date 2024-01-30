@@ -3,6 +3,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import uniq from "lodash/uniq";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -117,12 +118,13 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const cycleIssueIds = this.issues[cycleId] ?? [];
+    const cycleIssueIds = this.issues[cycleId];
+    if (!cycleIssueIds) return;
 
     const _issues = this.rootIssueStore.issues.getIssuesByIds(cycleIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
@@ -164,7 +166,6 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      console.log(error);
       this.loader = undefined;
       throw error;
     }
@@ -266,10 +267,12 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       });
 
       runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds) => {
-          if (!cycleIssueIds) return [...issueIds];
-          else return concat(cycleIssueIds, [...issueIds]);
+        update(this.issues, cycleId, (cycleIssueIds = []) => {
+          uniq(concat(cycleIssueIds, issueIds));
         });
+      });
+      issueIds.forEach((issueId) => {
+        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
       });
 
       return issueToCycle;
@@ -331,7 +334,6 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      console.log(error);
       this.loader = undefined;
       throw error;
     }

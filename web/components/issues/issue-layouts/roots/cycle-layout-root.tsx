@@ -61,13 +61,13 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
-        {issues?.loader === "init-loader" ? (
+        {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         ) : (
           <>
-            {!issues?.groupedIssueIds ? (
+            {issues?.groupedIssueIds?.length === 0 ? (
               <CycleEmptyState
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}

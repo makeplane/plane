@@ -8,7 +8,7 @@ import { useApplication, useProjectState } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
@@ -30,66 +30,121 @@ type ButtonProps = {
   dropdownArrowClassName: string;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   state: IState | undefined;
+  tooltip: boolean;
 };
 
 const BorderButton = (props: ButtonProps) => {
-  const { className, dropdownArrow, dropdownArrowClassName, hideIcon = false, hideText = false, state } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    isActive = false,
+    state,
+    tooltip,
+  } = props;
 
   return (
-    <div
-      className={cn(
-        "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-        className
-      )}
-    >
-      {!hideIcon && (
-        <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
-      )}
-      {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
-      {dropdownArrow && (
-        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-      )}
-    </div>
+    <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"} disabled={!tooltip}>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          {
+            "bg-custom-background-80": isActive,
+          },
+          className
+        )}
+      >
+        {!hideIcon && (
+          <StateGroupIcon
+            stateGroup={state?.group ?? "backlog"}
+            color={state?.color}
+            className="h-3 w-3 flex-shrink-0"
+          />
+        )}
+        {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
+        {dropdownArrow && (
+          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </div>
+    </Tooltip>
   );
 };
 
 const BackgroundButton = (props: ButtonProps) => {
-  const { className, dropdownArrow, dropdownArrowClassName, hideIcon = false, hideText = false, state } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    state,
+    tooltip,
+  } = props;
 
   return (
-    <div
-      className={cn("h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80", className)}
-    >
-      {!hideIcon && (
-        <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
-      )}
-      {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
-      {dropdownArrow && (
-        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-      )}
-    </div>
+    <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"} disabled={!tooltip}>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          className
+        )}
+      >
+        {!hideIcon && (
+          <StateGroupIcon
+            stateGroup={state?.group ?? "backlog"}
+            color={state?.color}
+            className="h-3 w-3 flex-shrink-0"
+          />
+        )}
+        {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
+        {dropdownArrow && (
+          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </div>
+    </Tooltip>
   );
 };
 
 const TransparentButton = (props: ButtonProps) => {
-  const { className, dropdownArrow, dropdownArrowClassName, hideIcon = false, hideText = false, state } = props;
+  const {
+    className,
+    dropdownArrow,
+    dropdownArrowClassName,
+    hideIcon = false,
+    hideText = false,
+    isActive = false,
+    state,
+    tooltip,
+  } = props;
 
   return (
-    <div
-      className={cn(
-        "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-        className
-      )}
-    >
-      {!hideIcon && (
-        <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
-      )}
-      {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
-      {dropdownArrow && (
-        <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-      )}
-    </div>
+    <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"} disabled={!tooltip}>
+      <div
+        className={cn(
+          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          {
+            "bg-custom-background-80": isActive,
+          },
+          className
+        )}
+      >
+        {!hideIcon && (
+          <StateGroupIcon
+            stateGroup={state?.group ?? "backlog"}
+            color={state?.color}
+            className="h-3 w-3 flex-shrink-0"
+          />
+        )}
+        {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
+        {dropdownArrow && (
+          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </div>
+    </Tooltip>
   );
 };
 
@@ -107,8 +162,9 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     onChange,
     placement,
     projectId,
-    value,
     tabIndex,
+    tooltip = false,
+    value,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -204,6 +260,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
+                tooltip={tooltip}
               />
             ) : buttonVariant === "border-without-text" ? (
               <BorderButton
@@ -212,6 +270,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
+                tooltip={tooltip}
                 hideText
               />
             ) : buttonVariant === "background-with-text" ? (
@@ -221,6 +281,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                tooltip={tooltip}
               />
             ) : buttonVariant === "background-without-text" ? (
               <BackgroundButton
@@ -229,6 +290,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                tooltip={tooltip}
                 hideText
               />
             ) : buttonVariant === "transparent-with-text" ? (
@@ -238,6 +300,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                isActive={isOpen}
+                tooltip={tooltip}
               />
             ) : buttonVariant === "transparent-without-text" ? (
               <TransparentButton
@@ -245,6 +309,9 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 className={buttonClassName}
                 dropdownArrow={dropdownArrow && !disabled}
                 dropdownArrowClassName={dropdownArrowClassName}
+                hideIcon={hideIcon}
+                isActive={isOpen}
+                tooltip={tooltip}
                 hideText
               />
             ) : null}

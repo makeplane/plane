@@ -90,7 +90,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
+    const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "my_issues");
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -100,6 +100,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     );
 
     if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
+    if (userFilters?.displayFilters?.layout === "spreadsheet") filteredRouteParams.sub_issue = false;
 
     return filteredRouteParams;
   };
@@ -125,7 +126,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters);
+      displayFilters = this.computedDisplayFilters(_filters?.display_filters, { layout: "spreadsheet" });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       kanbanFilters = {
         group_by: _filters?.kanban_filters?.group_by || [],
@@ -162,14 +163,15 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   ) => {
     try {
       if (!viewId) throw new Error("View id is required");
+      const issueFilters = this.getIssueFilters(viewId);
 
-      if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
+      if (!issueFilters || isEmpty(filters)) return;
 
       const _filters = {
-        filters: this.filters[viewId].filters as IIssueFilterOptions,
-        displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
-        displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
-        kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,
+        filters: issueFilters.filters as IIssueFilterOptions,
+        displayFilters: issueFilters.displayFilters as IIssueDisplayFilterOptions,
+        displayProperties: issueFilters.displayProperties as IIssueDisplayProperties,
+        kanbanFilters: issueFilters.kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
@@ -211,6 +213,11 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
             _filters.displayFilters.group_by = "state";
             updatedDisplayFilters.group_by = "state";
+          }
+          // set sub_issue to false if layout is switched to spreadsheet and sub_issue is true
+          if (_filters.displayFilters.layout === "spreadsheet" && _filters.displayFilters.sub_issue === true) {
+            _filters.displayFilters.sub_issue = false;
+            updatedDisplayFilters.sub_issue = false;
           }
 
           runInAction(() => {

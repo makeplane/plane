@@ -50,11 +50,11 @@ export const DashboardWidgets = observer(() => {
         // if the widget is full width, return it in a 2 column grid
         if (widget.fullWidth)
           return (
-            <div className="lg:col-span-2">
+            <div key={key} className="lg:col-span-2">
               <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
             </div>
           );
-        else return <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />;
+        else return <WidgetComponent key={key} dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />;
       })}
     </div>
   );

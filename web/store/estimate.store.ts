@@ -23,7 +23,7 @@ export interface IEstimateStore {
   getProjectActiveEstimateDetails: (projectId: string) => IEstimate | null;
   // fetch actions
   fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<IEstimate[]>;
-  fetchWorskpaceEstimates: (workspaceSlug: string) => Promise<IEstimate[]>;
+  fetchWorkspaceEstimates: (workspaceSlug: string) => Promise<IEstimate[]>;
   // crud actions
   createEstimate: (workspaceSlug: string, projectId: string, data: IEstimateFormData) => Promise<IEstimate>;
   updateEstimate: (
@@ -56,7 +56,7 @@ export class EstimateStore implements IEstimateStore {
       activeEstimateDetails: computed,
       // actions
       fetchProjectEstimates: action,
-      fetchWorskpaceEstimates: action,
+      fetchWorkspaceEstimates: action,
       createEstimate: action,
       updateEstimate: action,
       deleteEstimate: action,
@@ -158,7 +158,7 @@ export class EstimateStore implements IEstimateStore {
    * @param workspaceSlug
    * @param projectId
    */
-  fetchWorskpaceEstimates = async (workspaceSlug: string) =>
+  fetchWorkspaceEstimates = async (workspaceSlug: string) =>
     await this.estimateService.getWorkspaceEstimatesList(workspaceSlug).then((response) => {
       runInAction(() => {
         response.forEach((estimate) => {

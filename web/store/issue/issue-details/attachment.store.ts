@@ -1,5 +1,9 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import uniq from "lodash/uniq";
+import pull from "lodash/pull";
 // services
 import { IssueAttachmentService } from "services/issue";
 // types
@@ -83,10 +87,13 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     try {
       const response = await this.issueAttachmentService.getIssueAttachment(workspaceSlug, projectId, issueId);
 
-      runInAction(() => {
-        this.attachments[issueId] = response.map((attachment) => attachment.id);
-        response.forEach((attachment) => set(this.attachmentMap, attachment.id, attachment));
-      });
+      if (response && response.length > 0) {
+        const _attachmentIds = response.map((attachment) => attachment.id);
+        runInAction(() => {
+          update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, _attachmentIds)));
+          response.forEach((attachment) => set(this.attachmentMap, attachment.id, attachment));
+        });
+      }
 
       return response;
     } catch (error) {
@@ -98,10 +105,11 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     try {
       const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
 
-      runInAction(() => {
-        this.attachments[issueId].push(response.id);
-        set(this.attachmentMap, response.id, response);
-      });
+      if (response && response.id)
+        runInAction(() => {
+          update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
+          set(this.attachmentMap, response.id, response);
+        });
 
       return response;
     } catch (error) {
@@ -118,12 +126,13 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         attachmentId
       );
 
-      const reactionIndex = this.attachments[issueId].findIndex((_comment) => _comment === attachmentId);
-      if (reactionIndex >= 0)
-        runInAction(() => {
-          this.attachments[issueId].splice(reactionIndex, 1);
-          delete this.attachmentMap[attachmentId];
+      runInAction(() => {
+        update(this.attachments, [issueId], (attachmentIds = []) => {
+          if (attachmentIds.includes(attachmentId)) pull(attachmentIds, attachmentId);
+          return attachmentIds;
         });
+        delete this.attachmentMap[attachmentId];
+      });
 
       return response;
     } catch (error) {

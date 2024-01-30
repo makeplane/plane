@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // hooks
 import { useUser } from "hooks/store";
 // components
@@ -18,11 +19,15 @@ export interface ICyclesBoard {
 
 export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
   const { cycleIds, filter, workspaceSlug, projectId, peekCycle } = props;
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser } = useUser();
 
   const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS[filter as keyof typeof CYCLE_EMPTY_STATE_DETAILS];
-  const emptyStateImage = getEmptyStateImagePath("cycle", filter, currentUser?.theme.theme === "light");
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("cycle", filter, isLightMode);
 
   return (
     <>
