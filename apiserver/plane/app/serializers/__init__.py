@@ -7,6 +7,8 @@ from .user import (
     UserAdminLiteSerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
+    ProfileSerializer,
+    AccountSerializer,
 )
 from .workspace import (
     WorkSpaceSerializer,
@@ -116,7 +118,10 @@ from .inbox import (
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import NotificationSerializer, UserNotificationPreferenceSerializer
+from .notification import (
+    NotificationSerializer,
+    UserNotificationPreferenceSerializer,
+)
 
 from .exporter import ExporterHistorySerializer
 
