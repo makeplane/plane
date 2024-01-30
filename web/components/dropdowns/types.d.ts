@@ -17,7 +17,6 @@ export type TDropdownProps = {
   hideIcon?: boolean;
   placeholder?: string;
   placement?: Placement;
+  showTooltip?: boolean;
   tabIndex?: number;
-  // TODO: rename this prop to showTooltip
-  tooltip?: boolean;
 };

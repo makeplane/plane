@@ -2,19 +2,22 @@ import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
 import { useApplication, useMember, useUser } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { BackgroundButton, BorderButton, TransparentButton } from "components/dropdowns";
+import { ButtonAvatars } from "./avatar";
+import { DropdownButton } from "../buttons";
 // icons
 import { Avatar } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
 import { MemberDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 
 type Props = {
   projectId: string;
@@ -36,8 +39,8 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
     placeholder = "Members",
     placement,
     projectId,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -139,74 +142,28 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
             )}
             onClick={openDropdown}
           >
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                userIds={value}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                userIds={value}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                userIds={value}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                userIds={value}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                userIds={value}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                userIds={value}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : null}
+            <DropdownButton
+              className={buttonClassName}
+              isActive={isOpen}
+              tooltipHeading={placeholder}
+              tooltipContent={`${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+              showTooltip={showTooltip}
+              variant={buttonVariant}
+            >
+              {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} />}
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                <span className="flex-grow truncate text-sm leading-5">
+                  {Array.isArray(value) && value.length > 0
+                    ? value.length === 1
+                      ? getUserDetails(value[0])?.display_name
+                      : ""
+                    : placeholder}
+                </span>
+              )}
+              {dropdownArrow && (
+                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              )}
+            </DropdownButton>
           </button>
         )}
       </Combobox.Button>

@@ -7,13 +7,16 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { useApplication, useModule } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// components
+import { DropdownButton } from "./buttons";
 // icons
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { DiceIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { IModule } from "@plane/types";
 import { TDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -32,112 +35,6 @@ type DropdownOptions =
     }[]
   | undefined;
 
-type ButtonProps = {
-  className?: string;
-  dropdownArrow: boolean;
-  dropdownArrowClassName: string;
-  hideIcon?: boolean;
-  hideText?: boolean;
-  isActive?: boolean;
-  module: IModule | null;
-  placeholder: string;
-  tooltip: boolean;
-};
-
-const BorderButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    module,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Module" tooltipContent={module?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const BackgroundButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    module,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Module" tooltipContent={module?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
-      >
-        {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const TransparentButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    module,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Module" tooltipContent={module?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
 export const ModuleDropdown: React.FC<Props> = observer((props) => {
   const {
     button,
@@ -153,8 +50,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     placeholder = "Module",
     placement,
     projectId,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -264,74 +161,22 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             )}
             onClick={openDropdown}
           >
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : null}
+            <DropdownButton
+              className={buttonClassName}
+              isActive={isOpen}
+              tooltipHeading="Module"
+              tooltipContent={selectedModule?.name ?? placeholder}
+              showTooltip={showTooltip}
+              variant={buttonVariant}
+            >
+              {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                <span className="flex-grow truncate">{selectedModule?.name ?? placeholder}</span>
+              )}
+              {dropdownArrow && (
+                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              )}
+            </DropdownButton>
           </button>
         )}
       </Combobox.Button>

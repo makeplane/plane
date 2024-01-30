@@ -7,14 +7,15 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { useProject } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// ui
-import { Tooltip } from "@plane/ui";
+// components
+import { DropdownButton } from "./buttons";
 // helpers
 import { cn } from "helpers/common.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IProject } from "@plane/types";
 import { TDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -22,119 +23,6 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
   value: string | null;
-};
-
-type ButtonProps = {
-  className?: string;
-  dropdownArrow: boolean;
-  dropdownArrowClassName: string;
-  hideIcon?: boolean;
-  hideText?: boolean;
-  placeholder: string;
-  project: IProject | null;
-  tooltip: boolean;
-};
-
-const BorderButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    placeholder,
-    project,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Project" tooltipContent={project?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          className
-        )}
-      >
-        {!hideIcon && (
-          <span className="grid place-items-center flex-shrink-0">
-            {project?.emoji ? renderEmoji(project?.emoji) : project?.icon_prop ? renderEmoji(project?.icon_prop) : null}
-          </span>
-        )}
-        {!hideText && <span className="flex-grow truncate">{project?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const BackgroundButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    placeholder,
-    project,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Project" tooltipContent={project?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
-      >
-        {!hideIcon && (
-          <span className="grid place-items-center flex-shrink-0">
-            {project?.emoji ? renderEmoji(project?.emoji) : project?.icon_prop ? renderEmoji(project?.icon_prop) : null}
-          </span>
-        )}
-        {!hideText && <span className="flex-grow truncate">{project?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const TransparentButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    placeholder,
-    project,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Project" tooltipContent={project?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          className
-        )}
-      >
-        {!hideIcon && (
-          <span className="grid place-items-center flex-shrink-0">
-            {project?.emoji ? renderEmoji(project?.emoji) : project?.icon_prop ? renderEmoji(project?.icon_prop) : null}
-          </span>
-        )}
-        {!hideText && <span className="flex-grow truncate">{project?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
 };
 
 export const ProjectDropdown: React.FC<Props> = observer((props) => {
@@ -151,8 +39,8 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     onChange,
     placeholder = "Project",
     placement,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -247,70 +135,30 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             )}
             onClick={openDropdown}
           >
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                project={selectedProject}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                project={selectedProject}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                project={selectedProject}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                project={selectedProject}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                project={selectedProject}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                project={selectedProject}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : null}
+            <DropdownButton
+              className={buttonClassName}
+              isActive={isOpen}
+              tooltipHeading="Project"
+              tooltipContent={selectedProject?.name ?? placeholder}
+              showTooltip={showTooltip}
+              variant={buttonVariant}
+            >
+              {!hideIcon && (
+                <span className="grid place-items-center flex-shrink-0">
+                  {selectedProject?.emoji
+                    ? renderEmoji(selectedProject?.emoji)
+                    : selectedProject?.icon_prop
+                    ? renderEmoji(selectedProject?.icon_prop)
+                    : null}
+                </span>
+              )}
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                <span className="flex-grow truncate">{selectedProject?.name ?? placeholder}</span>
+              )}
+              {dropdownArrow && (
+                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              )}
+            </DropdownButton>
           </button>
         )}
       </Combobox.Button>
