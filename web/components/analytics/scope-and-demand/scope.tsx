@@ -65,7 +65,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
                   );
               },
             }}
-            margin={{ top: 20 }}
+            margin={{ top: 20, right: 20 }}
             theme={{
               axis: {},
             }}
