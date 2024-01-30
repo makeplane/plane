@@ -1,6 +1,5 @@
 import { FC } from "react";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 // components
 import { IssueParentSiblingItem } from "./sibling-item";
 // hooks
