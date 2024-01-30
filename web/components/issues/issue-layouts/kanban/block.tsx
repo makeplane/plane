@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
@@ -16,11 +16,11 @@ interface IssueBlockProps {
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
+  draggableId: string;
+  index: number;
   handleIssues: (issue: TIssue, action: EIssueActions) => void;
   quickActions: (issue: TIssue) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  provided: DraggableProvided;
-  snapshot: DraggableStateSnapshot;
 }
 
 interface IssueDetailsBlockProps {
@@ -90,11 +90,11 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     issuesMap,
     displayProperties,
     isDragDisabled,
+    draggableId,
+    index,
     handleIssues,
     quickActions,
     canEditProperties,
-    provided,
-    snapshot,
   } = props;
 
   const issue = issuesMap[issueId];
@@ -104,29 +104,38 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const canEditIssueProperties = canEditProperties(issue.project_id);
 
   return (
-    <div
-      className="group/kanban-block relative p-1.5 hover:cursor-default"
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-      ref={provided.innerRef}
+    <Draggable
+      key={draggableId}
+      draggableId={draggableId}
+      index={index}
+      isDragDisabled={!canEditIssueProperties || isDragDisabled}
     >
-      {issue.tempId !== undefined && (
-        <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+      {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+        <div
+          className="group/kanban-block relative p-1.5 hover:cursor-default"
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+        >
+          {issue.tempId !== undefined && (
+            <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+          )}
+          <div
+            className={`space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all ${
+              isDragDisabled ? "" : "hover:cursor-grab"
+            } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
+          >
+            <KanbanIssueDetailsBlock
+              issue={issue}
+              displayProperties={displayProperties}
+              handleIssues={handleIssues}
+              quickActions={quickActions}
+              isReadOnly={!canEditIssueProperties}
+            />
+          </div>
+        </div>
       )}
-      <div
-        className={`space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all ${
-          isDragDisabled ? "" : "hover:cursor-grab"
-        } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
-      >
-        <KanbanIssueDetailsBlock
-          issue={issue}
-          displayProperties={displayProperties}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          isReadOnly={!canEditIssueProperties}
-        />
-      </div>
-    </div>
+    </Draggable>
   );
 });
 

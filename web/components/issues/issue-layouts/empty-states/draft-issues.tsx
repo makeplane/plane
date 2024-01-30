@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import size from "lodash/size";
+import { useTheme } from "next-themes";
 // hooks
 import { useIssues, useUser } from "hooks/store";
 // components
@@ -26,6 +27,9 @@ export const ProjectDraftEmptyState: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -35,12 +39,9 @@ export const ProjectDraftEmptyState: React.FC = observer(() => {
   const userFilters = issuesFilter?.issueFilters?.filters;
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
-  const currentLayoutEmptyStateImagePath = getEmptyStateImagePath(
-    "empty-filters",
-    activeLayout ?? "list",
-    currentUser?.theme.theme === "light"
-  );
-  const EmptyStateImagePath = getEmptyStateImagePath("draft", "empty-issues", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const currentLayoutEmptyStateImagePath = getEmptyStateImagePath("empty-filters", activeLayout ?? "list", isLightMode);
+  const EmptyStateImagePath = getEmptyStateImagePath("draft", "empty-issues", isLightMode);
 
   const issueFilterCount = size(
     Object.fromEntries(

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 // hooks
@@ -101,59 +102,72 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
       <button
         type="button"
         className={cn(
-          "group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none",
+          "group flex items-center gap-2 px-2 py-0.5 rounded outline-none",
           {
             "cursor-not-allowed": disabled,
             "hover:bg-custom-background-80": !disabled,
+            "bg-custom-background-80": isRelationModalOpen === relationKey,
           },
           className
         )}
         onClick={() => toggleRelationModal(relationKey)}
         disabled={disabled}
       >
-        {relationIssueIds.length > 0 ? (
-          <div className="flex items-center gap-2 flex-wrap">
-            {relationIssueIds.map((relationIssueId) => {
-              const currentIssue = issueMap[relationIssueId];
-              if (!currentIssue) return;
+        <div className="flex items-start justify-between w-full">
+          {relationIssueIds.length > 0 ? (
+            <div className="flex items-center gap-2 py-0.5 flex-wrap">
+              {relationIssueIds.map((relationIssueId) => {
+                const currentIssue = issueMap[relationIssueId];
+                if (!currentIssue) return;
 
-              const projectDetails = getProjectById(currentIssue.project_id);
+                const projectDetails = getProjectById(currentIssue.project_id);
 
-              return (
-                <div
-                  key={relationIssueId}
-                  className={`group flex items-center gap-1 rounded px-1.5 py-1 ${issueRelationObject[relationKey].className}`}
-                >
-                  <a
-                    href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${currentIssue.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-medium"
-                    onClick={(e) => e.stopPropagation()}
+                return (
+                  <div
+                    key={relationIssueId}
+                    className={`group flex items-center gap-1 rounded px-1.5 pt-1 pb-1 leading-3 hover:bg-custom-background-90 ${issueRelationObject[relationKey].className}`}
                   >
-                    {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}
-                  </a>
-                  {!disabled && (
-                    <Tooltip tooltipContent="Remove">
-                      <span
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
-                        }}
+                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name}>
+                      <Link
+                        href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${currentIssue.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium mt-0.5"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
-                      </span>
+                        {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}
+                      </Link>
                     </Tooltip>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <span className="text-sm text-custom-text-400">{issueRelationObject[relationKey].placeholder}</span>
-        )}
-        {!disabled && <Pencil className="h-4 w-4 flex-shrink-0 hidden group-hover:inline" />}
+                    {!disabled && (
+                      <Tooltip tooltipContent="Remove" position="bottom">
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
+                          }}
+                        >
+                          <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                        </span>
+                      </Tooltip>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <span className="text-sm text-custom-text-400">{issueRelationObject[relationKey].placeholder}</span>
+          )}
+          {!disabled && (
+            <span
+              className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
+                "text-custom-text-400": relationIssueIds.length === 0,
+              })}
+            >
+              <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
+            </span>
+          )}
+        </div>
       </button>
     </>
   );
