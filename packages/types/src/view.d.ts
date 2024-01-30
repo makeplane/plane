@@ -53,22 +53,16 @@ export type TViewDisplayProperties = {
   updated_on: boolean;
 };
 
-export type TViewProps = {
-  filters: TViewFilters;
-  display_filters: TViewDisplayFilters;
-  display_properties: TViewDisplayProperties;
-};
-
 export type TView = {
   id: string;
   workspace: string;
   project: string | undefined;
   name: string;
-  description: string | undefined;
+  description: string;
   query: string;
-  filters: undefined;
-  display_filters: undefined;
-  display_properties: undefined;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
   access: TViewAccess;
   owned_by: string;
   sort_order: number;

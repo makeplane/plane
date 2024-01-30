@@ -12,9 +12,9 @@ export type TViews = TView & {
   // actions
   updateName: (name: string) => Promise<void>;
   updateDescription: (description: string) => Promise<void>;
-  updateFilters: (filters: TViewFilters) => Promise<void>;
-  updateDisplayFilters: (display_filters: TViewDisplayFilters) => Promise<void>;
-  updateDisplayProperties: (display_properties: TViewDisplayProperties) => Promise<void>;
+  updateFilters: (filters: Partial<TViewFilters>) => Promise<void>;
+  updateDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => Promise<void>;
+  updateDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) => Promise<void>;
   lockView: () => Promise<void>;
   unlockView: () => Promise<void>;
 };
@@ -24,11 +24,11 @@ export class Views implements TViews {
   workspace: string;
   project: string | undefined;
   name: string;
-  description: string | undefined;
+  description: string;
   query: string;
-  filters: undefined;
-  display_filters: undefined;
-  display_properties: undefined;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
   access: TViewAccess;
   owned_by: string;
   sort_order: number;
@@ -82,7 +82,7 @@ export class Views implements TViews {
   updateName = async (name: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const view = await this.service.update(workspaceSlug, this.id, { name: name }, projectId);
       if (!view) return;
@@ -96,7 +96,7 @@ export class Views implements TViews {
   updateDescription = async (description: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const view = await this.service.update(workspaceSlug, this.id, { description: description }, projectId);
       if (!view) return;
@@ -107,12 +107,15 @@ export class Views implements TViews {
     }
   };
 
-  updateFilters = async (filters: any) => {
+  updateFilters = async (filters: Partial<TViewFilters>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
-      const view = await this.service.update(workspaceSlug, this.id, { filters: filters }, projectId);
+      const viewFilters = this.filters;
+      const _filters = { ...viewFilters, ...filters };
+
+      const view = await this.service.update(workspaceSlug, this.id, { filters: _filters }, projectId);
       if (!view) return;
 
       this.filters = view.filters;
@@ -121,12 +124,15 @@ export class Views implements TViews {
     }
   };
 
-  updateDisplayFilters = async (display_filters: any) => {
+  updateDisplayFilters = async (display_filters: Partial<TViewDisplayFilters>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
-      const view = await this.service.update(workspaceSlug, this.id, { display_filters: display_filters }, projectId);
+      const viewDisplayFilters = this.display_filters;
+      const _filters = { ...viewDisplayFilters, ...display_filters };
+
+      const view = await this.service.update(workspaceSlug, this.id, { display_filters: _filters }, projectId);
       if (!view) return;
 
       this.display_filters = view.display_filters;
@@ -135,17 +141,15 @@ export class Views implements TViews {
     }
   };
 
-  updateDisplayProperties = async (display_properties: any) => {
+  updateDisplayProperties = async (display_properties: Partial<TViewDisplayProperties>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
-      const view = await this.service.update(
-        workspaceSlug,
-        this.id,
-        { display_properties: display_properties },
-        projectId
-      );
+      const viewDisplayProperties = this.display_properties;
+      const _filters = { ...viewDisplayProperties, ...display_properties };
+
+      const view = await this.service.update(workspaceSlug, this.id, { display_properties: _filters }, projectId);
       if (!view) return;
 
       this.display_properties = view.display_properties;
@@ -157,7 +161,7 @@ export class Views implements TViews {
   lockView = async () => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const view = await this.service.lock(workspaceSlug, this.id, projectId);
       if (!view) return;
@@ -171,7 +175,7 @@ export class Views implements TViews {
   unlockView = async () => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const view = await this.service.unlock(workspaceSlug, this.id, projectId);
       if (!view) return;

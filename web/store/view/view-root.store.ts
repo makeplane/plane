@@ -53,7 +53,7 @@ export class ViewRoot implements TViewRoot {
   fetch = async () => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const views = await this.service.fetch(workspaceSlug, projectId);
       if (!views) return;
@@ -69,7 +69,7 @@ export class ViewRoot implements TViewRoot {
   create = async (_view: Partial<TView>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const view = await this.service.create(workspaceSlug, _view, projectId);
       if (!view) return;
@@ -83,7 +83,7 @@ export class ViewRoot implements TViewRoot {
   delete = async (viewId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       await this.service.remove(workspaceSlug, viewId, projectId);
 
@@ -96,7 +96,7 @@ export class ViewRoot implements TViewRoot {
   duplicate = async (viewId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       const view = await this.service.duplicate(workspaceSlug, viewId, projectId);
       if (!view) return;
