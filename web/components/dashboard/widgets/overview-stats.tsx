@@ -78,7 +78,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
             <div className={`relative flex justify-center items-center`}>
               <div>
                 <h5 className="font-semibold text-xl">{stat.count}</h5>
-                <p className="text-custom-text-300">{stat.title}</p>
+                <p className="text-custom-text-300 text-sm xl:text-base">{stat.title}</p>
               </div>
             </div>
           </Link>

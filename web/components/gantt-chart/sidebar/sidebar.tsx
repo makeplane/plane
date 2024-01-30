@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "components/gantt-chart/hooks";
@@ -27,10 +26,10 @@ type Props = {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
+  showAllBlocks?: boolean;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {
     blockUpdateHandler,
     blocks,
@@ -39,6 +38,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
+    showAllBlocks = false,
   } = props;
 
   const router = useRouter();
@@ -100,7 +100,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
 
   return (
     <DragDropContext onDragEnd={handleOrderChange}>
-      <StrictModeDroppable droppableId="gantt-sidebar">
+      <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
@@ -111,7 +111,15 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "");
+                  const isBlockVisibleOnSidebar = block.start_date && block.target_date;
+
+                  // hide the block if it doesn't have start and target dates and showAllBlocks is false
+                  if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
+
+                  const duration =
+                    !block.start_date || !block.target_date
+                      ? null
+                      : findTotalDaysInRange(block.start_date, block.target_date);
 
                   return (
                     <Draggable
@@ -149,7 +157,11 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                                 <IssueGanttSidebarBlock data={block.data} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                {duration} day{duration > 1 ? "s" : ""}
+                                {duration && (
+                                  <span>
+                                    {duration} day{duration > 1 ? "s" : ""}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -173,7 +185,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
             )}
           </div>
         )}
-      </StrictModeDroppable>
+      </Droppable>
     </DragDropContext>
   );
 };

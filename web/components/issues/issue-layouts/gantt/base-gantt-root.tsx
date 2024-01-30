@@ -13,11 +13,12 @@ import {
 } from "components/gantt-chart";
 // types
 import { TIssue, TUnGroupedIssues } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+// constants
+import { EUserProjectRoles } from "constants/project";
 import { EIssueActions } from "../types";
 
 interface IBaseGanttRoot {
@@ -76,12 +77,14 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
               viewId={viewId}
               enableQuickIssueCreate
               disableIssueCreation={!enableIssueCreation || !isAllowed}
+              showAllBlocks
             />
           )}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
+          showAllBlocks
         />
       </div>
     </>
