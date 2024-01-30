@@ -2,6 +2,7 @@ import { MouseEvent } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import { useTheme } from "next-themes";
 // hooks
 import { useCycle, useIssues, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -43,6 +44,7 @@ interface IActiveCycleDetails {
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser } = useUser();
   const {
@@ -76,7 +78,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["active"];
-  const emptyStateImage = getEmptyStateImagePath("cycle", "active", currentUser?.theme.theme === "light");
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("cycle", "active", isLightMode);
 
   if (!activeCycle && isLoading)
     return (
@@ -161,7 +165,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                     <h3 className="break-words text-lg font-semibold">{truncateText(activeCycle.name, 70)}</h3>
                   </Tooltip>
                 </span>
-                <span className="flex items-center gap-1 capitalize">
+                <span className="flex items-center gap-1">
                   <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
                     {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
                   </span>
@@ -251,7 +255,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             <div className="flex h-full w-full flex-col p-4 text-custom-text-200">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
-                <LinearProgressIndicator data={progressIndicatorData} inPercentage />
+                <LinearProgressIndicator size="md" data={progressIndicatorData} inPercentage />
               </div>
               <div className="mt-2 flex flex-col items-center gap-1">
                 {Object.keys(groupedIssues).map((group, index) => (

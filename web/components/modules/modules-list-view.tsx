@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useModule, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
@@ -15,6 +16,8 @@ export const ModulesListView: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
@@ -25,7 +28,8 @@ export const ModulesListView: React.FC = observer(() => {
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "modules", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "modules", isLightMode);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

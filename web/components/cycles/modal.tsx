@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle } from "hooks/store";
+import { useApplication, useCycle, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -25,11 +25,12 @@ const cycleService = new CycleService();
 export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // states
-  const [activeProject, setActiveProject] = useState<string>(projectId);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
+  const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   // toast alert
   const { setToastAlert } = useToast();
@@ -134,6 +135,27 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       });
   };
 
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!isOpen) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (data && data.project) {
+      setActiveProject(data.project);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+  }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -164,7 +186,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
                 <CycleForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
-                  projectId={activeProject}
+                  status={data ? true : false}
+                  projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
                   data={data}
                 />

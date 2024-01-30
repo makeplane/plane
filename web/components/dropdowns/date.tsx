@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import { usePopper } from "react-popper";
-import { CalendarDays, X } from "lucide-react";
+import { Calendar, CalendarDays, X } from "lucide-react";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -23,6 +23,7 @@ type Props = TDropdownProps & {
   onChange: (val: Date | null) => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
+  showPlaceholderIcon?: boolean;
 };
 
 type ButtonProps = {
@@ -33,9 +34,11 @@ type ButtonProps = {
   isClearable: boolean;
   hideIcon?: boolean;
   hideText?: boolean;
+  isActive?: boolean;
   onClear: () => void;
   placeholder: string;
   tooltip: boolean;
+  showPlaceholderIcon?: boolean;
 };
 
 const BorderButton = (props: ButtonProps) => {
@@ -47,6 +50,7 @@ const BorderButton = (props: ButtonProps) => {
     isClearable,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     onClear,
     placeholder,
     tooltip,
@@ -61,6 +65,7 @@ const BorderButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
@@ -131,9 +136,11 @@ const TransparentButton = (props: ButtonProps) => {
     isClearable,
     hideIcon = false,
     hideText = false,
+    isActive = false,
     onClear,
     placeholder,
     tooltip,
+    showPlaceholderIcon = false,
   } = props;
 
   return (
@@ -145,11 +152,16 @@ const TransparentButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          { "bg-custom-background-80": isActive },
           className
         )}
       >
         {!hideIcon && icon}
         {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
+        {showPlaceholderIcon && !date && (
+          <Calendar className="h-2.5 w-2.5 flex-shrink-0 hidden group-hover:inline text-custom-text-400" />
+        )}
+
         {isClearable && (
           <X
             className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
@@ -183,6 +195,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     placement,
     tabIndex,
     tooltip = false,
+    showPlaceholderIcon = false,
     value,
   } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -246,6 +259,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
             />
           ) : buttonVariant === "border-without-text" ? (
@@ -258,6 +272,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
               hideText
             />
@@ -296,7 +311,9 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
+              showPlaceholderIcon={showPlaceholderIcon}
             />
           ) : buttonVariant === "transparent-without-text" ? (
             <TransparentButton
@@ -308,8 +325,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
               placeholder={placeholder}
               isClearable={isClearable && isDateSelected}
               onClear={() => onChange(null)}
+              isActive={isOpen}
               tooltip={tooltip}
               hideText
+              showPlaceholderIcon={showPlaceholderIcon}
             />
           ) : null}
         </button>

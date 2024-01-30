@@ -13,8 +13,8 @@ export interface IGanttBlock {
     width: number;
   };
   sort_order: number;
-  start_date: Date;
-  target_date: Date;
+  start_date: Date | null;
+  target_date: Date | null;
 }
 
 export interface IBlockUpdateData {
