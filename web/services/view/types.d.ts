@@ -14,4 +14,6 @@ export type TViewService = {
   lock: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
   unlock: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
   duplicate: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  makeFavorite: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  removeFavorite: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
 };

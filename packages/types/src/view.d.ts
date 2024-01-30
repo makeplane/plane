@@ -53,23 +53,36 @@ export type TViewDisplayProperties = {
   updated_on: boolean;
 };
 
-export type TView = {
-  id: string;
-  workspace: string;
-  project: string | undefined;
-  name: string;
-  description: string;
-  query: string;
+export type TViewFilterProps = {
   filters: TViewFilters;
   display_filters: TViewDisplayFilters;
   display_properties: TViewDisplayProperties;
-  access: TViewAccess;
-  owned_by: string;
-  sort_order: number;
-  is_locked: boolean;
-  is_pinned: boolean;
-  created_by: string;
-  updated_by: string;
-  created_at: Date;
-  updated_at: Date;
+};
+
+export type TViewFilterPartialProps = {
+  filters: Partial<TViewFilters>;
+  display_filters: Partial<TViewDisplayFilters>;
+  display_properties: Partial<TViewDisplayProperties>;
+};
+
+export type TView = {
+  readonly id: string;
+  readonly workspace: string;
+  readonly project: string | undefined;
+  name: string;
+  description: string;
+  readonly query: string;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
+  readonly access: TViewAccess;
+  readonly owned_by: string;
+  readonly sort_order: number;
+  readonly is_locked: boolean;
+  readonly is_pinned: boolean;
+  readonly is_favorite: boolean;
+  readonly created_by: string;
+  readonly updated_by: string;
+  readonly created_at: Date;
+  readonly updated_at: Date;
 };

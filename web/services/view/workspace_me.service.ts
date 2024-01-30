@@ -73,4 +73,20 @@ export class WorkspaceMeViewService extends APIService implements TViewService {
         throw error?.response;
       });
   }
+
+  async makeFavorite(workspaceSlug: string, viewId: string): Promise<TView> {
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/views/${viewId}/favorite/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async removeFavorite(workspaceSlug: string, viewId: string): Promise<TView> {
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/views/${viewId}/unfavorite/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }

@@ -1,25 +1,43 @@
-import { action, computed, makeObservable } from "mobx";
-
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import set from "lodash/set";
 // store
 import { RootStore } from "store/root.store";
 // types
 import { TViewService } from "services/view/types";
-import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties, TViewAccess } from "@plane/types";
+import {
+  TView,
+  TViewFilters,
+  TViewDisplayFilters,
+  TViewDisplayProperties,
+  TViewFilterProps,
+  TViewFilterPartialProps,
+  TViewAccess,
+} from "@plane/types";
 
-export type TViews = TView & {
+type TLoader = "submitting" | "submit" | undefined;
+
+export type TViewsStore = TView & {
+  // observables
+  loader: TLoader;
+  filtersToUpdate: TViewFilterPartialProps;
   // computed
-  user: undefined;
+  appliedFilters: TViewFilterProps | undefined;
+  appliedFiltersQueryParams: undefined;
+  // helper actions
+  updateFilters: (filters: Partial<TViewFilters>) => void;
+  updateDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
+  updateDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) => void;
+  resetFilterChanges: () => void;
+  saveFilterChanges: () => void;
   // actions
-  updateName: (name: string) => Promise<void>;
-  updateDescription: (description: string) => Promise<void>;
-  updateFilters: (filters: Partial<TViewFilters>) => Promise<void>;
-  updateDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => Promise<void>;
-  updateDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) => Promise<void>;
   lockView: () => Promise<void>;
   unlockView: () => Promise<void>;
+  makeFavorite: () => Promise<void>;
+  removeFavorite: () => Promise<void>;
+  update: (viewData: Partial<TView>) => Promise<void>;
 };
 
-export class Views implements TViews {
+export class ViewsStore implements TViewsStore {
   id: string;
   workspace: string;
   project: string | undefined;
@@ -34,10 +52,18 @@ export class Views implements TViews {
   sort_order: number;
   is_locked: boolean;
   is_pinned: boolean;
+  is_favorite: boolean;
   created_by: string;
   updated_by: string;
   created_at: Date;
   updated_at: Date;
+
+  loader: TLoader = undefined;
+  filtersToUpdate: TViewFilterPartialProps = {
+    filters: {},
+    display_filters: {},
+    display_properties: {},
+  };
 
   constructor(private store: RootStore, _view: TView, private service: TViewService) {
     this.id = _view.id;
@@ -54,133 +80,143 @@ export class Views implements TViews {
     this.sort_order = _view.sort_order;
     this.is_locked = _view.is_locked;
     this.is_pinned = _view.is_pinned;
+    this.is_favorite = _view.is_favorite;
     this.created_by = _view.created_by;
     this.updated_by = _view.updated_by;
     this.created_at = _view.created_at;
     this.updated_at = _view.updated_at;
 
     makeObservable(this, {
+      // observables
+      loader: observable,
+      filtersToUpdate: observable.ref,
       // computed
-      user: computed,
-      // actions
-      updateName: action,
-      updateDescription: action,
+      appliedFilters: computed,
+      appliedFiltersQueryParams: computed,
+      // helper actions
       updateFilters: action,
       updateDisplayFilters: action,
       updateDisplayProperties: action,
+      resetFilterChanges: action,
+      saveFilterChanges: action,
+      // actions
+      update: action,
       lockView: action,
       unlockView: action,
     });
   }
 
   // computed
-  get user() {
+  get appliedFilters() {
     return undefined;
   }
 
-  // actions
-  updateName = async (name: string) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+  get appliedFiltersQueryParams() {
+    return undefined;
+  }
 
-      const view = await this.service.update(workspaceSlug, this.id, { name: name }, projectId);
-      if (!view) return;
-
-      this.name = view.name;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  updateDescription = async (description: string) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
-
-      const view = await this.service.update(workspaceSlug, this.id, { description: description }, projectId);
-      if (!view) return;
-
-      this.description = view.description;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  updateFilters = async (filters: Partial<TViewFilters>) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
-
-      const viewFilters = this.filters;
-      const _filters = { ...viewFilters, ...filters };
-
-      const view = await this.service.update(workspaceSlug, this.id, { filters: _filters }, projectId);
-      if (!view) return;
-
-      this.filters = view.filters;
-    } catch (error) {
-      console.log(error);
-    }
+  // helper actions
+  updateFilters = (filters: Partial<TViewFilters>) => {
+    runInAction(() => {
+      this.loader = "submit";
+      this.filtersToUpdate.filters = filters;
+    });
   };
 
   updateDisplayFilters = async (display_filters: Partial<TViewDisplayFilters>) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
-
-      const viewDisplayFilters = this.display_filters;
-      const _filters = { ...viewDisplayFilters, ...display_filters };
-
-      const view = await this.service.update(workspaceSlug, this.id, { display_filters: _filters }, projectId);
-      if (!view) return;
-
-      this.display_filters = view.display_filters;
-    } catch (error) {
-      console.log(error);
-    }
+    runInAction(() => {
+      this.loader = "submit";
+      this.filtersToUpdate.display_filters = display_filters;
+    });
   };
 
   updateDisplayProperties = async (display_properties: Partial<TViewDisplayProperties>) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
-
-      const viewDisplayProperties = this.display_properties;
-      const _filters = { ...viewDisplayProperties, ...display_properties };
-
-      const view = await this.service.update(workspaceSlug, this.id, { display_properties: _filters }, projectId);
-      if (!view) return;
-
-      this.display_properties = view.display_properties;
-    } catch (error) {
-      console.log(error);
-    }
+    runInAction(() => {
+      this.loader = "submit";
+      this.filtersToUpdate.display_properties = display_properties;
+    });
   };
 
+  resetFilterChanges = () => {
+    runInAction(() => {
+      this.loader = undefined;
+      this.filtersToUpdate = {
+        filters: {},
+        display_filters: {},
+        display_properties: {},
+      };
+    });
+  };
+
+  saveFilterChanges = async () => {
+    this.loader = "submitting";
+    if (this.appliedFilters) await this.update(this.appliedFilters);
+    this.loader = undefined;
+  };
+
+  // actions
   lockView = async () => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
 
-      const view = await this.service.lock(workspaceSlug, this.id, projectId);
-      if (!view) return;
+    const view = await this.service.lock(workspaceSlug, this.id, projectId);
+    if (!view) return;
 
+    runInAction(() => {
       this.is_locked = view.is_locked;
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   unlockView = async () => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
+
+    const view = await this.service.unlock(workspaceSlug, this.id, projectId);
+    if (!view) return;
+
+    runInAction(() => {
+      this.is_locked = view.is_locked;
+    });
+  };
+
+  makeFavorite = async () => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
+
+    const view = await this.service.makeFavorite(workspaceSlug, this.id, projectId);
+    if (!view) return;
+
+    runInAction(() => {
+      this.is_favorite = view.is_locked;
+    });
+  };
+
+  removeFavorite = async () => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
+
+    const view = await this.service.removeFavorite(workspaceSlug, this.id, projectId);
+    if (!view) return;
+
+    runInAction(() => {
+      this.is_favorite = view.is_locked;
+    });
+  };
+
+  update = async (viewData: Partial<TView>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug) return;
 
-      const view = await this.service.unlock(workspaceSlug, this.id, projectId);
+      const view = await this.service.update(workspaceSlug, this.id, viewData, projectId);
       if (!view) return;
 
-      this.is_locked = view.is_locked;
+      runInAction(() => {
+        Object.keys(viewData).forEach((key) => {
+          const _key = key as keyof TView;
+          set(this, _key, viewData[_key]);
+        });
+      });
     } catch (error) {
       console.log(error);
     }

@@ -110,4 +110,30 @@ export class ProjectViewService extends APIService implements TViewService {
         throw error?.response;
       });
   }
+
+  async makeFavorite(
+    workspaceSlug: string,
+    viewId: string,
+    projectId: string | undefined = undefined
+  ): Promise<TView | undefined> {
+    if (!projectId) return undefined;
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/favorite/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async removeFavorite(
+    workspaceSlug: string,
+    viewId: string,
+    projectId: string | undefined = undefined
+  ): Promise<TView | undefined> {
+    if (!projectId) return undefined;
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/unfavorite/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }

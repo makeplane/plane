@@ -1,8 +1,8 @@
 // types
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // stores
 import { RootStore } from "store/root.store";
-import { Views } from "./view.store";
+import { ViewsStore } from "./view.store";
 // types
 import { TViewService } from "services/view/types";
 import { TView } from "@plane/types";
@@ -12,10 +12,9 @@ export type TLoader = "" | undefined;
 
 type TViewRoot = {
   // observables
-  viewMap: Record<string, Views>;
+  viewMap: Record<string, ViewsStore>;
   // computed
   viewIds: string[];
-
   // actions
   fetch: () => Promise<void>;
   create: (view: Partial<TView>) => Promise<void>;
@@ -24,7 +23,7 @@ type TViewRoot = {
 };
 
 export class ViewRoot implements TViewRoot {
-  viewMap: Record<string, Views> = {};
+  viewMap: Record<string, ViewsStore> = {};
 
   constructor(private store: RootStore, private service: TViewService) {
     makeObservable(this, {
@@ -51,59 +50,51 @@ export class ViewRoot implements TViewRoot {
 
   // actions
   fetch = async () => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
 
-      const views = await this.service.fetch(workspaceSlug, projectId);
-      if (!views) return;
+    const views = await this.service.fetch(workspaceSlug, projectId);
+    if (!views) return;
 
+    runInAction(() => {
       views.forEach((view) => {
-        set(this.viewMap, [view.id], new Views(this.store, view, this.service));
+        set(this.viewMap, [view.id], new ViewsStore(this.store, view, this.service));
       });
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
-  create = async (_view: Partial<TView>) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+  create = async (data: Partial<TView>) => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
 
-      const view = await this.service.create(workspaceSlug, _view, projectId);
-      if (!view) return;
+    const view = await this.service.create(workspaceSlug, data, projectId);
+    if (!view) return;
 
-      set(this.viewMap, [view.id], new Views(this.store, view, this.service));
-    } catch (error) {
-      console.log(error);
-    }
+    runInAction(() => {
+      set(this.viewMap, [view.id], new ViewsStore(this.store, view, this.service));
+    });
   };
 
   delete = async (viewId: string) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
 
-      await this.service.remove(workspaceSlug, viewId, projectId);
+    await this.service.remove(workspaceSlug, viewId, projectId);
 
+    runInAction(() => {
       delete this.viewMap[viewId];
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   duplicate = async (viewId: string) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return;
 
-      const view = await this.service.duplicate(workspaceSlug, viewId, projectId);
-      if (!view) return;
+    const view = await this.service.duplicate(workspaceSlug, viewId, projectId);
+    if (!view) return;
 
-      set(this.viewMap, [view.id], new Views(this.store, view, this.service));
-    } catch (error) {
-      console.log(error);
-    }
+    runInAction(() => {
+      set(this.viewMap, [view.id], new ViewsStore(this.store, view, this.service));
+    });
   };
 }
