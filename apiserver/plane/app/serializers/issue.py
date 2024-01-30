@@ -304,6 +304,7 @@ class IssueRelationSerializer(BaseSerializer):
     sequence_id = serializers.IntegerField(
         source="related_issue.sequence_id", read_only=True
     )
+    name = serializers.CharField(source="related_issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
 
     class Meta:
@@ -313,6 +314,7 @@ class IssueRelationSerializer(BaseSerializer):
             "project_id",
             "sequence_id",
             "relation_type",
+            "name",
         ]
         read_only_fields = [
             "workspace",
@@ -328,6 +330,7 @@ class RelatedIssueSerializer(BaseSerializer):
     sequence_id = serializers.IntegerField(
         source="issue.sequence_id", read_only=True
     )
+    name = serializers.CharField(source="issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
 
     class Meta:
@@ -337,6 +340,7 @@ class RelatedIssueSerializer(BaseSerializer):
             "project_id",
             "sequence_id",
             "relation_type",
+            "name",
         ]
         read_only_fields = [
             "workspace",

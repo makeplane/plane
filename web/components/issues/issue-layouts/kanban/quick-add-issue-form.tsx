@@ -54,7 +54,7 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;

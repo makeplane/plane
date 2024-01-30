@@ -12,12 +12,7 @@ import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plan
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TStaticViewTypes,
-} from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";

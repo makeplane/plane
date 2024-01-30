@@ -1,5 +1,4 @@
 import { FC } from "react";
-
 // hooks
 import { useChart } from "../hooks";
 // types
