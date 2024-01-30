@@ -49,7 +49,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
 
   const issueFilterCount = size(
     Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([key, value]) => value && Array.isArray(value) && value.length > 0)
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
     )
   );
 

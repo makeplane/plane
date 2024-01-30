@@ -1,6 +1,5 @@
 import React, { Fragment, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
