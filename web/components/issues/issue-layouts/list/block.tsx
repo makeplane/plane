@@ -5,6 +5,8 @@ import { IssueProperties } from "../properties/all-properties";
 import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
+// helper
+import { cn } from "helpers/common.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -25,7 +27,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     router: { workspaceSlug, projectId },
   } = useApplication();
   const { getProjectById } = useProject();
-  const { setPeekIssue } = useIssueDetail();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
 
   const updateIssue = (issueToUpdate: TIssue) => {
     handleIssues(issueToUpdate, EIssueActions.UPDATE);
@@ -47,7 +49,15 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   return (
     <>
-      <div className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm">
+      <div
+        className={cn(
+          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200 last:border-b-transparent",
+          {
+            "border border-custom-primary-70 hover:border-custom-primary-70":
+              peekIssue && peekIssue.issueId === issue.id,
+          }
+        )}
+      >
         {displayProperties && displayProperties?.key && (
           <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
             {projectDetails?.identifier}-{issue.sequence_id}

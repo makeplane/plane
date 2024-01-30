@@ -148,10 +148,12 @@ def send_email_notification(
     template_data = []
     total_changes = 0
     comments = []
+    actors_involved = []
     for actor_id, changes in data.items():
         actor = User.objects.get(pk=actor_id)
         total_changes = total_changes + len(changes)
         comment = changes.pop("comment", False)
+        actors_involved.append(actor_id)
         if comment:
             comments.append(
                 {
@@ -191,6 +193,7 @@ def send_email_notification(
     context = {
         "data": template_data,
         "summary": summary,
+        "actors_involved": len(set(actors_involved)),
         "issue": {
             "issue_identifier": f"{str(issue.project.identifier)}-{str(issue.sequence_id)}",
             "name": issue.name,
@@ -200,6 +203,9 @@ def send_email_notification(
             "email": receiver.email,
         },
         "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
+        "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",
+        "workspace":str(issue.project.workspace.slug),
+        "project": str(issue.project.name),
         "user_preference": f"{base_api}/profile/preferences/email",
         "comments": comments,
     }
