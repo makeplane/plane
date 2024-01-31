@@ -10,7 +10,7 @@ import { TActivityOperations } from "../root";
 import { TIssueComment } from "@plane/types";
 // icons
 import { Globe2, Lock } from "lucide-react";
-import { useWorkspace } from "hooks/store";
+import { useMention, useWorkspace } from "hooks/store";
 
 const fileService = new FileService();
 
@@ -43,6 +43,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
+  const { mentionHighlights, mentionSuggestions } = useMention();
+
   // refs
   const editorRef = useRef<any>(null);
   // react hook form
@@ -61,7 +63,14 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   };
 
   return (
-    <div>
+    <div
+    // onKeyDown={(e) => {
+    //   if (e.key === "Enter" && !e.shiftKey) {
+    //     e.preventDefault();
+    //     // handleSubmit(onSubmit)(e);
+    //   }
+    // }}
+    >
       <Controller
         name="access"
         control={control}
@@ -72,6 +81,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
                 onEnterKeyPress={(e) => {
+                  console.log("yo");
                   handleSubmit(onSubmit)(e);
                 }}
                 cancelUploadImage={fileService.cancelUpload}
@@ -86,6 +96,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 onChange={(comment_json: Object, comment_html: string) => {
                   onChange(comment_html);
                 }}
+                mentionSuggestions={mentionSuggestions}
+                mentionHighlights={mentionHighlights}
                 commentAccessSpecifier={
                   showAccessSpecifier
                     ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
