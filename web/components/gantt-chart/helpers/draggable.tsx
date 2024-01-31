@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-
-// icons
 import { ArrowLeft, ArrowRight } from "lucide-react";
 // hooks
 import { useChart } from "../hooks";
@@ -16,23 +14,17 @@ type Props = {
   enableBlockMove: boolean;
 };
 
-export const ChartDraggable: React.FC<Props> = ({
-  block,
-  blockToRender,
-  handleBlock,
-  enableBlockLeftResize,
-  enableBlockRightResize,
-  enableBlockMove,
-}) => {
+export const ChartDraggable: React.FC<Props> = (props) => {
+  const { block, blockToRender, handleBlock, enableBlockLeftResize, enableBlockRightResize, enableBlockMove } = props;
+  // states
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [posFromLeft, setPosFromLeft] = useState<number | null>(null);
-
+  // refs
   const resizableRef = useRef<HTMLDivElement>(null);
-
+  // chart hook
   const { currentViewData, scrollLeft } = useChart();
-
   // check if cursor reaches either end while resizing/dragging
   const checkScrollEnd = (e: MouseEvent): number => {
     const SCROLL_THRESHOLD = 70;
@@ -68,7 +60,6 @@ export const ChartDraggable: React.FC<Props> = ({
 
     return delWidth;
   };
-
   // handle block resize from the left end
   const handleBlockLeftResize = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!currentViewData || !resizableRef.current || !block.position) return;
@@ -120,7 +111,6 @@ export const ChartDraggable: React.FC<Props> = ({
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
-
   // handle block resize from the right end
   const handleBlockRightResize = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!currentViewData || !resizableRef.current || !block.position) return;
@@ -163,7 +153,6 @@ export const ChartDraggable: React.FC<Props> = ({
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
-
   // handle block x-axis move
   const handleBlockMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!enableBlockMove || !currentViewData || !resizableRef.current || !block.position) return;
@@ -210,7 +199,6 @@ export const ChartDraggable: React.FC<Props> = ({
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
-
   // scroll to a hidden block
   const handleScrollToBlock = () => {
     const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
@@ -220,7 +208,6 @@ export const ChartDraggable: React.FC<Props> = ({
     // update container's scroll position to the block's position
     scrollContainer.scrollLeft = block.position.marginLeft - 4;
   };
-
   // update block position from viewport's left end on scroll
   useEffect(() => {
     const block = resizableRef.current;
@@ -229,7 +216,6 @@ export const ChartDraggable: React.FC<Props> = ({
 
     setPosFromLeft(block.getBoundingClientRect().left);
   }, [scrollLeft]);
-
   // check if block is hidden on either side
   const isBlockHiddenOnLeft =
     block.position?.marginLeft &&

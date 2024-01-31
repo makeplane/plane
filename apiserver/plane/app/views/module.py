@@ -7,6 +7,8 @@ from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 # Third party imports
 from rest_framework.response import Response
@@ -296,23 +298,20 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "issue", flat=True
             )
         )
-        issue_activity.delay(
-            type="module.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "module_id": str(pk),
-                    "module_name": str(module.name),
-                    "issues": [str(issue_id) for issue_id in module_issues],
-                }
-            ),
-            actor_id=str(request.user.id),
-            issue_id=str(pk),
-            project_id=str(project_id),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
-        )
+        _ = [
+            issue_activity.delay(
+                type="module.activity.deleted",
+                requested_data=json.dumps({"module_id": str(pk)}),
+                actor_id=str(request.user.id),
+                issue_id=str(issue),
+                project_id=project_id,
+                current_instance=json.dumps({"module_name": str(module.name)}),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            for issue in module_issues
+        ]
         module.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -332,62 +331,18 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ProjectEntityPermission,
     ]
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("issue")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(module_id=self.kwargs.get("module_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("module")
-            .select_related("issue", "issue__state", "issue__project")
-            .prefetch_related("issue__assignees", "issue__labels")
-            .prefetch_related("module__members")
-            .distinct()
-        )
 
-    @method_decorator(gzip_page)
-    def list(self, request, slug, project_id, module_id):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-        order_by = request.GET.get("order_by", "created_at")
-        filters = issue_filters(request.query_params, "GET")
-        issues = (
-            Issue.issue_objects.filter(issue_module__module_id=module_id)
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(
+                project_id=self.kwargs.get("project_id"),
+                workspace__slug=self.kwargs.get("slug"),
+                issue_module__module_id=self.kwargs.get("module_id")
             )
-            .filter(project_id=project_id)
-            .filter(workspace__slug=slug)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .order_by(order_by)
-            .filter(**filters)
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("labels", "assignees")
+            .prefetch_related('issue_module__module')
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -403,105 +358,118 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
             .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
                 )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
-        )
+        ).distinct()
+
+    @method_decorator(gzip_page)
+    def list(self, request, slug, project_id, module_id):
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
+        filters = issue_filters(request.query_params, "GET")
+        issue_queryset = self.get_queryset().filter(**filters)
         serializer = IssueSerializer(
-            issues, many=True, fields=fields if fields else None
+            issue_queryset, many=True, fields=fields if fields else None
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def create(self, request, slug, project_id, module_id):
+    # create multiple issues inside a module
+    def create_module_issues(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response(
                 {"error": "Issues are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        module = Module.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=module_id
-        )
-
-        module_issues = list(ModuleIssue.objects.filter(issue_id__in=issues))
-
-        update_module_issue_activity = []
-        records_to_update = []
-        record_to_create = []
-
-        for issue in issues:
-            module_issue = [
-                module_issue
-                for module_issue in module_issues
-                if str(module_issue.issue_id) in issues
-            ]
-
-            if len(module_issue):
-                if module_issue[0].module_id != module_id:
-                    update_module_issue_activity.append(
-                        {
-                            "old_module_id": str(module_issue[0].module_id),
-                            "new_module_id": str(module_id),
-                            "issue_id": str(module_issue[0].issue_id),
-                        }
-                    )
-                    module_issue[0].module_id = module_id
-                    records_to_update.append(module_issue[0])
-            else:
-                record_to_create.append(
-                    ModuleIssue(
-                        module=module,
-                        issue_id=issue,
-                        project_id=project_id,
-                        workspace=module.workspace,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
+        project = Project.objects.get(pk=project_id)
+        _ = ModuleIssue.objects.bulk_create(
+            [
+                ModuleIssue(
+                    issue_id=str(issue),
+                    module_id=module_id,
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
                 )
-
-        ModuleIssue.objects.bulk_create(
-            record_to_create,
+                for issue in issues
+            ],
             batch_size=10,
             ignore_conflicts=True,
         )
+        # Bulk Update the activity
+        _ = [
+            issue_activity.delay(
+                type="module.activity.created",
+                requested_data=json.dumps({"module_id": str(module_id)}),
+                actor_id=str(request.user.id),
+                issue_id=str(issue),
+                project_id=project_id,
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            for issue in issues
+        ]
+        issues = (self.get_queryset().filter(pk__in=issues))
+        serializer = IssueSerializer(issues , many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
-        ModuleIssue.objects.bulk_update(
-            records_to_update,
-            ["module"],
+    # create multiple module inside an issue
+    def create_issue_modules(self, request, slug, project_id, issue_id):
+        modules = request.data.get("modules", [])
+        if not len(modules):
+            return Response(
+                {"error": "Modules are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        project = Project.objects.get(pk=project_id)
+        _ = ModuleIssue.objects.bulk_create(
+            [
+                ModuleIssue(
+                    issue_id=issue_id,
+                    module_id=module,
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+                for module in modules
+            ],
             batch_size=10,
+            ignore_conflicts=True,
         )
+        # Bulk Update the activity
+        _ = [
+            issue_activity.delay(
+                type="module.activity.created",
+                requested_data=json.dumps({"module_id": module}),
+                actor_id=str(request.user.id),
+                issue_id=issue_id,
+                project_id=project_id,
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            for module in modules
+        ]
 
-        # Capture Issue Activity
-        issue_activity.delay(
-            type="module.activity.created",
-            requested_data=json.dumps({"modules_list": issues}),
-            actor_id=str(self.request.user.id),
-            issue_id=None,
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {
-                    "updated_module_issues": update_module_issue_activity,
-                    "created_module_issues": serializers.serialize(
-                        "json", record_to_create
-                    ),
-                }
-            ),
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
-        )
+        issue = (self.get_queryset().filter(pk=issue_id).first())
+        serializer = IssueSerializer(issue)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        issues = self.get_queryset().values_list("issue_id", flat=True)
-
-        return Response(
-            IssueSerializer(
-                Issue.objects.filter(pk__in=issues), many=True
-            ).data,
-            status=status.HTTP_200_OK,
-        )
 
     def destroy(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
@@ -512,16 +480,11 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         )
         issue_activity.delay(
             type="module.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "module_id": str(module_id),
-                    "issues": [str(issue_id)],
-                }
-            ),
+            requested_data=json.dumps({"module_id": str(module_id)}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps({"module_name": module_issue.module.name}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

@@ -53,7 +53,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       storeType={EIssuesStoreType.MODULE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
-        return issues.addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
+        return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
       }}
     />
   );

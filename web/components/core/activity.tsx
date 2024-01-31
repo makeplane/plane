@@ -40,9 +40,9 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           }`}`}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline whitespace-nowrap"
+          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
         >
-          {`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}{" "}
+          <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
           <span className="font-normal">{activity.issue_detail?.name}</span>
         </a>
       ) : (
@@ -267,7 +267,7 @@ const activityDetails: {
               <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
             </span>
             {showIssue && (
-              <span>
+              <span className="">
                 {" "}
                 to <IssueLink activity={activity} />
               </span>

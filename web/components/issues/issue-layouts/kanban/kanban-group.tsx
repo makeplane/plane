@@ -17,6 +17,7 @@ import { EIssueActions } from "../types";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
+  peekIssueId?: string;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
@@ -47,6 +48,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     issuesMap,
     displayProperties,
     issueIds,
+    peekIssueId,
     isDragDisabled,
     handleIssues,
     quickActions,
@@ -118,6 +120,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               sub_group_id={sub_group_id}
               columnId={groupId}
               issuesMap={issuesMap}
+              peekIssueId={peekIssueId}
               issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
               displayProperties={displayProperties}
               isDragDisabled={isDragDisabled}

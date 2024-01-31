@@ -44,7 +44,7 @@ export interface IBaseKanBanLayout {
   showLoader?: boolean;
   viewId?: string;
   storeType?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 

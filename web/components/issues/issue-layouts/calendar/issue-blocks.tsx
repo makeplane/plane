@@ -6,7 +6,8 @@ import { MoreHorizontal } from "lucide-react";
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// ui
+// helpers
+import { cn } from "helpers/common.helper";
 // types
 import { TIssue, TIssueMap } from "@plane/types";
 import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
@@ -26,7 +27,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   } = useApplication();
   const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
-  const { setPeekIssue } = useIssueDetail();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
@@ -84,11 +85,18 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     )}
 
                     <div
-                      className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-100 px-1 py-1.5 shadow-custom-shadow-2xs ${
-                        snapshot.isDragging
-                          ? "bg-custom-background-90 shadow-custom-shadow-rg"
-                          : "bg-custom-background-100 hover:bg-custom-background-90"
-                      }`}
+                      className={cn(
+                        "group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-200 hover:border-custom-border-400 px-1 py-1.5 ",
+                        {
+                          "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100":
+                            snapshot.isDragging,
+                        },
+                        { "bg-custom-background-100 hover:bg-custom-background-90": !snapshot.isDragging },
+                        {
+                          "border border-custom-primary-70 hover:border-custom-primary-70":
+                            peekIssue?.issueId === issue.id,
+                        }
+                      )}
                     >
                       <div className="flex h-full items-center gap-1.5">
                         <span

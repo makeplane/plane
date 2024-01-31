@@ -14,7 +14,7 @@ import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
-import { ExternalLinkIcon, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper

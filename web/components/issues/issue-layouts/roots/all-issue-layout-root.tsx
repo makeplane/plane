@@ -61,6 +61,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
     ) {
       const routerQueryParams = { ...router.query };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { ["workspaceSlug"]: _workspaceSlug, ["globalViewId"]: _globalViewId, ...filters } = routerQueryParams;
 
       let issueFilters: any = {};
