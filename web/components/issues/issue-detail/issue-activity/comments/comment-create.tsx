@@ -17,7 +17,6 @@ const fileService = new FileService();
 type TIssueCommentCreate = {
   workspaceSlug: string;
   activityOperations: TActivityOperations;
-  disabled: boolean;
   showAccessSpecifier?: boolean;
 };
 
@@ -40,7 +39,7 @@ const commentAccess: commentAccessType[] = [
 ];
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
-  const { workspaceSlug, activityOperations, disabled, showAccessSpecifier = false } = props;
+  const { workspaceSlug, activityOperations, showAccessSpecifier = false } = props;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
@@ -94,7 +93,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 }
                 submitButton={
                   <Button
-                    disabled={isSubmitting || disabled}
+                    disabled={isSubmitting}
                     variant="primary"
                     type="submit"
                     className="!px-2.5 !py-1.5 !text-xs"

@@ -100,7 +100,7 @@ def dashboard_assigned_issues(self, request, slug):
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
-        .prefetch_related("assignees", "labels")
+        .prefetch_related("assignees", "labels", "issue_module__module")
         .prefetch_related(
             Prefetch(
                 "issue_relation",
@@ -110,7 +110,6 @@ def dashboard_assigned_issues(self, request, slug):
             )
         )
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
-        .annotate(module_id=F("issue_module__module_id"))
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -221,9 +220,8 @@ def dashboard_created_issues(self, request, slug):
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
-        .prefetch_related("assignees", "labels")
+        .prefetch_related("assignees", "labels", "issue_module__module")
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
-        .annotate(module_id=F("issue_module__module_id"))
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()

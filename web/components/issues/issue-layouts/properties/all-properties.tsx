@@ -155,7 +155,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             multiple
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
-            tooltip
           />
         </div>
       </WithDisplayPropertiesHOC>

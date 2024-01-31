@@ -1,6 +1,8 @@
 import { memo } from "react";
 import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueProperties } from "../properties/all-properties";
@@ -9,9 +11,11 @@ import { Tooltip, ControlLink } from "@plane/ui";
 // types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
+// helper
+import { cn } from "helpers/common.helper";
 
 interface IssueBlockProps {
+  peekIssueId?: string;
   issueId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -86,6 +90,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const {
+    peekIssueId,
     issueId,
     issuesMap,
     displayProperties,
@@ -121,9 +126,12 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
             <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
           )}
           <div
-            className={`space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all ${
-              isDragDisabled ? "" : "hover:cursor-grab"
-            } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
+            className={cn(
+              "space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm transition-all hover:border-custom-border-400",
+              { "hover:cursor-grab": !isDragDisabled },
+              { "border-custom-primary-100": snapshot.isDragging },
+              { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
+            )}
           >
             <KanbanIssueDetailsBlock
               issue={issue}

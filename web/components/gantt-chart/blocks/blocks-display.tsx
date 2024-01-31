@@ -1,9 +1,11 @@
 import { FC } from "react";
 // hooks
+import { useIssueDetail } from "hooks/store";
 import { useChart } from "../hooks";
 // helpers
 import { ChartAddBlock, ChartDraggable } from "components/gantt-chart";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
 
@@ -31,6 +33,7 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
   } = props;
 
   const { activeBlock, dispatch } = useChart();
+  const { peekIssue } = useIssueDetail();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -88,7 +91,14 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
           return (
             <div
               key={`block-${block.id}`}
-              className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
+              className={cn(
+                "h-11",
+                { "rounded bg-custom-background-80": activeBlock?.id === block.id },
+                {
+                  "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
+                    peekIssue?.issueId === block.data.id,
+                }
+              )}
               onMouseEnter={() => updateActiveBlock(block)}
               onMouseLeave={() => updateActiveBlock(null)}
             >

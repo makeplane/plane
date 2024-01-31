@@ -3,12 +3,14 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea
 import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "components/gantt-chart/hooks";
+import { useIssueDetail } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // components
 import { GanttQuickAddIssueForm, IssueGanttSidebarBlock } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 import { TIssue } from "@plane/types";
@@ -45,6 +47,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
   const { cycleId } = router.query;
 
   const { activeBlock, dispatch } = useChart();
+  const { peekIssue } = useIssueDetail();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -104,7 +107,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
-            className="mt-3 max-h-full overflow-y-auto pl-2.5"
+            className="mt-[12px] max-h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
@@ -130,7 +133,14 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          className={cn(
+                            "h-11",
+                            { "rounded bg-custom-background-80": snapshot.isDragging },
+                            {
+                              "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
+                                peekIssue?.issueId === block.data.id,
+                            }
+                          )}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
