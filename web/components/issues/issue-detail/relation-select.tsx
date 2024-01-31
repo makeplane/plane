@@ -132,7 +132,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                         href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${currentIssue.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-medium mt-0.5"
+                        className="text-xs font-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}

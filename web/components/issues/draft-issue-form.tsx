@@ -152,7 +152,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
     project_id: watch("project_id"),
     parent_id: watch("parent_id"),
     cycle_id: watch("cycle_id"),
-    module_id: watch("module_id"),
+    module_ids: watch("module_ids"),
   };
 
   useEffect(() => {
@@ -257,14 +257,16 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   };
 
   useEffect(() => {
-    setFocus("name");
-
     reset({
       ...defaultValues,
       ...(prePopulatedData ?? {}),
       ...(data ?? {}),
     });
-  }, [setFocus, prePopulatedData, reset, data]);
+  }, [prePopulatedData, reset, data]);
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
@@ -570,22 +572,25 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                {projectDetails?.module_view && (
+
+                {projectDetails?.module_view && workspaceSlug && (
                   <Controller
                     control={control}
-                    name="module_id"
+                    name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
                         <ModuleDropdown
                           projectId={projectId}
-                          value={value}
-                          onChange={(moduleId) => onChange(moduleId)}
+                          value={value ?? []}
+                          onChange={onChange}
                           buttonVariant="border-with-text"
+                          multiple
                         />
                       </div>
                     )}
                   />
                 )}
+
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
                   areEstimatesEnabledForProject(projectId) && (
                     <Controller

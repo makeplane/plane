@@ -10,6 +10,11 @@ export interface CustomMentionOptions extends MentionOptions {
 }
 
 export const CustomMention = Mention.extend<CustomMentionOptions>({
+  addStorage(this) {
+    return {
+      mentionsOpen: false,
+    };
+  },
   addAttributes() {
     return {
       id: {

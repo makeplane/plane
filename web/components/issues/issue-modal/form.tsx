@@ -44,7 +44,7 @@ const defaultValues: Partial<TIssue> = {
   assignee_ids: [],
   label_ids: [],
   cycle_id: null,
-  module_id: null,
+  module_ids: null,
   start_date: null,
   target_date: null,
 };
@@ -267,6 +267,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                       }}
                       buttonVariant="border-with-text"
+                      // TODO: update tabIndex logic
                       tabIndex={19}
                     />
                   </div>
@@ -541,21 +542,23 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                {projectDetails?.module_view && (
+                {projectDetails?.module_view && workspaceSlug && (
                   <Controller
                     control={control}
-                    name="module_id"
+                    name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
                         <ModuleDropdown
                           projectId={projectId}
-                          value={value}
-                          onChange={(moduleId) => {
-                            onChange(moduleId);
+                          value={value ?? []}
+                          onChange={(moduleIds) => {
+                            onChange(moduleIds);
                             handleFormChange();
                           }}
                           buttonVariant="border-with-text"
                           tabIndex={13}
+                          multiple
+                          showCount
                         />
                       </div>
                     )}

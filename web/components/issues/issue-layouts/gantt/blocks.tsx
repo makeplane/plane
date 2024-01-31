@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers

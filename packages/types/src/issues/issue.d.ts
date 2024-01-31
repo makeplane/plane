@@ -21,7 +21,7 @@ export type TIssue = {
   project_id: string;
   parent_id: string | null;
   cycle_id: string | null;
-  module_id: string | null;
+  module_ids: string[] | null;
 
   created_at: string;
   updated_at: string;
