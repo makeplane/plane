@@ -61,7 +61,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         projectId?.toString(),
         issueStore,
         issueMap,
-        groupedIssueIds
+        groupedIssueIds,
+        viewId
       ).catch((err) => {
         setToastAlert({
           title: "Error",
