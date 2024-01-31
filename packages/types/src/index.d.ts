@@ -27,7 +27,7 @@ export * from "./auth";
 export * from "./api_token";
 export * from "./instance";
 export * from "./app";
-export * from "./view";
+export * from "./view/root";
 
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object

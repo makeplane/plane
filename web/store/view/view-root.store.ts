@@ -18,7 +18,7 @@ type TViewRoot = {
   // actions
   fetch: () => Promise<void>;
   create: (view: Partial<TView>) => Promise<void>;
-  delete: (viewId: string) => Promise<void>;
+  remove: (viewId: string) => Promise<void>;
   duplicate: (viewId: string) => Promise<void>;
 };
 
@@ -34,7 +34,7 @@ export class ViewRoot implements TViewRoot {
       // actions
       fetch: action,
       create: action,
-      delete: action,
+      remove: action,
       duplicate: action,
     });
   }
@@ -49,6 +49,10 @@ export class ViewRoot implements TViewRoot {
   }
 
   // actions
+  /**
+   * @description This method is used to fetch all the views
+   * @returns
+   */
   fetch = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
     if (!workspaceSlug) return;
@@ -63,6 +67,11 @@ export class ViewRoot implements TViewRoot {
     });
   };
 
+  /**
+   * @description This method is used to create a view
+   * @param data: Partial<TView>
+   * @returns
+   */
   create = async (data: Partial<TView>) => {
     const { workspaceSlug, projectId } = this.store.app.router;
     if (!workspaceSlug) return;
@@ -75,7 +84,12 @@ export class ViewRoot implements TViewRoot {
     });
   };
 
-  delete = async (viewId: string) => {
+  /**
+   * @description This method is used to remove a view
+   * @param viewId: string
+   * @returns
+   */
+  remove = async (viewId: string) => {
     const { workspaceSlug, projectId } = this.store.app.router;
     if (!workspaceSlug) return;
 
@@ -86,6 +100,11 @@ export class ViewRoot implements TViewRoot {
     });
   };
 
+  /**
+   * @description This method is used to duplicate a view
+   * @param viewId: string
+   * @returns
+   */
   duplicate = async (viewId: string) => {
     const { workspaceSlug, projectId } = this.store.app.router;
     if (!workspaceSlug) return;
