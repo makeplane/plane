@@ -35,7 +35,7 @@ export class EventTrackerStore implements IEventTrackerStore {
     group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
   ) => {
     try {
-      const currentWorkspaceDetails = this.rootStore.workspaceRoot.workspaces.currentWorkspace;
+      const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
       const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
       let extras: any = {
         workspace_name: currentWorkspaceDetails?.name ?? "",
@@ -45,7 +45,8 @@ export class EventTrackerStore implements IEventTrackerStore {
         project_id: currentProjectDetails?.id ?? "",
         project_identifier: currentProjectDetails?.identifier ?? "",
       };
-      if (["PROJECT_CREATED", "PROJECT_UPDATED"].includes(eventName)) {
+      if (["Project created", "Project updated"].includes(eventName)) {
+        
         const project_details: any = payload as object;
         extras = {
           ...extras,
@@ -53,24 +54,19 @@ export class EventTrackerStore implements IEventTrackerStore {
           project_id: project_details?.id ?? "",
           project_identifier: project_details?.identifier ?? "",
         };
+        console.log("Project created",extras);
       }
       if (group && group!.isGrouping === true) {
         posthog?.group(group!.groupType!, group!.groupId!, {
           date: new Date(),
           workspace_id: group!.groupId,
         });
-        posthog?.capture(eventName, {
-          ...payload,
-          extras: extras,
-          element: this.trackElement ?? "",
-        });
-      } else {
-        posthog?.capture(eventName, {
-          ...payload,
-          extras: extras,
-          element: this.trackElement ?? "",
-        });
       }
+      posthog?.capture(eventName, {
+        ...payload,
+        extras: extras,
+        element: this.trackElement ?? "",
+      });
     } catch (error) {
       throw error;
     }

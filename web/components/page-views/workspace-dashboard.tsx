@@ -37,7 +37,7 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        postHogEventTracker("USER_TOUR_COMPLETE", {
+        postHogEventTracker("User tour complete", {
           user_id: currentUser?.id,
           email: currentUser?.email,
           state: "SUCCESS",

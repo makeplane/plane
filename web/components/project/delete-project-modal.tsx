@@ -64,7 +64,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
 
         handleClose();
         postHogEventTracker(
-          "PROJECT_DELETED",
+          "Project deleted",
           {
             state: "SUCCESS",
           },
@@ -82,7 +82,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       })
       .catch(() => {
         postHogEventTracker(
-          "PROJECT_DELETED",
+          "Project deleted",
           {
             state: "FAILED",
           },

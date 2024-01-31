@@ -72,7 +72,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              postHogEventTracker("WORKSPACE_CREATED", {
+              postHogEventTracker("Workspace created", {
                 ...res,
                 state: "SUCCESS",
               });
@@ -90,7 +90,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               });
-              postHogEventTracker("WORKSPACE_CREATED", {
+              postHogEventTracker("Workspace created", {
                 state: "FAILED",
               });
             });
@@ -102,7 +102,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
-        postHogEventTracker("WORKSPACE_CREATED", {
+        postHogEventTracker("Workspace created", {
           state: "FAILED",
         });
       });

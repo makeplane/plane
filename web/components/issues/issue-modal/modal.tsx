@@ -148,7 +148,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue created successfully.",
       });
       postHogEventTracker(
-        "ISSUE_CREATED",
+        "Issue created",
         {
           ...response,
           state: "SUCCESS",
@@ -168,7 +168,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue could not be created. Please try again.",
       });
       postHogEventTracker(
-        "ISSUE_CREATED",
+        "Issue created",
         {
           state: "FAILED",
         },
@@ -192,7 +192,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue updated successfully.",
       });
       postHogEventTracker(
-        "ISSUE_UPDATED",
+        "Issue updated",
         {
           ...response,
           state: "SUCCESS",
@@ -212,7 +212,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue could not be created. Please try again.",
       });
       postHogEventTracker(
-        "ISSUE_UPDATED",
+        "Issue updated",
         {
           state: "FAILED",
         },

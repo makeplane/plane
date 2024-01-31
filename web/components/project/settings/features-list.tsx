@@ -94,7 +94,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
               setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
-              postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
+              postHogEventTracker(`Toggle ${feature.title.toLowerCase()}`, {
                 workspace_id: currentWorkspace?.id,
                 workspace_slug: currentWorkspace?.slug,
                 project_id: currentProjectDetails?.id,

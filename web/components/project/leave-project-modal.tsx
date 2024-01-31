@@ -65,7 +65,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
-              postHogEventTracker("PROJECT_MEMBER_LEAVE", {
+              postHogEventTracker("Project member leave", {
                 state: "SUCCESS",
               });
             })
@@ -75,7 +75,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
-              postHogEventTracker("PROJECT_MEMBER_LEAVE", {
+              postHogEventTracker("Project member leave", {
                 state: "FAILED",
               });
             });

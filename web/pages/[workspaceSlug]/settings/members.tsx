@@ -45,7 +45,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
       .then(() => {
         setInviteModal(false);
-        postHogEventTracker("MEMBER_INVITED", { state: "SUCCESS" });
+        postHogEventTracker("Member invited", { state: "SUCCESS" });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -53,7 +53,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         });
       })
       .catch((err) => {
-        postHogEventTracker("MEMBER_INVITED", { state: "FAILED" });
+        postHogEventTracker("Member invited", { state: "FAILED" });
         setToastAlert({
           type: "error",
           title: "Error!",

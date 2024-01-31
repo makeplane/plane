@@ -48,7 +48,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        postHogEventTracker("CYCLE_CREATE", {
+        postHogEventTracker("Cycle create", {
           ...res,
           state: "SUCCESS",
         });
@@ -59,7 +59,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Error!",
           message: err.detail ?? "Error in creating cycle. Please try again.",
         });
-        postHogEventTracker("CYCLE_CREATE", {
+        postHogEventTracker("Cycle create", {
           state: "FAILED",
         });
       });

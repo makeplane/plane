@@ -61,7 +61,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
         router.push("/");
-        postHogEventTracker("WORKSPACE_DELETED", {
+        postHogEventTracker("Workspace deleted", {
           res,
           state: "SUCCESS",
         });
@@ -77,7 +77,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });
-        postHogEventTracker("WORKSPACE_DELETED", {
+        postHogEventTracker("Workspace deleted", {
           state: "FAILED",
         });
       });

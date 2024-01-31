@@ -52,7 +52,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module deleted successfully.",
         });
-        postHogEventTracker("MODULE_DELETED", {
+        postHogEventTracker("Module deleted", {
           state: "SUCCESS",
         });
       })
@@ -62,7 +62,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });
-        postHogEventTracker("MODULE_DELETED", {
+        postHogEventTracker("Module deleted", {
           state: "FAILED",
         });
       })

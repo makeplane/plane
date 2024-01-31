@@ -84,7 +84,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        postHogEventTracker("MEMBER_ACCEPTED", {
+        postHogEventTracker("Member accepted", {
           ...res,
           state: "SUCCESS",
           accepted_from: "App",

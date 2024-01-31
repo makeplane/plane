@@ -81,7 +81,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateUserOnBoard()
       .then(() => {
-        postHogEventTracker("USER_ONBOARDING_COMPLETE", {
+        postHogEventTracker("User onboarding complete", {
           user_role: user.role,
           email: user.email,
           user_id: user.id,

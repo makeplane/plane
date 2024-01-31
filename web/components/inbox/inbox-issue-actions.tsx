@@ -88,7 +88,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             throw new Error("Missing required parameters");
           await removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
           postHogEventTracker(
-            "ISSUE_DELETED",
+            "Issue deleted",
             {
               state: "SUCCESS",
             },
@@ -108,7 +108,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
           postHogEventTracker(
-            "ISSUE_DELETED",
+            "Issue deleted",
             {
               state: "FAILED",
             },

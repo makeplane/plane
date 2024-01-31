@@ -90,7 +90,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           message: "Members added successfully.",
         });
         postHogEventTracker(
-          "MEMBER_ADDED",
+          "Member added",
           {
             ...res,
             state: "SUCCESS",
@@ -105,7 +105,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         postHogEventTracker(
-          "MEMBER_ADDED",
+          "Member added",
           {
             state: "FAILED",
           },

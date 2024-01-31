@@ -61,7 +61,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module created successfully.",
         });
-        postHogEventTracker("MODULE_CREATED", {
+        postHogEventTracker("Module created", {
           ...res,
           state: "SUCCESS",
         });
@@ -72,7 +72,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err.detail ?? "Module could not be created. Please try again.",
         });
-        postHogEventTracker("MODULE_CREATED", {
+        postHogEventTracker("Module created", {
           state: "FAILED",
         });
       });
@@ -91,7 +91,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module updated successfully.",
         });
-        postHogEventTracker("MODULE_UPDATED", {
+        postHogEventTracker("Module updated", {
           ...res,
           state: "SUCCESS",
         });
@@ -102,7 +102,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err.detail ?? "Module could not be updated. Please try again.",
         });
-        postHogEventTracker("MODULE_UPDATED", {
+        postHogEventTracker("Module updated", {
           state: "FAILED",
         });
       });

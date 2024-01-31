@@ -46,12 +46,12 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
-          postHogEventTracker("CYCLE_DELETE", {
+          postHogEventTracker("Cycle delete", {
             state: "SUCCESS",
           });
         })
         .catch(() => {
-          postHogEventTracker("CYCLE_DELETE", {
+          postHogEventTracker("Cycle delete", {
             state: "FAILED",
           });
         });

@@ -94,7 +94,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           handleClose();
         } else reset(defaultValues);
         postHogEventTracker(
-          "ISSUE_CREATED",
+          "Issue created",
           {
             ...res,
             state: "SUCCESS",
@@ -109,7 +109,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         postHogEventTracker(
-          "ISSUE_CREATED",
+          "Issue created",
           {
             state: "FAILED",
           },

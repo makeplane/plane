@@ -78,7 +78,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         postHogEventTracker(
-          "PROJECT_UPDATED",
+          "Project updated",
           { ...res, state: "SUCCESS" },
           {
             isGrouping: true,
@@ -94,7 +94,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         postHogEventTracker(
-          "PROJECT_UPDATED",
+          "Project updated",
           {
             state: "FAILED",
           },

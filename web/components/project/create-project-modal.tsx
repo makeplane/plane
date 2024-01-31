@@ -135,7 +135,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           ...res,
           state: "SUCCESS",
         };
-        postHogEventTracker("PROJECT_CREATED", newPayload, {
+        postHogEventTracker("Project created", newPayload, {
           isGrouping: true,
           groupType: "Workspace_metrics",
           groupId: res.workspace,
@@ -158,7 +158,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             message: err.data[key],
           });
           postHogEventTracker(
-            "PROJECT_CREATED",
+            "Project created",
             {
               state: "FAILED",
             },

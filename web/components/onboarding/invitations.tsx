@@ -63,7 +63,7 @@ export const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        postHogEventTracker("MEMBER_ACCEPTED", { ...res, state: "SUCCESS", accepted_from: "App" });
+        postHogEventTracker("Member accepted", { ...res, state: "SUCCESS", accepted_from: "App" });
         await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -72,7 +72,7 @@ export const Invitations: React.FC<Props> = (props) => {
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker("MEMBER_ACCEPTED", { state: "FAILED", accepted_from: "App" });
+        postHogEventTracker("Member accepted", { state: "FAILED", accepted_from: "App" });
       })
       .finally(() => setIsJoiningWorkspaces(false));
   };
