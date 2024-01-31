@@ -64,14 +64,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   };
 
   return (
-    <div
-    // onKeyDown={(e) => {
-    //   if (e.key === "Enter" && !e.shiftKey) {
-    //     e.preventDefault();
-    //     // handleSubmit(onSubmit)(e);
-    //   }
-    // }}
-    >
+    <div>
       <Controller
         name="access"
         control={control}
@@ -82,7 +75,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
                 onEnterKeyPress={(e) => {
-                  console.log("yo");
                   handleSubmit(onSubmit)(e);
                 }}
                 cancelUploadImage={fileService.cancelUpload}
