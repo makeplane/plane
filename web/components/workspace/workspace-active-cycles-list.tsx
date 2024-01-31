@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 // hooks
 import { useUser } from "hooks/store";
 // components
@@ -20,6 +21,8 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
   // store
   const {
     membership: { currentWorkspaceRole },
@@ -56,12 +59,8 @@ export const WorkspaceActiveCyclesList = observer(() => {
       />
     );
   }
-
-  const EmptyStateImagePath = getEmptyStateImagePath(
-    "onboarding",
-    "workspace-active-cycles",
-    currentUser?.theme.theme === "light"
-  );
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "workspace-active-cycles", isLightMode);
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
