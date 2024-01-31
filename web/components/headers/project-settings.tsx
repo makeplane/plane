@@ -32,7 +32,7 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <SidebarHamburgerToggle />
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap justify-between">
+      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
           <div className="z-50">
             <Breadcrumbs>
@@ -52,26 +52,27 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
                 }
                 link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
               />
-              <Breadcrumbs.BreadcrumbItem type="component" component={
-                <CustomMenu
-                  className="flex-shrink-0"
-                  maxHeight="lg"
-                  customButton={
-                    <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">{title}</span>
-                  }
-                  placement="bottom-start"
-                  closeOnSelect
-                >
-                  {PROJECT_SETTINGS_LINKS.map((item) => (
-                    <CustomMenu.MenuItem key={item.key} onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}>
-                      {item.label}
-                    </CustomMenu.MenuItem>
-                  ))}
-                </CustomMenu>
-              } />
+              <div className="hidden sm:hidden md:block lg:block">
+                <Breadcrumbs.BreadcrumbItem type="text" label={title} />
+              </div>
             </Breadcrumbs>
           </div>
         </div>
+        <CustomMenu
+          className="flex-shrink-0 block sm:block md:hidden lg:hidden"
+          maxHeight="lg"
+          customButton={
+            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">{title}</span>
+          }
+          placement="bottom-start"
+          closeOnSelect
+        >
+          {PROJECT_SETTINGS_LINKS.map((item) => (
+            <CustomMenu.MenuItem key={item.key} onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}>
+              {item.label}
+            </CustomMenu.MenuItem>
+          ))}
+        </CustomMenu>
       </div>
     </div>
   );
