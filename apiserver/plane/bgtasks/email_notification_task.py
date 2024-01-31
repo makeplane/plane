@@ -186,7 +186,7 @@ def send_email_notification(
                 }
         )
 
-    summary = "updates were made to the issue by"
+    summary = "Updates were made to the issue by"
 
     # Send the mail
     subject = f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
