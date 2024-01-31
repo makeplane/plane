@@ -15,6 +15,7 @@ import { TIssuePriorities } from "@plane/types";
 import { TDropdownProps } from "./types";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -34,7 +35,7 @@ type ButtonProps = {
   isActive?: boolean;
   highlightUrgent: boolean;
   priority: TIssuePriorities;
-  tooltip: boolean;
+  showTooltip: boolean;
 };
 
 const BorderButton = (props: ButtonProps) => {
@@ -46,7 +47,7 @@ const BorderButton = (props: ButtonProps) => {
     hideText = false,
     highlightUrgent,
     priority,
-    tooltip,
+    showTooltip,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -60,7 +61,7 @@ const BorderButton = (props: ButtonProps) => {
   };
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!tooltip}>
+    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
@@ -115,7 +116,7 @@ const BackgroundButton = (props: ButtonProps) => {
     hideText = false,
     highlightUrgent,
     priority,
-    tooltip,
+    showTooltip,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -129,7 +130,7 @@ const BackgroundButton = (props: ButtonProps) => {
   };
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!tooltip}>
+    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
@@ -185,7 +186,7 @@ const TransparentButton = (props: ButtonProps) => {
     isActive = false,
     highlightUrgent,
     priority,
-    tooltip,
+    showTooltip,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -199,7 +200,7 @@ const TransparentButton = (props: ButtonProps) => {
   };
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!tooltip}>
+    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
@@ -260,8 +261,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     highlightUrgent = true,
     onChange,
     placement,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -302,13 +303,40 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: TIssuePriorities) => {
+    onChange(val);
+    handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
+
+  const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
+    ? BorderButton
+    : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
+    ? BackgroundButton
+    : TransparentButton;
 
   return (
     <Combobox
@@ -323,7 +351,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
         className
       )}
       value={value}
-      onChange={onChange}
+      onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
     >
@@ -333,7 +361,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             ref={setReferenceElement}
             type="button"
             className={cn("block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -349,86 +377,20 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
               },
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                priority={value}
-                className={cn(buttonClassName, {
-                  "text-white": resolvedTheme === "dark",
-                })}
-                highlightUrgent={highlightUrgent}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                priority={value}
-                className={cn(buttonClassName, {
-                  "text-white": resolvedTheme === "dark",
-                })}
-                highlightUrgent={highlightUrgent}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                priority={value}
-                className={cn(buttonClassName, {
-                  "text-white": resolvedTheme === "dark",
-                })}
-                highlightUrgent={highlightUrgent}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                priority={value}
-                className={cn(buttonClassName, {
-                  "text-white": resolvedTheme === "dark",
-                })}
-                highlightUrgent={highlightUrgent}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                priority={value}
-                className={cn(buttonClassName, {
-                  "text-white": resolvedTheme === "dark",
-                })}
-                highlightUrgent={highlightUrgent}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                priority={value}
-                className={cn(buttonClassName, {
-                  "text-white": resolvedTheme === "dark",
-                })}
-                highlightUrgent={highlightUrgent}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                isActive={isOpen}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : null}
+            <ButtonToRender
+              priority={value}
+              className={cn(buttonClassName, {
+                "text-white": resolvedTheme === "dark",
+              })}
+              highlightUrgent={highlightUrgent}
+              dropdownArrow={dropdownArrow && !disabled}
+              dropdownArrowClassName={dropdownArrowClassName}
+              hideIcon={hideIcon}
+              showTooltip={showTooltip}
+              hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+            />
           </button>
         )}
       </Combobox.Button>
@@ -461,7 +423,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                         active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
-                    onClick={closeDropdown}
                   >
                     {({ selected }) => (
                       <>

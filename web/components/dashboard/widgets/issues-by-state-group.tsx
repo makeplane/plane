@@ -72,14 +72,14 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       startedCount > 0
         ? "started"
         : unStartedCount > 0
-        ? "unstarted"
-        : backlogCount > 0
-        ? "backlog"
-        : completedCount > 0
-        ? "completed"
-        : canceledCount > 0
-        ? "cancelled"
-        : null;
+          ? "unstarted"
+          : backlogCount > 0
+            ? "backlog"
+            : completedCount > 0
+              ? "completed"
+              : canceledCount > 0
+                ? "cancelled"
+                : null;
 
     setActiveStateGroup(stateGroup);
     setDefaultStateGroup(stateGroup);
@@ -151,13 +151,13 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
         />
       </div>
       {totalCount > 0 ? (
-        <div className="flex items-center pl-20 md:pl-11 lg:pl-14 pr-11 mt-11">
-          <div className="flex md:flex-col lg:flex-row items-center gap-x-10 gap-y-8 w-full">
-            <div className="w-full flex justify-center">
+        <div className="flex items-center pl-10 md:pl-11 lg:pl-14 pr-11 mt-11">
+          <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row items-center justify-evenly gap-x-10 gap-y-8 w-full">
+            <div>
               <PieGraph
                 data={chartData}
                 height="220px"
-                width="220px"
+                width="200px"
                 innerRadius={0.6}
                 cornerRadius={5}
                 colors={(datum) => datum.data.color}
@@ -189,7 +189,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
                 layers={["arcs", CenteredMetric]}
               />
             </div>
-            <div className="justify-self-end space-y-6 w-min whitespace-nowrap">
+            <div className="space-y-6 w-min whitespace-nowrap">
               {chartData.map((item) => (
                 <div key={item.id} className="flex items-center justify-between gap-6">
                   <div className="flex items-center gap-2.5 w-24">

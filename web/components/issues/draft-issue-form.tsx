@@ -21,7 +21,7 @@ import {
   CycleDropdown,
   DateDropdown,
   EstimateDropdown,
-  ModuleSelectDropdown,
+  ModuleDropdown,
   PriorityDropdown,
   ProjectDropdown,
   ProjectMemberDropdown,
@@ -577,12 +577,12 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
-                        <ModuleSelectDropdown
-                          workspaceSlug={workspaceSlug?.toString()}
+                        <ModuleDropdown
                           projectId={projectId}
-                          value={value || undefined}
-                          onChange={(moduleId) => onChange(moduleId)}
+                          value={value ?? []}
+                          onChange={onChange}
                           buttonVariant="border-with-text"
+                          multiple
                         />
                       </div>
                     )}

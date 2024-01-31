@@ -47,14 +47,34 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? projectLabels : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
-  const openDropdown = () => {
-    setIsDropdownOpen(true);
+  const onOpen = () => {
     if (!projectLabels && workspaceSlug && projectId) fetchProjectLabels(workspaceSlug.toString(), projectId);
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsDropdownOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isDropdownOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (isDropdownOpen) setIsDropdownOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isDropdownOpen) onOpen();
+    setIsDropdownOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: string[]) => {
+    onChange(val);
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
@@ -62,7 +82,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       ref={dropdownRef}
       tabIndex={tabIndex}
       value={value}
-      onChange={(val) => onChange(val)}
+      onChange={dropdownOnChange}
       className="relative flex-shrink-0 h-full"
       multiple
       disabled={disabled}
@@ -73,7 +93,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
           type="button"
           ref={setReferenceElement}
           className="h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
-          onClick={openDropdown}
+          onClick={handleOnClick}
         >
           {label ? (
             label
