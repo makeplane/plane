@@ -130,17 +130,29 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     onChange(unsplashImages[0].urls.regular);
   }, [value, onChange, unsplashImages]);
 
-  const openDropdown = () => setIsOpen(true);
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+  };
 
-  useOutsideClickDetector(ref, closeDropdown);
+  const toggleDropdown = () => {
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(ref, handleClose);
 
   return (
     <Popover className="relative z-[2]" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
         className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
-        onClick={openDropdown}
+        onClick={handleOnClick}
         disabled={disabled}
       >
         {label}

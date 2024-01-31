@@ -40,7 +40,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
   } = props;
   // states
   const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -90,13 +90,34 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
   };
   if (multiple) comboboxProps.multiple = true;
 
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: string & string[]) => {
+    onChange(val);
+    if (!multiple) handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
@@ -106,6 +127,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
       className={cn("h-full", className)}
       {...comboboxProps}
       handleKeyDown={handleKeyDown}
+      onChange={dropdownOnChange}
     >
       <Combobox.Button as={Fragment}>
         {button ? (
@@ -113,6 +135,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
             ref={setReferenceElement}
             type="button"
             className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -128,6 +151,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
               },
               buttonContainerClassName
             )}
+            onClick={handleOnClick}
           >
             <DropdownButton
               className={buttonClassName}
@@ -154,56 +178,55 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
           </button>
         )}
       </Combobox.Button>
-      <Combobox.Options className="fixed z-10">
-        <div
-          className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
-          ref={setPopperElement}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-            <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
-            <Combobox.Input
-              className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search"
-              displayValue={(assigned: any) => assigned?.name}
-            />
-          </div>
-          <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
-            {filteredOptions ? (
-              filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <Combobox.Option
-                    key={option.value}
-                    value={option.value}
-                    className={({ active, selected }) =>
-                      `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                        active ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                    }
-                    onClick={() => {
-                      if (!multiple) closeDropdown();
-                    }}
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span className="flex-grow truncate">{option.content}</span>
-                        {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                      </>
-                    )}
-                  </Combobox.Option>
-                ))
+      {isOpen && (
+        <Combobox.Options className="fixed z-10" static>
+          <div
+            className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Combobox.Input
+                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search"
+                displayValue={(assigned: any) => assigned?.name}
+              />
+            </div>
+            <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+              {filteredOptions ? (
+                filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <Combobox.Option
+                      key={option.value}
+                      value={option.value}
+                      className={({ active, selected }) =>
+                        `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                          active ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span className="flex-grow truncate">{option.content}</span>
+                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))
+                ) : (
+                  <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
-              )
-            ) : (
-              <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
-            )}
+                <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+              )}
+            </div>
           </div>
-        </div>
-      </Combobox.Options>
+        </Combobox.Options>
+      )}
     </Combobox>
   );
 });

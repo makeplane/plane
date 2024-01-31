@@ -221,20 +221,41 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     if (!moduleIds) fetchModules(workspaceSlug, projectId);
   }, [moduleIds, fetchModules, projectId, workspaceSlug]);
 
+  const onOpen = () => {
+    if (referenceElement) referenceElement.focus();
+  };
+
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: string & string[]) => {
+    onChange(val);
+    if (!multiple) handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
+
   const comboboxProps: any = {
     value,
-    onChange,
+    onChange: dropdownOnChange,
     disabled,
   };
   if (multiple) comboboxProps.multiple = true;
-
-  const openDropdown = () => {
-    setIsOpen(true);
-    if (referenceElement) referenceElement.focus();
-  };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
 
   return (
     <Combobox
@@ -251,7 +272,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn("block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -267,7 +288,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
               },
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
             <DropdownButton
               className={buttonClassName}
@@ -330,9 +351,6 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
                           }
                         )
                       }
-                      onClick={() => {
-                        if (!multiple) closeDropdown();
-                      }}
                     >
                       {({ selected }) => (
                         <>

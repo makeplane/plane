@@ -69,13 +69,34 @@ export const DateDropdown: React.FC<Props> = (props) => {
 
   const isDateSelected = value && value.toString().trim() !== "";
 
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: Date | null) => {
+    onChange(val);
+    if (closeOnSelect) handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
@@ -97,7 +118,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
             },
             buttonContainerClassName
           )}
-          onClick={openDropdown}
+          onClick={handleOnClick}
         >
           <DropdownButton
             className={buttonClassName}
@@ -128,10 +149,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
           <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
             <DatePicker
               selected={value ? new Date(value) : null}
-              onChange={(val) => {
-                onChange(val);
-                if (closeOnSelect) closeDropdown();
-              }}
+              onChange={dropdownOnChange}
               dateFormat="dd-MM-yyyy"
               minDate={minDate}
               maxDate={maxDate}
