@@ -87,6 +87,7 @@ urlpatterns = [
         UserIssueCompletedGraphEndpoint.as_view(),
         name="completed-graph",
     ),
+    ## End User Graph
     path(
         "users/me/workspaces/<str:slug>/dashboard/",
         UserWorkspaceDashboardEndpoint.as_view(),
@@ -119,6 +120,15 @@ urlpatterns = [
         name="user-workspace-views",
     ),
     path(
+        "users/me/workspaces/<str:slug>/views/<uuid:pk>/lock/",
+        UserWorkspaceViewViewSet.as_view(
+            {
+                "post": "toggle_lock",
+            }
+        ),
+        name="user-workspace-views-lock",
+    ),
+    path(
         "users/me/workspaces/<str:slug>/projects/<uuid:project_id>/views/",
         UserProjectViewViewSet.as_view(
             {
@@ -139,5 +149,5 @@ urlpatterns = [
         ),
         name="user-project-views",
     ),
-    ## End User Graph
+
 ]

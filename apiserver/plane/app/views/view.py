@@ -1,6 +1,5 @@
 # Django imports
 from django.db.models import (
-    Prefetch,
     OuterRef,
     Func,
     F,
@@ -68,46 +67,38 @@ class UserWorkspaceViewViewSet(BaseViewSet):
             .filter(Q(owned_by=self.request.user) & Q(access=0))
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
-            .order_by(self.request.GET.get("order_by", "-created_at"))
+            .order_by(self.request.GET.get("order_by", "-is_pinned"))
+            .order_by("-is_pinned", "-created_at")
             .distinct()
         )
 
-    def perform_update(self, serializer):
-        view = View.objects.get(pk=self.kwargs.get("pk"))
-        if view.is_locked:
+    def partial_update(self, request, slug, pk):
+        view = View.objects.get(pk=pk, workspace__slug=slug)
+        if view.owned_by == self.request.user and not view.is_locked:
+            serializer = ViewSerializer(view, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
-                {"error": "You cannot update the view"},
-                status=status.HTTP_403_FORBIDDEN,
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
-        if view.owned_by == self.request.user:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
             {"error": "You cannot update the view"},
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    def lock(self, request, slug, pk):
+    def toggle_lock(self, request, slug, pk):
         view = View.objects.get(pk=pk, workspace__slug=slug)
+        lock = request.data.get("lock", view.is_locked)
         if view.owned_by != self.request.user:
             return Response(
                 {"error": "You cannot lock the view"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        view.is_locked = True
-        view.save()
-        return Response(status=status.HTTP_200_OK)
+        view.is_locked = lock
+        view.save(update_fields=["is_locked"])
+        return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
-    def unlock(self, request, slug, pk):
-        view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot un lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = False
-        view.save()
-        return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, pk):
         view = View.objects.get(workspace__slug=slug, pk=pk)
@@ -149,27 +140,12 @@ class WorkspaceViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    def lock(self, request, slug, pk):
+    def toggle_lock(self, request, slug, pk):
         view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = True
-        view.save()
-        return Response(status=status.HTTP_200_OK)
-
-    def unlock(self, request, slug, pk):
-        view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot un lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = False
-        view.save()
-        return Response(status=status.HTTP_200_OK)
+        lock = request.data.get("lock", view.is_locked)
+        view.is_locked = lock
+        view.save(update_fields=["is_locked"])
+        return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
 
 class UserProjectViewViewSet(BaseViewSet):
@@ -208,15 +184,36 @@ class UserProjectViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    def perform_update(self, serializer):
-        view = View.objects.get(pk=self.kwargs.get("pk"))
-        if view.owned_by == self.request.user:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+    def partial_update(self, request, slug, project_id, pk):
+        view = View.objects.get(
+            pk=pk, project_id=project_id, workspace__slug=slug
+        )
+        if view.owned_by == self.request.user and not view.is_locked:
+            serializer = ViewSerializer(view, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(
             {"error": "You cannot update the view"},
             status=status.HTTP_403_FORBIDDEN,
         )
+
+    def toggle_lock(self, request, slug, project_id, pk):
+        view = View.objects.get(
+            pk=pk, project_id=project_id, workspace__slug=slug
+        )
+        lock = request.data.get("lock", view.is_locked)
+        if view.owned_by != self.request.user:
+            return Response(
+                {"error": "You cannot lock the view"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        view.is_locked = lock
+        view.save(update_fields=["is_locked"])
+        return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk):
         view = View.objects.get(
@@ -229,28 +226,6 @@ class UserProjectViewViewSet(BaseViewSet):
             )
         view.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def lock(self, request, slug, pk):
-        view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = True
-        view.save()
-        return Response(status=status.HTTP_200_OK)
-
-    def unlock(self, request, slug, pk):
-        view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot un lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = False
-        view.save()
-        return Response(status=status.HTTP_200_OK)
 
 
 class ProjectViewViewSet(BaseViewSet):
@@ -288,27 +263,16 @@ class ProjectViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    def lock(self, request, slug, pk):
-        view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = True
-        view.save()
-        return Response(status=status.HTTP_200_OK)
-
-    def unlock(self, request, slug, pk):
-        view = View.objects.get(pk=pk, workspace__slug=slug)
-        if view.owned_by != self.request.user:
-            return Response(
-                {"error": "You cannot un lock the view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        view.is_locked = False
-        view.save()
-        return Response(status=status.HTTP_200_OK)
+    def toggle_lock(self, request, slug, project_id, pk):
+        view = (
+            self.get_queryset()
+            .filter(pk=pk, project_id=project_id, workspace__slug=slug)
+            .first()
+        )
+        lock = request.data.get("lock", view.is_locked)
+        view.is_locked = lock
+        view.save(update_fields=["is_locked"])
+        return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
@@ -376,7 +340,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (self.get_queryset().filter(**filters))
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -444,7 +408,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ViewFavoriteViewSet(BaseViewSet):
+class WorkspaceViewFavoriteViewSet(BaseViewSet):
     serializer_class = ViewFavoriteSerializer
     model = ViewFavorite
 
@@ -457,12 +421,45 @@ class ViewFavoriteViewSet(BaseViewSet):
             .select_related("view")
         )
 
-    def create(self, request, slug, project_id):
-        serializer = ViewFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request, slug, view_id):
+        workspace = Workspace.objects.get(slug=slug)
+        view = ViewFavorite.objects.create(
+            view_id=view_id, user=request.user, workspace_id=workspace.id
+        )
+        return Response(
+            ViewFavoriteSerializer(view).data, status=status.HTTP_201_CREATED
+        )
+
+    def destroy(self, request, slug, view_id):
+        view_favorite = ViewFavorite.objects.get(
+            user=request.user,
+            workspace__slug=slug,
+            view_id=view_id,
+        )
+        view_favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectViewFavoriteViewSet(BaseViewSet):
+    serializer_class = ViewFavoriteSerializer
+    model = ViewFavorite
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(user=self.request.user)
+            .select_related("view")
+        )
+
+    def create(self, request, slug, project_id, view_id):
+        view = ViewFavorite.objects.create(
+            view_id=view_id, user=request.user, project_id=project_id
+        )
+        return Response(
+            ViewFavoriteSerializer(view).data, status=status.HTTP_201_CREATED
+        )
 
     def destroy(self, request, slug, project_id, view_id):
         view_favorite = ViewFavorite.objects.get(

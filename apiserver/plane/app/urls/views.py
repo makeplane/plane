@@ -4,7 +4,8 @@ from django.urls import path
 from plane.app.views import (
     ProjectViewViewSet,
     WorkspaceViewViewSet,
-    ViewFavoriteViewSet,
+    WorkspaceViewFavoriteViewSet,
+    ProjectViewFavoriteViewSet,
 )
 
 
@@ -62,22 +63,25 @@ urlpatterns = [
         name="global-view-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
-        ViewFavoriteViewSet.as_view(
+        "workspaces/<str:slug>/views/<uuid:view_id>/favorite/",
+        WorkspaceViewFavoriteViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
-            }
-        ),
-        name="user-favorite-view",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
-        ViewFavoriteViewSet.as_view(
-            {
                 "delete": "destroy",
             }
         ),
-        name="user-favorite-view",
+        name="user-workspace-favorite-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/favorite/",
+        ProjectViewFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "delete": "destroy",
+            }
+        ),
+        name="user-project-favorite-view",
     ),
 ]

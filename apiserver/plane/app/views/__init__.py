@@ -54,7 +54,8 @@ from .state import StateViewSet
 from .view import (
     WorkspaceViewViewSet,
     ProjectViewViewSet,
-    ViewFavoriteViewSet,
+    WorkspaceViewFavoriteViewSet,
+    ProjectViewFavoriteViewSet,
     UserWorkspaceViewViewSet,
     UserProjectViewViewSet,
     ProjectViewViewSet,
