@@ -62,7 +62,7 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         buttonContainerClassName="w-full"
         buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
         buttonVariant="transparent-with-text"
-        hideIcon={false}
+        hideIcon
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
         showTooltip
