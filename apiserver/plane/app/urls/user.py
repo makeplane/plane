@@ -14,6 +14,8 @@ from plane.app.views import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
+    UserWorkspaceViewViewSet,
+    UserProjectViewViewSet,
     ## End Workspaces
 )
 
@@ -94,6 +96,48 @@ urlpatterns = [
         "users/me/set-password/",
         SetUserPasswordEndpoint.as_view(),
         name="set-password",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/views/",
+        UserWorkspaceViewViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-workspace-views",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/views/<uuid:pk>/",
+        UserWorkspaceViewViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="user-workspace-views",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/projects/<uuid:project_id>/views/",
+        UserProjectViewViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-project-views",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
+        UserProjectViewViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="user-project-views",
     ),
     ## End User Graph
 ]

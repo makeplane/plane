@@ -52,10 +52,12 @@ from .workspace import (
 )
 from .state import StateViewSet
 from .view import (
-    GlobalViewViewSet,
-    GlobalViewIssuesViewSet,
-    IssueViewViewSet,
-    IssueViewFavoriteViewSet,
+    WorkspaceViewViewSet,
+    ProjectViewViewSet,
+    ViewFavoriteViewSet,
+    UserWorkspaceViewViewSet,
+    UserProjectViewViewSet,
+    ProjectViewViewSet,
 )
 from .cycle import (
     CycleViewSet,

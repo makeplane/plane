@@ -3,7 +3,7 @@ from django.db import models
 from django.conf import settings
 
 # Module import
-from . import ProjectBaseModel, BaseModel, WorkspaceBaseModel
+from . import BaseModel, WorkspaceBaseModel
 
 
 def get_default_filters():
@@ -84,7 +84,7 @@ class GlobalView(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
-class IssueView(WorkspaceBaseModel):
+class View(WorkspaceBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")
@@ -94,29 +94,44 @@ class IssueView(WorkspaceBaseModel):
         default=get_default_display_properties
     )
     access = models.PositiveSmallIntegerField(
-        default=1, choices=((0, "Private"), (1, "Public"))
+        default=1, choices=((0, "Private"), (1, "Public"), (2, "Shared"))
+    )
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="views", null=True, blank=True
     )
     sort_order = models.FloatField(default=65535)
+    is_locked = models.BooleanField(default=False)
+    is_pinned = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = "Issue View"
-        verbose_name_plural = "Issue Views"
-        db_table = "issue_views"
+        verbose_name = "View"
+        verbose_name_plural = "Views"
+        db_table = "views"
         ordering = ("-created_at",)
+    
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            largest_sort_order = View.objects.filter(
+                workspace=self.workspace
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
+        super(View, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return name of the View"""
         return f"{self.name} <{self.project.name}>"
 
 
-class IssueViewFavorite(ProjectBaseModel):
+class ViewFavorite(WorkspaceBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="user_view_favorites",
     )
     view = models.ForeignKey(
-        "db.IssueView", on_delete=models.CASCADE, related_name="view_favorites"
+        "db.View", on_delete=models.CASCADE, related_name="view_favorites"
     )
 
     class Meta:

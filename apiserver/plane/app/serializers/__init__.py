@@ -36,9 +36,8 @@ from .project import (
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import (
-    GlobalViewSerializer,
-    IssueViewSerializer,
-    IssueViewFavoriteSerializer,
+    ViewSerializer,
+    ViewFavoriteSerializer,
 )
 from .cycle import (
     CycleSerializer,

@@ -17,7 +17,7 @@ from plane.db.models import (
     Cycle,
     Module,
     Page,
-    IssueView,
+    View,
 )
 from plane.utils.issue_search import search_issues
 
@@ -161,7 +161,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
 
-        issue_views = IssueView.objects.filter(
+        issue_views = View.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,

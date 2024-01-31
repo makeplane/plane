@@ -2,17 +2,16 @@ from django.urls import path
 
 
 from plane.app.views import (
-    IssueViewViewSet,
-    GlobalViewViewSet,
-    GlobalViewIssuesViewSet,
-    IssueViewFavoriteViewSet,
+    ProjectViewViewSet,
+    WorkspaceViewViewSet,
+    ViewFavoriteViewSet,
 )
 
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
-        IssueViewViewSet.as_view(
+        ProjectViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -22,7 +21,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
-        IssueViewViewSet.as_view(
+        ProjectViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -34,7 +33,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/views/",
-        GlobalViewViewSet.as_view(
+        WorkspaceViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -44,10 +43,9 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/views/<uuid:pk>/",
-        GlobalViewViewSet.as_view(
+        WorkspaceViewViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
@@ -56,7 +54,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/issues/",
-        GlobalViewIssuesViewSet.as_view(
+        WorkspaceViewViewSet.as_view(
             {
                 "get": "list",
             }
@@ -65,7 +63,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
-        IssueViewFavoriteViewSet.as_view(
+        ViewFavoriteViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -75,7 +73,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
-        IssueViewFavoriteViewSet.as_view(
+        ViewFavoriteViewSet.as_view(
             {
                 "delete": "destroy",
             }
