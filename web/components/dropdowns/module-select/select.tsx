@@ -97,16 +97,34 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
     if (!moduleIds) fetchModules(workspaceSlug, projectId);
   }, [moduleIds, fetchModules, projectId, workspaceSlug]);
 
-  const openDropdown = () => {
-    if (isOpen) closeDropdown();
-    else {
-      setIsOpen(true);
-      if (referenceElement) referenceElement.focus();
-    }
+  const onOpen = () => {
+    if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: string | (string | undefined)[] | undefined) => {
+    onChange(val);
+    if (!multiple) handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
 
   const comboboxProps: any = {};
   if (multiple) comboboxProps.multiple = true;
@@ -118,7 +136,7 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
       tabIndex={tabIndex}
       className={twMerge("h-full", className)}
       value={value}
-      onChange={onChange}
+      onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
       {...comboboxProps}
@@ -133,7 +151,7 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
               disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer",
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -146,7 +164,7 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
               disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer",
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
             <ModuleSelectButton
               value={value}
@@ -202,7 +220,6 @@ export const ModuleSelectDropdown: FC<TModuleSelectDropdown> = observer((props) 
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
-                      onClick={() => !multiple && closeDropdown()}
                     >
                       {({ selected }) => (
                         <>
