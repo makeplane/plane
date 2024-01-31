@@ -7,6 +7,8 @@ import { Plus } from "lucide-react";
 import { useApplication, useProject } from "hooks/store";
 // components
 import { CustomSelect, Input } from "@plane/ui";
+// helpers
+import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IJiraImporterForm } from "@plane/types";
 
@@ -46,17 +48,18 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             render={({ field: { value, onChange, ref } }) => (
               <Input
                 id="metadata.api_token"
-                name="metadata.api_token"
                 type="text"
                 value={value}
                 onChange={onChange}
                 ref={ref}
+                hasError={Boolean(errors.metadata?.api_token)}
                 placeholder="XXXXXXXX"
                 className="w-full"
                 autoComplete="off"
               />
             )}
           />
+          {errors.metadata?.api_token && <p className="text-red-500 text-xs">{errors.metadata.api_token.message}</p>}
         </div>
       </div>
 
@@ -75,7 +78,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             render={({ field: { value, onChange, ref } }) => (
               <Input
                 id="metadata.project_key"
-                name="metadata.project_key"
                 type="text"
                 value={value}
                 onChange={onChange}
@@ -86,6 +88,9 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
+          {errors.metadata?.project_key && (
+            <p className="text-red-500 text-xs">{errors.metadata.project_key.message}</p>
+          )}
         </div>
       </div>
 
@@ -100,11 +105,11 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             name="metadata.email"
             rules={{
               required: "Please enter email address.",
+              validate: (value) => checkEmailValidity(value) || "Please enter a valid email address",
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
                 id="metadata.email"
-                name="metadata.email"
                 type="email"
                 value={value}
                 onChange={onChange}
@@ -115,6 +120,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
+          {errors.metadata?.email && <p className="text-red-500 text-xs">{errors.metadata.email.message}</p>}
         </div>
       </div>
 
@@ -129,12 +135,11 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             name="metadata.cloud_hostname"
             rules={{
               required: "Please enter your cloud host name.",
+              validate: (value) => !/^https?:\/\//.test(value) || "Hostname should not begin with http:// or https://",
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
                 id="metadata.cloud_hostname"
-                name="metadata.cloud_hostname"
-                type="email"
                 value={value}
                 onChange={onChange}
                 ref={ref}
@@ -144,6 +149,9 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
+          {errors.metadata?.cloud_hostname && (
+            <p className="text-red-500 text-xs">{errors.metadata.cloud_hostname.message}</p>
+          )}
         </div>
       </div>
 
