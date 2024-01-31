@@ -20,7 +20,7 @@ import {
   CycleDropdown,
   DateDropdown,
   EstimateDropdown,
-  ModuleSelectDropdown,
+  ModuleDropdown,
   PriorityDropdown,
   ProjectDropdown,
   ProjectMemberDropdown,
@@ -267,6 +267,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                       }}
                       buttonVariant="border-with-text"
+                      // TODO: update tabIndex logic
                       tabIndex={19}
                     />
                   </div>
@@ -547,18 +548,17 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
-                        <ModuleSelectDropdown
-                          workspaceSlug={workspaceSlug.toString()}
+                        <ModuleDropdown
                           projectId={projectId}
-                          value={value || undefined}
-                          onChange={(moduleId) => {
-                            onChange(moduleId);
+                          value={value ?? []}
+                          onChange={(moduleIds) => {
+                            onChange(moduleIds);
                             handleFormChange();
                           }}
                           buttonVariant="border-with-text"
                           tabIndex={13}
-                          multiple={true}
-                          showCount={true}
+                          multiple
+                          showCount
                         />
                       </div>
                     )}
