@@ -257,14 +257,16 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   };
 
   useEffect(() => {
-    setFocus("name");
-
     reset({
       ...defaultValues,
       ...(prePopulatedData ?? {}),
       ...(data ?? {}),
     });
-  }, [setFocus, prePopulatedData, reset, data]);
+  }, [prePopulatedData, reset, data]);
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
