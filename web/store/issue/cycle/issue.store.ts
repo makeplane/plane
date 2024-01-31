@@ -200,6 +200,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       if (!cycleId) throw new Error("Cycle Id is required");
 
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
@@ -267,9 +268,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       });
 
       runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds = []) => {
-          return uniq(concat(cycleIssueIds, issueIds));
-        });
+        update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, issueIds)));
       });
       issueIds.forEach((issueId) => {
         this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
