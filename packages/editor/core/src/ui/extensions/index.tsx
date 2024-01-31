@@ -1,26 +1,25 @@
-import StarterKit from "@tiptap/starter-kit";
-import TiptapUnderline from "@tiptap/extension-underline";
-import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import TextStyle from "@tiptap/extension-text-style";
+import TiptapUnderline from "@tiptap/extension-underline";
+import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 
-import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
 import { Table } from "src/ui/extensions/table/table";
 import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
+import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
 import { TableRow } from "src/ui/extensions/table/table-row/table-row";
-import { HorizontalRule } from "src/ui/extensions/horizontal-rule";
 
 import { ImageExtension } from "src/ui/extensions/image";
 
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
 
-import { CustomKeymap } from "src/ui/extensions/keymap";
 import { CustomCodeBlockExtension } from "src/ui/extensions/code";
-import { CustomQuoteExtension } from "src/ui/extensions/quote";
 import { ListKeymap } from "src/ui/extensions/custom-list-keymap";
+import { CustomKeymap } from "src/ui/extensions/keymap";
+import { CustomQuoteExtension } from "src/ui/extensions/quote";
 
 import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
@@ -55,7 +54,9 @@ export const CoreEditorExtensions = (
     },
     code: false,
     codeBlock: false,
-    horizontalRule: false,
+    horizontalRule: {
+      HTMLAttributes: { class: "mt-4 mb-4" },
+    },
     blockquote: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
@@ -104,7 +105,6 @@ export const CoreEditorExtensions = (
     transformCopiedText: true,
     transformPastedText: true,
   }),
-  HorizontalRule,
   Table,
   TableHeader,
   TableCell,
