@@ -337,7 +337,7 @@ class IssueLink(ProjectBaseModel):
 
 
 def get_upload_path(instance, filename):
-    return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
+    return f"{instance.workspace.id}/{uuid4().hex}"
 
 
 def file_size(value):

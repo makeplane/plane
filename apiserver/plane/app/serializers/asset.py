@@ -1,8 +1,9 @@
-from .base import BaseSerializer
+from .base import BaseFileSerializer
 from plane.db.models import FileAsset
 
 
-class FileAssetSerializer(BaseSerializer):
+class FileAssetSerializer(BaseFileSerializer):
+
     class Meta:
         model = FileAsset
         fields = "__all__"

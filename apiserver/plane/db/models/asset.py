@@ -8,12 +8,12 @@ from django.conf import settings
 
 # Module import
 from . import BaseModel
-
+from plane.settings.storage import S3PrivateBucketStorage
 
 def get_upload_path(instance, filename):
     if instance.workspace_id is not None:
-        return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
-    return f"user-{uuid4().hex}-{filename}"
+        return f"{instance.workspace.id}/{uuid4().hex}"
+    return f"user-{uuid4().hex}"
 
 
 def file_size(value):
@@ -32,6 +32,7 @@ class FileAsset(BaseModel):
         validators=[
             file_size,
         ],
+        storage=S3PrivateBucketStorage(),
     )
     workspace = models.ForeignKey(
         "db.Workspace",

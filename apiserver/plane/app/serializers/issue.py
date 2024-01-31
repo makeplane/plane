@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer, DynamicBaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer, BaseFileSerializer
 from .user import UserLiteSerializer
 from .state import StateSerializer, StateLiteSerializer
 from .project import ProjectLiteSerializer
@@ -444,7 +444,8 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
 
-class IssueAttachmentSerializer(BaseSerializer):
+class IssueAttachmentSerializer(BaseFileSerializer):
+
     class Meta:
         model = IssueAttachment
         fields = "__all__"
@@ -503,9 +504,7 @@ class IssueCommentSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(
         read_only=True, source="workspace"
     )
-    comment_reactions = CommentReactionSerializer(
-        read_only=True, many=True
-    )
+    comment_reactions = CommentReactionSerializer(read_only=True, many=True)
     is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -615,7 +614,10 @@ class IssueSerializer(DynamicBaseSerializer):
 
     def get_module_ids(self, obj):
         # Access the prefetched modules and extract module IDs
-        return [module for module in obj.issue_module.values_list("module_id", flat=True)]
+        return [
+            module
+            for module in obj.issue_module.values_list("module_id", flat=True)
+        ]
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):

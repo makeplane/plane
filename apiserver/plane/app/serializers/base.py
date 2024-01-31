@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from plane.settings.storage import S3PrivateBucketStorage
 
 
 class BaseSerializer(serializers.ModelSerializer):
@@ -60,7 +61,7 @@ class DynamicBaseSerializer(BaseSerializer):
                     CycleIssueSerializer,
                     IssueFlatSerializer,
                     IssueRelationSerializer,
-                    InboxIssueLiteSerializer
+                    InboxIssueLiteSerializer,
                 )
 
                 # Expansion mapper
@@ -81,10 +82,22 @@ class DynamicBaseSerializer(BaseSerializer):
                     "issue_cycle": CycleIssueSerializer,
                     "parent": IssueSerializer,
                     "issue_relation": IssueRelationSerializer,
-                    "issue_inbox" : InboxIssueLiteSerializer,
+                    "issue_inbox": InboxIssueLiteSerializer,
                 }
-                
-                self.fields[field] = expansion[field](many=True if field in ["members", "assignees", "labels", "issue_cycle", "issue_relation", "issue_inbox"] else False)            
+
+                self.fields[field] = expansion[field](
+                    many=True
+                    if field
+                    in [
+                        "members",
+                        "assignees",
+                        "labels",
+                        "issue_cycle",
+                        "issue_relation",
+                        "issue_inbox",
+                    ]
+                    else False
+                )
 
         return self.fields
 
@@ -105,7 +118,7 @@ class DynamicBaseSerializer(BaseSerializer):
                         LabelSerializer,
                         CycleIssueSerializer,
                         IssueRelationSerializer,
-                        InboxIssueLiteSerializer
+                        InboxIssueLiteSerializer,
                     )
 
                     # Expansion mapper
@@ -126,7 +139,7 @@ class DynamicBaseSerializer(BaseSerializer):
                         "issue_cycle": CycleIssueSerializer,
                         "parent": IssueSerializer,
                         "issue_relation": IssueRelationSerializer,
-                        "issue_inbox" : InboxIssueLiteSerializer,
+                        "issue_inbox": InboxIssueLiteSerializer,
                     }
                     # Check if field in expansion then expand the field
                     if expand in expansion:
@@ -145,4 +158,30 @@ class DynamicBaseSerializer(BaseSerializer):
                             instance, f"{expand}_id", None
                         )
 
+        return response
+
+
+class BaseFileSerializer(DynamicBaseSerializer):
+    download_url = serializers.SerializerMethodField()
+
+    class Meta:
+        abstract = True  # Make this serializer abstract
+
+    def get_download_url(self, obj):
+        if hasattr(obj, "asset") and obj.asset:
+            storage = S3PrivateBucketStorage()
+            return storage.download_url(obj.asset.name)
+        return None
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        response = super().to_representation(instance)
+        response[
+            "asset"
+        ] = (
+            instance.asset.name
+        )  # Ensure 'asset' field is consistently serialized
+        # Apply custom method to get download URL
         return response
