@@ -1,6 +1,6 @@
 {
   "extends": "tsconfig/nextjs.json",
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../god-mode/app/sidebar.tsx", "../god-mode/app/header.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
