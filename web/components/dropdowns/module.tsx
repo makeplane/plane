@@ -194,7 +194,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
       content: (
         <div className="flex items-center gap-2">
           <DiceIcon className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">{moduleDetails?.id}</span>
+          <span className="flex-grow truncate">{moduleDetails?.name}</span>
         </div>
       ),
     };
