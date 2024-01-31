@@ -2,27 +2,40 @@ import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search, X } from "lucide-react";
 // hooks
 import { useApplication, useModule } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// components
+import { DropdownButton } from "./buttons";
 // icons
 import { DiceIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { IModule } from "@plane/types";
 import { TDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  onChange: (val: string | null) => void;
   projectId: string;
-  value: string | null;
-};
+  showCount?: boolean;
+} & (
+    | {
+        multiple: false;
+        onChange: (val: string | null) => void;
+        value: string | null;
+      }
+    | {
+        multiple: true;
+        onChange: (val: string[]) => void;
+        value: string[];
+      }
+  );
 
 type DropdownOptions =
   | {
@@ -32,110 +45,97 @@ type DropdownOptions =
     }[]
   | undefined;
 
-type ButtonProps = {
-  className?: string;
+type ButtonContentProps = {
+  disabled: boolean;
   dropdownArrow: boolean;
   dropdownArrowClassName: string;
-  hideIcon?: boolean;
-  hideText?: boolean;
-  isActive?: boolean;
-  module: IModule | null;
+  hideIcon: boolean;
+  hideText: boolean;
+  onChange: (moduleIds: string[]) => void;
   placeholder: string;
-  tooltip: boolean;
+  showCount: boolean;
+  value: string | string[] | null;
 };
 
-const BorderButton = (props: ButtonProps) => {
+const ButtonContent: React.FC<ButtonContentProps> = (props) => {
   const {
-    className,
+    disabled,
     dropdownArrow,
     dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    module,
+    hideIcon,
+    hideText,
+    onChange,
     placeholder,
-    tooltip,
+    showCount,
+    value,
   } = props;
+  // store hooks
+  const { getModuleById } = useModule();
 
-  return (
-    <Tooltip tooltipHeading="Module" tooltipContent={module?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
-          className
+  if (Array.isArray(value))
+    return (
+      <>
+        {showCount ? (
+          <>
+            {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+            <span className="flex-grow truncate text-left">
+              {value.length > 0 ? `${value.length} Module${value.length === 1 ? "" : "s"}` : placeholder}
+            </span>
+          </>
+        ) : value.length > 0 ? (
+          <div className="flex items-center gap-2 py-0.5 flex-wrap">
+            {value.map((moduleId) => {
+              const moduleDetails = getModuleById(moduleId);
+              return (
+                <div
+                  key={moduleId}
+                  className="flex items-center gap-1 bg-custom-background-80 text-custom-text-200 rounded px-1.5 py-1"
+                >
+                  {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
+                  {!hideText && (
+                    <Tooltip tooltipHeading="Title" tooltipContent={moduleDetails?.name}>
+                      <span className="text-xs font-medium flex-grow truncate max-w-40">{moduleDetails?.name}</span>
+                    </Tooltip>
+                  )}
+                  {!disabled && (
+                    <Tooltip tooltipContent="Remove">
+                      <button
+                        type="button"
+                        className="flex-shrink-0"
+                        onClick={() => {
+                          const newModuleIds = value.filter((m) => m !== moduleId);
+                          onChange(newModuleIds);
+                        }}
+                      >
+                        <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                      </button>
+                    </Tooltip>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <>
+            {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+            <span className="flex-grow truncate text-left">{placeholder}</span>
+          </>
         )}
-      >
-        {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const BackgroundButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    module,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Module" tooltipContent={module?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
-      >
+      </>
+    );
+  else
+    return (
+      <>
         {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
+        {!hideText && <span className="flex-grow truncate text-left">{value ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const TransparentButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    module,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Module" tooltipContent={module?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{module?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
+      </>
+    );
 };
 
 export const ModuleDropdown: React.FC<Props> = observer((props) => {
@@ -149,12 +149,14 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     dropdownArrow = false,
     dropdownArrowClassName = "",
     hideIcon = false,
+    multiple,
     onChange,
     placeholder = "Module",
     placement,
     projectId,
+    showCount = false,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -186,7 +188,6 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
 
   const options: DropdownOptions = moduleIds?.map((moduleId) => {
     const moduleDetails = getModuleById(moduleId);
-
     return {
       value: moduleId,
       query: `${moduleDetails?.name}`,
@@ -198,16 +199,17 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
       ),
     };
   });
-  options?.unshift({
-    value: null,
-    query: "No module",
-    content: (
-      <div className="flex items-center gap-2">
-        <DiceIcon className="h-3 w-3 flex-shrink-0" />
-        <span className="flex-grow truncate">No module</span>
-      </div>
-    ),
-  });
+  if (!multiple)
+    options?.unshift({
+      value: null,
+      query: "No module",
+      content: (
+        <div className="flex items-center gap-2">
+          <DiceIcon className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">No module</span>
+        </div>
+      ),
+    });
 
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
@@ -219,15 +221,41 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     if (!moduleIds) fetchModules(workspaceSlug, projectId);
   }, [moduleIds, fetchModules, projectId, workspaceSlug]);
 
-  const selectedModule = value ? getModuleById(value) : null;
-
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: string & string[]) => {
+    onChange(val);
+    if (!multiple) handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
+
+  const comboboxProps: any = {
+    value,
+    onChange: dropdownOnChange,
+    disabled,
+  };
+  if (multiple) comboboxProps.multiple = true;
 
   return (
     <Combobox
@@ -235,10 +263,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
       onKeyDown={handleKeyDown}
+      {...comboboxProps}
     >
       <Combobox.Button as={Fragment}>
         {button ? (
@@ -246,7 +272,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn("block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -262,76 +288,31 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
               },
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
+            <DropdownButton
+              className={buttonClassName}
+              isActive={isOpen}
+              tooltipHeading="Module"
+              tooltipContent={
+                Array.isArray(value) ? `${value?.length ?? 0} module${value?.length !== 1 ? "s" : ""}` : ""
+              }
+              showTooltip={showTooltip}
+              variant={buttonVariant}
+            >
+              <ButtonContent
+                disabled={disabled}
+                dropdownArrow={dropdownArrow}
                 dropdownArrowClassName={dropdownArrowClassName}
                 hideIcon={hideIcon}
+                hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
                 placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
+                showCount={showCount}
+                value={value}
+                // @ts-ignore
+                onChange={onChange}
               />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                module={selectedModule}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : null}
+            </DropdownButton>
           </button>
         )}
       </Combobox.Button>
@@ -361,11 +342,15 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        cn(
+                          "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
+                          {
+                            "bg-custom-background-80": active,
+                            "text-custom-text-100": selected,
+                            "text-custom-text-200": !selected,
+                          }
+                        )
                       }
-                      onClick={closeDropdown}
                     >
                       {({ selected }) => (
                         <>

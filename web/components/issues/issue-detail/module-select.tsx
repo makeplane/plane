@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import xor from "lodash/xor";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
-import { ModuleSelectDropdown } from "components/dropdowns";
+import { ModuleDropdown } from "components/dropdowns";
 // ui
 import { Spinner } from "@plane/ui";
 // helpers
@@ -33,56 +32,42 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
   const issue = getIssueById(issueId);
   const disableSelect = disabled || isUpdating;
 
-  const handleIssueModuleChange = async (moduleIds: undefined | string | (string | undefined)[]) => {
-    if (!issue) return;
+  const handleIssueModuleChange = async (moduleIds: string[]) => {
+    if (!issue || !issue.module_ids) return;
 
     setIsUpdating(true);
-    if (moduleIds === undefined && issue?.module_ids && issue?.module_ids.length > 0)
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, issue?.module_ids);
 
-    if (typeof moduleIds === "string" && moduleIds)
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, [moduleIds]);
-
-    if (Array.isArray(moduleIds)) {
-      if (moduleIds.includes(undefined)) {
-        await issueOperations.removeModulesFromIssue?.(
-          workspaceSlug,
-          projectId,
-          issueId,
-          moduleIds.filter((x) => x != undefined) as string[]
-        );
-      } else {
-        const _moduleIds = xor(issue?.module_ids, moduleIds)[0];
-        if (_moduleIds) {
-          if (issue?.module_ids?.includes(_moduleIds))
-            await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, [_moduleIds]);
-          else await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, [_moduleIds]);
-        }
-      }
+    if (moduleIds.length === 0)
+      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, issue.module_ids);
+    else if (moduleIds.length > issue.module_ids.length) {
+      const newModuleIds = moduleIds.filter((m) => !issue.module_ids?.includes(m));
+      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, newModuleIds);
+    } else if (moduleIds.length < issue.module_ids.length) {
+      const removedModuleIds = issue.module_ids.filter((m) => !moduleIds.includes(m));
+      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, removedModuleIds);
     }
+
     setIsUpdating(false);
   };
 
   return (
     <div className={cn(`flex items-center gap-1 h-full`, className)}>
-      <ModuleSelectDropdown
-        workspaceSlug={workspaceSlug}
+      <ModuleDropdown
         projectId={projectId}
-        value={issue?.module_ids?.length ? issue?.module_ids : undefined}
+        value={issue?.module_ids ?? []}
         onChange={handleIssueModuleChange}
-        multiple={true}
         placeholder="No module"
         disabled={disableSelect}
-        className={`w-full h-full group`}
+        className="w-full h-full group"
         buttonContainerClassName="w-full"
-        buttonClassName={`min-h-8 ${issue?.module_ids?.length ? `` : `text-custom-text-400`}`}
+        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
         buttonVariant="transparent-with-text"
-        hideIcon={false}
-        dropdownArrow={true}
+        hideIcon
+        dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-        showTooltip={true}
+        showTooltip
+        multiple
       />
-
       {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );

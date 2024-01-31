@@ -324,6 +324,27 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         values: [],
       },
     },
+    list: {
+      filters: [
+        "priority",
+        "state_group",
+        "labels",
+        "assignees",
+        "created_by",
+        "subscriber",
+        "project",
+        "start_date",
+        "target_date",
+      ],
+      display_properties: true,
+      display_filters: {
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: false,
+        values: [],
+      },
+    },
   },
   issues: {
     list: {
