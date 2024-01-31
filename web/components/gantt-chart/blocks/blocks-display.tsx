@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import { useChart } from "../hooks";
@@ -12,7 +12,7 @@ import { IBlockUpdateData, IGanttBlock } from "../types";
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  blockToRender: (data: any) => React.ReactNode;
+  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -31,9 +31,12 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     enableBlockMove,
     showAllBlocks,
   } = props;
-
-  const { activeBlock, dispatch } = useChart();
+  // refs
+  const blocksContainerRef = useRef<HTMLDivElement>(null);
+  // store hooks
   const { peekIssue } = useIssueDetail();
+  // chart hook
+  const { activeBlock, dispatch, scrollTop, updateScrollTop } = useChart();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -75,10 +78,28 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     });
   };
 
+  const handleBlocksScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    updateScrollTop(e.currentTarget.scrollTop);
+
+    const sidebarScrollContainer = document.getElementById("gantt-sidebar-scroll-container") as HTMLDivElement;
+    if (!sidebarScrollContainer) return;
+
+    sidebarScrollContainer.scrollTop = e.currentTarget.scrollTop;
+  };
+
+  useEffect(() => {
+    const blocksContainer = blocksContainerRef.current;
+    if (!blocksContainer) return;
+
+    blocksContainer.scrollTop = scrollTop;
+  }, [scrollTop]);
+
   return (
     <div
+      ref={blocksContainerRef}
       className="relative z-[5] mt-[72px] h-full overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
+      onScroll={handleBlocksScroll}
     >
       {blocks &&
         blocks.length > 0 &&
@@ -91,26 +112,26 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
           return (
             <div
               key={`block-${block.id}`}
-              className={cn(
-                "h-11",
-                { "rounded bg-custom-background-80": activeBlock?.id === block.id },
-                {
-                  "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
-                    peekIssue?.issueId === block.data.id,
-                }
-              )}
+              className={cn("relative h-11", {
+                "rounded bg-custom-background-80": activeBlock?.id === block.id,
+                "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
+                  peekIssue?.issueId === block.data.id,
+              })}
               onMouseEnter={() => updateActiveBlock(block)}
               onMouseLeave={() => updateActiveBlock(null)}
             >
-              {!isBlockVisibleOnChart && <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />}
-              <ChartDraggable
-                block={block}
-                blockToRender={blockToRender}
-                handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                enableBlockLeftResize={enableBlockLeftResize}
-                enableBlockRightResize={enableBlockRightResize}
-                enableBlockMove={enableBlockMove}
-              />
+              {isBlockVisibleOnChart ? (
+                <ChartDraggable
+                  block={block}
+                  blockToRender={blockToRender}
+                  handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                  enableBlockLeftResize={enableBlockLeftResize}
+                  enableBlockRightResize={enableBlockRightResize}
+                  enableBlockMove={enableBlockMove}
+                />
+              ) : (
+                <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />
+              )}
             </div>
           );
         })}

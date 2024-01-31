@@ -12,7 +12,7 @@ type GanttChartRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  blockToRender: (data: any) => React.ReactNode;
+  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
   enableBlockLeftResize?: boolean;
   enableBlockRightResize?: boolean;

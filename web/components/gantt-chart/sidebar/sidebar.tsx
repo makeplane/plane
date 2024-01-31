@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
@@ -42,9 +41,6 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
     disableIssueCreation,
     showAllBlocks = false,
   } = props;
-
-  const router = useRouter();
-  const { cycleId } = router.query;
 
   const { activeBlock, dispatch } = useChart();
   const { peekIssue } = useIssueDetail();
@@ -105,12 +101,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
     <DragDropContext onDragEnd={handleOrderChange}>
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
-          <div
-            id={`gantt-sidebar-${cycleId}`}
-            className="mt-[12px] max-h-full overflow-y-auto pl-2.5"
-            ref={droppableProvided.innerRef}
-            {...droppableProvided.droppableProps}
-          >
+          <div id={`gantt-sidebar-${viewId}`} ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
             <>
               {blocks ? (
                 blocks.map((block, index) => {

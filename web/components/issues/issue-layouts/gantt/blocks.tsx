@@ -1,13 +1,14 @@
+// hooks
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { TIssue } from "@plane/types";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
-export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
-  // hooks
+export const IssueGanttBlock = ({ data, textDisplacement }: { data: TIssue; textDisplacement: number }) => {
+  // store hooks
   const {
     router: { workspaceSlug },
   } = useApplication();
@@ -43,7 +44,15 @@ export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
         }
         position="top-left"
       >
-        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100 overflow-hidden">
+          <span
+            style={{
+              ...(textDisplacement > 0 ? { paddingLeft: `${textDisplacement}px` } : {}),
+            }}
+          >
+            {data?.name}
+          </span>
+        </div>
       </Tooltip>
     </div>
   );

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 // icons
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
@@ -39,7 +39,7 @@ type ChartViewRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  blockToRender: (data: any) => React.ReactNode;
+  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -69,8 +69,11 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null); // blocks state management starts
+  // refs
+  const sidebarRef = useRef<HTMLDivElement>(null);
   // hooks
-  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } = useChart();
+  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft, scrollTop, updateScrollTop } =
+    useChart();
 
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
@@ -202,16 +205,24 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
 
     const scrollWidth: number = scrollContainer?.scrollWidth;
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
-    const currentScrollPosition: number = scrollContainer?.scrollLeft;
+    const currentLeftScrollPosition: number = scrollContainer?.scrollLeft;
 
-    updateScrollLeft(currentScrollPosition);
+    updateScrollLeft(currentLeftScrollPosition);
 
     const approxRangeLeft: number = scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
 
-    if (currentScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right", currentView);
-    if (currentScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left", currentView);
+    if (currentLeftScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right", currentView);
+    if (currentLeftScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left", currentView);
   };
+
+  const onSidebarScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => updateScrollTop(e.currentTarget.scrollTop);
+
+  // useEffect(() => {
+  //   const sidebarContainer = sidebarRef.current;
+  //   if (!sidebarContainer) return;
+  //   sidebarContainer.scrollTop = scrollTop;
+  // }, [scrollTop]);
 
   return (
     <div
@@ -289,7 +300,14 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
             <h6>Duration</h6>
           </div>
 
-          {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
+          <div
+            id="gantt-sidebar-scroll-container"
+            className="max-h-full mt-[12px] overflow-y-auto pl-2.5"
+            onScroll={onSidebarScroll}
+            ref={sidebarRef}
+          >
+            {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
+          </div>
         </div>
         <div
           className="horizontal-scroll-enable relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"

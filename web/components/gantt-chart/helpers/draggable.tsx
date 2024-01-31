@@ -7,7 +7,7 @@ import { IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;
-  blockToRender: (data: any) => React.ReactNode;
+  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right" | "move") => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -223,6 +223,8 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     scrollLeft > block.position.marginLeft + block.position.width;
   const isBlockHiddenOnRight = posFromLeft && window && posFromLeft > window.innerWidth;
 
+  const textDisplacement = scrollLeft - (block.position?.marginLeft ?? 0);
+
   return (
     <>
       {/* move to left side hidden block button */}
@@ -272,7 +274,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
           className={`relative z-[2] flex h-8 w-full items-center rounded ${isMoving ? "pointer-events-none" : ""}`}
           onMouseDown={handleBlockMove}
         >
-          {blockToRender(block.data)}
+          {blockToRender(block.data, textDisplacement)}
         </div>
         {/* right resize drag handle */}
         {enableBlockRightResize && (
