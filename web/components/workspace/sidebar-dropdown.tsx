@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
 import { mutate } from "swr";
 import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+import { usePopper } from "react-popper";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // hooks
@@ -14,7 +15,6 @@ import useToast from "hooks/use-toast";
 import { Avatar, Loader } from "@plane/ui";
 // types
 import { IWorkspace } from "@plane/types";
-
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
@@ -36,7 +36,6 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Settings,
   },
 ];
-
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "View profile",
@@ -49,7 +48,6 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
     link: "/profile",
   },
 ];
-
 export const WorkspaceSidebarDropdown = observer(() => {
   // router
   const router = useRouter();
@@ -64,12 +62,25 @@ export const WorkspaceSidebarDropdown = observer(() => {
   // hooks
   const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
-
+  // popper-js refs
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // popper-js init
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "right",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
   const handleWorkspaceNavigation = (workspace: IWorkspace) =>
     updateCurrentUser({
       last_workspace_id: workspace?.id,
     });
-
   const handleSignOut = async () => {
     await signOut()
       .then(() => {
@@ -85,16 +96,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
         })
       );
   };
-
   const handleItemClick = () => {
-    console.log('CLICKED')
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
   };
-
   const workspacesList = Object.values(workspaces ?? {});
-
   // TODO: fix workspaces list scroll
   return (
     <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
@@ -121,14 +128,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       activeWorkspace?.name?.charAt(0) ?? "..."
                     )}
                   </div>
-
                   {!sidebarCollapsed && (
                     <h4 className="truncate text-base font-medium text-custom-text-100">
                       {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
                     </h4>
                   )}
                 </div>
-
                 {!sidebarCollapsed && (
                   <ChevronDown
                     className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${open ? "rotate-180" : ""
@@ -137,7 +142,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 )}
               </div>
             </Menu.Button>
-
             <Transition
               as={Fragment}
               enter="transition ease-out duration-100"
@@ -185,7 +189,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
                                       workspace?.name?.charAt(0) ?? "..."
                                     )}
                                   </span>
-
                                   <h5
                                     className={`truncate text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
                                       }`}
@@ -226,9 +229,14 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       </Menu.Item>
                     </Link>
                     {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                      <Link key={link.key} href={link.href} className="w-full" onClick={() => {
-                        if (index > 0) handleItemClick();
-                      }}>
+                      <Link
+                        key={link.key}
+                        href={link.href}
+                        className="w-full"
+                        onClick={() => {
+                          if (index > 0) handleItemClick();
+                        }}
+                      >
                         <Menu.Item
                           as="div"
                           className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 font-medium"
@@ -256,10 +264,9 @@ export const WorkspaceSidebarDropdown = observer(() => {
           </>
         )}
       </Menu>
-
       {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="grid place-items-center outline-none">
+          <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
             <Avatar
               name={currentUser?.display_name}
               src={currentUser?.avatar}
@@ -268,7 +275,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
               className="!text-base"
             />
           </Menu.Button>
-
           <Transition
             as={Fragment}
             enter="transition ease-out duration-100"
@@ -281,11 +287,20 @@ export const WorkspaceSidebarDropdown = observer(() => {
             <Menu.Items
               className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
           divide-custom-sidebar-border-200 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
                 {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Link key={index} href={link.link} onClick={() => { if (index == 0) handleItemClick(); }}>
+                  <Link
+                    key={index}
+                    href={link.link}
+                    onClick={() => {
+                      if (index == 0) handleItemClick();
+                    }}
+                  >
                     <Menu.Item key={index} as="div">
                       <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />

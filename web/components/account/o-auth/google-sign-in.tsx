@@ -31,7 +31,6 @@ export const GoogleSignInButton: FC<Props> = (props) => {
           size: "large",
           logo_alignment: "center",
           text: type === "sign_in" ? "signin_with" : "signup_with",
-          width: 384,
         } as GsiButtonConfiguration // customization attributes
       );
     } catch (err) {

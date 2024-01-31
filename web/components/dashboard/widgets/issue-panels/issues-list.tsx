@@ -77,7 +77,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
                 })}
               >
                 Issues
-                <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium py-1 px-1.5 rounded-xl h-4 min-w-6 flex items-center text-center justify-center">
+                <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl h-4 min-w-6 flex items-center text-center justify-center">
                   {totalIssues}
                 </span>
               </h6>
