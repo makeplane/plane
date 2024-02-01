@@ -31,10 +31,10 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
     let delWidth = 0;
 
-    const ganttContainer = document.querySelector("#gantt-container") as HTMLElement;
-    const ganttSidebar = document.querySelector("#gantt-sidebar") as HTMLElement;
+    const ganttContainer = document.querySelector("#gantt-container") as HTMLDivElement;
+    const ganttSidebar = document.querySelector("#gantt-sidebar") as HTMLDivElement;
 
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
 
     if (!ganttContainer || !ganttSidebar || !scrollContainer) return 0;
 
@@ -222,8 +222,6 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   const isBlockHiddenOnRight = posFromLeft && window && posFromLeft > window.innerWidth;
 
   const textDisplacement = scrollLeft - (block.position?.marginLeft ?? 0);
-
-  console.log("scrollLeft", scrollLeft);
 
   return (
     <>

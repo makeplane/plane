@@ -72,7 +72,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   // refs
   const sidebarRef = useRef<HTMLDivElement>(null);
   // hooks
-  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft, scrollTop, updateScrollTop } =
+  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft, updateScrollTop } =
     useChart();
 
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
@@ -159,9 +159,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const updatingCurrentLeftScrollPosition = (width: number) => {
-    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+  const scrollContainer = document.getElementById("scroll-container") as HTMLDivElement;
 
+  const updatingCurrentLeftScrollPosition = (width: number) => {
     if (!scrollContainer) return;
 
     scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
@@ -169,8 +169,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   };
 
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
-    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-
     if (!scrollContainer) return;
 
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
@@ -198,19 +196,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   };
 
   // handling scroll functionality
-  const onScroll = () => {
-    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-
-    if (!scrollContainer) return;
-
-    const scrollWidth: number = scrollContainer?.scrollWidth;
-    const clientVisibleWidth: number = scrollContainer?.clientWidth;
-    const currentLeftScrollPosition: number = scrollContainer?.scrollLeft;
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const { clientWidth: clientVisibleWidth, scrollLeft: currentLeftScrollPosition, scrollWidth } = e.currentTarget;
 
     updateScrollLeft(currentLeftScrollPosition);
 
-    const approxRangeLeft: number = scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
-    const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
+    const approxRangeLeft = scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
+    const approxRangeRight = scrollWidth - (approxRangeLeft + clientVisibleWidth);
 
     if (currentLeftScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right", currentView);
     if (currentLeftScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left", currentView);
