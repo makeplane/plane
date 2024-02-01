@@ -1,5 +1,5 @@
 // components
-import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+import { IssueBlock, IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
@@ -10,12 +10,15 @@ import {
   IIssueDisplayProperties,
   TIssueMap,
   TUnGroupedIssues,
+  IIssueListRow,
 } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
 import { HeaderGroupByCard } from "./headers/group-by-card";
-import { getGroupByColumns } from "../utils";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { getGroupByColumns, getIssueFlatList } from "../utils";
+import { EIssueListRow, TCreateModalStoreTypes } from "constants/issue";
+import { useRef } from "react";
+import RenderIfVisible from "components/core/render-if-visible-HOC";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -62,9 +65,11 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const label = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  if (!list) return null;
+  const groups = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
+
+  if (!groups) return null;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
@@ -91,59 +96,82 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     return preloadedData;
   };
 
-  const validateEmptyIssueGroups = (issues: TIssue[]) => {
-    const issuesCount = issues?.length || 0;
-    if (!showEmptyGroup && issuesCount <= 0) return false;
-    return true;
-  };
+  const list = getIssueFlatList(groups, issueIds, !!showEmptyGroup);
+
+  console.log(groups, issueIds, list);
 
   const is_list = group_by === null ? true : false;
 
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className="relative h-full w-full">
+    <div ref={containerRef} className="relative overflow-auto h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map(
-          (_list: any) =>
-            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
-              <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
+        list.map((listRow: IIssueListRow) => {
+          switch (listRow.type) {
+            case EIssueListRow.HEADER:
+              return (
+                <div
+                  key={listRow.id}
+                  className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1"
+                >
                   <HeaderGroupByCard
-                    icon={_list.icon}
-                    title={_list.name || ""}
-                    count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
-                    issuePayload={_list.payload}
+                    icon={listRow.icon}
+                    title={listRow?.name || ""}
+                    count={is_list ? issueIds?.length || 0 : issueIds?.[listRow.id]?.length || 0}
+                    issuePayload={listRow.payload || {}}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     storeType={storeType}
                     addIssuesToView={addIssuesToView}
                   />
                 </div>
-
-                {issueIds && (
-                  <IssueBlocksList
-                    issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
-                    issuesMap={issuesMap}
-                    handleIssues={handleIssues}
-                    quickActions={quickActions}
-                    displayProperties={displayProperties}
-                    canEditProperties={canEditProperties}
-                  />
-                )}
-
-                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && (
-                  <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+              );
+            case EIssueListRow.QUICK_ADD:
+              if (enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy)
+                return (
+                  <div
+                    key={`${listRow.id}_${EIssueListRow.QUICK_ADD}`}
+                    className="sticky bottom-0 z-[1] w-full flex-shrink-0"
+                  >
                     <ListQuickAddIssueForm
-                      prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
+                      prePopulatedData={prePopulateQuickAddData(group_by, listRow.id)}
                       quickAddCallback={quickAddCallback}
                       viewId={viewId}
                     />
                   </div>
-                )}
-              </div>
-            )
-        )}
+                );
+              else return null;
+            case EIssueListRow.NO_ISSUES:
+              const noIssuesRow = listRow as IIssueListRow;
+              return (
+                <div
+                  key={`${noIssuesRow.id}_${EIssueListRow.NO_ISSUES}`}
+                  className="bg-custom-background-100 p-3 text-sm text-custom-text-400"
+                >
+                  No issues
+                </div>
+              );
+            case EIssueListRow.ISSUE:
+              return (
+                <RenderIfVisible
+                  key={`${listRow.id}_${listRow.groupId}`}
+                  defaultHeight={45}
+                  root={containerRef}
+                  classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
+                >
+                  <IssueBlock
+                    issueId={listRow.id}
+                    issuesMap={issuesMap}
+                    handleIssues={handleIssues}
+                    quickActions={quickActions}
+                    canEditProperties={canEditProperties}
+                    displayProperties={displayProperties}
+                  />
+                </RenderIfVisible>
+              );
+          }
+        })}
     </div>
   );
 };
@@ -209,3 +237,5 @@ export const List: React.FC<IList> = (props) => {
     </div>
   );
 };
+
+

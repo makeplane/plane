@@ -48,56 +48,50 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const projectDetails = getProjectById(issue.project_id);
 
   return (
-    <>
-      <div
-        className={cn(
-          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200 last:border-b-transparent",
-          {
-            "border border-custom-primary-70 hover:border-custom-primary-70":
-              peekIssue && peekIssue.issueId === issue.id,
-          }
-        )}
+    <div
+      className={cn("relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm", {
+        "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue && peekIssue.issueId === issue.id,
+      })}
+    >
+      {displayProperties && displayProperties?.key && (
+        <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+          {projectDetails?.identifier}-{issue.sequence_id}
+        </div>
+      )}
+
+      {issue?.tempId !== undefined && (
+        <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+      )}
+
+      <ControlLink
+        href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+        target="_blank"
+        onClick={() => handleIssuePeekOverview(issue)}
+        className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
       >
-        {displayProperties && displayProperties?.key && (
-          <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-            {projectDetails?.identifier}-{issue.sequence_id}
+        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <span>{issue.name}</span>
+        </Tooltip>
+      </ControlLink>
+
+      <div className="ml-auto flex flex-shrink-0 items-center gap-2">
+        {!issue?.tempId ? (
+          <>
+            <IssueProperties
+              className="relative flex items-center gap-2 whitespace-nowrap"
+              issue={issue}
+              isReadOnly={!canEditIssueProperties}
+              handleIssues={updateIssue}
+              displayProperties={displayProperties}
+            />
+            {quickActions(issue)}
+          </>
+        ) : (
+          <div className="h-4 w-4">
+            <Spinner className="h-4 w-4" />
           </div>
         )}
-
-        {issue?.tempId !== undefined && (
-          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-        )}
-
-        <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
-          target="_blank"
-          onClick={() => handleIssuePeekOverview(issue)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
-        >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-            <span>{issue.name}</span>
-          </Tooltip>
-        </ControlLink>
-
-        <div className="ml-auto flex flex-shrink-0 items-center gap-2">
-          {!issue?.tempId ? (
-            <>
-              <IssueProperties
-                className="relative flex items-center gap-2 whitespace-nowrap"
-                issue={issue}
-                isReadOnly={!canEditIssueProperties}
-                handleIssues={updateIssue}
-                displayProperties={displayProperties}
-              />
-              {quickActions(issue)}
-            </>
-          ) : (
-            <div className="h-4 w-4">
-              <Spinner className="h-4 w-4" />
-            </div>
-          )}
-        </div>
       </div>
-    </>
+    </div>
   );
 });

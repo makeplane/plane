@@ -119,25 +119,23 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   return (
-    <>
-      <div className={`relative h-full w-full bg-custom-background-90`}>
-        <List
-          issuesMap={issueMap}
-          displayProperties={displayProperties}
-          group_by={group_by}
-          handleIssues={handleIssues}
-          quickActions={renderQuickActions}
-          issueIds={issueIds}
-          showEmptyGroup={showEmptyGroup}
-          viewId={viewId}
-          quickAddCallback={issues?.quickAddIssue}
-          enableIssueQuickAdd={!!enableQuickAdd}
-          canEditProperties={canEditProperties}
-          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-          storeType={storeType}
-          addIssuesToView={addIssuesToView}
-        />
-      </div>
-    </>
+    <div className={`relative h-full w-full bg-custom-background-90`}>
+      <List
+        issuesMap={issueMap}
+        displayProperties={displayProperties}
+        group_by={group_by}
+        handleIssues={handleIssues}
+        quickActions={renderQuickActions}
+        issueIds={issueIds}
+        showEmptyGroup={showEmptyGroup}
+        viewId={viewId}
+        quickAddCallback={issues?.quickAddIssue}
+        enableIssueQuickAdd={!!enableQuickAdd}
+        canEditProperties={canEditProperties}
+        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+        storeType={storeType}
+        addIssuesToView={addIssuesToView}
+      />
+    </div>
   );
 });
