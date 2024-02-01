@@ -20,6 +20,7 @@ import {
 import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
+import { MutableRefObject } from "react";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -45,6 +46,7 @@ export interface IGroupByKanBan {
   storeType?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -67,6 +69,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     storeType,
     addIssuesToView,
     canEditProperties,
+    scrollableContainerRef,
   } = props;
 
   const member = useMember();
@@ -135,6 +138,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   disableIssueCreation={disableIssueCreation}
                   canEditProperties={canEditProperties}
                   groupByVisibilityToggle={groupByVisibilityToggle}
+                  scrollableContainerRef={scrollableContainerRef}
                 />
               )}
             </div>
@@ -168,6 +172,7 @@ export interface IKanBan {
   storeType?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -189,6 +194,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     storeType,
     addIssuesToView,
     canEditProperties,
+    scrollableContainerRef,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -213,6 +219,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       storeType={storeType}
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}
+      scrollableContainerRef={scrollableContainerRef}
     />
   );
 });

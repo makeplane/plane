@@ -13,6 +13,7 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { EIssueActions } from "../types";
+import { MutableRefObject } from "react";
 
 interface IKanbanGroup {
   groupId: string;
@@ -37,6 +38,7 @@ interface IKanbanGroup {
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle: boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 export const KanbanGroup = (props: IKanbanGroup) => {
@@ -57,6 +59,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     disableIssueCreation,
     quickAddCallback,
     viewId,
+    scrollableContainerRef,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -127,6 +130,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               handleIssues={handleIssues}
               quickActions={quickActions}
               canEditProperties={canEditProperties}
+              scrollableContainerRef={scrollableContainerRef}
             />
 
             {provided.placeholder}

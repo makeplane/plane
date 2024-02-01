@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { MutableRefObject, memo } from "react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -16,6 +16,7 @@ interface IssueBlocksListProps {
   handleIssues: (issue: TIssue, action: EIssueActions) => void;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
@@ -30,6 +31,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     handleIssues,
     quickActions,
     canEditProperties,
+    scrollableContainerRef,
   } = props;
 
   return (
@@ -56,6 +58,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 index={index}
                 isDragDisabled={isDragDisabled}
                 canEditProperties={canEditProperties}
+                scrollableContainerRef={scrollableContainerRef}
               />
             );
           })}

@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
@@ -90,6 +90,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const KanBanView = sub_group_by ? KanBanSwimLanes : KanBan;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+
+  const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
 
   // states
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
@@ -236,8 +238,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         </div>
       )}
 
-      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90">
-        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+      <div
+        className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90"
+        ref={scrollableContainerRef}
+      >
+        <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {/* drag and delete component */}
             <div
@@ -280,6 +285,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               canEditProperties={canEditProperties}
               storeType={storeType}
               addIssuesToView={addIssuesToView}
+              scrollableContainerRef={scrollableContainerRef}
             />
           </DragDropContext>
         </div>
