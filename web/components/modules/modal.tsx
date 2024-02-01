@@ -55,7 +55,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
       .then((res) => {
         handleClose();
-
         setToastAlert({
           type: "success",
           title: "Success!",

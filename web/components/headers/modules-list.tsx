@@ -19,7 +19,10 @@ export const ModulesListHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const {
+    commandPalette: commandPaletteStore,
+    eventTracker: { setTrackElement },
+  } = useApplication();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -33,7 +36,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle/>
+        <SidebarHamburgerToggle />
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -86,7 +89,10 @@ export const ModulesListHeader: React.FC = observer(() => {
             variant="primary"
             size="sm"
             prependIcon={<Plus />}
-            onClick={() => commandPaletteStore.toggleCreateModuleModal(true)}
+            onClick={() => {
+              setTrackElement("Modules page");
+              commandPaletteStore.toggleCreateModuleModal(true);
+            }}
           >
             Add Module
           </Button>

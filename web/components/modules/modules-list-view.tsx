@@ -19,7 +19,10 @@ export const ModulesListView: React.FC = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const {
+    commandPalette: commandPaletteStore,
+    eventTracker: { setTrackElement },
+  } = useApplication();
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -106,7 +109,10 @@ export const ModulesListView: React.FC = observer(() => {
           }}
           primaryButton={{
             text: "Build your first module",
-            onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
+            onClick: () => {
+              setTrackElement("Module empty state");
+              commandPaletteStore.toggleCreateModuleModal(true);
+            },
           }}
           size="lg"
           disabled={!isEditingAllowed}

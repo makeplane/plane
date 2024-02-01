@@ -39,6 +39,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreateModuleModal(true);
           }}
           className="focus:outline-none"
@@ -54,6 +55,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreateViewModal(true);
           }}
           className="focus:outline-none"
@@ -69,6 +71,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreatePageModal(true);
           }}
           className="focus:outline-none"
