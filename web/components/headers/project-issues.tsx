@@ -9,6 +9,7 @@ import { useApplication, useLabel, useProject, useProjectState, useUser, useInbo
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // types
@@ -19,7 +20,6 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { renderEmoji } from "helpers/emoji.helper";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
-import { BreadcrumbLink } from "components/common";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states

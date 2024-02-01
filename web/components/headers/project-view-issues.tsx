@@ -17,6 +17,7 @@ import {
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
@@ -27,7 +28,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
-import { BreadcrumbLink } from "components/common";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router

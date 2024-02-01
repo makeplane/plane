@@ -6,11 +6,11 @@ import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { BreadcrumbLink } from "components/common";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router

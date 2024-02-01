@@ -9,9 +9,9 @@ import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
 import { CreateInboxIssueModal } from "components/inbox";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { BreadcrumbLink } from "components/common";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states

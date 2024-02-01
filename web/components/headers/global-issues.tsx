@@ -8,6 +8,7 @@ import { useLabel, useMember, useUser, useIssues } from "hooks/store";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // icons
@@ -17,7 +18,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { BreadcrumbLink } from "components/common";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
