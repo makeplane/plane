@@ -63,7 +63,7 @@ class UserWorkspaceViewViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project__isnull=True)
+            # .filter(project__isnull=True)
             .filter(Q(owned_by=self.request.user) & Q(access=0))
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
@@ -86,6 +86,20 @@ class UserWorkspaceViewViewSet(BaseViewSet):
             {"error": "You cannot update the view"},
             status=status.HTTP_403_FORBIDDEN,
         )
+    
+    def list(self, request, slug):
+        type = request.GET.get("type", None)
+        views = self.get_queryset()
+
+        if type == "workspace":
+            views = views.filter(project__isnull=True)
+
+        if type == "project":
+            views = views.filter(project__isnull=False)
+        
+        serializer = ViewSerializer(views, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def toggle_lock(self, request, slug, pk):
         view = View.objects.get(pk=pk, workspace__slug=slug)
