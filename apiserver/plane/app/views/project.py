@@ -36,6 +36,7 @@ from plane.app.serializers import (
     ProjectFavoriteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
+    ProjectMemberRoleSerializer,
 )
 
 from plane.app.permissions import (
@@ -67,7 +68,7 @@ from plane.bgtasks.project_invitation_task import project_invitation
 
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
 
@@ -75,19 +76,20 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
         ProjectBasePermission,
     ]
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action in ["update", "partial_update"]:
-            return ProjectSerializer
-        return ProjectDetailSerializer
-
     def get_queryset(self):
         return self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(Q(project_projectmember__member=self.request.user) | Q(network=2))
+            .filter(
+                Q(project_projectmember__member=self.request.user)
+                | Q(network=2)
+            )
             .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
+                "workspace",
+                "workspace__owner",
+                "default_assignee",
+                "project_lead",
             )
             .annotate(
                 is_favorite=Exists(
@@ -159,7 +161,11 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
         )
 
     def list(self, request, slug):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
 
         sort_order_query = ProjectMember.objects.filter(
             member=request.user,
@@ -172,7 +178,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             .annotate(sort_order=Subquery(sort_order_query))
             .order_by("sort_order", "name")
         )
-        if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+        if request.GET.get("per_page", False) and request.GET.get(
+            "cursor", False
+        ):
             return self.paginate(
                 request=request,
                 queryset=(projects),
@@ -180,12 +188,10 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     projects, many=True
                 ).data,
             )
-
-        return Response(
-            ProjectListSerializer(
-                projects, many=True, fields=fields if fields else None
-            ).data
-        )
+        projects = ProjectListSerializer(
+            projects, many=True, fields=fields if fields else None
+        ).data
+        return Response(projects, status=status.HTTP_200_OK)
 
     def create(self, request, slug):
         try:
@@ -199,7 +205,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
 
                 # Add the user as Administrator to the project
                 project_member = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+                    project_id=serializer.data["id"],
+                    member=request.user,
+                    role=20,
                 )
                 # Also create the issue property for the user
                 _ = IssueProperty.objects.create(
@@ -272,9 +280,15 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     ]
                 )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
                 serializer = ProjectListSerializer(project)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
@@ -287,7 +301,8 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 )
         except Workspace.DoesNotExist as e:
             return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except serializers.ValidationError as e:
             return Response(
@@ -312,7 +327,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 serializer.save()
                 if serializer.data["inbox_view"]:
                     Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox", project=project, is_default=True
+                        name=f"{project.name} Inbox",
+                        project=project,
+                        is_default=True,
                     )
 
                     # Create the triage state in Backlog group
@@ -324,10 +341,16 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                         color="#ff7700",
                     )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         except IntegrityError as e:
             if "already exists" in str(e):
@@ -337,7 +360,8 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except serializers.ValidationError as e:
             return Response(
@@ -372,11 +396,14 @@ class ProjectInvitationsViewset(BaseViewSet):
         # Check if email is provided
         if not emails:
             return Response(
-                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Emails are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         requesting_user = ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project_id, member_id=request.user.id
+            workspace__slug=slug,
+            project_id=project_id,
+            member_id=request.user.id,
         )
 
         # Check if any invited user has an higher role
@@ -550,7 +577,9 @@ class ProjectJoinEndpoint(BaseAPIView):
                     _ = WorkspaceMember.objects.create(
                         workspace_id=project_invite.workspace_id,
                         member=user,
-                        role=15 if project_invite.role >= 15 else project_invite.role,
+                        role=15
+                        if project_invite.role >= 15
+                        else project_invite.role,
                     )
                 else:
                     # Else make him active
@@ -656,11 +685,25 @@ class ProjectMemberViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
+        bulk_project_members = []
+        member_roles = {member.get("member_id"): member.get("role") for member in members}
+        # Update roles in the members array based on the member_roles dictionary
+        for project_member in  ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members]):
+            project_member.role = member_roles[str(project_member.member_id)]
+            project_member.is_active = True
+            bulk_project_members.append(project_member)
+
+        # Update the roles of the existing members
+        ProjectMember.objects.bulk_update(
+            bulk_project_members, ["is_active", "role"], batch_size=100
+        )
+
         for member in members:
             sort_order = [
                 project_member.get("sort_order")
                 for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
+                if str(project_member.get("member_id"))
+                == str(member.get("member_id"))
             ]
             bulk_project_members.append(
                 ProjectMember(
@@ -668,7 +711,9 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 10),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
+                    sort_order=sort_order[0] - 10000
+                    if len(sort_order)
+                    else 65535,
                 )
             )
             bulk_issue_props.append(
@@ -678,25 +723,6 @@ class ProjectMemberViewSet(BaseViewSet):
                     workspace_id=project.workspace_id,
                 )
             )
-
-            # Check if the user is already a member of the project and is inactive
-            if ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member_id=member.get("member_id"),
-                is_active=False,
-            ).exists():
-                member_detail = ProjectMember.objects.get(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    member_id=member.get("member_id"),
-                    is_active=False,
-                )
-                # Check if the user has not deactivated the account
-                user = User.objects.filter(pk=member.get("member_id")).first()
-                if user.is_active:
-                    member_detail.is_active = True
-                    member_detail.save(update_fields=["is_active"])
 
         project_members = ProjectMember.objects.bulk_create(
             bulk_project_members,
@@ -708,18 +734,12 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_issue_props, batch_size=10, ignore_conflicts=True
         )
 
-        serializer = ProjectMemberSerializer(project_members, many=True)
-
+        project_members = ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members])
+        serializer = ProjectMemberRoleSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, slug, project_id):
-        project_member = ProjectMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-            is_active=True,
-        )
-
+        # Get the list of project members for the project
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
@@ -727,10 +747,9 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         ).select_related("project", "member", "workspace")
 
-        if project_member.role > 10:
-            serializer = ProjectMemberAdminSerializer(project_members, many=True)
-        else:
-            serializer = ProjectMemberSerializer(project_members, many=True)
+        serializer = ProjectMemberRoleSerializer(
+            project_members, fields=("id", "member", "role"), many=True
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk):
@@ -758,7 +777,9 @@ class ProjectMemberViewSet(BaseViewSet):
             > requested_project_member.role
         ):
             return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
+                {
+                    "error": "You cannot update a role that is higher than your own role"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -797,7 +818,9 @@ class ProjectMemberViewSet(BaseViewSet):
         # User cannot deactivate higher role
         if requesting_project_member.role < project_member.role:
             return Response(
-                {"error": "You cannot remove a user having role higher than you"},
+                {
+                    "error": "You cannot remove a user having role higher than you"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -848,7 +871,8 @@ class AddTeamToProjectEndpoint(BaseAPIView):
 
         if len(team_members) == 0:
             return Response(
-                {"error": "No such team exists"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "No such team exists"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         workspace = Workspace.objects.get(slug=slug)
@@ -895,7 +919,8 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         if name == "":
             return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Name is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         exists = ProjectIdentifier.objects.filter(
@@ -912,16 +937,23 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         if name == "":
             return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if Project.objects.filter(identifier=name, workspace__slug=slug).exists():
-            return Response(
-                {"error": "Cannot delete an identifier of an existing project"},
+                {"error": "Name is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        ProjectIdentifier.objects.filter(name=name, workspace__slug=slug).delete()
+        if Project.objects.filter(
+            identifier=name, workspace__slug=slug
+        ).exists():
+            return Response(
+                {
+                    "error": "Cannot delete an identifier of an existing project"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ProjectIdentifier.objects.filter(
+            name=name, workspace__slug=slug
+        ).delete()
 
         return Response(
             status=status.HTTP_204_NO_CONTENT,
@@ -939,7 +971,9 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         ).first()
 
         if project_member is None:
-            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
+            )
 
         view_props = project_member.view_props
         default_props = project_member.default_props
@@ -947,8 +981,12 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         sort_order = project_member.sort_order
 
         project_member.view_props = request.data.get("view_props", view_props)
-        project_member.default_props = request.data.get("default_props", default_props)
-        project_member.preferences = request.data.get("preferences", preferences)
+        project_member.default_props = request.data.get(
+            "default_props", default_props
+        )
+        project_member.preferences = request.data.get(
+            "preferences", preferences
+        )
         project_member.sort_order = request.data.get("sort_order", sort_order)
 
         project_member.save()
@@ -1010,18 +1048,11 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
 
     def get(self, request):
         files = []
-        s3_client_params = {
-            "service_name": "s3",
-            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
-            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
-        }
-
-        # Use AWS_S3_ENDPOINT_URL if it is present in the settings
-        if hasattr(settings, "AWS_S3_ENDPOINT_URL") and settings.AWS_S3_ENDPOINT_URL:
-            s3_client_params["endpoint_url"] = settings.AWS_S3_ENDPOINT_URL
-
-        s3 = boto3.client(**s3_client_params)
-
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
         params = {
             "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",
@@ -1034,19 +1065,9 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
                 if not content["Key"].endswith(
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
-                    if (
-                        hasattr(settings, "AWS_S3_CUSTOM_DOMAIN")
-                        and settings.AWS_S3_CUSTOM_DOMAIN
-                        and hasattr(settings, "AWS_S3_URL_PROTOCOL")
-                        and settings.AWS_S3_URL_PROTOCOL
-                    ):
-                        files.append(
-                            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/{content['Key']}"
-                        )
-                    else:
-                        files.append(
-                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                        )
+                    files.append(
+                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                    )
 
         return Response(files, status=status.HTTP_200_OK)
 
@@ -1113,6 +1134,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
         ).values("project_id", "role")
 
         project_members = {
-            str(member["project_id"]): member["role"] for member in project_members
+            str(member["project_id"]): member["role"]
+            for member in project_members
         }
         return Response(project_members, status=status.HTTP_200_OK)

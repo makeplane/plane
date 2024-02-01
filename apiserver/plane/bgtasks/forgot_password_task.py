@@ -21,7 +21,7 @@ from plane.license.utils.instance_value import get_email_configuration
 def forgot_password(first_name, email, uidb64, token, current_site):
     try:
         relative_link = (
-            f"/accounts/password/?uidb64={uidb64}&token={token}&email={email}"
+            f"/accounts/reset-password/?uidb64={uidb64}&token={token}&email={email}"
         )
         abs_url = str(current_site) + relative_link
 
@@ -42,7 +42,9 @@ def forgot_password(first_name, email, uidb64, token, current_site):
             "email": email,
         }
 
-        html_content = render_to_string("emails/auth/forgot_password.html", context)
+        html_content = render_to_string(
+            "emails/auth/forgot_password.html", context
+        )
 
         text_content = strip_tags(html_content)
 

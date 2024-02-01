@@ -8,12 +8,16 @@ def workspace_member_props(old_props):
         "filters": {
             "priority": old_props.get("filters", {}).get("priority", None),
             "state": old_props.get("filters", {}).get("state", None),
-            "state_group": old_props.get("filters", {}).get("state_group", None),
+            "state_group": old_props.get("filters", {}).get(
+                "state_group", None
+            ),
             "assignees": old_props.get("filters", {}).get("assignees", None),
             "created_by": old_props.get("filters", {}).get("created_by", None),
             "labels": old_props.get("filters", {}).get("labels", None),
             "start_date": old_props.get("filters", {}).get("start_date", None),
-            "target_date": old_props.get("filters", {}).get("target_date", None),
+            "target_date": old_props.get("filters", {}).get(
+                "target_date", None
+            ),
             "subscriber": old_props.get("filters", {}).get("subscriber", None),
         },
         "display_filters": {
@@ -27,18 +31,28 @@ def workspace_member_props(old_props):
         },
         "display_properties": {
             "assignee": old_props.get("properties", {}).get("assignee", True),
-            "attachment_count": old_props.get("properties", {}).get("attachment_count", True),
-            "created_on": old_props.get("properties", {}).get("created_on", True),
+            "attachment_count": old_props.get("properties", {}).get(
+                "attachment_count", True
+            ),
+            "created_on": old_props.get("properties", {}).get(
+                "created_on", True
+            ),
             "due_date": old_props.get("properties", {}).get("due_date", True),
             "estimate": old_props.get("properties", {}).get("estimate", True),
             "key": old_props.get("properties", {}).get("key", True),
             "labels": old_props.get("properties", {}).get("labels", True),
             "link": old_props.get("properties", {}).get("link", True),
             "priority": old_props.get("properties", {}).get("priority", True),
-            "start_date": old_props.get("properties", {}).get("start_date", True),
+            "start_date": old_props.get("properties", {}).get(
+                "start_date", True
+            ),
             "state": old_props.get("properties", {}).get("state", True),
-            "sub_issue_count": old_props.get("properties", {}).get("sub_issue_count", True),
-            "updated_on": old_props.get("properties", {}).get("updated_on", True),
+            "sub_issue_count": old_props.get("properties", {}).get(
+                "sub_issue_count", True
+            ),
+            "updated_on": old_props.get("properties", {}).get(
+                "updated_on", True
+            ),
         },
     }
     return new_props
@@ -49,12 +63,16 @@ def project_member_props(old_props):
         "filters": {
             "priority": old_props.get("filters", {}).get("priority", None),
             "state": old_props.get("filters", {}).get("state", None),
-            "state_group": old_props.get("filters", {}).get("state_group", None),
+            "state_group": old_props.get("filters", {}).get(
+                "state_group", None
+            ),
             "assignees": old_props.get("filters", {}).get("assignees", None),
             "created_by": old_props.get("filters", {}).get("created_by", None),
             "labels": old_props.get("filters", {}).get("labels", None),
             "start_date": old_props.get("filters", {}).get("start_date", None),
-            "target_date": old_props.get("filters", {}).get("target_date", None),
+            "target_date": old_props.get("filters", {}).get(
+                "target_date", None
+            ),
             "subscriber": old_props.get("filters", {}).get("subscriber", None),
         },
         "display_filters": {
@@ -75,59 +93,75 @@ def cycle_module_props(old_props):
         "filters": {
             "priority": old_props.get("filters", {}).get("priority", None),
             "state": old_props.get("filters", {}).get("state", None),
-            "state_group": old_props.get("filters", {}).get("state_group", None),
+            "state_group": old_props.get("filters", {}).get(
+                "state_group", None
+            ),
             "assignees": old_props.get("filters", {}).get("assignees", None),
             "created_by": old_props.get("filters", {}).get("created_by", None),
             "labels": old_props.get("filters", {}).get("labels", None),
             "start_date": old_props.get("filters", {}).get("start_date", None),
-            "target_date": old_props.get("filters", {}).get("target_date", None),
+            "target_date": old_props.get("filters", {}).get(
+                "target_date", None
+            ),
             "subscriber": old_props.get("filters", {}).get("subscriber", None),
         },
     }
     return new_props
-     
+
 
 def update_workspace_member_view_props(apps, schema_editor):
     WorkspaceMemberModel = apps.get_model("db", "WorkspaceMember")
     updated_workspace_member = []
     for obj in WorkspaceMemberModel.objects.all():
-            obj.view_props = workspace_member_props(obj.view_props)
-            obj.default_props = workspace_member_props(obj.default_props)
-            updated_workspace_member.append(obj)
-    WorkspaceMemberModel.objects.bulk_update(updated_workspace_member, ["view_props", "default_props"], batch_size=100)
+        obj.view_props = workspace_member_props(obj.view_props)
+        obj.default_props = workspace_member_props(obj.default_props)
+        updated_workspace_member.append(obj)
+    WorkspaceMemberModel.objects.bulk_update(
+        updated_workspace_member,
+        ["view_props", "default_props"],
+        batch_size=100,
+    )
+
 
 def update_project_member_view_props(apps, schema_editor):
     ProjectMemberModel = apps.get_model("db", "ProjectMember")
     updated_project_member = []
     for obj in ProjectMemberModel.objects.all():
-            obj.view_props = project_member_props(obj.view_props)
-            obj.default_props = project_member_props(obj.default_props)
-            updated_project_member.append(obj)
-    ProjectMemberModel.objects.bulk_update(updated_project_member, ["view_props", "default_props"], batch_size=100)
+        obj.view_props = project_member_props(obj.view_props)
+        obj.default_props = project_member_props(obj.default_props)
+        updated_project_member.append(obj)
+    ProjectMemberModel.objects.bulk_update(
+        updated_project_member, ["view_props", "default_props"], batch_size=100
+    )
+
 
 def update_cycle_props(apps, schema_editor):
     CycleModel = apps.get_model("db", "Cycle")
     updated_cycle = []
     for obj in CycleModel.objects.all():
-            if "filter" in obj.view_props:
-                obj.view_props = cycle_module_props(obj.view_props)
-                updated_cycle.append(obj)
-    CycleModel.objects.bulk_update(updated_cycle, ["view_props"], batch_size=100)
+        if "filter" in obj.view_props:
+            obj.view_props = cycle_module_props(obj.view_props)
+            updated_cycle.append(obj)
+    CycleModel.objects.bulk_update(
+        updated_cycle, ["view_props"], batch_size=100
+    )
+
 
 def update_module_props(apps, schema_editor):
     ModuleModel = apps.get_model("db", "Module")
     updated_module = []
     for obj in ModuleModel.objects.all():
-            if "filter" in obj.view_props:
-                obj.view_props = cycle_module_props(obj.view_props)
-                updated_module.append(obj)
-    ModuleModel.objects.bulk_update(updated_module, ["view_props"], batch_size=100)
+        if "filter" in obj.view_props:
+            obj.view_props = cycle_module_props(obj.view_props)
+            updated_module.append(obj)
+    ModuleModel.objects.bulk_update(
+        updated_module, ["view_props"], batch_size=100
+    )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0043_alter_analyticview_created_by_and_more'),
+        ("db", "0043_alter_analyticview_created_by_and_more"),
     ]
 
     operations = [

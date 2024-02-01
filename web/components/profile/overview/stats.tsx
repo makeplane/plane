@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CreateIcon, LayerStackIcon, Loader } from "@plane/ui";
 import { UserCircle2 } from "lucide-react";
 // types
-import { IUserProfileData } from "types";
+import { IUserProfileData } from "@plane/types";
 
 type Props = {
   userProfile: IUserProfileData | undefined;

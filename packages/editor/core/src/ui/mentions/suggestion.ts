@@ -14,6 +14,7 @@ export const Suggestion = (suggestions: IMentionSuggestion[]) => ({
 
     return {
       onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+        props.editor.storage.mentionsOpen = true;
         reactRenderer = new ReactRenderer(MentionList, {
           props,
           editor: props.editor,
@@ -45,10 +46,18 @@ export const Suggestion = (suggestions: IMentionSuggestion[]) => ({
           return true;
         }
 
-        // @ts-ignore
-        return reactRenderer?.ref?.onKeyDown(props);
+        const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
+
+        if (navigationKeys.includes(props.event.key)) {
+          // @ts-ignore
+          reactRenderer?.ref?.onKeyDown(props);
+          event?.stopPropagation();
+          return true;
+        }
+        return false;
       },
-      onExit: () => {
+      onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
+        props.editor.storage.mentionsOpen = false;
         popup?.[0].destroy();
         reactRenderer?.destroy();
       },

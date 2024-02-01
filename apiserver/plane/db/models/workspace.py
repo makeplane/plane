@@ -55,6 +55,54 @@ def get_default_props():
     }
 
 
+def get_default_filters():
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
+
+
+def get_default_display_filters():
+    return {
+        "display_filters": {
+            "group_by": None,
+            "order_by": "-created_at",
+            "type": None,
+            "sub_issue": True,
+            "show_empty_groups": True,
+            "layout": "list",
+            "calendar_date_range": "",
+        },
+    }
+
+
+def get_default_display_properties():
+    return {
+        "display_properties": {
+            "assignee": True,
+            "attachment_count": True,
+            "created_on": True,
+            "due_date": True,
+            "estimate": True,
+            "key": True,
+            "labels": True,
+            "link": True,
+            "priority": True,
+            "start_date": True,
+            "state": True,
+            "sub_issue_count": True,
+            "updated_on": True,
+        },
+    }
+
+
 def get_issue_props():
     return {
         "subscribed": True,
@@ -89,7 +137,14 @@ class Workspace(BaseModel):
         on_delete=models.CASCADE,
         related_name="owner_workspace",
     )
-    slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[slug_validator,])
+    slug = models.SlugField(
+        max_length=48,
+        db_index=True,
+        unique=True,
+        validators=[
+            slug_validator,
+        ],
+    )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
@@ -103,9 +158,31 @@ class Workspace(BaseModel):
         ordering = ("-created_at",)
 
 
+class WorkspaceBaseModel(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
+    )
+    project = models.ForeignKey(
+        "db.Project",
+        models.CASCADE,
+        related_name="project_%(class)s",
+        null=True,
+    )
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if self.project:
+            self.workspace = self.project.workspace
+        super(WorkspaceBaseModel, self).save(*args, **kwargs)
+
+
 class WorkspaceMember(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_member",
     )
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -133,7 +210,9 @@ class WorkspaceMember(BaseModel):
 
 class WorkspaceMemberInvite(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_member_invite",
     )
     email = models.CharField(max_length=255)
     accepted = models.BooleanField(default=False)
@@ -183,9 +262,13 @@ class TeamMember(BaseModel):
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="team_member"
     )
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="team_member")
+    team = models.ForeignKey(
+        Team, on_delete=models.CASCADE, related_name="team_member"
+    )
     member = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="team_member"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="team_member",
     )
 
     def __str__(self):
@@ -205,7 +288,9 @@ class WorkspaceTheme(BaseModel):
     )
     name = models.CharField(max_length=300)
     actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="themes",
     )
     colors = models.JSONField(default=dict)
 
@@ -218,3 +303,31 @@ class WorkspaceTheme(BaseModel):
         verbose_name_plural = "Workspace Themes"
         db_table = "workspace_themes"
         ordering = ("-created_at",)
+
+
+class WorkspaceUserProperties(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_user_properties",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workspace_user_properties",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
+
+    class Meta:
+        unique_together = ["workspace", "user"]
+        verbose_name = "Workspace User Property"
+        verbose_name_plural = "Workspace User Property"
+        db_table = "Workspace_user_properties"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.user.email}"

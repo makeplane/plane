@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { Controller, useForm } from "react-hook-form";
 
@@ -12,10 +11,11 @@ import { MemberSelect } from "components/project";
 // ui
 import { Loader } from "@plane/ui";
 // types
-import { IProject, IUserLite, IWorkspace } from "types";
+import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -26,11 +26,13 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
-  const { user: userStore, project: projectStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
-  const { currentProjectRole } = userStore;
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
+  // derived values
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
   // form info
@@ -38,9 +40,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // fetching user members
   useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   useEffect(() => {
@@ -48,7 +48,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
     reset({
       ...currentProjectDetails,
-      default_assignee: currentProjectDetails.default_assignee?.id ?? currentProjectDetails.default_assignee,
+      default_assignee:
+        (currentProjectDetails.default_assignee as IUserLite)?.id ?? currentProjectDetails.default_assignee,
       project_lead: (currentProjectDetails.project_lead as IUserLite)?.id ?? currentProjectDetails.project_lead,
       workspace: (currentProjectDetails.workspace as IWorkspace).id,
     });
@@ -59,18 +60,18 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
     reset({
       ...currentProjectDetails,
-      default_assignee: currentProjectDetails?.default_assignee?.id ?? currentProjectDetails?.default_assignee,
+      default_assignee:
+        (currentProjectDetails?.default_assignee as IUserLite)?.id ?? currentProjectDetails?.default_assignee,
       project_lead: (currentProjectDetails?.project_lead as IUserLite)?.id ?? currentProjectDetails?.project_lead,
       ...formData,
     });
 
-    await projectStore
-      .updateProject(workspaceSlug.toString(), projectId.toString(), {
-        default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
-        project_lead: formData.project_lead === "none" ? null : formData.project_lead,
-      })
+    await updateProject(workspaceSlug.toString(), projectId.toString(), {
+      default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
+      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
+    })
       .then(() => {
-        projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
+        fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
         setToastAlert({
           title: "Success",
           type: "success",
@@ -78,7 +79,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

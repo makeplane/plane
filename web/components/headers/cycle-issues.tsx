@@ -1,13 +1,23 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import Link from "next/link";
 // hooks
+import {
+  useApplication,
+  useCycle,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
 // icons
@@ -16,37 +26,62 @@ import { ArrowRight, Plus } from "lucide-react";
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+
+const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getCycleById } = useCycle();
+  // derived values
+  const cycle = getCycleById(cycleId);
+
+  if (!cycle) return null;
+
+  return (
+    <CustomMenu.MenuItem key={cycle.id}>
+      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`} className="flex items-center gap-1.5">
+        <ContrastIcon className="h-3 w-3" />
+        {truncateText(cycle.name, 40)}
+      </Link>
+    </CustomMenu.MenuItem>
+  );
+};
 
 export const CycleIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     cycleId: string;
   };
-
+  // store hooks
   const {
-    cycle: cycleStore,
-    projectIssuesFilter: projectIssueFiltersStore,
-    project: { currentProjectDetails },
-    projectMember: { projectMembers },
-    projectLabel: { projectLabels },
-    projectState: projectStateStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    cycleIssuesFilter: { issueFilters, updateFilters },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCycleIds, getCycleById } = useCycle();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
-  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -58,7 +93,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -77,7 +112,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
@@ -85,7 +120,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -93,16 +128,15 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const cyclesList = cycleStore.projectCycles;
-  const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
-
+  // derived values
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -113,6 +147,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       />
       <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2">
+          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -147,19 +182,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     </>
                   }
                   className="ml-1.5 flex-shrink-0"
-                  width="auto"
                   placement="bottom-start"
                 >
-                  {cyclesList?.map((cycle) => (
-                    <CustomMenu.MenuItem
-                      key={cycle.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <ContrastIcon className="h-3 w-3" />
-                        {truncateText(cycle.name, 40)}
-                      </div>
-                    </CustomMenu.MenuItem>
+                  {currentProjectCycleIds?.map((cycleId) => (
+                    <CycleDropdownOption key={cycleId} cycleId={cycleId} />
                   ))}
                 </CustomMenu>
               }
@@ -179,9 +205,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectLabels ?? undefined}
-              members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+              labels={projectLabels}
+              memberIds={projectMemberIds ?? undefined}
+              states={projectStates}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -204,7 +230,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               <Button
                 onClick={() => {
                   setTrackElement("CYCLE_PAGE_HEADER");
-                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }}
                 size="sm"
                 prependIcon={<Plus />}

@@ -1,6 +1,7 @@
 import os
 import requests
 
+
 def slack_oauth(code):
     SLACK_OAUTH_URL = os.environ.get("SLACK_OAUTH_URL", False)
     SLACK_CLIENT_ID = os.environ.get("SLACK_CLIENT_ID", False)

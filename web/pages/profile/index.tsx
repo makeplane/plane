@@ -1,10 +1,11 @@
 import React, { useEffect, useState, ReactElement } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
-import { UserService } from "services/user.service";
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
@@ -17,8 +18,8 @@ import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane
 // icons
 import { ChevronDown, User2 } from "lucide-react";
 // types
-import type { IUser } from "types";
-import type { NextPageWithLayout } from "types/app";
+import type { IUser } from "@plane/types";
+import type { NextPageWithLayout } from "lib/types";
 // constants
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
@@ -35,40 +36,34 @@ const defaultValues: Partial<IUser> = {
 };
 
 const fileService = new FileService();
-const userService = new UserService();
 
-const ProfileSettingsPage: NextPageWithLayout = () => {
+const ProfileSettingsPage: NextPageWithLayout = observer(() => {
+  // states
+  const [isLoading, setIsLoading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
-
   // form info
   const {
     handleSubmit,
     reset,
     watch,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IUser>({ defaultValues });
-
+  // toast alert
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUserAuth();
+  // store hooks
+  const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
   }, [myProfile, reset]);
 
   const onSubmit = async (formData: IUser) => {
-    if (formData.first_name === "" || formData.last_name === "") {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "First and last names are required.",
-      });
-
-      return;
-    }
-
+    setIsLoading(true);
     const payload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -79,14 +74,8 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
       user_timezone: formData.user_timezone,
     };
 
-    await userService
-      .updateUser(payload)
-      .then((res) => {
-        mutateUser((prevData: any) => {
-          if (!prevData) return prevData;
-
-          return { ...prevData, ...res };
-        }, false);
+    await updateCurrentUser(payload)
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -100,6 +89,9 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
           message: "There was some error in updating your profile. Please try again.",
         })
       );
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
   };
 
   const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
@@ -109,18 +101,13 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 
     fileService.deleteUserFile(url).then(() => {
       if (updateUser)
-        userService
-          .updateUser({ avatar: "" })
+        updateCurrentUser({ avatar: "" })
           .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
               message: "Profile picture removed successfully.",
             });
-            mutateUser((prevData: any) => {
-              if (!prevData) return prevData;
-              return { ...prevData, avatar: "" };
-            }, false);
             setIsRemoving(false);
           })
           .catch(() => {
@@ -226,19 +213,24 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               {/* <Link href={`/profile/${myProfile.id}`}>
-                <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
-                  <ExternalLink className="h-4 w-4" />
-                  Activity Overview
-                </span>
-              </Link> */}
+              <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
+                <ExternalLink className="h-4 w-4" />
+                Activity Overview
+              </span>
+            </Link> */}
             </div>
 
             <div className="grid grid-cols-1 gap-6 px-8 lg:grid-cols-2 2xl:grid-cols-3">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">First name</h4>
+                <h4 className="text-sm">
+                  First name<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   control={control}
                   name="first_name"
+                  rules={{
+                    required: "First name is required.",
+                  }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
                       id="first_name"
@@ -249,10 +241,11 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className="w-full rounded-md"
+                      className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
                     />
                   )}
                 />
+                {errors.first_name && <span className="text-xs text-red-500">Please enter first name</span>}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -278,21 +271,27 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Email</h4>
+                <h4 className="text-sm">
+                  Email<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   control={control}
                   name="email"
-                  render={({ field: { value, onChange, ref } }) => (
+                  rules={{
+                    required: "Email is required.",
+                  }}
+                  render={({ field: { value, ref } }) => (
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={value}
-                      onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className="w-full rounded-md"
+                      className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${
+                        errors.email ? "border-red-500" : ""
+                      }`}
                       disabled
                     />
                   )}
@@ -300,19 +299,21 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Role</h4>
+                <h4 className="text-sm">
+                  Role<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   name="role"
                   control={control}
-                  rules={{ required: "This field is required" }}
+                  rules={{ required: "Role is required." }}
                   render={({ field: { value, onChange } }) => (
                     <CustomSelect
                       value={value}
                       onChange={onChange}
                       label={value ? value.toString() : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : "border-none"}
+                      buttonClassName={errors.role ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
-                      width="w-full"
+                      optionsClassName="w-full"
                       input
                     >
                       {USER_ROLES.map((item) => (
@@ -327,7 +328,9 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Display name</h4>
+                <h4 className="text-sm">
+                  Display name<span className="text-red-500">*</span>
+                </h4>
                 <Controller
                   control={control}
                   name="display_name"
@@ -357,19 +360,22 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.display_name)}
                       placeholder="Enter your display name"
-                      className="w-full"
+                      className={`w-full ${errors.display_name ? "border-red-500" : ""}`}
                     />
                   )}
                 />
+                {errors.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Timezone</h4>
+                <h4 className="text-sm">
+                  Timezone<span className="text-red-500">*</span>
+                </h4>
 
                 <Controller
                   name="user_timezone"
                   control={control}
-                  rules={{ required: "This field is required" }}
+                  rules={{ required: "Time zone is required" }}
                   render={({ field: { value, onChange } }) => (
                     <CustomSearchSelect
                       value={value}
@@ -377,18 +383,18 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       options={timeZoneOptions}
                       onChange={onChange}
                       optionsClassName="w-full"
-                      buttonClassName="border-none"
+                      buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       input
                     />
                   )}
                 />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
+                {errors.role && <span className="text-xs text-red-500">Please select a time zone</span>}
               </div>
 
               <div className="flex items-center justify-between py-2">
-                <Button variant="primary" type="submit" loading={isSubmitting}>
-                  {isSubmitting ? "Saving..." : "Save changes"}
+                <Button variant="primary" type="submit" loading={isLoading}>
+                  {isLoading ? "Saving..." : "Save changes"}
                 </Button>
               </div>
             </div>
@@ -431,7 +437,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
       </div>
     </>
   );
-};
+});
 
 ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;

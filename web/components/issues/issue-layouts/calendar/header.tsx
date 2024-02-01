@@ -1,34 +1,28 @@
 import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store/issues";
+import { useCalendarView } from "hooks/store/use-calendar-view";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  viewId?: string;
 }
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore } = props;
+  const { issuesFilterStore, viewId } = props;
 
-  const { calendar: calendarStore } = useMobxStore();
+  const issueCalendarView = useCalendarView();
 
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
-  const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
+  const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
 
   const handlePrevious = () => {
     if (calendarLayout === "month") {
@@ -38,7 +32,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
 
       const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeMonthDate: previousMonthFirstDate,
       });
     } else {
@@ -48,7 +42,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         activeWeekDate.getDate() - 7
       );
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeWeekDate: previousWeekDate,
       });
     }
@@ -62,7 +56,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
 
       const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeMonthDate: nextMonthFirstDate,
       });
     } else {
@@ -72,7 +66,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         activeWeekDate.getDate() + 7
       );
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeWeekDate: nextWeekDate,
       });
     }
@@ -82,7 +76,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
     const today = new Date();
     const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    calendarStore.updateCalendarFilters({
+    issueCalendarView.updateCalendarFilters({
       activeMonthDate: firstDayOfCurrentMonth,
       activeWeekDate: today,
     });
@@ -97,7 +91,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         <button type="button" className="grid place-items-center" onClick={handleNext}>
           <ChevronRight size={16} strokeWidth={2} />
         </button>
-        <CalendarMonthsDropdown />
+        <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
       </div>
       <div className="flex items-center gap-1.5">
         <button
@@ -107,7 +101,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         >
           Today
         </button>
-        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} viewId={viewId} />
       </div>
     </div>
   );

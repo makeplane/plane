@@ -1,31 +1,37 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 // components
 import { PagesListView } from "components/pages/pages-list";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Loader } from "@plane/ui";
-// assets
-import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const RecentPagesList: FC = observer(() => {
-  // store
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    commandPalette: commandPaletteStore,
-    page: { recentProjectPages },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+    currentUser,
+  } = useUser();
+  const { recentProjectPages } = useProjectPages();
 
-  const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("pages", "recent", isLightMode);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  // FIXME: replace any with proper type
+  const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!recentProjectPages) {
     return (
@@ -49,32 +55,22 @@ export const RecentPagesList: FC = observer(() => {
                 <h2 className="sticky top-0 z-[1] mb-2 bg-custom-background-100 text-xl font-semibold capitalize">
                   {replaceUnderscoreIfSnakeCase(key)}
                 </h2>
-                <PagesListView pages={recentProjectPages[key]} />
+                <PagesListView pageIds={recentProjectPages[key]} />
               </div>
             );
           })}
         </>
       ) : (
         <>
-          <NewEmptyState
-            title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started."
-            description="Pages are thoughtspotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
-            image={emptyPage}
-            comicBox={{
-              title: "A page can be a doc or a doc of docs.",
-              description:
-                "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
-              direction: "right",
+          <EmptyState
+            title="Write a note, a doc, or a full knowledge base"
+            description="Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated."
+            image={EmptyStateImagePath}
+            primaryButton={{
+              text: "Create new page",
+              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
-            primaryButton={
-              isEditingAllowed
-                ? {
-                    icon: <Plus className="h-4 w-4" />,
-                    text: "Create your first page",
-                    onClick: () => commandPaletteStore.toggleCreatePageModal(true),
-                  }
-                : null
-            }
+            size="sm"
             disabled={!isEditingAllowed}
           />
         </>

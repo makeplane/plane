@@ -41,7 +41,9 @@ class WebhookMixin:
     bulk = False
 
     def finalize_response(self, request, response, *args, **kwargs):
-        response = super().finalize_response(request, response, *args, **kwargs)
+        response = super().finalize_response(
+            request, response, *args, **kwargs
+        )
 
         # Check for the case should webhook be sent
         if (
@@ -104,15 +106,14 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[0]
                 return Response(
-                    {"error": f"{model_name} does not exist."},
+                    {"error": f"The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 return Response(
-                    {"error": f"key {e} does not exist"},
+                    {"error": f" The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -140,7 +141,9 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
-        response = super().finalize_response(request, response, *args, **kwargs)
+        response = super().finalize_response(
+            request, response, *args, **kwargs
+        )
 
         # Add custom headers if they exist in the request META
         ratelimit_remaining = request.META.get("X-RateLimit-Remaining")
@@ -164,13 +167,17 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     @property
     def fields(self):
         fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
+            field
+            for field in self.request.GET.get("fields", "").split(",")
+            if field
         ]
         return fields if fields else None
 
     @property
     def expand(self):
         expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
+            expand
+            for expand in self.request.GET.get("expand", "").split(",")
+            if expand
         ]
         return expand if expand else None

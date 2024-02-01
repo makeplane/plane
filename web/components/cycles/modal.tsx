@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
+import { useApplication, useCycle, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CycleForm } from "components/cycles";
 // types
-import type { CycleDateCheckData, ICycle } from "types";
+import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -23,21 +24,24 @@ const cycleService = new CycleService();
 
 export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
-  // store
-  const {
-    cycle: cycleStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
   // states
-  const [activeProject, setActiveProject] = useState<string>(projectId);
-  // toast
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+  // store hooks
+  const {
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { workspaceProjectIds } = useProject();
+  const { createCycle, updateCycleDetails } = useCycle();
+  // toast alert
   const { setToastAlert } = useToast();
 
-  const createCycle = async (payload: Partial<ICycle>) => {
+  const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
+
+  const handleCreateCycle = async (payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
+
     const selectedProjectId = payload.project ?? projectId.toString();
-    await cycleStore
-      .createCycle(workspaceSlug, selectedProjectId, payload)
+    await createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
         setToastAlert({
           type: "success",
@@ -61,11 +65,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       });
   };
 
-  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
+
     const selectedProjectId = payload.project ?? projectId.toString();
-    await cycleStore
-      .patchCycle(workspaceSlug, selectedProjectId, cycleId, payload)
+    await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -116,8 +120,12 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     }
 
     if (isDateValid) {
-      if (data) await updateCycle(data.id, payload);
-      else await createCycle(payload);
+      if (data) await handleUpdateCycle(data.id, payload);
+      else {
+        await handleCreateCycle(payload).then(() => {
+          setCycleTab("all");
+        });
+      }
       handleClose();
     } else
       setToastAlert({
@@ -126,6 +134,27 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         message: "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
       });
   };
+
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!isOpen) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (data && data.project) {
+      setActiveProject(data.project);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
+      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+  }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -157,7 +186,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
                 <CycleForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
-                  projectId={activeProject}
+                  status={data ? true : false}
+                  projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
                   data={data}
                 />

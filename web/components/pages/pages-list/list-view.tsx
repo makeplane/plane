@@ -1,71 +1,75 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
 // components
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { PagesListItem } from "./list-item";
-import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
-// images
-import emptyPage from "public/empty-state/empty_page.png";
-// types
-import { IPage } from "types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/page";
 
 type IPagesListView = {
-  pages: IPage[];
+  pageIds: string[];
 };
 
-export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
-  // store
+export const PagesListView: FC<IPagesListView> = (props) => {
+  const { pageIds: projectPageIds } = props;
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
-    user: { currentProjectRole },
     commandPalette: { toggleCreatePageModal },
-  } = useMobxStore();
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+    currentUser,
+  } = useUser();
+  // local storage
+  const { storedValue: pageTab } = useLocalStorage("pageTab", "Recent");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const currentPageTabDetails = pageTab
+    ? PAGE_EMPTY_STATE_DETAILS[pageTab as keyof typeof PAGE_EMPTY_STATE_DETAILS]
+    : PAGE_EMPTY_STATE_DETAILS["All"];
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("pages", currentPageTabDetails.key, isLightMode);
+
+  const isButtonVisible = currentPageTabDetails.key !== "archived" && currentPageTabDetails.key !== "favorites";
+
+  // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
-      {pages && workspaceSlug && projectId ? (
+      {projectPageIds && workspaceSlug && projectId ? (
         <div className="h-full space-y-4 overflow-y-auto">
-          {pages.length > 0 ? (
+          {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
-              {pages.map((page) => (
-                <PagesListItem
-                  key={page.id}
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  page={page}
-                />
+              {projectPageIds.map((pageId: string) => (
+                <PagesListItem key={pageId} pageId={pageId} projectId={projectId.toString()} />
               ))}
             </ul>
           ) : (
-            <NewEmptyState
-              title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started."
-              description="Pages are thoughtspotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
-              image={emptyPage}
-              comicBox={{
-                title: "A page can be a doc or a doc of docs.",
-                description:
-                  "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
-                direction: "right",
-              }}
+            <EmptyState
+              title={currentPageTabDetails.title}
+              description={currentPageTabDetails.description}
+              image={emptyStateImage}
               primaryButton={
-                isEditingAllowed
+                isButtonVisible
                   ? {
-                      icon: <Plus className="h-4 w-4" />,
-                      text: "Create your first page",
+                      text: "Create new page",
                       onClick: () => toggleCreatePageModal(true),
                     }
-                  : null
+                  : undefined
               }
               disabled={!isEditingAllowed}
             />
@@ -80,4 +84,4 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
       )}
     </>
   );
-});
+};

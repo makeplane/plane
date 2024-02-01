@@ -1,91 +1,144 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import isEmpty from "lodash/isEmpty";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
+import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
 // components
-import { GlobalViewsAppliedFiltersRoot } from "components/issues";
+import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
-import { IIssueUnGroupedStructure } from "store/issue";
+import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssueActions } from "../types";
+// constants
+import { EUserProjectRoles } from "constants/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { ALL_ISSUES_EMPTY_STATE_DETAILS, EUserWorkspaceRoles } from "constants/workspace";
 
-import { EFilterType, TUnGroupedIssues } from "store/issues/types";
-import { EUserWorkspaceRoles } from "constants/workspace";
-
-type Props = {
-  type?: TStaticViewTypes | null;
-};
-
-export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
-  const { type = null } = props;
-
+export const AllIssueLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
-
-  const currentIssueView = type ?? globalViewId;
-
+  const { workspaceSlug, globalViewId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
+  //swr hook for fetching issue properties
+  useWorkspaceIssueProperties(workspaceSlug);
+  // store
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    workspaceMember: { workspaceMembers },
-    workspace: { workspaceLabels },
-    globalViews: { fetchAllGlobalViews },
-    workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
-    workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
-  } = useMobxStore();
+    issuesFilter: { filters, fetchFilters, updateFilters },
+    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
+  } = useIssues(EIssuesStoreType.GLOBAL);
+
+  const { dataViewId, issueIds } = groupedIssueIds;
+  const {
+    membership: { currentWorkspaceAllProjectsRole, currentWorkspaceRole },
+    currentUser,
+  } = useUser();
+  const { fetchAllGlobalViews } = useGlobalView();
+  const { workspaceProjectIds } = useProject();
+
+  const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
+  const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
+  const currentViewDetails = ALL_ISSUES_EMPTY_STATE_DETAILS[currentView as keyof typeof ALL_ISSUES_EMPTY_STATE_DETAILS];
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, isLightMode);
+
+  // filter init from the query params
+
+  const routerFilterParams = () => {
+    if (
+      workspaceSlug &&
+      globalViewId &&
+      ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
+    ) {
+      const routerQueryParams = { ...router.query };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { ["workspaceSlug"]: _workspaceSlug, ["globalViewId"]: _globalViewId, ...filters } = routerQueryParams;
+
+      let issueFilters: any = {};
+      Object.keys(filters).forEach((key) => {
+        const filterKey: any = key;
+        const filterValue = filters[key]?.toString() || undefined;
+        if (
+          ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
+          filterKey &&
+          filterValue
+        )
+          issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
+      });
+
+      if (!isEmpty(filters))
+        updateFilters(
+          workspaceSlug.toString(),
+          undefined,
+          EIssueFilterType.FILTERS,
+          issueFilters,
+          globalViewId.toString()
+        );
+    }
+  };
 
   useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
     if (workspaceSlug) {
-      await fetchAllGlobalViews(workspaceSlug);
+      await fetchAllGlobalViews(workspaceSlug.toString());
     }
   });
 
   useSWR(
-    workspaceSlug && currentIssueView ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${currentIssueView}` : null,
+    workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
     async () => {
-      if (workspaceSlug && currentIssueView) {
-        setCurrentView(currentIssueView);
-        await fetchAllGlobalViews(workspaceSlug);
-        await fetchFilters(workspaceSlug, currentIssueView);
-        await fetchIssues(workspaceSlug, currentIssueView, getIssues ? "mutation" : "init-loader");
+      if (workspaceSlug && globalViewId) {
+        await fetchAllGlobalViews(workspaceSlug.toString());
+        await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
+        await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
+        routerFilterParams();
       }
     }
   );
 
-  const canEditProperties = (projectId: string | undefined) => {
-    if (!projectId) return false;
+  const canEditProperties = useCallback(
+    (projectId: string | undefined) => {
+      if (!projectId) return false;
 
-    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+      const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
-    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-  };
-
-  const issuesResponse = getIssues;
-  const issueIds = (getIssuesIds ?? []) as TUnGroupedIssues;
-  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
-
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      const projectId = issue.project;
-      if (!workspaceSlug || !projectId) return;
-
-      await updateIssue(workspaceSlug, projectId, issue.id, issue, currentIssueView);
+      return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
     },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      const projectId = issue.project;
-      if (!workspaceSlug || !projectId) return;
+    [currentWorkspaceAllProjectsRole]
+  );
 
-      await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
-    },
-  };
+  const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
+
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
+        if (!workspaceSlug || !projectId || !globalViewId) return;
+
+        await updateIssue(workspaceSlug.toString(), projectId, issue.id, issue, globalViewId.toString());
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
+        if (!workspaceSlug || !projectId || !globalViewId) return;
+
+        await removeIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateIssue, removeIssue, workspaceSlug]
+  );
 
   const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
+    async (issue: TIssue, action: EIssueActions) => {
       if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
       if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
     },
@@ -97,47 +150,80 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug) return;
 
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
     },
     [updateFilters, workspaceSlug]
   );
 
+  const renderQuickActions = useCallback(
+    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+      <AllIssueQuickActions
+        customActionButton={customActionButton}
+        issue={issue}
+        handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
+        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+        portalElement={portalElement}
+      />
+    ),
+    [handleIssues]
+  );
+
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {currentView != currentIssueView && (loader === "init-loader" || !getIssues) ? (
+      {!globalViewId || globalViewId !== dataViewId || loader === "init-loader" || !issueIds ? (
         <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <GlobalViewsAppliedFiltersRoot />
+          <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
 
-          {Object.keys(getIssues ?? {}).length == 0 ? (
-            <>{/* <GlobalViewEmptyState /> */}</>
+          {(issueIds ?? {}).length == 0 ? (
+            <EmptyState
+              image={emptyStateImage}
+              title={(workspaceProjectIds ?? []).length > 0 ? currentViewDetails.title : "No project"}
+              description={
+                (workspaceProjectIds ?? []).length > 0
+                  ? currentViewDetails.description
+                  : "To create issues or manage your work, you need to create a project or be a part of one."
+              }
+              size="sm"
+              primaryButton={
+                (workspaceProjectIds ?? []).length > 0
+                  ? currentView !== "custom-view" && currentView !== "subscribed"
+                    ? {
+                        text: "Create new issue",
+                        onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
+                      }
+                    : undefined
+                  : {
+                      text: "Start your first project",
+                      onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+                    }
+              }
+              disabled={!isEditingAllowed}
+            />
           ) : (
             <div className="relative h-full w-full overflow-auto">
               <SpreadsheetView
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-                issues={issues as IIssueUnGroupedStructure}
-                quickActions={(issue) => (
-                  <AllIssueQuickActions
-                    issue={issue}
-                    handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
-                    handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-                  />
-                )}
-                members={workspaceMembers?.map((m) => m.member)}
-                labels={workspaceLabels || undefined}
+                issueIds={issueIds}
+                quickActions={renderQuickActions}
                 handleIssues={handleIssues}
                 canEditProperties={canEditProperties}
-                viewId={currentIssueView}
+                viewId={globalViewId}
               />
             </div>
           )}
         </>
       )}
+
+      {/* peek overview */}
+      <IssuePeekOverview />
     </div>
   );
 });

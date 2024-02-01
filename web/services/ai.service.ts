@@ -1,6 +1,6 @@
 import { APIService } from "services/api.service";
 // types
-import { IGptResponse } from "types";
+import { IGptResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 

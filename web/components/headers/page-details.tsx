@@ -2,25 +2,18 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { FileText, Plus } from "lucide-react";
-// services
-import { PageService } from "services/page.service";
-
-// constants
-import { PAGE_DETAILS } from "constants/fetch-keys";
-
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, usePage, useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helper
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
-
-import useSWR from "swr";
+// components
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
 }
-const pageService = new PageService();
 
 export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { showButton = false } = props;
@@ -28,19 +21,15 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
 
-  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { currentProjectDetails } = useProject();
 
-  const { data: pageDetails } = useSWR(
-    workspaceSlug && currentProjectDetails?.id && pageId ? PAGE_DETAILS(pageId as string) : null,
-    workspaceSlug && currentProjectDetails?.id
-      ? () => pageService.getPageDetails(workspaceSlug as string, currentProjectDetails.id, pageId as string)
-      : null
-  );
+  const pageDetails = usePage(pageId as string);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+        <SidebarHamburgerToggle/>
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem

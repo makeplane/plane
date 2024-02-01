@@ -10,13 +10,12 @@ import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { getMenuOptions } from "src/utils/menu-options";
 import { useRouter } from "next/router";
-import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentEditor {
   // document info
   documentDetails: DocumentDetails;
   value: string;
-  rerenderOnPropsChange: {
+  rerenderOnPropsChange?: {
     id: string;
     description_html: string;
   };
@@ -39,7 +38,7 @@ interface IDocumentEditor {
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
-  updatePageTitle: (title: string) => Promise<void>;
+  updatePageTitle: (title: string) => void;
   debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
 
@@ -47,7 +46,6 @@ interface IDocumentEditor {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-  embedConfig?: IEmbedConfig;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -75,16 +73,22 @@ const DocumentEditor = ({
   duplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig,
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
   rerenderOnPropsChange,
 }: IDocumentEditor) => {
-  // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const router = useRouter();
+
+  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
+
+  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
+  // loads such that we can invoke it from react when the cursor leaves the container
+  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
+    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
+  };
 
   const editor = useEditor({
     onChange(json, html) {
@@ -104,7 +108,7 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, embedConfig?.issueEmbedConfig, setIsSubmitting),
+    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
   });
 
   if (!editor) {
@@ -145,12 +149,14 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
         isSubmitting={isSubmitting}
       />
-      <div className="flex h-full w-full overflow-y-auto">
+      <div className="flex h-full w-full overflow-y-auto frame-renderer">
         <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
+            onActionCompleteHandler={onActionCompleteHandler}
+            hideDragHandle={hideDragHandleOnMouseLeave}
             readonly={false}
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}

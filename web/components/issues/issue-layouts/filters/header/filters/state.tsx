@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -13,7 +14,7 @@ type Props = {
   states: IState[] | undefined;
 };
 
-export const FilterState: React.FC<Props> = (props) => {
+export const FilterState: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery, states } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -75,4 +76,4 @@ export const FilterState: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

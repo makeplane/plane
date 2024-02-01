@@ -1,7 +1,7 @@
 // types
-import { IUserStateDistribution } from "types";
+import { IUserStateDistribution } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -17,7 +17,7 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => (
             <div
               className="h-3 w-3 rounded-sm"
               style={{
-                backgroundColor: STATE_GROUP_COLORS[group.state_group],
+                backgroundColor: STATE_GROUPS[group.state_group].color,
               }}
             />
             <div className="-mt-1 space-y-1">
@@ -25,8 +25,8 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => (
                 {group.state_group === "unstarted"
                   ? "Not Started"
                   : group.state_group === "started"
-                    ? "Working on"
-                    : group.state_group}
+                  ? "Working on"
+                  : group.state_group}
               </p>
               <p className="text-xl font-semibold">{group.state_count}</p>
             </div>

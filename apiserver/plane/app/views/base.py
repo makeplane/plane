@@ -46,7 +46,9 @@ class WebhookMixin:
     bulk = False
 
     def finalize_response(self, request, response, *args, **kwargs):
-        response = super().finalize_response(request, response, *args, **kwargs)
+        response = super().finalize_response(
+            request, response, *args, **kwargs
+        )
 
         # Check for the case should webhook be sent
         if (
@@ -88,7 +90,9 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return self.model.objects.all()
         except Exception as e:
             capture_exception(e)
-            raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
+            raise APIException(
+                "Please check the view", status.HTTP_400_BAD_REQUEST
+            )
 
     def handle_exception(self, exc):
         """
@@ -99,6 +103,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             response = super().handle_exception(exc)
             return response
         except Exception as e:
+            print(e) if settings.DEBUG else print("Server Error")
             if isinstance(e, IntegrityError):
                 return Response(
                     {"error": "The payload is not valid"},
@@ -112,23 +117,23 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[0]
                 return Response(
-                    {"error": f"{model_name} does not exist."},
+                    {"error": f"The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 capture_exception(e)
                 return Response(
-                    {"error": f"key {e} does not exist"},
+                    {"error": f"The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            
-            print(e) if settings.DEBUG else print("Server Error")
-            capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -158,6 +163,24 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
         if resolve(self.request.path_info).url_name == "project":
             return self.kwargs.get("pk", None)
+
+    @property
+    def fields(self):
+        fields = [
+            field
+            for field in self.request.GET.get("fields", "").split(",")
+            if field
+        ]
+        return fields if fields else None
+
+    @property
+    def expand(self):
+        expand = [
+            expand
+            for expand in self.request.GET.get("expand", "").split(",")
+            if expand
+        ]
+        return expand if expand else None
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
@@ -201,20 +224,24 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[0]
                 return Response(
-                    {"error": f"{model_name} does not exist."},
+                    {"error": f"The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-            
+
             if isinstance(e, KeyError):
-                return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": f"The required key does not exist."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             if settings.DEBUG:
                 print(e)
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -239,3 +266,21 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     @property
     def project_id(self):
         return self.kwargs.get("project_id", None)
+
+    @property
+    def fields(self):
+        fields = [
+            field
+            for field in self.request.GET.get("fields", "").split(",")
+            if field
+        ]
+        return fields if fields else None
+
+    @property
+    def expand(self):
+        expand = [
+            expand
+            for expand in self.request.GET.get("expand", "").split(",")
+            if expand
+        ]
+        return expand if expand else None

@@ -1,7 +1,7 @@
-import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 
@@ -18,8 +18,8 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   const router = useRouter();
 
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   if (!currentWorkspaceRole) return null;
 

@@ -4,9 +4,8 @@ import { mutate } from "swr";
 import { useTheme } from "next-themes";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 
 type Props = {
@@ -16,16 +15,13 @@ type Props = {
 
 export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
-
   // states
   const [switchingAccount, setSwitchingAccount] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
-
-  const {
-    user: { deactivateAccount, signOut },
-  } = useMobxStore();
-
+  // router
   const router = useRouter();
+  // store hooks
+  const { deactivateAccount, signOut } = useUser();
 
   const { resolvedTheme, setTheme } = useTheme();
 

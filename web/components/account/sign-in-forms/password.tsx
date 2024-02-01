@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { XCircle } from "lucide-react";
+import { Eye, EyeOff, XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useApplication } from "hooks/store";
+// components
+import { ESignInSteps, ForgotPasswordPopover } from "components/account";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IPasswordSignInData } from "types/auth";
-// constants
-import { ESignInSteps } from "components/account";
+import { IPasswordSignInData } from "@plane/types";
 
 type Props = {
   email: string;
-  updateEmail: (email: string) => void;
   handleStepChange: (step: ESignInSteps) => void;
-  handleSignInRedirection: () => Promise<void>;
+  handleEmailClear: () => void;
+  onSubmit: () => Promise<void>;
 };
 
 type TPasswordFormValues = {
@@ -34,21 +36,25 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const PasswordForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
+export const SignInPasswordForm: React.FC<Props> = observer((props) => {
+  const { email, handleStepChange, handleEmailClear, onSubmit } = props;
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
-  const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
+  const {
+    config: { envConfig },
+  } = useApplication();
+  // derived values
+  const isSmtpConfigured = envConfig?.is_smtp_configured;
   // form info
   const {
     control,
-    formState: { dirtyFields, errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid },
     getValues,
     handleSubmit,
     setError,
-    setFocus,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -59,8 +65,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
   });
 
   const handleFormSubmit = async (formData: TPasswordFormValues) => {
-    updateEmail(formData.email);
-
     const payload: IPasswordSignInData = {
       email: formData.email,
       password: formData.password,
@@ -68,7 +72,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
 
     await authService
       .passwordSignIn(payload)
-      .then(async () => await handleSignInRedirection())
+      .then(async () => await onSubmit())
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -76,31 +80,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
           message: err?.error ?? "Something went wrong. Please try again.",
         })
       );
-  };
-
-  const handleForgotPassword = async () => {
-    const emailFormValue = getValues("email");
-
-    const isEmailValid = checkEmailValidity(emailFormValue);
-
-    if (!isEmailValid) {
-      setError("email", { message: "Email is invalid" });
-      return;
-    }
-
-    setIsSendingResetPasswordLink(true);
-
-    authService
-      .sendResetPasswordLink({ email: emailFormValue })
-      .then(() => handleStepChange(ESignInSteps.SET_PASSWORD_LINK))
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsSendingResetPasswordLink(false));
   };
 
   const handleSendUniqueCode = async () => {
@@ -128,16 +107,15 @@ export const PasswordForm: React.FC<Props> = (props) => {
       .finally(() => setIsSendingUniqueCode(false));
   };
 
-  useEffect(() => {
-    setFocus("password");
-  }, [setFocus]);
-
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-semibold text-onboarding-text-100">
-        Get on your flight deck
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
+        Welcome back, let{"'"}s get you on board
       </h1>
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-11 space-y-4 sm:w-96">
+      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
+        Get back to your issues, projects and workspaces.
+      </p>
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div>
           <Controller
             control={control}
@@ -155,13 +133,17 @@ export const PasswordForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@frstflt.com"
+                  placeholder="name@company.com"
                   className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+                  disabled={isSmtpConfigured}
                 />
                 {value.length > 0 && (
                   <XCircle
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => onChange("")}
+                    onClick={() => {
+                      if (isSmtpConfigured) handleEmailClear();
+                      else onChange("");
+                    }}
                   />
                 )}
               </div>
@@ -173,61 +155,71 @@ export const PasswordForm: React.FC<Props> = (props) => {
             control={control}
             name="password"
             rules={{
-              required: dirtyFields.email ? false : "Password is required",
+              required: "Password is required",
             }}
             render={({ field: { value, onChange } }) => (
-              <Input
-                type="password"
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.password)}
-                placeholder="Enter password"
-                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-              />
+              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={value}
+                  onChange={onChange}
+                  hasError={Boolean(errors.password)}
+                  placeholder="Enter password"
+                  className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                  autoFocus
+                />
+                {showPassword ? (
+                  <EyeOff
+                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <Eye
+                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
+              </div>
             )}
           />
-          <div className="w-full text-right">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className={`text-xs font-medium ${
-                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-custom-primary-100"
-              }`}
-              disabled={isSendingResetPasswordLink}
-            >
-              {isSendingResetPasswordLink ? "Sending link" : "Forgot your password?"}
-            </button>
+          <div className="w-full text-right mt-2 pb-3">
+            {isSmtpConfigured ? (
+              <Link
+                href={`/accounts/forgot-password?email=${email}`}
+                className="text-xs font-medium text-custom-primary-100"
+              >
+                Forgot your password?
+              </Link>
+            ) : (
+              <ForgotPasswordPopover />
+            )}
           </div>
         </div>
-        <div className="grid gap-2.5 sm:grid-cols-2">
-          <Button
-            type="button"
-            onClick={handleSendUniqueCode}
-            variant="primary"
-            className="w-full"
-            size="xl"
-            loading={isSendingUniqueCode}
-          >
-            {isSendingUniqueCode ? "Sending code" : "Use unique code"}
-          </Button>
+        <div className="space-y-2.5">
           <Button
             type="submit"
-            variant="outline-primary"
+            variant="primary"
             className="w-full"
             size="xl"
             disabled={!isValid}
             loading={isSubmitting}
           >
-            Go to workspace
+            {envConfig?.is_smtp_configured ? "Continue" : "Go to workspace"}
           </Button>
+          {envConfig && envConfig.is_smtp_configured && (
+            <Button
+              type="button"
+              onClick={handleSendUniqueCode}
+              variant="outline-primary"
+              className="w-full"
+              size="xl"
+              loading={isSendingUniqueCode}
+            >
+              {isSendingUniqueCode ? "Sending code" : "Sign in with unique code"}
+            </Button>
+          )}
         </div>
-        <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
       </form>
     </>
   );
-};
+});

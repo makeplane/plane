@@ -4,36 +4,29 @@ import { Droppable } from "@hello-pangea/dnd";
 // components
 import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
 // helpers
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
-import { IIssue } from "types";
-import { IGroupedIssues, IIssueResponse } from "store/issues/types";
-import {
-  ICycleIssuesFilterStore,
-  IModuleIssuesFilterStore,
-  IProjectIssuesFilterStore,
-  IViewIssuesFilterStore,
-} from "store/issues";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   date: ICalendarDate;
-  issues: IIssueResponse | undefined;
-  groupedIssueIds: IGroupedIssues;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  issues: TIssueMap | undefined;
+  groupedIssueIds: TGroupedIssues;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 
@@ -52,7 +45,9 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const [showAllIssues, setShowAllIssues] = useState(false);
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
-  const issueIdList = groupedIssueIds ? groupedIssueIds[renderDateFormat(date.date)] : null;
+  const formattedDatePayload = renderFormattedPayloadDate(date.date);
+  if (!formattedDatePayload) return null;
+  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
   const totalIssues = issueIdList?.length ?? 0;
   return (
@@ -78,7 +73,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
 
         {/* content */}
         <div className="h-full w-full">
-          <Droppable droppableId={renderDateFormat(date.date)} isDropDisabled={false}>
+          <Droppable droppableId={formattedDatePayload} isDropDisabled={false}>
             {(provided, snapshot) => (
               <div
                 className={`h-full w-full select-none overflow-y-auto ${
@@ -100,9 +95,9 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   <div className="px-2 py-1">
                     <CalendarQuickAddIssueForm
                       formKey="target_date"
-                      groupId={renderDateFormat(date.date)}
+                      groupId={formattedDatePayload}
                       prePopulatedData={{
-                        target_date: renderDateFormat(date.date),
+                        target_date: renderFormattedPayloadDate(date.date) ?? undefined,
                       }}
                       quickAddCallback={quickAddCallback}
                       viewId={viewId}

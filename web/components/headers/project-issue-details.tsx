@@ -2,27 +2,28 @@ import { FC } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
+// hooks
+import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-// helper
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // services
 import { IssueService } from "services/issue";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-import { useMobxStore } from "lib/mobx/store-provider";
+// components
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 // services
 const issueService = new IssueService();
 
 export const ProjectIssueDetailsHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
+  // store hooks
+  const { currentProjectDetails, getProjectById } = useProject();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -34,6 +35,7 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+        <SidebarHamburgerToggle/>
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -62,7 +64,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={`${issueDetails?.project_detail.identifier}-${issueDetails?.sequence_id}` ?? "..."}
+              label={
+                `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ?? "..."
+              }
             />
           </Breadcrumbs>
         </div>

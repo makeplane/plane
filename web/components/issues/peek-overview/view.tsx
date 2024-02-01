@@ -1,52 +1,37 @@
-import { FC, ReactNode, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { MoveRight, MoveDiagonal, Link2, Trash2 } from "lucide-react";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useKeypress from "hooks/use-keypress";
+// store hooks
+import { useIssueDetail, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import {
   DeleteArchivedIssueModal,
   DeleteIssueModal,
-  IssueActivity,
+  IssueSubscription,
   IssueUpdateStatus,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
+  TIssueOperations,
 } from "components/issues";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
-import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
-// types
-import { IIssue, IIssueLink, ILinkDetails } from "types";
+import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
+// helpers
+import { copyUrlToClipboard } from "helpers/string.helper";
 
 interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  issue: IIssue | null;
   isLoading?: boolean;
-  isArchived?: boolean;
-  handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  redirectToIssueDetail: () => void;
-  issueUpdate: (issue: Partial<IIssue>) => void;
-  issueReactionCreate: (reaction: string) => void;
-  issueReactionRemove: (reaction: string) => void;
-  issueCommentCreate: (comment: any) => void;
-  issueCommentUpdate: (comment: any) => void;
-  issueCommentRemove: (commentId: string) => void;
-  issueCommentReactionCreate: (commentId: string, reaction: string) => void;
-  issueCommentReactionRemove: (commentId: string, reaction: string) => void;
-  issueSubscriptionCreate: () => void;
-  issueSubscriptionRemove: () => void;
-  issueLinkCreate: (formData: IIssueLink) => Promise<ILinkDetails>;
-  issueLinkUpdate: (formData: IIssueLink, linkId: string) => Promise<ILinkDetails>;
-  issueLinkDelete: (linkId: string) => Promise<void>;
-  handleDeleteIssue: () => Promise<void>;
-  children: ReactNode;
-  disableUserActions?: boolean;
-  showCommentAccessSpecifier?: boolean;
+  is_archived: boolean;
+  disabled?: boolean;
+  issueOperations: TIssueOperations;
 }
 
 type TPeekModes = "side-peek" | "modal" | "full-screen";
@@ -70,119 +55,79 @@ const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
 ];
 
 export const IssueView: FC<IIssueView> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    issueId,
-    issue,
-    isLoading,
-    isArchived,
-    handleCopyText,
-    redirectToIssueDetail,
-    issueUpdate,
-    issueReactionCreate,
-    issueReactionRemove,
-    issueCommentCreate,
-    issueCommentUpdate,
-    issueCommentRemove,
-    issueCommentReactionCreate,
-    issueCommentReactionRemove,
-    issueSubscriptionCreate,
-    issueSubscriptionRemove,
-    issueLinkCreate,
-    issueLinkUpdate,
-    issueLinkDelete,
-    handleDeleteIssue,
-    children,
-    disableUserActions = false,
-    showCommentAccessSpecifier = false,
-  } = props;
-
+  const { workspaceSlug, projectId, issueId, isLoading, is_archived, disabled = false, issueOperations } = props;
+  // router
   const router = useRouter();
-  const { peekIssueId } = router.query;
-
-  const {
-    user: { currentUser },
-    issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
-  } = useMobxStore();
-
+  // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
-
-  const updateRoutePeekId = () => {
-    if (issueId != peekIssueId) {
-      setPeekId(issueId);
-      const { query } = router;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issueId, peekProjectId: projectId },
-      });
-    }
-  };
+  // store hooks
+  const { setPeekIssue, isAnyModalOpen, isDeleteIssueModalOpen, toggleDeleteIssueModal } = useIssueDetail();
+  const { currentUser } = useUser();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { setToastAlert } = useToast();
+  // derived values
+  const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
+  const issue = getIssueById(issueId);
 
   const removeRoutePeekId = () => {
-    const { query } = router;
+    setPeekIssue(undefined);
+  };
+  useOutsideClickDetector(issuePeekOverviewRef, () => !isAnyModalOpen && removeRoutePeekId());
 
-    if (query.peekIssueId) {
-      setPeekId(null);
-
-      delete query.peekIssueId;
-      delete query.peekProjectId;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
-    }
+  const redirectToIssueDetail = () => {
+    router.push({
+      pathname: `/${workspaceSlug}/projects/${projectId}/${is_archived ? "archived-issues" : "issues"}/${issueId}`,
+    });
+    removeRoutePeekId();
   };
 
-  useSWR(
-    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_PEEK_OVERVIEW_SUBSCRIPTION_${workspaceSlug}_${projectId}_${peekIssueId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await fetchIssueSubscription(workspaceSlug, projectId, issueId);
-      }
-    }
-  );
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(
+      `${workspaceSlug}/projects/${projectId}/${is_archived ? "archived-issues" : "issues"}/${issueId}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
+  };
 
-  const issueReactions = getIssueReactions || [];
-  const issueActivity = getIssueActivity;
-  const issueSubscription = getIssueSubscription || [];
-
-  const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
-
-  useOutsideClickDetector(issuePeekOverviewRef, () => removeRoutePeekId());
+  const handleKeyDown = () => !isAnyModalOpen && removeRoutePeekId();
+  useKeypress("Escape", handleKeyDown);
 
   return (
     <>
-      {issue && !isArchived && (
+      {issue && !is_archived && (
         <DeleteIssueModal
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={isDeleteIssueModalOpen}
+          handleClose={() => {
+            toggleDeleteIssueModal(false);
+            removeRoutePeekId();
+          }}
           data={issue}
-          onSubmit={handleDeleteIssue}
+          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
         />
       )}
-      {issue && isArchived && (
+
+      {issue && is_archived && (
         <DeleteArchivedIssueModal
           data={issue}
-          isOpen={deleteIssueModal}
-          handleClose={() => setDeleteIssueModal(false)}
-          onSubmit={handleDeleteIssue}
+          isOpen={isDeleteIssueModalOpen}
+          handleClose={() => toggleDeleteIssueModal(false)}
+          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
         />
       )}
-      <div className="w-full truncate !text-base">
-        {children && (
-          <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-            {children}
-          </div>
-        )}
 
-        {issueId === peekIssueId && (
+      <div className="w-full truncate !text-base">
+        {issueId && (
           <div
             ref={issuePeekOverviewRef}
             className={`fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300 
@@ -241,28 +186,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               <div className="flex items-center gap-x-4">
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
-                  {issue?.created_by !== currentUser?.id &&
-                    !issue?.assignees.includes(currentUser?.id ?? "") &&
-                    !router.pathname.includes("[archivedIssueId]") && (
-                      <Button
-                        size="sm"
-                        prependIcon={<Bell className="h-3 w-3" />}
-                        variant="outline-primary"
-                        className="hover:!bg-custom-primary-100/20"
-                        onClick={() =>
-                          issueSubscription && issueSubscription.subscribed
-                            ? issueSubscriptionRemove()
-                            : issueSubscriptionCreate()
-                        }
-                      >
-                        {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                      </Button>
-                    )}
+                  {currentUser && !is_archived && (
+                    <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+                  )}
                   <button onClick={handleCopyText}>
                     <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
-                  {!disableUserActions && (
-                    <button onClick={() => setDeleteIssueModal(true)}>
+                  {!disabled && (
+                    <button onClick={() => toggleDeleteIssueModal(true)}>
                       <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                     </button>
                   )}
@@ -281,87 +212,62 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
                       <div className="relative flex flex-col gap-3 px-8 py-5">
-                        {isArchived && (
-                          <div className="absolute left-0 top-0 z-[9] flex h-full min-h-full w-full items-center justify-center bg-custom-background-100 opacity-60" />
-                        )}
                         <PeekOverviewIssueDetails
-                          setIsSubmitting={(value) => setIsSubmitting(value)}
-                          isSubmitting={isSubmitting}
                           workspaceSlug={workspaceSlug}
-                          issue={issue}
-                          issueUpdate={issueUpdate}
-                          issueReactions={issueReactions}
-                          user={currentUser}
-                          issueReactionCreate={issueReactionCreate}
-                          issueReactionRemove={issueReactionRemove}
+                          projectId={projectId}
+                          issueId={issueId}
+                          issueOperations={issueOperations}
+                          disabled={disabled}
+                          isSubmitting={isSubmitting}
+                          setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
 
                         <PeekOverviewProperties
-                          issue={issue}
-                          issueUpdate={issueUpdate}
-                          issueLinkCreate={issueLinkCreate}
-                          issueLinkUpdate={issueLinkUpdate}
-                          issueLinkDelete={issueLinkDelete}
-                          disableUserActions={disableUserActions}
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          issueOperations={issueOperations}
+                          disabled={disabled}
                         />
 
                         <IssueActivity
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          user={currentUser}
-                          issueActivity={issueActivity}
-                          issueCommentCreate={issueCommentCreate}
-                          issueCommentUpdate={issueCommentUpdate}
-                          issueCommentRemove={issueCommentRemove}
-                          issueCommentReactionCreate={issueCommentReactionCreate}
-                          issueCommentReactionRemove={issueCommentReactionRemove}
-                          showCommentAccessSpecifier={showCommentAccessSpecifier}
                         />
                       </div>
                     ) : (
-                      <div className={`flex h-full w-full overflow-auto ${isArchived ? "opacity-60" : ""}`}>
+                      <div className={`flex h-full w-full overflow-auto`}>
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
-                          <div className={isArchived ? "pointer-events-none" : ""}>
+                          <div>
                             <PeekOverviewIssueDetails
-                              setIsSubmitting={(value) => setIsSubmitting(value)}
-                              isSubmitting={isSubmitting}
                               workspaceSlug={workspaceSlug}
-                              issue={issue}
-                              issueReactions={issueReactions}
-                              issueUpdate={issueUpdate}
-                              user={currentUser}
-                              issueReactionCreate={issueReactionCreate}
-                              issueReactionRemove={issueReactionRemove}
+                              projectId={projectId}
+                              issueId={issueId}
+                              issueOperations={issueOperations}
+                              disabled={disabled}
+                              isSubmitting={isSubmitting}
+                              setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
 
                             <IssueActivity
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
                               issueId={issueId}
-                              user={currentUser}
-                              issueActivity={issueActivity}
-                              issueCommentCreate={issueCommentCreate}
-                              issueCommentUpdate={issueCommentUpdate}
-                              issueCommentRemove={issueCommentRemove}
-                              issueCommentReactionCreate={issueCommentReactionCreate}
-                              issueCommentReactionRemove={issueCommentReactionRemove}
-                              showCommentAccessSpecifier={showCommentAccessSpecifier}
                             />
                           </div>
                         </div>
                         <div
                           className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 ${
-                            isArchived ? "pointer-events-none" : ""
+                            is_archived ? "pointer-events-none" : ""
                           }`}
                         >
                           <PeekOverviewProperties
-                            issue={issue}
-                            issueUpdate={issueUpdate}
-                            issueLinkCreate={issueLinkCreate}
-                            issueLinkUpdate={issueLinkUpdate}
-                            issueLinkDelete={issueLinkDelete}
-                            disableUserActions={disableUserActions}
+                            workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            issueId={issueId}
+                            issueOperations={issueOperations}
+                            disabled={disabled}
                           />
                         </div>
                       </div>

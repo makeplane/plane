@@ -1,31 +1,36 @@
 import { ReactElement } from "react";
 import useSWR from "swr";
 import Link from "next/link";
+import { observer } from "mobx-react";
+//hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
-import { ActivityIcon, ActivityMessage } from "components/core";
+import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
-import { ExternalLinkIcon, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const userService = new UserService();
 
-const ProfileActivityPage: NextPageWithLayout = () => {
+const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
+  // store hooks
+  const { currentUser } = useUser();
 
   return (
-    <section className="mx-auto pt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+    <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
       <div className="flex items-center border-b border-custom-border-100 pb-3.5">
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
@@ -70,7 +75,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               : activityItem.actor_detail.display_name}
                           </div>
                           <p className="mt-0.5 text-xs text-custom-text-200">
-                            Commented {timeAgo(activityItem.created_at)}
+                            Commented {calculateTimeAgo(activityItem.created_at)}
                           </p>
                         </div>
                         <div className="issue-comments-section p-0">
@@ -93,21 +98,13 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                 activityItem.field !== "modules" &&
                 activityItem.field !== "attachment" &&
                 activityItem.field !== "link" &&
-                activityItem.field !== "estimate" ? (
-                  <span className="text-custom-text-200">
-                    created{" "}
-                    <Link
-                      href={`/${activityItem.workspace_detail.slug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
-                    >
-                      <span className="inline-flex items-center hover:underline">
-                        this issue. <ExternalLinkIcon className="ml-1 h-3.5 w-3.5" />
-                      </span>
-                    </Link>
+                activityItem.field !== "estimate" &&
+                !activityItem.field ? (
+                  <span>
+                    created <IssueLink activity={activityItem} />
                   </span>
-                ) : activityItem.field ? (
-                  <ActivityMessage activity={activityItem} showIssue />
                 ) : (
-                  "created the issue."
+                  <ActivityMessage activity={activityItem} showIssue />
                 );
 
               if ("field" in activityItem && activityItem.field !== "updated_by") {
@@ -158,14 +155,16 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                   href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
                                 >
                                   <span className="text-gray font-medium">
-                                    {activityItem.actor_detail.display_name}
+                                    {currentUser?.id === activityItem.actor_detail.id
+                                      ? "You"
+                                      : activityItem.actor_detail.display_name}
                                   </span>
                                 </Link>
                               )}{" "}
                               <div className="flex gap-1 truncate">
                                 {message}{" "}
                                 <span className="flex-shrink-0 whitespace-nowrap">
-                                  {timeAgo(activityItem.created_at)}
+                                  {calculateTimeAgo(activityItem.created_at)}
                                 </span>
                               </div>
                             </div>
@@ -180,7 +179,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
           </ul>
         </div>
       ) : (
-        <Loader className="space-y-5 mt-5">
+        <Loader className="space-y-5">
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
@@ -189,7 +188,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
       )}
     </section>
   );
-};
+});
 
 ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;

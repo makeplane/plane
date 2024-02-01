@@ -7,7 +7,7 @@ import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 import { ProfileIssuesPage } from "components/profile/profile-issues";
 
 const ProfileSubscribedIssuesPage: NextPageWithLayout = () => <ProfileIssuesPage type="subscribed" />;

@@ -41,13 +41,19 @@ from plane.app.serializers import (
     ProjectMemberSerializer,
     WorkspaceThemeSerializer,
     IssueActivitySerializer,
-    IssueLiteSerializer,
+    IssueSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
+    ProjectMemberRoleSerializer,
+    WorkspaceUserPropertiesSerializer,
+    WorkspaceEstimateSerializer,
+    StateSerializer,
+    LabelSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
 from plane.db.models import (
+    State,
     User,
     Workspace,
     WorkspaceMemberInvite,
@@ -64,6 +70,9 @@ from plane.db.models import (
     WorkspaceMember,
     CycleIssue,
     IssueReaction,
+    WorkspaceUserProperties,
+    Estimate,
+    EstimatePoint,
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -71,10 +80,12 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
     WorkspaceViewerPermission,
     WorkspaceUserPermission,
+    ProjectLitePermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
+
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -111,7 +122,9 @@ class WorkSpaceViewSet(BaseViewSet):
             .values("count")
         )
         return (
-            self.filter_queryset(super().get_queryset().select_related("owner"))
+            self.filter_queryset(
+                super().get_queryset().select_related("owner")
+            )
             .order_by("name")
             .filter(
                 workspace_member__member=self.request.user,
@@ -137,7 +150,9 @@ class WorkSpaceViewSet(BaseViewSet):
 
             if len(name) > 80 or len(slug) > 48:
                 return Response(
-                    {"error": "The maximum length for name is 80 and for slug is 48"},
+                    {
+                        "error": "The maximum length for name is 80 and for slug is 48"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -150,7 +165,9 @@ class WorkSpaceViewSet(BaseViewSet):
                     role=20,
                     company_role=request.data.get("company_role", ""),
                 )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
                 status=status.HTTP_400_BAD_REQUEST,
@@ -173,6 +190,11 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
         member_count = (
             WorkspaceMember.objects.filter(
                 workspace=OuterRef("id"),
@@ -204,13 +226,17 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .annotate(total_members=member_count)
             .annotate(total_issues=issue_count)
             .filter(
-                workspace_member__member=request.user, workspace_member__is_active=True
+                workspace_member__member=request.user,
+                workspace_member__is_active=True,
             )
             .distinct()
         )
-
-        serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        workspaces = WorkSpaceSerializer(
+            self.filter_queryset(workspace),
+            fields=fields if fields else None,
+            many=True,
+        ).data
+        return Response(workspaces, status=status.HTTP_200_OK)
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
@@ -250,7 +276,8 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         # Check if email is provided
         if not emails:
             return Response(
-                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Emails are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # check for role level of the requesting user
@@ -407,7 +434,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
                     # Delete the invitation
                     workspace_invite.delete()
-                
+
                 # Send event
                 workspace_invite_event.delay(
                     user=user.id if user is not None else None,
@@ -537,10 +564,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_members = self.get_queryset()
 
         if workspace_member.role > 10:
-            serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
+            serializer = WorkspaceMemberAdminSerializer(
+                workspace_members,
+                fields=("id", "member", "role"),
+                many=True,
+            )
         else:
             serializer = WorkSpaceMemberSerializer(
                 workspace_members,
+                fields=("id", "member", "role"),
                 many=True,
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -572,7 +604,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             > requested_workspace_member.role
         ):
             return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
+                {
+                    "error": "You cannot update a role that is higher than your own role"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -611,7 +645,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if requesting_workspace_member.role < workspace_member.role:
             return Response(
-                {"error": "You cannot remove a user having role higher than you"},
+                {
+                    "error": "You cannot remove a user having role higher than you"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -705,6 +741,49 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class WorkspaceProjectMemberEndpoint(BaseAPIView):
+    serializer_class = ProjectMemberRoleSerializer
+    model = ProjectMember
+
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        # Fetch all project IDs where the user is involved
+        project_ids = (
+            ProjectMember.objects.filter(
+                member=request.user,
+                member__is_bot=False,
+                is_active=True,
+            )
+            .values_list("project_id", flat=True)
+            .distinct()
+        )
+
+        # Get all the project members in which the user is involved
+        project_members = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member__is_bot=False,
+            project_id__in=project_ids,
+            is_active=True,
+        ).select_related("project", "member", "workspace")
+        project_members = ProjectMemberRoleSerializer(
+            project_members, many=True
+        ).data
+
+        project_members_dict = dict()
+
+        # Construct a dictionary with project_id as key and project_members as value
+        for project_member in project_members:
+            project_id = project_member.pop("project")
+            if str(project_id) not in project_members_dict:
+                project_members_dict[str(project_id)] = []
+            project_members_dict[str(project_id)].append(project_member)
+
+        return Response(project_members_dict, status=status.HTTP_200_OK)
+
+
 class TeamMemberViewSet(BaseViewSet):
     serializer_class = TeamSerializer
     model = Team
@@ -739,7 +818,9 @@ class TeamMemberViewSet(BaseViewSet):
         )
 
         if len(members) != len(request.data.get("members", [])):
-            users = list(set(request.data.get("members", [])).difference(members))
+            users = list(
+                set(request.data.get("members", [])).difference(members)
+            )
             users = User.objects.filter(pk__in=users)
 
             serializer = UserLiteSerializer(users, many=True)
@@ -753,7 +834,9 @@ class TeamMemberViewSet(BaseViewSet):
 
         workspace = Workspace.objects.get(slug=slug)
 
-        serializer = TeamSerializer(data=request.data, context={"workspace": workspace})
+        serializer = TeamSerializer(
+            data=request.data, context={"workspace": workspace}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -782,7 +865,9 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
             workspace_id=last_workspace_id, member=request.user
         ).select_related("workspace", "project", "member", "workspace__owner")
 
-        project_member_serializer = ProjectMemberSerializer(project_member, many=True)
+        project_member_serializer = ProjectMemberSerializer(
+            project_member, many=True
+        )
 
         return Response(
             {
@@ -966,7 +1051,11 @@ class WorkspaceThemeViewSet(BaseViewSet):
     serializer_class = WorkspaceThemeSerializer
 
     def get_queryset(self):
-        return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+        )
 
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -1229,12 +1318,22 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, user_id):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
         filters = issue_filters(request.query_params, "GET")
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        state_order = [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = (
@@ -1246,21 +1345,9 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
             )
             .filter(**filters)
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .select_related("project", "workspace", "state", "parent")
-            .prefetch_related("assignees", "labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .order_by("-created_at")
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1268,17 +1355,30 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .order_by("created_at")
         ).distinct()
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
-                priority_order if order_by_param == "priority" else priority_order[::-1]
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
             )
             issue_queryset = issue_queryset.annotate(
                 priority_order=Case(
@@ -1326,16 +1426,17 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                     else order_by_param
                 )
             ).order_by(
-                "-max_values" if order_by_param.startswith("-") else "max_values"
+                "-max_values"
+                if order_by_param.startswith("-")
+                else "max_values"
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(
+        issues = IssueSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(issue_dict, status=status.HTTP_200_OK)
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
@@ -1347,5 +1448,79 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         labels = Label.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
-        ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
-        return Response(labels, status=status.HTTP_200_OK)
+        )
+        serializer = LabelSerializer(labels, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+class WorkspaceStatesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        states = State.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+        )
+        serializer = StateSerializer(states, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+class WorkspaceEstimatesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        estimate_ids = Project.objects.filter(
+            workspace__slug=slug, estimate__isnull=False
+        ).values_list("estimate_id", flat=True)
+        estimates = Estimate.objects.filter(
+            pk__in=estimate_ids
+        ).prefetch_related(
+            Prefetch(
+                "points",
+                queryset=EstimatePoint.objects.select_related(
+                    "estimate", "workspace", "project"
+                ),
+            )
+        )
+        serializer = WorkspaceEstimateSerializer(estimates, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkspaceUserPropertiesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def patch(self, request, slug):
+        workspace_properties = WorkspaceUserProperties.objects.get(
+            user=request.user,
+            workspace__slug=slug,
+        )
+
+        workspace_properties.filters = request.data.get(
+            "filters", workspace_properties.filters
+        )
+        workspace_properties.display_filters = request.data.get(
+            "display_filters", workspace_properties.display_filters
+        )
+        workspace_properties.display_properties = request.data.get(
+            "display_properties", workspace_properties.display_properties
+        )
+        workspace_properties.save()
+
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug):
+        (
+            workspace_properties,
+            _,
+        ) = WorkspaceUserProperties.objects.get_or_create(
+            user=request.user, workspace__slug=slug
+        )
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-
-// react-popper
+import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
-// headless ui
 import { Listbox } from "@headlessui/react";
-// icons
 import { Check, ChevronDown } from "lucide-react";
+// hooks
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "../hooks/use-outside-click-detector";
+// helpers
+import { cn } from "../../helpers";
 // types
 import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
@@ -25,21 +26,36 @@ const CustomSelect = (props: ICustomSelectProps) => {
     onChange,
     optionsClassName = "",
     value,
-    width = "auto",
+    tabIndex,
   } = props;
+  // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  // refs
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
   });
 
+  const openDropdown = () => {
+    setIsOpen(true);
+    if (referenceElement) referenceElement.focus();
+  };
+  const closeDropdown = () => setIsOpen(false);
+  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+  useOutsideClickDetector(dropdownRef, closeDropdown);
+
   return (
     <Listbox
       as="div"
+      ref={dropdownRef}
+      tabIndex={tabIndex}
       value={value}
       onChange={onChange}
-      className={`relative flex-shrink-0 text-left ${className}`}
+      className={cn("relative flex-shrink-0 text-left", className)}
+      onKeyDown={handleKeyDown}
       disabled={disabled}
     >
       <>
@@ -51,6 +67,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               className={`flex items-center justify-between gap-1 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
+              onClick={openDropdown}
             >
               {customButton}
             </button>
@@ -65,6 +82,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               } ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
+              onClick={openDropdown}
             >
               {label}
               {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -72,26 +90,27 @@ const CustomSelect = (props: ICustomSelectProps) => {
           </Listbox.Button>
         )}
       </>
-      <Listbox.Options>
-        <div
-          className={`z-10 my-1 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-custom-shadow-rg focus:outline-none ${
-            maxHeight === "lg"
-              ? "max-h-60"
-              : maxHeight === "md"
-                ? "max-h-48"
-                : maxHeight === "rg"
-                  ? "max-h-36"
-                  : maxHeight === "sm"
-                    ? "max-h-28"
-                    : ""
-          } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
-          ref={setPopperElement}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <div className="space-y-1 p-2">{children}</div>
-        </div>
-      </Listbox.Options>
+      {isOpen && (
+        <Listbox.Options className="fixed z-10" onClick={() => closeDropdown()} static>
+          <div
+            className={cn(
+              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+              {
+                "max-h-60": maxHeight === "lg",
+                "max-h-48": maxHeight === "md",
+                "max-h-36": maxHeight === "rg",
+                "max-h-28": maxHeight === "sm",
+              },
+              optionsClassName
+            )}
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            {children}
+          </div>
+        </Listbox.Options>
+      )}
     </Listbox>
   );
 };
@@ -101,16 +120,20 @@ const Option = (props: ICustomSelectItemProps) => {
   return (
     <Listbox.Option
       value={value}
-      className={({ active, selected }) =>
-        `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-          active || selected ? "bg-custom-background-80" : ""
-        } ${selected ? "text-custom-text-100" : "text-custom-text-200"} ${className}`
+      className={({ active }) =>
+        cn(
+          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200",
+          {
+            "bg-custom-background-80": active,
+          },
+          className
+        )
       }
     >
       {({ selected }) => (
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">{children}</div>
-          {selected && <Check className="h-4 w-4 flex-shrink-0" />}
+          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>
       )}
     </Listbox.Option>

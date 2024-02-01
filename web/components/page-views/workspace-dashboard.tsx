@@ -1,113 +1,102 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
+import { useEffect } from "react";
+import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
 // components
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
-import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
+import { IssuePeekOverview } from "components/issues";
+import { DashboardWidgets } from "components/dashboard";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+// ui
+import { Spinner } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
-// images
-import { NewEmptyState } from "components/common/new-empty-state";
-import emptyProject from "public/empty-state/dashboard_empty_project.webp";
 
 export const WorkspaceDashboardView = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-  // store
-
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
-    user: userStore,
-    project: projectStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement, postHogEventTracker },
-  } = useMobxStore();
+    commandPalette: { toggleCreateProjectModal },
+    eventTracker: { postHogEventTracker },
+    router: { workspaceSlug },
+  } = useApplication();
+  const {
+    currentUser,
+    updateTourCompleted,
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
+  const { joinedProjectIds } = useProject();
 
-  const user = userStore.currentUser;
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-  const workspaceDashboardInfo = userStore.dashboardInfo;
-  // states
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
-  // fetch user dashboard info
-  useSWR(
-    workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
-    workspaceSlug ? () => userStore.fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
-  );
-  const isEditingAllowed = !!userStore.currentWorkspaceRole && userStore.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "dashboard", isLightMode);
 
   const handleTourCompleted = () => {
-    userStore
-      .updateTourCompleted()
+    updateTourCompleted()
       .then(() => {
         postHogEventTracker("USER_TOUR_COMPLETE", {
-          user_id: user?.id,
-          email: user?.email,
+          user_id: currentUser?.id,
+          email: currentUser?.email,
           state: "SUCCESS",
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
+  // fetch home dashboard widgets on workspace change
+  useEffect(() => {
+    if (!workspaceSlug) return;
+
+    fetchHomeDashboardWidgets(workspaceSlug);
+  }, [fetchHomeDashboardWidgets, workspaceSlug]);
+
+  const isEditingAllowed = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
   return (
     <>
-      {/* {isProductUpdatesModalOpen && (
-        <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
-      )} */}
-      {user && !user.is_tour_completed && (
-        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
-          <TourRoot onComplete={handleTourCompleted} />
-        </div>
-      )}
-      <div className="space-y-8 p-8">
-        {user && <UserGreetingsView user={user} />}
-
-        {projects ? (
-          projects.length > 0 ? (
-            <div className="flex flex-col gap-8">
-              <IssuesStats data={workspaceDashboardInfo} />
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                <IssuesList issues={workspaceDashboardInfo?.overdue_issues} type="overdue" />
-                <IssuesList issues={workspaceDashboardInfo?.upcoming_issues} type="upcoming" />
-                <IssuesPieChart groupedIssues={workspaceDashboardInfo?.state_distribution} />
-                <CompletedIssuesGraph
-                  issues={workspaceDashboardInfo?.completed_issues}
-                  month={month}
-                  setMonth={setMonth}
-                />
-              </div>
+      {homeDashboardId && joinedProjectIds ? (
+        <>
+          {joinedProjectIds.length > 0 ? (
+            <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
+              <IssuePeekOverview />
+              {currentUser && <UserGreetingsView user={currentUser} />}
+              {currentUser && !currentUser.is_tour_completed && (
+                <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
+                  <TourRoot onComplete={handleTourCompleted} />
+                </div>
+              )}
+              <DashboardWidgets />
             </div>
           ) : (
-            <NewEmptyState
-              image={emptyProject}
+            <EmptyState
+              image={emptyStateImage}
               title="Overview of your projects, activity, and metrics"
-              description="When you have created a project and have issues assigned, you will see metrics, activity, and things you care about here. This is personalized to your role in projects, so project admins will see more than members."
+              description=" Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this
+            page will transform into a space that helps you progress. Admins will also see items which help their team
+            progress."
+              primaryButton={{
+                text: "Build your first project",
+                onClick: () => toggleCreateProjectModal(true),
+              }}
               comicBox={{
                 title: "Everything starts with a project in Plane",
-                direction: "right",
                 description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
               }}
-              primaryButton={
-                isEditingAllowed
-                  ? {
-                      text: "Build your first project",
-                      onClick: () => {
-                        setTrackElement("DASHBOARD_PAGE");
-                        commandPaletteStore.toggleCreateProjectModal(true);
-                      },
-                    }
-                  : null
-              }
+              size="lg"
               disabled={!isEditingAllowed}
             />
-          )
-        ) : null}
-      </div>
+          )}
+        </>
+      ) : (
+        <div className="h-full w-full grid place-items-center">
+          <Spinner />
+        </div>
+      )}
     </>
   );
 });

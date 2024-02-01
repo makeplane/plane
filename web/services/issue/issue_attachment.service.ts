@@ -1,13 +1,20 @@
 import { APIService } from "services/api.service";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
+// types
+import { TIssueAttachment } from "@plane/types";
 
 export class IssueAttachmentService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async uploadIssueAttachment(workspaceSlug: string, projectId: string, issueId: string, file: FormData): Promise<any> {
+  async uploadIssueAttachment(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    file: FormData
+  ): Promise<TIssueAttachment> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`,
       file,
@@ -24,7 +31,7 @@ export class IssueAttachmentService extends APIService {
       });
   }
 
-  async getIssueAttachment(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async getIssueAttachment(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueAttachment[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -37,7 +44,7 @@ export class IssueAttachmentService extends APIService {
     projectId: string,
     issueId: string,
     assetId: string
-  ): Promise<any> {
+  ): Promise<TIssueAttachment> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${assetId}/`
     )

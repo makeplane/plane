@@ -5,7 +5,7 @@ import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 // type
-import type { NotificationType, NotificationCount } from "types";
+import type { NotificationType, NotificationCount } from "@plane/types";
 
 type NotificationHeaderProps = {
   notificationCount?: NotificationCount | null;
@@ -95,6 +95,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 <MoreVertical className="h-3.5 w-3.5" />
               </div>
             }
+            closeOnSelect
           >
             <CustomMenu.MenuItem onClick={markAllNotificationsAsRead}>
               <div className="flex items-center gap-2">
@@ -150,8 +151,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 {snoozed
                   ? "Snoozed Notifications"
                   : readNotification
-                    ? "Unread Notifications"
-                    : "Archived Notifications"}
+                  ? "Unread Notifications"
+                  : "Archived Notifications"}
               </span>
             </h4>
           </button>

@@ -17,6 +17,7 @@ from .workspace import (
     WorkspaceThemeSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
+    WorkspaceUserPropertiesSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -31,14 +32,20 @@ from .project import (
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
+    ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
+from .view import (
+    GlobalViewSerializer,
+    IssueViewSerializer,
+    IssueViewFavoriteSerializer,
+)
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
     CycleFavoriteSerializer,
     CycleWriteSerializer,
+    CycleUserPropertiesSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (
@@ -69,6 +76,7 @@ from .module import (
     ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
+    ModuleUserPropertiesSerializer,
 )
 
 from .api import APITokenSerializer, APITokenReadSerializer
@@ -85,20 +93,33 @@ from .integration import (
 
 from .importer import ImporterSerializer
 
-from .page import PageSerializer, PageLogSerializer, SubPageSerializer, PageFavoriteSerializer
+from .page import (
+    PageSerializer,
+    PageLogSerializer,
+    SubPageSerializer,
+    PageFavoriteSerializer,
+)
 
 from .estimate import (
     EstimateSerializer,
     EstimatePointSerializer,
     EstimateReadSerializer,
+    WorkspaceEstimateSerializer,
 )
 
-from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSerializer
+from .inbox import (
+    InboxSerializer,
+    InboxIssueSerializer,
+    IssueStateInboxSerializer,
+    InboxIssueLiteSerializer,
+)
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import NotificationSerializer
+from .notification import NotificationSerializer, UserNotificationPreferenceSerializer
 
 from .exporter import ExporterHistorySerializer
 
 from .webhook import WebhookSerializer, WebhookLogSerializer
+
+from .dashboard import DashboardSerializer, WidgetSerializer

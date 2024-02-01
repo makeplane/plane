@@ -2,9 +2,8 @@ import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useMember, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -15,33 +14,38 @@ import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/w
 // ui
 import { Button } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWorkspaceBulkInviteFormData } from "types";
+import { NextPageWithLayout } from "lib/types";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-  // store
-  const {
-    user: { currentWorkspaceRole },
-    workspaceMember: { inviteMembersToWorkspace },
-    trackEvent: { postHogEventTracker, setTrackElement },
-  } = useMobxStore();
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // hooks
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    eventTracker: { postHogEventTracker, setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const {
+    workspace: { inviteMembersToWorkspace },
+  } = useMember();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
 
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(async (res) => {
+      .then(() => {
         setInviteModal(false);
-        postHogEventTracker("MEMBER_INVITED", { ...res, state: "SUCCESS" });
+        postHogEventTracker("MEMBER_INVITED", { state: "SUCCESS" });
         setToastAlert({
           type: "success",
           title: "Success!",

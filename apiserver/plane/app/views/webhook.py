@@ -26,8 +26,12 @@ class WebhookEndpoint(BaseAPIView):
             )
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(

@@ -3,11 +3,10 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { FileService } from "services/file.service";
 // hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -17,7 +16,7 @@ import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 
@@ -33,17 +32,19 @@ const fileService = new FileService();
 
 export const WorkspaceDetails: FC = observer(() => {
   // states
+  const [isLoading, setIsLoading] = useState(false);
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  // store
+  // store hooks
   const {
-    workspace: { currentWorkspace, updateWorkspace },
-    user: { currentWorkspaceRole },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
-  // hooks
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace, updateWorkspace } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
@@ -51,13 +52,15 @@ export const WorkspaceDetails: FC = observer(() => {
     control,
     reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...currentWorkspace },
   });
 
   const onSubmit = async (formData: IWorkspace) => {
     if (!currentWorkspace) return;
+
+    setIsLoading(true);
 
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
@@ -83,6 +86,9 @@ export const WorkspaceDetails: FC = observer(() => {
         });
         console.error(err);
       });
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
   };
 
   const handleRemoveLogo = () => {
@@ -247,7 +253,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     value={value}
                     onChange={onChange}
                     label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
-                    width="w-full"
+                    optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
                     disabled={!isAdmin}
@@ -289,8 +295,8 @@ export const WorkspaceDetails: FC = observer(() => {
 
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
-              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-                {isSubmitting ? "Updating..." : "Update Workspace"}
+              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isLoading}>
+                {isLoading ? "Updating..." : "Update Workspace"}
               </Button>
             </div>
           )}

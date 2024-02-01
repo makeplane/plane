@@ -1,38 +1,42 @@
 import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
-import { NewEmptyState } from "components/common/new-empty-state";
-// icons
-import { Plus } from "lucide-react";
-// assets
-import emptyAnalytics from "public/empty-state/empty_analytics.webp";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  // store
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
-    project: { workspaceProjects },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+    currentUser,
+  } = useUser();
+  const { workspaceProjectIds } = useProject();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", isLightMode);
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
-      {workspaceProjects && workspaceProjects.length > 0 ? (
+      {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
         <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
@@ -61,29 +65,25 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
           </Tab.Group>
         </div>
       ) : (
-        <>
-          <NewEmptyState
-            title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster."
-            description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
-            image={emptyAnalytics}
-            comicBox={{
-              title: "Analytics works best with Cycles + Modules",
-              description:
-                "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
-              direction: "right",
-              extraPadding: true,
-            }}
-            primaryButton={{
-              icon: <Plus className="h-4 w-4" />,
-              text: "Create Cycles and Modules first",
-              onClick: () => {
-                setTrackElement("ANALYTICS_EMPTY_STATE");
-                toggleCreateProjectModal(true);
-              },
-            }}
-            disabled={!isEditingAllowed}
-          />
-        </>
+        <EmptyState
+          image={EmptyStateImagePath}
+          title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster"
+          description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
+          primaryButton={{
+            text: "Create Cycles and Modules first",
+            onClick: () => {
+              setTrackElement("ANALYTICS_EMPTY_STATE");
+              toggleCreateProjectModal(true);
+            },
+          }}
+          comicBox={{
+            title: "Analytics works best with Cycles + Modules",
+            description:
+              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+          }}
+          size="lg"
+          disabled={!isEditingAllowed}
+        />
       )}
     </>
   );

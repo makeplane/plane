@@ -14,13 +14,12 @@ import { SingleProgressStats } from "components/core";
 import { Avatar, StateGroupIcon } from "@plane/ui";
 // types
 import {
-  IIssueFilterOptions,
   IModule,
   TAssigneesDistribution,
   TCompletionChartDistribution,
   TLabelsDistribution,
   TStateGroups,
-} from "types";
+} from "@plane/types";
 
 type Props = {
   distribution: {
@@ -36,9 +35,6 @@ type Props = {
   roundedTab?: boolean;
   noBackground?: boolean;
   isPeekView?: boolean;
-  isCompleted?: boolean;
-  filters?: IIssueFilterOptions;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
 };
 
 export const SidebarProgressStats: React.FC<Props> = ({
@@ -48,10 +44,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
   module,
   roundedTab,
   noBackground,
-  isCompleted = false,
   isPeekView = false,
-  filters,
-  handleFiltersUpdate,
 }) => {
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -133,7 +126,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
         <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
-          {distribution.assignees.length > 0 ? (
+          {distribution?.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (
@@ -147,11 +140,20 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     }
                     completed={assignee.completed_issues}
                     total={assignee.total_issues}
-                    {...(!isPeekView &&
-                      !isCompleted && {
-                        onClick: () => handleFiltersUpdate("assignees", assignee.assignee_id ?? ""),
-                        selected: filters?.assignees?.includes(assignee.assignee_id ?? ""),
-                      })}
+                    {...(!isPeekView && {
+                      onClick: () => {
+                        // TODO: set filters here
+                        // if (filters?.assignees?.includes(assignee.assignee_id ?? ""))
+                        //   setFilters({
+                        //     assignees: filters?.assignees?.filter((a) => a !== assignee.assignee_id),
+                        //   });
+                        // else
+                        //   setFilters({
+                        //     assignees: [...(filters?.assignees ?? []), assignee.assignee_id ?? ""],
+                        //   });
+                      },
+                      // selected: filters?.assignees?.includes(assignee.assignee_id ?? ""),
+                    })}
                   />
                 );
               else
@@ -181,7 +183,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           )}
         </Tab.Panel>
         <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
-          {distribution.labels.length > 0 ? (
+          {distribution?.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}
@@ -198,11 +200,17 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 }
                 completed={label.completed_issues}
                 total={label.total_issues}
-                {...(!isPeekView &&
-                  !isCompleted && {
-                    onClick: () => handleFiltersUpdate("labels", label.label_id ?? ""),
-                    selected: filters?.labels?.includes(label.label_id ?? `no-label-${index}`),
-                  })}
+                {...(!isPeekView && {
+                  // TODO: set filters here
+                  onClick: () => {
+                    // if (filters.labels?.includes(label.label_id ?? ""))
+                    //   setFilters({
+                    //     labels: filters?.labels?.filter((l) => l !== label.label_id),
+                    //   });
+                    // else setFilters({ labels: [...(filters?.labels ?? []), label.label_id ?? ""] });
+                  },
+                  // selected: filters?.labels?.includes(label.label_id ?? ""),
+                })}
               />
             ))
           ) : (

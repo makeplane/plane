@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-// icons
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // ui
 import { Tooltip } from "@plane/ui";
 
@@ -41,9 +40,10 @@ const INSTANCE_ADMIN_LINKS = [
 ];
 
 export const InstanceAdminSidebarMenu = () => {
+  // store hooks
   const {
     theme: { sidebarCollapsed },
-  } = useMobxStore();
+  } = useApplication();
   // router
   const router = useRouter();
 

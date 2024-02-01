@@ -5,7 +5,10 @@ import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
 // types
-import { TStaticViewTypes } from "types";
+import { TStaticViewTypes } from "@plane/types";
+import { Props } from "components/icons/types";
+// icons
+import { SettingIcon } from "components/icons";
 
 export enum EUserWorkspaceRoles {
   GUEST = 5,
@@ -115,48 +118,103 @@ export const RESTRICTED_URLS = [
 ];
 
 export const WORKSPACE_SETTINGS_LINKS: {
+  key: string;
   label: string;
   href: string;
   access: EUserWorkspaceRoles;
+  highlight: (pathname: string, baseUrl: string) => boolean;
+  Icon: React.FC<Props>;
 }[] = [
   {
+    key: "general",
     label: "General",
     href: `/settings`,
     access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings`,
+    Icon: SettingIcon,
   },
   {
+    key: "members",
     label: "Members",
     href: `/settings/members`,
     access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members`,
+    Icon: SettingIcon,
   },
   {
+    key: "billing-and-plans",
     label: "Billing and plans",
     href: `/settings/billing`,
     access: EUserWorkspaceRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing`,
+    Icon: SettingIcon,
   },
   {
+    key: "integrations",
     label: "Integrations",
     href: `/settings/integrations`,
     access: EUserWorkspaceRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
+    Icon: SettingIcon,
   },
   {
+    key: "import",
     label: "Imports",
     href: `/settings/imports`,
     access: EUserWorkspaceRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports`,
+    Icon: SettingIcon,
   },
   {
+    key: "export",
     label: "Exports",
     href: `/settings/exports`,
     access: EUserWorkspaceRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports`,
+    Icon: SettingIcon,
   },
   {
+    key: "webhooks",
     label: "Webhooks",
     href: `/settings/webhooks`,
     access: EUserWorkspaceRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks`,
+    Icon: SettingIcon,
   },
   {
+    key: "api-tokens",
     label: "API tokens",
     href: `/settings/api-tokens`,
     access: EUserWorkspaceRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens`,
+    Icon: SettingIcon,
   },
 ];
+
+export const ALL_ISSUES_EMPTY_STATE_DETAILS = {
+  "all-issues": {
+    key: "all-issues",
+    title: "No issues in the project",
+    description: "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
+  },
+  assigned: {
+    key: "assigned",
+    title: "No issues yet",
+    description: "Issues assigned to you can be tracked from here.",
+  },
+  created: {
+    key: "created",
+    title: "No issues yet",
+    description: "All issues created by you come here, track them here directly.",
+  },
+  subscribed: {
+    key: "subscribed",
+    title: "No issues yet",
+    description: "Subscribe to issues you are interested in, track all of them here.",
+  },
+  "custom-view": {
+    key: "custom-view",
+    title: "No issues yet",
+    description: "Issues that applies to the filters, track all of them here.",
+  },
+};

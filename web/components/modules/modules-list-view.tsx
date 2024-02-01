@@ -1,37 +1,46 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
 // hooks
+import { useApplication, useModule, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, Spinner } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-// assets
-import emptyModule from "public/empty-state/empty_modules.webp";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EUserProjectRoles } from "constants/project";
 
 export const ModulesListView: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
-
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    module: moduleStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+    currentUser,
+  } = useUser();
+  const { projectModuleIds, loader } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
-  const modulesList = moduleStore.projectModules;
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "modules", isLightMode);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!modulesList)
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
+
+  if (!projectModuleIds)
     return (
       <Loader className="grid grid-cols-3 gap-4 p-8">
         <Loader.Item height="176px" />
@@ -45,14 +54,14 @@ export const ModulesListView: React.FC = observer(() => {
 
   return (
     <>
-      {modulesList.length > 0 ? (
+      {projectModuleIds.length > 0 ? (
         <>
           {modulesView === "list" && (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
                 <div className="flex h-full w-full flex-col overflow-y-auto">
-                  {modulesList.map((module) => (
-                    <ModuleListItem key={module.id} module={module} />
+                  {projectModuleIds.map((moduleId) => (
+                    <ModuleListItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
                 <ModulePeekOverview
@@ -72,8 +81,8 @@ export const ModulesListView: React.FC = observer(() => {
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
                   } auto-rows-max transition-all `}
                 >
-                  {modulesList.map((module) => (
-                    <ModuleCardItem key={module.id} module={module} />
+                  {projectModuleIds.map((moduleId) => (
+                    <ModuleCardItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
                 <ModulePeekOverview
@@ -86,25 +95,20 @@ export const ModulesListView: React.FC = observer(() => {
           {modulesView === "gantt_chart" && <ModulesListGanttChartView />}
         </>
       ) : (
-        <NewEmptyState
+        <EmptyState
           title="Map your project milestones to Modules and track aggregated work easily."
           description="A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone."
-          image={emptyModule}
+          image={EmptyStateImagePath}
           comicBox={{
             title: "Modules help group work by hierarchy.",
-            direction: "right",
             description:
               "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  icon: <Plus className="h-4 w-4" />,
-                  text: "Build your first module",
-                  onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
-                }
-              : null
-          }
+          primaryButton={{
+            text: "Build your first module",
+            onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
+          }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}

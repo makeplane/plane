@@ -10,7 +10,15 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import Workspace, Project, Issue, Cycle, Module, Page, IssueView
+from plane.db.models import (
+    Workspace,
+    Project,
+    Issue,
+    Cycle,
+    Module,
+    Page,
+    IssueView,
+)
 from plane.utils.issue_search import search_issues
 
 
@@ -25,7 +33,9 @@ class GlobalSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
         return (
-            Workspace.objects.filter(q, workspace_member__member=self.request.user)
+            Workspace.objects.filter(
+                q, workspace_member__member=self.request.user
+            )
             .distinct()
             .values("name", "id", "slug")
         )
@@ -38,7 +48,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         return (
             Project.objects.filter(
                 q,
-                Q(project_projectmember__member=self.request.user) | Q(network=2),
+                Q(project_projectmember__member=self.request.user)
+                | Q(network=2),
                 workspace__slug=slug,
             )
             .distinct()
@@ -169,7 +180,9 @@ class GlobalSearchEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         query = request.query_params.get("search", False)
-        workspace_search = request.query_params.get("workspace_search", "false")
+        workspace_search = request.query_params.get(
+            "workspace_search", "false"
+        )
         project_id = request.query_params.get("project_id", False)
 
         if not query:
@@ -209,11 +222,13 @@ class GlobalSearchEndpoint(BaseAPIView):
 class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         query = request.query_params.get("search", False)
-        workspace_search = request.query_params.get("workspace_search", "false")
+        workspace_search = request.query_params.get(
+            "workspace_search", "false"
+        )
         parent = request.query_params.get("parent", "false")
         issue_relation = request.query_params.get("issue_relation", "false")
         cycle = request.query_params.get("cycle", "false")
-        module = request.query_params.get("module", "false")
+        module = request.query_params.get("module", False)
         sub_issue = request.query_params.get("sub_issue", "false")
 
         issue_id = request.query_params.get("issue_id", False)
@@ -234,9 +249,9 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = issues.filter(
                 ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
             ).exclude(
-                pk__in=Issue.issue_objects.filter(parent__isnull=False).values_list(
-                    "parent_id", flat=True
-                )
+                pk__in=Issue.issue_objects.filter(
+                    parent__isnull=False
+                ).values_list("parent_id", flat=True)
             )
         if issue_relation == "true" and issue_id:
             issue = Issue.issue_objects.get(pk=issue_id)
@@ -254,8 +269,8 @@ class IssueSearchEndpoint(BaseAPIView):
         if cycle == "true":
             issues = issues.exclude(issue_cycle__isnull=False)
 
-        if module == "true":
-            issues = issues.exclude(issue_module__isnull=False)
+        if module:
+            issues = issues.exclude(issue_module__module=module)
 
         return Response(
             issues.values(

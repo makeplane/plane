@@ -1,38 +1,40 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Search } from "lucide-react";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
 import { ProjectViewListItem } from "components/views";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Input, Loader } from "@plane/ui";
-// assets
-import emptyView from "public/empty-state/empty_view.webp";
-// icons
-import { Plus, Search } from "lucide-react";
+import { Input, Loader, Spinner } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewsList = observer(() => {
+  // states
   const [query, setQuery] = useState("");
-
-  const router = useRouter();
-  const { projectId } = router.query;
-
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
-    projectViews: projectViewsStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    commandPalette: { toggleCreateViewModal },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+    currentUser,
+  } = useUser();
+  const { projectViewIds, getViewById, loader } = useProjectView();
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+  if (loader)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Spinner />
+      </div>
+    );
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  if (!viewsList)
+  if (!projectViewIds)
     return (
       <Loader className="space-y-4 p-4">
         <Loader.Item height="72px" />
@@ -42,7 +44,14 @@ export const ProjectViewsList = observer(() => {
       </Loader>
     );
 
-  const filteredViewsList = viewsList.filter((v) => v.name.toLowerCase().includes(query.toLowerCase()));
+  const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "views", isLightMode);
+
+  const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -67,24 +76,19 @@ export const ProjectViewsList = observer(() => {
           )}
         </div>
       ) : (
-        <NewEmptyState
-          title="Save filtered views for your project. Create as many as you need."
+        <EmptyState
+          title="Save filtered views for your project. Create as many as you need"
           description="Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best."
-          image={emptyView}
+          image={EmptyStateImagePath}
           comicBox={{
             title: "Views work atop Issue properties.",
             description: "You can create a view from here with as many properties as filters as you see fit.",
-            direction: "right",
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  icon: <Plus size={14} strokeWidth={2} />,
-                  text: "Build your first view",
-                  onClick: () => commandPaletteStore.toggleCreateViewModal(true),
-                }
-              : null
-          }
+          primaryButton={{
+            text: "Create your first view",
+            onClick: () => toggleCreateViewModal(true),
+          }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}

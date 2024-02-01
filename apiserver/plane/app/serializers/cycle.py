@@ -7,7 +7,12 @@ from .user import UserLiteSerializer
 from .issue import IssueStateSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import Cycle, CycleIssue, CycleFavorite
+from plane.db.models import (
+    Cycle,
+    CycleIssue,
+    CycleFavorite,
+    CycleUserProperties,
+)
 
 
 class CycleWriteSerializer(BaseSerializer):
@@ -17,7 +22,9 @@ class CycleWriteSerializer(BaseSerializer):
             and data.get("end_date", None) is not None
             and data.get("start_date", None) > data.get("end_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed end date")
+            raise serializers.ValidationError(
+                "Start date cannot exceed end date"
+            )
         return data
 
     class Meta:
@@ -26,7 +33,6 @@ class CycleWriteSerializer(BaseSerializer):
 
 
 class CycleSerializer(BaseSerializer):
-    owned_by = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
@@ -38,7 +44,9 @@ class CycleSerializer(BaseSerializer):
     total_estimates = serializers.IntegerField(read_only=True)
     completed_estimates = serializers.IntegerField(read_only=True)
     started_estimates = serializers.IntegerField(read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkspaceLiteSerializer(
+        read_only=True, source="workspace"
+    )
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     status = serializers.CharField(read_only=True)
 
@@ -48,7 +56,9 @@ class CycleSerializer(BaseSerializer):
             and data.get("end_date", None) is not None
             and data.get("start_date", None) > data.get("end_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed end date")
+            raise serializers.ValidationError(
+                "Start date cannot exceed end date"
+            )
         return data
 
     def get_assignees(self, obj):
@@ -105,4 +115,15 @@ class CycleFavoriteSerializer(BaseSerializer):
             "workspace",
             "project",
             "user",
+        ]
+
+
+class CycleUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = CycleUserProperties
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "cycle" "user",
         ]

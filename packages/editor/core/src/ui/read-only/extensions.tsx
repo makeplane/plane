@@ -1,5 +1,4 @@
 import StarterKit from "@tiptap/starter-kit";
-import TiptapLink from "@tiptap/extension-link";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
@@ -12,12 +11,12 @@ import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
 import { Table } from "src/ui/extensions/table/table";
 import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
 import { TableRow } from "src/ui/extensions/table/table-row/table-row";
-import { HorizontalRule } from "src/ui/extensions/horizontal-rule";
 
 import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionSuggestions: IMentionSuggestion[];
@@ -51,7 +50,9 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       },
     },
     codeBlock: false,
-    horizontalRule: false,
+    horizontalRule: {
+      HTMLAttributes: { class: "mt-4 mb-4" },
+    },
     dropcursor: {
       color: "rgba(var(--color-text-100))",
       width: 2,
@@ -59,7 +60,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     gapcursor: false,
   }),
   Gapcursor,
-  TiptapLink.configure({
+  CustomLinkExtension.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
     HTMLAttributes: {
@@ -72,7 +73,6 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       class: "rounded-lg border border-custom-border-300",
     },
   }),
-  HorizontalRule,
   TiptapUnderline,
   TextStyle,
   Color,

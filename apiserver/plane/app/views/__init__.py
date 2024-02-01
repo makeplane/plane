@@ -45,6 +45,10 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
+    WorkspaceStatesEndpoint,
+    WorkspaceEstimatesEndpoint,
 )
 from .state import StateViewSet
 from .view import (
@@ -59,6 +63,7 @@ from .cycle import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleUserPropertiesEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .issue import (
@@ -103,6 +108,7 @@ from .module import (
     ModuleIssueViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
+    ModuleUserPropertiesEndpoint,
 )
 
 from .api import ApiTokenEndpoint
@@ -136,7 +142,11 @@ from .page import (
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
-from .external import GPTIntegrationEndpoint, ReleaseNotesEndpoint, UnsplashEndpoint
+from .external import (
+    GPTIntegrationEndpoint,
+    ReleaseNotesEndpoint,
+    UnsplashEndpoint,
+)
 
 from .estimate import (
     ProjectEstimatePointEndpoint,
@@ -157,14 +167,20 @@ from .notification import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     MarkAllReadNotificationViewSet,
+    UserNotificationPreferenceEndpoint,
 )
 
 from .exporter import ExportIssuesEndpoint
 
-from .config import ConfigurationEndpoint
+from .config import ConfigurationEndpoint, MobileConfigurationEndpoint
 
 from .webhook import (
     WebhookEndpoint,
     WebhookLogsEndpoint,
     WebhookSecretRegenerateEndpoint,
+)
+
+from .dashboard import (
+    DashboardEndpoint,
+    WidgetsEndpoint
 )

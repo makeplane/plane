@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
 // services
@@ -10,9 +9,11 @@ import useDebounce from "hooks/use-debounce";
 // ui
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // types
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
+import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
 type Props = {
+  workspaceSlug: string | undefined;
+  projectId: string | undefined;
   isOpen: boolean;
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;
@@ -22,24 +23,25 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = ({
-  isOpen,
-  handleClose: onClose,
-  searchParams,
-  handleOnSubmit,
-  workspaceLevelToggle = false,
-}) => {
+export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+  const {
+    workspaceSlug,
+    projectId,
+    isOpen,
+    handleClose: onClose,
+    searchParams,
+    handleOnSubmit,
+    workspaceLevelToggle = false,
+  } = props;
+  // states
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<ISearchIssueResponse[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -76,8 +78,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
-
-    setIsSearching(true);
+    if (issues.length <= 0) setIsSearching(true);
 
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
@@ -87,7 +88,16 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
       })
       .then((res) => setIssues(res))
       .finally(() => setIsSearching(false));
-  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
+  }, [issues, debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
+
+  useEffect(() => {
+    setSearchTerm("");
+    setIssues([]);
+    setSelectedIssues([]);
+    setIsSearching(false);
+    setIsSubmitting(false);
+    setIsWorkspaceLevel(false);
+  }, [isOpen]);
 
   return (
     <>
@@ -260,16 +270,16 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     )}
                   </Combobox.Options>
                 </Combobox>
-                {selectedIssues.length > 0 && (
-                  <div className="flex items-center justify-end gap-2 p-3">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                      Cancel
-                    </Button>
+                <div className="flex items-center justify-end gap-2 p-3">
+                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  {selectedIssues.length > 0 && (
                     <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
                       {isSubmitting ? "Adding..." : "Add selected issues"}
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

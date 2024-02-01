@@ -1,57 +1,29 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
-import { PrioritySelect } from "components/project";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { PriorityDropdown } from "components/dropdowns";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled } = props;
 
   return (
-    <>
-      <PrioritySelect
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <PriorityDropdown
         value={issue.priority}
-        onChange={(data) => {
-          onChange(issue, { priority: data });
-          if (issue.parent) {
-            mutateSubIssues(issue, { priority: data });
-          }
-        }}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1"
-        showTitle
-        highlightUrgentPriority={false}
-        hideDropdownArrow
+        onChange={(data) => onChange(issue, { priority: data })}
         disabled={disabled}
+        buttonVariant="transparent-with-text"
+        buttonClassName="rounded-none text-left"
+        buttonContainerClassName="w-full"
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <div className={`h-11`}>
-            <SpreadsheetPriorityColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
-        ))}
-    </>
+    </div>
   );
-};
+});

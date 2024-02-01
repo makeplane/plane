@@ -1,20 +1,20 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import useSWR from "swr";
-
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
-// hooks
-import useUser from "hooks/use-user";
+// components
+import { ProfileSidebarTime } from "./time";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
 // helpers
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
@@ -22,11 +22,12 @@ import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 // services
 const userService = new UserService();
 
-export const ProfileSidebar = () => {
+export const ProfileSidebar = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
-
-  const { user } = useUser();
+  // store hooks
+  const { currentUser } = useUser();
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
@@ -35,37 +36,23 @@ export const ProfileSidebar = () => {
       : null
   );
 
-  // Create a date object for the current time in the specified timezone
-  const currentTime = new Date();
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: userProjectsData?.user_data.user_timezone,
-    hour12: false, // Use 24-hour format
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const timeString = formatter.format(currentTime);
-
   const userDetails = [
     {
       label: "Joined on",
-      value: renderLongDetailDateFormat(userProjectsData?.user_data.date_joined ?? ""),
+      value: renderFormattedDate(userProjectsData?.user_data.date_joined ?? ""),
     },
     {
       label: "Timezone",
-      value: (
-        <span>
-          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
-        </span>
-      ),
+      value: <ProfileSidebarTime timeZone={userProjectsData?.user_data.user_timezone} />,
     },
   ];
 
   return (
-    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80">
+    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80 border-l border-custom-border-100">
       {userProjectsData ? (
         <>
           <div className="relative h-32">
-            {user?.id === userId && (
+            {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
                   <span className="grid place-items-center text-black">
@@ -256,4 +243,4 @@ export const ProfileSidebar = () => {
       )}
     </div>
   );
-};
+});

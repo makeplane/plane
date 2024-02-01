@@ -4,10 +4,11 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
-import { Tab, Transition, Popover } from "@headlessui/react";
+import { Tab, Popover } from "@headlessui/react";
 import { Control, Controller } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useWorkspace } from "hooks/store";
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // services
 import { FileService } from "services/file.service";
 // hooks
@@ -38,32 +39,32 @@ type Props = {
   control: Control<any>;
   onChange: (data: string) => void;
   disabled?: boolean;
+  tabIndex?: number;
 };
 
 // services
 const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = observer((props) => {
-  const { label, value, control, onChange, disabled = false } = props;
-
+  const { label, value, control, onChange, disabled = false, tabIndex } = props;
+  // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useState("");
   const [formData, setFormData] = useState({
     search: "",
   });
-
+  // refs
   const ref = useRef<HTMLDivElement>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
-    workspace: { currentWorkspace },
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -119,7 +120,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -129,27 +130,39 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     onChange(unsplashImages[0].urls.regular);
   }, [value, onChange, unsplashImages]);
 
-  useOutsideClickDetector(imagePickerRef, () => setIsOpen(false));
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(ref, handleClose);
 
   return (
-    <Popover className="relative z-[2]" ref={ref}>
+    <Popover className="relative z-[2]" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
         className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleOnClick}
         disabled={disabled}
       >
         {label}
       </Popover.Button>
-      <Transition
-        show={isOpen}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm">
+
+      {isOpen && (
+        <Popover.Panel
+          className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          static
+        >
           <div
             ref={imagePickerRef}
             className="flex h-96 w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
@@ -350,7 +363,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
             </Tab.Group>
           </div>
         </Popover.Panel>
-      </Transition>
+      )}
     </Popover>
   );
 });

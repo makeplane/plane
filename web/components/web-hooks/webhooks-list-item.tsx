@@ -1,12 +1,12 @@
 import { FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useWebhook } from "hooks/store";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 interface IWebhookListItem {
   webhook: IWebhook;
@@ -17,10 +17,8 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const {
-    webhook: { updateWebhook },
-  } = useMobxStore();
+  // store hooks
+  const { updateWebhook } = useWebhook();
 
   const handleToggle = () => {
     if (!workspaceSlug || !webhook.id) return;

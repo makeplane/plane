@@ -1,10 +1,11 @@
 import { FC } from "react";
-
 // hooks
+import { useIssueDetail } from "hooks/store";
 import { useChart } from "../hooks";
 // helpers
-import { ChartDraggable } from "../helpers/draggable";
-import { renderDateFormat } from "helpers/date-time.helper";
+import { ChartAddBlock, ChartDraggable } from "components/gantt-chart";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
 
@@ -16,6 +17,7 @@ export type GanttChartBlocksProps = {
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
+  showAllBlocks: boolean;
 };
 
 export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
@@ -27,9 +29,11 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
+    showAllBlocks,
   } = props;
 
   const { activeBlock, dispatch } = useChart();
+  const { peekIssue } = useIssueDetail();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -46,6 +50,8 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     totalBlockShifts: number,
     dragDirection: "left" | "right" | "move"
   ) => {
+    if (!block.start_date || !block.target_date) return;
+
     const originalStartDate = new Date(block.start_date);
     const updatedStartDate = new Date(originalStartDate);
 
@@ -64,8 +70,8 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
 
     // call the block update handler with the updated dates
     blockUpdateHandler(block.data, {
-      start_date: renderDateFormat(updatedStartDate),
-      target_date: renderDateFormat(updatedTargetDate),
+      start_date: renderFormattedPayloadDate(updatedStartDate) ?? undefined,
+      target_date: renderFormattedPayloadDate(updatedTargetDate) ?? undefined,
     });
   };
 
@@ -76,27 +82,38 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
     >
       {blocks &&
         blocks.length > 0 &&
-        blocks.map(
-          (block) =>
-            block.start_date &&
-            block.target_date && (
-              <div
-                key={`block-${block.id}`}
-                className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
-                onMouseEnter={() => updateActiveBlock(block)}
-                onMouseLeave={() => updateActiveBlock(null)}
-              >
-                <ChartDraggable
-                  block={block}
-                  blockToRender={blockToRender}
-                  handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                  enableBlockLeftResize={enableBlockLeftResize}
-                  enableBlockRightResize={enableBlockRightResize}
-                  enableBlockMove={enableBlockMove}
-                />
-              </div>
-            )
-        )}
+        blocks.map((block) => {
+          // hide the block if it doesn't have start and target dates and showAllBlocks is false
+          if (!showAllBlocks && !(block.start_date && block.target_date)) return;
+
+          const isBlockVisibleOnChart = block.start_date && block.target_date;
+
+          return (
+            <div
+              key={`block-${block.id}`}
+              className={cn(
+                "h-11",
+                { "rounded bg-custom-background-80": activeBlock?.id === block.id },
+                {
+                  "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
+                    peekIssue?.issueId === block.data.id,
+                }
+              )}
+              onMouseEnter={() => updateActiveBlock(block)}
+              onMouseLeave={() => updateActiveBlock(null)}
+            >
+              {!isBlockVisibleOnChart && <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />}
+              <ChartDraggable
+                block={block}
+                blockToRender={blockToRender}
+                handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                enableBlockLeftResize={enableBlockLeftResize}
+                enableBlockRightResize={enableBlockRightResize}
+                enableBlockMove={enableBlockMove}
+              />
+            </div>
+          );
+        })}
     </div>
   );
 };

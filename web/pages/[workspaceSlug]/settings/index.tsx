@@ -6,7 +6,7 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { WorkspaceSettingHeader } from "components/headers";
 import { WorkspaceDetails } from "components/workspace";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 const WorkspaceSettingsPage: NextPageWithLayout = () => <WorkspaceDetails />;
 

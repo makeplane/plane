@@ -48,7 +48,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 super()
                 .get_queryset()
                 .filter(
-                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                    Q(snoozed_till__gte=timezone.now())
+                    | Q(snoozed_till__isnull=True),
                     project_id=self.kwargs.get("project_id"),
                     workspace__slug=self.kwargs.get("slug"),
                     inbox_id=self.kwargs.get("inbox_id"),
@@ -80,7 +81,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
             .prefetch_related("assignees", "labels")
             .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -92,7 +95,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -124,7 +129,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
         if not request.data.get("issue", {}).get("name", False):
             return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Name is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Check for valid priority
@@ -136,7 +142,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
             "none",
         ]:
             return Response(
-                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Invalid priority"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Create or get state
@@ -192,7 +199,10 @@ class InboxIssuePublicViewSet(BaseViewSet):
             )
 
         inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            inbox_id=inbox_id,
         )
         # Get the project member
         if str(inbox_issue.created_by_id) != str(request.user.id):
@@ -205,7 +215,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
         issue_data = request.data.pop("issue", False)
 
         issue = Issue.objects.get(
-            pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
+            pk=inbox_issue.issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
         )
         # viewers and guests since only viewers and guests
         issue_data = {
@@ -216,7 +228,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
             "description": issue_data.get("description", issue.description),
         }
 
-        issue_serializer = IssueCreateSerializer(issue, data=issue_data, partial=True)
+        issue_serializer = IssueCreateSerializer(
+            issue, data=issue_data, partial=True
+        )
 
         if issue_serializer.is_valid():
             current_instance = issue
@@ -237,7 +251,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 )
             issue_serializer.save()
             return Response(issue_serializer.data, status=status.HTTP_200_OK)
-        return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def retrieve(self, request, slug, project_id, inbox_id, pk):
         project_deploy_board = ProjectDeployBoard.objects.get(
@@ -250,10 +266,15 @@ class InboxIssuePublicViewSet(BaseViewSet):
             )
 
         inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            inbox_id=inbox_id,
         )
         issue = Issue.objects.get(
-            pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
+            pk=inbox_issue.issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
         )
         serializer = IssueStateInboxSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -269,7 +290,10 @@ class InboxIssuePublicViewSet(BaseViewSet):
             )
 
         inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            inbox_id=inbox_id,
         )
 
         if str(inbox_issue.created_by_id) != str(request.user.id):

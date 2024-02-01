@@ -9,3 +9,4 @@ export * from "./progress";
 export * from "./spinners";
 export * from "./tooltip";
 export * from "./loader";
+export * from "./control-link";

@@ -3,29 +3,30 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
 import { IssueArchiveService } from "services/issue";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+// components
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 const issueArchiveService = new IssueArchiveService();
 
 export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
+  // store hooks
+  const { currentProjectDetails, getProjectById } = useProject();
 
-  const { project: projectStore } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
-
-  const { data: issueDetails } = useSWR<IIssue | undefined>(
+  const { data: issueDetails } = useSWR<TIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -40,6 +41,7 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+        <SidebarHamburgerToggle/>
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -68,7 +70,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={`${issueDetails?.project_detail.identifier}-${issueDetails?.sequence_id}` ?? "..."}
+              label={
+                `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ?? "..."
+              }
             />
           </Breadcrumbs>
         </div>

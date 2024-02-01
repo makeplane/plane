@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0005_auto_20221114_2127'),
+        ("db", "0005_auto_20221114_2127"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cycle',
-            name='status',
-            field=models.CharField(choices=[('draft', 'Draft'), ('started', 'Started'), ('completed', 'Completed')], default='draft', max_length=255, verbose_name='Cycle Status'),
+            model_name="cycle",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("draft", "Draft"),
+                    ("started", "Started"),
+                    ("completed", "Completed"),
+                ],
+                default="draft",
+                max_length=255,
+                verbose_name="Cycle Status",
+            ),
         ),
     ]

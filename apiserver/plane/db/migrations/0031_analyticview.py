@@ -7,31 +7,75 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0030_alter_estimatepoint_unique_together'),
+        ("db", "0030_alter_estimatepoint_unique_together"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AnalyticView',
+            name="AnalyticView",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField(blank=True)),
-                ('query', models.JSONField()),
-                ('query_dict', models.JSONField(default=dict)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='analyticview_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='analyticview_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='analytics', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.TextField(blank=True)),
+                ("query", models.JSONField()),
+                ("query_dict", models.JSONField(default=dict)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="analyticview_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="analyticview_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="analytics",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Analytic',
-                'verbose_name_plural': 'Analytics',
-                'db_table': 'analytic_views',
-                'ordering': ('-created_at',),
+                "verbose_name": "Analytic",
+                "verbose_name_plural": "Analytics",
+                "db_table": "analytic_views",
+                "ordering": ("-created_at",),
             },
         ),
     ]

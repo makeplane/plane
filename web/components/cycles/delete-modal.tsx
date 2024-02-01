@@ -1,17 +1,15 @@
 import { Fragment, useState } from "react";
-// next
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
+// hooks
+import { useApplication, useCycle } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import { Button } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
 // types
-import { ICycle } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { ICycle } from "@plane/types";
 
 interface ICycleDelete {
   cycle: ICycle;
@@ -23,56 +21,51 @@ interface ICycleDelete {
 
 export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
-  // store
-  const {
-    cycle: cycleStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-  // toast
-  const { setToastAlert } = useToast();
   // states
   const [loader, setLoader] = useState(false);
+  // router
   const router = useRouter();
   const { cycleId, peekCycle } = router.query;
+  // store hooks
+  const {
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { deleteCycle } = useCycle();
+  // toast alert
+  const { setToastAlert } = useToast();
 
   const formSubmit = async () => {
+    if (!cycle) return;
+
     setLoader(true);
-    if (cycle?.id)
-      try {
-        await cycleStore
-          .removeCycle(workspaceSlug, projectId, cycle?.id)
-          .then(() => {
-            setToastAlert({
-              type: "success",
-              title: "Success!",
-              message: "Cycle deleted successfully.",
-            });
-            postHogEventTracker("CYCLE_DELETE", {
-              state: "SUCCESS",
-            });
-          })
-          .catch(() => {
-            postHogEventTracker("CYCLE_DELETE", {
-              state: "FAILED",
-            });
+    try {
+      await deleteCycle(workspaceSlug, projectId, cycle.id)
+        .then(() => {
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Cycle deleted successfully.",
           });
-
-        if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
-
-        handleClose();
-      } catch (error) {
-        setToastAlert({
-          type: "error",
-          title: "Warning!",
-          message: "Something went wrong please try again later.",
+          postHogEventTracker("CYCLE_DELETE", {
+            state: "SUCCESS",
+          });
+        })
+        .catch(() => {
+          postHogEventTracker("CYCLE_DELETE", {
+            state: "FAILED",
+          });
         });
-      }
-    else
+
+      if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
+
+      handleClose();
+    } catch (error) {
       setToastAlert({
         type: "error",
         title: "Warning!",
         message: "Something went wrong please try again later.",
       });
+    }
 
     setLoader(false);
   };

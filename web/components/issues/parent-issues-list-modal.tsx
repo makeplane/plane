@@ -13,7 +13,7 @@ import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { Rocket, Search } from "lucide-react";
 // types
-import { ISearchIssueResponse } from "types";
+import { ISearchIssueResponse } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

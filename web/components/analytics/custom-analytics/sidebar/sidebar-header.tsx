@@ -1,26 +1,26 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle, useMember, useModule, useProject } from "hooks/store";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-import { renderShortDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 
 export const CustomAnalyticsSidebarHeader = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { projectId, cycleId, moduleId } = router.query;
 
-  const { cycle: cycleStore, module: moduleStore, project: projectStore } = useMobxStore();
+  const { getProjectById } = useProject();
+  const { getCycleById } = useCycle();
+  const { getModuleById } = useModule();
+  const { getUserDetails } = useMember();
 
-  const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
-  const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
 
   return (
     <>
@@ -31,13 +31,13 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
                 <h6 className="text-custom-text-200">Lead</h6>
-                <span>{cycleDetails.owned_by?.display_name}</span>
+                <span>{cycleOwnerDetails?.display_name}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <h6 className="text-custom-text-200">Start Date</h6>
                 <span>
                   {cycleDetails.start_date && cycleDetails.start_date !== ""
-                    ? renderShortDate(cycleDetails.start_date)
+                    ? renderFormattedDate(cycleDetails.start_date)
                     : "No start date"}
                 </span>
               </div>
@@ -45,7 +45,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
                 <h6 className="text-custom-text-200">Target Date</h6>
                 <span>
                   {cycleDetails.end_date && cycleDetails.end_date !== ""
-                    ? renderShortDate(cycleDetails.end_date)
+                    ? renderFormattedDate(cycleDetails.end_date)
                     : "No end date"}
                 </span>
               </div>
@@ -63,7 +63,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
                 <h6 className="text-custom-text-200">Start Date</h6>
                 <span>
                   {moduleDetails.start_date && moduleDetails.start_date !== ""
-                    ? renderShortDate(moduleDetails.start_date)
+                    ? renderFormattedDate(moduleDetails.start_date)
                     : "No start date"}
                 </span>
               </div>
@@ -71,7 +71,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
                 <h6 className="text-custom-text-200">Target Date</h6>
                 <span>
                   {moduleDetails.target_date && moduleDetails.target_date !== ""
-                    ? renderShortDate(moduleDetails.target_date)
+                    ? renderFormattedDate(moduleDetails.target_date)
                     : "No end date"}
                 </span>
               </div>

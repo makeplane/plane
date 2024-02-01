@@ -1,18 +1,19 @@
 import { useRouter } from "next/router";
-import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "components/gantt-chart/hooks";
+import { useIssueDetail } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { GanttInlineCreateIssueForm, IssueGanttSidebarBlock } from "components/issues";
+import { GanttQuickAddIssueForm, IssueGanttSidebarBlock } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -22,15 +23,15 @@ type Props = {
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
+  showAllBlocks?: boolean;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {
     blockUpdateHandler,
     blocks,
@@ -39,12 +40,14 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
+    showAllBlocks = false,
   } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
 
   const { activeBlock, dispatch } = useChart();
+  const { peekIssue } = useIssueDetail();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -100,18 +103,26 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
 
   return (
     <DragDropContext onDragEnd={handleOrderChange}>
-      <StrictModeDroppable droppableId="gantt-sidebar">
+      <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
-            className="mt-3 max-h-full overflow-y-auto pl-2.5"
+            className="mt-[12px] max-h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "", true);
+                  const isBlockVisibleOnSidebar = block.start_date && block.target_date;
+
+                  // hide the block if it doesn't have start and target dates and showAllBlocks is false
+                  if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
+
+                  const duration =
+                    !block.start_date || !block.target_date
+                      ? null
+                      : findTotalDaysInRange(block.start_date, block.target_date);
 
                   return (
                     <Draggable
@@ -122,7 +133,14 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          className={cn(
+                            "h-11",
+                            { "rounded bg-custom-background-80": snapshot.isDragging },
+                            {
+                              "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
+                                peekIssue?.issueId === block.data.id,
+                            }
+                          )}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -149,7 +167,11 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                                 <IssueGanttSidebarBlock data={block.data} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                {duration} day{duration > 1 ? "s" : ""}
+                                {duration && (
+                                  <span>
+                                    {duration} day{duration > 1 ? "s" : ""}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -169,11 +191,11 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
               {droppableProvided.placeholder}
             </>
             {enableQuickIssueCreate && !disableIssueCreation && (
-              <GanttInlineCreateIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
+              <GanttQuickAddIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
             )}
           </div>
         )}
-      </StrictModeDroppable>
+      </Droppable>
     </DragDropContext>
   );
 };
