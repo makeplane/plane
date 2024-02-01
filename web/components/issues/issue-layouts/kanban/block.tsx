@@ -128,7 +128,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           <div
             className={cn(
               "space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm transition-all hover:border-custom-border-400",
-              { "hover:cursor-grab": !isDragDisabled },
+              { "hover:cursor-grab": !isDragDisabled && snapshot.isDragging },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
             )}
