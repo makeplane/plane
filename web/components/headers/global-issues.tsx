@@ -8,6 +8,7 @@ import { useLabel, useMember, useUser, useIssues } from "hooks/store";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // icons
@@ -108,18 +109,22 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="relative flex gap-2">
-        <SidebarHamburgerToggle/>
+          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={
-                activeLayout === "spreadsheet" ? (
-                  <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                ) : (
-                  <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
-                )
+              link={
+                <BreadcrumbLink
+                  label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
+                  icon={
+                    activeLayout === "spreadsheet" ? (
+                      <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                    ) : (
+                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                    )
+                  }
+                />
               }
-              label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
             />
           </Breadcrumbs>
         </div>

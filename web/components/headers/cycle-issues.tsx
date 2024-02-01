@@ -18,6 +18,7 @@ import useLocalStorage from "hooks/use-local-storage";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
 // icons
@@ -151,25 +152,33 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={
-                currentProjectDetails?.emoji ? (
-                  renderEmoji(currentProjectDetails.emoji)
-                ) : currentProjectDetails?.icon_prop ? (
-                  renderEmoji(currentProjectDetails.icon_prop)
-                ) : (
-                  <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                    {currentProjectDetails?.name.charAt(0)}
-                  </span>
-                )
+              link={
+                <BreadcrumbLink
+                  label={currentProjectDetails?.name ?? "Project"}
+                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                  icon={
+                    currentProjectDetails?.emoji ? (
+                      renderEmoji(currentProjectDetails.emoji)
+                    ) : currentProjectDetails?.icon_prop ? (
+                      renderEmoji(currentProjectDetails.icon_prop)
+                    ) : (
+                      <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
+                        {currentProjectDetails?.name.charAt(0)}
+                      </span>
+                    )
+                  }
+                />
               }
-              label={currentProjectDetails?.name ?? "Project"}
-              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Cycles"
-              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
+              link={
+                <BreadcrumbLink
+                  label="Cycles"
+                  href={`/${workspaceSlug}/projects/${projectId}/cycles`}
+                  icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
             />
             <Breadcrumbs.BreadcrumbItem
               type="component"
