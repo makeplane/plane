@@ -132,6 +132,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   const issueName = watch("name");
