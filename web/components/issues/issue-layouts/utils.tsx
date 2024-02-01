@@ -1,10 +1,10 @@
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { ISSUE_PRIORITIES } from "constants/issue";
+import { EIssueListRow, ISSUE_PRIORITIES } from "constants/issue";
 import { renderEmoji } from "helpers/emoji.helper";
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
-import { GroupByColumnTypes, IGroupByColumn } from "@plane/types";
+import { GroupByColumnTypes, IGroupByColumn, IIssueListRow, TGroupedIssues, TUnGroupedIssues } from "@plane/types";
 import { STATE_GROUPS } from "constants/state";
 import { ILabelStore } from "store/label.store";
 
@@ -155,3 +155,47 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
     };
   });
 };
+
+export function getIssueFlatList(
+  groups: IGroupByColumn[],
+  issueIds: TGroupedIssues | TUnGroupedIssues,
+  showEmptyGroup: boolean
+): IIssueListRow[] | undefined {
+  let list: IIssueListRow[] = [];
+
+  if (Array.isArray(issueIds)) {
+    return wrapIssuesWithHeaderAndFooter(groups[0], issueIds, showEmptyGroup);
+  }
+
+  for (const group of groups) {
+    const groupList = wrapIssuesWithHeaderAndFooter(group, issueIds[group.id], showEmptyGroup);
+
+    if (!groupList) continue;
+
+    list = list.concat(groupList);
+  }
+
+  return list;
+}
+
+function wrapIssuesWithHeaderAndFooter(
+  group: IGroupByColumn,
+  issueIds: string[],
+  showEmptyGroup: boolean
+): IIssueListRow[] | undefined {
+  const header: IIssueListRow = { ...group, groupId: group.id, type: EIssueListRow.HEADER };
+  const quickAdd: IIssueListRow = { ...group, groupId: group.id, type: EIssueListRow.QUICK_ADD };
+  if (issueIds && issueIds.length > 0) {
+    const list: IIssueListRow[] = [header];
+
+    for (const issueId of issueIds) {
+      list.push({ id: issueId, groupId: group.id, type: EIssueListRow.ISSUE });
+    }
+
+    list.push(quickAdd);
+
+    return list;
+  }
+
+  if (showEmptyGroup) return [header, { id: group.id, groupId: group.id, type: EIssueListRow.NO_ISSUES }, quickAdd];
+}
