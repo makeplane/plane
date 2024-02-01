@@ -20,7 +20,7 @@ export const WorkspaceDashboardView = observer(() => {
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { postHogEventTracker },
+    eventTracker: { postHogEventTracker, setTrackElement },
     router: { workspaceSlug },
   } = useApplication();
   const {
@@ -81,7 +81,9 @@ export const WorkspaceDashboardView = observer(() => {
             progress."
               primaryButton={{
                 text: "Build your first project",
-                onClick: () => toggleCreateProjectModal(true),
+                onClick: () => {
+                  setTrackElement("Dashboard");
+                  toggleCreateProjectModal(true)},
               }}
               comicBox={{
                 title: "Everything starts with a project in Plane",

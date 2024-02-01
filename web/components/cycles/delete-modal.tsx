@@ -28,7 +28,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { cycleId, peekCycle } = router.query;
   // store hooks
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureCycleEvent },
   } = useApplication();
   const { deleteCycle } = useCycle();
   // toast alert
@@ -46,13 +46,15 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
-          postHogEventTracker("Cycle delete", {
-            state: "SUCCESS",
+          captureCycleEvent({
+            eventName: "Cycle deleted",
+            payload: { ...cycle, state: "SUCCESS" },
           });
         })
         .catch(() => {
-          postHogEventTracker("Cycle delete", {
-            state: "FAILED",
+          captureCycleEvent({
+            eventName: "Cycle deleted",
+            payload: { ...cycle, state: "FAILED" },
           });
         });
 

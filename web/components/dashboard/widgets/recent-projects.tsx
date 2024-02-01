@@ -71,6 +71,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
+    eventTracker: { setTrackElement },
   } = useApplication();
   const {
     membership: { currentWorkspaceRole },
@@ -105,6 +106,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

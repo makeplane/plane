@@ -32,7 +32,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureModuleEvent },
   } = useApplication();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
@@ -61,9 +61,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module created successfully.",
         });
-        postHogEventTracker("Module created", {
-          ...res,
-          state: "SUCCESS",
+        captureModuleEvent({
+          eventName: "Module created",
+          payload: { ...res, state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -72,8 +72,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err.detail ?? "Module could not be created. Please try again.",
         });
-        postHogEventTracker("Module created", {
-          state: "FAILED",
+        captureModuleEvent({
+          eventName: "Module created",
+          payload: { ...data, state: "FAILED" },
         });
       });
   };
@@ -91,9 +92,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module updated successfully.",
         });
-        postHogEventTracker("Module updated", {
-          ...res,
-          state: "SUCCESS",
+        captureModuleEvent({
+          eventName: "Module updated",
+          payload: { ...res, state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -102,8 +103,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err.detail ?? "Module could not be updated. Please try again.",
         });
-        postHogEventTracker("Module updated", {
-          state: "FAILED",
+        captureModuleEvent({
+          eventName: "Module updated",
+          payload: { ...data, state: "FAILED" },
         });
       });
   };

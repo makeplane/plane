@@ -53,7 +53,7 @@ export const ProjectsHeader = observer(() => {
             prependIcon={<Plus />}
             size="sm"
             onClick={() => {
-              setTrackElement("PROJECTS_PAGE_HEADER");
+              setTrackElement("Projects page");
               commandPaletteStore.toggleCreateProjectModal(true);
             }}
           >

@@ -28,7 +28,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureCycleEvent },
   } = useApplication();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
@@ -48,9 +48,9 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        postHogEventTracker("Cycle create", {
-          ...res,
-          state: "SUCCESS",
+        captureCycleEvent({
+          eventName: "Cycle created",
+          payload: { ...res, state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -59,8 +59,9 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Error!",
           message: err.detail ?? "Error in creating cycle. Please try again.",
         });
-        postHogEventTracker("Cycle create", {
-          state: "FAILED",
+        captureCycleEvent({
+          eventName: "Cycle created",
+          payload: { ...payload, state: "FAILED" },
         });
       });
   };

@@ -217,6 +217,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
+                                  setTrackElement("Sidebar");
                                   setIsFavoriteProjectCreate(false);
                                   setIsProjectModalOpen(true);
                                 }}
@@ -267,7 +268,7 @@ export const ProjectSidebarList: FC = observer(() => {
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
-              setTrackElement("APP_SIDEBAR");
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

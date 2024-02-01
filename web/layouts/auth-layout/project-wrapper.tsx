@@ -33,6 +33,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchInboxes } = useInbox();
   const {
     commandPalette: { toggleCreateProjectModal },
+    eventTracker: { setTrackElement },
   } = useApplication();
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
@@ -135,7 +136,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
           image={emptyProject}
           primaryButton={{
             text: "Create Project",
-            onClick: () => toggleCreateProjectModal(true),
+            onClick: () => {
+              setTrackElement("Projects page empty state");
+              toggleCreateProjectModal(true)
+            },
           }}
         />
       </div>

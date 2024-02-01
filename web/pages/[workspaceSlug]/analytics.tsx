@@ -72,7 +72,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
           primaryButton={{
             text: "Create Cycles and Modules first",
             onClick: () => {
-              setTrackElement("ANALYTICS_EMPTY_STATE");
+              setTrackElement("Analytics empty state");
               toggleCreateProjectModal(true);
             },
           }}

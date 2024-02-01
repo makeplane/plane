@@ -62,7 +62,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureProjectEvent },
   } = useApplication();
   const {
     membership: { currentWorkspaceRole },
@@ -135,10 +135,14 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           ...res,
           state: "SUCCESS",
         };
-        postHogEventTracker("Project created", newPayload, {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: res.workspace,
+        captureProjectEvent({
+          eventName: "Project created",
+          payload: newPayload,
+          group: {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            groupId: res.workspace,
+          },
         });
         setToastAlert({
           type: "success",
@@ -157,17 +161,18 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             title: "Error!",
             message: err.data[key],
           });
-          postHogEventTracker(
-            "Project created",
-            {
+          captureProjectEvent({
+            eventName: "Project created",
+            payload: {
+              ...payload,
               state: "FAILED",
             },
-            {
+            group: {
               isGrouping: true,
               groupType: "Workspace_metrics",
               groupId: currentWorkspace?.id!,
-            }
-          );
+            },
+          });
         });
       });
   };

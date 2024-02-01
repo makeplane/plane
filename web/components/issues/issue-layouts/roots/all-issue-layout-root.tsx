@@ -44,6 +44,9 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
@@ -195,12 +198,18 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
                   ? currentView !== "custom-view" && currentView !== "subscribed"
                     ? {
                         text: "Create new issue",
-                        onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
+                        onClick: () => {
+                          setTrackElement("All issues empty state");
+                          commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                        },
                       }
                     : undefined
                   : {
                       text: "Start your first project",
-                      onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+                      onClick: () => {
+                        setTrackElement("All issues empty state");
+                        commandPaletteStore.toggleCreateProjectModal(true);
+                      },
                     }
               }
               disabled={!isEditingAllowed}

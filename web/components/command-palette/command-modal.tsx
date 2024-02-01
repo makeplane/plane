@@ -278,7 +278,7 @@ export const CommandModal: React.FC = observer(() => {
                           <Command.Item
                             onSelect={() => {
                               closePalette();
-                              setTrackElement("COMMAND_PALETTE");
+                              setTrackElement("Command Palette");
                               toggleCreateIssueModal(true);
                             }}
                             className="focus:bg-custom-background-80"
@@ -296,7 +296,7 @@ export const CommandModal: React.FC = observer(() => {
                             <Command.Item
                               onSelect={() => {
                                 closePalette();
-                                setTrackElement("COMMAND_PALETTE");
+                                setTrackElement("Command palette");
                                 toggleCreateProjectModal(true);
                               }}
                               className="focus:outline-none"

@@ -27,7 +27,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
   // store hooks
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureModuleEvent },
   } = useApplication();
   const { deleteModule } = useModule();
   // toast alert
@@ -52,8 +52,9 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module deleted successfully.",
         });
-        postHogEventTracker("Module deleted", {
-          state: "SUCCESS",
+        captureModuleEvent({
+          eventName: "Module deleted",
+          payload: { ...data, state: "SUCCESS" },
         });
       })
       .catch(() => {
@@ -62,8 +63,9 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });
-        postHogEventTracker("Module deleted", {
-          state: "FAILED",
+        captureModuleEvent({
+          eventName: "Module deleted",
+          payload: { ...data, state: "FAILED" },
         });
       })
       .finally(() => {

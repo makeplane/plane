@@ -66,7 +66,7 @@ export const ProjectCardList = observer(() => {
           primaryButton={{
             text: "Start your first project",
             onClick: () => {
-              setTrackElement("PROJECTS_EMPTY_STATE");
+              setTrackElement("Project empty state");
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}

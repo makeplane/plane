@@ -159,7 +159,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     variant="primary"
                     onClick={() => {
                       onComplete();
-                      setTrackElement("ONBOARDING_TOUR");
+                      setTrackElement("Onboarding tour");
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                   >

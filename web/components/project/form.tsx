@@ -31,7 +31,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store hooks
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureProjectEvent },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
   const { updateProject } = useProject();
@@ -77,15 +77,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
-        postHogEventTracker(
-          "Project updated",
-          { ...res, state: "SUCCESS" },
-          {
+        captureProjectEvent({
+          eventName: "Project updated",
+          payload: { ...res, state: "SUCCESS", element: "Project general settings" },
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
             groupId: res.workspace,
-          }
-        );
+          },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -93,17 +93,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       })
       .catch((error) => {
-        postHogEventTracker(
-          "Project updated",
-          {
-            state: "FAILED",
-          },
-          {
+        captureProjectEvent({
+          eventName: "Project updated",
+          payload: { ...payload, state: "FAILED", element: "Project general settings" },
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+            groupId: currentWorkspace?.id,
+          },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",

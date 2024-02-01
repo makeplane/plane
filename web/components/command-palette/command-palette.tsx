@@ -119,10 +119,10 @@ export const CommandPalette: FC = observer(() => {
         }
       } else if (!isAnyModalOpen) {
         if (keyPressed === "c") {
-          setTrackElement("SHORTCUT_KEY");
+          setTrackElement("Shortcut key");
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
-          setTrackElement("SHORTCUT_KEY");
+          setTrackElement("Shortcut key");
           toggleCreateProjectModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
