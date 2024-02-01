@@ -112,6 +112,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           quickActions={quickActions}
           handleIssues={handleIssues}
           canEditProperties={canEditProperties}
+          containerRef={containerRef}
         />
       </div>
       <div className="border-t border-custom-border-100">

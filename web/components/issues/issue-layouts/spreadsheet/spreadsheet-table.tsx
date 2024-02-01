@@ -5,6 +5,9 @@ import { EIssueActions } from "../types";
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
+import { MutableRefObject, useRef } from "react";
+import RenderIfVisible from "components/core/render-if-visible-HOC";
+import { cn } from "helpers/common.helper";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -20,6 +23,7 @@ type Props = {
   handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
+  containerRef: MutableRefObject<HTMLTableElement | null>;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -33,6 +37,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     quickActions,
     handleIssues,
     canEditProperties,
+    containerRef,
   } = props;
 
   return (
@@ -45,17 +50,18 @@ export const SpreadsheetTable = observer((props: Props) => {
       />
       <tbody>
         {issueIds.map((id) => (
-          <SpreadsheetIssueRow
-            key={id}
-            issueId={id}
-            displayProperties={displayProperties}
-            quickActions={quickActions}
-            canEditProperties={canEditProperties}
-            nestingLevel={0}
-            isEstimateEnabled={isEstimateEnabled}
-            handleIssues={handleIssues}
-            portalElement={portalElement}
-          />
+          <RenderIfVisible key={id} as="tr" defaultHeight={44.5} root={containerRef}>
+            <SpreadsheetIssueRow
+              issueId={id}
+              displayProperties={displayProperties}
+              quickActions={quickActions}
+              canEditProperties={canEditProperties}
+              nestingLevel={0}
+              isEstimateEnabled={isEstimateEnabled}
+              handleIssues={handleIssues}
+              portalElement={portalElement}
+            />
+          </RenderIfVisible>
         ))}
       </tbody>
     </table>
