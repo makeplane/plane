@@ -118,11 +118,10 @@ export const CommandPalette: FC = observer(() => {
           toggleSidebar();
         }
       } else if (!isAnyModalOpen) {
+        setTrackElement("Shortcut key");
         if (keyPressed === "c") {
-          setTrackElement("Shortcut key");
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
-          setTrackElement("Shortcut key");
           toggleCreateProjectModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);

@@ -90,14 +90,15 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page list layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page list layout");
     setDeleteModal(true);
-    setTrackElement("CYCLE_PAGE_LIST_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {

@@ -66,7 +66,7 @@ export const CyclesHeader: FC = observer(() => {
             size="sm"
             prependIcon={<Plus />}
             onClick={() => {
-              setTrackElement("CYCLES_PAGE_HEADER");
+              setTrackElement("Cycles page");
               toggleCreateCycleModal(true);
             }}
           >

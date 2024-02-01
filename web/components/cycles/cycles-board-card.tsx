@@ -117,14 +117,15 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page board layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page board layout");
     setDeleteModal(true);
-    setTrackElement("CYCLE_PAGE_BOARD_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {

@@ -23,7 +23,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            setTrackElement("COMMAND_PALETTE");
+            setTrackElement("Command palette");
             toggleCreateCycleModal(true);
           }}
           className="focus:outline-none"
