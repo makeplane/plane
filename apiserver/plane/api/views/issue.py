@@ -230,9 +230,16 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
+                issue = Issue.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    external_id=request.data.get("external_id"),
+                    external_source=request.data.get("external_source"),
+                ).first()
                 return Response(
                     {
-                        "error": "Issue with the same external id and external source already exists"
+                        "error": "Issue with the same external id and external source already exists",
+                        "issue_id": str(issue.id),
                     },
                     status=status.HTTP_410_GONE,
                 )
@@ -290,7 +297,8 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             ):
                 return Response(
                     {
-                        "error": "Issue with the same external id and external source already exists"
+                        "error": "Issue with the same external id and external source already exists",
+                        "issue_id": str(issue.id)
                     },
                     status=status.HTTP_410_GONE,
                 )

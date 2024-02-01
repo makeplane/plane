@@ -142,9 +142,16 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
+                module = Module.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).first()
                 return Response(
                     {
-                        "error": "Module with the same external id and external source already exists"
+                        "error": "Module with the same external id and external source already exists",
+                        "module_id": str(module.id),
                     },
                     status=status.HTTP_410_GONE,
                 )
@@ -182,7 +189,8 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             ):
                 return Response(
                     {
-                        "error": "Module with the same external id and external source already exists"
+                        "error": "Module with the same external id and external source already exists",
+                        "module_id": str(module.id),
                     },
                     status=status.HTTP_410_GONE,
                 )

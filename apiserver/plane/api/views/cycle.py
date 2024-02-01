@@ -253,9 +253,16 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                         external_id=request.data.get("external_id"),
                     ).exists()
                 ):
+                    cycle = Cycle.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).first()
                     return Response(
                         {
-                            "error": "Cycle with the same external id and external source already exists"
+                            "error": "Cycle with the same external id and external source already exists",
+                            "cycle": str(cycle.id),
                         },
                         status=status.HTTP_410_GONE,
                     )
@@ -322,7 +329,8 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
             ):
                 return Response(
                     {
-                        "error": "Cycle with the same external id and external source already exists"
+                        "error": "Cycle with the same external id and external source already exists",
+                        "cycle_id": str(cycle.id),
                     },
                     status=status.HTTP_410_GONE,
                 )
