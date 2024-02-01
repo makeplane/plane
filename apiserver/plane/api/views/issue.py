@@ -220,6 +220,23 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists"
+                    },
+                    status=status.HTTP_410_GONE,
+                )
+
             serializer.save()
 
             # Track the issue
@@ -256,6 +273,28 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (issue.external_id != str(request.data.get("external_id")))
+                and request.data.get("external_source")
+                and (
+                    issue.external_source
+                    != request.data.get("external_source")
+                )
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists"
+                    },
+                    status=status.HTTP_410_GONE,
+                )
+
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",

@@ -243,6 +243,22 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
         ):
             serializer = CycleSerializer(data=request.data)
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Cycle.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    return Response(
+                        {
+                            "error": "Cycle with the same external id and external source already exists"
+                        },
+                        status=status.HTTP_410_GONE,
+                    )
                 serializer.save(
                     project_id=project_id,
                     owned_by=request.user,
@@ -289,6 +305,27 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
 
         serializer = CycleSerializer(cycle, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and (cycle.external_id != request.data.get("external_id"))
+                and request.data.get("external_source")
+                and (
+                    cycle.external_source
+                    != request.data.get("external_source")
+                )
+                and Cycle.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Cycle with the same external id and external source already exists"
+                    },
+                    status=status.HTTP_410_GONE,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

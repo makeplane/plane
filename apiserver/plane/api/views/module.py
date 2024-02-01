@@ -132,6 +132,22 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             },
         )
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Module.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Module with the same external id and external source already exists"
+                    },
+                    status=status.HTTP_410_GONE,
+                )
             serializer.save()
             module = Module.objects.get(pk=serializer.data["id"])
             serializer = ModuleSerializer(module)
@@ -149,6 +165,27 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and (module.external_id != request.data.get("external_id"))
+                and request.data.get("external_source")
+                and (
+                    module.external_source
+                    != request.data.get("external_source")
+                )
+                and Module.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Module with the same external id and external source already exists"
+                    },
+                    status=status.HTTP_410_GONE,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
