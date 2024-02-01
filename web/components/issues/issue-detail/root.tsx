@@ -198,15 +198,15 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
         try {
           await removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
           setToastAlert({
-            title: "Module removed from issue successfully",
             type: "success",
-            message: "Module removed from issue successfully",
+            title: "Successful!",
+            message: "Issue removed from module successfully.",
           });
         } catch (error) {
           setToastAlert({
-            title: "Module remove from issue failed",
             type: "error",
-            message: "Module remove from issue failed",
+            title: "Error!",
+            message: "Issue could not be removed from module. Please try again.",
           });
         }
       },

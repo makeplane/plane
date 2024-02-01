@@ -81,7 +81,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             projectId={issue.project_id}
             disabled={isReadOnly}
             buttonVariant="border-with-text"
-            tooltip
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -95,7 +95,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             disabled={isReadOnly}
             buttonVariant="border-without-text"
             buttonClassName="border"
-            tooltip
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -123,7 +123,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             placeholder="Start date"
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
-            tooltip
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -139,7 +139,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             placeholder="Due date"
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
-            tooltip
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -169,7 +169,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               projectId={issue.project_id}
               disabled={isReadOnly}
               buttonVariant="border-with-text"
-              tooltip
+              showTooltip
             />
           </div>
         </WithDisplayPropertiesHOC>

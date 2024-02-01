@@ -78,7 +78,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
                 href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium mt-0.5"
+                className="text-xs font-medium"
                 onClick={(e) => e.stopPropagation()}
               >
                 {parentIssueProjectDetails?.identifier}-{parentIssue.sequence_id}
