@@ -30,6 +30,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
+import { BreadcrumbLink } from "components/common";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -154,25 +155,33 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={
-                currentProjectDetails?.emoji ? (
-                  renderEmoji(currentProjectDetails.emoji)
-                ) : currentProjectDetails?.icon_prop ? (
-                  renderEmoji(currentProjectDetails.icon_prop)
-                ) : (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                    {currentProjectDetails?.name.charAt(0)}
-                  </span>
-                )
+              link={
+                <BreadcrumbLink
+                  label={currentProjectDetails?.name ?? "Project"}
+                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                  icon={
+                    currentProjectDetails?.emoji ? (
+                      renderEmoji(currentProjectDetails.emoji)
+                    ) : currentProjectDetails?.icon_prop ? (
+                      renderEmoji(currentProjectDetails.icon_prop)
+                    ) : (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        {currentProjectDetails?.name.charAt(0)}
+                      </span>
+                    )
+                  }
+                />
               }
-              label={currentProjectDetails?.name ?? "Project"}
-              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Modules"
-              link={`/${workspaceSlug}/projects/${projectId}/modules`}
+              link={
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/projects/${projectId}/modules`}
+                  label="Modules"
+                  icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
             />
             <Breadcrumbs.BreadcrumbItem
               type="component"

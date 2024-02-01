@@ -17,6 +17,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { BreadcrumbLink } from "components/common";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -108,18 +109,22 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="relative flex gap-2">
-        <SidebarHamburgerToggle/>
+          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={
-                activeLayout === "spreadsheet" ? (
-                  <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                ) : (
-                  <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
-                )
+              link={
+                <BreadcrumbLink
+                  label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
+                  icon={
+                    activeLayout === "spreadsheet" ? (
+                      <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                    ) : (
+                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                    )
+                  }
+                />
               }
-              label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
             />
           </Breadcrumbs>
         </div>

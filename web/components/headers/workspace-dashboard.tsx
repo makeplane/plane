@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // components
-import { ProductUpdatesModal } from "components/common";
+import { BreadcrumbLink, ProductUpdatesModal } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
@@ -25,8 +25,9 @@ export const WorkspaceDashboardHeader = () => {
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />}
-                label="Dashboard"
+                link={
+                  <BreadcrumbLink label="Dashboard" icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>
