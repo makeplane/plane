@@ -205,6 +205,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       if (!moduleId) throw new Error("Module Id is required");
 
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);

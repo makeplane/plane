@@ -36,7 +36,7 @@ export const SpreadsheetTable = observer((props: Props) => {
   } = props;
 
   return (
-    <table className="divide-x-[0.5px] divide-custom-border-200 overflow-y-auto">
+    <table className="overflow-y-auto">
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}

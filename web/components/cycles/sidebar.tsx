@@ -587,14 +587,16 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
-                              <ProgressChart
-                                distribution={cycleDetails.distribution?.completion_chart ?? {}}
-                                startDate={cycleDetails.start_date ?? ""}
-                                endDate={cycleDetails.end_date ?? ""}
-                                totalIssues={cycleDetails.total_issues}
-                              />
-                            </div>
+                            {cycleDetails && cycleDetails.distribution && (
+                              <div className="relative h-40 w-80">
+                                <ProgressChart
+                                  distribution={cycleDetails.distribution?.completion_chart ?? {}}
+                                  startDate={cycleDetails.start_date ?? ""}
+                                  endDate={cycleDetails.end_date ?? ""}
+                                  totalIssues={cycleDetails.total_issues}
+                                />
+                              </div>
+                            )}
                           </div>
                         ) : (
                           ""
