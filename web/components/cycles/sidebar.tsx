@@ -6,7 +6,7 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle, useUser } from "hooks/store";
+import { useApplication, useCycle, useMember, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -73,8 +73,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, updateCycleDetails } = useCycle();
+  const { getUserDetails } = useMember();
 
   const cycleDetails = getCycleById(cycleId);
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
 
   const { setToastAlert } = useToast();
 
@@ -518,8 +520,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             <div className="flex w-1/2 items-center rounded-sm">
               <div className="flex items-center gap-2.5">
-                <Avatar name={cycleDetails.owned_by.display_name} src={cycleDetails.owned_by.avatar} />
-                <span className="text-sm text-custom-text-200">{cycleDetails.owned_by.display_name}</span>
+                <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+                <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
               </div>
             </div>
           </div>

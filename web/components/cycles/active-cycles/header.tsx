@@ -9,6 +9,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { useMember } from "hooks/store";
 
 export type ActiveCycleHeaderProps = {
   cycle: ICycle;
@@ -18,10 +19,12 @@ export type ActiveCycleHeaderProps = {
 
 export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
+  // store
+  const { getUserDetails } = useMember();
+  const cycleOwnerDetails = cycle ? getUserDetails(cycle.owned_by) : undefined;
 
   const daysLeft = findHowManyDaysLeft(cycle.end_date ?? new Date());
   const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
-
   return (
     <div className="flex items-center justify-between px-3 py-1.5 rounded-lg border-[0.5px] border-custom-border-100 bg-custom-background-90">
       <div className="flex items-center gap-2 cursor-default">
@@ -48,20 +51,20 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
               <span className="text-base leading-5">Lead</span>
             </span>
             <div className="flex items-center gap-1.5">
-              {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+              {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
                 <img
-                  src={cycle.owned_by.avatar}
+                  src={cycleOwnerDetails?.avatar}
                   height={18}
                   width={18}
                   className="rounded-full"
-                  alt={cycle.owned_by.display_name}
+                  alt={cycleOwnerDetails?.display_name}
                 />
               ) : (
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
-                  {cycle.owned_by.display_name.charAt(0)}
+                  {cycleOwnerDetails?.display_name.charAt(0)}
                 </span>
               )}
-              <span className="text-base leading-5">{cycle.owned_by.display_name}</span>
+              <span className="text-base leading-5">{cycleOwnerDetails?.display_name}</span>
             </div>
           </div>
         </div>
