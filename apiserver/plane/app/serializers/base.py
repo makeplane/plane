@@ -162,16 +162,9 @@ class DynamicBaseSerializer(BaseSerializer):
 
 
 class BaseFileSerializer(DynamicBaseSerializer):
-    download_url = serializers.SerializerMethodField()
 
     class Meta:
         abstract = True  # Make this serializer abstract
-
-    def get_download_url(self, obj):
-        if hasattr(obj, "asset") and obj.asset:
-            storage = S3PrivateBucketStorage()
-            return storage.download_url(obj.asset.name)
-        return None
 
     def to_representation(self, instance):
         """

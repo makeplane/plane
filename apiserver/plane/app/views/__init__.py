@@ -18,6 +18,7 @@ from .user import (
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
+    UserAssetsEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -65,7 +66,7 @@ from .cycle import (
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
 )
-from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .asset import FileAssetEndpoint, FileAssetViewSet
 from .issue import (
     IssueViewSet,
     WorkSpaceIssuesEndpoint,
@@ -180,7 +181,4 @@ from .webhook import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .dashboard import (
-    DashboardEndpoint,
-    WidgetsEndpoint
-)
+from .dashboard import DashboardEndpoint, WidgetsEndpoint

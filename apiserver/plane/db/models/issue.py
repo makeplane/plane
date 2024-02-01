@@ -389,9 +389,6 @@ class IssueActivity(ProjectBaseModel):
     )
 
     comment = models.TextField(verbose_name="Comment", blank=True)
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
     issue_comment = models.ForeignKey(
         "db.IssueComment",
         on_delete=models.SET_NULL,
@@ -423,9 +420,6 @@ class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_comments"
     )

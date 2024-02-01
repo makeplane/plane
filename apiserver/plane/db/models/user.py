@@ -15,11 +15,16 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.dispatch import receiver
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Third party imports
 from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+
+# Module imports
+from . import BaseModel
+from plane.settings.storage import S3PrivateBucketStorage
 
 
 def get_default_onboarding():
@@ -49,7 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
     avatar = models.CharField(max_length=255, blank=True)
-    cover_image = models.URLField(blank=True, null=True, max_length=800)
+    cover_image = models.CharField(blank=True, null=True, max_length=800)
 
     # tracking metrics
     date_joined = models.DateTimeField(
@@ -142,6 +147,42 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.is_staff = True
 
         super(User, self).save(*args, **kwargs)
+
+
+def get_upload_path(instance, filename):
+    return f"user-{uuid.uuid4().hex}"
+
+def file_size(value):
+    if value.size > settings.FILE_SIZE_LIMIT:
+        raise ValidationError("File too large. Size should not exceed 5 MB.")
+
+class UserAsset(BaseModel):
+
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="assets")
+    asset = models.FileField(
+        upload_to=get_upload_path,
+        validators=[
+            file_size,
+        ],
+        storage=S3PrivateBucketStorage(),
+        max_length=500,
+    )
+    is_deleted = models.BooleanField(default=False)
+    size = models.PositiveBigIntegerField(null=True)
+    attributes = models.JSONField(default=dict)
+
+    def save(self, *args, **kwargs):
+        self.size = self.asset.size
+        super(UserAsset, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "User Asset"
+        verbose_name_plural = "User Assets"
+        db_table = "user_assets"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return str(self.asset)
 
 
 @receiver(post_save, sender=User)

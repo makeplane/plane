@@ -3,8 +3,7 @@ from rest_framework import serializers
 
 # Module import
 from .base import BaseSerializer
-from plane.db.models import User, Workspace, WorkspaceMemberInvite
-from plane.license.models import InstanceAdmin, Instance
+from plane.db.models import User, Workspace, WorkspaceMemberInvite, UserAsset
 
 
 class UserSerializer(BaseSerializer):
@@ -197,3 +196,12 @@ class ResetPasswordSerializer(serializers.Serializer):
     """
 
     new_password = serializers.CharField(required=True, min_length=8)
+
+
+class UserAssetSerializer(BaseSerializer):
+    class Meta:
+        model = UserAsset
+        fields = "__all__"
+        read_only_fields = [
+            "user",
+        ]

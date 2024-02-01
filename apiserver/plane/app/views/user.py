@@ -1,7 +1,15 @@
+# Python imports
+import requests
+
+# Django imports
+from django.http import StreamingHttpResponse
+from django.conf import settings
+
 # Third party imports
+import boto3
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
 from plane.app.serializers import (
@@ -9,13 +17,14 @@ from plane.app.serializers import (
     IssueActivitySerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
+    UserAssetSerializer,
 )
 
 from plane.app.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember
+from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember, UserAsset
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
-
+from plane.utils.file_stream import get_file_streams
 
 from django.db.models import Q, F, Count, Case, When, IntegerField
 
@@ -177,3 +186,27 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
+
+
+class UserAssetsEndpoint(BaseAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        serializer = UserAssetSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, asset_key):
+        user_asset = UserAsset.objects.get(
+            asset=asset_key, created_by=request.user
+        )
+        user_asset.is_deleted = True
+        user_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    def get(self, request, key):
+        response = get_file_streams(key, key)
+        return response

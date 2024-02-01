@@ -20,16 +20,6 @@ urlpatterns = [
         name="file-assets",
     ),
     path(
-        "users/file-assets/",
-        UserAssetsEndpoint.as_view(),
-        name="user-file-assets",
-    ),
-    path(
-        "users/file-assets/<str:asset_key>/",
-        UserAssetsEndpoint.as_view(),
-        name="user-file-assets",
-    ),
-    path(
         "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/restore/",
         FileAssetViewSet.as_view(
             {
