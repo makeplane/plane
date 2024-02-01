@@ -61,7 +61,7 @@ export const IssueGanttBlock = ({ data, textDisplacement }: { data: TIssue; text
 // rendering issues on gantt sidebar
 export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
   // hooks
-  const { getProjectStates } = useProjectState();
+  const { getStateById } = useProjectState();
   const { getProjectById } = useProject();
   const {
     router: { workspaceSlug },
@@ -75,8 +75,7 @@ export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
     data.id &&
     setPeekIssue({ workspaceSlug, projectId: data.project_id, issueId: data.id });
 
-  const currentStateDetails =
-    getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id) || undefined;
+  const currentStateDetails = getStateById(data?.state_id);
 
   return (
     <ControlLink
@@ -86,7 +85,7 @@ export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
       className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
-        {currentStateDetails != undefined && (
+        {currentStateDetails && (
           <StateGroupIcon stateGroup={currentStateDetails?.group} color={currentStateDetails?.color} />
         )}
         <div className="flex-shrink-0 text-xs text-custom-text-300">

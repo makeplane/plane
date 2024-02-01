@@ -47,7 +47,14 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   return (
     <ChartContext.Provider
-      value={{ ...state, scrollLeft, updateScrollLeft, scrollTop, updateScrollTop, dispatch: handleDispatch }}
+      value={{
+        ...state,
+        scrollLeft,
+        updateScrollLeft,
+        scrollTop,
+        updateScrollTop,
+        dispatch: handleDispatch,
+      }}
     >
       {children}
     </ChartContext.Provider>

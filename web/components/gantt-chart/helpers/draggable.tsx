@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 // hooks
-import { useChart } from "../hooks";
-// types
-import { IGanttBlock } from "../types";
+import { IGanttBlock, useChart } from "components/gantt-chart";
+// helpers
+import { cn } from "helpers/common.helper";
 
 type Props = {
   block: IGanttBlock;
@@ -201,10 +201,8 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   };
   // scroll to a hidden block
   const handleScrollToBlock = () => {
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
     if (!scrollContainer || !block.position) return;
-
     // update container's scroll position to the block's position
     scrollContainer.scrollLeft = block.position.marginLeft - 4;
   };
@@ -225,13 +223,18 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
   const textDisplacement = scrollLeft - (block.position?.marginLeft ?? 0);
 
+  console.log("scrollLeft", scrollLeft);
+
   return (
     <>
       {/* move to left side hidden block button */}
       {isBlockHiddenOnLeft && (
         <div
-          className="fixed z-[1] ml-1 mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          className="absolute top-1/2 z-[1] grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
           onClick={handleScrollToBlock}
+          style={{
+            transform: `translate(${scrollLeft + 4}px, -50%)`,
+          }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
         </div>
@@ -239,8 +242,11 @@ export const ChartDraggable: React.FC<Props> = (props) => {
       {/* move to right side hidden block button */}
       {isBlockHiddenOnRight && (
         <div
-          className="fixed right-1 z-[1] mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          className="absolute top-1/2 z-[1] grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
           onClick={handleScrollToBlock}
+          style={{
+            transform: `translate(${(block.position?.marginLeft ?? 0) - posFromLeft + window.innerWidth - 36}px, -50%)`,
+          }}
         >
           <ArrowRight className="h-3.5 w-3.5" />
         </div>
@@ -261,17 +267,22 @@ export const ChartDraggable: React.FC<Props> = (props) => {
               onMouseDown={handleBlockLeftResize}
               onMouseEnter={() => setIsLeftResizing(true)}
               onMouseLeave={() => setIsLeftResizing(false)}
-              className="absolute -left-2.5 top-1/2 z-[3] h-full w-6 -translate-y-1/2 cursor-col-resize rounded-md"
+              className="absolute -left-2.5 top-1/2 -translate-y-1/2 z-[3] h-full w-6 cursor-col-resize rounded-md"
             />
             <div
-              className={`absolute top-1/2 h-7 w-1 -translate-y-1/2 rounded-sm bg-custom-background-100 transition-all duration-300 ${
-                isLeftResizing ? "-left-2.5" : "left-1"
-              }`}
+              className={cn(
+                "absolute left-1 top-1/2 -translate-y-1/2 h-7 w-1 rounded-sm bg-custom-background-100 transition-all duration-300",
+                {
+                  "-left-2.5": isLeftResizing,
+                }
+              )}
             />
           </>
         )}
         <div
-          className={`relative z-[2] flex h-8 w-full items-center rounded ${isMoving ? "pointer-events-none" : ""}`}
+          className={cn("relative z-[2] flex h-8 w-full items-center rounded", {
+            "pointer-events-none": isMoving,
+          })}
           onMouseDown={handleBlockMove}
         >
           {blockToRender(block.data, textDisplacement)}
@@ -283,12 +294,15 @@ export const ChartDraggable: React.FC<Props> = (props) => {
               onMouseDown={handleBlockRightResize}
               onMouseEnter={() => setIsRightResizing(true)}
               onMouseLeave={() => setIsRightResizing(false)}
-              className="absolute -right-2.5 top-1/2 z-[2] h-full w-6 -translate-y-1/2 cursor-col-resize rounded-md"
+              className="absolute -right-2.5 top-1/2 -translate-y-1/2 z-[2] h-full w-6 cursor-col-resize rounded-md"
             />
             <div
-              className={`absolute top-1/2 h-7 w-1 -translate-y-1/2 rounded-sm bg-custom-background-100 transition-all duration-300 ${
-                isRightResizing ? "-right-2.5" : "right-1"
-              }`}
+              className={cn(
+                "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-1 rounded-sm bg-custom-background-100 transition-all duration-300",
+                {
+                  "-right-2.5": isRightResizing,
+                }
+              )}
             />
           </>
         )}
