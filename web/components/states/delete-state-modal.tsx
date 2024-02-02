@@ -44,7 +44,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        postHogEventTracker("State delete", {
+        postHogEventTracker("State deleted", {
           state: "SUCCESS",
         });
         handleClose();
@@ -63,7 +63,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        postHogEventTracker("State delete", {
+        postHogEventTracker("State deleted", {
           state: "FAILED",
         });
       })

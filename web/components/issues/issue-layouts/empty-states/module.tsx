@@ -77,7 +77,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
-              setTrackElement("MODULE_EMPTY_STATE");
+              setTrackElement("Module issue empty state");
               toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
             },
           }}

@@ -229,7 +229,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               </Button>
               <Button
                 onClick={() => {
-                  setTrackElement("CYCLE_PAGE_HEADER");
+                  setTrackElement("Cycle issues page");
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }}
                 size="sm"

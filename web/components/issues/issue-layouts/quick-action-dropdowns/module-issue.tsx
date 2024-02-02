@@ -4,6 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+import { useIssues, useApplication } from "hooks/store";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -23,8 +24,15 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, moduleId } = router.query;
+  // store hooks
+    const {
+      eventTracker: { setTrackElement },
+  } = useApplication();
+  const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   // toast alert
   const { setToastAlert } = useToast();
+
+  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() =>
@@ -82,6 +90,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         <CustomMenu.MenuItem
           onClick={() => {
             setIssueToEdit({ ...issue, module: moduleId?.toString() ?? null });
+            setTrackElement(activeLayout);
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -102,6 +111,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={() => {
+            setTrackElement(activeLayout);
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -114,6 +124,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            setTrackElement(activeLayout);
             setDeleteIssueModal(true);
           }}
         >

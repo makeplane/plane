@@ -25,7 +25,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
-            setTrackElement("VIEW_EMPTY_STATE");
+            setTrackElement("View issue empty state");
             commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },
         }}

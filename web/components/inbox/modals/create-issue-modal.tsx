@@ -63,7 +63,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   } = useInboxIssues();
   const {
     config: { envConfig },
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureIssueEvent },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
 
@@ -93,32 +93,37 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.id}`);
           handleClose();
         } else reset(defaultValues);
-        postHogEventTracker(
-          "Issue created",
-          {
-            ...res,
+        captureIssueEvent({
+          eventName: "Issue created",
+          payload: {
+            ...formData,
             state: "SUCCESS",
+            element: "Inbox page",
           },
-          {
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
             groupId: currentWorkspace?.id!,
-          }
-        );
+          },
+          path: router.pathname,
+        });
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker(
-          "Issue created",
-          {
+        captureIssueEvent({
+          eventName: "Issue created",
+          payload: {
+            ...formData,
             state: "FAILED",
+            element: "Inbox page",
           },
-          {
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
             groupId: currentWorkspace?.id!,
-          }
-        );
+          },
+          path: router.pathname,
+        });
       });
   };
 

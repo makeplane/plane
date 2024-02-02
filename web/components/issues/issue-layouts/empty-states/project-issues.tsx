@@ -90,7 +90,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
             text: "Create your first issue",
 
             onClick: () => {
-              setTrackElement("PROJECT_EMPTY_STATE");
+              setTrackElement("Project issue empty state");
               commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             },
           },

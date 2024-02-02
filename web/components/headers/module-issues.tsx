@@ -232,7 +232,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               </Button>
               <Button
                 onClick={() => {
-                  setTrackElement("MODULE_PAGE_HEADER");
+                  setTrackElement("Module issues page");
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 size="sm"

@@ -88,7 +88,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "State created successfully.",
         });
-        postHogEventTracker("State create", {
+        postHogEventTracker("State created", {
           ...res,
           state: "SUCCESS",
         });
@@ -106,7 +106,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be created. Please try again.",
           });
-        postHogEventTracker("State create", {
+        postHogEventTracker("State created", {
           state: "FAILED",
         });
       });
@@ -118,7 +118,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
     await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
         handleClose();
-        postHogEventTracker("State update", {
+        postHogEventTracker("State updated", {
           ...res,
           state: "SUCCESS",
         });
@@ -141,7 +141,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be updated. Please try again.",
           });
-        postHogEventTracker("State update", {
+        postHogEventTracker("State updated", {
           state: "FAILED",
         });
       });

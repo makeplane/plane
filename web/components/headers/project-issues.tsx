@@ -217,7 +217,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
               <Button
                 onClick={() => {
-                  setTrackElement("PROJECT_PAGE_HEADER");
+                  setTrackElement("Project issues page");
                   toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                 }}
                 size="sm"

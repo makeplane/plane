@@ -39,7 +39,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const router = useRouter();
   // hooks
   const {
-    eventTracker: { postHogEventTracker },
+    eventTracker: { captureIssueEvent },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
   const {
@@ -87,17 +87,19 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !currentWorkspace)
             throw new Error("Missing required parameters");
           await removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
-          postHogEventTracker(
-            "Issue deleted",
-            {
+          captureIssueEvent({
+            eventName: "Issue deleted",
+            payload: {
+              id: inboxIssueId,
               state: "SUCCESS",
+              element: "Inbox page",
             },
-            {
+            group: {
               isGrouping: true,
               groupType: "Workspace_metrics",
               groupId: currentWorkspace?.id!,
-            }
-          );
+            },
+          });
           router.push({
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
           });
@@ -107,17 +109,19 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             title: "Error!",
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
-          postHogEventTracker(
-            "Issue deleted",
-            {
+          captureIssueEvent({
+            eventName: "Issue deleted",
+            payload: {
+              id: inboxIssueId,
               state: "FAILED",
+              element: "Inbox page",
             },
-            {
+            group: {
               isGrouping: true,
               groupType: "Workspace_metrics",
               groupId: currentWorkspace?.id!,
-            }
-          );
+            },
+          });
         }
       },
     }),
@@ -130,7 +134,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       updateInboxIssueStatus,
       removeInboxIssue,
       setToastAlert,
-      postHogEventTracker,
+      captureIssueEvent,
       router,
     ]
   );

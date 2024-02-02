@@ -4,6 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+import { useApplication } from "hooks/store";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -23,6 +24,10 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // hooks
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -81,6 +86,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={() => {
+            setTrackElement("Global issues");
             setIssueToEdit(issue);
             setCreateUpdateIssueModal(true);
           }}
@@ -92,6 +98,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={() => {
+            setTrackElement("Global issues");
             setCreateUpdateIssueModal(true);
           }}
         >
@@ -102,6 +109,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={() => {
+            setTrackElement("Global issues");
             setDeleteIssueModal(true);
           }}
         >

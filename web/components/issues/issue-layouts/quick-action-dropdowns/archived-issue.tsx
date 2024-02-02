@@ -4,23 +4,32 @@ import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+import { useApplication, useIssues } from "hooks/store";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, customActionButton, portalElement } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
+  // toast alert
   const { setToastAlert } = useToast();
+  // store hooks
+  const {
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+
+  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`).then(() =>
@@ -59,6 +68,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={() => {
+            setTrackElement(activeLayout);
             setDeleteIssueModal(true);
           }}
         >
