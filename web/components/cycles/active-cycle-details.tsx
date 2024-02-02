@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useTheme } from "next-themes";
 // hooks
-import { useCycle, useIssues, useProject, useUser } from "hooks/store";
+import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
@@ -58,6 +58,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     removeCycleFromFavorites,
   } = useCycle();
   const { currentProjectDetails } = useProject();
+  const { getUserDetails } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -67,6 +68,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
+  const cycleOwnerDetails = activeCycle ? getUserDetails(activeCycle.owned_by) : undefined;
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && currentProjectActiveCycleId
@@ -203,20 +205,20 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
 
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5 text-custom-text-200">
-                  {activeCycle.owned_by.avatar && activeCycle.owned_by.avatar !== "" ? (
+                  {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
                     <img
-                      src={activeCycle.owned_by.avatar}
+                      src={cycleOwnerDetails?.avatar}
                       height={16}
                       width={16}
                       className="rounded-full"
-                      alt={activeCycle.owned_by.display_name}
+                      alt={cycleOwnerDetails?.display_name}
                     />
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
-                      {activeCycle.owned_by.display_name.charAt(0)}
+                      {cycleOwnerDetails?.display_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-custom-text-200">{activeCycle.owned_by.display_name}</span>
+                  <span className="text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
                 </div>
 
                 {activeCycle.assignees.length > 0 && (

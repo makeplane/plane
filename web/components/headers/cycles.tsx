@@ -11,6 +11,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { EUserProjectRoles } from "constants/project";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 
 export const CyclesHeader: FC = observer(() => {
   // router
@@ -37,24 +38,27 @@ export const CyclesHeader: FC = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={currentProjectDetails?.name ?? "Project"}
-              icon={
-                currentProjectDetails?.emoji ? (
-                  renderEmoji(currentProjectDetails.emoji)
-                ) : currentProjectDetails?.icon_prop ? (
-                  renderEmoji(currentProjectDetails.icon_prop)
-                ) : (
-                  <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                    {currentProjectDetails?.name.charAt(0)}
-                  </span>
-                )
+              link={
+                <BreadcrumbLink
+                  label={currentProjectDetails?.name ?? "Project"}
+                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                  icon={
+                    currentProjectDetails?.emoji ? (
+                      renderEmoji(currentProjectDetails.emoji)
+                    ) : currentProjectDetails?.icon_prop ? (
+                      renderEmoji(currentProjectDetails.icon_prop)
+                    ) : (
+                      <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
+                        {currentProjectDetails?.name.charAt(0)}
+                      </span>
+                    )
+                  }
+                />
               }
-              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Cycles"
+              link={<BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>

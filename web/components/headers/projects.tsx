@@ -8,6 +8,7 @@ import { Breadcrumbs, Button } from "@plane/ui";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 
 export const ProjectsHeader = observer(() => {
   // store hooks
@@ -28,8 +29,7 @@ export const ProjectsHeader = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
-              label="Projects"
+              link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>

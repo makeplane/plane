@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { useEventTracker, useProject, useWorkspace } from "hooks/store";
@@ -29,6 +29,8 @@ const projectService = new ProjectService();
 
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
+  // states
+  const [isLoading, setIsLoading] = useState(false);
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
@@ -43,7 +45,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     setValue,
     setError,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IProject>({
     defaultValues: {
       ...project,
@@ -110,6 +112,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
+    setIsLoading(true);
 
     const payload: Partial<IProject> = {
       name: formData.name,
@@ -135,6 +138,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           else await handleUpdateChange(payload);
         });
     else await handleUpdateChange(payload);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
@@ -304,8 +311,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
         <div className="flex items-center justify-between py-2">
           <>
-            <Button variant="primary" type="submit" loading={isSubmitting} disabled={!isAdmin}>
-              {isSubmitting ? "Updating" : "Update project"}
+            <Button variant="primary" type="submit" loading={isLoading} disabled={!isAdmin}>
+              {isLoading ? "Updating..." : "Update project"}
             </Button>
             <span className="text-sm italic text-custom-sidebar-text-400">
               Created on {renderFormattedDate(project?.created_at)}

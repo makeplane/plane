@@ -56,7 +56,6 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               >
                 <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
               </PosthogWrapper>
-              {/* <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig> */}
             </CrispWrapper>
           </StoreWrapper>
         </InstanceLayout>

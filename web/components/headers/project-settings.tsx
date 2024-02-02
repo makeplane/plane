@@ -11,6 +11,7 @@ import { useProject, useUser } from "hooks/store";
 import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 
 export interface IProjectSettingHeader {
   title: string;
@@ -38,22 +39,26 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                label={currentProjectDetails?.name ?? "Project"}
-                icon={
-                  currentProjectDetails?.emoji ? (
-                    renderEmoji(currentProjectDetails.emoji)
-                  ) : currentProjectDetails?.icon_prop ? (
-                    renderEmoji(currentProjectDetails.icon_prop)
-                  ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
-                    </span>
-                  )
+                link={
+                  <BreadcrumbLink
+                    href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                    label={currentProjectDetails?.name ?? "Project"}
+                    icon={
+                      currentProjectDetails?.emoji ? (
+                        renderEmoji(currentProjectDetails.emoji)
+                      ) : currentProjectDetails?.icon_prop ? (
+                        renderEmoji(currentProjectDetails.icon_prop)
+                      ) : (
+                        <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                          {currentProjectDetails?.name.charAt(0)}
+                        </span>
+                      )
+                    }
+                  />
                 }
-                link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
               />
               <div className="hidden sm:hidden md:block lg:block">
-                <Breadcrumbs.BreadcrumbItem type="text" label={title} />
+                <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={title} />} />
               </div>
             </Breadcrumbs>
           </div>
@@ -62,13 +67,18 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
           className="flex-shrink-0 block sm:block md:hidden lg:hidden"
           maxHeight="lg"
           customButton={
-            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">{title}</span>
+            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">
+              {title}
+            </span>
           }
           placement="bottom-start"
           closeOnSelect
         >
           {PROJECT_SETTINGS_LINKS.map((item) => (
-            <CustomMenu.MenuItem key={item.key} onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}>
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}
+            >
               {item.label}
             </CustomMenu.MenuItem>
           ))}
