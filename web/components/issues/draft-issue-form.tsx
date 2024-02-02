@@ -170,17 +170,6 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   //   handleClose();
   // };
 
-  useEffect(() => {
-    if (!isOpen || data) return;
-
-    setLocalStorageValue(
-      JSON.stringify({
-        ...payload,
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(payload), isOpen, data]);
-
   // const onClose = () => {
   //   handleClose();
   // };
@@ -258,13 +247,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
 
   useEffect(() => {
     setFocus("name");
-
-    reset({
-      ...defaultValues,
-      ...(prePopulatedData ?? {}),
-      ...(data ?? {}),
-    });
-  }, [setFocus, prePopulatedData, reset, data]);
+  }, [setFocus]);
 
   // update projectId in form when projectId changes
   useEffect(() => {

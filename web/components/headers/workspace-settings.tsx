@@ -8,6 +8,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
+import { BreadcrumbLink } from "components/common";
 
 export interface IWorkspaceSettingHeader {
   title: string;
@@ -27,12 +28,16 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label="Settings"
-              icon={<Settings className="h-4 w-4 text-custom-text-300" />}
-              link={`/${workspaceSlug}/settings`}
+              link={
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/settings`}
+                  label="Settings"
+                  icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
             />
             <div className="hidden sm:hidden md:block lg:block">
-              <Breadcrumbs.BreadcrumbItem type="text" label={title} />
+              <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={title} />} />
             </div>
           </Breadcrumbs>
         </div>
@@ -40,7 +45,9 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
           className="flex-shrink-0 block sm:block md:hidden lg:hidden"
           maxHeight="lg"
           customButton={
-            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">{title}</span>
+            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">
+              {title}
+            </span>
           }
           placement="bottom-start"
           closeOnSelect

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useCycle, useModule, useProject } from "hooks/store";
+import { useCycle, useMember, useModule, useProject } from "hooks/store";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -15,10 +15,12 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
   const { getProjectById } = useProject();
   const { getCycleById } = useCycle();
   const { getModuleById } = useModule();
+  const { getUserDetails } = useMember();
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
   const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
 
   return (
     <>
@@ -29,7 +31,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
                 <h6 className="text-custom-text-200">Lead</h6>
-                <span>{cycleDetails.owned_by?.display_name}</span>
+                <span>{cycleOwnerDetails?.display_name}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <h6 className="text-custom-text-200">Start Date</h6>

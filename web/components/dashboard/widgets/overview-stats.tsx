@@ -7,7 +7,6 @@ import { useDashboard } from "hooks/store";
 import { WidgetLoader } from "components/dashboard/widgets";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { cn } from "helpers/common.helper";
 // types
 import { TOverviewStatsWidgetResponse } from "@plane/types";
 
