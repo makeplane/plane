@@ -8,7 +8,6 @@ from plane.app.views import (
     UserActivityEndpoint,
     ChangePasswordEndpoint,
     SetUserPasswordEndpoint,
-    UserAssetsEndpoint,
     ## End User
     ## Workspaces
     UserWorkSpacesEndpoint,
@@ -16,6 +15,10 @@ from plane.app.views import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     ## End Workspaces
+    # Asset Endpoints ## 
+    UserAvatarEndpoint,
+    UserCoverImageEndpoint,
+    ## End Asset Endpoint ##
 )
 
 urlpatterns = [
@@ -96,15 +99,26 @@ urlpatterns = [
         SetUserPasswordEndpoint.as_view(),
         name="set-password",
     ),
+    # User Assets
     path(
-        "users/assets/",
-        UserAssetsEndpoint.as_view(),
-        name="user-assets",
+        "users/avatar/",
+        UserAvatarEndpoint.as_view(),
+        name="user-avatar",
     ),
     path(
-        "users/assets/<str:key>/",
-        UserAssetsEndpoint.as_view(),
-        name="user-assets",
+        "users/avatar/<str:avatar_key>/",
+        UserAvatarEndpoint.as_view(),
+        name="user-avatar",
     ),
-    ## End User Graph
+    path(
+        "users/cover-image/",
+        UserCoverImageEndpoint.as_view(),
+        name="user-avatar",
+    ),
+    path(
+        "users/cover-image/<str:cover_image_key>/",
+        UserCoverImageEndpoint.as_view(),
+        name="user-avatar",
+    ),
+    ## User Assets
 ]

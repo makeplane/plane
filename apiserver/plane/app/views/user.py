@@ -2,7 +2,7 @@
 import requests
 
 # Django imports
-from django.http import StreamingHttpResponse
+from django.http import HttpResponseRedirect
 from django.conf import settings
 
 # Third party imports
@@ -10,6 +10,7 @@ import boto3
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # Module imports
 from plane.app.serializers import (
@@ -17,14 +18,14 @@ from plane.app.serializers import (
     IssueActivitySerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
-    UserAssetSerializer,
+    FileAssetSerializer,
 )
 
 from plane.app.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember, UserAsset
+from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember, FileAsset
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
-from plane.utils.file_stream import get_file_streams
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 from django.db.models import Q, F, Count, Case, When, IntegerField
 
@@ -188,25 +189,82 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
         )
 
 
-class UserAssetsEndpoint(BaseAPIView):
-    parser_classes = (MultiPartParser, FormParser)
+class UserAvatarEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+
+    def get(self, request, avatar_key):
+        url = generate_download_presigned_url(avatar_key)
+        return HttpResponseRedirect(url)
 
     def post(self, request):
-        serializer = UserAssetSerializer(data=request.data)
+        serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Get the workspace
+            serializer.save()
+            user = request.user
+            user.avatar = "/api/users/avatar/" + serializer.data["asset"] + "/"
+            user.save()
+            user_serializer = UserMeSerializer(user)
+            return Response(user_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, asset_key):
-        user_asset = UserAsset.objects.get(
-            asset=asset_key, created_by=request.user
-        )
-        user_asset.is_deleted = True
-        user_asset.save()
+    def delete(self, request, avatar_key):
+        file_asset = FileAsset.objects.get(asset=avatar_key)
+        file_asset.is_deleted = True
+        file_asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-    def get(self, request, key):
-        response = get_file_streams(key, key)
-        return response
+class UserCoverImageEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+    def get(self, request, cover_image_key):
+        url = generate_download_presigned_url(cover_image_key)
+        return HttpResponseRedirect(url)
+
+    def post(self, request):
+        serializer = FileAssetSerializer(data=request.data)
+        if serializer.is_valid():
+            # Get the workspace
+            serializer.save()
+            user = request.user
+            user.avatar = "/api/users/cover-image/" + serializer.data["asset"] + "/"
+            user.save()
+            user_serializer = UserMeSerializer(user)
+            return Response(user_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, cover_image_key):
+        file_asset = FileAsset.objects.get(asset=cover_image_key)
+        file_asset.is_deleted = True
+        file_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

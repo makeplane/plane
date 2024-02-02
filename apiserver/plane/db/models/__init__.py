@@ -1,6 +1,6 @@
 from .base import BaseModel
 
-from .user import User, UserAsset
+from .user import User
 
 from .workspace import (
     Workspace,

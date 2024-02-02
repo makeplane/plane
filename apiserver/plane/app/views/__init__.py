@@ -12,13 +12,15 @@ from .project import (
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
     UserProjectRolesEndpoint,
+    ProjectCoverImageEndpoint,
 )
 from .user import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
-    UserAssetsEndpoint,
+    UserAvatarEndpoint,
+    UserCoverImageEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -50,6 +52,7 @@ from .workspace import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    WorkspaceLogoEndpoint,
 )
 from .state import StateViewSet
 from .view import (

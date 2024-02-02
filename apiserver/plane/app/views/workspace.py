@@ -25,11 +25,13 @@ from django.db.models import (
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
+from django.http import HttpResponseRedirect
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
 from plane.app.serializers import (
@@ -49,6 +51,7 @@ from plane.app.serializers import (
     WorkspaceEstimateSerializer,
     StateSerializer,
     LabelSerializer,
+    FileAssetSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
@@ -73,6 +76,7 @@ from plane.db.models import (
     WorkspaceUserProperties,
     Estimate,
     EstimatePoint,
+    FileAsset,
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -84,6 +88,7 @@ from plane.app.permissions import (
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 from plane.bgtasks.event_tracking_task import workspace_invite_event
 
 
@@ -1524,3 +1529,44 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
         )
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkspaceLogoEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+    def get(self, request, slug, workspace_id, logo_key):
+        key = f"{workspace_id}/{logo_key}"
+        url = generate_download_presigned_url(key)
+        return HttpResponseRedirect(url)
+
+    def post(self, request, slug):
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
+        if serializer.is_valid():
+            serializer.save(workspace=workspace)
+            workspace.logo = f"/api/workspaces/{slug}/logo/{serializer.data['asset']}/"
+            workspace.save()
+            workspace_serializer = WorkSpaceSerializer(workspace)
+            return Response(workspace_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, slug, workspace_id, logo_key):
+        key = f"{workspace_id}/{logo_key}"
+        file_asset = FileAsset.objects.get(asset=key)
+        file_asset.is_deleted = True
+        file_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

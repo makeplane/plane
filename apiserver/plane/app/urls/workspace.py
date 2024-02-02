@@ -22,6 +22,7 @@ from plane.app.views import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    WorkspaceLogoEndpoint,
 )
 
 
@@ -218,5 +219,15 @@ urlpatterns = [
         "workspaces/<str:slug>/estimates/",
         WorkspaceEstimatesEndpoint.as_view(),
         name="workspace-estimate",
+    ),
+    path(
+        "workspaces/<str:slug>/logo/",
+        WorkspaceLogoEndpoint.as_view(),
+        name="workspace-logo",
+    ),
+    path(
+        "workspaces/<str:slug>/logo/<str:workspace_id>/<str:logo_key>/",
+        WorkspaceLogoEndpoint.as_view(),
+        name="workspace-logo",
     ),
 ]

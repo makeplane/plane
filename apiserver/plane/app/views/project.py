@@ -18,12 +18,13 @@ from django.db.models import (
 from django.core.validators import validate_email
 from django.conf import settings
 from django.utils import timezone
-
+from django.http import HttpResponseRedirect
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView, WebhookMixin
@@ -37,6 +38,8 @@ from plane.app.serializers import (
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectMemberRoleSerializer,
+    ProjectLiteSerializer,
+    FileAssetSerializer,
 )
 
 from plane.app.permissions import (
@@ -62,10 +65,10 @@ from plane.db.models import (
     Inbox,
     ProjectDeployBoard,
     IssueProperty,
+    FileAsset,
 )
 
-from plane.bgtasks.project_invitation_task import project_invitation
-
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectListSerializer
@@ -1138,3 +1141,45 @@ class UserProjectRolesEndpoint(BaseAPIView):
             for member in project_members
         }
         return Response(project_members, status=status.HTTP_200_OK)
+
+
+class ProjectCoverImageEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+    def get(self, request, slug, project_id, workspace_id, cover_image_key):
+        key = f"{workspace_id}/{cover_image_key}"
+        url = generate_download_presigned_url(key)
+        return HttpResponseRedirect(url)
+
+    def post(self, request, slug, project_id):
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
+        if serializer.is_valid():
+            serializer.save(workspace=workspace)
+            project = Project.objects.get(pk=project_id)
+            project.cover_image = f"/api/workspaces/{slug}/projects/{project_id}/cover-image/{serializer.data['asset']}/"
+            project.save()
+            project_serializer = ProjectLiteSerializer(project)
+            return Response(project_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, project_id, workspace_id, cover_image_key):
+        key = f"{workspace_id}/{cover_image_key}"
+        file_asset = FileAsset.objects.get(asset=key)
+        file_asset.is_deleted = True
+        file_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

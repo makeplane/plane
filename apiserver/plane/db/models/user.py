@@ -149,42 +149,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
 
 
-def get_upload_path(instance, filename):
-    return f"user-{uuid.uuid4().hex}"
-
-def file_size(value):
-    if value.size > settings.FILE_SIZE_LIMIT:
-        raise ValidationError("File too large. Size should not exceed 5 MB.")
-
-class UserAsset(BaseModel):
-
-    user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="assets")
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        validators=[
-            file_size,
-        ],
-        storage=S3PrivateBucketStorage(),
-        max_length=500,
-    )
-    is_deleted = models.BooleanField(default=False)
-    size = models.PositiveBigIntegerField(null=True)
-    attributes = models.JSONField(default=dict)
-
-    def save(self, *args, **kwargs):
-        self.size = self.asset.size
-        super(UserAsset, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = "User Asset"
-        verbose_name_plural = "User Assets"
-        db_table = "user_assets"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return str(self.asset)
-
-
 @receiver(post_save, sender=User)
 def send_welcome_slack(sender, instance, created, **kwargs):
     try:

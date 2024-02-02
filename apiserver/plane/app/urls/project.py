@@ -14,6 +14,7 @@ from plane.app.views import (
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
     UserProjectRolesEndpoint,
+    ProjectCoverImageEndpoint,
 )
 
 
@@ -174,5 +175,15 @@ urlpatterns = [
             }
         ),
         name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cover-image/<str:workspace_id>/<str:cover_image_key>/",
+        ProjectCoverImageEndpoint.as_view(),
+        name="project-cover-image",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cover-image/",
+        ProjectCoverImageEndpoint.as_view(),
+        name="project-cover-image",
     ),
 ]

@@ -9,49 +9,52 @@ import plane.db.models.asset
 def update_urls(apps, schema_editor):
     # Check if the app is using minio or s3
     if settings.USE_MINIO:
-        prefix = (
+        prefix1 = (
             f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
         )
-        prefix2 = prefix
+        prefix2 = prefix1
     else:
-        prefix = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
+        prefix1 = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
         prefix2 = (
             f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
         )
 
     User = apps.get_model("db", "User")
-    UserAsset = apps.get_model("db", "UserAsset")
     bulk_users = []
-    bulk_user_assets = []
-    for user in User.objects.all():
-        if user.avatar and (
-            user.avatar.startswith(prefix) or user.avatar.startswith(prefix2)
-        ):
-            avatar = user.avatar[len(prefix) :]
-            user.avatar = avatar
-            bulk_user_assets.append(
-                UserAsset(
-                    user=user,
-                    asset=avatar,
-                )
-            )
 
-        if user.cover_image and (
-            user.cover_image.startswith(prefix)
-            or user.cover_image.startswith(prefix2)
-        ):
-            cover_image = user.cover_image[len(prefix) :]
-            user.cover_image = cover_image
-            bulk_user_assets.append(
-                UserAsset(
-                    user=user,
-                    asset=cover_image,
-                )
+    # Loop through all the users and update the cover image
+    for user in User.objects.all():
+        # prefix 1
+        if user.avatar and (user.avatar.startswith(prefix1)):
+            avatar_key = user.avatar
+            user.avatar = "/api/users/avatar/" + avatar_key[len(prefix1) :] + "/"
+            bulk_users.append(user)
+
+        # prefix 2
+        if not settings.USE_MINIO and user.avatar and user.avatar.startswith(prefix2):
+            avatar_key = user.avatar
+            user.avatar = "/api/users/avatar/" + avatar_key[len(prefix2) :] + "/"
+            bulk_users.append(user)
+
+        # prefix 1
+        if user.cover_image and (user.cover_image.startswith(prefix1)):
+            cover_image_key = user.cover_image
+            user.cover_image = (
+                "/api/users/cover-image/" + cover_image_key[len(prefix1) :] + "/"
             )
+            bulk_users.append(user)
+
+        # prefix 2
+        if not settings.USE_MINIO and user.cover_image and user.cover_image.startswith(prefix2):
+            cover_image_key = user.cover_image
+            user.cover_image = (
+                "/api/users/cover-image/" + cover_image_key[len(prefix2) :] + "/"
+            )
+            bulk_users.append(user)
+
     User.objects.bulk_update(
         bulk_users, ["avatar", "cover_image"], batch_size=100
     )
-    UserAsset.objects.bulk_create(bulk_user_assets, batch_size=100)
 
 
 class Migration(migrations.Migration):
@@ -60,80 +63,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name="UserAsset",
-            fields=[
-                (
-                    "created_at",
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name="Created At"
-                    ),
-                ),
-                (
-                    "updated_at",
-                    models.DateTimeField(
-                        auto_now=True, verbose_name="Last Modified At"
-                    ),
-                ),
-                (
-                    "id",
-                    models.UUIDField(
-                        db_index=True,
-                        default=uuid.uuid4,
-                        editable=False,
-                        primary_key=True,
-                        serialize=False,
-                        unique=True,
-                    ),
-                ),
-                (
-                    "asset",
-                    models.FileField(
-                        max_length=500,
-                        storage=plane.settings.storage.S3PrivateBucketStorage(),
-                        upload_to=plane.db.models.user.get_upload_path,
-                        validators=[plane.db.models.user.file_size],
-                    ),
-                ),
-                ("is_deleted", models.BooleanField(default=False)),
-                ("size", models.PositiveBigIntegerField(null=True)),
-                ("attributes", models.JSONField(default=dict)),
-                (
-                    "created_by",
-                    models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_created_by",
-                        to=settings.AUTH_USER_MODEL,
-                        verbose_name="Created By",
-                    ),
-                ),
-                (
-                    "updated_by",
-                    models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_updated_by",
-                        to=settings.AUTH_USER_MODEL,
-                        verbose_name="Last Modified By",
-                    ),
-                ),
-                (
-                    "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="assets",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
-            options={
-                "verbose_name": "User Asset",
-                "verbose_name_plural": "User Assets",
-                "db_table": "user_assets",
-                "ordering": ("-created_at",),
-            },
-        ),
         migrations.AlterField(
             model_name="fileasset",
             name="asset",

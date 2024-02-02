@@ -41,6 +41,7 @@ class FileAsset(BaseModel):
         related_name="assets",
     )
     is_deleted = models.BooleanField(default=False)
+    size = models.PositiveBigIntegerField(null=True)
 
     class Meta:
         verbose_name = "File Asset"
@@ -50,3 +51,7 @@ class FileAsset(BaseModel):
 
     def __str__(self):
         return str(self.asset)
+
+    def save(self, *args, **kwargs):
+        self.size = self.asset.size
+        super(FileAsset, self).save(*args, **kwargs)
