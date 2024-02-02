@@ -97,6 +97,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         portalElement={portalElement}
       />
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleIssues]
   );
 
