@@ -13,9 +13,10 @@ export type TWidgetKeys =
   | "recent_projects"
   | "recent_collaborators";
 
-export type TIssuesListTypes = "upcoming" | "overdue" | "completed";
+export type TIssuesListTypes = "pending" | "upcoming" | "overdue" | "completed";
 
 export type TDurationFilterOptions =
+  | "none"
   | "today"
   | "this_week"
   | "this_month"

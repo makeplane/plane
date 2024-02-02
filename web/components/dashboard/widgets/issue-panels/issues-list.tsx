@@ -41,16 +41,18 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const filterParams = getRedirectionFilters(tab);
 
   const ISSUE_LIST_ITEM: {
-    [key in string]: {
+    [key: string]: {
       [key in TIssuesListTypes]: React.FC<IssueListItemProps>;
     };
   } = {
     assigned: {
+      pending: AssignedUpcomingIssueListItem,
       upcoming: AssignedUpcomingIssueListItem,
       overdue: AssignedOverdueIssueListItem,
       completed: AssignedCompletedIssueListItem,
     },
     created: {
+      pending: CreatedUpcomingIssueListItem,
       upcoming: CreatedUpcomingIssueListItem,
       overdue: CreatedOverdueIssueListItem,
       completed: CreatedCompletedIssueListItem,
@@ -76,7 +78,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
                   {totalIssues}
                 </span>
               </h6>
-              {tab === "upcoming" && <h6 className="text-center">Due date</h6>}
+              {["upcoming", "pending"].includes(tab) && <h6 className="text-center">Due date</h6>}
               {tab === "overdue" && <h6 className="text-center">Due by</h6>}
               {type === "assigned" && tab !== "completed" && <h6 className="text-center">Blocked by</h6>}
               {type === "created" && <h6 className="text-center">Assigned to</h6>}
