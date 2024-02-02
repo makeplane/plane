@@ -1,34 +1,45 @@
-import { TFilters, TDisplayFilters, TDisplayProperties } from "./filter";
+import {
+  TViewFilters,
+  TViewDisplayFilters,
+  TViewDisplayProperties,
+} from "./filter";
 
-declare enum EGlobalViewAccess {
+export type TViewTypes =
+  | "WORKSPACE_YOUR_VIEWS"
+  | "WORKSPACE_VIEWS"
+  | "WORKSPACE_PROJECT_VIEWS"
+  | "PROJECT_VIEWS"
+  | "PROJECT_YOUR_VIEWS";
+
+declare enum EViewAccess {
   "public" = 0,
   "private" = 1,
   "shared" = 2,
 }
 
 export type TViewAccess =
-  | EGlobalViewAccess.public
-  | EGlobalViewAccess.private
-  | EGlobalViewAccess.shared;
+  | EViewAccess.public
+  | EViewAccess.private
+  | EViewAccess.shared;
 
 export type TView = {
-  readonly id: string;
-  readonly workspace: string;
-  readonly project: string | undefined;
-  name: string;
-  description: string;
-  readonly query: string;
-  filters: TFilters;
-  display_filters: TDisplayFilters;
-  display_properties: TDisplayProperties;
-  readonly access: TViewAccess;
-  readonly owned_by: string;
-  readonly sort_order: number;
-  readonly is_locked: boolean;
-  readonly is_pinned: boolean;
-  readonly is_favorite: boolean;
-  readonly created_by: string;
-  readonly updated_by: string;
-  readonly created_at: Date;
-  readonly updated_at: Date;
+  id: string | undefined;
+  workspace: string | undefined;
+  project: string | undefined;
+  name: string | undefined;
+  description: string | undefined;
+  query: string | undefined;
+  filters: TViewFilters | undefined;
+  display_filters: TViewDisplayFilters | undefined;
+  display_properties: TViewDisplayProperties | undefined;
+  access: TViewAccess | undefined;
+  owned_by: string | undefined;
+  sort_order: number | undefined;
+  is_locked: boolean | undefined;
+  is_pinned: boolean | undefined;
+  is_favorite: boolean | undefined;
+  created_by: string | undefined;
+  updated_by: string | undefined;
+  created_at: Date | undefined;
+  updated_at: Date | undefined;
 };

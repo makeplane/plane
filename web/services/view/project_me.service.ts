@@ -91,7 +91,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/unlock/`)
+    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -130,7 +130,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/unfavorite/`)
+    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/favorite/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

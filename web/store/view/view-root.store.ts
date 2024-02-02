@@ -1,20 +1,21 @@
-// types
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import set from "lodash/set";
 // stores
 import { RootStore } from "store/root.store";
-import { ViewsStore } from "./view.store";
+import { ViewStore } from "./view.store";
 // types
 import { TViewService } from "services/view/types";
 import { TView } from "@plane/types";
-import { set } from "lodash";
 
 export type TLoader = "" | undefined;
 
-type TViewRoot = {
+type TViewRootStore = {
   // observables
-  viewMap: Record<string, ViewsStore>;
+  viewMap: Record<string, ViewStore>;
   // computed
   viewIds: string[];
+  // helper actions
+  viewById: (viewId: string) => ViewStore | undefined;
   // actions
   fetch: () => Promise<void>;
   create: (view: Partial<TView>) => Promise<void>;
@@ -22,13 +23,13 @@ type TViewRoot = {
   duplicate: (viewId: string) => Promise<void>;
 };
 
-export class ViewRoot implements TViewRoot {
-  viewMap: Record<string, ViewsStore> = {};
+export class ViewRootStore implements TViewRootStore {
+  viewMap: Record<string, ViewStore> = {};
 
   constructor(private store: RootStore, private service: TViewService) {
     makeObservable(this, {
       // observables
-      viewMap: observable,
+      viewMap: observable.ref,
       // computed
       viewIds: computed,
       // actions
@@ -44,15 +45,10 @@ export class ViewRoot implements TViewRoot {
     return Object.keys(this.viewMap);
   }
 
-  get views() {
-    return Object.values(this.viewMap);
-  }
+  // helper actions
+  viewById = (viewId: string) => this.viewMap?.[viewId] || undefined;
 
   // actions
-  /**
-   * @description This method is used to fetch all the views
-   * @returns
-   */
   fetch = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
     if (!workspaceSlug) return;
@@ -62,16 +58,11 @@ export class ViewRoot implements TViewRoot {
 
     runInAction(() => {
       views.forEach((view) => {
-        set(this.viewMap, [view.id], new ViewsStore(this.store, view, this.service));
+        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
       });
     });
   };
 
-  /**
-   * @description This method is used to create a view
-   * @param data: Partial<TView>
-   * @returns
-   */
   create = async (data: Partial<TView>) => {
     const { workspaceSlug, projectId } = this.store.app.router;
     if (!workspaceSlug) return;
@@ -80,40 +71,30 @@ export class ViewRoot implements TViewRoot {
     if (!view) return;
 
     runInAction(() => {
-      set(this.viewMap, [view.id], new ViewsStore(this.store, view, this.service));
+      if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
     });
   };
 
-  /**
-   * @description This method is used to remove a view
-   * @param viewId: string
-   * @returns
-   */
   remove = async (viewId: string) => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !viewId) return;
 
-    await this.service.remove(workspaceSlug, viewId, projectId);
+    await this.service.remove?.(workspaceSlug, viewId, projectId);
 
     runInAction(() => {
       delete this.viewMap[viewId];
     });
   };
 
-  /**
-   * @description This method is used to duplicate a view
-   * @param viewId: string
-   * @returns
-   */
   duplicate = async (viewId: string) => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || !this.service.duplicate) return;
 
     const view = await this.service.duplicate(workspaceSlug, viewId, projectId);
     if (!view) return;
 
     runInAction(() => {
-      set(this.viewMap, [view.id], new ViewsStore(this.store, view, this.service));
+      if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
     });
   };
 }

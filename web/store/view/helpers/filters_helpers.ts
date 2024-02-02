@@ -1,10 +1,16 @@
 import isEmpty from "lodash/isEmpty";
 // types
-import { TFilters, TDisplayFilters, TDisplayProperties, TFilterProps, TFilterQueryParams } from "@plane/types";
+import {
+  TViewFilters,
+  TViewDisplayFilters,
+  TViewDisplayProperties,
+  TViewFilterProps,
+  TViewFilterQueryParams,
+} from "@plane/types";
 
 export class FiltersHelper {
   // computed filters
-  computedFilters = (filters: TFilters, defaultValues?: Partial<TFilters>): TFilters => ({
+  computedFilters = (filters: TViewFilters, defaultValues?: Partial<TViewFilters>): TViewFilters => ({
     project: filters?.project || defaultValues?.project || [],
     priority: filters?.priority || defaultValues?.priority || [],
     state: filters?.state || defaultValues?.state || [],
@@ -20,9 +26,9 @@ export class FiltersHelper {
 
   // computed display filters
   computedDisplayFilters = (
-    displayFilters: TDisplayFilters,
-    defaultValues?: Partial<TDisplayFilters>
-  ): TDisplayFilters => ({
+    displayFilters: TViewDisplayFilters,
+    defaultValues?: Partial<TViewDisplayFilters>
+  ): TViewDisplayFilters => ({
     layout: displayFilters?.layout || defaultValues?.layout || "list",
     group_by: displayFilters?.group_by || defaultValues?.group_by || "none",
     sub_group_by: displayFilters?.sub_group_by || defaultValues?.sub_group_by || undefined,
@@ -38,9 +44,9 @@ export class FiltersHelper {
 
   // computed display properties
   computedDisplayProperties = (
-    displayProperties: TDisplayProperties,
-    defaultValues?: Partial<TDisplayProperties>
-  ): TDisplayProperties => ({
+    displayProperties: TViewDisplayProperties,
+    defaultValues?: Partial<TViewDisplayProperties>
+  ): TViewDisplayProperties => ({
     assignee: displayProperties?.assignee || defaultValues?.assignee || true,
     start_date: displayProperties?.start_date || defaultValues?.start_date || true,
     due_date: displayProperties?.due_date || defaultValues?.due_date || true,
@@ -58,13 +64,13 @@ export class FiltersHelper {
 
   // compute filters and display_filters issue query parameters
   computeAppliedFiltersQueryParameters = (
-    filters: TFilterProps,
+    filters: TViewFilterProps,
     acceptableParamsByLayout: string[]
   ): { params: any; query: string } => {
-    const paramsObject: Partial<Record<TFilterQueryParams, string | boolean>> = {};
+    const paramsObject: Partial<Record<TViewFilterQueryParams, string | boolean>> = {};
     let paramsString = "";
 
-    const filteredParams: Partial<Record<TFilterQueryParams, undefined | string[] | boolean | string>> = {
+    const filteredParams: Partial<Record<TViewFilterQueryParams, undefined | string[] | boolean | string>> = {
       // issue filters
       priority: filters.filters?.priority || undefined,
       state_group: filters.filters?.state_group || undefined,
@@ -83,7 +89,7 @@ export class FiltersHelper {
     };
 
     Object.keys(filteredParams).forEach((key) => {
-      const _key = key as TFilterQueryParams;
+      const _key = key as TViewFilterQueryParams;
       const _value: string | boolean | string[] | undefined = filteredParams[_key];
       if (_value != undefined && acceptableParamsByLayout.includes(_key))
         paramsObject[_key] = Array.isArray(_value) ? _value.join(",") : _value;
@@ -92,7 +98,7 @@ export class FiltersHelper {
     if (paramsObject && !isEmpty(paramsObject)) {
       paramsString = Object.keys(paramsObject)
         .map((key) => {
-          const _key = key as TFilterQueryParams;
+          const _key = key as TViewFilterQueryParams;
           const _value: string | boolean | undefined = paramsObject[_key];
           if (!undefined) return `${_key}=${_value}`;
         })

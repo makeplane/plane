@@ -1,24 +1,21 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
-// store
-import { RootStore } from "store/root.store";
 // types
-import { TViewService } from "services/view/types";
+import { TUserViewService } from "services/view/types";
 import {
-  TView,
+  TUserView,
   TViewFilters,
   TViewDisplayFilters,
   TViewDisplayProperties,
   TViewFilterProps,
   TViewFilterPartialProps,
-  TViewAccess,
 } from "@plane/types";
 // helpers
-import { FiltersHelper } from "./helpers/filters_helpers";
+import { FiltersHelper } from "../helpers/filters_helpers";
 
 type TLoader = "submitting" | "submit" | undefined;
 
-export type TViewStore = TView & {
+export type TUserViewStore = TUserView & {
   // observables
   loader: TLoader;
   filtersToUpdate: TViewFilterPartialProps;
@@ -32,29 +29,19 @@ export type TViewStore = TView & {
   resetFilterChanges: () => void;
   saveFilterChanges: () => void;
   // actions
-  lockView: () => Promise<void>;
-  unlockView: () => Promise<void>;
-  makeFavorite: () => Promise<void>;
-  removeFavorite: () => Promise<void>;
-  update: (viewData: Partial<TView>) => Promise<void>;
+  update: (viewData: Partial<TUserView>) => Promise<void>;
 };
 
-export class ViewStore extends FiltersHelper implements TViewStore {
+export class UserViewStore extends FiltersHelper implements TUserViewStore {
   id: string | undefined;
   workspace: string | undefined;
   project: string | undefined;
-  name: string | undefined;
-  description: string | undefined;
-  query: string | undefined;
+  module: string | undefined;
+  cycle: string | undefined;
   filters: TViewFilters | undefined;
   display_filters: TViewDisplayFilters | undefined;
   display_properties: TViewDisplayProperties | undefined;
-  access: TViewAccess | undefined;
-  owned_by: string | undefined;
-  sort_order: number | undefined;
-  is_locked: boolean | undefined;
-  is_pinned: boolean | undefined;
-  is_favorite: boolean | undefined;
+  user: string | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
@@ -67,25 +54,23 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     display_properties: {},
   };
 
-  constructor(private store: RootStore, _view: TView, private service: TViewService) {
+  constructor(
+    _view: TUserView,
+    private service: TUserViewService,
+    private workspaceSlug: string,
+    private projectId: string | undefined,
+    private featureId: string | undefined // moduleId/cycleId
+  ) {
     super();
     this.id = _view.id;
     this.workspace = _view.workspace;
     this.project = _view.project;
-    this.name = _view.name;
-    this.description = _view.description;
-    this.query = _view.query;
     this.filters = _view.filters ? this.computedFilters(_view.filters) : undefined;
     this.display_filters = _view.display_filters ? this.computedDisplayFilters(_view.display_filters) : undefined;
     this.display_properties = _view.display_properties
       ? this.computedDisplayProperties(_view.display_properties)
       : undefined;
-    this.access = _view.access;
-    this.owned_by = _view.owned_by;
-    this.sort_order = _view.sort_order;
-    this.is_locked = _view.is_locked;
-    this.is_pinned = _view.is_pinned;
-    this.is_favorite = _view.is_favorite;
+    this.user = _view.user;
     this.created_by = _view.created_by;
     this.updated_by = _view.updated_by;
     this.created_at = _view.created_at;
@@ -106,8 +91,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       saveFilterChanges: action,
       // actions
       update: action,
-      lockView: action,
-      unlockView: action,
     });
   }
 
@@ -184,64 +167,15 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   };
 
   // actions
-  lockView = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !this.id || !this.service.lock) return;
+  update = async (viewData: Partial<TViewFilterProps>) => {
+    if (!this.workspaceSlug || !this.id) return;
 
-    const view = await this.service.lock(workspaceSlug, this.id, projectId);
-    if (!view) return;
-
-    runInAction(() => {
-      this.is_locked = view.is_locked;
-    });
-  };
-
-  unlockView = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !this.id || !this.service.unlock) return;
-
-    const view = await this.service.unlock(workspaceSlug, this.id, projectId);
-    if (!view) return;
-
-    runInAction(() => {
-      this.is_locked = view.is_locked;
-    });
-  };
-
-  makeFavorite = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !this.id || !this.service.makeFavorite) return;
-
-    const view = await this.service.makeFavorite(workspaceSlug, this.id, projectId);
-    if (!view) return;
-
-    runInAction(() => {
-      this.is_favorite = view.is_locked;
-    });
-  };
-
-  removeFavorite = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !this.id || !this.service.removeFavorite) return;
-
-    const view = await this.service.removeFavorite(workspaceSlug, this.id, projectId);
-    if (!view) return;
-
-    runInAction(() => {
-      this.is_favorite = view.is_locked;
-    });
-  };
-
-  update = async (viewData: Partial<TView>) => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !this.id) return;
-
-    const view = await this.service.update(workspaceSlug, this.id, viewData, projectId);
+    const view = await this.service.update(this.workspaceSlug, viewData, this.projectId, this.featureId);
     if (!view) return;
 
     runInAction(() => {
       Object.keys(viewData).forEach((key) => {
-        const _key = key as keyof TView;
+        const _key = key as keyof TViewFilterProps;
         set(this, _key, viewData[_key]);
       });
     });

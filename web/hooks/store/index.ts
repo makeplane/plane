@@ -21,3 +21,7 @@ export * from "./use-kanban-view";
 export * from "./use-issue-detail";
 export * from "./use-inbox";
 export * from "./use-inbox-issues";
+
+// new store
+export * from "./use-view";
+export * from "./use-view-detail";

@@ -1,8 +1,13 @@
-export type TLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
+export type TViewLayouts =
+  | "list"
+  | "kanban"
+  | "calendar"
+  | "spreadsheet"
+  | "gantt";
 
-export type TCalendarLayouts = "month" | "week";
+export type TViewCalendarLayouts = "month" | "week";
 
-export type TFilters = {
+export type TViewFilters = {
   project: string[];
   priority: string[];
   state: string[];
@@ -16,8 +21,8 @@ export type TFilters = {
   target_date: string[];
 };
 
-export type TDisplayFilters = {
-  layout: TLayouts;
+export type TViewDisplayFilters = {
+  layout: TViewLayouts;
   group_by: string | undefined;
   sub_group_by: string | undefined;
   order_by: string;
@@ -26,11 +31,11 @@ export type TDisplayFilters = {
   show_empty_groups: boolean;
   calendar: {
     show_weekends: boolean;
-    layout: TCalendarLayouts;
+    layout: TViewCalendarLayouts;
   };
 };
 
-export type TDisplayProperties = {
+export type TViewDisplayProperties = {
   assignee: boolean;
   start_date: boolean;
   due_date: boolean;
@@ -46,19 +51,19 @@ export type TDisplayProperties = {
   updated_on: boolean;
 };
 
-export type TFilterProps = {
-  filters: TFilters;
-  display_filters: TDisplayFilters;
-  display_properties: TDisplayProperties;
+export type TViewFilterProps = {
+  filters: TViewFilters | undefined;
+  display_filters: TViewDisplayFilters | undefined;
+  display_properties: TViewDisplayProperties | undefined;
 };
 
-export type TFilterPartialProps = {
-  filters: Partial<TFilters>;
-  display_filters: Partial<TDisplayFilters>;
-  display_properties: Partial<TDisplayProperties>;
+export type TViewFilterPartialProps = {
+  filters: Partial<TViewFilters> | undefined;
+  display_filters: Partial<TViewDisplayFilters> | undefined;
+  display_properties: Partial<TViewDisplayProperties> | undefined;
 };
 
-export type TFilterQueryParams =
+export type TViewFilterQueryParams =
   | "project"
   | "priority"
   | "state"

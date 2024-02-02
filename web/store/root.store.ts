@@ -17,10 +17,14 @@ import { IMentionStore, MentionStore } from "./mention.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { ILabelStore, LabelStore } from "./label.store";
+// new stores
+import { GlobalViewRootStore } from "./view/root.store";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
+  view: GlobalViewRootStore;
+  // old store structure
   app: IAppRootStore;
   user: IUserRootStore;
   workspaceRoot: IWorkspaceRootStore;
@@ -40,6 +44,8 @@ export class RootStore {
   projectPages: IProjectPageStore;
 
   constructor() {
+    this.view = new GlobalViewRootStore(this);
+    // old store structure
     this.app = new AppRootStore(this);
     this.user = new UserRootStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);

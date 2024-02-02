@@ -10,23 +10,24 @@ export class IssueFiltersService extends APIService {
   }
 
   // // workspace issue filters
-  // async fetchWorkspaceFilters(workspaceSlug: string): Promise<IIssueFiltersResponse> {
-  //   return this.get(`/api/workspaces/${workspaceSlug}/user-properties/`)
-  //     .then((response) => response?.data)
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
-  // async patchWorkspaceFilters(
-  //   workspaceSlug: string,
-  //   data: Partial<IIssueFiltersResponse>
-  // ): Promise<IIssueFiltersResponse> {
-  //   return this.patch(`/api/workspaces/${workspaceSlug}/user-properties/`, data)
-  //     .then((response) => response?.data)
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
+  async fetchWorkspaceFilters(workspaceSlug: string): Promise<IIssueFiltersResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async patchWorkspaceFilters(
+    workspaceSlug: string,
+    data: Partial<IIssueFiltersResponse>
+  ): Promise<IIssueFiltersResponse> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/user-properties/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 
   // project issue filters
   async fetchProjectIssueFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {

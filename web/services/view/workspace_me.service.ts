@@ -11,7 +11,7 @@ export class WorkspaceMeViewService extends APIService implements TViewService {
   }
 
   async fetch(workspaceSlug: string): Promise<TView[]> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/views/`)
+    return this.get(`/api/users/me/workspaces/${workspaceSlug}/views/?type=workspace`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -59,7 +59,7 @@ export class WorkspaceMeViewService extends APIService implements TViewService {
   }
 
   async unlock(workspaceSlug: string, viewId: string): Promise<TView> {
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/views/${viewId}/unlock/`)
+    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/views/${viewId}/lock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -83,7 +83,7 @@ export class WorkspaceMeViewService extends APIService implements TViewService {
   }
 
   async removeFavorite(workspaceSlug: string, viewId: string): Promise<TView> {
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/views/${viewId}/unfavorite/`)
+    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/views/${viewId}/favorite/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
