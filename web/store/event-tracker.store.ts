@@ -2,56 +2,52 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import posthog from "posthog-js";
 // stores
 import { RootStore } from "./root.store";
+import {
+  EventGroupProps,
+  EventProps,
+  IssueEventProps,
+  getCycleEventPayload,
+  getIssueEventPayload,
+  getModuleEventPayload,
+  getProjectEventPayload,
+} from "constants/event-tracker";
 
 export interface IEventTrackerStore {
+  // properties
   trackElement: string;
+  // computed
   getRequiredPayload: any;
+  // actions
   setTrackElement: (element: string) => void;
-  postHogEventTracker: (
-    eventName: string,
-    payload: object | [] | null,
-    group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
-  ) => void;
+  postHogEventTracker: (eventName: string, payload: object | [] | null, group?: EventGroupProps) => void;
   captureProjectEvent: (props: EventProps) => void;
   captureCycleEvent: (props: EventProps) => void;
   captureModuleEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
 }
 
-type IssueEventProps = {
-  eventName: string;
-  payload: any;
-  updates?: any;
-  group?: EventGroupProps;
-  path?: string;
-};
-
-type EventProps = {
-  eventName: string;
-  payload: any;
-  group?: EventGroupProps;
-};
-type EventGroupProps = {
-  isGrouping?: boolean;
-  groupType?: string;
-  groupId?: string;
-};
-
 export class EventTrackerStore implements IEventTrackerStore {
   trackElement: string = "";
   rootStore;
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      // properties
       trackElement: observable,
+      // computed
       getRequiredPayload: computed,
+      // actions
       setTrackElement: action,
       postHogEventTracker: action,
       captureProjectEvent: action,
       captureCycleEvent: action,
     });
+    // store
     this.rootStore = _rootStore;
   }
 
+  /**
+   * @description: Returs the neccessary property for the event tracking
+   */
   get getRequiredPayload() {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
@@ -61,6 +57,10 @@ export class EventTrackerStore implements IEventTrackerStore {
     };
   }
 
+  /**
+   * @description: Set the trigger point of event.
+   * @param {string} element
+   */
   setTrackElement = (element: string) => {
     this.trackElement = element;
   };
@@ -85,119 +85,75 @@ export class EventTrackerStore implements IEventTrackerStore {
     }
   };
 
+  /**
+   * @description: Captures the project related events.
+   * @param {EventProps} props
+   */
   captureProjectEvent = (props: EventProps) => {
     const { eventName, payload, group } = props;
     if (group) {
       this.postHogGroup(group);
     }
-    const eventPayload: any = {
+    const eventPayload: any = getProjectEventPayload({
       ...this.getRequiredPayload,
-      project_id: payload.id,
-      identifier: payload.identifier,
-      created_at: payload.created_at,
-      updated_at: payload.updated_at,
-      state: payload.state,
+      ...payload,
       element: payload.element ?? this.trackElement,
-    };
+    });
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement("");
   };
 
+  /**
+   * @description: Captures the cycle related events.
+   * @param {EventProps} props
+   */
   captureCycleEvent = (props: EventProps) => {
     const { eventName, payload, group } = props;
     if (group) {
       this.postHogGroup(group);
     }
-    const eventPayload: any = {
+    const eventPayload: any = getCycleEventPayload({
       ...this.getRequiredPayload,
-      cycle_id: payload.id,
-      created_at: payload.created_at,
-      updated_at: payload.updated_at,
-      start_date: payload.start_date,
-      target_date: payload.target_date,
-      cycle_status: payload.status,
-      state: payload.state,
+      ...payload,
       element: payload.element ?? this.trackElement,
-    };
+    });
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement("");
   };
 
+  /**
+   * @description: Captures the module related events.
+   * @param {EventProps} props
+   */
   captureModuleEvent = (props: EventProps) => {
     const { eventName, payload, group } = props;
     if (group) {
       this.postHogGroup(group);
     }
-    const eventPayload: any = {
+    const eventPayload: any = getModuleEventPayload({
       ...this.getRequiredPayload,
-      module_id: payload.id,
-      created_at: payload.created_at,
-      updated_at: payload.updated_at,
-      start_date: payload.start_date,
-      target_date: payload.target_date,
-      module_status: payload.status,
-      state: payload.state,
+      ...payload,
       element: payload.element ?? this.trackElement,
-    };
+    });
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement("");
   };
 
+  /**
+   * @description: Captures the issue related events.
+   * @param {IssueEventProps} props
+   */
   captureIssueEvent = (props: IssueEventProps) => {
-    const { eventName, payload, updates, group } = props;
+    const { eventName, payload, group } = props;
     if (group) {
       this.postHogGroup(group);
     }
     let eventPayload: any = {
+      ...getIssueEventPayload(props),
       ...this.getRequiredPayload,
-      issue_id: payload.id,
-      estimate_point: payload.estimate_point,
-      link_count: payload.link_count,
-      target_date: payload.target_date,
-      is_draft: payload.is_draft,
-      label_ids: payload.label_ids,
-      assignee_ids: payload.assignee_ids,
-      created_at: payload.created_at,
-      updated_at: payload.updated_at,
-      sequence_id: payload.sequence_id,
-      module_ids: payload.module_ids,
-      sub_issues_count: payload.sub_issues_count,
-      parent_id: payload.parent_id,
-      project_id: payload.project_id,
-      priority: payload.priority,
-      state_id: payload.state_id,
       state_group: this.rootStore.state.getStateById(payload.state_id)?.group ?? "",
-      start_date: payload.start_date,
-      attachment_count: payload.attachment_count,
-      cycle_id: payload.cycle_id,
-      module_id: payload.module_id,
-      archived_at: payload.archived_at,
-      state: payload.state,
       element: payload.element ?? this.trackElement,
-      view_id:
-        props.path?.includes("workspace-views") || props.path?.includes("views") ? props.path.split("/").pop() : "",
     };
-
-    if (eventName === "Issue updated") {
-      eventPayload = {
-        ...eventPayload,
-        ...updates,
-        updated_from: props.path?.includes("workspace-views")
-          ? "All views"
-          : props.path?.includes("cycles")
-          ? "Cycle"
-          : props.path?.includes("modules")
-          ? "Module"
-          : props.path?.includes("views")
-          ? "Project view"
-          : props.path?.includes("inbox")
-          ? "Inbox"
-          : props.path?.includes("draft")
-          ? "Draft"
-          : "Project",
-      };
-    }
-
     posthog?.capture(eventName, eventPayload);
   };
 }
