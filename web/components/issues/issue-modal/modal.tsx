@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -32,7 +32,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const {
     eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { currentUser } = useUser();
   const {
     router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },
   } = useApplication();
@@ -49,27 +48,22 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const issueStores = {
     [EIssuesStoreType.PROJECT]: {
       store: projectIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: undefined,
     },
     [EIssuesStoreType.PROJECT_VIEW]: {
       store: viewIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: projectViewId,
     },
     [EIssuesStoreType.PROFILE]: {
       store: profileIssues,
-      dataIdToUpdate: currentUser?.id || undefined,
       viewId: undefined,
     },
     [EIssuesStoreType.CYCLE]: {
       store: cycleIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: cycleId,
     },
     [EIssuesStoreType.MODULE]: {
       store: moduleIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: moduleId,
     },
   };
@@ -78,7 +72,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
   // current store details
-  const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[storeType];
+  const { store: currentIssueStore, viewId } = issueStores[storeType];
 
   useEffect(() => {
     // if modal is closed, reset active project to null
@@ -129,13 +123,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !dataIdToUpdate) return;
+    if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      const response = await currentIssueStore.createIssue(workspaceSlug, dataIdToUpdate, payload, viewId);
+      const response = await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
       if (!response) throw new Error();
 
-      currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
+      currentIssueStore.fetchIssues(workspaceSlug, payload.project_id, "mutation", viewId);
 
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
@@ -182,10 +176,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !dataIdToUpdate || !data?.id) return;
+    if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      const response = await currentIssueStore.updateIssue(workspaceSlug, dataIdToUpdate, data.id, payload, viewId);
+      const response = await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -226,7 +220,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    if (!workspaceSlug || !dataIdToUpdate || !storeType) return;
+    if (!workspaceSlug || !formData.project_id || !storeType) return;
 
     const payload: Partial<TIssue> = {
       ...formData,
