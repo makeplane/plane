@@ -4,7 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication, useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
@@ -24,9 +24,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;

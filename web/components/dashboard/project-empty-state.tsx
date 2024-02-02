@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // assets
@@ -13,8 +13,8 @@ export const DashboardProjectEmptyState = observer(() => {
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

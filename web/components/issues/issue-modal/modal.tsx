@@ -3,7 +3,16 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
+import {
+  useApplication,
+  useEventTracker,
+  useCycle,
+  useIssues,
+  useModule,
+  useProject,
+  useUser,
+  useWorkspace,
+} from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -29,9 +38,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { currentUser } = useUser();
   const {
     router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },

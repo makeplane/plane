@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
 // hooks
-import { useApplication, useIssueDetail } from "hooks/store";
+import { useEventTracker, useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
@@ -57,9 +57,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     removeSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
-  const {
-    eventTracker: { setTrackElement, captureIssueEvent },
-  } = useApplication();
+  const { setTrackElement, captureIssueEvent } = useEventTracker();
   // state
 
   type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };

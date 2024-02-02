@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useEventTracker, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -29,9 +29,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;

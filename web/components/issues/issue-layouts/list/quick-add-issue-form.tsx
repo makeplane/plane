@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -64,9 +64,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { getProjectById } = useProject();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
 
   const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 

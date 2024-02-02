@@ -5,6 +5,7 @@ import useSWR from "swr";
 // hooks
 import {
   useApplication,
+  useEventTracker,
   useCycle,
   useEstimate,
   useLabel,
@@ -33,8 +34,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchInboxes } = useInbox();
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
@@ -138,7 +139,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
             text: "Create Project",
             onClick: () => {
               setTrackElement("Projects page empty state");
-              toggleCreateProjectModal(true)
+              toggleCreateProjectModal(true);
             },
           }}
         />

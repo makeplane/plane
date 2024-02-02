@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangleIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useEventTracker, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -34,9 +34,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { postHogEventTracker } = useEventTracker();
   const {
     membership: { leaveProject },
   } = useUser();

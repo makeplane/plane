@@ -8,7 +8,7 @@ import { CustomMenu } from "@plane/ui";
 // mobx
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
+import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
 import useToast from "hooks/use-toast";
@@ -30,9 +30,7 @@ export const HeaderGroupByCard = observer(
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
     // hooks
-    const {
-      eventTracker: { setTrackElement },
-    } = useApplication();
+    const { setTrackElement } = useEventTracker();
 
     const [isOpen, setIsOpen] = useState(false);
 

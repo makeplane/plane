@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
@@ -18,9 +18,9 @@ export const WorkspaceDashboardView = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
+  const { postHogEventTracker, setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { postHogEventTracker, setTrackElement },
     router: { workspaceSlug },
   } = useApplication();
   const {
@@ -83,7 +83,8 @@ export const WorkspaceDashboardView = observer(() => {
                 text: "Build your first project",
                 onClick: () => {
                   setTrackElement("Dashboard");
-                  toggleCreateProjectModal(true)},
+                  toggleCreateProjectModal(true);
+                },
               }}
               comicBox={{
                 title: "Everything starts with a project in Plane",

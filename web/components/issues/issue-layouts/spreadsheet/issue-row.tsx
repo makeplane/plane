@@ -11,7 +11,7 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
+import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
 // helper
 import { cn } from "helpers/common.helper";
 // types
@@ -51,9 +51,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   //hooks
   const { getProjectById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);

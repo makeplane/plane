@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle, useProject } from "hooks/store";
+import { useEventTracker, useCycle, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -27,9 +27,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { captureCycleEvent },
-  } = useApplication();
+  const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   // toast alert

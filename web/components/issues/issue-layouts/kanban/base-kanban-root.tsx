@@ -3,7 +3,7 @@ import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } 
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useEventTracker, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
@@ -73,9 +73,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { issueMap } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();

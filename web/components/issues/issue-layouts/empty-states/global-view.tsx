@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Plus, PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 // components
 import { EmptyState } from "components/common";
 // assets
@@ -12,8 +12,8 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
   // store hooks
   const {
     commandPalette: { toggleCreateIssueModal, toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds } = useProject();
 
   return (

@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { useApplication, useCycle } from "hooks/store";
+import { useEventTracker, useCycle } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { Button } from "@plane/ui";
@@ -27,9 +27,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const router = useRouter();
   const { cycleId, peekCycle } = router.query;
   // store hooks
-  const {
-    eventTracker: { captureCycleEvent },
-  } = useApplication();
+  const { captureCycleEvent } = useEventTracker();
   const { deleteCycle } = useCycle();
   // toast alert
   const { setToastAlert } = useToast();

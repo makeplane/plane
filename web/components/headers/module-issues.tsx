@@ -5,6 +5,7 @@ import Link from "next/link";
 // hooks
 import {
   useApplication,
+  useEventTracker,
   useLabel,
   useMember,
   useModule,
@@ -72,8 +73,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();

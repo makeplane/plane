@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication } from "hooks/store";
+import { useEventTracker } from "hooks/store";
 // services
 import { IssueDraftService } from "services/issue";
 // components
@@ -44,9 +44,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
     if (changesMade) setIssueDiscardModal(true);

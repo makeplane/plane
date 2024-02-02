@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -36,9 +36,7 @@ export const WorkspaceDetails: FC = observer(() => {
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { postHogEventTracker } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

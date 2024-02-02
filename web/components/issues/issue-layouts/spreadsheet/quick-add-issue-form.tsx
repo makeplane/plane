@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -59,11 +59,9 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails } = useProject();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   // router
-  const router =useRouter();
+  const router = useRouter();
   // form info
   const {
     reset,
@@ -166,7 +164,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
             captureIssueEvent({
               eventName: "Issue created",
               payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
-              path: router.asPath
+              path: router.asPath,
             });
           }
         ));
@@ -179,7 +177,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
       captureIssueEvent({
         eventName: "Issue created",
         payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
-        path: router.asPath
+        path: router.asPath,
       });
       console.error(err);
       setToastAlert({

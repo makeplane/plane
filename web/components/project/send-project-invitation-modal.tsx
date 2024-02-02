@@ -5,7 +5,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
-import { useApplication, useMember, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
@@ -45,9 +45,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { postHogEventTracker } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();

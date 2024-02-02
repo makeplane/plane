@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
 import { Popover } from "@headlessui/react";
 // hooks
-import { useApplication, useUser, useInboxIssues, useIssueDetail, useWorkspace } from "hooks/store";
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -38,9 +38,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   // router
   const router = useRouter();
   // hooks
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const {
     issues: { getInboxIssuesByInboxId, getInboxIssueByIssueId, updateInboxIssueStatus, removeInboxIssue },

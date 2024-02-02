@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useModule, useProject } from "hooks/store";
+import { useEventTracker, useModule, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ModuleForm } from "components/modules";
@@ -31,9 +31,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { captureModuleEvent },
-  } = useApplication();
+  const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
   // toast alert

@@ -5,7 +5,7 @@ import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useProjectState } from "hooks/store";
+import { useEventTracker, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
@@ -36,9 +36,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker, setTrackElement },
-  } = useApplication();
+  const { postHogEventTracker, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();

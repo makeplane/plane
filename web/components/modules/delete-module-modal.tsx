@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useModule } from "hooks/store";
+import { useEventTracker, useModule } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
@@ -26,9 +26,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
   // store hooks
-  const {
-    eventTracker: { captureModuleEvent },
-  } = useApplication();
+  const { captureModuleEvent } = useEventTracker();
   const { deleteModule } = useModule();
   // toast alert
   const { setToastAlert } = useToast();

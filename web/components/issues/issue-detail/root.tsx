@@ -9,7 +9,7 @@ import { EmptyState } from "components/common";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // hooks
-import { useApplication, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { TIssue } from "@plane/types";
@@ -70,9 +70,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },

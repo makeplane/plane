@@ -16,7 +16,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 // hooks
-import { useModule, useUser, useApplication } from "hooks/store";
+import { useModule, useUser, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
@@ -66,9 +66,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();

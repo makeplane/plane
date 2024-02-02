@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -30,9 +30,7 @@ const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store hooks
-  const {
-    eventTracker: { captureProjectEvent },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const { updateProject } = useProject();
   // toast alert

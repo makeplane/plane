@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
@@ -61,9 +61,7 @@ export interface ICreateProjectForm {
 export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
-  const {
-    eventTracker: { captureProjectEvent },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

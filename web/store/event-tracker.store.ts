@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import posthog from "posthog-js";
 // stores
-import { RootStore } from "../root.store";
+import { RootStore } from "./root.store";
 
 export interface IEventTrackerStore {
   trackElement: string;

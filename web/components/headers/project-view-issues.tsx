@@ -6,6 +6,7 @@ import Link from "next/link";
 // hooks
 import {
   useApplication,
+  useEventTracker,
   useIssues,
   useLabel,
   useMember,
@@ -40,9 +41,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateIssueModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
   const {
     membership: { currentProjectRole },

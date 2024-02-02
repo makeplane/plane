@@ -8,7 +8,7 @@ import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication } from "hooks/store";
+import { useEventTracker } from "hooks/store";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
@@ -49,9 +49,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, cycleId } = router.query;

@@ -1,7 +1,7 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 // ui
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
 
@@ -14,8 +14,8 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
 
   const {
     commandPalette: { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
   return (
     <>

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
@@ -32,8 +32,8 @@ export const CommandPalette: FC = observer(() => {
   const {
     commandPalette,
     theme: { toggleSidebar },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { currentUser } = useUser();
   const {
     issues: { removeIssue },

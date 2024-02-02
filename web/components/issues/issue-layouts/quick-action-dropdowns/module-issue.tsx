@@ -4,7 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssues, useApplication } from "hooks/store";
+import { useIssues, useEventTracker } from "hooks/store";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -25,9 +25,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const router = useRouter();
   const { workspaceSlug, moduleId } = router.query;
   // store hooks
-    const {
-      eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   // toast alert
   const { setToastAlert } = useToast();

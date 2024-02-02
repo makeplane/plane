@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
+import { useEventTracker, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
@@ -48,9 +48,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { postHogEventTracker } = useEventTracker();
   const { createWorkspace } = useWorkspace();
   // toast alert
   const { setToastAlert } = useToast();

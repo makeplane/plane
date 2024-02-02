@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // types
@@ -64,9 +64,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   } = useIssueDetail();
   const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
     useIssueDetail();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   // state
   const [loader, setLoader] = useState(false);
 

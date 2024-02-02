@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "@plane/types";
@@ -51,9 +51,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    eventTracker: { setTrackElement, postHogEventTracker },
-  } = useApplication();
+  const { setTrackElement, postHogEventTracker } = useEventTracker();
   const {
     currentUser,
     membership: { currentProjectRole },

@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
-import { useApplication, useWorkspace, useInboxIssues, useMention } from "hooks/store";
+import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { FileService } from "services/file.service";
@@ -63,8 +63,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   } = useInboxIssues();
   const {
     config: { envConfig },
-    eventTracker: { captureIssueEvent },
   } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
 
   const {

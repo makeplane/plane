@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // hooks
-import { useApplication, useEstimate, useLabel } from "hooks/store";
+import { useEventTracker, useEstimate, useLabel } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
@@ -32,9 +32,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, handleIssues, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
   const { labelMap } = useLabel();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   // router
   const router = useRouter();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();

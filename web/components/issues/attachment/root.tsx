@@ -1,6 +1,6 @@
 import { FC, useMemo } from "react";
 // hooks
-import { useApplication, useIssueDetail } from "hooks/store";
+import { useEventTracker, useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
@@ -23,9 +23,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { createAttachment, removeAttachment } = useIssueDetail();
-  const {
-    eventTracker: { captureIssueEvent },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { setToastAlert } = useToast();
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
