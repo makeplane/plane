@@ -47,6 +47,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
         >
           <Icon
             size={size}
+            viewBox="0 0 23.5 24"
             className={cn(
               {
                 "text-white": priority === "urgent",
