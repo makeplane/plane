@@ -14,7 +14,7 @@ import {
   IssueListItemProps,
 } from "components/dashboard/widgets";
 // ui
-import { Loader, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
@@ -61,12 +61,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
     <>
       <div className="h-full">
         {isLoading ? (
-          <Loader className="mt-7 mx-6 space-y-4">
-            <Loader.Item height="25px" />
-            <Loader.Item height="25px" />
-            <Loader.Item height="25px" />
-            <Loader.Item height="25px" />
-          </Loader>
+          <></>
         ) : issues.length > 0 ? (
           <>
             <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">

@@ -95,7 +95,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
         className="h-full flex flex-col"
       >
         <div className="px-6">
-          <TabsList />
+          <TabsList selectedTab={widgetDetails.widget_filters.tab ?? "upcoming"} />
         </div>
         <Tab.Panels as="div" className="h-full">
           {ISSUES_TABS_LIST.map((tab) => (
