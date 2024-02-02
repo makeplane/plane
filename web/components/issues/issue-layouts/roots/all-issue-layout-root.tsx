@@ -148,9 +148,15 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !globalViewId) return;
 
-      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        { ...updatedDisplayFilter },
+        globalViewId.toString()
+      );
     },
     [updateFilters, workspaceSlug]
   );
