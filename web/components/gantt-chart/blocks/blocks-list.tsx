@@ -20,7 +20,7 @@ export type GanttChartBlocksProps = {
   showAllBlocks: boolean;
 };
 
-export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
+export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
   const {
     itemsContainerWidth,
     blocks,
