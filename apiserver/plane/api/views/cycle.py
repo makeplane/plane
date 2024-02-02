@@ -264,7 +264,7 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                             "error": "Cycle with the same external id and external source already exists",
                             "cycle": str(cycle.id),
                         },
-                        status=status.HTTP_410_GONE,
+                        status=status.HTTP_409_CONFLICT,
                     )
                 serializer.save(
                     project_id=project_id,
@@ -315,15 +315,10 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
             if (
                 request.data.get("external_id")
                 and (cycle.external_id != request.data.get("external_id"))
-                and request.data.get("external_source")
-                and (
-                    cycle.external_source
-                    != request.data.get("external_source")
-                )
                 and Cycle.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
+                    external_source=request.data.get("external_source", cycle.external_source),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
@@ -332,7 +327,7 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                         "error": "Cycle with the same external id and external source already exists",
                         "cycle_id": str(cycle.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

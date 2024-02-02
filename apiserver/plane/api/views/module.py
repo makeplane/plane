@@ -153,7 +153,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                         "error": "Module with the same external id and external source already exists",
                         "module_id": str(module.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
             module = Module.objects.get(pk=serializer.data["id"])
@@ -175,15 +175,10 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             if (
                 request.data.get("external_id")
                 and (module.external_id != request.data.get("external_id"))
-                and request.data.get("external_source")
-                and (
-                    module.external_source
-                    != request.data.get("external_source")
-                )
                 and Module.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
+                    external_source=request.data.get("external_source", module.external_source),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
@@ -192,10 +187,10 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                         "error": "Module with the same external id and external source already exists",
                         "module_id": str(module.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug, project_id, pk=None):

@@ -241,7 +241,7 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                         "error": "Issue with the same external id and external source already exists",
                         "issue_id": str(issue.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
 
             serializer.save()
@@ -283,24 +283,19 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             if (
                 str(request.data.get("external_id"))
                 and (issue.external_id != str(request.data.get("external_id")))
-                and request.data.get("external_source")
-                and (
-                    issue.external_source
-                    != request.data.get("external_source")
-                )
                 and Issue.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
+                    external_source=request.data.get("external_source", issue.external_source),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
                 return Response(
                     {
                         "error": "Issue with the same external id and external source already exists",
-                        "issue_id": str(issue.id)
+                        "issue_id": str(issue.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
 
             serializer.save()
@@ -310,6 +305,8 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 actor_id=str(request.user.id),
                 issue_id=str(pk),
                 project_id=str(project_id),
+                external_id__isnull=False,
+                external_source__isnull=False,
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )

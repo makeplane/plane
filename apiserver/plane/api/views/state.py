@@ -59,7 +59,7 @@ class StateAPIEndpoint(BaseAPIView):
                         "error": "State with the same external id and external source already exists",
                         "state_id": str(state.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
 
             serializer.save(project_id=project_id)
@@ -118,24 +118,19 @@ class StateAPIEndpoint(BaseAPIView):
             if (
                 str(request.data.get("external_id"))
                 and (state.external_id != str(request.data.get("external_id")))
-                and request.data.get("external_source")
-                and (
-                    state.external_source
-                    != request.data.get("external_source")
-                )
-                and Issue.objects.filter(
+                and State.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
+                    external_source=request.data.get("external_source", state.external_source),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
                 return Response(
                     {
-                        "error": "Issue with the same external id and external source already exists",
+                        "error": "State with the same external id and external source already exists",
                         "state_id": str(state.id),
                     },
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
