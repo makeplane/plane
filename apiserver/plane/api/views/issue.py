@@ -1,6 +1,5 @@
 # Python imports
 import json
-from itertools import chain
 
 # Django imports
 from django.db import IntegrityError

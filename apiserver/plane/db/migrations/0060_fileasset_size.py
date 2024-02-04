@@ -2,10 +2,14 @@
 
 from django.db import migrations, models
 from django.conf import settings
+import django.db.models.deletion
+
+# Third party imports
+from bs4 import BeautifulSoup
 
 
-def update_workspace_urls(apps, schema_editor):
-    # Check if the app is using minio or s3
+def convert_image_sources(apps, schema_editor):
+
     if settings.USE_MINIO:
         prefix1 = (
             f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
@@ -17,56 +21,36 @@ def update_workspace_urls(apps, schema_editor):
             f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
         )
 
-    Workspace = apps.get_model("db", "Workspace")
-    bulk_workspaces = []
+    Issue = apps.get_model("db", "Issue")
 
-    # Loop through all the users and update the cover image
-    for workspace in Workspace.objects.all():
-        # prefix 1
-        if workspace.logo and (workspace.logo.startswith(prefix1)):
-            logo_key = workspace.logo
-            workspace.logo = f"/api/workspaces/{workspace.slug}/logo/{logo_key[len(prefix1) :]}/"
-            bulk_workspaces.append(workspace)
+    bulk_issues = []
 
-        # prefix 2
-        if not settings.USE_MINIO and workspace.logo and (workspace.logo.startswith(prefix2)):
-            logo_key = workspace.logo
-            workspace.logo = f"/api/workspaces/{workspace.slug}/logo/{logo_key[len(prefix2) :]}/"
-            bulk_workspaces.append(workspace)
+    for issue in Issue.objects.all():
+        # Parse the html
+        soup = BeautifulSoup(issue.description_html, "lxml")
+        img_tags = soup.find_all("img")
+        for img in img_tags:
+            src = img.get("src", "")
+            if src and (src.startswith(prefix1)):
+                img["src"] = (
+                    f"/api/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{src[len(prefix1): ]}"
+                )
+                issue.description_html = str(soup)
+                bulk_issues.append(issue)
 
-    Workspace.objects.bulk_update(bulk_workspaces, ["logo"], batch_size=100)
+            # prefix 2
+            if (
+                not settings.USE_MINIO
+                and src
+                and src.startswith(prefix2)
+            ):
+                img["src"] = (
+                    f"/api/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{src[len(prefix2): ]}"
+                )
+                issue.description_html = str(soup)
+                bulk_issues.append(issue)
 
-def update_project_urls(apps, schema_editor):
-    # Check if the app is using minio or s3
-    if settings.USE_MINIO:
-        prefix1 = (
-            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
-        )
-        prefix2 = prefix1
-    else:
-        prefix1 = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
-        prefix2 = (
-            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
-        )
-
-    Project = apps.get_model("db", "Project")
-    bulk_projects = []
-
-    # Loop through all the users and update the cover image
-    for project in Project.objects.all():
-        # prefix 1
-        if project.cover_image and (project.cover_image.startswith(prefix1)):
-            cover_image_key = project.cover_image
-            project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix1) :]}/"
-            bulk_projects.append(project)
-
-        # prefix 2
-        if not settings.USE_MINIO and project.cover_image and (project.cover_image.startswith(prefix2)):
-            cover_image_key = project.cover_image
-            project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix2) :]}/"
-            bulk_projects.append(project)
-
-    Project.objects.bulk_update(bulk_projects, ["cover_image"], batch_size=100)
+    Issue.objects.bulk_update(bulk_issues, ["description_html"], batch_size=1000)
 
 
 class Migration(migrations.Migration):
@@ -75,11 +59,32 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="fileasset",
-            name="size",
-            field=models.PositiveBigIntegerField(null=True),
-        ),
-        migrations.RunPython(update_workspace_urls),
-        migrations.RunPython(update_project_urls),
+        # migrations.AddField(
+        #     model_name="fileasset",
+        #     name="entity_identifier",
+        #     field=models.UUIDField(null=True),
+        # ),
+        # migrations.AddField(
+        #     model_name="fileasset",
+        #     name="entity_type",
+        #     field=models.CharField(
+        #         choices=[
+        #             ("issue", "Issue"),
+        #             ("comment", "Comment"),
+        #             ("page", "Page"),
+        #         ],
+        #         null=True,
+        #     ),
+        # ),
+        # migrations.AddField(
+        #     model_name="fileasset",
+        #     name="project_id",
+        #     field=models.ForeignKey(
+        #         null=True,
+        #         on_delete=django.db.models.deletion.CASCADE,
+        #         related_name="assets",
+        #         to="db.project",
+        #     ),
+        # ),
+        migrations.RunPython(convert_image_sources),
     ]

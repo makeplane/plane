@@ -6,7 +6,7 @@ import django.db.models
 import plane.db.models.asset
 
 
-def update_urls(apps, schema_editor):
+def update_user_urls(apps, schema_editor):
     # Check if the app is using minio or s3
     if settings.USE_MINIO:
         prefix1 = (
@@ -27,34 +27,124 @@ def update_urls(apps, schema_editor):
         # prefix 1
         if user.avatar and (user.avatar.startswith(prefix1)):
             avatar_key = user.avatar
-            user.avatar = "/api/users/avatar/" + avatar_key[len(prefix1) :] + "/"
+            user.avatar = (
+                "/api/users/avatar/" + avatar_key[len(prefix1) :] + "/"
+            )
             bulk_users.append(user)
 
         # prefix 2
-        if not settings.USE_MINIO and user.avatar and user.avatar.startswith(prefix2):
+        if (
+            not settings.USE_MINIO
+            and user.avatar
+            and user.avatar.startswith(prefix2)
+        ):
             avatar_key = user.avatar
-            user.avatar = "/api/users/avatar/" + avatar_key[len(prefix2) :] + "/"
+            user.avatar = (
+                "/api/users/avatar/" + avatar_key[len(prefix2) :] + "/"
+            )
             bulk_users.append(user)
 
         # prefix 1
         if user.cover_image and (user.cover_image.startswith(prefix1)):
             cover_image_key = user.cover_image
             user.cover_image = (
-                "/api/users/cover-image/" + cover_image_key[len(prefix1) :] + "/"
+                "/api/users/cover-image/"
+                + cover_image_key[len(prefix1) :]
+                + "/"
             )
             bulk_users.append(user)
 
         # prefix 2
-        if not settings.USE_MINIO and user.cover_image and user.cover_image.startswith(prefix2):
+        if (
+            not settings.USE_MINIO
+            and user.cover_image
+            and user.cover_image.startswith(prefix2)
+        ):
             cover_image_key = user.cover_image
             user.cover_image = (
-                "/api/users/cover-image/" + cover_image_key[len(prefix2) :] + "/"
+                "/api/users/cover-image/"
+                + cover_image_key[len(prefix2) :]
+                + "/"
             )
             bulk_users.append(user)
 
     User.objects.bulk_update(
         bulk_users, ["avatar", "cover_image"], batch_size=100
     )
+
+
+def update_workspace_urls(apps, schema_editor):
+    # Check if the app is using minio or s3
+    if settings.USE_MINIO:
+        prefix1 = (
+            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
+        )
+        prefix2 = prefix1
+    else:
+        prefix1 = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
+        prefix2 = (
+            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+        )
+
+    Workspace = apps.get_model("db", "Workspace")
+    bulk_workspaces = []
+
+    # Loop through all the users and update the cover image
+    for workspace in Workspace.objects.all():
+        # prefix 1
+        if workspace.logo and (workspace.logo.startswith(prefix1)):
+            logo_key = workspace.logo
+            workspace.logo = f"/api/workspaces/{workspace.slug}/logo/{logo_key[len(prefix1) :]}/"
+            bulk_workspaces.append(workspace)
+
+        # prefix 2
+        if (
+            not settings.USE_MINIO
+            and workspace.logo
+            and (workspace.logo.startswith(prefix2))
+        ):
+            logo_key = workspace.logo
+            workspace.logo = f"/api/workspaces/{workspace.slug}/logo/{logo_key[len(prefix2) :]}/"
+            bulk_workspaces.append(workspace)
+
+    Workspace.objects.bulk_update(bulk_workspaces, ["logo"], batch_size=100)
+
+
+def update_project_urls(apps, schema_editor):
+    # Check if the app is using minio or s3
+    if settings.USE_MINIO:
+        prefix1 = (
+            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
+        )
+        prefix2 = prefix1
+    else:
+        prefix1 = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
+        prefix2 = (
+            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+        )
+
+    Project = apps.get_model("db", "Project")
+    bulk_projects = []
+
+    # Loop through all the users and update the cover image
+    for project in Project.objects.all():
+        # prefix 1
+        if project.cover_image and (project.cover_image.startswith(prefix1)):
+            cover_image_key = project.cover_image
+            project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix1) :]}/"
+            bulk_projects.append(project)
+
+        # prefix 2
+        if (
+            not settings.USE_MINIO
+            and project.cover_image
+            and (project.cover_image.startswith(prefix2))
+        ):
+            cover_image_key = project.cover_image
+            project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix2) :]}/"
+            bulk_projects.append(project)
+
+    Project.objects.bulk_update(bulk_projects, ["cover_image"], batch_size=100)
 
 
 class Migration(migrations.Migration):
@@ -100,5 +190,12 @@ class Migration(migrations.Migration):
             name="logo",
             field=models.CharField(blank=True, null=True, verbose_name="Logo"),
         ),
-        migrations.RunPython(update_urls),
+        migrations.AddField(
+            model_name="fileasset",
+            name="size",
+            field=models.PositiveBigIntegerField(null=True),
+        ),
+        migrations.RunPython(update_user_urls),
+        migrations.RunPython(update_workspace_urls),
+        migrations.RunPython(update_project_urls),
     ]

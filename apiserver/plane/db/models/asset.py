@@ -40,6 +40,21 @@ class FileAsset(BaseModel):
         null=True,
         related_name="assets",
     )
+    project_id = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    entity_type = models.CharField(
+        choices=(
+            ("issue", "Issue"),
+            ("comment", "Comment"),
+            ("page", "Page"),
+        ),
+        null=True,
+    )
+    entity_identifier = models.UUIDField(null=True)
     is_deleted = models.BooleanField(default=False)
     size = models.PositiveBigIntegerField(null=True)
 
