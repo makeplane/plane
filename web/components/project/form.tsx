@@ -18,6 +18,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { NETWORK_CHOICES } from "constants/project";
 // services
 import { ProjectService } from "services/project";
+import { PROJECT_UPDATED } from "constants/event-tracker";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -78,7 +79,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         captureProjectEvent({
-          eventName: "Project updated",
+          eventName: PROJECT_UPDATED,
           payload: { ...res, state: "SUCCESS", element: "Project general settings" },
           group: {
             isGrouping: true,
@@ -94,7 +95,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         captureProjectEvent({
-          eventName: "Project updated",
+          eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
           group: {
             isGrouping: true,

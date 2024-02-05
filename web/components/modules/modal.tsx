@@ -9,6 +9,8 @@ import useToast from "hooks/use-toast";
 import { ModuleForm } from "components/modules";
 // types
 import type { IModule } from "@plane/types";
+// constants
+import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -59,7 +61,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: "Module created successfully.",
         });
         captureModuleEvent({
-          eventName: "Module created",
+          eventName: MODULE_CREATED,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -70,7 +72,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: err.detail ?? "Module could not be created. Please try again.",
         });
         captureModuleEvent({
-          eventName: "Module created",
+          eventName: MODULE_CREATED,
           payload: { ...data, state: "FAILED" },
         });
       });
@@ -90,7 +92,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: "Module updated successfully.",
         });
         captureModuleEvent({
-          eventName: "Module updated",
+          eventName: MODULE_UPDATED,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -101,7 +103,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: err.detail ?? "Module could not be updated. Please try again.",
         });
         captureModuleEvent({
-          eventName: "Module updated",
+          eventName: MODULE_UPDATED,
           payload: { ...data, state: "FAILED" },
         });
       });

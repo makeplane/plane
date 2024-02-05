@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
+import { ISSUE_UPDATED } from "constants/event-tracker";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // ui
@@ -178,7 +179,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
                   onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
                     handleIssues({ ...issue, ...data }, EIssueActions.UPDATE).then(() => {
                       captureIssueEvent({
-                        eventName: "Issue updated",
+                        eventName: ISSUE_UPDATED,
                         payload: {
                           ...issue,
                           ...data,

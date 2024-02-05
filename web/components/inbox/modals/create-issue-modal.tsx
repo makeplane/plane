@@ -18,6 +18,8 @@ import { GptAssistantPopover } from "components/core";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -94,7 +96,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           handleClose();
         } else reset(defaultValues);
         captureIssueEvent({
-          eventName: "Issue created",
+          eventName: ISSUE_CREATED,
           payload: {
             ...formData,
             state: "SUCCESS",
@@ -111,7 +113,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         captureIssueEvent({
-          eventName: "Issue created",
+          eventName: "ISSUE_CREATED",
           payload: {
             ...formData,
             state: "FAILED",

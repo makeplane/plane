@@ -13,6 +13,8 @@ import { IssueFormRoot } from "./form";
 import type { TIssue } from "@plane/types";
 // constants
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
+import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
+
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
   isOpen: boolean;
@@ -142,7 +144,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue created successfully.",
       });
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...response, state: "SUCCESS" },
         path: router.asPath,
         group: {
@@ -160,7 +162,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue could not be created. Please try again.",
       });
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED" },
         path: router.asPath,
         group: {
@@ -183,7 +185,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue updated successfully.",
       });
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...response, state: "SUCCESS" },
         path: router.asPath,
         group: {
@@ -201,7 +203,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue could not be created. Please try again.",
       });
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
         path: router.asPath,
         group: {

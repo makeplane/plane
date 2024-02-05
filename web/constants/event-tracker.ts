@@ -30,7 +30,7 @@ export const getProjectEventPayload = (payload: any) => ({
 
 export const getCycleEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
-  project_id: payload.id,
+  project_id: payload.project,
   cycle_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -43,7 +43,7 @@ export const getCycleEventPayload = (payload: any) => ({
 
 export const getModuleEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
-  project_id: payload.id,
+  project_id: payload.project,
   module_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -71,6 +71,7 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     sub_issues_count: payload.sub_issues_count,
     parent_id: payload.parent_id,
     project_id: payload.project_id,
+    workspace_id: payload.workspace_id,
     priority: payload.priority,
     state_id: payload.state_id,
     start_date: payload.start_date,
@@ -82,7 +83,7 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     view_id: path?.includes("workspace-views") || path?.includes("views") ? path.split("/").pop() : "",
   };
 
-  if (eventName === "Issue updated") {
+  if (eventName === ISSUE_UPDATED) {
     eventPayload = {
       ...eventPayload,
       ...updates,
@@ -103,3 +104,44 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
   }
   return eventPayload;
 };
+
+export const getProjectStateEventPayload = (payload: any) => {
+  return {
+    workspace_id: payload.workspace_id,
+    project_id: payload.id,
+    state_id: payload.id,
+    created_at: payload.created_at,
+    updated_at: payload.updated_at,
+    group: payload.group,
+    color: payload.color,
+    default: payload.default,
+    state: payload.state,
+    element: payload.element,
+  };
+};
+
+// Project Events
+export const PROJECT_CREATED = "Project created";
+export const PROJECT_UPDATED = "Project updated";
+export const PROJECT_DELETED = "Project deleted";
+// Cycle Events
+export const CYCLE_CREATED = "Cycle created";
+export const CYCLE_UPDATED = "Cycle updated";
+export const CYCLE_DELETED = "Cycle deleted";
+// Module Events
+export const MODULE_CREATED = "Module created";
+export const MODULE_UPDATED = "Module updated";
+export const MODULE_DELETED = "Module deleted";
+// Issue Events
+export const ISSUE_CREATED = "Issue created";
+export const ISSUE_UPDATED = "Issue updated";
+export const ISSUE_DELETED = "Issue deleted";
+// Project State Events
+export const STATE_CREATED = "State created";
+export const STATE_UPDATED = "State updated";
+export const STATE_DELETED = "State deleted";
+// Member Events
+export const MEMBER_ADDED = "Member added";
+export const MEMBER_REMOVED = "Member removed";
+
+

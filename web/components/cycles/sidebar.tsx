@@ -38,6 +38,7 @@ import {
 import { ICycle } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_UPDATED } from "constants/event-tracker";
 // fetch-keys
 import { CYCLE_STATUS } from "constants/cycle";
 
@@ -66,7 +67,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureCycleEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -85,7 +86,19 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data)
+      .then((res) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: { ...res, state: "SUCCESS" },
+        });
+      })
+      .catch((_) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: { ...data, state: "FAILED" },
+        });
+      });
   };
 
   const handleCopyText = () => {

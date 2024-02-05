@@ -10,13 +10,14 @@ import {
   getIssueEventPayload,
   getModuleEventPayload,
   getProjectEventPayload,
+  getProjectStateEventPayload,
 } from "constants/event-tracker";
 
 export interface IEventTrackerStore {
   // properties
   trackElement: string;
   // computed
-  getRequiredPayload: any;
+  getRequiredProperties: any;
   // actions
   setTrackElement: (element: string) => void;
   captureEvent: (eventName: string, payload: object | [] | null, group?: EventGroupProps) => void;
@@ -24,6 +25,7 @@ export interface IEventTrackerStore {
   captureCycleEvent: (props: EventProps) => void;
   captureModuleEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
+  captureProjectStateEvent: (props: EventProps) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -34,7 +36,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       // properties
       trackElement: observable,
       // computed
-      getRequiredPayload: computed,
+      getRequiredProperties: computed,
       // actions
       setTrackElement: action,
       captureEvent: action,
@@ -48,7 +50,7 @@ export class EventTrackerStore implements IEventTrackerStore {
   /**
    * @description: Returns the necessary property for the event tracking
    */
-  get getRequiredPayload() {
+  get getRequiredProperties() {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
     return {
@@ -77,6 +79,7 @@ export class EventTrackerStore implements IEventTrackerStore {
   captureEvent = (eventName: string, payload: object | [] | null) => {
     posthog?.capture(eventName, {
       ...payload,
+      ...this.getRequiredProperties,
       element: this.trackElement ?? "",
     });
   };
@@ -91,7 +94,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       this.postHogGroup(group);
     }
     const eventPayload: any = getProjectEventPayload({
-      ...this.getRequiredPayload,
+      ...this.getRequiredProperties,
       ...payload,
       element: payload.element ?? this.trackElement,
     });
@@ -109,7 +112,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       this.postHogGroup(group);
     }
     const eventPayload: any = getCycleEventPayload({
-      ...this.getRequiredPayload,
+      ...this.getRequiredProperties,
       ...payload,
       element: payload.element ?? this.trackElement,
     });
@@ -127,7 +130,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       this.postHogGroup(group);
     }
     const eventPayload: any = getModuleEventPayload({
-      ...this.getRequiredPayload,
+      ...this.getRequiredProperties,
       ...payload,
       element: payload.element ?? this.trackElement,
     });
@@ -146,8 +149,25 @@ export class EventTrackerStore implements IEventTrackerStore {
     }
     const eventPayload: any = {
       ...getIssueEventPayload(props),
-      ...this.getRequiredPayload,
+      ...this.getRequiredProperties,
       state_group: this.rootStore.state.getStateById(payload.state_id)?.group ?? "",
+      element: payload.element ?? this.trackElement,
+    };
+    posthog?.capture(eventName, eventPayload);
+  };
+
+  /**
+   * @description: Captures the issue related events.
+   * @param {IssueEventProps} props
+   */
+  captureProjectStateEvent = (props: EventProps) => {
+    const { eventName, payload, group } = props;
+    if (group) {
+      this.postHogGroup(group);
+    }
+    let eventPayload: any = {
+      ...getProjectStateEventPayload(props),
+      ...this.getRequiredProperties,
       element: payload.element ?? this.trackElement,
     };
     posthog?.capture(eventName, eventPayload);

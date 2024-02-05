@@ -34,6 +34,7 @@ import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -66,7 +67,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureModuleEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
@@ -77,7 +78,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
+      .then((res) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...res, state: "SUCCESS" },
+        });
+      })
+      .catch((_) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...data, state: "FAILED" },
+        });
+      });
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {

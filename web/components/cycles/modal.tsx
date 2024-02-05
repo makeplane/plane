@@ -10,6 +10,8 @@ import useLocalStorage from "hooks/use-local-storage";
 import { CycleForm } from "components/cycles";
 // types
 import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
+// constants
+import { CYCLE_CREATED, CYCLE_UPDATED } from "constants/event-tracker";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -47,7 +49,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Cycle created successfully.",
         });
         captureCycleEvent({
-          eventName: "Cycle created",
+          eventName: CYCLE_CREATED,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -58,7 +60,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: err.detail ?? "Error in creating cycle. Please try again.",
         });
         captureCycleEvent({
-          eventName: "Cycle created",
+          eventName: CYCLE_CREATED,
           payload: { ...payload, state: "FAILED" },
         });
       });
@@ -69,7 +71,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
     const selectedProjectId = payload.project ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
-      .then(() => {
+      .then((res) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: { ...res, state: "SUCCESS" },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -77,6 +83,10 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         });
       })
       .catch((err) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: { ...payload, state: "FAILED" },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",

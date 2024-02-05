@@ -10,6 +10,8 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // types
 import type { IProject } from "@plane/types";
+// constants
+import { PROJECT_DELETED } from "constants/event-tracker";
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -62,7 +64,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
 
         handleClose();
         captureProjectEvent({
-          eventName: "Project deleted",
+          eventName: PROJECT_DELETED,
           payload: { ...project, state: "SUCCESS", element: "Project general settings" },
           group: {
             isGrouping: true,
@@ -78,7 +80,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       })
       .catch(() => {
         captureProjectEvent({
-          eventName: "Project deleted",
+          eventName: PROJECT_DELETED,
           payload: { ...project, state: "FAILED", element: "Project general settings" },
           group: {
             isGrouping: true,
