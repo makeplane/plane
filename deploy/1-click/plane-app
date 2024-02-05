@@ -656,7 +656,7 @@ function stop_server() {
         $SUDO docker compose -f $docker_compose_file --env-file=$env_file down
         show_message "Plane Server Stopped ✅" "replace_last_line" >&2
     else
-        show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
+        show_message "Plane Server not installed [Skipping] ✅" "replace_last_line" >&2
     fi
 }
 function restart_server() {
