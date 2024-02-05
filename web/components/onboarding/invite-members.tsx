@@ -316,6 +316,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
               role: email.role,
             })),
           ],
+          project_id: undefined,
           state: "SUCCESS",
           element: "Onboarding step 3",
         });
@@ -329,6 +330,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
       })
       .catch((err) => {
         captureEvent(MEMBER_INVITED, {
+          project_id: undefined,
           state: "FAILED",
           element: "Onboarding step 3",
         });

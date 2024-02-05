@@ -46,6 +46,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         setInviteModal(false);
         captureEvent(MEMBER_INVITED, {
           emails: data.emails,
+          project_id: undefined,
           state: "SUCCESS",
           element: "Workspace settings member page",
         });
@@ -58,6 +59,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
       .catch((err) => {
         captureEvent(MEMBER_INVITED, {
           emails: data.emails,
+          project_id: undefined,
           state: "FAILED",
           element: "Workspace settings member page",
         });
@@ -93,14 +95,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
             />
           </div>
           {hasAddMemberPermission && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("WORKSPACE_SETTINGS_MEMBERS_PAGE_HEADER");
-                setInviteModal(true);
-              }}
-            >
+            <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}

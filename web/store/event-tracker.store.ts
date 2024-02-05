@@ -3,10 +3,10 @@ import posthog from "posthog-js";
 // stores
 import { RootStore } from "./root.store";
 import {
-  EventProps,
   GROUP_WORKSPACE,
-  IssueEventProps,
   WORKSPACE_CREATED,
+  EventProps,
+  IssueEventProps,
   getCycleEventPayload,
   getIssueEventPayload,
   getModuleEventPayload,
@@ -24,7 +24,7 @@ export interface IEventTrackerStore {
   resetSession: () => void;
   setTrackElement: (element: string) => void;
   captureEvent: (eventName: string, payload: any) => void;
-  createWorkspaceMetricGroup: (userEmail: string, workspaceId: string) => void;
+  joinWorkspaceMetricGroup: (workspaceId?: string) => void;
   captureWorkspaceEvent: (props: EventProps) => void;
   captureProjectEvent: (props: EventProps) => void;
   captureCycleEvent: (props: EventProps) => void;
@@ -85,8 +85,8 @@ export class EventTrackerStore implements IEventTrackerStore {
    * @param {string} userEmail
    * @param {string} workspaceId
    */
-  createWorkspaceMetricGroup = (userEmail: string, workspaceId: string) => {
-    posthog?.identify(userEmail);
+  joinWorkspaceMetricGroup = (workspaceId?: string) => {
+    if (!workspaceId) return;
     posthog?.group(GROUP_WORKSPACE, workspaceId, {
       date: new Date().toDateString(),
       workspace_id: workspaceId,
@@ -100,9 +100,9 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureEvent = (eventName: string, payload: any) => {
     posthog?.capture(eventName, {
-      ...payload,
       ...this.getRequiredProperties,
-      element: this.trackElement ?? "",
+      ...payload,
+      element: payload.element ?? this.trackElement,
     });
   };
 
@@ -113,7 +113,7 @@ export class EventTrackerStore implements IEventTrackerStore {
   captureWorkspaceEvent = (props: EventProps) => {
     const { eventName, payload } = props;
     if (eventName === WORKSPACE_CREATED && payload.state == "SUCCESS") {
-      this.createWorkspaceMetricGroup(payload.user_email, payload.id);
+      this.joinWorkspaceMetricGroup(payload.id);
     }
     const eventPayload: any = getWorkspaceEventPayload({
       ...payload,

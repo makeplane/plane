@@ -146,9 +146,11 @@ export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
 export const STATE_DELETED = "State deleted";
 // Member Events
-export const PROJECT_MEMBER_ADDED = "Project member added";
 export const MEMBER_INVITED = "Member invited";
-
+export const MEMBER_ACCEPTED = "Member accepted";
+export const PROJECT_MEMBER_ADDED = "Project member added";
+export const PROJECT_MEMBER_LEAVE= "Project member leave";
+export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
 

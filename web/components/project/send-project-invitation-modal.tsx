@@ -50,7 +50,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
   const {
     project: { projectMemberIds, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
@@ -80,7 +79,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const payload = { ...formData };
 
     await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then((res) => {
+      .then(() => {
         if (onSuccess) onSuccess();
         onClose();
         setToastAlert({
@@ -88,34 +87,19 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: "success",
           message: "Members added successfully.",
         });
-        captureEvent(
-          PROJECT_MEMBER_ADDED,
-          {
-            ...res,
-            state: "SUCCESS",
-            element: "Project settings members page",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+        captureEvent(PROJECT_MEMBER_ADDED, {
+          members: payload.members,
+          state: "SUCCESS",
+          element: "Project settings members page",
+        });
       })
       .catch((error) => {
         console.error(error);
-        captureEvent(
-          PROJECT_MEMBER_ADDED,
-          {
-            state: "FAILED",
-            element: "Project settings members page",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+        captureEvent(PROJECT_MEMBER_ADDED, {
+          members: payload.members,
+          state: "FAILED",
+          element: "Project settings members page",
+        });
       })
       .finally(() => {
         reset(defaultValues);

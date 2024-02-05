@@ -11,6 +11,7 @@ import { WorkspaceService } from "services/workspace.service";
 // constants
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
+import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // types
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
@@ -58,11 +59,19 @@ export const Invitations: React.FC<Props> = (props) => {
     if (invitationsRespond.length <= 0) return;
 
     setIsJoiningWorkspaces(true);
+    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async (res) => {
-        captureEvent("Member accepted", { ...res, state: "SUCCESS", accepted_from: "App" });
+      .then(async () => {
+        captureEvent(MEMBER_ACCEPTED, {
+          member_id: invitation?.id,
+          role: invitation?.role,
+          project_id: undefined,
+          accepted_from: "App",
+          state: "SUCCESS",
+          element: "Workspace invitations page",
+        });
         await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -71,7 +80,14 @@ export const Invitations: React.FC<Props> = (props) => {
       })
       .catch((error) => {
         console.error(error);
-        captureEvent("Member accepted", { state: "FAILED", accepted_from: "App" });
+        captureEvent(MEMBER_ACCEPTED, {
+          member_id: invitation?.id,
+          role: invitation?.role,
+          project_id: undefined,
+          accepted_from: "App",
+          state: "FAILED",
+          element: "Workspace invitations page",
+        });
       })
       .finally(() => setIsJoiningWorkspaces(false));
   };
