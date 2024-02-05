@@ -492,7 +492,7 @@ function install() {
             
         else
             OS_SUPPORTED=false
-            PROGRESS_MSG="❌❌❌ Unsupported OS Detected ❌❌❌"
+            PROGRESS_MSG="❌❌❌ Unsupported OS Detected : $OS_NAME ❌❌❌"
             show_message ""
             exit 1
         fi
