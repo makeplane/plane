@@ -40,7 +40,7 @@ def stack_email_notification():
     processed_notifications = []
     # Loop through all the issues to create the emails
     for receiver_id in receivers:
-        # Notifcation triggered for the receiver
+        # Notification triggered for the receiver
         receiver_notifications = [
             notification
             for notification in email_notifications
