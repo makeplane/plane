@@ -354,8 +354,21 @@ class IssueAttachment(ProjectBaseModel):
             file_size,
         ],
     )
+    asset_key = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.CASCADE,
+        related_name="issue_assets",
+        null=True,
+    )
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
+    )
+    type = models.PositiveSmallIntegerField(
+        choices=(
+            (0, "Attachment"),
+            (1, "Description"),
+        ),
+        default=0,
     )
 
     class Meta:
