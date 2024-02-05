@@ -31,13 +31,13 @@ from plane.app.permissions import (
 )
 from plane.db.models import (
     Issue,
-    IssueAttachment,
     IssueLink,
     Project,
     Label,
     ProjectMember,
     IssueComment,
     IssueActivity,
+    FileAsset,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.api.serializers import (
@@ -126,8 +126,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

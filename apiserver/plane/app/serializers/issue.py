@@ -25,7 +25,7 @@ from plane.db.models import (
     Module,
     ModuleIssue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueReaction,
     CommentReaction,
     IssueVote,
@@ -442,22 +442,6 @@ class IssueLinkSerializer(BaseSerializer):
                 {"error": "URL already exists for this Issue"}
             )
         return IssueLink.objects.create(**validated_data)
-
-
-class IssueAttachmentSerializer(BaseFileSerializer):
-
-    class Meta:
-        model = IssueAttachment
-        fields = "__all__"
-        read_only_fields = [
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-            "workspace",
-            "project",
-            "issue",
-        ]
 
 
 class IssueReactionSerializer(BaseSerializer):

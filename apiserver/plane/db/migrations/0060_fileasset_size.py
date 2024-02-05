@@ -67,7 +67,7 @@ def convert_issue_description_image_sources(apps, schema_editor):
     for asset in FileAsset.objects.filter(asset__in=file_assets.keys()):
         asset.project_id = file_assets[str(asset.asset)]["project_id"]
         asset.entity_identifier = file_assets[str(asset.asset)]["issue_id"]
-        asset.entity_type = "issue"
+        asset.entity_type = "issue_description"
         bulk_assets.append(asset)
 
     FileAsset.objects.bulk_update(

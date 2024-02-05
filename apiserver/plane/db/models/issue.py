@@ -345,42 +345,6 @@ def file_size(value):
     if value.size > settings.FILE_SIZE_LIMIT:
         raise ValidationError("File too large. Size should not exceed 5 MB.")
 
-
-class IssueAttachment(ProjectBaseModel):
-    attributes = models.JSONField(default=dict)
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        validators=[
-            file_size,
-        ],
-    )
-    asset_key = models.ForeignKey(
-        "db.FileAsset",
-        on_delete=models.CASCADE,
-        related_name="issue_assets",
-        null=True,
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
-    )
-    type = models.PositiveSmallIntegerField(
-        choices=(
-            (0, "Attachment"),
-            (1, "Description"),
-        ),
-        default=0,
-    )
-
-    class Meta:
-        verbose_name = "Issue Attachment"
-        verbose_name_plural = "Issue Attachments"
-        db_table = "issue_attachments"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.issue.name} {self.asset}"
-
-
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue,

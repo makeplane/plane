@@ -224,7 +224,8 @@ class Migration(migrations.Migration):
             name="entity_type",
             field=models.CharField(
                 choices=[
-                    ("issue", "Issue"),
+                    ("issue_attachment", "Issue Attachment"),
+                    ("issue_description", "Issue Description"),
                     ("comment", "Comment"),
                     ("page", "Page"),
                 ],

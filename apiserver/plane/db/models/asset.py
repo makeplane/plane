@@ -48,7 +48,8 @@ class FileAsset(BaseModel):
     )
     entity_type = models.CharField(
         choices=(
-            ("issue", "Issue"),
+            ("issue_attachment", "Issue Attachment"),
+            ("issue_description", "Issue Description"),
             ("comment", "Comment"),
             ("page", "Page"),
         ),

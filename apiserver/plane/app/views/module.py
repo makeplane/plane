@@ -37,7 +37,7 @@ from plane.db.models import (
     ModuleLink,
     ModuleFavorite,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueSubscriber,
     ModuleUserProperties,
 )
@@ -331,17 +331,16 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ProjectEntityPermission,
     ]
 
-
     def get_queryset(self):
         return (
             Issue.objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
-                issue_module__module_id=self.kwargs.get("module_id")
+                issue_module__module_id=self.kwargs.get("module_id"),
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("labels", "assignees")
-            .prefetch_related('issue_module__module')
+            .prefetch_related("issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -350,8 +349,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -420,10 +420,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             for issue in issues
         ]
-        issues = (self.get_queryset().filter(pk__in=issues))
-        serializer = IssueSerializer(issues , many=True)
+        issues = self.get_queryset().filter(pk__in=issues)
+        serializer = IssueSerializer(issues, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
 
     # create multiple module inside an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
@@ -466,10 +465,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             for module in modules
         ]
 
-        issue = (self.get_queryset().filter(pk=issue_id).first())
+        issue = self.get_queryset().filter(pk=issue_id).first()
         serializer = IssueSerializer(issue)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
     def destroy(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
@@ -484,7 +482,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"module_name": module_issue.module.name}),
+            current_instance=json.dumps(
+                {"module_name": module_issue.module.name}
+            ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

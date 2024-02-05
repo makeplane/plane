@@ -32,7 +32,7 @@ from plane.db.models import (
     Dashboard,
     Project,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueRelation,
 )
 from plane.app.serializers import (
@@ -117,8 +117,9 @@ def dashboard_assigned_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+            attachment_count=FileAsset.objects.filter(
+                entity_identifier=OuterRef("id"),
+                entity_type="issue_attachment",
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -229,8 +230,9 @@ def dashboard_created_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+            attachment_count=FileAsset.objects.filter(
+                entity_identifier=OuterRef("id"),
+                entity_type="issue_attachment",
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))

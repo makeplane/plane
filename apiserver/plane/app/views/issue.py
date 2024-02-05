@@ -4,7 +4,7 @@ import random
 from itertools import chain
 
 # Django imports
-from django.db import models
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.db.models import (
     Prefetch,
@@ -29,7 +29,7 @@ from django.db import IntegrityError
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
 from . import BaseViewSet, BaseAPIView, WebhookMixin
@@ -43,13 +43,13 @@ from plane.app.serializers import (
     IssueFlatSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
-    IssueAttachmentSerializer,
     IssueSubscriberSerializer,
     ProjectMemberLiteSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueRelationSerializer,
     RelatedIssueSerializer,
+    FileAssetSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -58,6 +58,7 @@ from plane.app.permissions import (
     ProjectLitePermission,
 )
 from plane.db.models import (
+    Workspace,
     Project,
     Issue,
     IssueActivity,
@@ -65,7 +66,7 @@ from plane.db.models import (
     IssueProperty,
     Label,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     State,
     IssueSubscriber,
     ProjectMember,
@@ -75,10 +76,12 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     ProjectPublicMember,
+    FileAsset,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 from collections import defaultdict
 
 
@@ -128,8 +131,9 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -372,8 +376,9 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -792,8 +797,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -1010,17 +1016,21 @@ class BulkCreateIssueLabelsEndpoint(BaseAPIView):
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
-    serializer_class = IssueAttachmentSerializer
     permission_classes = [
         ProjectEntityPermission,
     ]
-    model = IssueAttachment
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser,)
 
     def post(self, request, slug, project_id, issue_id):
-        serializer = IssueAttachmentSerializer(data=request.data)
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
         if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id)
+            serializer.save(
+                workspace=workspace,
+                project_id=project_id,
+                entity_type="issue_attachment",
+                entity_identifier=issue_id,
+            )
             issue_activity.delay(
                 type="attachment.activity.created",
                 requested_data=None,
@@ -1038,10 +1048,19 @@ class IssueAttachmentEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = IssueAttachment.objects.get(pk=pk)
-        issue_attachment.asset.delete(save=False)
-        issue_attachment.delete()
+    def delete(
+        self, request, slug, project_id, issue_id, workspace_id, asset_key
+    ):
+        key = f"{workspace_id}/{asset_key}"
+        asset = FileAsset.objects.get(
+            asset=key,
+            entity_identifier=issue_id,
+            entity_type="issue_attachment",
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        asset.is_deleted = True
+        asset.save()
         issue_activity.delay(
             type="attachment.activity.deleted",
             requested_data=None,
@@ -1053,14 +1072,30 @@ class IssueAttachmentEndpoint(BaseAPIView):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def get(self, request, slug, project_id, issue_id):
-        issue_attachments = IssueAttachment.objects.filter(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+    def get(
+        self,
+        request,
+        slug,
+        project_id,
+        issue_id,
+        workspace_id=None,
+        asset_key=None,
+    ):
+        if workspace_id and asset_key:
+            key = f"{workspace_id}/{asset_key}"
+            url = generate_download_presigned_url(key)
+            return HttpResponseRedirect(url)
+
+        # For listing
+        issue_attachments = FileAsset.objects.filter(
+            entity_type="issue_attachment",
+            entity_identifier=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
         )
-        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        serializer = FileAssetSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -1084,7 +1119,7 @@ class IssueArchiveViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))            
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1092,8 +1127,9 @@ class IssueArchiveViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -1131,10 +1167,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1579,15 +1612,17 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=issue
-                    if relation_type == "blocking"
-                    else issue_id,
-                    related_issue_id=issue_id
-                    if relation_type == "blocking"
-                    else issue,
-                    relation_type="blocked_by"
-                    if relation_type == "blocking"
-                    else relation_type,
+                    issue_id=(
+                        issue if relation_type == "blocking" else issue_id
+                    ),
+                    related_issue_id=(
+                        issue_id if relation_type == "blocking" else issue
+                    ),
+                    relation_type=(
+                        "blocked_by"
+                        if relation_type == "blocking"
+                        else relation_type
+                    ),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -1695,8 +1730,9 @@ class IssueDraftViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -1733,10 +1769,7 @@ class IssueDraftViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":

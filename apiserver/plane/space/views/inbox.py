@@ -17,7 +17,7 @@ from plane.db.models import (
     Issue,
     State,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     ProjectDeployBoard,
 )
 from plane.app.serializers import (
@@ -95,8 +95,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                entity_identifier=OuterRef("id"),
+                entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

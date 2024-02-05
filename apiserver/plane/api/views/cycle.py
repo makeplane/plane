@@ -17,7 +17,7 @@ from plane.db.models import (
     Issue,
     CycleIssue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
 )
 from plane.app.permissions import ProjectEntityPermission
 from plane.api.serializers import (
@@ -390,8 +390,9 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

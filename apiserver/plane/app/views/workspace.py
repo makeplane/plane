@@ -66,7 +66,7 @@ from plane.db.models import (
     Issue,
     WorkspaceTheme,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueSubscriber,
     Project,
     Label,
@@ -1360,8 +1360,9 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -1558,10 +1559,14 @@ class WorkspaceLogoEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         if serializer.is_valid():
             serializer.save(workspace=workspace)
-            workspace.logo = f"/api/workspaces/{slug}/logo/{serializer.data['asset']}/"
+            workspace.logo = (
+                f"/api/workspaces/{slug}/logo/{serializer.data['asset']}/"
+            )
             workspace.save()
             workspace_serializer = WorkSpaceSerializer(workspace)
-            return Response(workspace_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                workspace_serializer.data, status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, workspace_id, logo_key):

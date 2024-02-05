@@ -4,6 +4,31 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def create_attachment_assets(apps, schema_editor):
+    bulk_assets = []
+
+    issue_attachments = {}
+
+    FileAsset = apps.get_model("db", "FileAsset")
+    IssueAttachment = apps.get_model("db", "IssueAttachment")
+
+    for issue_attachment in IssueAttachment.objects.values():
+        bulk_assets.append(
+            FileAsset(
+                workspace_id=issue_attachment["workspace_id"],
+                project_id=issue_attachment["project_id"],
+                entity_identifier=issue_attachment["issue_id"],
+                entity_type="issue_attachment",
+                asset=issue_attachment["asset"],
+                attributes=issue_attachment["attributes"],
+            )
+        )
+        issue_attachments[str(issue_attachment["asset"])] = str(
+            issue_attachment["id"]
+        )
+
+    FileAsset.objects.bulk_create(bulk_assets, batch_size=100)
+
 
 class Migration(migrations.Migration):
 
@@ -12,21 +37,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="issueattachment",
-            name="asset_key",
-            field=models.ForeignKey(
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="issue_assets",
-                to="db.fileasset",
-            ),
-        ),
-        migrations.AddField(
-            model_name="issueattachment",
-            name="type",
-            field=models.PositiveSmallIntegerField(
-                choices=[(0, "Attachment"), (1, "Description")], default=0
-            ),
+        migrations.RunPython(create_attachment_assets),
+        migrations.DeleteModel(
+            name="IssueAttachment",
         ),
     ]

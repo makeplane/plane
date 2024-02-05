@@ -47,10 +47,10 @@ from plane.db.models import (
     Issue,
     CycleFavorite,
     IssueLink,
-    IssueAttachment,
     Label,
     CycleUserProperties,
     IssueSubscriber,
+    FileAsset,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
@@ -611,7 +611,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
+                attachment_count=FileAsset.objects.filter(
                     issue=OuterRef("id")
                 )
                 .order_by()

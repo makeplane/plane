@@ -19,7 +19,7 @@ from plane.db.models import (
     Issue,
     State,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     ProjectMember,
 )
 from plane.app.serializers import (
@@ -92,7 +92,7 @@ class InboxIssueViewSet(BaseViewSet):
             Issue.objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
-                issue_inbox__inbox_id=self.kwargs.get("inbox_id")
+                issue_inbox__inbox_id=self.kwargs.get("inbox_id"),
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -112,8 +112,9 @@ class InboxIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -131,8 +132,14 @@ class InboxIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, inbox_id):
         filters = issue_filters(request.query_params, "GET")
-        issue_queryset = self.get_queryset().filter(**filters).order_by("issue_inbox__snoozed_till", "issue_inbox__status")
-        issues_data = IssueSerializer(issue_queryset, expand=self.expand, many=True).data
+        issue_queryset = (
+            self.get_queryset()
+            .filter(**filters)
+            .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
+        )
+        issues_data = IssueSerializer(
+            issue_queryset, expand=self.expand, many=True
+        ).data
         return Response(
             issues_data,
             status=status.HTTP_200_OK,
@@ -199,8 +206,8 @@ class InboxIssueViewSet(BaseViewSet):
             source=request.data.get("source", "in-app"),
         )
 
-        issue = (self.get_queryset().filter(pk=issue.id).first())
-        serializer = IssueSerializer(issue ,expand=self.expand)
+        issue = self.get_queryset().filter(pk=issue.id).first()
+        serializer = IssueSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, inbox_id, issue_id):
@@ -320,20 +327,23 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
-                issue = (self.get_queryset().filter(pk=issue_id).first())
+                issue = self.get_queryset().filter(pk=issue_id).first()
                 serializer = IssueSerializer(issue, expand=self.expand)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            issue = (self.get_queryset().filter(pk=issue_id).first())
-            serializer = IssueSerializer(issue ,expand=self.expand)
+            issue = self.get_queryset().filter(pk=issue_id).first()
+            serializer = IssueSerializer(issue, expand=self.expand)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, inbox_id, issue_id):
         issue = self.get_queryset().filter(pk=issue_id).first()
-        serializer = IssueSerializer(issue, expand=self.expand,)
+        serializer = IssueSerializer(
+            issue,
+            expand=self.expand,
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, issue_id):

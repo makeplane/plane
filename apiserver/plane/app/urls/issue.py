@@ -117,12 +117,12 @@ urlpatterns = [
         name="project-issue-links",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
     ),

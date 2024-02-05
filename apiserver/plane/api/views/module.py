@@ -19,8 +19,8 @@ from plane.db.models import (
     ModuleLink,
     Issue,
     ModuleIssue,
-    IssueAttachment,
     IssueLink,
+    FileAsset,
 )
 from plane.api.serializers import (
     ModuleSerializer,
@@ -273,8 +273,9 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
