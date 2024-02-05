@@ -1,3 +1,4 @@
+/** @type {import("next").NextConfig} */
 require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
@@ -22,6 +23,7 @@ const nextConfig = {
     unoptimized: true,
   },
   output: "standalone",
+  transpilePackages: ["@plane/editor/extensions"],
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {
