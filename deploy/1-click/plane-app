@@ -575,10 +575,10 @@ function uninstall() {
                 fi
             fi
 
-            rm $PLANE_INSTALL_DIR/.env &> /dev/null
-            rm $PLANE_INSTALL_DIR/variables-upgrade.env &> /dev/null
-            rm $PLANE_INSTALL_DIR/config.env &> /dev/null
-            rm $PLANE_INSTALL_DIR/docker-compose.yaml &> /dev/null
+            $SUDO rm $PLANE_INSTALL_DIR/.env &> /dev/null
+            $SUDO rm $PLANE_INSTALL_DIR/variables-upgrade.env &> /dev/null
+            $SUDO rm $PLANE_INSTALL_DIR/config.env &> /dev/null
+            $SUDO rm $PLANE_INSTALL_DIR/docker-compose.yaml &> /dev/null
             
             # rm -rf $PLANE_INSTALL_DIR &> /dev/null
             show_message "- Configuration Cleaned ✅"
