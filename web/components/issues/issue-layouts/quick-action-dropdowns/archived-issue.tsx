@@ -4,6 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker, useIssues ,useUser} from "hooks/store";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
@@ -11,17 +12,16 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 import { EUserProjectRoles } from "constants/project";
-import { useUser } from "hooks/store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, customActionButton, portalElement, readOnly = false } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
+  // toast alert
   const { setToastAlert } = useToast();
 
   // store hooks
@@ -30,6 +30,11 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   } = useUser();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  // store hooks
+  const { setTrackElement } = useEventTracker();
+  const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+
+  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`).then(() =>
@@ -69,7 +74,8 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         {isEditingAllowed && !readOnly && (
           <CustomMenu.MenuItem
             onClick={() => {
-              setDeleteIssueModal(true);
+              setTrackElement(activeLayout);
+            setDeleteIssueModal(true);
             }}
           >
             <div className="flex items-center gap-2">

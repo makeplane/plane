@@ -44,8 +44,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   } = useApplication();
   const { setPeekIssue } = useIssueDetail();
 
-  const updateIssue = (issueToUpdate: TIssue) => {
-    if (issueToUpdate) handleIssues(issueToUpdate, EIssueActions.UPDATE);
+  const updateIssue = async (issueToUpdate: TIssue) => {
+    if (issueToUpdate) await handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
   const handleIssuePeekOverview = (issue: TIssue) =>
@@ -81,6 +81,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         className="flex flex-wrap items-center gap-2 whitespace-nowrap"
         issue={issue}
         displayProperties={displayProperties}
+        activeLayout="Kanban"
         handleIssues={updateIssue}
         isReadOnly={isReadOnly}
       />

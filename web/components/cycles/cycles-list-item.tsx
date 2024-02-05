@@ -2,7 +2,7 @@ import { FC, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { useApplication, useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -37,9 +37,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -90,14 +88,15 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page list layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page list layout");
     setDeleteModal(true);
-    setTrackElement("CYCLE_PAGE_LIST_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {

@@ -4,7 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useUser } from "hooks/store";
+import { useEventTracker, useIssues,useUser } from "hooks/store";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -33,6 +33,9 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query;
+  // store hooks
+  const { setTrackElement } = useEventTracker();
+  const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -42,6 +45,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   } = useUser();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+
+  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() =>
@@ -104,7 +109,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
                   ...issue,
                   cycle: cycleId?.toString() ?? null,
                 });
-                setCreateUpdateIssueModal(true);
+                setTrackElement(activeLayout);
+            setCreateUpdateIssueModal(true);
               }}
             >
               <div className="flex items-center gap-2">
@@ -124,7 +130,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               onClick={() => {
-                setCreateUpdateIssueModal(true);
+                setTrackElement(activeLayout);
+            setCreateUpdateIssueModal(true);
               }}
             >
               <div className="flex items-center gap-2">
@@ -134,7 +141,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               onClick={() => {
-                setDeleteIssueModal(true);
+                setTrackElement(activeLayout);
+            setDeleteIssueModal(true);
               }}
             >
               <div className="flex items-center gap-2">

@@ -9,7 +9,7 @@ interface Props {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
 }

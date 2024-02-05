@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
@@ -18,9 +18,9 @@ export const WorkspaceDashboardView = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
+  const { captureEvent, setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { postHogEventTracker },
     router: { workspaceSlug },
   } = useApplication();
   const {
@@ -37,7 +37,7 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        postHogEventTracker("USER_TOUR_COMPLETE", {
+        captureEvent("User tour complete", {
           user_id: currentUser?.id,
           email: currentUser?.email,
           state: "SUCCESS",
@@ -62,7 +62,7 @@ export const WorkspaceDashboardView = observer(() => {
       {homeDashboardId && joinedProjectIds ? (
         <>
           {joinedProjectIds.length > 0 ? (
-            <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
+            <div className="flex h-full w-full flex-col space-y-7 overflow-y-auto bg-custom-background-90 p-7">
               <IssuePeekOverview />
               {currentUser && <UserGreetingsView user={currentUser} />}
               {currentUser && !currentUser.is_tour_completed && (
@@ -81,7 +81,10 @@ export const WorkspaceDashboardView = observer(() => {
             progress."
               primaryButton={{
                 text: "Build your first project",
-                onClick: () => toggleCreateProjectModal(true),
+                onClick: () => {
+                  setTrackElement("Dashboard");
+                  toggleCreateProjectModal(true);
+                },
               }}
               comicBox={{
                 title: "Everything starts with a project in Plane",
@@ -93,7 +96,7 @@ export const WorkspaceDashboardView = observer(() => {
           )}
         </>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <Spinner />
         </div>
       )}

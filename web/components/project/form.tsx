@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -32,9 +32,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const { updateProject } = useProject();
   // toast alert
@@ -79,15 +77,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
-        postHogEventTracker(
-          "PROJECT_UPDATED",
-          { ...res, state: "SUCCESS" },
-          {
+        captureProjectEvent({
+          eventName: "Project updated",
+          payload: { ...res, state: "SUCCESS", element: "Project general settings" },
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
             groupId: res.workspace,
-          }
-        );
+          },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -95,17 +93,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       })
       .catch((error) => {
-        postHogEventTracker(
-          "PROJECT_UPDATED",
-          {
-            state: "FAILED",
-          },
-          {
+        captureProjectEvent({
+          eventName: "Project updated",
+          payload: { ...payload, state: "FAILED", element: "Project general settings" },
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+            groupId: currentWorkspace?.id,
+          },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
