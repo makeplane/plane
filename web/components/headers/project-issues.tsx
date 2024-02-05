@@ -4,7 +4,16 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
-import { useApplication, useLabel, useProject, useProjectState, useUser, useInbox, useMember } from "hooks/store";
+import {
+  useApplication,
+  useEventTracker,
+  useLabel,
+  useProject,
+  useProjectState,
+  useUser,
+  useInbox,
+  useMember,
+} from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
@@ -36,8 +45,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   } = useIssues(EIssuesStoreType.PROJECT);
   const {
     commandPalette: { toggleCreateIssueModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -221,7 +230,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
               <Button
                 onClick={() => {
-                  setTrackElement("PROJECT_PAGE_HEADER");
+                  setTrackElement("Project issues page");
                   toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                 }}
                 size="sm"

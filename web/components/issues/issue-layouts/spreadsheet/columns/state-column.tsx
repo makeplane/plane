@@ -7,8 +7,8 @@ import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
-  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
@@ -20,7 +20,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
       <StateDropdown
         projectId={issue.project_id}
         value={issue.state_id}
-        onChange={(data) => onChange(issue, { state_id: data })}
+        onChange={(data) => onChange(issue, { state_id: data }, { changed_property: "state", change_details: data })}
         disabled={disabled}
         buttonVariant="transparent-with-text"
         buttonClassName="rounded-none text-left"

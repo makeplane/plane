@@ -28,9 +28,9 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: FC<ISvgIcons>;
     Column: React.FC<{
       issue: TIssue;
-      onChange: (issue: TIssue, data: Partial<TIssue>) => void;
-      disabled: boolean;
       onClose: () => void;
+      onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
+      disabled: boolean;
     }>;
   };
 } = {

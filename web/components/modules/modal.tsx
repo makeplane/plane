@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useModule, useProject } from "hooks/store";
+import { useEventTracker, useModule, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ModuleForm } from "components/modules";
@@ -31,9 +31,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
   // toast alert
@@ -55,15 +53,14 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
       .then((res) => {
         handleClose();
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Module created successfully.",
         });
-        postHogEventTracker("MODULE_CREATED", {
-          ...res,
-          state: "SUCCESS",
+        captureModuleEvent({
+          eventName: "Module created",
+          payload: { ...res, state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -72,8 +69,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err.detail ?? "Module could not be created. Please try again.",
         });
-        postHogEventTracker("MODULE_CREATED", {
-          state: "FAILED",
+        captureModuleEvent({
+          eventName: "Module created",
+          payload: { ...data, state: "FAILED" },
         });
       });
   };
@@ -91,9 +89,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module updated successfully.",
         });
-        postHogEventTracker("MODULE_UPDATED", {
-          ...res,
-          state: "SUCCESS",
+        captureModuleEvent({
+          eventName: "Module updated",
+          payload: { ...res, state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -102,8 +100,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err.detail ?? "Module could not be updated. Please try again.",
         });
-        postHogEventTracker("MODULE_UPDATED", {
-          state: "FAILED",
+        captureModuleEvent({
+          eventName: "Module updated",
+          payload: { ...data, state: "FAILED" },
         });
       });
   };

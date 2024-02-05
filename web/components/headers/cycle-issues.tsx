@@ -5,6 +5,7 @@ import Link from "next/link";
 // hooks
 import {
   useApplication,
+  useEventTracker,
   useCycle,
   useLabel,
   useMember,
@@ -70,8 +71,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const {
     commandPalette: { toggleCreateIssueModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -238,7 +239,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               </Button>
               <Button
                 onClick={() => {
-                  setTrackElement("CYCLE_PAGE_HEADER");
+                  setTrackElement("Cycle issues page");
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }}
                 size="sm"

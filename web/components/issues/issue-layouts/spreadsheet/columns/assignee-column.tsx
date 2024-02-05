@@ -7,8 +7,8 @@ import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
-  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
   onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
@@ -19,7 +19,16 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <ProjectMemberDropdown
         value={issue?.assignee_ids ?? []}
-        onChange={(data) => onChange(issue, { assignee_ids: data })}
+        onChange={(data) => {
+          onChange(
+            issue,
+            { assignee_ids: data },
+            {
+              changed_property: "assignees",
+              change_details: data,
+            }
+          );
+        }}
         projectId={issue?.project_id}
         disabled={disabled}
         multiple

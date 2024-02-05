@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
@@ -20,8 +20,8 @@ export const CyclesHeader: FC = observer(() => {
   // store hooks
   const {
     commandPalette: { toggleCreateCycleModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -70,7 +70,7 @@ export const CyclesHeader: FC = observer(() => {
             size="sm"
             prependIcon={<Plus />}
             onClick={() => {
-              setTrackElement("CYCLES_PAGE_HEADER");
+              setTrackElement("Cycles page");
               toggleCreateCycleModal(true);
             }}
           >

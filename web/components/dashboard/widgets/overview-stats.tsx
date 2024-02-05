@@ -9,6 +9,7 @@ import { WidgetLoader } from "components/dashboard/widgets";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TOverviewStatsWidgetResponse } from "@plane/types";
+import { cn } from "helpers/common.helper";
 
 export type WidgetProps = {
   dashboardId: string;
@@ -71,10 +72,18 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
         [&>div:nth-child(2)>a>div]:lg:border-r
         "
     >
-      {STATS_LIST.map((stat) => (
-        <div className="w-full flex flex-col gap-2 hover:bg-custom-background-80 rounded-[10px]">
+      {STATS_LIST.map((stat, index) => (
+        <div
+          className={cn(
+            `w-full flex flex-col gap-2 hover:bg-custom-background-80`,
+            index === 0 ? "rounded-tl-xl lg:rounded-l-xl" : "",
+            index === STATS_LIST.length - 1 ? "rounded-br-xl lg:rounded-r-xl" : "",
+            index === 1 ? "rounded-tr-xl lg:rounded-[0px]" : "",
+            index == 2 ? "rounded-bl-xl lg:rounded-[0px]" : ""
+          )}
+        >
           <Link href={stat.link} className="py-4 duration-300 rounded-[10px] w-full ">
-            <div className={`relative flex justify-center items-center`}>
+            <div className={`relative flex pl-10 sm:pl-20 md:pl-20 lg:pl-20 items-center`}>
               <div>
                 <h5 className="font-semibold text-xl">{stat.count}</h5>
                 <p className="text-custom-text-300 text-sm xl:text-base">{stat.title}</p>

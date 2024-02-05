@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // components
 import { Button } from "@plane/ui";
 // helpers
@@ -15,6 +15,7 @@ import { ROLE } from "constants/workspace";
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
+import {} from "hooks/store/use-event-tracker";
 
 type Props = {
   handleNextStep: () => void;
@@ -28,9 +29,7 @@ export const Invitations: React.FC<Props> = (props) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const { currentUser, updateCurrentUser } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
@@ -63,7 +62,7 @@ export const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        postHogEventTracker("MEMBER_ACCEPTED", { ...res, state: "SUCCESS", accepted_from: "App" });
+        captureEvent("Member accepted", { ...res, state: "SUCCESS", accepted_from: "App" });
         await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -72,7 +71,7 @@ export const Invitations: React.FC<Props> = (props) => {
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker("MEMBER_ACCEPTED", { state: "FAILED", accepted_from: "App" });
+        captureEvent("Member accepted", { state: "FAILED", accepted_from: "App" });
       })
       .finally(() => setIsJoiningWorkspaces(false));
   };

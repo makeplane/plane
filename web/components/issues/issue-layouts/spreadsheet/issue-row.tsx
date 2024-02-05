@@ -12,8 +12,8 @@ import { IssueColumn } from "./issue-column";
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
 import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
+import { useIssueDetail, useProject } from "hooks/store";
 // helper
 import { cn } from "helpers/common.helper";
 // types

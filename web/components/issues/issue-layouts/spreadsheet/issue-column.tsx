@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useRouter } from "next/router";
 // hooks
 import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
 // types
@@ -8,6 +9,7 @@ import { EIssueActions } from "../types";
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { useEventTracker } from "hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -20,9 +22,12 @@ type Props = {
 
 export const IssueColumn = (props: Props) => {
   const { displayProperties, issueDetail, disableUserActions, property, handleIssues, isEstimateEnabled } = props;
+  // router
+  const router = useRouter();
   // hooks
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
+  const { captureIssueEvent } = useEventTracker();
 
   const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
 
@@ -42,7 +47,20 @@ export const IssueColumn = (props: Props) => {
       >
         <Column
           issue={issueDetail}
-          onChange={(issue: TIssue, data: Partial<TIssue>) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}
+          onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
+            handleIssues({ ...issue, ...data }, EIssueActions.UPDATE).then(() => {
+              captureIssueEvent({
+                eventName: "Issue updated",
+                payload: {
+                  ...issue,
+                  ...data,
+                  element: "Spreadsheet layout",
+                },
+                updates: updates,
+                path: router.asPath,
+              });
+            })
+          }
           disabled={disableUserActions}
           onClose={() => {
             tableCellRef?.current?.focus();
