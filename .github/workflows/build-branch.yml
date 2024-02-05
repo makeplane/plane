@@ -2,11 +2,6 @@ name: Branch Build
 
 on:
   workflow_dispatch:
-    inputs:
-      branch_name:
-        description: "Branch Name"
-        required: true
-        default: "preview"
   push:
     branches:
       - master
@@ -16,48 +11,70 @@ on:
     types: [released, prereleased]
 
 env:
-  TARGET_BRANCH: ${{ inputs.branch_name || github.ref_name || github.event.release.target_commitish }}
+  TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
 
 jobs:
   branch_build_setup:
     name: Build-Push Web/Space/API/Proxy Docker Image
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3.3.0
+    runs-on: ubuntu-latest
     outputs:
-      gh_branch_name: ${{ env.TARGET_BRANCH }}
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }} 
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+
+    steps:
+      - id: set_env_variables
+        name: Set Environment Variables
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
+          else
+            echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=local" >> $GITHUB_OUTPUT
+          fi
+          echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
 
   branch_build_push_frontend:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
       FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
     steps:
       - name: Set Frontend Docker Tag
         run: |
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ github.event.release.tag_name }}
-          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:stable
           else
             TAG=${{ env.FRONTEND_TAG }}
           fi
           echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.0.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          buildkitd-flags: "--allow-insecure-entitlement security.insecure"
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
         uses: actions/checkout@v4.1.1
@@ -67,7 +84,7 @@ jobs:
         with:
           context: .
           file: ./web/Dockerfile.web
-          platforms: linux/amd64
+          platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.FRONTEND_TAG }}
           push: true
         env:
@@ -80,32 +97,35 @@ jobs:
     needs: [branch_build_setup]
     env:
       SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
     steps:
       - name: Set Space Docker Tag
         run: |
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ github.event.release.tag_name }}
-          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:stable
           else
             TAG=${{ env.SPACE_TAG }}
           fi
           echo "SPACE_TAG=${TAG}" >> $GITHUB_ENV
 
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.0.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          buildkitd-flags: "--allow-insecure-entitlement security.insecure"
-
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
         uses: actions/checkout@v4.1.1
@@ -115,7 +135,7 @@ jobs:
         with:
           context: .
           file: ./space/Dockerfile.space
-          platforms: linux/amd64
+          platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.SPACE_TAG }}
           push: true
         env:
@@ -128,32 +148,35 @@ jobs:
     needs: [branch_build_setup]
     env:
       BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
     steps:
       - name: Set Backend Docker Tag
         run: |
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ github.event.release.tag_name }}
-          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:stable
           else
             TAG=${{ env.BACKEND_TAG }}
           fi
           echo "BACKEND_TAG=${TAG}" >> $GITHUB_ENV
 
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.0.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          buildkitd-flags: "--allow-insecure-entitlement security.insecure"
-
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
         uses: actions/checkout@v4.1.1
@@ -163,7 +186,7 @@ jobs:
         with:
           context: ./apiserver
           file: ./apiserver/Dockerfile.api
-          platforms: linux/amd64
+          platforms: ${{ env.BUILDX_PLATFORMS }}
           push: true
           tags: ${{ env.BACKEND_TAG }}
         env:
@@ -171,37 +194,41 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
+
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
       PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
     steps:
       - name: Set Proxy Docker Tag
         run: |
-          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ github.event.release.tag_name }}
-          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:stable
           else
             TAG=${{ env.PROXY_TAG }}
           fi
           echo "PROXY_TAG=${TAG}" >> $GITHUB_ENV
 
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.0.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          buildkitd-flags: "--allow-insecure-entitlement security.insecure"
-
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
         uses: actions/checkout@v4.1.1
@@ -211,10 +238,11 @@ jobs:
         with:
           context: ./nginx
           file: ./nginx/Dockerfile
-          platforms: linux/amd64
+          platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.PROXY_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+

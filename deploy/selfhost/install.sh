@@ -194,7 +194,7 @@ function askForAction() {
 
 # CPU ARCHITECHTURE BASED SETTINGS
 ARCH=$(uname -m)
-if [ $ARCH == "amd64" ] || [ $ARCH == "x86_64" ];
+if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ($BRANCH == "master" && $CPU_ARCH == "arm64") ]];
 then
     USE_GLOBAL_IMAGES=1
     DOCKERHUB_USER=makeplane

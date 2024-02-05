@@ -87,14 +87,14 @@ function prepare_environment() {
     show_message "Prepare Environment..." >&2
 
     show_message "- Updating OS with required tools ✋"  >&2
-    sudo apt-get update -y &> /dev/null
-    sudo apt-get upgrade -y &> /dev/null
+    sudo "$PACKAGE_MANAGER" update -y &> /dev/null
+    sudo "$PACKAGE_MANAGER" upgrade -y &> /dev/null
 
-    required_tools=("curl" "awk" "wget" "nano" "dialog" "git")
+    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git")
 
     for tool in "${required_tools[@]}"; do
         if ! command -v $tool &> /dev/null; then
-            sudo apt install -y $tool &> /dev/null
+            sudo "$PACKAGE_MANAGER" install -y $tool &> /dev/null
         fi
     done
 
@@ -106,7 +106,7 @@ function prepare_environment() {
         sudo curl -o- https://get.docker.com | bash - 
 
         if [ "$EUID" -ne 0 ]; then
-            dockerd-rootless-setuptool.sh install &> /dev/null
+            sudo dockerd-rootless-setuptool.sh install &> /dev/null
         fi
         show_message "- Docker Installed ✅" "replace_last_line"  >&2
     else
@@ -114,7 +114,7 @@ function prepare_environment() {
     fi
 
     update_config "PLANE_ARCH" "$CPU_ARCH"
-    update_config "DOCKER_VERSION" "$(docker -v | awk '{print $3}' | sed 's/,//g')"
+    update_config "DOCKER_VERSION" "$(sudo docker -v | awk '{print $3}' | sed 's/,//g')"
     update_config "PLANE_DATA_DIR" "$DATA_DIR"
     update_config "PLANE_LOG_DIR" "$LOG_DIR"
 
@@ -199,8 +199,6 @@ function check_for_docker_images() {
     show_message "" >&2
     # show_message "Building Plane Images" >&2
     
-    update_env "DOCKERHUB_USER" "makeplane"
-    update_env "PULL_POLICY" "always"
     CURR_DIR=$(pwd)
     
     if [ "$BRANCH" == "master" ]; then
@@ -211,13 +209,16 @@ function check_for_docker_images() {
         export APP_RELEASE=$BRANCH    
     fi
 
-    if [ $CPU_ARCH == "amd64" ] || [ $CPU_ARCH == "x86_64" ]; then
+    if [ $USE_GLOBAL_IMAGES == 1 ]; then
         # show_message "Building Plane Images for $CPU_ARCH is not required. Skipping... ✅" "replace_last_line" >&2
+        export DOCKERHUB_USER=makeplane
+        update_env "DOCKERHUB_USER" "$DOCKERHUB_USER"
+        update_env "PULL_POLICY" "always"
         echo "Building Plane Images for $CPU_ARCH is not required. Skipping..."
     else
         export DOCKERHUB_USER=myplane
         show_message "Building Plane Images for $CPU_ARCH " >&2
-        update_env "DOCKERHUB_USER" "myplane"
+        update_env "DOCKERHUB_USER" "$DOCKERHUB_USER"
         update_env "PULL_POLICY" "never"
 
         build_local_image
@@ -233,7 +234,7 @@ function check_for_docker_images() {
     sudo sed -i "s|- uploads:|- $DATA_DIR/minio:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
 
     show_message "Downloading Plane Images for $CPU_ARCH ✋" >&2
-    docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file=$PLANE_INSTALL_DIR/.env pull
+    sudo docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file=$PLANE_INSTALL_DIR/.env pull
     show_message "Plane Images Downloaded ✅" "replace_last_line" >&2
 }
 function configure_plane() {
@@ -454,8 +455,10 @@ function install() {
     if [ "$(uname)" == "Linux" ]; then
         OS="linux"
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
-        # check the OS 
-        if [ "$OS_NAME" == "ubuntu" ]; then
+        print_header
+        if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
+                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amazon" ] || 
+                [ "$OS_NAME" == "alpine" ] ; then
             OS_SUPPORTED=true
             show_message "******** Installing Plane ********"
             show_message ""
@@ -488,6 +491,7 @@ function install() {
             fi
             
         else
+            OS_SUPPORTED=false
             PROGRESS_MSG="❌❌❌ Unsupported OS Detected ❌❌❌"
             show_message ""
             exit 1
@@ -499,12 +503,17 @@ function install() {
     fi
 }
 function upgrade() {
+    print_header
     if [ "$(uname)" == "Linux" ]; then
         OS="linux"
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
-        # check the OS 
-        if [ "$OS_NAME" == "ubuntu" ]; then
+        if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
+                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amazon" ] || 
+                [ "$OS_NAME" == "alpine" ] ; then
+
             OS_SUPPORTED=true
+            show_message "******** Upgrading Plane ********"
+            show_message ""
 
             prepare_environment
 
@@ -539,24 +548,19 @@ function upgrade() {
     fi
 }
 function uninstall() {
+    print_header
     if [ "$(uname)" == "Linux" ]; then
         OS="linux"
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
-        # check the OS 
-        if [ "$OS_NAME" == "ubuntu" ]; then
+        if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
+                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amazon" ] || 
+                [ "$OS_NAME" == "alpine" ] ; then
+
             OS_SUPPORTED=true
             show_message "******** Uninstalling Plane ********"
             show_message ""
 
             stop_server
-            # CHECK IF PLANE SERVICE EXISTS
-            # if [ -f "/etc/systemd/system/plane.service" ]; then
-            #     sudo systemctl stop plane.service &> /dev/null
-            #     sudo systemctl disable plane.service &> /dev/null
-            #     sudo rm /etc/systemd/system/plane.service &> /dev/null
-            #     sudo systemctl daemon-reload &> /dev/null
-            # fi
-            # show_message "- Plane Service removed ✅"
 
             if ! [ -x "$(command -v docker)" ]; then
                 echo "DOCKER_NOT_INSTALLED" &> /dev/null
@@ -565,8 +569,8 @@ function uninstall() {
                 CONFIRM_DOCKER_PURGE=$(dialog --title "Uninstall Docker" --yesno "Are you sure you want to uninstall docker ?" 8 60 3>&1 1>&2 2>&3)
                 if [ $? -eq 0 ]; then
                     show_message "- Uninstalling Docker ✋"
-                    sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
-                    sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
+                    sudo "$PACKAGE_MANAGER" purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
+                    sudo "$PACKAGE_MANAGER" autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
                     show_message "- Docker Uninstalled ✅" "replace_last_line" >&2
                 fi
             fi
@@ -609,11 +613,11 @@ function start_server() {
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
         show_message "Starting Plane Server ✋"
-        docker compose -f $docker_compose_file --env-file=$env_file up -d
+        sudo docker compose -f $docker_compose_file --env-file=$env_file up -d
 
         # Wait for containers to be running
         echo "Waiting for containers to start..."
-        while ! docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
+        while ! sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
             sleep 1
         done
         show_message "Plane Server Started ✅" "replace_last_line" >&2
@@ -627,7 +631,7 @@ function stop_server() {
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
         show_message "Stopping Plane Server ✋"
-        docker compose -f $docker_compose_file --env-file=$env_file down
+        sudo docker compose -f $docker_compose_file --env-file=$env_file down
         show_message "Plane Server Stopped ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
@@ -639,7 +643,7 @@ function restart_server() {
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
         show_message "Restarting Plane Server ✋"
-        docker compose -f $docker_compose_file --env-file=$env_file restart
+        sudo docker compose -f $docker_compose_file --env-file=$env_file restart
         show_message "Plane Server Restarted ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
@@ -679,15 +683,33 @@ export APP_RELEASE=$BRANCH
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=always
 
+if [ "$BRANCH" == "master" ]; then
+    export APP_RELEASE=latest
+fi
+
 PLANE_INSTALL_DIR=/opt/plane
 DATA_DIR=$PLANE_INSTALL_DIR/data
 LOG_DIR=$PLANE_INSTALL_DIR/log
 OS_SUPPORTED=false
 CPU_ARCH=$(uname -m)
 PROGRESS_MSG=""
-USE_GLOBAL_IMAGES=1
+USE_GLOBAL_IMAGES=0
+PACKAGE_MANAGER=""
+
+if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ($BRANCH == "master" && $CPU_ARCH == "arm64") ]]; then
+    USE_GLOBAL_IMAGES=1
+fi
 
 mkdir -p $PLANE_INSTALL_DIR/{data,log}
+
+if command -v apt-get &> /dev/null; then
+    PACKAGE_MANAGER="apt"
+elif command -v yum &> /dev/null; then
+    PACKAGE_MANAGER="yum"
+elif command -v apk &> /dev/null; then
+    PACKAGE_MANAGER="apk"
+fi
+
 
 if [ "$1" == "start" ]; then
     start_server
