@@ -5,4 +5,5 @@ export interface IQuickActionProps {
   handleRemoveFromView?: () => Promise<void>;
   customActionButton?: React.ReactElement;
   portalElement?: HTMLDivElement | null;
+  readOnly?: boolean;
 }

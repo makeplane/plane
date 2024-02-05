@@ -11,11 +11,12 @@ import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
-import { useIssues } from "hooks/store";
+import { useIssues, useUser } from "hooks/store";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { EUserProjectRoles } from "constants/project";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
@@ -27,10 +28,11 @@ interface IBaseCalendarRoot {
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
+  isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId } = props;
+  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, isCompletedCycle = false } = props;
 
   // router
   const router = useRouter();
@@ -39,6 +41,11 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   // hooks
   const { setToastAlert } = useToast();
   const { issueMap } = useIssues();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
@@ -107,10 +114,12 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                     ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
                     : undefined
                 }
+                readOnly={!isEditingAllowed || isCompletedCycle}
               />
             )}
             quickAddCallback={issueStore.quickAddIssue}
             viewId={viewId}
+            readOnly={!isEditingAllowed || isCompletedCycle}
           />
         </DragDropContext>
       </div>

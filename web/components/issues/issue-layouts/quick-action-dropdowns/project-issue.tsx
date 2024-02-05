@@ -17,7 +17,7 @@ import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, customActionButton, portalElement } = props;
+  const { issue, handleDelete, handleUpdate, customActionButton, portalElement, readOnly = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -91,7 +91,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
             Copy link
           </div>
         </CustomMenu.MenuItem>
-        {isEditingAllowed && (
+        {isEditingAllowed && !readOnly && (
           <>
             <CustomMenu.MenuItem
               onClick={() => {
