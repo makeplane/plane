@@ -76,7 +76,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
     onClose && onClose();
   };

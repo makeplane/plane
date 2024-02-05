@@ -8,6 +8,7 @@ import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { useEventTracker } from "hooks/store";
+import { observer } from "mobx-react";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -18,7 +19,7 @@ type Props = {
   isEstimateEnabled: boolean;
 };
 
-export const IssueColumn = (props: Props) => {
+export const IssueColumn = observer((props: Props) => {
   const { displayProperties, issueDetail, disableUserActions, property, handleIssues, isEstimateEnabled } = props;
   // router
   const router = useRouter();
@@ -64,4 +65,4 @@ export const IssueColumn = (props: Props) => {
       </td>
     </WithDisplayPropertiesHOC>
   );
-};
+});

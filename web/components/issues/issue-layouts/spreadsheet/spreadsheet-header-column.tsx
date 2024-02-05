@@ -4,6 +4,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/type
 //components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
+import { observer } from "mobx-react";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
@@ -12,7 +13,7 @@ interface Props {
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
 }
-export const SpreadsheetHeaderColumn = (props: Props) => {
+export const SpreadsheetHeaderColumn = observer((props: Props) => {
   const { displayProperties, displayFilters, property, isEstimateEnabled, handleDisplayFilterUpdate } = props;
 
   //hooks
@@ -42,4 +43,4 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
       </th>
     </WithDisplayPropertiesHOC>
   );
-};
+});

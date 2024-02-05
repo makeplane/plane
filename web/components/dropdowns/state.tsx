@@ -96,9 +96,10 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
-    if (referenceElement) referenceElement.blur();
+    if (!isOpen) return;
+    setIsOpen(false);
     onClose && onClose();
+    if (referenceElement) referenceElement.blur();
   };
 
   const toggleDropdown = () => {
