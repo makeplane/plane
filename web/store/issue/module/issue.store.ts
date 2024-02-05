@@ -156,6 +156,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       const params = this.rootIssueStore?.moduleIssuesFilter?.appliedFilters;
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       runInAction(() => {
         set(
@@ -187,6 +188,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id]);
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {
@@ -223,6 +225,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       if (!moduleId) throw new Error("Module Id is required");
 
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
       if (issueIndex >= 0)
@@ -251,6 +254,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       });
 
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       const quickAddIssueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === data.id);
       if (quickAddIssueIndex >= 0)
@@ -284,6 +288,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
           else return uniq(concat(issueModuleIds, [moduleId]));
         });
       });
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return issueToModule;
     } catch (error) {
@@ -314,6 +319,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
         moduleId,
         issueIds
       );
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {
