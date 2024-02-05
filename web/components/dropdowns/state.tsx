@@ -23,6 +23,7 @@ type Props = TDropdownProps & {
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
+  onClose?: () => void;
   projectId: string;
   value: string;
 };
@@ -39,6 +40,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    onClose,
     placement,
     projectId,
     showTooltip = false,
@@ -96,6 +98,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const handleClose = () => {
     if (isOpen) setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -134,7 +137,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
             onClick={handleOnClick}
           >
             {button}
@@ -144,7 +147,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,

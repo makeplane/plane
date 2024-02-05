@@ -8,11 +8,12 @@ import { TIssue } from "@plane/types";
 type Props = {
   issue: TIssue;
   onChange: (issue: TIssue, data: Partial<TIssue>) => void;
+  onClose: () => void;
   disabled: boolean;
 };
 
 export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
-  const { issue, onChange, disabled } = props;
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -24,6 +25,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
         buttonVariant="transparent-with-text"
         buttonClassName="rounded-none text-left"
         buttonContainerClassName="w-full"
+        onClose={onClose}
       />
     </div>
   );

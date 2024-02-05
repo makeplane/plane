@@ -10,11 +10,12 @@ import { TIssue } from "@plane/types";
 type Props = {
   issue: TIssue;
   onChange: (issue: TIssue, data: Partial<TIssue>) => void;
+  onClose: () => void;
   disabled: boolean;
 };
 
 export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) => {
-  const { issue, onChange, disabled } = props;
+  const { issue, onChange, disabled, onClose } = props;
   // hooks
   const { labelMap } = useLabel();
 
@@ -34,6 +35,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
       maxRender={1}
       disabled={disabled}
       placeholderText="Select labels"
+      onClose={onClose}
     />
   );
 });
