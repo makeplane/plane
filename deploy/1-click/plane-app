@@ -455,6 +455,7 @@ function install() {
     if [ "$(uname)" == "Linux" ]; then
         OS="linux"
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+        OS_NAME=$(echo "$OS_NAME" | tr -d '"')
         print_header
         if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
                 [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amzn" ] || 
@@ -507,6 +508,7 @@ function upgrade() {
     if [ "$(uname)" == "Linux" ]; then
         OS="linux"
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+        OS_NAME=$(echo "$OS_NAME" | tr -d '"')
         if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
                 [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amzn" ] || 
                 [ "$OS_NAME" == "alpine" ] ; then
@@ -552,6 +554,7 @@ function uninstall() {
     if [ "$(uname)" == "Linux" ]; then
         OS="linux"
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+        OS_NAME=$(echo "$OS_NAME" | tr -d '"')
         if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
                 [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amzn" ] || 
                 [ "$OS_NAME" == "alpine" ] ; then
