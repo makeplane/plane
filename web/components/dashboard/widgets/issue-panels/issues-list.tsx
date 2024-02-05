@@ -14,7 +14,7 @@ import {
   IssueListItemProps,
 } from "components/dashboard/widgets";
 // ui
-import { Loader, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
@@ -41,16 +41,18 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const filterParams = getRedirectionFilters(tab);
 
   const ISSUE_LIST_ITEM: {
-    [key in string]: {
+    [key: string]: {
       [key in TIssuesListTypes]: React.FC<IssueListItemProps>;
     };
   } = {
     assigned: {
+      pending: AssignedUpcomingIssueListItem,
       upcoming: AssignedUpcomingIssueListItem,
       overdue: AssignedOverdueIssueListItem,
       completed: AssignedCompletedIssueListItem,
     },
     created: {
+      pending: CreatedUpcomingIssueListItem,
       upcoming: CreatedUpcomingIssueListItem,
       overdue: CreatedOverdueIssueListItem,
       completed: CreatedCompletedIssueListItem,
@@ -61,12 +63,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
     <>
       <div className="h-full">
         {isLoading ? (
-          <Loader className="mt-7 mx-6 space-y-4">
-            <Loader.Item height="25px" />
-            <Loader.Item height="25px" />
-            <Loader.Item height="25px" />
-            <Loader.Item height="25px" />
-          </Loader>
+          <></>
         ) : issues.length > 0 ? (
           <>
             <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
@@ -81,7 +78,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
                   {totalIssues}
                 </span>
               </h6>
-              {tab === "upcoming" && <h6 className="text-center">Due date</h6>}
+              {["upcoming", "pending"].includes(tab) && <h6 className="text-center">Due date</h6>}
               {tab === "overdue" && <h6 className="text-center">Due by</h6>}
               {type === "assigned" && tab !== "completed" && <h6 className="text-center">Blocked by</h6>}
               {type === "created" && <h6 className="text-center">Assigned to</h6>}
