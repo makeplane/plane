@@ -103,11 +103,29 @@ function prepare_environment() {
     # Install Docker if not installed
     if ! command -v docker &> /dev/null; then
         show_message "- Installing Docker ✋"  >&2
-        $SUDO curl -o- https://get.docker.com | bash - 
+        # $SUDO curl -o- https://get.docker.com | bash - 
 
-        # if [ "$EUID" -ne 0 ]; then
-        #     dockerd-rootless-setuptool.sh install &> /dev/null
-        # fi
+        if [ "$PACKAGE_MANAGER" == "yum" ]; then
+            $SUDO $PACKAGE_MANAGER install -y yum-utils
+            $SUDO yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+            # Add Docker's official GPG key:
+            $SUDO $PACKAGE_MANAGER update
+            $SUDO $PACKAGE_MANAGER install ca-certificates curl
+            $SUDO install -m 0755 -d /etc/apt/keyrings
+            $SUDO curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+            $SUDO chmod a+r /etc/apt/keyrings/docker.asc
+
+            # Add the repository to Apt sources:
+            echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+            $SUDO tee /etc/apt/sources.list.d/docker.list > /dev/null
+            $SUDO $PACKAGE_MANAGER update
+        fi
+
+        $SUDO $PACKAGE_MANAGER install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
         show_message "- Docker Installed ✅" "replace_last_line"  >&2
     else
         show_message "- Docker is already installed ✅"  >&2
