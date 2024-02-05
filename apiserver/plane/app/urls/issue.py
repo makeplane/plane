@@ -21,6 +21,7 @@ from plane.app.views import (
     IssueArchiveViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    CommentAssetEndpoint,
 )
 
 
@@ -313,4 +314,16 @@ urlpatterns = [
         ),
         name="project-issue-draft",
     ),
+    # Comment Assets
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/",
+        CommentAssetEndpoint.as_view(),
+        name="project-comment-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        CommentAssetEndpoint.as_view(),
+        name="project-comment-attachments",
+    ),
+    ## End Comments
 ]

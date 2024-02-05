@@ -89,6 +89,7 @@ from .issue import (
     IssueReactionViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    CommentAssetEndpoint,
 )
 
 from .auth_extended import (
@@ -141,6 +142,7 @@ from .page import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
+    PageAssetEndpoint,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint

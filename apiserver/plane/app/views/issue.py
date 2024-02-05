@@ -1926,3 +1926,66 @@ class IssueDraftViewSet(BaseViewSet):
             origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentAssetEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def post(self, request, slug, project_id, comment_id):
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
+        if serializer.is_valid():
+            serializer.save(
+                workspace=workspace,
+                project_id=project_id,
+                entity_type="comment",
+                entity_identifier=comment_id,
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(
+        self, request, slug, project_id, comment_id, workspace_id, asset_key
+    ):
+        key = f"{workspace_id}/{asset_key}"
+        asset = FileAsset.objects.get(
+            asset=key,
+            entity_identifier=comment_id,
+            entity_type="comment",
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        asset.is_deleted = True
+        asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(
+        self,
+        request,
+        slug,
+        project_id,
+        comment_id,
+        workspace_id=None,
+        asset_key=None,
+    ):
+        if workspace_id and asset_key:
+            key = f"{workspace_id}/{asset_key}"
+            url = generate_download_presigned_url(key)
+            return HttpResponseRedirect(url)
+
+        # For listing
+        comment_assets = FileAsset.objects.filter(
+            entity_type="comment",
+            entity_identifier=comment_id,
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        serializer = FileAssetSerializer(comment_assets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

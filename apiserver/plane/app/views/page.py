@@ -4,23 +4,34 @@ from datetime import date, datetime, timedelta
 # Django imports
 from django.db import connection
 from django.db.models import Exists, OuterRef, Q
-from django.utils import timezone
+from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-
-from plane.app.permissions import ProjectEntityPermission
-from plane.app.serializers import (IssueLiteSerializer, PageFavoriteSerializer,
-                                   PageLogSerializer, PageSerializer,
-                                   SubPageSerializer)
-from plane.db.models import (Issue, IssueActivity, IssueAssignee, Page,
-                             PageFavorite, PageLog, ProjectMember)
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
+from plane.app.permissions import ProjectEntityPermission
+from plane.app.serializers import (
+    PageFavoriteSerializer,
+    PageLogSerializer,
+    PageSerializer,
+    SubPageSerializer,
+    FileAssetSerializer,
+)
+from plane.db.models import (
+    Workspace,
+    Page,
+    PageFavorite,
+    PageLog,
+    ProjectMember,
+    FileAsset,
+)
 from .base import BaseAPIView, BaseViewSet
-
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
@@ -348,3 +359,66 @@ class SubPagesEndpoint(BaseAPIView):
         return Response(
             SubPageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
+
+
+class PageAssetEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def post(self, request, slug, project_id, page_id):
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
+        if serializer.is_valid():
+            serializer.save(
+                workspace=workspace,
+                project_id=project_id,
+                entity_type="page",
+                entity_identifier=page_id,
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(
+        self, request, slug, project_id, page_id, workspace_id, asset_key
+    ):
+        key = f"{workspace_id}/{asset_key}"
+        asset = FileAsset.objects.get(
+            asset=key,
+            entity_identifier=page_id,
+            entity_type="page",
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        asset.is_deleted = True
+        asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(
+        self,
+        request,
+        slug,
+        project_id,
+        page_id,
+        workspace_id=None,
+        asset_key=None,
+    ):
+        if workspace_id and asset_key:
+            key = f"{workspace_id}/{asset_key}"
+            url = generate_download_presigned_url(key)
+            return HttpResponseRedirect(url)
+
+        # For listing
+        page_assets = FileAsset.objects.filter(
+            entity_type="page",
+            entity_identifier=page_id,
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        serializer = FileAssetSerializer(page_assets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
