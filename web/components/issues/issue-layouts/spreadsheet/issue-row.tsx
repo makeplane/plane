@@ -165,18 +165,16 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           </ControlLink>
         </td>
         {/* Rest of the columns */}
-        {SPREADSHEET_PROPERTY_LIST.map((property) => {
-          return (
-            <IssueColumn
-              displayProperties={displayProperties}
-              issueDetail={issueDetail}
-              disableUserActions={disableUserActions}
-              property={property}
-              handleIssues={handleIssues}
-              isEstimateEnabled={isEstimateEnabled}
-            />
-          );
-        })}
+        {SPREADSHEET_PROPERTY_LIST.map((property) => (
+          <IssueColumn
+            displayProperties={displayProperties}
+            issueDetail={issueDetail}
+            disableUserActions={disableUserActions}
+            property={property}
+            handleIssues={handleIssues}
+            isEstimateEnabled={isEstimateEnabled}
+          />
+        ))}
       </tr>
 
       {isExpanded &&
