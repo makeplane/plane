@@ -5,6 +5,8 @@ import { useDropzone } from "react-dropzone";
 import { useApplication } from "hooks/store";
 // constants
 import { MAX_FILE_SIZE } from "constants/common";
+// helpers
+import { generateFileName } from "helpers/attachment.helper";
 // types
 import { TAttachmentOperations } from "./root";
 
@@ -26,15 +28,17 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (!acceptedFiles[0] || !workspaceSlug) return;
+    const currentFile: File = acceptedFiles[0];
+    if (!currentFile || !workspaceSlug) return;
 
+    const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), { type: currentFile.type });
     const formData = new FormData();
-    formData.append("asset", acceptedFiles[0]);
+    formData.append("asset", uploadedFile);
     formData.append(
       "attributes",
       JSON.stringify({
-        name: acceptedFiles[0].name,
-        size: acceptedFiles[0].size,
+        name: uploadedFile.name,
+        size: uploadedFile.size,
       })
     );
     setIsLoading(true);

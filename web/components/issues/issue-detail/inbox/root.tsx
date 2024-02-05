@@ -1,10 +1,11 @@
 import { FC, useMemo } from "react";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
 import { InboxIssueMainContent } from "./main-content";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 // hooks
-import { useInboxIssues, useIssueDetail, useUser } from "hooks/store";
+import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { TIssue } from "@plane/types";
@@ -21,6 +22,8 @@ export type TInboxIssueDetailRoot = {
 
 export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   const { workspaceSlug, projectId, inboxId, issueId } = props;
+  // router
+  const router = useRouter();
   // hooks
   const {
     issues: { fetchInboxIssueById, updateInboxIssue, removeInboxIssue },
@@ -28,6 +31,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { captureIssueEvent } = useEventTracker();
   const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
@@ -50,7 +54,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
         showToast: boolean = true
       ) => {
         try {
-          await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
+          const response = await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
           if (showToast) {
             setToastAlert({
               title: "Issue updated successfully",
@@ -58,11 +62,29 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
               message: "Issue updated successfully",
             });
           }
+          captureIssueEvent({
+            eventName: "Inbox issue updated",
+            payload: { ...response, state: "SUCCESS", element: "Inbox" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
         } catch (error) {
           setToastAlert({
             title: "Issue update failed",
             type: "error",
             message: "Issue update failed",
+          });
+          captureIssueEvent({
+            eventName: "Inbox issue updated",
+            payload: { state: "SUCCESS", element: "Inbox" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
           });
         }
       },
@@ -74,7 +96,17 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
             type: "success",
             message: "Issue deleted successfully",
           });
+          captureIssueEvent({
+            eventName: "Inbox issue deleted",
+            payload: { id: issueId, state: "SUCCESS", element: "Inbox" },
+            path: router.asPath,
+          });
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Inbox issue deleted",
+            payload: { id: issueId, state: "FAILED", element: "Inbox" },
+            path: router.asPath,
+          });
           setToastAlert({
             title: "Issue delete failed",
             type: "error",

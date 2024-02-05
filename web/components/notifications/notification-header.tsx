@@ -95,6 +95,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 <MoreVertical className="h-3.5 w-3.5" />
               </div>
             }
+            closeOnSelect
           >
             <CustomMenu.MenuItem onClick={markAllNotificationsAsRead}>
               <div className="flex items-center gap-2">

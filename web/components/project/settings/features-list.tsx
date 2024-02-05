@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "@plane/types";
@@ -51,9 +51,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    eventTracker: { setTrackElement, postHogEventTracker },
-  } = useApplication();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -94,7 +92,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
               setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
-              postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
+              captureEvent(`Toggle ${feature.title.toLowerCase()}`, {
                 workspace_id: currentWorkspace?.id,
                 workspace_slug: currentWorkspace?.slug,
                 project_id: currentProjectDetails?.id,

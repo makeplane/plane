@@ -2,8 +2,9 @@ import { Fragment, useCallback, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
+import { useTheme } from "next-themes";
 // hooks
-import { useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -22,7 +23,10 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -49,7 +53,9 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     },
     [handleCurrentLayout, setCycleTab]
   );
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", currentUser?.theme.theme === "light");
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "cycles", isLightMode);
 
   const totalCycles = currentProjectCycleIds?.length ?? 0;
 
@@ -86,6 +92,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               text: "Set your first cycle",
               onClick: () => {
+                setTrackElement("Cycle empty state");
                 setCreateModal(true);
               },
             }}

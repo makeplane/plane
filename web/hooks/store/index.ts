@@ -1,4 +1,5 @@
 export * from "./use-application";
+export * from "./use-event-tracker"
 export * from "./use-calendar-view";
 export * from "./use-cycle";
 export * from "./use-dashboard";

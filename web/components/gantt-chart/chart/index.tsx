@@ -46,22 +46,25 @@ type ChartViewRootProps = {
   enableBlockMove: boolean;
   enableReorder: boolean;
   bottomSpacing: boolean;
+  showAllBlocks: boolean;
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = ({
-  border,
-  title,
-  blocks = null,
-  loaderTitle,
-  blockUpdateHandler,
-  sidebarToRender,
-  blockToRender,
-  enableBlockLeftResize,
-  enableBlockRightResize,
-  enableBlockMove,
-  enableReorder,
-  bottomSpacing,
-}) => {
+export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
+  const {
+    border,
+    title,
+    blocks = null,
+    loaderTitle,
+    blockUpdateHandler,
+    sidebarToRender,
+    blockToRender,
+    enableBlockLeftResize,
+    enableBlockRightResize,
+    enableBlockMove,
+    enableReorder,
+    bottomSpacing,
+    showAllBlocks,
+  } = props;
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
@@ -311,6 +314,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               enableBlockLeftResize={enableBlockLeftResize}
               enableBlockRightResize={enableBlockRightResize}
               enableBlockMove={enableBlockMove}
+              showAllBlocks={showAllBlocks}
             />
           )}
         </div>

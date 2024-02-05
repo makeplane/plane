@@ -11,7 +11,9 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
+import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
+// helper
+import { cn } from "helpers/common.helper";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -48,7 +50,8 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const { workspaceSlug } = router.query;
   //hooks
   const { getProjectById } = useProject();
-  const { setPeekIssue } = useIssueDetail();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { captureIssueEvent } = useEventTracker();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -95,9 +98,20 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
 
   return (
     <>
-      <tr>
+      <tr
+        className={cn({
+          "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issueDetail.id,
+        })}
+      >
         {/* first column/ issue name and key column */}
-        <td className="sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-custom-border-100 before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-custom-border-100">
+        <td
+          className={cn(
+            "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200",
+            {
+              "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
+            }
+          )}
+        >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <div
               className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
@@ -161,8 +175,19 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100">
                 <Column
                   issue={issueDetail}
-                  onChange={(issue: TIssue, data: Partial<TIssue>) =>
-                    handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)
+                  onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
+                    handleIssues({ ...issue, ...data }, EIssueActions.UPDATE).then(() => {
+                      captureIssueEvent({
+                        eventName: "Issue updated",
+                        payload: {
+                          ...issue,
+                          ...data,
+                          element: "Spreadsheet layout",
+                        },
+                        updates: updates,
+                        path: router.asPath,
+                      });
+                    })
                   }
                   disabled={disableUserActions}
                 />

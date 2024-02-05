@@ -229,7 +229,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                 )}
                 <Tooltip
                   position="top-right"
-                  tooltipContent={`Created by ${ownerDetails?.member.display_name} on ${renderFormattedDate(
+                  tooltipContent={`Created by ${ownerDetails?.member?.display_name} on ${renderFormattedDate(
                     created_at
                   )}`}
                 >

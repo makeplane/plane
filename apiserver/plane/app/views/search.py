@@ -228,7 +228,7 @@ class IssueSearchEndpoint(BaseAPIView):
         parent = request.query_params.get("parent", "false")
         issue_relation = request.query_params.get("issue_relation", "false")
         cycle = request.query_params.get("cycle", "false")
-        module = request.query_params.get("module", "false")
+        module = request.query_params.get("module", False)
         sub_issue = request.query_params.get("sub_issue", "false")
 
         issue_id = request.query_params.get("issue_id", False)
@@ -269,8 +269,8 @@ class IssueSearchEndpoint(BaseAPIView):
         if cycle == "true":
             issues = issues.exclude(issue_cycle__isnull=False)
 
-        if module == "true":
-            issues = issues.exclude(issue_module__isnull=False)
+        if module:
+            issues = issues.exclude(issue_module__module=module)
 
         return Response(
             issues.values(
