@@ -13,6 +13,7 @@ import {
   getProjectEventPayload,
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
+  getPageEventPayload,
 } from "constants/event-tracker";
 
 export interface IEventTrackerStore {
@@ -29,6 +30,7 @@ export interface IEventTrackerStore {
   captureProjectEvent: (props: EventProps) => void;
   captureCycleEvent: (props: EventProps) => void;
   captureModuleEvent: (props: EventProps) => void;
+  capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
 }
@@ -160,6 +162,21 @@ export class EventTrackerStore implements IEventTrackerStore {
   captureModuleEvent = (props: EventProps) => {
     const { eventName, payload } = props;
     const eventPayload: any = getModuleEventPayload({
+      ...this.getRequiredProperties,
+      ...payload,
+      element: payload.element ?? this.trackElement,
+    });
+    posthog?.capture(eventName, eventPayload);
+    this.setTrackElement("");
+  };
+
+  /**
+   * @description: Captures the project pages related events.
+   * @param {EventProps} props
+   */
+  capturePageEvent = (props: EventProps) => {
+    const { eventName, payload } = props;
+    const eventPayload: any = getPageEventPayload({
       ...this.getRequiredProperties,
       ...payload,
       element: payload.element ?? this.trackElement,

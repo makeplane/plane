@@ -10,7 +10,6 @@ export type EventProps = {
   payload: any;
 };
 
-
 export const getWorkspaceEventPayload = (payload: any) => ({
   workspace_id: payload.id,
   created_at: payload.created_at,
@@ -52,6 +51,18 @@ export const getModuleEventPayload = (payload: any) => ({
   start_date: payload.start_date,
   target_date: payload.target_date,
   module_status: payload.status,
+  state: payload.state,
+  element: payload.element,
+});
+export const getPageEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.project,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  access: payload.access === 0 ? "Public" : "Private",
+  is_locked: payload.is_locked,
+  archived_at: payload.archived_at,
+  created_by: payload.created_by,
   state: payload.state,
   element: payload.element,
 });
@@ -145,13 +156,15 @@ export const ISSUE_DELETED = "Issue deleted";
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
 export const STATE_DELETED = "State deleted";
+// Project Page Events
+export const PAGE_CREATED = "Page created";
+export const PAGE_UPDATED = "Page updated";
+export const PAGE_DELETED = "Page deleted";
 // Member Events
 export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";
 export const PROJECT_MEMBER_ADDED = "Project member added";
-export const PROJECT_MEMBER_LEAVE= "Project member leave";
+export const PROJECT_MEMBER_LEAVE = "Project member leave";
 export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
-
-
