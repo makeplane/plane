@@ -137,11 +137,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         captureProjectEvent({
           eventName: PROJECT_CREATED,
           payload: newPayload,
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: res.workspace,
-          },
         });
         setToastAlert({
           type: "success",
@@ -165,12 +160,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             payload: {
               ...payload,
               state: "FAILED",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            },
+            }
           });
         });
       });

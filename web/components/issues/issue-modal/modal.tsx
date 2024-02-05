@@ -147,11 +147,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         eventName: ISSUE_CREATED,
         payload: { ...response, state: "SUCCESS" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
       !createMore && handleClose();
       return response;
@@ -165,11 +160,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
     }
   };
@@ -188,11 +178,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         eventName: ISSUE_UPDATED,
         payload: { ...response, state: "SUCCESS" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
       handleClose();
       return response;
@@ -206,11 +191,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
     }
   };

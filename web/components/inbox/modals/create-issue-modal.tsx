@@ -67,7 +67,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     config: { envConfig },
   } = useApplication();
   const { captureIssueEvent } = useEventTracker();
-  const { currentWorkspace } = useWorkspace();
 
   const {
     control,
@@ -102,11 +101,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
             state: "SUCCESS",
             element: "Inbox page",
           },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          },
           path: router.pathname,
         });
       })
@@ -118,11 +112,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
             ...formData,
             state: "FAILED",
             element: "Inbox page",
-          },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
           },
           path: router.pathname,
         });

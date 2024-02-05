@@ -92,12 +92,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
               id: inboxIssueId,
               state: "SUCCESS",
               element: "Inbox page",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            },
+            }
           });
           router.push({
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
@@ -114,11 +109,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
               id: inboxIssueId,
               state: "FAILED",
               element: "Inbox page",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
             },
           });
         }

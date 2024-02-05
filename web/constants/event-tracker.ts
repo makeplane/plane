@@ -2,21 +2,14 @@ export type IssueEventProps = {
   eventName: string;
   payload: any;
   updates?: any;
-  group?: EventGroupProps;
   path?: string;
 };
 
 export type EventProps = {
   eventName: string;
   payload: any;
-  group?: EventGroupProps;
 };
 
-export type EventGroupProps = {
-  isGrouping?: boolean;
-  groupType?: string;
-  groupId?: string;
-};
 
 export const getWorkspaceEventPayload = (payload: any) => ({
   workspace_id: payload.id,
@@ -155,5 +148,8 @@ export const STATE_DELETED = "State deleted";
 // Member Events
 export const PROJECT_MEMBER_ADDED = "Project member added";
 export const MEMBER_INVITED = "Member invited";
+
+// Groups
+export const GROUP_WORKSPACE = "Workspace_metrics";
 
 

@@ -81,11 +81,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         captureProjectEvent({
           eventName: PROJECT_UPDATED,
           payload: { ...res, state: "SUCCESS", element: "Project general settings" },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: res.workspace,
-          },
         });
         setToastAlert({
           type: "success",
@@ -97,11 +92,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         captureProjectEvent({
           eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id,
-          },
         });
         setToastAlert({
           type: "error",

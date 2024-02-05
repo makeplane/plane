@@ -66,11 +66,6 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         captureProjectEvent({
           eventName: PROJECT_DELETED,
           payload: { ...project, state: "SUCCESS", element: "Project general settings" },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          },
         });
         setToastAlert({
           type: "success",
@@ -82,11 +77,6 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         captureProjectEvent({
           eventName: PROJECT_DELETED,
           payload: { ...project, state: "FAILED", element: "Project general settings" },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          },
         });
         setToastAlert({
           type: "error",
