@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -22,8 +22,8 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
     currentUser,
@@ -72,7 +72,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
           primaryButton={{
             text: "Create Cycles and Modules first",
             onClick: () => {
-              setTrackElement("ANALYTICS_EMPTY_STATE");
+              setTrackElement("Analytics empty state");
               toggleCreateProjectModal(true);
             },
           }}

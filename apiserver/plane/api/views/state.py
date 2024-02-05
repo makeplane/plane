@@ -38,6 +38,30 @@ class StateAPIEndpoint(BaseAPIView):
             data=request.data, context={"project_id": project_id}
         )
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and State.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                state = State.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    external_id=request.data.get("external_id"),
+                    external_source=request.data.get("external_source"),
+                ).first()
+                return Response(
+                    {
+                        "error": "State with the same external id and external source already exists",
+                        "state_id": str(state.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save(project_id=project_id)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -91,6 +115,23 @@ class StateAPIEndpoint(BaseAPIView):
         )
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (state.external_id != str(request.data.get("external_id")))
+                and State.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source", state.external_source),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "State with the same external id and external source already exists",
+                        "state_id": str(state.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
