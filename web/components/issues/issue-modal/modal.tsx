@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
+import { useApplication, useEventTracker, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -12,7 +13,6 @@ import { IssueFormRoot } from "./form";
 import type { TIssue } from "@plane/types";
 // constants
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
-
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
   isOpen: boolean;
@@ -29,9 +29,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const {
     router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },
   } = useApplication();
@@ -67,6 +65,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       viewId: moduleId,
     },
   };
+  // router
+  const router = useRouter();
   // toast alert
   const { setToastAlert } = useToast();
   // local storage
@@ -141,18 +141,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Success!",
         message: "Issue created successfully.",
       });
-      postHogEventTracker(
-        "ISSUE_CREATED",
-        {
-          ...response,
-          state: "SUCCESS",
-        },
-        {
+      captureIssueEvent({
+        eventName: "Issue created",
+        payload: { ...response, state: "SUCCESS" },
+        path: router.asPath,
+        group: {
           isGrouping: true,
           groupType: "Workspace_metrics",
           groupId: currentWorkspace?.id!,
-        }
-      );
+        },
+      });
       !createMore && handleClose();
       return response;
     } catch (error) {
@@ -161,17 +159,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
-      postHogEventTracker(
-        "ISSUE_CREATED",
-        {
-          state: "FAILED",
-        },
-        {
+      captureIssueEvent({
+        eventName: "Issue created",
+        payload: { ...payload, state: "FAILED" },
+        path: router.asPath,
+        group: {
           isGrouping: true,
           groupType: "Workspace_metrics",
           groupId: currentWorkspace?.id!,
-        }
-      );
+        },
+      });
     }
   };
 
@@ -185,18 +182,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Success!",
         message: "Issue updated successfully.",
       });
-      postHogEventTracker(
-        "ISSUE_UPDATED",
-        {
-          ...response,
-          state: "SUCCESS",
-        },
-        {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...response, state: "SUCCESS" },
+        path: router.asPath,
+        group: {
           isGrouping: true,
           groupType: "Workspace_metrics",
           groupId: currentWorkspace?.id!,
-        }
-      );
+        },
+      });
       handleClose();
       return response;
     } catch (error) {
@@ -205,17 +200,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
-      postHogEventTracker(
-        "ISSUE_UPDATED",
-        {
-          state: "FAILED",
-        },
-        {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...payload, state: "FAILED" },
+        path: router.asPath,
+        group: {
           isGrouping: true,
           groupType: "Workspace_metrics",
           groupId: currentWorkspace?.id!,
-        }
-      );
+        },
+      });
     }
   };
 

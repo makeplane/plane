@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 import { useTheme } from "next-themes";
 // hooks
-import { useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -26,6 +26,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -91,6 +92,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               text: "Set your first cycle",
               onClick: () => {
+                setTrackElement("Cycle empty state");
                 setCreateModal(true);
               },
             }}

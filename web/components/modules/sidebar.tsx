@@ -16,7 +16,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 // hooks
-import { useModule, useUser } from "hooks/store";
+import { useModule, useUser, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
@@ -66,7 +66,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-
+  const { setTrackElement } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
@@ -297,7 +297,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("Module peek-overview");
+                    setModuleDeleteModal(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
                     <span>Delete module</span>

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
@@ -13,10 +13,8 @@ export const ProjectCardList = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
     currentUser,
@@ -66,7 +64,7 @@ export const ProjectCardList = observer(() => {
           primaryButton={{
             text: "Start your first project",
             onClick: () => {
-              setTrackElement("PROJECTS_EMPTY_STATE");
+              setTrackElement("Project empty state");
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}

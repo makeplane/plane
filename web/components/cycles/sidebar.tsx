@@ -6,7 +6,7 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle, useMember, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -66,9 +66,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
