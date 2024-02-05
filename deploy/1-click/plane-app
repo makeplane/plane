@@ -90,7 +90,7 @@ function prepare_environment() {
     $SUDO "$PACKAGE_MANAGER" update -y &> /dev/null
     $SUDO "$PACKAGE_MANAGER" upgrade -y &> /dev/null
 
-    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git")
+    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap")
 
     for tool in "${required_tools[@]}"; do
         if ! command -v $tool &> /dev/null; then
@@ -106,7 +106,7 @@ function prepare_environment() {
         $SUDO curl -o- https://get.docker.com | bash - 
 
         if [ "$EUID" -ne 0 ]; then
-            $SUDO dockerd-rootless-setuptool.sh install &> /dev/null
+            dockerd-rootless-setuptool.sh install &> /dev/null
         fi
         show_message "- Docker Installed ✅" "replace_last_line"  >&2
     else
