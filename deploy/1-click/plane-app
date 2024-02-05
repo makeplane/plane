@@ -129,11 +129,11 @@ function download_plane() {
     show_message "Downloading Plane Setup Files ✋"  >&2
     $SUDO curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  \
-        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s) 
+        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s) 
 
     $SUDO curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/variables-upgrade.env \
-        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s) 
+        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/variables.env?$(date +%s) 
 
     # if .env does not exists rename variables-upgrade.env to .env
     if [ ! -f "$PLANE_INSTALL_DIR/.env" ]; then
@@ -186,7 +186,7 @@ function build_local_image() {
     PLANE_TEMP_CODE_DIR=$PLANE_INSTALL_DIR/temp
     $SUDO rm -rf $PLANE_TEMP_CODE_DIR > /dev/null
 
-    $SUDO git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch -q > /dev/null
+    $SUDO git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $DEPLOY_BRANCH --single-branch -q > /dev/null
 
     $SUDO cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
 
@@ -201,12 +201,12 @@ function check_for_docker_images() {
     
     CURR_DIR=$(pwd)
     
-    if [ "$BRANCH" == "master" ]; then
+    if [ "$DEPLOY_BRANCH" == "master" ]; then
         update_env "APP_RELEASE" "latest"
         export APP_RELEASE=latest
     else
-        update_env "APP_RELEASE" "$BRANCH"
-        export APP_RELEASE=$BRANCH    
+        update_env "APP_RELEASE" "$DEPLOY_BRANCH"
+        export APP_RELEASE=$DEPLOY_BRANCH    
     fi
 
     if [ $USE_GLOBAL_IMAGES == 1 ]; then
@@ -672,18 +672,18 @@ function update_installer() {
     show_message "Updating Plane Installer ✋" >&2
     $SUDO curl -H 'Cache-Control: no-cache, no-store' \
         -s -o /usr/local/bin/plane-app  \
-        https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/1-click/install.sh?token=$(date +%s) 
+        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/1-click/install.sh?token=$(date +%s) 
 
     $SUDO chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
     show_message "Plane Installer Updated ✅" "replace_last_line" >&2
 }
 
-export BRANCH=${BRANCH:-master}
-export APP_RELEASE=$BRANCH
+export DEPLOY_BRANCH=${BRANCH:-master}
+export APP_RELEASE=$DEPLOY_BRANCH
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=always
 
-if [ "$BRANCH" == "master" ]; then
+if [ "$DEPLOY_BRANCH" == "master" ]; then
     export APP_RELEASE=latest
 fi
 
@@ -696,7 +696,7 @@ PROGRESS_MSG=""
 USE_GLOBAL_IMAGES=0
 PACKAGE_MANAGER=""
 
-if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ($BRANCH == "master" && $CPU_ARCH == "arm64") ]]; then
+if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ($DEPLOY_BRANCH == "master" && $CPU_ARCH == "arm64") ]]; then
     USE_GLOBAL_IMAGES=1
 fi
 
