@@ -8,7 +8,9 @@ import django.db.models.deletion
 from bs4 import BeautifulSoup
 
 
-def convert_image_sources(apps, schema_editor):
+def convert_issue_description_image_sources(apps, schema_editor):
+
+    file_assets = {}
 
     if settings.USE_MINIO:
         prefix1 = (
@@ -35,22 +37,192 @@ def convert_image_sources(apps, schema_editor):
                 img["src"] = (
                     f"/api/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{src[len(prefix1): ]}"
                 )
+                file_assets[src[len(prefix1) :]] = {
+                    "project_id": str(issue.project_id),
+                    "issue_id": str(issue.id),
+                }
                 issue.description_html = str(soup)
                 bulk_issues.append(issue)
 
             # prefix 2
-            if (
-                not settings.USE_MINIO
-                and src
-                and src.startswith(prefix2)
-            ):
+            if not settings.USE_MINIO and src and src.startswith(prefix2):
                 img["src"] = (
                     f"/api/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{src[len(prefix2): ]}"
                 )
+                file_assets[src[len(prefix2) :]] = {
+                    "project_id": str(issue.project_id),
+                    "issue_id": str(issue.id),
+                }
                 issue.description_html = str(soup)
                 bulk_issues.append(issue)
 
-    Issue.objects.bulk_update(bulk_issues, ["description_html"], batch_size=1000)
+    # Update the issue description htmls
+    Issue.objects.bulk_update(
+        bulk_issues, ["description_html"], batch_size=1000
+    )
+
+    # Update file assets
+    FileAsset = apps.get_model("db", "FileAsset")
+    bulk_assets = []
+    for asset in FileAsset.objects.filter(asset__in=file_assets.keys()):
+        asset.project_id = file_assets[str(asset.asset)]["project_id"]
+        asset.entity_identifier = file_assets[str(asset.asset)]["issue_id"]
+        asset.entity_type = "issue"
+        bulk_assets.append(asset)
+
+    FileAsset.objects.bulk_update(
+        bulk_assets,
+        [
+            "project_id",
+            "entity_identifier",
+            "entity_type",
+        ],
+        batch_size=100,
+    )
+    return
+
+def convert_page_image_sources(apps, schema_editor):
+
+    file_assets = {}
+
+    if settings.USE_MINIO:
+        prefix1 = (
+            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
+        )
+        prefix2 = prefix1
+    else:
+        prefix1 = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
+        prefix2 = (
+            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+        )
+
+    Page = apps.get_model("db", "Page")
+    FileAsset = apps.get_model("db", "FileAsset")
+
+    bulk_pages = []
+    bulk_assets = {}
+
+    for page in Page.objects.all():
+        # Parse the html
+        soup = BeautifulSoup(page.description_html, "lxml")
+        img_tags = soup.find_all("img")
+        for img in img_tags:
+            src = img.get("src", "")
+            if src and (src.startswith(prefix1)):
+                img["src"] = (
+                    f"/api/workspaces/{page.workspace.slug}/projects/{page.project_id}/issues/{page.id}/attachments/{src[len(prefix1): ]}/"
+                )
+                file_assets[src[len(prefix1) :]] = {
+                    "project_id": str(page.project_id),
+                    "page_id": str(page.id),
+                }
+                page.description_html = str(soup)
+                bulk_pages.append(page)
+
+            # prefix 2
+            if not settings.USE_MINIO and src and src.startswith(prefix2):
+                img["src"] = (
+                    f"/api/workspaces/{page.workspace.slug}/projects/{page.project_id}/issues/{page.id}/attachments/{src[len(prefix2): ]}/"
+                )
+                file_assets[src[len(prefix2) :]] = {
+                    "project_id": str(page.project_id),
+                    "page_id": str(page.id),
+                }
+                page.description_html = str(soup)
+                bulk_pages.append(page)
+
+    Page.objects.bulk_update(bulk_pages, ["description_html"], batch_size=1000)
+
+    # Update file assets
+    FileAsset = apps.get_model("db", "FileAsset")
+    bulk_assets = []
+    for asset in FileAsset.objects.filter(asset__in=file_assets.keys()):
+        asset.project_id = file_assets[str(asset.asset)]["project_id"]
+        asset.entity_identifier = file_assets[str(asset.asset)]["page_id"]
+        asset.entity_type = "page"
+        bulk_assets.append(asset)
+
+    FileAsset.objects.bulk_update(
+        bulk_assets,
+        [
+            "project_id",
+            "entity_identifier",
+            "entity_type",
+        ],
+        batch_size=100,
+    )
+    return
+
+def convert_comment_image_sources(apps, schema_editor):
+
+    file_assets = {}
+
+    if settings.USE_MINIO:
+        prefix1 = (
+            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/"
+        )
+        prefix2 = prefix1
+    else:
+        prefix1 = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/"
+        prefix2 = (
+            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+        )
+
+    IssueComment = apps.get_model("db", "IssueComment")
+
+    bulk_comments = []
+    bulk_assets = {}
+
+    for comment in IssueComment.objects.all():
+        # Parse the html
+        soup = BeautifulSoup(comment.comment_html, "lxml")
+        img_tags = soup.find_all("img")
+        for img in img_tags:
+            src = img.get("src", "")
+            if src and (src.startswith(prefix1)):
+                img["src"] = (
+                    f"/api/workspaces/{comment.workspace.slug}/projects/{comment.project_id}/issues/{comment.id}/attachments/{src[len(prefix1): ]}/"
+                )
+                file_assets[src[len(prefix1) :]] = {
+                    "project_id": str(comment.project_id),
+                    "comment_id": str(comment.id),
+                }
+                comment.comment_html = str(soup)
+                bulk_comments.append(comment)
+
+            # prefix 2
+            if not settings.USE_MINIO and src and src.startswith(prefix2):
+                img["src"] = (
+                    f"/api/workspaces/{comment.workspace.slug}/projects/{comment.project_id}/issues/{comment.id}/attachments/{src[len(prefix2): ]}/"
+                )
+                file_assets[src[len(prefix2) :]] = {
+                    "project_id": str(comment.project_id),
+                    "comment_id": str(comment.id),
+                }
+                comment.comment_html = str(soup)
+                bulk_comments.append(comment)
+
+    IssueComment.objects.bulk_update(bulk_comments, ["comment_html"], batch_size=1000)
+
+    # Update file assets
+    FileAsset = apps.get_model("db", "FileAsset")
+    bulk_assets = []
+    for asset in FileAsset.objects.filter(asset__in=file_assets.keys()):
+        asset.project_id = file_assets[str(asset.asset)]["project_id"]
+        asset.entity_identifier = file_assets[str(asset.asset)]["comment_id"]
+        asset.entity_type = "comment"
+        bulk_assets.append(asset)
+
+    FileAsset.objects.bulk_update(
+        bulk_assets,
+        [
+            "project_id",
+            "entity_identifier",
+            "entity_type",
+        ],
+        batch_size=100,
+    )
+    return
 
 
 class Migration(migrations.Migration):
@@ -59,32 +231,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.AddField(
-        #     model_name="fileasset",
-        #     name="entity_identifier",
-        #     field=models.UUIDField(null=True),
-        # ),
-        # migrations.AddField(
-        #     model_name="fileasset",
-        #     name="entity_type",
-        #     field=models.CharField(
-        #         choices=[
-        #             ("issue", "Issue"),
-        #             ("comment", "Comment"),
-        #             ("page", "Page"),
-        #         ],
-        #         null=True,
-        #     ),
-        # ),
-        # migrations.AddField(
-        #     model_name="fileasset",
-        #     name="project_id",
-        #     field=models.ForeignKey(
-        #         null=True,
-        #         on_delete=django.db.models.deletion.CASCADE,
-        #         related_name="assets",
-        #         to="db.project",
-        #     ),
-        # ),
-        migrations.RunPython(convert_image_sources),
+        migrations.RunPython(convert_issue_description_image_sources),
+        migrations.RunPython(convert_page_image_sources),
+        migrations.RunPython(convert_comment_image_sources),
     ]

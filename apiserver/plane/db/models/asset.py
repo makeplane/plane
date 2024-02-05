@@ -40,7 +40,7 @@ class FileAsset(BaseModel):
         null=True,
         related_name="assets",
     )
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         "db.Project",
         on_delete=models.CASCADE,
         null=True,

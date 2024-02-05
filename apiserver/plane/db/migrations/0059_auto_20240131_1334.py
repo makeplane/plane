@@ -111,6 +111,8 @@ def update_workspace_urls(apps, schema_editor):
 
 
 def update_project_urls(apps, schema_editor):
+    file_assets = {}
+
     # Check if the app is using minio or s3
     if settings.USE_MINIO:
         prefix1 = (
@@ -132,6 +134,7 @@ def update_project_urls(apps, schema_editor):
         if project.cover_image and (project.cover_image.startswith(prefix1)):
             cover_image_key = project.cover_image
             project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix1) :]}/"
+            file_assets[cover_image_key[len(prefix1) :]] = str(project.id)
             bulk_projects.append(project)
 
         # prefix 2
@@ -142,9 +145,25 @@ def update_project_urls(apps, schema_editor):
         ):
             cover_image_key = project.cover_image
             project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix2) :]}/"
+            file_assets[cover_image_key[len(prefix2) :]] = str(project.id)
             bulk_projects.append(project)
 
     Project.objects.bulk_update(bulk_projects, ["cover_image"], batch_size=100)
+
+    FileAsset = apps.get_model("db", "FileAsset")
+    bulk_assets = []
+    for asset in FileAsset.objects.filter(asset__in=file_assets.keys()):
+        asset.project_id = file_assets[str(asset.asset)]
+        bulk_assets.append(asset)
+
+    FileAsset.objects.bulk_update(
+        bulk_assets,
+        [
+            "project_id",
+        ],
+        batch_size=100,
+    )
+    return
 
 
 class Migration(migrations.Migration):
@@ -194,6 +213,33 @@ class Migration(migrations.Migration):
             model_name="fileasset",
             name="size",
             field=models.PositiveBigIntegerField(null=True),
+        ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="entity_identifier",
+            field=models.UUIDField(null=True),
+        ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="entity_type",
+            field=models.CharField(
+                choices=[
+                    ("issue", "Issue"),
+                    ("comment", "Comment"),
+                    ("page", "Page"),
+                ],
+                null=True,
+            ),
+        ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="project",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="assets",
+                to="db.project",
+            ),
         ),
         migrations.RunPython(update_user_urls),
         migrations.RunPython(update_workspace_urls),
