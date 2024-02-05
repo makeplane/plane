@@ -12,7 +12,6 @@ import { IssueColumn } from "./issue-column";
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
 import { useIssueDetail, useProject } from "hooks/store";
 // helper
 import { cn } from "helpers/common.helper";
@@ -58,8 +57,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const [isExpanded, setExpanded] = useState<boolean>(false);
 
   const menuActionRef = useRef<HTMLDivElement | null>(null);
-
-  const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
   const handleIssuePeekOverview = (issue: TIssue) => {
     if (workspaceSlug && issue && issue.project_id && issue.id)
@@ -114,7 +111,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
             }
           )}
-          onKeyDown={handleKeyBoardNavigation}
           tabIndex={0}
         >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">

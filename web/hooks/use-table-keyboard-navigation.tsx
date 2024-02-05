@@ -15,10 +15,10 @@ export const useTableKeyboardNavigation = () => {
     return element.closest("thead")?.nextSibling?.childNodes?.[0];
   };
 
-  const handleKeyBoardNavigation = function (e: React.KeyboardEvent<HTMLTableCellElement>) {
+  const handleKeyBoardNavigation = function (e: React.KeyboardEvent<HTMLTableElement>) {
     const element = e.target as HTMLElement;
 
-    if (!element) return;
+    if (!(element?.tagName === "TD" || element?.tagName === "TH")) return;
 
     let c: HTMLElement | null = null;
     if (e.key == "ArrowRight") {

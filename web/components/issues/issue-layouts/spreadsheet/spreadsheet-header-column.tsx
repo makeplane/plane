@@ -1,6 +1,4 @@
 import { useRef } from "react";
-//hooks
-import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
 //types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 //components
@@ -19,7 +17,6 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
 
   //hooks
   const tableHeaderCellRef = useRef<HTMLTableCellElement | null>(null);
-  const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
   const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
 
@@ -33,7 +30,6 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
         className="h-11 w-full min-w-[8rem] items-center bg-custom-background-90 text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-custom-border-100 focus:border-custom-primary-70"
         ref={tableHeaderCellRef}
         tabIndex={0}
-        onKeyDown={handleKeyBoardNavigation}
       >
         <HeaderColumn
           displayFilters={displayFilters}
