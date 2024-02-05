@@ -1,0 +1,8 @@
+{
+  "name": "@plane/auth",
+  "version": "0.15.0",
+  "main": "index.ts",
+  "dependencies": {
+    "next-auth": "^4.24.5"
+  }
+}
