@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -64,6 +64,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // states
@@ -126,7 +127,13 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
             ...payload,
           },
           viewId
-        ));
+        ).then((res) => {
+          captureIssueEvent({
+            eventName: "Issue created",
+            payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
+            path: router.asPath,
+          });
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -134,6 +141,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       });
     } catch (err: any) {
       console.error(err);
+      captureIssueEvent({
+        eventName: "Issue created",
+        payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
+        path: router.asPath,
+      });
       setToastAlert({
         type: "error",
         title: "Error!",

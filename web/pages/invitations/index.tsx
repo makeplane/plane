@@ -10,7 +10,7 @@ import { CheckCircle2 } from "lucide-react";
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useEventTracker, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
@@ -40,9 +40,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const { currentUser, currentUserSettings } = useUser();
   // router
   const router = useRouter();
@@ -84,7 +82,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        postHogEventTracker("MEMBER_ACCEPTED", {
+        captureEvent("Member accepted", {
           ...res,
           state: "SUCCESS",
           accepted_from: "App",
