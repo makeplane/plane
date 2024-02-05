@@ -105,9 +105,9 @@ function prepare_environment() {
         show_message "- Installing Docker ✋"  >&2
         $SUDO curl -o- https://get.docker.com | bash - 
 
-        if [ "$EUID" -ne 0 ]; then
-            dockerd-rootless-setuptool.sh install &> /dev/null
-        fi
+        # if [ "$EUID" -ne 0 ]; then
+        #     dockerd-rootless-setuptool.sh install &> /dev/null
+        # fi
         show_message "- Docker Installed ✅" "replace_last_line"  >&2
     else
         show_message "- Docker is already installed ✅"  >&2
