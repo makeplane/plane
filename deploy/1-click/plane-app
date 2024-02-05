@@ -476,7 +476,7 @@ function install() {
         OS_NAME=$(echo "$OS_NAME" | tr -d '"')
         print_header
         if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
-                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amzn" ] || 
+                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amazon" ] || 
                 [ "$OS_NAME" == "alpine" ] ; then
             OS_SUPPORTED=true
             show_message "******** Installing Plane ********"
@@ -528,7 +528,7 @@ function upgrade() {
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
         OS_NAME=$(echo "$OS_NAME" | tr -d '"')
         if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
-                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amzn" ] || 
+                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amazon" ] || 
                 [ "$OS_NAME" == "alpine" ] ; then
 
             OS_SUPPORTED=true
@@ -574,7 +574,7 @@ function uninstall() {
         OS_NAME=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
         OS_NAME=$(echo "$OS_NAME" | tr -d '"')
         if [ "$OS_NAME" == "ubuntu" ] || [ "$OS_NAME" == "debian" ] || 
-                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amzn" ] || 
+                [ "$OS_NAME" == "centos" ] || [ "$OS_NAME" == "amazon" ] || 
                 [ "$OS_NAME" == "alpine" ] ; then
 
             OS_SUPPORTED=true
