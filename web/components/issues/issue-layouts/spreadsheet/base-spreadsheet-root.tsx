@@ -28,10 +28,19 @@ interface IBaseSpreadsheetRoot {
     [EIssueActions.REMOVE]?: (issue: TIssue) => void;
   };
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  isCompletedCycle?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions, canEditPropertiesBasedOnProject } = props;
+  const {
+    issueFiltersStore,
+    issueStore,
+    viewId,
+    QuickActions,
+    issueActions,
+    canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
+  } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
@@ -113,7 +122,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       quickAddCallback={issueStore.quickAddIssue}
       viewId={viewId}
       enableQuickCreateIssue={enableQuickAdd}
-      disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+      disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
     />
   );
 });
