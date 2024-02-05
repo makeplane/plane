@@ -304,6 +304,7 @@ export class CycleStore implements ICycleStore {
         set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
       });
       const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
+      this.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       console.log("Failed to patch cycle from cycle store");

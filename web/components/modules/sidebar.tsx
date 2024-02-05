@@ -262,13 +262,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
-    moduleDetails.total_issues === 0
-      ? "0 Issue"
-      : moduleDetails.total_issues === moduleDetails.completed_issues
-      ? moduleDetails.total_issues > 1
-        ? `${moduleDetails.total_issues}`
-        : `${moduleDetails.total_issues}`
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+    moduleDetails.total_issues === 0 ? "0 Issue" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -582,7 +576,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
+                        {moduleDetails.start_date && moduleDetails.target_date ? (
                           <div className=" h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
                               <div className="flex items-center gap-3 text-custom-text-100">
@@ -598,9 +592,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                distribution={moduleDetails.distribution?.completion_chart}
-                                startDate={moduleDetails.start_date ?? ""}
-                                endDate={moduleDetails.target_date ?? ""}
+                                distribution={moduleDetails.distribution?.completion_chart ?? {}}
+                                startDate={moduleDetails.start_date}
+                                endDate={moduleDetails.target_date}
                                 totalIssues={moduleDetails.total_issues}
                               />
                             </div>
