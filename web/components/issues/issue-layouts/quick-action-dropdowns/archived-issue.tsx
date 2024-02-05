@@ -10,9 +10,11 @@ import { DeleteArchivedIssueModal } from "components/issues";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
+import { EUserProjectRoles } from "constants/project";
+import { useUser } from "hooks/store";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, customActionButton, portalElement } = props;
+  const { issue, handleDelete, customActionButton, portalElement, readOnly = false } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -21,6 +23,13 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const { setToastAlert } = useToast();
+
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`).then(() =>
@@ -57,16 +66,18 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
             Copy link
           </div>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() => {
-            setDeleteIssueModal(true);
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <Trash2 className="h-3 w-3" />
-            Delete issue
-          </div>
-        </CustomMenu.MenuItem>
+        {isEditingAllowed && !readOnly && (
+          <CustomMenu.MenuItem
+            onClick={() => {
+              setDeleteIssueModal(true);
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <Trash2 className="h-3 w-3" />
+              Delete issue
+            </div>
+          </CustomMenu.MenuItem>
+        )}
       </CustomMenu>
     </>
   );
