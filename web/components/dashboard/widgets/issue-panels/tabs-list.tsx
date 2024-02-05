@@ -18,10 +18,6 @@ export const TabsList: React.FC<Props> = observer((props) => {
   const tabsList = durationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
   const selectedTabIndex = tabsList.findIndex((tab) => tab.key === (selectedTab ?? "pending"));
 
-  console.log("tabsList", tabsList);
-  console.log("activeTab", selectedTab);
-  console.log("selectedTabIndex", selectedTabIndex);
-
   return (
     <Tab.List
       as="div"
@@ -30,7 +26,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
         gridTemplateColumns: `repeat(${tabsList.length}, 1fr)`,
       }}
     >
-      {/* <div
+      <div
         className={cn("absolute bg-custom-background-100 rounded transition-all duration-500 ease-in-out", {
           // right shadow
           "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== tabsList.length - 1,
@@ -42,24 +38,22 @@ export const TabsList: React.FC<Props> = observer((props) => {
           width: `${100 / tabsList.length}%`,
           transform: `translateX(${selectedTabIndex * 100}%)`,
         }}
-      /> */}
+      />
       {tabsList.map((tab) => (
         <Tab
           key={tab.key}
-          className={({ selected }) =>
-            cn(
-              "relative z-[1] font-semibold text-xs rounded py-1.5 text-custom-text-400 focus:outline-none",
-              // "transition duration-500",
-              {
-                "text-custom-text-100 bg-custom-background-100": selected,
-                "hover:text-custom-text-300": !selected,
-                // right shadow
-                "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== tabsList.length - 1,
-                // left shadow
-                "shadow-[-2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== 0,
-              }
-            )
-          }
+          className={cn(
+            "relative z-[1] font-semibold text-xs rounded py-1.5 text-custom-text-400 focus:outline-none",
+            "transition duration-500",
+            {
+              "text-custom-text-100 bg-custom-background-100": selectedTab === tab.key,
+              "hover:text-custom-text-300": selectedTab !== tab.key,
+              // // right shadow
+              // "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== tabsList.length - 1,
+              // // left shadow
+              // "shadow-[-2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== 0,
+            }
+          )}
         >
           <span className="scale-110">{tab.label}</span>
         </Tab>
