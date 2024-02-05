@@ -25,14 +25,14 @@ function update_env_files() {
     # Check if the config file exists
     if [ ! -f "$config_file" ]; then
         echo "Config file not found. Creating a new one..." >&2
-        touch "$config_file"
+        $SUDO touch "$config_file"
     fi
 
     # Check if the key already exists in the config file
     if grep -q "^$key=" "$config_file"; then
-        awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && mv "$config_file.tmp" "$config_file"
+        $SUDO awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && mv "$config_file.tmp" "$config_file"
     else
-        echo "$key=$value" >> "$config_file"
+        $SUDO echo "$key=$value" >> "$config_file"
     fi
 }
 function read_env_file() {
@@ -42,12 +42,12 @@ function read_env_file() {
     # Check if the config file exists
     if [ ! -f "$config_file" ]; then
         echo "Config file not found. Creating a new one..." >&2
-        touch "$config_file"
+        $SUDO touch "$config_file"
     fi
 
     # Check if the key already exists in the config file
     if grep -q "^$key=" "$config_file"; then
-        value=$(awk -v key="$key" -F '=' '{if ($1 == key) print $2}' "$config_file")
+        value=$($SUDO awk -v key="$key" -F '=' '{if ($1 == key) print $2}' "$config_file")
         echo "$value"
     else
         echo ""
@@ -87,14 +87,14 @@ function prepare_environment() {
     show_message "Prepare Environment..." >&2
 
     show_message "- Updating OS with required tools ✋"  >&2
-    sudo "$PACKAGE_MANAGER" update -y &> /dev/null
-    sudo "$PACKAGE_MANAGER" upgrade -y &> /dev/null
+    $SUDO "$PACKAGE_MANAGER" update -y &> /dev/null
+    $SUDO "$PACKAGE_MANAGER" upgrade -y &> /dev/null
 
     local required_tools=("curl" "awk" "wget" "nano" "dialog" "git")
 
     for tool in "${required_tools[@]}"; do
         if ! command -v $tool &> /dev/null; then
-            sudo "$PACKAGE_MANAGER" install -y $tool &> /dev/null
+            $SUDO "$PACKAGE_MANAGER" install -y $tool &> /dev/null
         fi
     done
 
@@ -103,10 +103,10 @@ function prepare_environment() {
     # Install Docker if not installed
     if ! command -v docker &> /dev/null; then
         show_message "- Installing Docker ✋"  >&2
-        sudo curl -o- https://get.docker.com | bash - 
+        $SUDO curl -o- https://get.docker.com | bash - 
 
         if [ "$EUID" -ne 0 ]; then
-            sudo dockerd-rootless-setuptool.sh install &> /dev/null
+            $SUDO dockerd-rootless-setuptool.sh install &> /dev/null
         fi
         show_message "- Docker Installed ✅" "replace_last_line"  >&2
     else
@@ -114,7 +114,7 @@ function prepare_environment() {
     fi
 
     update_config "PLANE_ARCH" "$CPU_ARCH"
-    update_config "DOCKER_VERSION" "$(sudo docker -v | awk '{print $3}' | sed 's/,//g')"
+    update_config "DOCKER_VERSION" "$($SUDO docker -v | awk '{print $3}' | sed 's/,//g')"
     update_config "PLANE_DATA_DIR" "$DATA_DIR"
     update_config "PLANE_LOG_DIR" "$LOG_DIR"
 
@@ -184,16 +184,16 @@ function build_local_image() {
     REPO=https://github.com/makeplane/plane.git
     CURR_DIR=$PWD
     PLANE_TEMP_CODE_DIR=$PLANE_INSTALL_DIR/temp
-    sudo rm -rf $PLANE_TEMP_CODE_DIR > /dev/null
+    $SUDO rm -rf $PLANE_TEMP_CODE_DIR > /dev/null
 
-    sudo git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch -q > /dev/null
+    $SUDO git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch -q > /dev/null
 
-    sudo cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
+    $SUDO cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
 
     show_message "- Plane Source Code Downloaded ✅" "replace_last_line" >&2
     
     show_message "- Building Docker Images ✋" >&2
-    sudo docker compose --env-file=$PLANE_INSTALL_DIR/.env -f $PLANE_TEMP_CODE_DIR/build.yml build --no-cache
+    $SUDO docker compose --env-file=$PLANE_INSTALL_DIR/.env -f $PLANE_TEMP_CODE_DIR/build.yml build --no-cache
 }
 function check_for_docker_images() {
     show_message "" >&2
@@ -223,18 +223,18 @@ function check_for_docker_images() {
 
         build_local_image
 
-        sudo rm -rf $PLANE_INSTALL_DIR/temp > /dev/null
+        $SUDO rm -rf $PLANE_INSTALL_DIR/temp > /dev/null
 
         show_message "- Docker Images Built ✅" "replace_last_line" >&2
-        sudo cd $CURR_DIR
+        $SUDO cd $CURR_DIR
     fi
 
-    sudo sed -i "s|- pgdata:|- $DATA_DIR/postgres:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
-    sudo sed -i "s|- redisdata:|- $DATA_DIR/redis:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
-    sudo sed -i "s|- uploads:|- $DATA_DIR/minio:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
+    $SUDO sed -i "s|- pgdata:|- $DATA_DIR/postgres:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
+    $SUDO sed -i "s|- redisdata:|- $DATA_DIR/redis:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
+    $SUDO sed -i "s|- uploads:|- $DATA_DIR/minio:|g" $PLANE_INSTALL_DIR/docker-compose.yaml
 
     show_message "Downloading Plane Images for $CPU_ARCH ✋" >&2
-    sudo docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file=$PLANE_INSTALL_DIR/.env pull
+    $SUDO docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file=$PLANE_INSTALL_DIR/.env pull
     show_message "Plane Images Downloaded ✅" "replace_last_line" >&2
 }
 function configure_plane() {
@@ -569,8 +569,8 @@ function uninstall() {
                 CONFIRM_DOCKER_PURGE=$(dialog --title "Uninstall Docker" --yesno "Are you sure you want to uninstall docker ?" 8 60 3>&1 1>&2 2>&3)
                 if [ $? -eq 0 ]; then
                     show_message "- Uninstalling Docker ✋"
-                    sudo "$PACKAGE_MANAGER" purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
-                    sudo "$PACKAGE_MANAGER" autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
+                    $SUDO "$PACKAGE_MANAGER" purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
+                    $SUDO "$PACKAGE_MANAGER" autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
                     show_message "- Docker Uninstalled ✅" "replace_last_line" >&2
                 fi
             fi
@@ -613,11 +613,11 @@ function start_server() {
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
         show_message "Starting Plane Server ✋"
-        sudo docker compose -f $docker_compose_file --env-file=$env_file up -d
+        $SUDO docker compose -f $docker_compose_file --env-file=$env_file up -d
 
         # Wait for containers to be running
         echo "Waiting for containers to start..."
-        while ! sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
+        while ! $SUDO docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
             sleep 1
         done
         show_message "Plane Server Started ✅" "replace_last_line" >&2
@@ -631,7 +631,7 @@ function stop_server() {
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
         show_message "Stopping Plane Server ✋"
-        sudo docker compose -f $docker_compose_file --env-file=$env_file down
+        $SUDO docker compose -f $docker_compose_file --env-file=$env_file down
         show_message "Plane Server Stopped ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
@@ -643,7 +643,7 @@ function restart_server() {
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
         show_message "Restarting Plane Server ✋"
-        sudo docker compose -f $docker_compose_file --env-file=$env_file restart
+        $SUDO docker compose -f $docker_compose_file --env-file=$env_file restart
         show_message "Plane Server Restarted ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
@@ -708,6 +708,13 @@ elif command -v yum &> /dev/null; then
     PACKAGE_MANAGER="yum"
 elif command -v apk &> /dev/null; then
     PACKAGE_MANAGER="apk"
+fi
+
+# Check if the user has $SUDO access
+if [ "$(sudo -n true 2>&1)" != "" ]; then
+    SUDO="sudo"
+else
+    SUDO=""
 fi
 
 
