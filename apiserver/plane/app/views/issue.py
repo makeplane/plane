@@ -1028,7 +1028,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
             serializer.save(
                 workspace=workspace,
                 project_id=project_id,
-                entity_type="issue_attachment",
                 entity_identifier=issue_id,
             )
             issue_activity.delay(
