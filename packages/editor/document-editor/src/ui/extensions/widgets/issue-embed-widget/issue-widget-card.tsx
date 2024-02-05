@@ -41,9 +41,13 @@ export const IssueWidgetCard = (props) => {
             </div>
             <div>
               <AvatarGroup size="sm">
-                {issueDetails.assignee_details.map((assignee) => (
-                  <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} className={"m-0"} />
-                ))}
+                {issueDetails.assignee_details.map((assignee, index) => {
+                  if (assignee) {
+                    return (
+                      <Avatar key={index} name={assignee?.display_name} src={assignee?.avatar} className={"m-0"} />
+                    );
+                  }
+                })}
               </AvatarGroup>
             </div>
             {issueDetails.target_date && (
