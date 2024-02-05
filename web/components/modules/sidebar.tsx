@@ -168,18 +168,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     if (!watch("target_date") || watch("target_date") === "") endDateButtonRef.current?.click();
 
     if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create module in past date. Please enter a valid date.",
-        });
-        reset({
-          ...moduleDetails,
-        });
-        return;
-      }
-
       submitChanges({
         start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
         target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
@@ -198,18 +186,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     if (!watch("start_date") || watch("start_date") === "") endDateButtonRef.current?.click();
 
     if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create module in past date. Please enter a valid date.",
-        });
-        reset({
-          ...moduleDetails,
-        });
-        return;
-      }
-
       submitChanges({
         start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
         target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
