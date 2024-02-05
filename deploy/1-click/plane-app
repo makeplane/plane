@@ -55,19 +55,19 @@ function read_env_file() {
 }
 function update_config() {
     config_file="$PLANE_INSTALL_DIR/config.env"
-    update_env_files "$config_file" "$1" "$2"
+    update_env_files $config_file $1 $2
 }
 function read_config() {
     config_file="$PLANE_INSTALL_DIR/config.env"
-    read_env_file "$config_file" "$1"
+    read_env_file $config_file $1
 }
 function update_env() {
     config_file="$PLANE_INSTALL_DIR/.env"
-    update_env_files "$config_file" "$1" "$2"
+    update_env_files $config_file $1 $2
 }
 function read_env() {
     config_file="$PLANE_INSTALL_DIR/.env"
-    read_env_file "$config_file" "$1"
+    read_env_file $config_file $1
 }
 function show_message() {
     print_header
