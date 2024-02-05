@@ -26,9 +26,10 @@ export type TViewStore = TView & {
   appliedFilters: TViewFilterProps | undefined;
   appliedFiltersQueryParams: string | undefined;
   // helper actions
-  updateFilters: (filters: Partial<TViewFilters>) => void;
-  updateDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
-  updateDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) => void;
+  setName: (name: string) => void;
+  setFilters: (filters: Partial<TViewFilters>) => void;
+  setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
+  setDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) => void;
   resetFilterChanges: () => void;
   saveFilterChanges: () => void;
   // actions
@@ -46,19 +47,22 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   name: string | undefined;
   description: string | undefined;
   query: string | undefined;
-  filters: TViewFilters | undefined;
-  display_filters: TViewDisplayFilters | undefined;
-  display_properties: TViewDisplayProperties | undefined;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
   access: TViewAccess | undefined;
   owned_by: string | undefined;
   sort_order: number | undefined;
-  is_locked: boolean | undefined;
-  is_pinned: boolean | undefined;
-  is_favorite: boolean | undefined;
+  is_locked: boolean = false;
+  is_pinned: boolean = false;
+  is_favorite: boolean = false;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
   updated_at: Date | undefined;
+  // local variables
+  is_local_view: boolean = false;
+  is_create: boolean = false;
 
   loader: TLoader = undefined;
   filtersToUpdate: TViewFilterPartialProps = {
@@ -75,11 +79,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.name = _view.name;
     this.description = _view.description;
     this.query = _view.query;
-    this.filters = _view.filters ? this.computedFilters(_view.filters) : undefined;
-    this.display_filters = _view.display_filters ? this.computedDisplayFilters(_view.display_filters) : undefined;
-    this.display_properties = _view.display_properties
-      ? this.computedDisplayProperties(_view.display_properties)
-      : undefined;
+    this.filters = this.computedFilters(_view.filters);
+    this.display_filters = this.computedDisplayFilters(_view.display_filters);
+    this.display_properties = this.computedDisplayProperties(_view.display_properties);
     this.access = _view.access;
     this.owned_by = _view.owned_by;
     this.sort_order = _view.sort_order;
@@ -90,18 +92,42 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.updated_by = _view.updated_by;
     this.created_at = _view.created_at;
     this.updated_at = _view.updated_at;
+    this.is_local_view = _view.is_local_view;
+    this.is_create = _view.is_create;
 
     makeObservable(this, {
       // observables
-      loader: observable,
-      filtersToUpdate: observable.ref,
+      id: observable.ref,
+      workspace: observable.ref,
+      project: observable.ref,
+      name: observable.ref,
+      description: observable.ref,
+      query: observable.ref,
+      filters: observable,
+      display_filters: observable,
+      display_properties: observable,
+      access: observable.ref,
+      owned_by: observable.ref,
+      sort_order: observable.ref,
+      is_locked: observable.ref,
+      is_pinned: observable.ref,
+      is_favorite: observable.ref,
+      created_by: observable.ref,
+      updated_by: observable.ref,
+      created_at: observable.ref,
+      updated_at: observable.ref,
+      is_local_view: observable.ref,
+      is_create: observable.ref,
+      loader: observable.ref,
+      filtersToUpdate: observable,
       // computed
       appliedFilters: computed,
       appliedFiltersQueryParams: computed,
       // helper actions
-      updateFilters: action,
-      updateDisplayFilters: action,
-      updateDisplayProperties: action,
+      setName: action,
+      setFilters: action,
+      setDisplayFilters: action,
+      setDisplayProperties: action,
       resetFilterChanges: action,
       saveFilterChanges: action,
       // actions
@@ -114,13 +140,12 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   // computed
   get appliedFilters() {
     return {
-      filters: this.filters ? this.computedFilters(this.filters, this.filtersToUpdate.filters) : undefined,
-      display_filters: this.display_filters
-        ? this.computedDisplayFilters(this.display_filters, this.filtersToUpdate.display_filters)
-        : undefined,
-      display_properties: this.display_properties
-        ? this.computedDisplayProperties(this.display_properties, this.filtersToUpdate.display_properties)
-        : undefined,
+      filters: this.computedFilters(this.filters, this.filtersToUpdate.filters),
+      display_filters: this.computedDisplayFilters(this.display_filters, this.filtersToUpdate.display_filters),
+      display_properties: this.computedDisplayProperties(
+        this.display_properties,
+        this.filtersToUpdate.display_properties
+      ),
     };
   }
 
@@ -131,14 +156,23 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   }
 
   // helper actions
-  updateFilters = (filters: Partial<TViewFilters>) => {
+  setName = (name: string) => {
     runInAction(() => {
-      this.loader = "submit";
-      this.filtersToUpdate.filters = filters;
+      this.name = name;
     });
   };
 
-  updateDisplayFilters = async (display_filters: Partial<TViewDisplayFilters>) => {
+  setFilters = (filters: Partial<TViewFilters>) => {
+    runInAction(() => {
+      this.loader = "submit";
+      Object.keys(filters).forEach((key) => {
+        const _key = key as keyof TViewFilters;
+        set(this.filtersToUpdate, ["filters", _key], filters[_key]);
+      });
+    });
+  };
+
+  setDisplayFilters = async (display_filters: Partial<TViewDisplayFilters>) => {
     const appliedFilters = this.appliedFilters;
 
     const layout = appliedFilters?.display_filters?.layout;
@@ -146,7 +180,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     const group_by = appliedFilters?.display_filters?.group_by;
     const sub_issue = appliedFilters?.display_filters?.sub_issue;
 
-    if (group_by === undefined) display_filters.sub_group_by = undefined;
+    if (group_by === undefined && display_filters.sub_group_by) display_filters.sub_group_by = undefined;
     if (layout === "kanban") {
       if (sub_group_by === group_by) display_filters.group_by = undefined;
       if (group_by === null) display_filters.group_by = "state";
@@ -155,14 +189,22 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
     runInAction(() => {
       this.loader = "submit";
-      this.filtersToUpdate.display_filters = display_filters;
+      Object.keys(display_filters).forEach((key) => {
+        const _key = key as keyof TViewDisplayFilters;
+        set(this.filtersToUpdate, ["display_filters", _key], display_filters[_key]);
+      });
     });
+
+    console.log("this.filtersToUpdate", this.filtersToUpdate?.display_filters?.layout);
   };
 
-  updateDisplayProperties = async (display_properties: Partial<TViewDisplayProperties>) => {
+  setDisplayProperties = async (display_properties: Partial<TViewDisplayProperties>) => {
     runInAction(() => {
       this.loader = "submit";
-      this.filtersToUpdate.display_properties = display_properties;
+      Object.keys(display_properties).forEach((key) => {
+        const _key = key as keyof TViewDisplayProperties;
+        set(this.filtersToUpdate, ["display_properties", _key], display_properties[_key]);
+      });
     });
   };
 

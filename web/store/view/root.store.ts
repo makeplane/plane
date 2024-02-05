@@ -1,5 +1,4 @@
 // services
-
 import {
   WorkspaceViewService,
   WorkspaceMeViewService,
@@ -21,7 +20,6 @@ export class GlobalViewRootStore {
   // views root
   workspaceViewMeStore: ViewRootStore;
   workspaceViewStore: ViewRootStore;
-  workspaceViewProjectStore: ViewRootStore;
   projectViewStore: ViewRootStore;
   projectViewMeStore: ViewRootStore;
 
@@ -32,10 +30,41 @@ export class GlobalViewRootStore {
   cycleUserViewStore?: userViewRootStore;
 
   constructor(private store: RootStore) {
-    // views root
+    const defaultViews: any[] = [
+      {
+        id: "all-issues",
+        name: "All Issues",
+        filters: {},
+        is_local_view: true,
+      },
+      {
+        id: "assigned",
+        name: "Assigned",
+        filters: {
+          assignees: store.user?.currentUser?.id ? [store.user?.currentUser?.id] : [],
+        },
+        is_local_view: true,
+      },
+      {
+        id: "created",
+        name: "Created",
+        filters: {
+          created_by: store.user?.currentUser?.id ? [store.user?.currentUser?.id] : [],
+        },
+        is_local_view: true,
+      },
+      {
+        id: "subscribed",
+        name: "Subscribed",
+        filters: {
+          subscriber: store.user?.currentUser?.id ? [store.user?.currentUser?.id] : [],
+        },
+        is_local_view: true,
+      },
+    ];
+
     this.workspaceViewMeStore = new ViewRootStore(this.store, new WorkspaceMeViewService());
-    this.workspaceViewStore = new ViewRootStore(this.store, new WorkspaceViewService());
-    this.workspaceViewProjectStore = new ViewRootStore(this.store, new WorkspaceMeViewService());
+    this.workspaceViewStore = new ViewRootStore(this.store, new WorkspaceViewService(), defaultViews);
     this.projectViewStore = new ViewRootStore(this.store, new ProjectViewService());
     this.projectViewMeStore = new ViewRootStore(this.store, new ProjectViewMeService());
 

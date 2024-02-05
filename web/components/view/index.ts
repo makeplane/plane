@@ -1,9 +1,13 @@
-export * from "./root";
+export * from "./all-issues-root";
 
 // views
 export * from "./views/root";
+export * from "./views/view-item";
 export * from "./views/create-edit";
 export * from "./views/create-edit-form";
+
+// layouts
+export * from "./layout";
 
 // view filters
 export * from "./filters/root";

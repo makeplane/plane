@@ -1,23 +1,40 @@
 import { FC, Fragment } from "react";
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2, Plus, X } from "lucide-react";
+// hooks
+import { useViewDetail } from "hooks/store";
+// components
+import { ViewAppliedFiltersRoot } from "../";
 // ui
 import { Input, Button } from "@plane/ui";
 // types
+import { TView, TViewTypes } from "@plane/types";
 import { TViewOperations } from "../types";
 
 type TViewCreateEditForm = {
+  workspaceSlug: string;
+  projectId: string | undefined;
+  viewId: string;
+  viewType: TViewTypes;
+  viewOperations: TViewOperations;
   modalToggle: boolean;
-
   handleModalClose: () => void;
-  viewOperations?: TViewOperations;
+  onSubmit: (viewData: Partial<TView>) => void;
 };
 
-export const ViewCreateEditForm: FC<TViewCreateEditForm> = (props) => {
-  const { modalToggle, handleModalClose, viewOperations } = props;
+export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations, modalToggle, handleModalClose, onSubmit } = props;
+  // hooks
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
-  const createView = () => {
-    viewOperations?.create({ name: "create" });
+  const onContinue = async () => {
+    const payload: Partial<TView> = {
+      id: viewDetailStore?.id,
+      name: viewDetailStore?.name,
+      filters: viewDetailStore?.filters,
+    };
+    onSubmit(payload);
   };
 
   return (
@@ -48,23 +65,24 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = (props) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem] py-5 border-[0.1px] border-custom-border-100">
                 <div className="p-3 px-5 relative flex items-center gap-2">
-                  <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
+                  {/* <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
                     <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
                       <Trash2 className="w-3.5 h-3.5" />
                     </div>
                     <div className="text-xs uppercase">Project Identifier</div>
-                  </div>
-                  <div className="">Create|Edit View</div>
+                  </div> */}
+                  <div className="">Create View</div>
                 </div>
 
                 <div className="p-3 px-5">
                   <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    // value={value}
-                    // onChange={onChange}
-                    // hasError={Boolean(errors.email)}
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={viewDetailStore?.name || ""}
+                    onChange={(e) => {
+                      viewDetailStore?.setName(e.target.value);
+                    }}
                     placeholder="What do you want to call this view?"
                     className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                     autoFocus
@@ -86,13 +104,23 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = (props) => {
                   </div>
                 </div>
 
-                <div className="p-3 px-5 relative bg-custom-background-80">Applied Filters with each dropdown</div>
+                <div className="p-3 px-5 relative bg-custom-background-80">
+                  <ViewAppliedFiltersRoot
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    viewId={viewId}
+                    viewType={viewType}
+                    viewOperations={viewOperations}
+                  />
+                </div>
 
                 <div className="p-3 px-5 relative flex justify-end items-center gap-2">
                   <Button variant="neutral-primary" onClick={handleModalClose}>
                     Cancel
                   </Button>
-                  <Button variant="primary">Create View</Button>
+                  <Button variant="primary" onClick={onContinue}>
+                    Create View
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -101,4 +129,4 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

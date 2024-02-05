@@ -1,4 +1,4 @@
-import { FC,  } from "react";
+import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 // components
 import { IssuePeekOverview } from "components/issues";

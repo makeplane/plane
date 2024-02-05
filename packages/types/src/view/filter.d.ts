@@ -5,10 +5,53 @@ export type TViewLayouts =
   | "spreadsheet"
   | "gantt";
 
+export type TViewDisplayFiltersGrouped =
+  | "project"
+  | "state_detail.group"
+  | "state"
+  | "priority"
+  | "labels"
+  | "created_by"
+  | "assignees"
+  | "mentions"
+  | "modules"
+  | "cycles";
+
+export type TViewDisplayFiltersOrderBy =
+  | "sort_order"
+  | "created_at"
+  | "-created_at"
+  | "updated_at"
+  | "-updated_at"
+  | "start_date"
+  | "-start_date"
+  | "target_date"
+  | "-target_date"
+  | "state__name"
+  | "-state__name"
+  | "priority"
+  | "-priority"
+  | "labels__name"
+  | "-labels__name"
+  | "assignees__first_name"
+  | "-assignees__first_name"
+  | "estimate_point"
+  | "-estimate_point"
+  | "link_count"
+  | "-link_count"
+  | "attachment_count"
+  | "-attachment_count"
+  | "sub_issues_count"
+  | "-sub_issues_count";
+
+export type TViewDisplayFiltersType = "active" | "backlog";
+
 export type TViewCalendarLayouts = "month" | "week";
 
 export type TViewFilters = {
   project: string[];
+  module: string[];
+  cycle: string[];
   priority: string[];
   state: string[];
   state_group: string[];
@@ -23,10 +66,10 @@ export type TViewFilters = {
 
 export type TViewDisplayFilters = {
   layout: TViewLayouts;
-  group_by: string | undefined;
-  sub_group_by: string | undefined;
-  order_by: string;
-  type: string | undefined;
+  group_by: TViewDisplayFiltersGrouped | undefined;
+  sub_group_by: TViewDisplayFiltersGrouped | undefined;
+  order_by: TViewDisplayFiltersOrderBy | string;
+  type: TViewDisplayFiltersType | undefined;
   sub_issue: boolean;
   show_empty_groups: boolean;
   calendar: {
@@ -52,19 +95,21 @@ export type TViewDisplayProperties = {
 };
 
 export type TViewFilterProps = {
-  filters: TViewFilters | undefined;
-  display_filters: TViewDisplayFilters | undefined;
-  display_properties: TViewDisplayProperties | undefined;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
 };
 
 export type TViewFilterPartialProps = {
-  filters: Partial<TViewFilters> | undefined;
-  display_filters: Partial<TViewDisplayFilters> | undefined;
-  display_properties: Partial<TViewDisplayProperties> | undefined;
+  filters: Partial<TViewFilters>;
+  display_filters: Partial<TViewDisplayFilters>;
+  display_properties: Partial<TViewDisplayProperties>;
 };
 
 export type TViewFilterQueryParams =
   | "project"
+  | "module"
+  | "cycle"
   | "priority"
   | "state"
   | "state_group"

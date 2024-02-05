@@ -1,7 +1,6 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
 // stores
-import { RootStore } from "store/root.store";
 import { UserViewStore } from "./view.store";
 // types
 import { TUserViewService } from "services/view/types";

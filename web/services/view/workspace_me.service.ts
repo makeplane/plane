@@ -11,7 +11,7 @@ export class WorkspaceMeViewService extends APIService implements TViewService {
   }
 
   async fetch(workspaceSlug: string): Promise<TView[]> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/views/?type=workspace`)
+    return this.get(`/api/users/me/workspaces/${workspaceSlug}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

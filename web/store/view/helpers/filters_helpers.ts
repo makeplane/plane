@@ -11,17 +11,19 @@ import {
 export class FiltersHelper {
   // computed filters
   computedFilters = (filters: TViewFilters, defaultValues?: Partial<TViewFilters>): TViewFilters => ({
-    project: filters?.project || defaultValues?.project || [],
-    priority: filters?.priority || defaultValues?.priority || [],
-    state: filters?.state || defaultValues?.state || [],
-    state_group: filters?.state_group || defaultValues?.state_group || [],
-    assignees: filters?.assignees || defaultValues?.assignees || [],
-    mentions: filters?.mentions || defaultValues?.mentions || [],
-    subscriber: filters?.subscriber || defaultValues?.subscriber || [],
-    created_by: filters?.created_by || defaultValues?.created_by || [],
-    labels: filters?.labels || defaultValues?.labels || [],
-    start_date: filters?.start_date || defaultValues?.start_date || [],
-    target_date: filters?.target_date || defaultValues?.target_date || [],
+    project: defaultValues?.project || filters?.project || [],
+    module: defaultValues?.module || filters?.module || [],
+    cycle: defaultValues?.cycle || filters?.cycle || [],
+    priority: defaultValues?.priority || filters?.priority || [],
+    state: defaultValues?.state || filters?.state || [],
+    state_group: defaultValues?.state_group || filters?.state_group || [],
+    assignees: defaultValues?.assignees || filters?.assignees || [],
+    mentions: defaultValues?.mentions || filters?.mentions || [],
+    subscriber: defaultValues?.subscriber || filters?.subscriber || [],
+    created_by: defaultValues?.created_by || filters?.created_by || [],
+    labels: defaultValues?.labels || filters?.labels || [],
+    start_date: defaultValues?.start_date || filters?.start_date || [],
+    target_date: defaultValues?.target_date || filters?.target_date || [],
   });
 
   // computed display filters
@@ -29,16 +31,16 @@ export class FiltersHelper {
     displayFilters: TViewDisplayFilters,
     defaultValues?: Partial<TViewDisplayFilters>
   ): TViewDisplayFilters => ({
-    layout: displayFilters?.layout || defaultValues?.layout || "list",
-    group_by: displayFilters?.group_by || defaultValues?.group_by || "none",
-    sub_group_by: displayFilters?.sub_group_by || defaultValues?.sub_group_by || undefined,
-    order_by: displayFilters?.order_by || defaultValues?.order_by || "sort_order",
-    type: displayFilters?.type || defaultValues?.type || undefined,
-    sub_issue: displayFilters?.sub_issue || defaultValues?.sub_issue || false,
-    show_empty_groups: displayFilters?.show_empty_groups || defaultValues?.show_empty_groups || false,
+    layout: defaultValues?.layout || displayFilters?.layout || "list",
+    group_by: defaultValues?.group_by || displayFilters?.group_by || undefined,
+    sub_group_by: defaultValues?.sub_group_by || displayFilters?.sub_group_by || undefined,
+    order_by: defaultValues?.order_by || displayFilters?.order_by || "sort_order",
+    type: defaultValues?.type || displayFilters?.type || undefined,
+    sub_issue: defaultValues?.sub_issue || displayFilters?.sub_issue || false,
+    show_empty_groups: defaultValues?.show_empty_groups || displayFilters?.show_empty_groups || false,
     calendar: {
-      show_weekends: displayFilters?.calendar?.show_weekends || defaultValues?.calendar?.show_weekends || false,
-      layout: displayFilters?.calendar?.layout || defaultValues?.calendar?.layout || "month",
+      show_weekends: defaultValues?.calendar?.show_weekends || displayFilters?.calendar?.show_weekends || false,
+      layout: defaultValues?.calendar?.layout || displayFilters?.calendar?.layout || "month",
     },
   });
 
@@ -47,19 +49,19 @@ export class FiltersHelper {
     displayProperties: TViewDisplayProperties,
     defaultValues?: Partial<TViewDisplayProperties>
   ): TViewDisplayProperties => ({
-    assignee: displayProperties?.assignee || defaultValues?.assignee || true,
-    start_date: displayProperties?.start_date || defaultValues?.start_date || true,
-    due_date: displayProperties?.due_date || defaultValues?.due_date || true,
-    labels: displayProperties?.labels || defaultValues?.labels || true,
-    priority: displayProperties?.priority || defaultValues?.priority || true,
-    state: displayProperties?.state || defaultValues?.state || true,
-    sub_issue_count: displayProperties?.sub_issue_count || defaultValues?.sub_issue_count || true,
-    attachment_count: displayProperties?.attachment_count || defaultValues?.attachment_count || true,
-    link: displayProperties?.link || defaultValues?.link || true,
-    estimate: displayProperties?.estimate || defaultValues?.estimate || true,
-    key: displayProperties?.key || defaultValues?.key || true,
-    created_on: displayProperties?.created_on || defaultValues?.created_on || true,
-    updated_on: displayProperties?.updated_on || defaultValues?.updated_on || true,
+    assignee: defaultValues?.assignee || displayProperties?.assignee || true,
+    start_date: defaultValues?.start_date || displayProperties?.start_date || true,
+    due_date: defaultValues?.due_date || displayProperties?.due_date || true,
+    labels: defaultValues?.labels || displayProperties?.labels || true,
+    priority: defaultValues?.priority || displayProperties?.priority || true,
+    state: defaultValues?.state || displayProperties?.state || true,
+    sub_issue_count: defaultValues?.sub_issue_count || displayProperties?.sub_issue_count || true,
+    attachment_count: defaultValues?.attachment_count || displayProperties?.attachment_count || true,
+    link: defaultValues?.link || displayProperties?.link || true,
+    estimate: defaultValues?.estimate || displayProperties?.estimate || true,
+    key: defaultValues?.key || displayProperties?.key || true,
+    created_on: defaultValues?.created_on || displayProperties?.created_on || true,
+    updated_on: defaultValues?.updated_on || displayProperties?.updated_on || true,
   });
 
   // compute filters and display_filters issue query parameters

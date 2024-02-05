@@ -7,7 +7,6 @@ import {
 export type TViewTypes =
   | "WORKSPACE_YOUR_VIEWS"
   | "WORKSPACE_VIEWS"
-  | "WORKSPACE_PROJECT_VIEWS"
   | "PROJECT_VIEWS"
   | "PROJECT_YOUR_VIEWS";
 
@@ -29,17 +28,20 @@ export type TView = {
   name: string | undefined;
   description: string | undefined;
   query: string | undefined;
-  filters: TViewFilters | undefined;
-  display_filters: TViewDisplayFilters | undefined;
-  display_properties: TViewDisplayProperties | undefined;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
   access: TViewAccess | undefined;
   owned_by: string | undefined;
   sort_order: number | undefined;
-  is_locked: boolean | undefined;
-  is_pinned: boolean | undefined;
-  is_favorite: boolean | undefined;
+  is_locked: boolean;
+  is_pinned: boolean;
+  is_favorite: boolean;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
   updated_at: Date | undefined;
+  // local view variables
+  is_local_view: boolean;
+  is_create: boolean;
 };
