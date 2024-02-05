@@ -46,6 +46,7 @@ export interface IBaseKanBanLayout {
   storeType?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  isCompletedCycle?: boolean;
 }
 
 type KanbanDragState = {
@@ -65,6 +66,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     storeType,
     addIssuesToView,
     canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
   } = props;
   // router
   const router = useRouter();
@@ -276,7 +278,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               quickAddCallback={issues?.quickAddIssue}
               viewId={viewId}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
               canEditProperties={canEditProperties}
               storeType={storeType}
               addIssuesToView={addIssuesToView}
