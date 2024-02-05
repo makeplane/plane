@@ -35,7 +35,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const { postHogEventTracker } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const { currentUser, currentUserLoader, updateCurrentUser, updateUserOnBoard } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
@@ -79,7 +79,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateUserOnBoard()
       .then(() => {
-        postHogEventTracker("User onboarding completed", {
+        captureEvent("User onboarding completed", {
           user_role: user.role,
           email: user.email,
           user_id: user.id,

@@ -40,7 +40,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   // store hooks
-  const { postHogEventTracker } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const { currentUser, currentUserSettings } = useUser();
   // router
   const router = useRouter();
@@ -82,7 +82,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        postHogEventTracker("Member accepted", {
+        captureEvent("Member accepted", {
           ...res,
           state: "SUCCESS",
           accepted_from: "App",

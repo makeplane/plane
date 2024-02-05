@@ -36,7 +36,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { postHogEventTracker, setTrackElement } = useEventTracker();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
@@ -86,7 +86,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "State created successfully.",
         });
-        postHogEventTracker("State created", {
+        captureEvent("State created", {
           ...res,
           state: "SUCCESS",
         });
@@ -104,7 +104,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be created. Please try again.",
           });
-        postHogEventTracker("State created", {
+        captureEvent("State created", {
           state: "FAILED",
         });
       });
@@ -116,7 +116,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
     await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
         handleClose();
-        postHogEventTracker("State updated", {
+        captureEvent("State updated", {
           ...res,
           state: "SUCCESS",
         });
@@ -139,7 +139,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be updated. Please try again.",
           });
-        postHogEventTracker("State updated", {
+        captureEvent("State updated", {
           state: "FAILED",
         });
       });

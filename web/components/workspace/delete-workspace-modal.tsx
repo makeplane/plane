@@ -28,7 +28,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { postHogEventTracker } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
   // toast alert
   const { setToastAlert } = useToast();
@@ -59,7 +59,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
         router.push("/");
-        postHogEventTracker("Workspace deleted", {
+        captureEvent("Workspace deleted", {
           res,
           state: "SUCCESS",
         });
@@ -75,7 +75,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });
-        postHogEventTracker("Workspace deleted", {
+        captureEvent("Workspace deleted", {
           state: "FAILED",
         });
       });

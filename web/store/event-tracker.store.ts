@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
 // stores
 import { RootStore } from "./root.store";
@@ -19,7 +19,7 @@ export interface IEventTrackerStore {
   getRequiredPayload: any;
   // actions
   setTrackElement: (element: string) => void;
-  postHogEventTracker: (eventName: string, payload: object | [] | null, group?: EventGroupProps) => void;
+  captureEvent: (eventName: string, payload: object | [] | null, group?: EventGroupProps) => void;
   captureProjectEvent: (props: EventProps) => void;
   captureCycleEvent: (props: EventProps) => void;
   captureModuleEvent: (props: EventProps) => void;
@@ -37,7 +37,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       getRequiredPayload: computed,
       // actions
       setTrackElement: action,
-      postHogEventTracker: action,
+      captureEvent: action,
       captureProjectEvent: action,
       captureCycleEvent: action,
     });
@@ -46,7 +46,7 @@ export class EventTrackerStore implements IEventTrackerStore {
   }
 
   /**
-   * @description: Returs the neccessary property for the event tracking
+   * @description: Returns the necessary property for the event tracking
    */
   get getRequiredPayload() {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
@@ -74,15 +74,11 @@ export class EventTrackerStore implements IEventTrackerStore {
     }
   };
 
-  postHogEventTracker = (eventName: string, payload: object | [] | null) => {
-    try {
-      posthog?.capture(eventName, {
-        ...payload,
-        element: this.trackElement ?? "",
-      });
-    } catch (error) {
-      throw error;
-    }
+  captureEvent = (eventName: string, payload: object | [] | null) => {
+    posthog?.capture(eventName, {
+      ...payload,
+      element: this.trackElement ?? "",
+    });
   };
 
   /**
@@ -148,7 +144,7 @@ export class EventTrackerStore implements IEventTrackerStore {
     if (group) {
       this.postHogGroup(group);
     }
-    let eventPayload: any = {
+    const eventPayload: any = {
       ...getIssueEventPayload(props),
       ...this.getRequiredPayload,
       state_group: this.rootStore.state.getStateById(payload.state_id)?.group ?? "",

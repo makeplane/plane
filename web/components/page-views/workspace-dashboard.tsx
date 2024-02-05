@@ -18,7 +18,7 @@ export const WorkspaceDashboardView = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { postHogEventTracker, setTrackElement } = useEventTracker();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateProjectModal },
     router: { workspaceSlug },
@@ -37,7 +37,7 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        postHogEventTracker("User tour complete", {
+        captureEvent("User tour complete", {
           user_id: currentUser?.id,
           email: currentUser?.email,
           state: "SUCCESS",
@@ -62,7 +62,7 @@ export const WorkspaceDashboardView = observer(() => {
       {homeDashboardId && joinedProjectIds ? (
         <>
           {joinedProjectIds.length > 0 ? (
-            <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
+            <div className="flex h-full w-full flex-col space-y-7 overflow-y-auto bg-custom-background-90 p-7">
               <IssuePeekOverview />
               {currentUser && <UserGreetingsView user={currentUser} />}
               {currentUser && !currentUser.is_tour_completed && (
@@ -96,7 +96,7 @@ export const WorkspaceDashboardView = observer(() => {
           )}
         </>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <Spinner />
         </div>
       )}

@@ -51,7 +51,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { setTrackElement, postHogEventTracker } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -92,7 +92,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
               setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
-              postHogEventTracker(`Toggle ${feature.title.toLowerCase()}`, {
+              captureEvent(`Toggle ${feature.title.toLowerCase()}`, {
                 workspace_id: currentWorkspace?.id,
                 workspace_slug: currentWorkspace?.slug,
                 project_id: currentProjectDetails?.id,

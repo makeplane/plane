@@ -27,7 +27,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { postHogEventTracker, setTrackElement } = useEventTracker();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -43,7 +43,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
       .then(() => {
         setInviteModal(false);
-        postHogEventTracker("Member invited", { state: "SUCCESS" });
+        captureEvent("Member invited", { state: "SUCCESS" });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -51,7 +51,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         });
       })
       .catch((err) => {
-        postHogEventTracker("Member invited", { state: "FAILED" });
+        captureEvent("Member invited", { state: "FAILED" });
         setToastAlert({
           type: "error",
           title: "Error!",

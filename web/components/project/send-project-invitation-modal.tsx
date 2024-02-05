@@ -45,7 +45,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const { postHogEventTracker } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -87,7 +87,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: "success",
           message: "Members added successfully.",
         });
-        postHogEventTracker(
+        captureEvent(
           "Member added",
           {
             ...res,
@@ -102,7 +102,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker(
+        captureEvent(
           "Member added",
           {
             state: "FAILED",

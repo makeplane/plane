@@ -5,58 +5,54 @@ export type IssueEventProps = {
   group?: EventGroupProps;
   path?: string;
 };
+
 export type EventProps = {
   eventName: string;
   payload: any;
   group?: EventGroupProps;
 };
+
 export type EventGroupProps = {
   isGrouping?: boolean;
   groupType?: string;
   groupId?: string;
 };
 
-export const getProjectEventPayload = (payload: any) => {
-  return {
-    workspace_id: payload.workspace_id,
-    project_id: payload.id,
-    identifier: payload.identifier,
-    created_at: payload.created_at,
-    updated_at: payload.updated_at,
-    state: payload.state,
-    element: payload.element,
-  };
-};
+export const getProjectEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.id,
+  identifier: payload.identifier,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  state: payload.state,
+  element: payload.element,
+});
 
-export const getCycleEventPayload = (payload: any) => {
-  return {
-    workspace_id: payload.workspace_id,
-    project_id: payload.id,
-    cycle_id: payload.id,
-    created_at: payload.created_at,
-    updated_at: payload.updated_at,
-    start_date: payload.start_date,
-    target_date: payload.target_date,
-    cycle_status: payload.status,
-    state: payload.state,
-    element: payload.element,
-  };
-};
+export const getCycleEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.id,
+  cycle_id: payload.id,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  start_date: payload.start_date,
+  target_date: payload.target_date,
+  cycle_status: payload.status,
+  state: payload.state,
+  element: payload.element,
+});
 
-export const getModuleEventPayload = (payload: any) => {
-  return {
-    workspace_id: payload.workspace_id,
-    project_id: payload.id,
-    module_id: payload.id,
-    created_at: payload.created_at,
-    updated_at: payload.updated_at,
-    start_date: payload.start_date,
-    target_date: payload.target_date,
-    module_status: payload.status,
-    state: payload.state,
-    element: payload.element,
-  };
-};
+export const getModuleEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.id,
+  module_id: payload.id,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  start_date: payload.start_date,
+  target_date: payload.target_date,
+  module_status: payload.status,
+  state: payload.state,
+  element: payload.element,
+});
 
 export const getIssueEventPayload = (props: IssueEventProps) => {
   const { eventName, payload, updates, path } = props;

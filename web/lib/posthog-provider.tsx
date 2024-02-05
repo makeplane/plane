@@ -1,7 +1,7 @@
 import { FC, ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
-import { PostHogProvider } from "posthog-js/react";
+import { PostHogProvider as PHProvider } from "posthog-js/react";
 // mobx store provider
 import { IUser } from "@plane/types";
 // helpers
@@ -16,7 +16,7 @@ export interface IPosthogWrapper {
   posthogHost: string | null;
 }
 
-const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
+const PostHogProvider: FC<IPosthogWrapper> = (props) => {
   const { children, user, workspaceRole, projectRole, posthogAPIKey, posthogHost } = props;
   // router
   const router = useRouter();
@@ -39,10 +39,6 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
     if (posthogAPIKey && posthogHost) {
       posthog.init(posthogAPIKey, {
         api_host: posthogHost || "https://app.posthog.com",
-        // Enable debug mode in development
-        // loaded: (posthog) => {
-        //   if (process.env.NODE_ENV === "development") posthog.debug();
-        // },
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
@@ -63,9 +59,9 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
   }, []);
 
   if (posthogAPIKey) {
-    return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
+    return <PHProvider client={posthog}>{children}</PHProvider>;
   }
   return <>{children}</>;
 };
 
-export default PosthogWrapper;
+export default PostHogProvider;

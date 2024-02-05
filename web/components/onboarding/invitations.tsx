@@ -29,7 +29,7 @@ export const Invitations: React.FC<Props> = (props) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   // store hooks
-  const { postHogEventTracker } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const { currentUser, updateCurrentUser } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
@@ -62,7 +62,7 @@ export const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        postHogEventTracker("Member accepted", { ...res, state: "SUCCESS", accepted_from: "App" });
+        captureEvent("Member accepted", { ...res, state: "SUCCESS", accepted_from: "App" });
         await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -71,7 +71,7 @@ export const Invitations: React.FC<Props> = (props) => {
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker("Member accepted", { state: "FAILED", accepted_from: "App" });
+        captureEvent("Member accepted", { state: "FAILED", accepted_from: "App" });
       })
       .finally(() => setIsJoiningWorkspaces(false));
   };
