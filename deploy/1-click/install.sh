@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Check if the user has sudo access
-if [ "$(sudo -n true 2>&1)" != "" ]; then
-    SUDO="sudo"
-else
+if [ "$(id -u)" -eq 0 ]; then
     SUDO=""
+else
+    SUDO="sudo"
 fi
+
 
 if command -v curl &> /dev/null; then
     $SUDO curl -sSL \

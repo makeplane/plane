@@ -711,10 +711,10 @@ elif command -v apk &> /dev/null; then
 fi
 
 # Check if the user has $SUDO access
-if [ "$(sudo -n true 2>&1)" != "" ]; then
-    SUDO="sudo"
-else
+if [ "$(id -u)" -eq 0 ]; then
     SUDO=""
+else
+    SUDO="sudo"
 fi
 
 
