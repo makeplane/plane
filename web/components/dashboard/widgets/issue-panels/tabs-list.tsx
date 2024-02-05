@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // helpers
 import { cn } from "helpers/common.helper";
@@ -11,15 +12,15 @@ type Props = {
   selectedTab: TIssuesListTypes;
 };
 
-export const TabsList: React.FC<Props> = (props) => {
+export const TabsList: React.FC<Props> = observer((props) => {
   const { durationFilter, selectedTab } = props;
 
   const tabsList = durationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
   const selectedTabIndex = tabsList.findIndex((tab) => tab.key === (selectedTab ?? "pending"));
 
-  // console.log("tabsList", tabsList);
-  // console.log("activeTab", selectedTab);
-  // console.log("selectedTabIndex", selectedTabIndex);
+  console.log("tabsList", tabsList);
+  console.log("activeTab", selectedTab);
+  console.log("selectedTabIndex", selectedTabIndex);
 
   return (
     <Tab.List
@@ -65,4 +66,4 @@ export const TabsList: React.FC<Props> = (props) => {
       ))}
     </Tab.List>
   );
-};
+});

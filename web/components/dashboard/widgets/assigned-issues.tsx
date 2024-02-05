@@ -30,6 +30,8 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TAssignedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const selectedTab = widgetDetails?.widget_filters.tab ?? "pending";
+  const selectedDurationFilter = widgetDetails?.widget_filters.target_date ?? "none";
 
   const handleUpdateFilters = async (filters: Partial<TAssignedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -41,21 +43,21 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       filters,
     });
 
-    const filterDates = getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "none");
+    const filterDates = getCustomDates(filters.target_date ?? selectedDurationFilter);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      issue_type: filters.tab ?? widgetDetails.widget_filters.tab ?? "pending",
+      issue_type: filters.tab ?? selectedTab,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
       expand: "issue_relation",
     }).finally(() => setFetching(false));
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(widgetDetails?.widget_filters.target_date ?? "none");
+    const filterDates = getCustomDates(selectedDurationFilter);
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      issue_type: widgetDetails?.widget_filters.tab ?? "pending",
+      issue_type: selectedTab,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
       expand: "issue_relation",
     });
@@ -63,9 +65,8 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "pending");
-  const tabsList =
-    widgetDetails?.widget_filters.target_date ?? "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
+  const filterParams = getRedirectionFilters(selectedTab);
+  const tabsList = selectedDurationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
@@ -79,44 +80,39 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           Assigned to you
         </Link>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.target_date ?? "none"}
+          value={selectedDurationFilter}
           onChange={(val) => {
-            if (val === widgetDetails.widget_filters.target_date) return;
-            let extraOptions: Partial<TAssignedIssuesWidgetFilters> = {};
+            if (val === selectedDurationFilter) return;
 
             // switch to pending tab if target date is changed to none
-            if (val === "none" && widgetDetails.widget_filters.tab !== "completed") extraOptions = { tab: "pending" };
+            if (val === "none" && selectedTab !== "completed") {
+              handleUpdateFilters({ target_date: val, tab: "pending" });
+              return;
+            }
             // switch to upcoming tab if target date is changed to other than none
-            if (
-              val !== "none" &&
-              widgetDetails.widget_filters.target_date === "none" &&
-              widgetDetails.widget_filters.tab !== "completed"
-            )
-              extraOptions = { tab: "upcoming" };
+            if (val !== "none" && selectedDurationFilter === "none" && selectedTab !== "completed") {
+              handleUpdateFilters({
+                target_date: val,
+                tab: "upcoming",
+              });
+              return;
+            }
 
-            handleUpdateFilters({
-              target_date: val,
-              ...extraOptions,
-            });
+            handleUpdateFilters({ target_date: val });
           }}
         />
       </div>
       <Tab.Group
         as="div"
-        // selectedIndex={selectedIndex}
-        defaultIndex={tabsList.findIndex((t) => t.key === widgetDetails.widget_filters.tab ?? "pending")}
+        selectedIndex={tabsList.findIndex((tab) => tab.key === selectedTab)}
         onChange={(i) => {
           const selectedTab = tabsList[i];
           handleUpdateFilters({ tab: selectedTab?.key ?? "pending" });
-          // setSelectedIndex(i);
         }}
         className="h-full flex flex-col"
       >
         <div className="px-6">
-          <TabsList
-            durationFilter={widgetDetails.widget_filters.target_date ?? "none"}
-            selectedTab={widgetDetails.widget_filters.tab ?? "pending"}
-          />
+          <TabsList durationFilter={selectedDurationFilter} selectedTab={selectedTab} />
         </div>
         <Tab.Panels as="div" className="h-full">
           {tabsList.map((tab) => (
