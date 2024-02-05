@@ -30,7 +30,7 @@ function update_env_files() {
 
     # Check if the key already exists in the config file
     if $SUDO grep -q "^$key=" "$config_file"; then
-        $SUDO awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && mv "$config_file.tmp" "$config_file"
+        $SUDO awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && sudo mv "$config_file.tmp" "$config_file"
     else
         $SUDO echo "$key=$value" >> "$config_file"
     fi
