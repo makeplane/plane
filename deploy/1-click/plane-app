@@ -29,7 +29,7 @@ function update_env_files() {
     fi
 
     # Check if the key already exists in the config file
-    if grep -q "^$key=" "$config_file"; then
+    if $SUDO grep -q "^$key=" "$config_file"; then
         $SUDO awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && mv "$config_file.tmp" "$config_file"
     else
         $SUDO echo "$key=$value" >> "$config_file"
@@ -46,7 +46,7 @@ function read_env_file() {
     fi
 
     # Check if the key already exists in the config file
-    if grep -q "^$key=" "$config_file"; then
+    if $SUDO grep -q "^$key=" "$config_file"; then
         value=$($SUDO awk -v key="$key" -F '=' '{if ($1 == key) print $2}' "$config_file")
         echo "$value"
     else
@@ -127,17 +127,17 @@ function prepare_environment() {
 function download_plane() {
     # Download Docker Compose File from github url 
     show_message "Downloading Plane Setup Files ✋"  >&2
-    curl -H 'Cache-Control: no-cache, no-store' \
+    $SUDO curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  \
         https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s) 
 
-    curl -H 'Cache-Control: no-cache, no-store' \
+    $SUDO curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/variables-upgrade.env \
         https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s) 
 
     # if .env does not exists rename variables-upgrade.env to .env
     if [ ! -f "$PLANE_INSTALL_DIR/.env" ]; then
-        mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
+        $SUDO mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
     fi
 
     show_message "Plane Setup Files Downloaded ✅" "replace_last_line"  >&2
@@ -670,11 +670,11 @@ function show_help() {
 }
 function update_installer() {
     show_message "Updating Plane Installer ✋" >&2
-    curl -H 'Cache-Control: no-cache, no-store' \
+    $SUDO curl -H 'Cache-Control: no-cache, no-store' \
         -s -o /usr/local/bin/plane-app  \
         https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/1-click/install.sh?token=$(date +%s) 
 
-    chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
+    $SUDO chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
     show_message "Plane Installer Updated ✅" "replace_last_line" >&2
 }
 
@@ -700,10 +700,10 @@ if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ($BRANCH == "master" && $
     USE_GLOBAL_IMAGES=1
 fi
 
-mkdir -p $PLANE_INSTALL_DIR/{data,log}
+$SUDO mkdir -p $PLANE_INSTALL_DIR/{data,log}
 
 if command -v apt-get &> /dev/null; then
-    PACKAGE_MANAGER="apt"
+    PACKAGE_MANAGER="apt-get"
 elif command -v yum &> /dev/null; then
     PACKAGE_MANAGER="yum"
 elif command -v apk &> /dev/null; then
