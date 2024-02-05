@@ -45,6 +45,9 @@ export const useTableKeyboardNavigation = () => {
       return;
     }
 
+    if (!c) return;
+
+    e.preventDefault();
     c?.focus();
     c?.scrollIntoView({ behavior: "smooth", block: "center", inline: "end" });
   };
