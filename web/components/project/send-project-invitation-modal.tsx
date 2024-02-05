@@ -12,6 +12,7 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // constants
 import { ROLE } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
+import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -88,10 +89,11 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           message: "Members added successfully.",
         });
         captureEvent(
-          "Member added",
+          PROJECT_MEMBER_ADDED,
           {
             ...res,
             state: "SUCCESS",
+            element: "Project settings members page",
           },
           {
             isGrouping: true,
@@ -103,9 +105,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         captureEvent(
-          "Member added",
+          PROJECT_MEMBER_ADDED,
           {
             state: "FAILED",
+            element: "Project settings members page",
           },
           {
             isGrouping: true,

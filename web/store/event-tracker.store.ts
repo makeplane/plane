@@ -21,6 +21,7 @@ export interface IEventTrackerStore {
   // actions
   setTrackElement: (element: string) => void;
   captureEvent: (eventName: string, payload: object | [] | null, group?: EventGroupProps) => void;
+  captureWorkspaceEvent: (props: EventProps) => void;
   captureProjectEvent: (props: EventProps) => void;
   captureCycleEvent: (props: EventProps) => void;
   captureModuleEvent: (props: EventProps) => void;
@@ -82,6 +83,20 @@ export class EventTrackerStore implements IEventTrackerStore {
       ...this.getRequiredProperties,
       element: this.trackElement ?? "",
     });
+  };
+
+  /**
+   * @description: Captures the workspace crud related events.
+   * @param {EventProps} props
+   */
+  captureWorkspaceEvent = (props: EventProps) => {
+    const { eventName, payload } = props;
+    const eventPayload: any = getProjectEventPayload({
+      ...payload,
+      element: payload.element ?? this.trackElement,
+    });
+    posthog?.capture(eventName, eventPayload);
+    this.setTrackElement("");
   };
 
   /**

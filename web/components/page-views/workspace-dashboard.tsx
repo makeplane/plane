@@ -37,9 +37,8 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        captureEvent("User tour complete", {
+        captureEvent("User tour completed", {
           user_id: currentUser?.id,
-          email: currentUser?.email,
           state: "SUCCESS",
         });
       })

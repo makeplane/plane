@@ -18,6 +18,15 @@ export type EventGroupProps = {
   groupId?: string;
 };
 
+export const getWorkspaceEventPayload = (payload: any) => ({
+  workspace_id: payload.id,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  organization_size: payload.organization_size,
+  state: payload.state,
+  element: payload.element,
+});
+
 export const getProjectEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.id,
@@ -119,7 +128,10 @@ export const getProjectStateEventPayload = (payload: any) => {
     element: payload.element,
   };
 };
-
+// Workspace crud Events
+export const WORKSPACE_CREATED = "Workspace created";
+export const WORKSPACE_UPDATED = "Workspace updated";
+export const WORKSPACE_DELETED = "Workspace deleted";
 // Project Events
 export const PROJECT_CREATED = "Project created";
 export const PROJECT_UPDATED = "Project updated";
@@ -141,7 +153,7 @@ export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
 export const STATE_DELETED = "State deleted";
 // Member Events
-export const MEMBER_ADDED = "Member added";
-export const MEMBER_REMOVED = "Member removed";
+export const PROJECT_MEMBER_ADDED = "Project member added";
+export const MEMBER_INVITED = "Member invited";
 
 

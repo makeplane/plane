@@ -5,12 +5,13 @@ import { Button, Input } from "@plane/ui";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // constants
 import { RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED } from "constants/event-tracker";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -33,6 +34,7 @@ export const Workspace: React.FC<Props> = (props) => {
   // store hooks
   const { updateCurrentUser } = useUser();
   const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
+  const { captureWorkspaceEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -46,31 +48,46 @@ export const Workspace: React.FC<Props> = (props) => {
           setSlugError(false);
 
           await createWorkspace(formData)
-            .then(async () => {
+            .then(async (res) => {
               setToastAlert({
                 type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  ...res,
+                  state: "SUCCESS",
+                  element: "Onboarding step 1",
+                },
+              });
               await fetchWorkspaces();
               await completeStep();
             })
-            .catch(() =>
+            .catch(() => {
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  state: "FAILED",
+                  element: "Onboarding step 1",
+                },
+              });
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              })
-            );
+              });
+            });
         } else setSlugError(true);
       })
-      .catch(() => {
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
-        });
-      });
+        })
+      );
   };
 
   const completeStep = async () => {

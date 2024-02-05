@@ -18,6 +18,7 @@ import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { MEMBER_INVITED } from "constants/event-tracker";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   // states
@@ -43,7 +44,11 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
       .then(() => {
         setInviteModal(false);
-        captureEvent("Member invited", { state: "SUCCESS" });
+        captureEvent(MEMBER_INVITED, {
+          emails: data.emails,
+          state: "SUCCESS",
+          element: "Workspace settings member page",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -51,7 +56,11 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         });
       })
       .catch((err) => {
-        captureEvent("Member invited", { state: "FAILED" });
+        captureEvent(MEMBER_INVITED, {
+          emails: data.emails,
+          state: "FAILED",
+          element: "Workspace settings member page",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
