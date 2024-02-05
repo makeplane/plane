@@ -1,7 +1,8 @@
 import { FC, Fragment, useState } from "react";
 import { Dialog, Transition, Tab } from "@headlessui/react";
 import { CheckCircle } from "lucide-react";
-import { useApplication } from "hooks/store";
+// store
+import { useEventTracker } from "hooks/store";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -35,9 +36,7 @@ export type ProPlanModalProps = {
 export const ProPlanModal: FC<ProPlanModalProps> = (props) => {
   const { isOpen, handleClose } = props;
   // store
-  const {
-    eventTracker: { captureEvent },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   // states
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
@@ -45,14 +44,14 @@ export const ProPlanModal: FC<ProPlanModalProps> = (props) => {
   const handleProPlaneMonthRedirection = () => {
     if (process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL) {
       window.open(process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL, "_blank");
-      captureEvent("pro_plan_modal_month_redirection");
+      captureEvent("pro_plan_modal_month_redirection", {});
     }
   };
 
   const handleProPlanYearlyRedirection = () => {
     if (process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL) {
       window.open(process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL, "_blank");
-      captureEvent("pro_plan_modal_yearly_redirection");
+      captureEvent("pro_plan_modal_yearly_redirection", {});
     }
   };
 

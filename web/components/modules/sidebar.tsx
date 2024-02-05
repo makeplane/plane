@@ -16,7 +16,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 // hooks
-import { useModule, useUser } from "hooks/store";
+import { useModule, useUser, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
@@ -66,7 +66,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-
+  const { setTrackElement } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
@@ -262,13 +262,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
-    moduleDetails.total_issues === 0
-      ? "0 Issue"
-      : moduleDetails.total_issues === moduleDetails.completed_issues
-      ? moduleDetails.total_issues > 1
-        ? `${moduleDetails.total_issues}`
-        : `${moduleDetails.total_issues}`
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+    moduleDetails.total_issues === 0 ? "0 Issue" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -303,7 +297,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("Module peek-overview");
+                    setModuleDeleteModal(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
                     <span>Delete module</span>
@@ -582,7 +581,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
+                        {moduleDetails.start_date && moduleDetails.target_date ? (
                           <div className=" h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
                               <div className="flex items-center gap-3 text-custom-text-100">
@@ -598,9 +597,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                distribution={moduleDetails.distribution?.completion_chart}
-                                startDate={moduleDetails.start_date ?? ""}
-                                endDate={moduleDetails.target_date ?? ""}
+                                distribution={moduleDetails.distribution?.completion_chart ?? {}}
+                                startDate={moduleDetails.start_date}
+                                endDate={moduleDetails.target_date}
                                 totalIssues={moduleDetails.total_issues}
                               />
                             </div>

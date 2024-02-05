@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useFormContext, Controller } from "react-hook-form";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
@@ -14,10 +14,8 @@ import { IJiraImporterForm } from "@plane/types";
 
 export const JiraGetImportDetail: React.FC = observer(() => {
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, getProjectById } = useProject();
   // form info
   const {
@@ -202,7 +200,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                   <button
                     type="button"
                     onClick={() => {
-                      setTrackElement("JIRA_IMPORT_DETAIL");
+                      setTrackElement("Jira import detail page");
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"

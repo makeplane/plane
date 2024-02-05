@@ -11,7 +11,7 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
+import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
 // helper
 import { cn } from "helpers/common.helper";
 // types
@@ -51,6 +51,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   //hooks
   const { getProjectById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { captureIssueEvent } = useEventTracker();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -174,8 +175,19 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100">
                 <Column
                   issue={issueDetail}
-                  onChange={(issue: TIssue, data: Partial<TIssue>) =>
-                    handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)
+                  onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
+                    handleIssues({ ...issue, ...data }, EIssueActions.UPDATE).then(() => {
+                      captureIssueEvent({
+                        eventName: "Issue updated",
+                        payload: {
+                          ...issue,
+                          ...data,
+                          element: "Spreadsheet layout",
+                        },
+                        updates: updates,
+                        path: router.asPath,
+                      });
+                    })
                   }
                   disabled={disableUserActions}
                 />

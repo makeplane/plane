@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // components
-import { ProductUpdatesModal } from "components/common";
+import { BreadcrumbLink, ProductUpdatesModal } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
@@ -18,15 +18,16 @@ export const WorkspaceDashboardHeader = () => {
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-20 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />}
-                label="Dashboard"
+                link={
+                  <BreadcrumbLink label="Dashboard" icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>

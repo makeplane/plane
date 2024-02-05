@@ -1,20 +1,19 @@
 import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 
 export const ProjectsHeader = observer(() => {
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -25,13 +24,12 @@ export const ProjectsHeader = observer(() => {
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle/>
+        <SidebarHamburgerToggle />
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
-              label="Projects"
+              link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>
@@ -53,7 +51,7 @@ export const ProjectsHeader = observer(() => {
             prependIcon={<Plus />}
             size="sm"
             onClick={() => {
-              setTrackElement("PROJECTS_PAGE_HEADER");
+              setTrackElement("Projects page");
               commandPaletteStore.toggleCreateProjectModal(true);
             }}
           >
