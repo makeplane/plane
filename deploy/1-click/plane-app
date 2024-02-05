@@ -587,7 +587,7 @@ function uninstall() {
                 echo "DOCKER_NOT_INSTALLED" &> /dev/null
             else
                 # Ask of user input to confirm uninstall docker ?
-                CONFIRM_DOCKER_PURGE=$(dialog --title "Uninstall Docker" --yesno "Are you sure you want to uninstall docker ?" 8 60 3>&1 1>&2 2>&3)
+                CONFIRM_DOCKER_PURGE=$(dialog --title "Uninstall Docker" --yesno --defaultno "Are you sure you want to uninstall docker ?" 8 60 3>&1 1>&2 2>&3)
                 if [ $? -eq 0 ]; then
                     show_message "- Uninstalling Docker ✋"
                     $SUDO "$PACKAGE_MANAGER" purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
