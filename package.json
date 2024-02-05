@@ -6,6 +6,7 @@
   "workspaces": [
     "web",
     "space",
+    "packages/auth",
     "packages/editor/*",
     "packages/eslint-config-custom",
     "packages/tailwind-config-custom",
