@@ -1,9 +1,9 @@
 import { Provider } from "next-auth/providers";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import { signIn } from "./sign-in";
-import { jwt } from "./jwt";
-import { session } from "./session";
+import { signIn } from "../callbacks/sign-in";
+import { jwt } from "../callbacks/jwt";
+import { session } from "../callbacks/session";
 import PlaneAuthAdapter from "./adapter";
 
 export type TAuthConfig = {
