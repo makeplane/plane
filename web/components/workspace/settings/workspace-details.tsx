@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -37,9 +37,7 @@ export const WorkspaceDetails: FC = observer(() => {
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -70,7 +68,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        postHogEventTracker("WORKSPACE_UPDATED", {
+        captureEvent("Workspace updated", {
           ...res,
           state: "SUCCESS",
         });
@@ -81,7 +79,7 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        postHogEventTracker("WORKSPACE_UPDATED", {
+        captureEvent("Workspace updated", {
           state: "FAILED",
         });
         console.error(err);

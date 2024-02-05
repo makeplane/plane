@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // constants
@@ -12,10 +12,8 @@ import { BreadcrumbLink } from "components/common";
 
 export const ProjectsHeader = observer(() => {
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -53,7 +51,7 @@ export const ProjectsHeader = observer(() => {
             prependIcon={<Plus />}
             size="sm"
             onClick={() => {
-              setTrackElement("PROJECTS_PAGE_HEADER");
+              setTrackElement("Projects page");
               commandPaletteStore.toggleCreateProjectModal(true);
             }}
           >

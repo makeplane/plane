@@ -5,7 +5,7 @@ import useSWR from "swr";
 import isEmpty from "lodash/isEmpty";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
 import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
@@ -44,6 +44,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
+  const { setTrackElement } = useEventTracker();
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
@@ -201,12 +202,18 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
                   ? currentView !== "custom-view" && currentView !== "subscribed"
                     ? {
                         text: "Create new issue",
-                        onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
+                        onClick: () => {
+                          setTrackElement("All issues empty state");
+                          commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                        },
                       }
                     : undefined
                   : {
                       text: "Start your first project",
-                      onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+                      onClick: () => {
+                        setTrackElement("All issues empty state");
+                        commandPaletteStore.toggleCreateProjectModal(true);
+                      },
                     }
               }
               disabled={!isEditingAllowed}

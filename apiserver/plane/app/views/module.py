@@ -197,7 +197,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 total_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         archived_at__isnull=True,
                         is_draft=False,
@@ -206,7 +206,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 completed_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -216,7 +216,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 pending_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -239,7 +239,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .values("label_name", "color", "label_id")
             .annotate(
                 total_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         archived_at__isnull=True,
                         is_draft=False,
@@ -248,7 +248,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 completed_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -258,7 +258,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 pending_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
