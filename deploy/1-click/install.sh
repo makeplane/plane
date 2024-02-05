@@ -19,6 +19,6 @@ else
 fi
 
 $SUDO chmod +x /usr/local/bin/plane-app
-$SUDO sed -i 's/export BRANCH=${BRANCH:-master}/export BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
+$SUDO sed -i 's/export DEPLOY_BRANCH=${BRANCH:-master}/export DEPLOY_BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
 
 $SUDO plane-app --help
