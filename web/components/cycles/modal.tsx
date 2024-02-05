@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle, useProject } from "hooks/store";
+import { useEventTracker, useCycle, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -27,9 +27,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   // toast alert
@@ -48,9 +46,9 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        postHogEventTracker("CYCLE_CREATE", {
-          ...res,
-          state: "SUCCESS",
+        captureCycleEvent({
+          eventName: "Cycle created",
+          payload: { ...res, state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -59,8 +57,9 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Error!",
           message: err.detail ?? "Error in creating cycle. Please try again.",
         });
-        postHogEventTracker("CYCLE_CREATE", {
-          state: "FAILED",
+        captureCycleEvent({
+          eventName: "Cycle created",
+          payload: { ...payload, state: "FAILED" },
         });
       });
   };

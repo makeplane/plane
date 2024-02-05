@@ -5,7 +5,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
@@ -25,8 +25,8 @@ export const ProjectSidebarList: FC = observer(() => {
   const {
     theme: { sidebarCollapsed },
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -217,6 +217,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
+                                  setTrackElement("Sidebar");
                                   setIsFavoriteProjectCreate(false);
                                   setIsProjectModalOpen(true);
                                 }}
@@ -267,7 +268,7 @@ export const ProjectSidebarList: FC = observer(() => {
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
-              setTrackElement("APP_SIDEBAR");
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

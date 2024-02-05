@@ -243,6 +243,29 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
         ):
             serializer = CycleSerializer(data=request.data)
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Cycle.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    cycle = Cycle.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).first()
+                    return Response(
+                        {
+                            "error": "Cycle with the same external id and external source already exists",
+                            "cycle": str(cycle.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
                 serializer.save(
                     project_id=project_id,
                     owned_by=request.user,
@@ -289,6 +312,23 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
 
         serializer = CycleSerializer(cycle, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and (cycle.external_id != request.data.get("external_id"))
+                and Cycle.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source", cycle.external_source),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Cycle with the same external id and external source already exists",
+                        "cycle_id": str(cycle.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

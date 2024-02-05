@@ -5,7 +5,7 @@ import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useProjectState } from "hooks/store";
+import { useEventTracker, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
@@ -36,9 +36,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker, setTrackElement },
-  } = useApplication();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
@@ -88,7 +86,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "State created successfully.",
         });
-        postHogEventTracker("STATE_CREATE", {
+        captureEvent("State created", {
           ...res,
           state: "SUCCESS",
         });
@@ -106,7 +104,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be created. Please try again.",
           });
-        postHogEventTracker("STATE_CREATE", {
+        captureEvent("State created", {
           state: "FAILED",
         });
       });
@@ -118,7 +116,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
     await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
         handleClose();
-        postHogEventTracker("STATE_UPDATE", {
+        captureEvent("State updated", {
           ...res,
           state: "SUCCESS",
         });
@@ -141,7 +139,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be updated. Please try again.",
           });
-        postHogEventTracker("STATE_UPDATE", {
+        captureEvent("State updated", {
           state: "FAILED",
         });
       });
