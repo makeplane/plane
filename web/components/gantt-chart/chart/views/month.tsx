@@ -14,7 +14,7 @@ export const MonthChartView: FC<any> = () => {
 
   return (
     <>
-      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-100/50">
+      <div className="absolute h-full flex flex-grow divide-x divide-custom-border-100/50">
         {monthBlocks?.map((block, rootIndex) => (
           <div key={`month-${block?.month}-${block?.year}`} className="relative flex flex-col">
             <div className="h-[60px] w-full">

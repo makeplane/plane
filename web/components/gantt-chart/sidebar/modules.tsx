@@ -1,16 +1,15 @@
-import { useRouter } from "next/router";
-import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { CycleGanttSidebarBlock } from "components/cycles";
+import { ModuleGanttSidebarBlock } from "components/modules";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
-import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 
 type Props = {
   title: string;
@@ -19,13 +18,9 @@ type Props = {
   enableReorder: boolean;
 };
 
-export const CycleGanttSidebar: React.FC<Props> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, enableReorder } = props;
-
-  const router = useRouter();
-  const { cycleId } = router.query;
-
+export const ModuleGanttSidebar: React.FC<Props> = (props) => {
+  const { blockUpdateHandler, blocks, enableReorder } = props;
+  // chart hook
   const { activeBlock, dispatch } = useChart();
 
   // update the active block on hover
@@ -85,7 +80,6 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
-            id={`gantt-sidebar-${cycleId}`}
             className="mt-3 max-h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
@@ -128,7 +122,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                               <div className="flex-grow truncate">
-                                <CycleGanttSidebarBlock data={block.data} />
+                                <ModuleGanttSidebarBlock data={block.data} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
