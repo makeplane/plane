@@ -591,8 +591,8 @@ function uninstall() {
                 if [ $? -eq 0 ]; then
                     show_message "- Uninstalling Docker ✋"
                     sudo docker images -q | xargs -r sudo docker rmi -f &> /dev/null
-                    sudo "$PACKAGE_MANAGER" purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
-                    sudo "$PACKAGE_MANAGER" autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
+                    sudo "$PACKAGE_MANAGER" remove -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
+                    sudo "$PACKAGE_MANAGER" autoremove -y docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
                     show_message "- Docker Uninstalled ✅" "replace_last_line" >&2
                 fi
             fi
