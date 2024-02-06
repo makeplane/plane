@@ -633,7 +633,7 @@ function start_server() {
     env_file="$PLANE_INSTALL_DIR/.env"
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
-        show_message "Starting Plane Server ✋"
+        show_message "Starting Plane Server ($APP_RELEASE) ✋"
         sudo docker compose -f $docker_compose_file --env-file=$env_file up -d
 
         # Wait for containers to be running
@@ -641,7 +641,7 @@ function start_server() {
         while ! sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
             sleep 1
         done
-        show_message "Plane Server Started ✅" "replace_last_line" >&2
+        show_message "Plane Server Started ($APP_RELEASE) ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
     fi
@@ -651,9 +651,9 @@ function stop_server() {
     env_file="$PLANE_INSTALL_DIR/.env"
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
-        show_message "Stopping Plane Server ✋"
+        show_message "Stopping Plane Server ($APP_RELEASE) ✋"
         sudo docker compose -f $docker_compose_file --env-file=$env_file down
-        show_message "Plane Server Stopped ✅" "replace_last_line" >&2
+        show_message "Plane Server Stopped ($APP_RELEASE) ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed [Skipping] ✅" "replace_last_line" >&2
     fi
@@ -663,9 +663,9 @@ function restart_server() {
     env_file="$PLANE_INSTALL_DIR/.env"
     # check if both the files exits 
     if [ -f "$docker_compose_file" ] && [ -f "$env_file" ]; then
-        show_message "Restarting Plane Server ✋"
+        show_message "Restarting Plane Server ($APP_RELEASE) ✋"
         sudo docker compose -f $docker_compose_file --env-file=$env_file restart
-        show_message "Plane Server Restarted ✅" "replace_last_line" >&2
+        show_message "Plane Server Restarted ($APP_RELEASE) ✅" "replace_last_line" >&2
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
     fi
