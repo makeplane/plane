@@ -1,19 +1,18 @@
-import { Fragment, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-import { Controller, useForm } from "react-hook-form";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { Fragment, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
+import { useApplication, useEventTracker, useInboxIssues, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
-import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
 // components
-import { PriorityDropdown } from "components/dropdowns";
 import { GptAssistantPopover } from "components/core";
+import { PriorityDropdown } from "components/dropdowns";
+import { RichTextEditor } from "components/editor/rich-text-editor";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
@@ -34,7 +33,6 @@ const defaultValues: Partial<TIssue> = {
 
 // services
 const aiService = new AIService();
-const fileService = new FileService();
 
 export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
@@ -46,7 +44,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const editorRef = useRef<any>(null);
   // toast alert
   const { setToastAlert } = useToast();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
@@ -284,11 +281,9 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             name="description_html"
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                              <RichTextEditorWithRef
-                                cancelUploadImage={fileService.cancelUpload}
-                                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                              <RichTextEditor
+                                workspaceId={workspaceId}
+                                workspaceSlug={workspaceSlug as string}
                                 ref={editorRef}
                                 debouncedUpdatesEnabled={false}
                                 value={!value || value === "" ? "<p></p>" : value}
@@ -296,8 +291,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 onChange={(description, description_html: string) => {
                                   onChange(description_html);
                                 }}
-                                mentionSuggestions={mentionSuggestions}
-                                mentionHighlights={mentionHighlights}
                               />
                             )}
                           />

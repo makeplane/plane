@@ -1,22 +1,16 @@
-import React, { FC, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { Sparkle, X } from "lucide-react";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useEstimate, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication, useEstimate, useProject, useWorkspace } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
+import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
 // components
 import { GptAssistantPopover } from "components/core";
-import { ParentIssuesListModal } from "components/issues";
-import { IssueLabelSelect } from "components/issues/select";
-import { CreateStateModal } from "components/states";
-import { CreateLabelModal } from "components/labels";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import {
   CycleDropdown,
   DateDropdown,
@@ -27,15 +21,19 @@ import {
   ProjectMemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
+import { RichTextEditor } from "components/editor/rich-text-editor";
+import { ParentIssuesListModal } from "components/issues";
+import { IssueLabelSelect } from "components/issues/select";
+import { CreateLabelModal } from "components/labels";
+import { CreateStateModal } from "components/states";
 // ui
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import type { IUser, TIssue, ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse, IUser, TIssue } from "@plane/types";
 
 const aiService = new AIService();
-const fileService = new FileService();
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -106,7 +104,6 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
   const { setToastAlert } = useToast();
@@ -417,11 +414,9 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                     name="description_html"
                     control={control}
                     render={({ field: { value, onChange } }) => (
-                      <RichTextEditorWithRef
-                        cancelUploadImage={fileService.cancelUpload}
-                        uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                        deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                        restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                      <RichTextEditor
+                        workspaceSlug={workspaceSlug as string}
+                        workspaceId={workspaceId}
                         ref={editorRef}
                         debouncedUpdatesEnabled={false}
                         value={
@@ -433,8 +428,6 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                         onChange={(description: Object, description_html: string) => {
                           onChange(description_html);
                         }}
-                        mentionHighlights={mentionHighlights}
-                        mentionSuggestions={mentionSuggestions}
                       />
                     )}
                   />

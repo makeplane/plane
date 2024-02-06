@@ -8,7 +8,7 @@ import { usePopper } from "react-popper";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
 import { Popover, Transition } from "@headlessui/react";
 // types
 import { Placement } from "@popperjs/core";
@@ -204,7 +204,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {prompt && (
               <div className="text-sm">
                 Content:
-                <RichReadOnlyEditorWithRef
+                <RichTextReadOnlyEditor
                   value={prompt}
                   customClassName="-m-3"
                   noBorder
@@ -216,7 +216,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {response !== "" && (
               <div className="page-block-section text-sm max-h-[8rem]">
                 Response:
-                <RichReadOnlyEditorWithRef
+                <RichTextReadOnlyEditor
                   value={`<p>${response}</p>`}
                   customClassName={response ? "-mx-3 -my-3" : ""}
                   noBorder

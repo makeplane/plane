@@ -5,13 +5,13 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
+import { RichTextEditor } from "components/editor/rich-text-editor";
+import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
-// services
-import { FileService } from "services/file.service";
-import { useMention, useWorkspace } from "hooks/store";
+// store
+import { useWorkspace } from "hooks/store";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -34,8 +34,6 @@ export interface IssueDetailsProps {
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
-const fileService = new FileService();
-
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   const workspaceStore = useWorkspace();
@@ -45,8 +43,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
-  // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     handleSubmit,
@@ -173,15 +169,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           render={({ field: { onChange } }) =>
             !disabled ? (
               <RichTextEditor
-                cancelUploadImage={fileService.cancelUpload}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                workspaceId={workspaceId}
+                workspaceSlug={workspaceSlug}
                 value={localIssueDescription.description_html}
                 rerenderOnPropsChange={localIssueDescription}
                 setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}
-                dragDropEnabled
+                dragDropEnabled={true}
                 customClassName="min-h-[150px] shadow-sm"
                 onChange={(description: Object, description_html: string) => {
                   setShowAlert(true);
@@ -189,15 +183,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                   onChange(description_html);
                   debouncedFormSave();
                 }}
-                mentionSuggestions={mentionSuggestions}
-                mentionHighlights={mentionHighlights}
               />
             ) : (
-              <RichReadOnlyEditor
+              <RichTextReadOnlyEditor
                 value={localIssueDescription.description_html}
                 customClassName="!p-0 !pt-2 text-custom-text-200"
                 noBorder={disabled}
-                mentionHighlights={mentionHighlights}
               />
             )
           }

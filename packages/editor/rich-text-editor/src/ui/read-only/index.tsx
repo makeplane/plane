@@ -2,7 +2,7 @@
 import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 import * as React from "react";
 
-interface IRichTextReadOnlyEditor {
+export interface IRichTextReadOnlyEditor {
   value: string;
   editorContentCustomClassNames?: string;
   noBorder?: boolean;
@@ -20,7 +20,7 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const RichReadOnlyEditor = ({
+const RichTextReadOnlyEditor = ({
   editorContentCustomClassNames,
   noBorder,
   borderOnFocus,
@@ -52,10 +52,10 @@ const RichReadOnlyEditor = ({
   );
 };
 
-const RichReadOnlyEditorWithRef = React.forwardRef<EditorHandle, IRichTextReadOnlyEditor>((props, ref) => (
-  <RichReadOnlyEditor {...props} forwardedRef={ref} />
+const RichTextReadOnlyEditorWithRef = React.forwardRef<EditorHandle, IRichTextReadOnlyEditor>((props, ref) => (
+  <RichTextReadOnlyEditor {...props} forwardedRef={ref} />
 ));
 
-RichReadOnlyEditorWithRef.displayName = "RichReadOnlyEditorWithRef";
+RichTextReadOnlyEditorWithRef.displayName = "RichTextReadOnlyEditorWithRef";
 
-export { RichReadOnlyEditor, RichReadOnlyEditorWithRef };
+export { RichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef };
