@@ -109,7 +109,7 @@ function prepare_environment() {
 
         if [ "$PACKAGE_MANAGER" == "yum" ]; then
             sudo $PACKAGE_MANAGER install -y yum-utils
-            yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo &> /dev/null
+            sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo &> /dev/null
         elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
             # Add Docker's official GPG key:
             sudo $PACKAGE_MANAGER update 
