@@ -16,6 +16,8 @@ import { Button } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { MEMBER_INVITED } from "constants/event-tracker";
@@ -45,7 +47,12 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
       .then(() => {
         setInviteModal(false);
         captureEvent(MEMBER_INVITED, {
-          emails: data.emails,
+          emails: [
+            ...data.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
           project_id: undefined,
           state: "SUCCESS",
           element: "Workspace settings member page",
@@ -58,7 +65,12 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
       })
       .catch((err) => {
         captureEvent(MEMBER_INVITED, {
-          emails: data.emails,
+          emails: [
+            ...data.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
           project_id: undefined,
           state: "FAILED",
           element: "Workspace settings member page",

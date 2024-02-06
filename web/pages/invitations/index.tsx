@@ -23,6 +23,7 @@ import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-l
 import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { getUserRole } from "helpers/user.helper";
 // types
 import { NextPageWithLayout } from "lib/types";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -87,7 +88,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: invitation?.role,
+          role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",

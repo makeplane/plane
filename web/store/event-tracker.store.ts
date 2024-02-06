@@ -206,11 +206,11 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureProjectStateEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    let eventPayload: any = {
-      ...getProjectStateEventPayload(props),
+    const eventPayload: any = getProjectStateEventPayload({
       ...this.getRequiredProperties,
+      ...payload,
       element: payload.element ?? this.trackElement,
-    };
+    });
     posthog?.capture(eventName, eventPayload);
   };
 }

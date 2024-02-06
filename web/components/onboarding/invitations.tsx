@@ -17,6 +17,7 @@ import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
 import {} from "hooks/store/use-event-tracker";
+import { getUserRole } from "helpers/user.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -66,7 +67,7 @@ export const Invitations: React.FC<Props> = (props) => {
       .then(async () => {
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: invitation?.role,
+          role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",
@@ -82,7 +83,7 @@ export const Invitations: React.FC<Props> = (props) => {
         console.error(error);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: invitation?.role,
+          role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",
           state: "FAILED",

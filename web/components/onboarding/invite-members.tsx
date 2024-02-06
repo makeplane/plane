@@ -30,6 +30,8 @@ import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 import { MEMBER_INVITED } from "constants/event-tracker";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
@@ -313,7 +315,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           emails: [
             ...payload.emails.map((email) => ({
               email: email.email,
-              role: email.role,
+              role: getUserRole(email.role),
             })),
           ],
           project_id: undefined,

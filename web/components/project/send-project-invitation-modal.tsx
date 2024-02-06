@@ -9,6 +9,8 @@ import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // constants
 import { ROLE } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
@@ -88,7 +90,12 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           message: "Members added successfully.",
         });
         captureEvent(PROJECT_MEMBER_ADDED, {
-          members: payload.members,
+          members: [
+            ...payload.members.map((member) => ({
+              member_id: member.member_id,
+              role: ROLE[member.role],
+            })),
+          ],
           state: "SUCCESS",
           element: "Project settings members page",
         });
@@ -96,7 +103,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         captureEvent(PROJECT_MEMBER_ADDED, {
-          members: payload.members,
           state: "FAILED",
           element: "Project settings members page",
         });
