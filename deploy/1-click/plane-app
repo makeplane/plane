@@ -701,7 +701,7 @@ function update_installer() {
 }
 
 export DEPLOY_BRANCH=${BRANCH:-master}
-export APP_RELEASE=${BUILD_TAG:-$DEPLOY_BRANCH}
+export APP_RELEASE=$DEPLOY_BRANCH
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=always
 
