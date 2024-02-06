@@ -89,14 +89,14 @@ function prepare_environment() {
     show_message "Prepare Environment..." >&2
 
     show_message "- Updating OS with required tools ✋"  >&2
-    sudo "$PACKAGE_MANAGER" update -y &> /dev/null
-    sudo "$PACKAGE_MANAGER" upgrade -y &> /dev/null
+    sudo "$PACKAGE_MANAGER" update -y
+    sudo "$PACKAGE_MANAGER" upgrade -y
 
     local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap")
 
     for tool in "${required_tools[@]}"; do
         if ! command -v $tool &> /dev/null; then
-            sudo "$PACKAGE_MANAGER" install -y $tool &> /dev/null
+            sudo "$PACKAGE_MANAGER" install -y $tool
         fi
     done
 
