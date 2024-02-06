@@ -718,7 +718,7 @@ PROGRESS_MSG=""
 USE_GLOBAL_IMAGES=0
 PACKAGE_MANAGER=""
 
-if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ($DEPLOY_BRANCH == "master" && $CPU_ARCH == "arm64") ]]; then
+if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $DEPLOY_BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; then
     USE_GLOBAL_IMAGES=1
 fi
 
