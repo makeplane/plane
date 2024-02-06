@@ -262,6 +262,7 @@ def send_webhook_deactivation_email(webhook_id, receiver_id, current_site, reaso
 
     # Send the mail
     context = {
+        "email": receiver.email,
         "message": message,
         "webhook_url":f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
     }
