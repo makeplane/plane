@@ -193,7 +193,7 @@ function askForAction() {
 }
 
 # CPU ARCHITECHTURE BASED SETTINGS
-ARCH=$(uname -m)
+CPU_ARCH=$(uname -m)
 if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
 then
     USE_GLOBAL_IMAGES=1
