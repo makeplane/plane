@@ -151,7 +151,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                 return Response(
                     {
                         "error": "Module with the same external id and external source already exists",
-                        "module_id": str(module.id),
+                        "id": str(module.id),
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
@@ -185,7 +185,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                 return Response(
                     {
                         "error": "Module with the same external id and external source already exists",
-                        "module_id": str(module.id),
+                        "id": str(module.id),
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
