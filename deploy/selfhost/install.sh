@@ -20,8 +20,8 @@ function buildLocalImage() {
         DO_BUILD="2"
     else 
         printf "\n" >&2
-        printf "${YELLOW}You are on ${ARCH} cpu architecture. ${NC}\n" >&2
-        printf "${YELLOW}Since the prebuilt ${ARCH} compatible docker images are not available for, we will be running the docker build on this system. ${NC} \n" >&2
+        printf "${YELLOW}You are on ${CPU_ARCH} cpu architecture. ${NC}\n" >&2
+        printf "${YELLOW}Since the prebuilt ${CPU_ARCH} compatible docker images are not available for, we will be running the docker build on this system. ${NC} \n" >&2
         printf "${YELLOW}This might take ${YELLOW}5-30 min based on your system's hardware configuration. \n ${NC} \n" >&2
         printf "\n" >&2
         printf "${GREEN}Select an option to proceed: ${NC}\n" >&2
@@ -149,7 +149,7 @@ function upgrade() {
 function askForAction() {
     echo
     echo "Select a Action you want to perform:"
-    echo "   1) Install (${ARCH})"
+    echo "   1) Install (${CPU_ARCH})"
     echo "   2) Start"
     echo "   3) Stop"
     echo "   4) Restart"
