@@ -150,11 +150,11 @@ function download_plane() {
     show_message "Downloading Plane Setup Files ✋"  >&2
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s) 
+        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?token=$(date +%s) 
 
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/variables-upgrade.env \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/variables.env?$(date +%s) 
+        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/variables.env?token=$(date +%s) 
 
     # if .env does not exists rename variables-upgrade.env to .env
     if [ ! -f "$PLANE_INSTALL_DIR/.env" ]; then
