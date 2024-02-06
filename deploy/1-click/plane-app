@@ -31,9 +31,10 @@ function update_env_file() {
     # Check if the key already exists in the config file
     if sudo grep "^$key=" "$config_file"; then
         sudo awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" | sudo tee "$config_file.tmp" > /dev/null
-        sudo mv "$config_file.tmp" "$config_file"
+        sudo mv "$config_file.tmp" "$config_file" &> /dev/null
     else
-        sudo echo "$key=$value" >> "$config_file"
+        # sudo echo "$key=$value" >> "$config_file"
+        echo -e "$key=$value" | sudo tee -a "$config_file" > /dev/null
     fi
 }
 function read_env_file() {
