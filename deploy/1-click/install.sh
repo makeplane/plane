@@ -14,4 +14,4 @@ fi
 sudo chmod +x /usr/local/bin/plane-app
 sudo sed -i 's/export DEPLOY_BRANCH=${BRANCH:-master}/export DEPLOY_BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
 
-sudo plane-app --help
+plane-app --help
