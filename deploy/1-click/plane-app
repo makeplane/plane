@@ -590,7 +590,7 @@ function uninstall() {
                 CONFIRM_DOCKER_PURGE=$(dialog --title "Uninstall Docker" --defaultno --yesno "Are you sure you want to uninstall docker ?" 8 60 3>&1 1>&2 2>&3)
                 if [ $? -eq 0 ]; then
                     show_message "- Uninstalling Docker ✋"
-                    sudo docker rmi $(docker images -q) -f &> /dev/null
+                    sudo docker rmi $(sudo docker images -q) -f &> /dev/null
                     sudo "$PACKAGE_MANAGER" purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin &> /dev/null
                     sudo "$PACKAGE_MANAGER" autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin &> /dev/null
                     show_message "- Docker Uninstalled ✅" "replace_last_line" >&2
