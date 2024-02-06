@@ -1,1 +1,1 @@
-export * from "./next-auth-options";
+export * from "./lib/next-auth-options";
