@@ -49,7 +49,7 @@ function buildLocalImage() {
         cd $PLANE_TEMP_CODE_DIR
         if [ "$BRANCH" == "master" ];
         then
-            APP_RELEASE=latest
+            export APP_RELEASE=latest
         fi
 
         docker compose -f build.yml build --no-cache  >&2
@@ -203,6 +203,11 @@ else
     USE_GLOBAL_IMAGES=0
     DOCKERHUB_USER=myplane
     PULL_POLICY=never
+fi
+
+if [ "$BRANCH" == "master" ];
+then
+    export APP_RELEASE=latest
 fi
 
 # REMOVE SPECIAL CHARACTERS FROM BRANCH NAME
