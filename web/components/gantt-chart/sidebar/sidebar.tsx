@@ -166,13 +166,13 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                               <div className="flex-grow truncate">
                                 <IssueGanttSidebarBlock data={block.data} />
                               </div>
-                              <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                {duration && (
+                              {duration && (
+                                <div className="flex-shrink-0 text-sm text-custom-text-200">
                                   <span>
                                     {duration} day{duration > 1 ? "s" : ""}
                                   </span>
-                                )}
-                              </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
