@@ -747,7 +747,7 @@ elif [ "$1" == "--upgrade" ] || [ "$1" == "-up" ]; then
     upgrade
 elif [ "$1" == "--uninstall" ] || [ "$1" == "-un" ]; then
     uninstall
-elif [ "$1" == "--update-installer" ] || [ "$1" == "-ui" ] ; then
+elif [ "$1" == "--update-installer" ] || [ "$1" == "-ui" ]; then
     update_installer
 elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     show_help
