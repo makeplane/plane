@@ -17,7 +17,7 @@ Project management tool from the future
 
 EOF
 }
-function update_env_files() {
+function update_env_file() {
     config_file=$1
     key=$2
     value=$3
@@ -29,8 +29,9 @@ function update_env_files() {
     fi
 
     # Check if the key already exists in the config file
-    if sudo grep -q "^$key=" "$config_file"; then
-        sudo awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" > "$config_file.tmp" && sudo mv "$config_file.tmp" "$config_file"
+    if sudo grep "^$key=" "$config_file"; then
+        sudo awk -v key="$key" -v value="$value" -F '=' '{if ($1 == key) $2 = value} 1' OFS='=' "$config_file" | sudo tee "$config_file.tmp" > /dev/null
+        sudo mv "$config_file.tmp" "$config_file"
     else
         sudo echo "$key=$value" >> "$config_file"
     fi
@@ -47,7 +48,7 @@ function read_env_file() {
 
     # Check if the key already exists in the config file
     if sudo grep -q "^$key=" "$config_file"; then
-        value=$(awk -v key="$key" -F '=' '{if ($1 == key) print $2}' "$config_file")
+        value=$(sudo awk -v key="$key" -F '=' '{if ($1 == key) print $2}' "$config_file")
         echo "$value"
     else
         echo ""
@@ -55,7 +56,7 @@ function read_env_file() {
 }
 function update_config() {
     config_file="$PLANE_INSTALL_DIR/config.env"
-    update_env_files $config_file $1 $2
+    update_env_file $config_file $1 $2
 }
 function read_config() {
     config_file="$PLANE_INSTALL_DIR/config.env"
@@ -63,7 +64,7 @@ function read_config() {
 }
 function update_env() {
     config_file="$PLANE_INSTALL_DIR/.env"
-    update_env_files $config_file $1 $2
+    update_env_file $config_file $1 $2
 }
 function read_env() {
     config_file="$PLANE_INSTALL_DIR/.env"
