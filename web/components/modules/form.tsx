@@ -70,7 +70,7 @@ export const ModuleForm: React.FC<Props> = ({
   const startDate = watch("start_date");
   const targetDate = watch("target_date");
 
-  const minDate = startDate ? new Date(startDate) : new Date();
+  const minDate = startDate ? new Date(startDate) : null;
   minDate?.setDate(minDate.getDate());
 
   const maxDate = targetDate ? new Date(targetDate) : null;
@@ -159,7 +159,6 @@ export const ModuleForm: React.FC<Props> = ({
                     onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                     buttonVariant="border-with-text"
                     placeholder="Start date"
-                    minDate={new Date()}
                     maxDate={maxDate ?? undefined}
                     tabIndex={3}
                   />

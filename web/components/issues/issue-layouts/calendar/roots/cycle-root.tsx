@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 //hooks
-import { useIssues } from "hooks/store";
+import { useCycle, useIssues } from "hooks/store";
 // components
 import { CycleIssueQuickActions } from "components/issues";
 // types
@@ -13,6 +13,7 @@ import { useMemo } from "react";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCompletedCycleIds } = useCycle();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -38,6 +39,9 @@ export const CycleCalendarLayout: React.FC = observer(() => {
 
   if (!cycleId) return null;
 
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+
   return (
     <BaseCalendarRoot
       issueStore={issues}
@@ -45,6 +49,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
       viewId={cycleId.toString()}
+      isCompletedCycle={isCompletedCycle}
     />
   );
 });

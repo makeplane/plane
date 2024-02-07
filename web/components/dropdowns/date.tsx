@@ -105,6 +105,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
       tabIndex={tabIndex}
       className={cn("h-full", className)}
       onKeyDown={handleKeyDown}
+      disabled={disabled}
     >
       <Combobox.Button as={React.Fragment}>
         <button
