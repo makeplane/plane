@@ -131,7 +131,7 @@ def process_mention(mention_component):
         user_id = mention['id']
         user = User.objects.get(pk=user_id)
         user_name = user.display_name
-        highlighted_name = f'<span id="mention-box">@{user_name}</span>'
+        highlighted_name = f"@{user_name}"
         mention.replace_with(highlighted_name)
     return str(soup)
 
