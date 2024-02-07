@@ -75,7 +75,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     }
   }, [root?.current, intersectionRef, children]);
 
-  // Set height after render
+  //Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible) {
       placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
@@ -85,7 +85,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
   const child = isVisible ? <>{children}</> : placeholderChildren;
   const style =
     isVisible && !pauseHeightUpdateWhileRendering ? {} : { height: placeholderHeight.current, width: "100%" };
-  const className = isVisible ? classNames : cn(classNames, "animate-pulse bg-custom-background-80");
+  const className = isVisible ? classNames : cn(classNames, "bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
 };
