@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
-import { useIssues } from "hooks/store";
+import { useCycle, useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 import { EIssueActions } from "../../types";
@@ -15,6 +15,7 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCompletedCycleIds } = useCycle();
 
   const issueActions = useMemo(
     () => ({
@@ -35,6 +36,11 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
     [issues, workspaceSlug, cycleId]
   );
 
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+
+  const canEditIssueProperties = () => !isCompletedCycle;
+
   return (
     <BaseSpreadsheetRoot
       issueStore={issues}
@@ -42,6 +48,8 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
       viewId={cycleId}
       issueActions={issueActions}
       QuickActions={CycleIssueQuickActions}
+      canEditPropertiesBasedOnProject={canEditIssueProperties}
+      isCompletedCycle={isCompletedCycle}
     />
   );
 });

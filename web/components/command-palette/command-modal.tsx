@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { FolderPlus, Search, Settings } from "lucide-react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
@@ -64,8 +64,8 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateIssueModal,
       toggleCreateProjectModal,
     },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
   // router
   const router = useRouter();
@@ -278,7 +278,7 @@ export const CommandModal: React.FC = observer(() => {
                           <Command.Item
                             onSelect={() => {
                               closePalette();
-                              setTrackElement("COMMAND_PALETTE");
+                              setTrackElement("Command Palette");
                               toggleCreateIssueModal(true);
                             }}
                             className="focus:bg-custom-background-80"
@@ -296,7 +296,7 @@ export const CommandModal: React.FC = observer(() => {
                             <Command.Item
                               onSelect={() => {
                                 closePalette();
-                                setTrackElement("COMMAND_PALETTE");
+                                setTrackElement("Command palette");
                                 toggleCreateProjectModal(true);
                               }}
                               className="focus:outline-none"

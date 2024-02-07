@@ -1,7 +1,8 @@
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // hooks
-import { useEstimate, useLabel } from "hooks/store";
+import { useEventTracker, useEstimate, useLabel } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
@@ -20,43 +21,118 @@ import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types"
 
 export interface IIssueProperties {
   issue: TIssue;
-  handleIssues: (issue: TIssue) => void;
+  handleIssues: (issue: TIssue) => Promise<void>;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
+  activeLayout: string;
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, handleIssues, displayProperties, isReadOnly, className } = props;
+  const { issue, handleIssues, displayProperties, activeLayout, isReadOnly, className } = props;
+  // store hooks
   const { labelMap } = useLabel();
+  const { captureIssueEvent } = useEventTracker();
+  // router
+  const router = useRouter();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
-
+  const currentLayout = `${activeLayout} layout`;
   const handleState = (stateId: string) => {
-    handleIssues({ ...issue, state_id: stateId });
+    handleIssues({ ...issue, state_id: stateId }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "state",
+          change_details: stateId,
+        },
+      });
+    });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
-    handleIssues({ ...issue, priority: value });
+    handleIssues({ ...issue, priority: value }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "priority",
+          change_details: value,
+        },
+      });
+    });
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues({ ...issue, label_ids: ids });
+    handleIssues({ ...issue, label_ids: ids }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "labels",
+          change_details: ids,
+        },
+      });
+    });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues({ ...issue, assignee_ids: ids });
+    handleIssues({ ...issue, assignee_ids: ids }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "assignees",
+          change_details: ids,
+        },
+      });
+    });
   };
 
   const handleStartDate = (date: Date | null) => {
-    handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null });
+    handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "start_date",
+          change_details: date ? renderFormattedPayloadDate(date) : null,
+        },
+      });
+    });
   };
 
   const handleTargetDate = (date: Date | null) => {
-    handleIssues({ ...issue, target_date: date ? renderFormattedPayloadDate(date) : null });
+    handleIssues({ ...issue, target_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "target_date",
+          change_details: date ? renderFormattedPayloadDate(date) : null,
+        },
+      });
+    });
   };
 
   const handleEstimate = (value: number | null) => {
-    handleIssues({ ...issue, estimate_point: value });
+    handleIssues({ ...issue, estimate_point: value }).then(() => {
+      captureIssueEvent({
+        eventName: "Issue updated",
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: {
+          changed_property: "estimate_point",
+          change_details: value,
+        },
+      });
+    });
   };
 
   if (!displayProperties) return null;

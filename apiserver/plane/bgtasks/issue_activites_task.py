@@ -353,12 +353,17 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignee_ids", [])]
+    requested_assignees = (
+        set([str(asg) for asg in requested_data.get("assignee_ids", [])])
+        if requested_data is not None
+        else set()
     )
-    current_assignees = set(
-        [str(asg) for asg in current_instance.get("assignee_ids", [])]
+    current_assignees = (
+        set([str(asg) for asg in current_instance.get("assignee_ids", [])])
+        if current_instance is not None
+        else set()
     )
+
 
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
@@ -547,6 +552,20 @@ def create_issue_activity(
             epoch=epoch,
         )
     )
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
+    if requested_data.get("assignee_ids") is not None:
+        track_assignees(
+            requested_data,
+            current_instance,
+            issue_id,
+            project_id,
+            workspace_id,
+            actor_id,
+            issue_activities,
+            epoch,
+        )
 
 
 def update_issue_activity(

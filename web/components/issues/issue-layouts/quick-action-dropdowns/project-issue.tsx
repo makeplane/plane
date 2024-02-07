@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
 // hooks
-import { useUser } from "hooks/store";
+import { useEventTracker, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -17,7 +17,7 @@ import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, customActionButton, portalElement } = props;
+  const { issue, handleDelete, handleUpdate, customActionButton, portalElement, readOnly = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -29,6 +29,10 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { setTrackElement } = useEventTracker();
+  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+
+  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -87,10 +91,11 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
             Copy link
           </div>
         </CustomMenu.MenuItem>
-        {isEditingAllowed && (
+        {isEditingAllowed && !readOnly && (
           <>
             <CustomMenu.MenuItem
               onClick={() => {
+                setTrackElement(activeLayout);
                 setIssueToEdit(issue);
                 setCreateUpdateIssueModal(true);
               }}
@@ -102,6 +107,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               onClick={() => {
+                setTrackElement(activeLayout);
                 setCreateUpdateIssueModal(true);
               }}
             >
@@ -112,6 +118,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               onClick={() => {
+                setTrackElement(activeLayout);
                 setDeleteIssueModal(true);
               }}
             >
