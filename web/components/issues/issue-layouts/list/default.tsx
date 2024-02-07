@@ -1,8 +1,7 @@
 import { useRef } from "react";
 // components
-import { IssueBlock, ListQuickAddIssueForm } from "components/issues";
+import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 import { HeaderGroupByCard } from "./headers/group-by-card";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
@@ -13,12 +12,12 @@ import {
   IIssueDisplayProperties,
   TIssueMap,
   TUnGroupedIssues,
-  IIssueListRow,
+  IGroupByColumn,
 } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
-import { EIssueListRow, TCreateModalStoreTypes } from "constants/issue";
-import { getGroupByColumns, getIssueFlatList } from "../utils";
+import { TCreateModalStoreTypes } from "constants/issue";
+import { getGroupByColumns } from "../utils";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -96,9 +95,11 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     return preloadedData;
   };
 
-  const list = getIssueFlatList(groups, issueIds, !!showEmptyGroup);
-
-  console.log(groups, issueIds, list);
+  const validateEmptyIssueGroups = (issues: TIssue[]) => {
+    const issuesCount = issues?.length || 0;
+    if (!showEmptyGroup && issuesCount <= 0) return false;
+    return true;
+  };
 
   const is_list = group_by === null ? true : false;
 
@@ -106,73 +107,48 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 
   return (
     <div ref={containerRef} className="relative overflow-auto h-full w-full">
-      {list &&
-        list.length > 0 &&
-        list.map((listRow: IIssueListRow, index) => {
-          switch (listRow.type) {
-            case EIssueListRow.HEADER:
-              return (
-                <div
-                  key={listRow.id}
-                  className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1"
-                >
+      {groups &&
+        groups.length > 0 &&
+        groups.map(
+          (_list: IGroupByColumn) =>
+            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
+              <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
                   <HeaderGroupByCard
-                    icon={listRow.icon}
-                    title={listRow?.name || ""}
-                    count={is_list ? issueIds?.length || 0 : issueIds?.[listRow.id]?.length || 0}
-                    issuePayload={listRow.payload || {}}
+                    icon={_list.icon}
+                    title={_list.name || ""}
+                    count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
+                    issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     storeType={storeType}
                     addIssuesToView={addIssuesToView}
                   />
                 </div>
-              );
-            case EIssueListRow.QUICK_ADD:
-              if (enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy)
-                return (
-                  <div
-                    key={`${listRow.id}_${EIssueListRow.QUICK_ADD}`}
-                    className="sticky bottom-0 z-[1] w-full flex-shrink-0"
-                  >
+
+                {issueIds && (
+                  <IssueBlocksList
+                    issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
+                    issuesMap={issuesMap}
+                    handleIssues={handleIssues}
+                    quickActions={quickActions}
+                    displayProperties={displayProperties}
+                    canEditProperties={canEditProperties}
+                    containerRef={containerRef}
+                  />
+                )}
+
+                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && (
+                  <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
                     <ListQuickAddIssueForm
-                      prePopulatedData={prePopulateQuickAddData(group_by, listRow.id)}
+                      prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
                       quickAddCallback={quickAddCallback}
                       viewId={viewId}
                     />
                   </div>
-                );
-              else return null;
-            case EIssueListRow.NO_ISSUES:
-              const noIssuesRow = listRow as IIssueListRow;
-              return (
-                <div
-                  key={`${noIssuesRow.id}_${EIssueListRow.NO_ISSUES}`}
-                  className="bg-custom-background-100 p-3 text-sm text-custom-text-400"
-                >
-                  No issues
-                </div>
-              );
-            case EIssueListRow.ISSUE:
-              return (
-                <RenderIfVisible
-                  key={`${listRow.id}_${listRow.groupId}`}
-                  defaultHeight={45}
-                  root={containerRef}
-                  classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
-                  index={index}
-                >
-                  <IssueBlock
-                    issueId={listRow.id}
-                    issuesMap={issuesMap}
-                    handleIssues={handleIssues}
-                    quickActions={quickActions}
-                    canEditProperties={canEditProperties}
-                    displayProperties={displayProperties}
-                  />
-                </RenderIfVisible>
-              );
-          }
-        })}
+                )}
+              </div>
+            )
+        )}
     </div>
   );
 };
