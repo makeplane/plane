@@ -13,6 +13,7 @@ type Props = {
   getShouldRender?: (index: number) => boolean;
   updateRenderTracker?: (index: number, isVisble: boolean) => void;
   placeholderChildren?: ReactNode;
+  pauseHeightUpdateWhileRendering?: boolean;
   index: number;
 };
 
@@ -29,6 +30,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     getShouldRender,
     updateRenderTracker,
     placeholderChildren = null,
+    pauseHeightUpdateWhileRendering = false,
     index,
   } = props;
   const defaultVisible = !!getShouldRender && getShouldRender(index);
@@ -78,10 +80,11 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     if (intersectionRef.current && isVisible) {
       placeholderHeight.current = intersectionRef.current.offsetHeight;
     }
-  }, [isVisible, intersectionRef, alwaysRender]);
+  }, [isVisible, intersectionRef, alwaysRender, pauseHeightUpdateWhileRendering]);
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
-  const style = isVisible ? {} : { height: placeholderHeight.current, width: "100%" };
+  const style =
+    isVisible && !pauseHeightUpdateWhileRendering ? {} : { height: placeholderHeight.current, width: "100%" };
   const className = isVisible ? classNames : cn(classNames, "animate-pulse bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);

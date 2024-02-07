@@ -102,6 +102,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     quickAddCallback,
     viewId,
     scrollableContainerRef,
+    isDragStarted,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -154,6 +155,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   quickAddCallback={quickAddCallback}
                   viewId={viewId}
                   scrollableContainerRef={scrollableContainerRef}
+                  isDragStarted={isDragStarted}
                 />
               </div>
             )}

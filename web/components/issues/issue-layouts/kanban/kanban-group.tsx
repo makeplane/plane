@@ -39,6 +39,7 @@ interface IKanbanGroup {
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 export const KanbanGroup = (props: IKanbanGroup) => {
@@ -60,6 +61,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     quickAddCallback,
     viewId,
     scrollableContainerRef,
+    isDragStarted,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -131,6 +133,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               quickActions={quickActions}
               canEditProperties={canEditProperties}
               scrollableContainerRef={scrollableContainerRef}
+              isDragStarted={isDragStarted}
             />
 
             {provided.placeholder}

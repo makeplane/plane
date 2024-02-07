@@ -47,6 +47,7 @@ export interface IGroupByKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -70,6 +71,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
+    isDragStarted,
   } = props;
 
   const member = useMember();
@@ -139,6 +141,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   canEditProperties={canEditProperties}
                   groupByVisibilityToggle={groupByVisibilityToggle}
                   scrollableContainerRef={scrollableContainerRef}
+                  isDragStarted={isDragStarted}
                 />
               )}
             </div>
@@ -173,6 +176,7 @@ export interface IKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -195,6 +199,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
+    isDragStarted,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -220,6 +225,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}
       scrollableContainerRef={scrollableContainerRef}
+      isDragStarted={isDragStarted}
     />
   );
 });

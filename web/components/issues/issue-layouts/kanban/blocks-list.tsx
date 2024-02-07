@@ -17,6 +17,7 @@ interface IssueBlocksListProps {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
@@ -32,6 +33,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     quickActions,
     canEditProperties,
     scrollableContainerRef,
+    isDragStarted,
   } = props;
 
   return (
@@ -59,6 +61,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 isDragDisabled={isDragDisabled}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
+                isDragStarted={isDragStarted}
               />
             );
           })}

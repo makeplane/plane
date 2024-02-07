@@ -286,6 +286,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               storeType={storeType}
               addIssuesToView={addIssuesToView}
               scrollableContainerRef={scrollableContainerRef}
+              isDragStarted={isDragStarted}
             />
           </DragDropContext>
         </div>
