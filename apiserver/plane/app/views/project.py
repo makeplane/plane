@@ -1162,7 +1162,11 @@ class ProjectCoverImageEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, workspace_id, cover_image_key):
         key = f"{workspace_id}/{cover_image_key}"
-        url = generate_download_presigned_url(key)
+        url = generate_download_presigned_url(
+            key=key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
         return HttpResponseRedirect(url)
 
     def post(self, request, slug, project_id):

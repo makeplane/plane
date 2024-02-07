@@ -410,7 +410,11 @@ class PageAssetEndpoint(BaseAPIView):
     ):
         if workspace_id and asset_key:
             key = f"{workspace_id}/{asset_key}"
-            url = generate_download_presigned_url(key)
+            url = generate_download_presigned_url(
+                key=key,
+                host=request.get_host(),
+                scheme=request.scheme,
+            )
             return HttpResponseRedirect(url)
 
         # For listing

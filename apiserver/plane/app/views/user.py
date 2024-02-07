@@ -208,7 +208,11 @@ class UserAvatarEndpoint(BaseAPIView):
 
 
     def get(self, request, avatar_key):
-        url = generate_download_presigned_url(avatar_key)
+        url = generate_download_presigned_url(
+            key=avatar_key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
         return HttpResponseRedirect(url)
 
     def post(self, request):
@@ -248,7 +252,11 @@ class UserCoverImageEndpoint(BaseAPIView):
         ]
 
     def get(self, request, cover_image_key):
-        url = generate_download_presigned_url(cover_image_key)
+        url = generate_download_presigned_url(
+            key=cover_image_key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
         return HttpResponseRedirect(url)
 
     def post(self, request):

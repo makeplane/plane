@@ -1019,7 +1019,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
     permission_classes = [
         ProjectEntityPermission,
     ]
-    parser_classes = (MultiPartParser, FormParser, JSONParser,)
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
 
     def post(self, request, slug, project_id, issue_id):
         serializer = FileAssetSerializer(data=request.data)
@@ -1084,7 +1088,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
     ):
         if workspace_id and asset_key:
             key = f"{workspace_id}/{asset_key}"
-            url = generate_download_presigned_url(key)
+            url = generate_download_presigned_url(
+                key=key,
+                host=request.get_host(),
+                scheme=request.scheme,
+            )
             return HttpResponseRedirect(url)
 
         # For listing
@@ -1976,7 +1984,11 @@ class CommentAssetEndpoint(BaseAPIView):
     ):
         if workspace_id and asset_key:
             key = f"{workspace_id}/{asset_key}"
-            url = generate_download_presigned_url(key)
+            url = generate_download_presigned_url(
+                key=key,
+                host=request.get_host(),
+                scheme=request.scheme,
+            )
             return HttpResponseRedirect(url)
 
         # For listing

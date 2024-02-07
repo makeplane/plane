@@ -24,6 +24,10 @@ http {
         }
 
         location /api/ {
+            proxy_set_header Host ${dollar}host;
+            proxy_set_header X-Real-IP ${dollar}remote_addr;
+            proxy_set_header X-Forwarded-For ${dollar}proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto ${dollar}scheme;
             proxy_pass http://api:8000/api/;
         }
 

@@ -1551,7 +1551,11 @@ class WorkspaceLogoEndpoint(BaseAPIView):
 
     def get(self, request, slug, workspace_id, logo_key):
         key = f"{workspace_id}/{logo_key}"
-        url = generate_download_presigned_url(key)
+        url = generate_download_presigned_url(
+            key=key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
         return HttpResponseRedirect(url)
 
     def post(self, request, slug):
