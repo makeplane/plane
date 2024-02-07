@@ -14,7 +14,7 @@ import { EIssueActions } from "../types";
 interface IssueBlockProps {
   issueId: string;
   issuesMap: TIssueMap;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -29,8 +29,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const { getProjectById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
 
-  const updateIssue = (issueToUpdate: TIssue) => {
-    handleIssues(issueToUpdate, EIssueActions.UPDATE);
+  const updateIssue = async (issueToUpdate: TIssue) => {
+    await handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
   const handleIssuePeekOverview = (issue: TIssue) =>
@@ -51,10 +51,11 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     <>
       <div
         className={cn(
-          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200 last:border-b-transparent",
+          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200",
           {
             "border border-custom-primary-70 hover:border-custom-primary-70":
               peekIssue && peekIssue.issueId === issue.id,
+            "last:border-b-transparent": peekIssue?.issueId !== issue.id,
           }
         )}
       >
@@ -88,6 +89,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
                 isReadOnly={!canEditIssueProperties}
                 handleIssues={updateIssue}
                 displayProperties={displayProperties}
+                activeLayout="List"
               />
               {quickActions(issue)}
             </>

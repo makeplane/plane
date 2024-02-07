@@ -9,7 +9,7 @@ import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
-  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
@@ -20,7 +20,17 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <DateDropdown
         value={issue.target_date}
-        onChange={(data) => onChange(issue, { target_date: data ? renderFormattedPayloadDate(data) : null })}
+        onChange={(data) => {
+          const targetDate = data ? renderFormattedPayloadDate(data) : null;
+          onChange(
+            issue,
+            { target_date: targetDate },
+            {
+              changed_property: "target_date",
+              change_details: targetDate,
+            }
+          );
+        }}
         disabled={disabled}
         placeholder="Due date"
         buttonVariant="transparent-with-text"

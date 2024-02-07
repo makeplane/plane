@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues } from "hooks/store";
+import { useCycle, useIssues } from "hooks/store";
 // ui
 import { CycleIssueQuickActions } from "components/issues";
 // types
@@ -20,6 +20,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
 
   // store
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCompletedCycleIds } = useCycle();
 
   const issueActions = useMemo(
     () => ({
@@ -42,6 +43,11 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     [issues, workspaceSlug, cycleId]
   );
 
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+
+  const canEditIssueProperties = () => !isCompletedCycle;
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -55,6 +61,8 @@ export const CycleKanBanLayout: React.FC = observer(() => {
         if (!workspaceSlug || !projectId || !cycleId) throw new Error();
         return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
       }}
+      canEditPropertiesBasedOnProject={canEditIssueProperties}
+      isCompletedCycle={isCompletedCycle}
     />
   );
 });

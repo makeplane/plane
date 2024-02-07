@@ -38,14 +38,12 @@ export const ProjectAnalyticsModal: React.FC<Props> = observer((props) => {
         >
           <Dialog.Panel className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
             <div
-              className={`fixed right-0 top-0 z-20 h-full bg-custom-background-100 shadow-custom-shadow-md ${
-                fullScreen ? "w-full p-2" : "w-1/2"
-              }`}
+              className={`fixed right-0 top-0 z-20 h-full bg-custom-background-100 shadow-custom-shadow-md ${fullScreen ? "w-full p-2" : "w-full sm:w-full md:w-1/2"
+                }`}
             >
               <div
-                className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
-                  fullScreen ? "rounded-lg border" : "border-l"
-                }`}
+                className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${fullScreen ? "rounded-lg border" : "border-l"
+                  }`}
               >
                 <ProjectAnalyticsModalHeader
                   fullScreen={fullScreen}

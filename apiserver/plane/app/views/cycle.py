@@ -243,13 +243,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     .values("display_name", "assignee_id", "avatar")
                     .annotate(
                         total_issues=Count(
-                            "assignee_id",
+                            "id",
                             filter=Q(archived_at__isnull=True, is_draft=False),
                         ),
                     )
                     .annotate(
                         completed_issues=Count(
-                            "assignee_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=False,
                                 archived_at__isnull=True,
@@ -259,7 +259,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .annotate(
                         pending_issues=Count(
-                            "assignee_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=True,
                                 archived_at__isnull=True,
@@ -282,13 +282,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     .values("label_name", "color", "label_id")
                     .annotate(
                         total_issues=Count(
-                            "label_id",
+                            "id",
                             filter=Q(archived_at__isnull=True, is_draft=False),
                         )
                     )
                     .annotate(
                         completed_issues=Count(
-                            "label_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=False,
                                 archived_at__isnull=True,
@@ -298,7 +298,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .annotate(
                         pending_issues=Count(
-                            "label_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=True,
                                 archived_at__isnull=True,
@@ -420,13 +420,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 total_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(archived_at__isnull=True, is_draft=False),
                 ),
             )
             .annotate(
                 completed_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -436,7 +436,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 pending_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -460,13 +460,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .values("label_name", "color", "label_id")
             .annotate(
                 total_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(archived_at__isnull=True, is_draft=False),
                 ),
             )
             .annotate(
                 completed_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -476,7 +476,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 pending_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
@@ -48,8 +48,8 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     commandPalette: { toggleShortcutModal },
-    eventTracker: { captureEvent },
   } = useApplication();
+  const { captureEvent } = useEventTracker();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -61,7 +61,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
   const handleProPlanModalOpen = () => {
     setIsProPlanModalOpen(true);
-    captureEvent("pro_plan_modal_opened");
+    captureEvent("pro_plan_modal_opened", {});
   };
 
   return (

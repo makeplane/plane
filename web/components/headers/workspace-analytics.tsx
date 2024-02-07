@@ -4,6 +4,7 @@ import { ArrowLeft, BarChart2 } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 
 export const WorkspaceAnalyticsHeader = () => {
   const router = useRouter();
@@ -15,21 +16,13 @@ export const WorkspaceAnalyticsHeader = () => {
       >
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
-          <div className="block md:hidden">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft fontSize={14} strokeWidth={2} />
-            </button>
-          </div>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />}
-                label="Analytics"
+                link={
+                  <BreadcrumbLink label="Analytics" icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>
