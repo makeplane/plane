@@ -11,32 +11,18 @@ from django.conf import settings
 class Command(BaseCommand):
     help = "Create the default bucket for the instance"
 
-    def set_bucket_public_policy(self, s3_client, bucket_name):
-        public_policy = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": "*",
-                    "Action": ["s3:GetObject"],
-                    "Resource": [f"arn:aws:s3:::{bucket_name}/*"],
-                }
-            ],
-        }
-
+    def set_bucket_private_policy(self, s3_client, bucket_name):
         try:
-            s3_client.put_bucket_policy(
-                Bucket=bucket_name, Policy=json.dumps(public_policy)
-            )
+            s3_client.delete_bucket_policy(Bucket=bucket_name)
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Public read access policy set for bucket '{bucket_name}'."
+                    f"Public access policy removed for bucket '{bucket_name}', bucket is now private."
                 )
             )
         except ClientError as e:
             self.stdout.write(
                 self.style.ERROR(
-                    f"Error setting public read access policy: {e}"
+                    f"Error removing public access policy: {e}"
                 )
             )
 
@@ -58,7 +44,7 @@ class Command(BaseCommand):
             # Check if the bucket exists
             s3_client.head_bucket(Bucket=bucket_name)
 
-            self.set_bucket_public_policy(s3_client, bucket_name)
+            self.set_bucket_private_policy(s3_client, bucket_name)
         except ClientError as e:
             error_code = int(e.response["Error"]["Code"])
             bucket_name = settings.AWS_STORAGE_BUCKET_NAME
@@ -76,7 +62,6 @@ class Command(BaseCommand):
                             f"Bucket '{bucket_name}' created successfully."
                         )
                     )
-                    self.set_bucket_public_policy(s3_client, bucket_name)
                 except ClientError as create_error:
                     self.stdout.write(
                         self.style.ERROR(
