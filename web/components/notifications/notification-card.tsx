@@ -5,6 +5,7 @@ import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
 import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // icons
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // constants
@@ -13,9 +14,10 @@ import { snoozeOptions } from "constants/notification";
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // type
-import type { IUserNotification } from "@plane/types";
+import type { IUserNotification, NotificationType } from "@plane/types";
 
 type NotificationCardProps = {
+  selectedTab: NotificationType;
   notification: IUserNotification;
   isSnoozedTabOpen: boolean;
   closePopover: () => void;
@@ -28,6 +30,7 @@ type NotificationCardProps = {
 
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
+    selectedTab,
     notification,
     isSnoozedTabOpen,
     closePopover,
@@ -37,6 +40,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     setSelectedNotificationForSnooze,
     markSnoozeNotification,
   } = props;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -49,6 +54,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     <Link
       onClick={() => {
         markNotificationReadStatus(notification.id);
+        captureEvent("Issue opened", {
+          issue_id: notification.data.issue.id,
+          element: "notification",
+        });
         closePopover();
       }}
       href={`/${workspaceSlug}/projects/${notification.project}/${
@@ -164,6 +173,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
+                captureEvent("Notification marked read", {
+                  tab: selectedTab,
+                  state: "SUCCESS",
+                });
                 setToastAlert({
                   title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
                   type: "success",
@@ -181,6 +194,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             ),
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
+                captureEvent("Notification archived", {
+                  tab: selectedTab,
+                  state: "SUCCESS",
+                });
                 setToastAlert({
                   title: notification.archived_at ? "Notification un-archived" : "Notification archived",
                   type: "success",
@@ -195,7 +212,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-
                 item.onClick();
               }}
               key={item.id}
@@ -231,6 +247,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   }
 
                   markSnoozeNotification(notification.id, item.value).then(() => {
+                    captureEvent("Notification snoozed", {
+                      tab: selectedTab,
+                      state: "SUCCESS",
+                    });
                     setToastAlert({
                       title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
                       type: "success",

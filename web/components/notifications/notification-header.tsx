@@ -2,6 +2,8 @@ import React from "react";
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
+// hooks
+import { useEventTracker } from "hooks/store";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 // type
@@ -39,6 +41,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
     setSelectedTab,
     markAllNotificationsAsRead,
   } = props;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const notificationTabs: Array<{
     label: string;
@@ -84,6 +88,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setSnoozed(false);
                 setArchived(false);
                 setReadNotification((prev) => !prev);
+                captureEvent("Unread notifications viewed");
               }}
             >
               <ListFilter className="h-3.5 w-3.5" />
@@ -97,7 +102,12 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             }
             closeOnSelect
           >
-            <CustomMenu.MenuItem onClick={markAllNotificationsAsRead}>
+            <CustomMenu.MenuItem
+              onClick={() => {
+                markAllNotificationsAsRead();
+                captureEvent("All notifications marked read");
+              }}
+            >
               <div className="flex items-center gap-2">
                 <CheckCheck className="h-3.5 w-3.5" />
                 Mark all as read
@@ -108,6 +118,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setArchived(false);
                 setReadNotification(false);
                 setSnoozed((prev) => !prev);
+                captureEvent("Snoozed notifications viewed");
               }}
             >
               <div className="flex items-center gap-2">
@@ -120,6 +131,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setSnoozed(false);
                 setReadNotification(false);
                 setArchived((prev) => !prev);
+                captureEvent("Archived notifications viewed");
               }}
             >
               <div className="flex items-center gap-2">
