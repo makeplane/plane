@@ -19,7 +19,7 @@ import { cn } from "helpers/common.helper";
 
 type Props = {
   blocks: IGanttBlock[] | null;
-  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
+  blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;
   chartBlocks: IGanttBlock[] | null;
@@ -85,7 +85,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     <div
       // DO NOT REMOVE THE ID
       id="gantt-container"
-      className={cn("h-full w-full overflow-hidden overflow-y-auto flex border-t border-custom-border-200", {
+      className={cn("h-full w-full overflow-hidden overflow-y-auto flex border-t-[0.5px] border-custom-border-200", {
         "mb-8": bottomSpacing,
       })}
     >

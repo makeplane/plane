@@ -127,7 +127,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                       >
                         {(provided, snapshot) => (
                           <div
-                            className={cn("border-r-[0.5px] border-custom-border-200", {
+                            className={cn({
                               "rounded bg-custom-background-80": snapshot.isDragging,
                               "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                                 peekIssue?.issueId === block.data.id,
@@ -138,7 +138,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                             {...provided.draggableProps}
                           >
                             <div
-                              className={cn("group flex h-full w-full items-center gap-2 px-2 pr-4", {
+                              className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
                                 "bg-custom-background-80": activeBlock?.id === block.id,
                               })}
                               style={{
@@ -157,7 +157,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                               )}
                               <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                                 <div className="flex-grow truncate">
-                                  <IssueGanttSidebarBlock data={block.data} />
+                                  <IssueGanttSidebarBlock issueId={block.data.id} />
                                 </div>
                                 {duration && (
                                   <div className="flex-shrink-0 text-sm text-custom-text-200">

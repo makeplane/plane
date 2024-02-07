@@ -28,7 +28,7 @@ type ChartViewRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
+  blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -63,7 +63,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
 
   // rendering the block structure
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
-    blocks && blocks.length > 0
+    blocks
       ? blocks.map((block: any) => ({
           ...block,
           position: getMonthChartItemPositionWidthInMonth(view, block),
@@ -183,7 +183,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     <div
       className={cn("relative flex flex-col h-full select-none rounded-sm bg-custom-background-100 shadow", {
         "fixed inset-0 z-[999999] bg-custom-background-100": fullScreenMode,
-        "border border-custom-border-200": border,
+        "border-[0.5px] border-custom-border-200": border,
       })}
     >
       <GanttChartHeader

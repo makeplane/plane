@@ -7,7 +7,7 @@ import { cn } from "helpers/common.helper";
 
 type Props = {
   block: IGanttBlock;
-  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
+  blockToRender: (data: any) => React.ReactNode;
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right" | "move") => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -20,7 +20,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isHidden, setIsHidden] = useState(true);
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
   // chart hook
@@ -212,8 +212,6 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     block.position?.width &&
     scrollLeft > block.position.marginLeft + block.position.width;
 
-  const textDisplacement = scrollLeft - (block.position?.marginLeft ?? 0);
-
   const intersectionRoot = document.querySelector("#scroll-container") as HTMLDivElement;
   useEffect(() => {
     const resizableBlock = resizableRef.current;
@@ -222,7 +220,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          setIsVisible(!entry.isIntersecting);
+          setIsHidden(!entry.isIntersecting);
         });
       },
       { root: intersectionRoot }
@@ -238,7 +236,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   return (
     <>
       {/* move to the hidden block */}
-      {isVisible && (
+      {isHidden && (
         <button
           type="button"
           className="sticky left-1 z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
@@ -284,7 +282,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
           })}
           onMouseDown={handleBlockMove}
         >
-          {blockToRender(block.data, textDisplacement)}
+          {blockToRender(block.data)}
         </div>
         {/* right resize drag handle */}
         {enableBlockRightResize && (

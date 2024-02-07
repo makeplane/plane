@@ -1,6 +1,8 @@
-// hooks
 import { Expand, Shrink } from "lucide-react";
+// hooks
 import { useChart } from "../hooks";
+// helpers
+import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, TGanttViews } from "../types";
 
@@ -22,35 +24,28 @@ export const GanttChartHeader: React.FC<Props> = (props) => {
   return (
     <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2 z-10">
       <div className="flex items-center gap-2 text-lg font-medium">{title}</div>
-
       <div className="ml-auto">
         <div className="ml-auto text-sm font-medium">{blocks ? `${blocks.length} ${loaderTitle}` : "Loading..."}</div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {allViews &&
-          allViews.map((_chatView: any) => (
-            <div
-              key={_chatView?.key}
-              className={`cursor-pointer rounded-sm p-1 px-2 text-xs ${
-                currentView === _chatView?.key ? `bg-custom-background-80` : `hover:bg-custom-background-90`
-              }`}
-              onClick={() => handleChartView(_chatView?.key)}
-            >
-              {_chatView?.title}
-            </div>
-          ))}
+        {allViews?.map((chartView: any) => (
+          <div
+            key={chartView?.key}
+            className={cn("cursor-pointer rounded-sm p-1 px-2 text-xs", {
+              "bg-custom-background-80": currentView === chartView?.key,
+              "hover:bg-custom-background-90": currentView !== chartView?.key,
+            })}
+            onClick={() => handleChartView(chartView?.key)}
+          >
+            {chartView?.title}
+          </div>
+        ))}
       </div>
 
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
-          onClick={handleToday}
-        >
-          Today
-        </button>
-      </div>
+      <button type="button" className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80" onClick={handleToday}>
+        Today
+      </button>
 
       <button
         type="button"

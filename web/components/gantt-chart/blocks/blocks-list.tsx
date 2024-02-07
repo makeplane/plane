@@ -15,7 +15,7 @@ import { BLOCK_HEIGHT, HEADER_HEIGHT } from "../constants";
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  blockToRender: (data: any, textDisplacement: number) => React.ReactNode;
+  blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;

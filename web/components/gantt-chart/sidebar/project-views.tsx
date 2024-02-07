@@ -128,7 +128,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                               <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock data={block.data} />
+                                <IssueGanttSidebarBlock issueId={block.data.id} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}

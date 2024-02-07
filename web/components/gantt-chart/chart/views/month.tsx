@@ -11,7 +11,6 @@ import { HEADER_HEIGHT } from "components/gantt-chart/constants";
 export const MonthChartView: FC<any> = () => {
   // chart hook
   const { currentViewData, renderView } = useChart();
-
   const monthBlocks: IMonthBlock[] = renderView;
 
   return (
@@ -20,7 +19,7 @@ export const MonthChartView: FC<any> = () => {
         {monthBlocks?.map((block, rootIndex) => (
           <div key={`month-${block?.month}-${block?.year}`} className="relative">
             <div
-              className="w-full"
+              className="fixed z-10 bg-custom-background-100 w-full"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
@@ -51,23 +50,16 @@ export const MonthChartView: FC<any> = () => {
                 ))}
               </div>
             </div>
-            <div className="flex h-full w-full divide-x divide-custom-border-100/50">
+            <div className="h-full w-full flex divide-x divide-custom-border-100/50">
               {block?.children?.map((monthDay, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}
-                  className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
+                  className="h-full overflow-hidden"
                   style={{ width: `${currentViewData?.data.width}px` }}
                 >
-                  <div
-                    className={cn("relative flex h-full w-full flex-1 justify-center", {
-                      "bg-custom-background-90": ["sat", "sun"].includes(monthDay?.dayData?.shortTitle),
-                    })}
-                  >
-                    {/* highlight today */}
-                    {/* {monthDay?.today && (
-                          <div className="absolute top-0 bottom-0 w-[1px] bg-red-500" />
-                        )} */}
-                  </div>
+                  {["sat", "sun"].includes(monthDay?.dayData?.shortTitle) && (
+                    <div className="h-full bg-custom-background-90" />
+                  )}
                 </div>
               ))}
             </div>
