@@ -10,11 +10,8 @@ type Props = {
   as?: keyof JSX.IntrinsicElements;
   classNames?: string;
   alwaysRender?: boolean;
-  getShouldRender?: (index: number) => boolean;
-  updateRenderTracker?: (index: number, isVisble: boolean) => void;
   placeholderChildren?: ReactNode;
   pauseHeightUpdateWhileRendering?: boolean;
-  index: number;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -27,26 +24,14 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     children,
     classNames = "",
     alwaysRender = false,
-    getShouldRender,
-    updateRenderTracker,
     placeholderChildren = null,
     pauseHeightUpdateWhileRendering = false,
-    index,
   } = props;
-  const defaultVisible = !!getShouldRender && getShouldRender(index);
-  const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender || defaultVisible);
+  const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender);
   const placeholderHeight = useRef<string>(defaultHeight);
   const intersectionRef = useRef<HTMLElement | null>(null);
 
   const isVisible = alwaysRender || shouldVisible;
-
-  useEffect(() => {
-    if (getShouldRender && getShouldRender(index)) setShouldVisible(true);
-  }, [getShouldRender, index]);
-
-  useEffect(() => {
-    updateRenderTracker && updateRenderTracker(index, shouldVisible);
-  }, [index, shouldVisible]);
 
   // Set visibility with intersection observer
   useEffect(() => {

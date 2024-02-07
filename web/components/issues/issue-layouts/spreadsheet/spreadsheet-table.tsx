@@ -84,14 +84,13 @@ export const SpreadsheetTable = observer((props: Props) => {
         isEstimateEnabled={isEstimateEnabled}
       />
       <tbody>
-        {issueIds.map((id, index) => (
+        {issueIds.map((id) => (
           <RenderIfVisible
             key={id}
             as="tr"
             defaultHeight="2.75rem"
             root={containerRef}
             placeholderChildren={<td colSpan={100} className="border-b-[0.5px]" />}
-            index={index}
           >
             <SpreadsheetIssueRow
               issueId={id}

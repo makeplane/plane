@@ -22,7 +22,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
   return (
     <div className="relative h-full w-full">
       {issueIds && issueIds.length > 0 ? (
-        issueIds.map((issueId: string, index: number) => {
+        issueIds.map((issueId: string) => {
           if (!issueId) return null;
           return (
             <RenderIfVisible
@@ -30,7 +30,6 @@ export const IssueBlocksList: FC<Props> = (props) => {
               defaultHeight="3rem"
               root={containerRef}
               classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
-              index={index}
             >
               <IssueBlock
                 issueId={issueId}
