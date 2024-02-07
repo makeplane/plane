@@ -1668,15 +1668,9 @@ class IssueDraftViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
+            Issue.objects.filter(
+                project_id=self.kwargs.get("project_id")
             )
-            .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_draft=True)
             .select_related("workspace", "project", "state", "parent")
@@ -1710,7 +1704,7 @@ class IssueDraftViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        )
+        ).distinct()
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -1832,7 +1826,10 @@ class IssueDraftViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            issue = (
+                self.get_queryset().filter(pk=serializer.data["id"]).first()
+            )
+            return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
@@ -1868,10 +1865,13 @@ class IssueDraftViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk, is_draft=True
+        issue = self.get_queryset().filter(pk=pk).first()
+        return Response(
+            IssueSerializer(
+                issue, fields=self.fields, expand=self.expand
+            ).data,
+            status=status.HTTP_200_OK,
         )
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(

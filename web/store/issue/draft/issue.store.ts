@@ -1,5 +1,9 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import uniq from "lodash/uniq";
+import concat from "lodash/concat";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -123,7 +127,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
       const response = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
-        this.issues[projectId].push(response.id);
+        update(this.issues, [projectId], (issueIds = []) => uniq(concat(issueIds, response.id)));
       });
 
       this.rootStore.issues.addIssue([response]);
@@ -136,8 +140,17 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
-      this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
+      const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+
+      if (data.hasOwnProperty("is_draft") && data?.is_draft === false) {
+        runInAction(() => {
+          update(this.issues, [projectId], (issueIds = []) => {
+            if (issueIds.includes(issueId)) pull(issueIds, issueId);
+            return issueIds;
+          });
+        });
+      }
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
@@ -147,15 +160,14 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const response = await this.issueDraftService.deleteDraftIssue(workspaceSlug, projectId, issueId);
+      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[projectId].splice(issueIndex, 1);
+      runInAction(() => {
+        update(this.issues, [projectId], (issueIds = []) => {
+          if (issueIds.includes(issueId)) pull(issueIds, issueId);
+          return issueIds;
         });
-
-      this.rootStore.issues.removeIssue(issueId);
+      });
 
       return response;
     } catch (error) {
