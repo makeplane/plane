@@ -320,7 +320,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           ],
           project_id: undefined,
           state: "SUCCESS",
-          element: "Onboarding step 3",
+          element: "Onboarding",
         });
         setToastAlert({
           type: "success",
@@ -334,7 +334,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         captureEvent(MEMBER_INVITED, {
           project_id: undefined,
           state: "FAILED",
-          element: "Onboarding step 3",
+          element: "Onboarding",
         });
         setToastAlert({
           type: "error",

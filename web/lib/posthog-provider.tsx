@@ -30,10 +30,11 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     if (user) {
       // Identify sends an event, so you want may want to limit how often you call it
       posthog?.identify(user.email, {
-        email: user.email,
+        id: user.id,
         first_name: user.first_name,
         last_name: user.last_name,
-        id: user.id,
+        email: user.email,
+        use_case: user.use_case,
         workspace_role: workspaceRole ? getUserRole(workspaceRole) : undefined,
         project_role: projectRole ? getUserRole(projectRole) : undefined,
       });

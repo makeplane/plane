@@ -5,6 +5,8 @@ import { useTheme } from "next-themes";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
+// hooks
+import { useEventTracker } from "hooks/store";
 // components
 import { BreadcrumbLink, ProductUpdatesModal } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
@@ -13,6 +15,7 @@ import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-ham
 export const WorkspaceDashboardHeader = () => {
   const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
   // hooks
+  const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
 
   return (
@@ -34,6 +37,11 @@ export const WorkspaceDashboardHeader = () => {
         </div>
         <div className="flex items-center gap-3 px-3">
           <a
+            onClick={() =>
+              captureEvent("Changelog redirected", {
+                element: "navbar",
+              })
+            }
             href="https://plane.so/changelog"
             target="_blank"
             rel="noopener noreferrer"
@@ -43,6 +51,11 @@ export const WorkspaceDashboardHeader = () => {
             {"What's new?"}
           </a>
           <a
+            onClick={() =>
+              captureEvent("Github redirected", {
+                element: "navbar",
+              })
+            }
             className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"
             href="https://github.com/makeplane/plane"
             target="_blank"

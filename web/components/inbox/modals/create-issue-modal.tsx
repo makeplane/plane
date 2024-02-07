@@ -107,7 +107,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         captureIssueEvent({
-          eventName: "ISSUE_CREATED",
+          eventName: ISSUE_CREATED,
           payload: {
             ...formData,
             state: "FAILED",

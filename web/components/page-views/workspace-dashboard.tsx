@@ -13,6 +13,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { Spinner } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
 
 export const WorkspaceDashboardView = observer(() => {
   // theme
@@ -37,7 +38,7 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        captureEvent("User tour completed", {
+        captureEvent(PRODUCT_TOUR_COMPLETED, {
           user_id: currentUser?.id,
           state: "SUCCESS",
         });

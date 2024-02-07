@@ -18,13 +18,13 @@ import {
 
 export interface IEventTrackerStore {
   // properties
-  trackElement: string;
+  trackElement: string | undefined;
   // computed
   getRequiredProperties: any;
   // actions
   resetSession: () => void;
   setTrackElement: (element: string) => void;
-  captureEvent: (eventName: string, payload: any) => void;
+  captureEvent: (eventName: string, payload?: any) => void;
   joinWorkspaceMetricGroup: (workspaceId?: string) => void;
   captureWorkspaceEvent: (props: EventProps) => void;
   captureProjectEvent: (props: EventProps) => void;
@@ -36,7 +36,7 @@ export interface IEventTrackerStore {
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
-  trackElement: string = "";
+  trackElement: string | undefined = undefined;
   rootStore;
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -62,8 +62,8 @@ export class EventTrackerStore implements IEventTrackerStore {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
     return {
-      workspace_id: currentWorkspaceDetails?.id ?? "",
-      project_id: currentProjectDetails?.id ?? "",
+      workspace_id: currentWorkspaceDetails?.id,
+      project_id: currentProjectDetails?.id,
     };
   }
 
@@ -71,7 +71,7 @@ export class EventTrackerStore implements IEventTrackerStore {
    * @description: Set the trigger point of event.
    * @param {string} element
    */
-  setTrackElement = (element: string) => {
+  setTrackElement = (element?: string) => {
     this.trackElement = element;
   };
 
@@ -100,12 +100,13 @@ export class EventTrackerStore implements IEventTrackerStore {
    * @param {string} eventName
    * @param {any} payload
    */
-  captureEvent = (eventName: string, payload: any) => {
+  captureEvent = (eventName: string, payload?: any) => {
     posthog?.capture(eventName, {
       ...this.getRequiredProperties,
       ...payload,
-      element: payload.element ?? this.trackElement,
+      element: payload?.element ?? this.trackElement,
     });
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -122,7 +123,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     });
     posthog?.capture(eventName, eventPayload);
-    this.setTrackElement("");
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -137,7 +138,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     });
     posthog?.capture(eventName, eventPayload);
-    this.setTrackElement("");
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -152,7 +153,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     });
     posthog?.capture(eventName, eventPayload);
-    this.setTrackElement("");
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -167,7 +168,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     });
     posthog?.capture(eventName, eventPayload);
-    this.setTrackElement("");
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -182,7 +183,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     });
     posthog?.capture(eventName, eventPayload);
-    this.setTrackElement("");
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -198,6 +199,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     };
     posthog?.capture(eventName, eventPayload);
+    this.setTrackElement(undefined);
   };
 
   /**
@@ -212,5 +214,6 @@ export class EventTrackerStore implements IEventTrackerStore {
       element: payload.element ?? this.trackElement,
     });
     posthog?.capture(eventName, eventPayload);
+    this.setTrackElement(undefined);
   };
 }

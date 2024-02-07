@@ -59,7 +59,8 @@ export const Workspace: React.FC<Props> = (props) => {
                 payload: {
                   ...res,
                   state: "SUCCESS",
-                  element: "Onboarding step 1",
+                  first_time: true,
+                  element: "Onboarding",
                 },
               });
               await fetchWorkspaces();
@@ -70,7 +71,8 @@ export const Workspace: React.FC<Props> = (props) => {
                 eventName: WORKSPACE_CREATED,
                 payload: {
                   state: "FAILED",
-                  element: "Onboarding step 1",
+                  first_time: true,
+                  element: "Onboarding",
                 },
               });
               setToastAlert({

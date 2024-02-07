@@ -15,6 +15,7 @@ export const getWorkspaceEventPayload = (payload: any) => ({
   created_at: payload.created_at,
   updated_at: payload.updated_at,
   organization_size: payload.organization_size,
+  first_time: payload.first_time,
   state: payload.state,
   element: payload.element,
 });
@@ -54,6 +55,7 @@ export const getModuleEventPayload = (payload: any) => ({
   state: payload.state,
   element: payload.element,
 });
+
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -132,6 +134,7 @@ export const getProjectStateEventPayload = (payload: any) => {
     element: payload.element,
   };
 };
+
 // Workspace crud Events
 export const WORKSPACE_CREATED = "Workspace created";
 export const WORKSPACE_UPDATED = "Workspace updated";
@@ -166,5 +169,22 @@ export const MEMBER_ACCEPTED = "Member accepted";
 export const PROJECT_MEMBER_ADDED = "Project member added";
 export const PROJECT_MEMBER_LEAVE = "Project member leave";
 export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
+// Sign-in & Sign-up Events
+export const NAVIGATE_TO_SIGNUP = "Navigate to sign-up page";
+export const NAVIGATE_TO_SIGNIN = "Navigate to sign-in page";
+export const CODE_VERIFIED = "Code verified";
+export const SETUP_PASSWORD = "Password setup";
+export const PASSWORD_CREATE_SELECTED = "Password created";
+export const PASSWORD_CREATE_SKIPPED = "Skipped to setup";
+export const SIGN_IN_WITH_PASSWORD = "Sign in with password";
+export const FORGOT_PASSWORD = "Forgot password clicked";
+export const FORGOT_PASS_LINK = "Forgot password link generated";
+export const NEW_PASS_CREATED = "New password created";
+// Onboarding Events
+export const USER_DETAILS = "User details added";
+// Product Tour Events
+export const PRODUCT_TOUR_STARTED = "Product tour started";
+export const PRODUCT_TOUR_COMPLETED = "Product tour completed";
+export const PRODUCT_TOUR_SKIPPED = "Product tour skipped";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
