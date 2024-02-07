@@ -10,6 +10,8 @@ import { CycleGanttSidebarBlock } from "components/cycles";
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+// constants
+import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
   title: string;
@@ -98,7 +100,10 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          className={`${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          style={{
+                            height: `${BLOCK_HEIGHT}px`,
+                          }}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}

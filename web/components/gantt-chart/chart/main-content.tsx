@@ -52,13 +52,12 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     updateCurrentViewRenderPayload,
   } = props;
   // chart hook
-  const { currentView, currentViewData, updateScrollLeft, updateScrollTop } = useChart();
+  const { currentView, currentViewData, updateScrollLeft } = useChart();
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { clientWidth: clientVisibleWidth, scrollLeft: currentLeftScrollPosition, scrollWidth } = e.currentTarget;
 
     updateScrollLeft(currentLeftScrollPosition);
-    updateScrollTop(e.currentTarget.scrollTop);
 
     const approxRangeLeft = scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight = scrollWidth - (approxRangeLeft + clientVisibleWidth);
@@ -86,7 +85,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     <div
       // DO NOT REMOVE THE ID
       id="gantt-container"
-      className={cn("relative h-full w-full flex flex-1 overflow-hidden border-t border-custom-border-200", {
+      className={cn("h-full w-full overflow-hidden overflow-y-auto flex border-t border-custom-border-200", {
         "mb-8": bottomSpacing,
       })}
     >
@@ -100,7 +99,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
       <div
         // DO NOT REMOVE THE ID
         id="scroll-container"
-        className="relative h-full w-full flex flex-col flex-1 overflow-hidden overflow-x-auto horizontal-scroll-enable"
+        className="relative min-h-full h-max w-3/4 flex-shrink-0 overflow-hidden overflow-x-auto"
         onScroll={onScroll}
       >
         <ActiveChartView />

@@ -54,8 +54,6 @@ export type ChartContextActionPayload =
 export interface ChartContextReducer extends ChartContextData {
   scrollLeft: number;
   updateScrollLeft: (scrollLeft: number) => void;
-  scrollTop: number;
-  updateScrollTop: (scrollTop: number) => void;
   dispatch: (action: ChartContextActionPayload) => void;
 }
 

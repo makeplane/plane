@@ -24,7 +24,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentViewData, scrollLeft } = useChart();
+  const { currentViewData, renderView, scrollLeft } = useChart();
   // check if cursor reaches either end while resizing/dragging
   const checkScrollEnd = (e: MouseEvent): number => {
     const SCROLL_THRESHOLD = 70;
@@ -208,14 +208,12 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   };
   // update block position from viewport's left end on scroll
   useEffect(() => {
-    const block = resizableRef.current;
+    const resizableBlock = resizableRef.current;
 
-    if (!block) return;
+    if (!resizableBlock) return;
 
-    requestAnimationFrame(() => {
-      setPosFromLeft(block.getBoundingClientRect().left);
-    });
-  }, [scrollLeft]);
+    setPosFromLeft(resizableBlock.getBoundingClientRect().left);
+  }, [block, scrollLeft]);
   // check if block is hidden on either side
   const isBlockHiddenOnLeft =
     block.position?.marginLeft &&
@@ -224,6 +222,8 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   const isBlockHiddenOnRight = posFromLeft && window && posFromLeft > window.innerWidth;
 
   const textDisplacement = scrollLeft - (block.position?.marginLeft ?? 0);
+
+  console.log("currentViewData", renderView);
 
   return (
     <>
@@ -240,17 +240,17 @@ export const ChartDraggable: React.FC<Props> = (props) => {
         </div>
       )}
       {/* move to right side hidden block button */}
-      {/* {isBlockHiddenOnRight && ( */}
-      <div
-        className="fixed z-0 right-1 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
-        onClick={handleScrollToBlock}
-        style={{
-          top: `${(resizableRef.current?.getBoundingClientRect().top ?? 0) + 6}px`,
-        }}
-      >
-        <ArrowRight className="h-3.5 w-3.5" />
-      </div>
-      {/* )} */}
+      {isBlockHiddenOnRight && (
+        <div
+          className="fixed z-0 right-1 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          onClick={handleScrollToBlock}
+          style={{
+            top: `${(resizableRef.current?.getBoundingClientRect().top ?? 0) + 6}px`,
+          }}
+        >
+          <ArrowRight className="h-3.5 w-3.5" />
+        </div>
+      )}
       <div
         id={`block-${block.id}`}
         ref={resizableRef}

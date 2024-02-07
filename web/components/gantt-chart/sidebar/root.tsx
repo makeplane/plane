@@ -1,6 +1,8 @@
 import { useRef } from "react";
 // components
-import { IBlockUpdateData, IGanttBlock, useChart } from "components/gantt-chart";
+import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
+// constants
+import { HEADER_HEIGHT } from "../constants";
 
 type Props = {
   blocks: IGanttBlock[] | null;
@@ -14,28 +16,24 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
   const { blocks, blockUpdateHandler, enableReorder, sidebarToRender, title } = props;
   // refs
   const sidebarRef = useRef<HTMLDivElement>(null);
-  // chart hook
-  const { updateScrollTop } = useChart();
-
-  const onSidebarScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => updateScrollTop(e.currentTarget.scrollTop);
 
   return (
     <div
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="flex h-full w-1/4 flex-col border-r border-custom-border-200"
+      className="h-full w-1/4 flex-shrink-0"
     >
-      <div className="box-border h-[60px] flex-shrink-0 flex items-end justify-between gap-2 border-b border-custom-border-200 pb-2 pl-10 pr-4 text-sm font-medium text-custom-text-300">
+      <div
+        className="box-border flex-shrink-0 flex items-end justify-between gap-2 border-[0.5px] border-l-0 border-t-0 border-custom-border-200 pb-2 pl-8 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-[1] bg-custom-background-100"
+        style={{
+          height: `${HEADER_HEIGHT}px`,
+        }}
+      >
         <h6>{title}</h6>
         <h6>Duration</h6>
       </div>
 
-      <div
-        id="gantt-sidebar-scroll-container"
-        className="max-h-full mt-[12px] pl-2.5 overflow-hidden overflow-y-auto"
-        onScroll={onSidebarScroll}
-        ref={sidebarRef}
-      >
+      <div id="gantt-sidebar-scroll-container" className="max-h-full" ref={sidebarRef}>
         {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
       </div>
     </div>

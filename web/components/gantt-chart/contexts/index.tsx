@@ -33,7 +33,6 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     activeBlock: null,
   });
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [scrollTop, setScrollTop] = useState(0);
 
   const handleDispatch = (action: ChartContextActionPayload): ChartContextData => {
     const newState = chartReducer(state, action);
@@ -43,16 +42,12 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const updateScrollLeft = (scrollLeft: number) => setScrollLeft(scrollLeft);
 
-  const updateScrollTop = (scrollTop: number) => setScrollTop(scrollTop);
-
   return (
     <ChartContext.Provider
       value={{
         ...state,
         scrollLeft,
         updateScrollLeft,
-        scrollTop,
-        updateScrollTop,
         dispatch: handleDispatch,
       }}
     >

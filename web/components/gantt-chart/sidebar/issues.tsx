@@ -14,6 +14,7 @@ import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 import { TIssue } from "@plane/types";
+import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -99,95 +100,96 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleOrderChange}>
-      <Droppable droppableId="gantt-sidebar">
-        {(droppableProvided) => (
-          <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-            <>
-              {blocks ? (
-                blocks.map((block, index) => {
-                  const isBlockVisibleOnSidebar = block.start_date && block.target_date;
+    <>
+      <DragDropContext onDragEnd={handleOrderChange}>
+        <Droppable droppableId="gantt-sidebar">
+          {(droppableProvided) => (
+            <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+              <>
+                {blocks ? (
+                  blocks.map((block, index) => {
+                    const isBlockVisibleOnSidebar = block.start_date && block.target_date;
 
-                  // hide the block if it doesn't have start and target dates and showAllBlocks is false
-                  if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
+                    // hide the block if it doesn't have start and target dates and showAllBlocks is false
+                    if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
 
-                  const duration =
-                    !block.start_date || !block.target_date
-                      ? null
-                      : findTotalDaysInRange(block.start_date, block.target_date);
+                    const duration =
+                      !block.start_date || !block.target_date
+                        ? null
+                        : findTotalDaysInRange(block.start_date, block.target_date);
 
-                  return (
-                    <Draggable
-                      key={`sidebar-block-${block.id}`}
-                      draggableId={`sidebar-block-${block.id}`}
-                      index={index}
-                      isDragDisabled={!enableReorder}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          className={cn(
-                            "h-11",
-                            { "rounded bg-custom-background-80": snapshot.isDragging },
-                            {
+                    return (
+                      <Draggable
+                        key={`sidebar-block-${block.id}`}
+                        draggableId={`sidebar-block-${block.id}`}
+                        index={index}
+                        isDragDisabled={!enableReorder}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className={cn("border-r-[0.5px] border-custom-border-200", {
+                              "rounded bg-custom-background-80": snapshot.isDragging,
                               "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                                 peekIssue?.issueId === block.data.id,
-                            }
-                          )}
-                          onMouseEnter={() => updateActiveBlock(block)}
-                          onMouseLeave={() => updateActiveBlock(null)}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                        >
-                          <div
-                            id={`sidebar-block-${block.id}`}
-                            className={`group flex h-full w-full items-center gap-2 rounded-l px-2 pr-4 ${
-                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
-                            }`}
+                            })}
+                            onMouseEnter={() => updateActiveBlock(block)}
+                            onMouseLeave={() => updateActiveBlock(null)}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
                           >
-                            {enableReorder && (
-                              <button
-                                type="button"
-                                className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
-                                {...provided.dragHandleProps}
-                              >
-                                <MoreVertical className="h-3.5 w-3.5" />
-                                <MoreVertical className="-ml-5 h-3.5 w-3.5" />
-                              </button>
-                            )}
-                            <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
-                              <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock data={block.data} />
-                              </div>
-                              {duration && (
-                                <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                  <span>
-                                    {duration} day{duration > 1 ? "s" : ""}
-                                  </span>
-                                </div>
+                            <div
+                              className={cn("group flex h-full w-full items-center gap-2 px-2 pr-4", {
+                                "bg-custom-background-80": activeBlock?.id === block.id,
+                              })}
+                              style={{
+                                height: `${BLOCK_HEIGHT}px`,
+                              }}
+                            >
+                              {enableReorder && (
+                                <button
+                                  type="button"
+                                  className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
+                                  {...provided.dragHandleProps}
+                                >
+                                  <MoreVertical className="h-3.5 w-3.5" />
+                                  <MoreVertical className="-ml-5 h-3.5 w-3.5" />
+                                </button>
                               )}
+                              <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
+                                <div className="flex-grow truncate">
+                                  <IssueGanttSidebarBlock data={block.data} />
+                                </div>
+                                {duration && (
+                                  <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                    <span>
+                                      {duration} day{duration > 1 ? "s" : ""}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })
-              ) : (
-                <Loader className="space-y-3 pr-2">
-                  <Loader.Item height="34px" />
-                  <Loader.Item height="34px" />
-                  <Loader.Item height="34px" />
-                  <Loader.Item height="34px" />
-                </Loader>
-              )}
-              {droppableProvided.placeholder}
-            </>
-            {enableQuickIssueCreate && !disableIssueCreation && (
-              <GanttQuickAddIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
-            )}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                        )}
+                      </Draggable>
+                    );
+                  })
+                ) : (
+                  <Loader className="space-y-3 pr-2">
+                    <Loader.Item height="34px" />
+                    <Loader.Item height="34px" />
+                    <Loader.Item height="34px" />
+                    <Loader.Item height="34px" />
+                  </Loader>
+                )}
+                {droppableProvided.placeholder}
+              </>
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+      {enableQuickIssueCreate && !disableIssueCreation && (
+        <GanttQuickAddIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
+      )}
+    </>
   );
 });

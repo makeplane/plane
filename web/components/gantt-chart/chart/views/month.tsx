@@ -5,6 +5,7 @@ import { useChart } from "components/gantt-chart";
 import { cn } from "helpers/common.helper";
 // types
 import { IMonthBlock } from "../../views";
+import { HEADER_HEIGHT } from "components/gantt-chart/constants";
 
 export const MonthChartView: FC<any> = () => {
   // chart hook
@@ -14,21 +15,35 @@ export const MonthChartView: FC<any> = () => {
 
   return (
     <>
-      <div className="absolute h-full flex flex-grow divide-x divide-custom-border-100/50">
+      <div className="absolute top-0 left-0 h-full w-max flex divide-x divide-custom-border-100/50">
         {monthBlocks?.map((block, rootIndex) => (
-          <div key={`month-${block?.month}-${block?.year}`} className="relative flex flex-col">
-            <div className="h-[60px] w-full">
-              <div className="relative h-[30px]">
+          <div key={`month-${block?.month}-${block?.year}`} className="relative">
+            <div
+              className="w-full"
+              style={{
+                height: `${HEADER_HEIGHT}px`,
+              }}
+            >
+              <div
+                className="relative"
+                style={{
+                  height: `${HEADER_HEIGHT / 2}px`,
+                }}
+              >
                 <div className="sticky left-0 inline-flex whitespace-nowrap px-3 py-2 text-xs font-medium capitalize">
                   {block?.title}
                 </div>
               </div>
-
-              <div className="flex h-[30px] w-full">
+              <div
+                className="flex w-full"
+                style={{
+                  height: `${HEADER_HEIGHT / 2}px`,
+                }}
+              >
                 {block?.children?.map((monthDay, _idx) => (
                   <div
                     key={`sub-title-${rootIndex}-${_idx}`}
-                    className="flex-shrink-0 border-b border-custom-border-200 py-1 text-center capitalize"
+                    className="flex-shrink-0 border-b-[0.5px] border-custom-border-200 py-1 text-center capitalize"
                     style={{ width: `${currentViewData?.data.width}px` }}
                   >
                     <div className="space-x-1 text-xs">
@@ -41,7 +56,6 @@ export const MonthChartView: FC<any> = () => {
                 ))}
               </div>
             </div>
-
             <div className="flex h-full w-full divide-x divide-custom-border-100/50">
               {block?.children?.map((monthDay, index) => (
                 <div

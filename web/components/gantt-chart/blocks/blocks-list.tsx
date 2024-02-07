@@ -9,6 +9,8 @@ import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
+// constants
+import { BLOCK_HEIGHT, HEADER_HEIGHT } from "../constants";
 
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
@@ -35,7 +37,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
   // store hooks
   const { peekIssue } = useIssueDetail();
   // chart hook
-  const { activeBlock, dispatch, updateScrollTop } = useChart();
+  const { activeBlock, dispatch } = useChart();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -77,20 +79,13 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
     });
   };
 
-  const handleBlocksScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    updateScrollTop(e.currentTarget.scrollTop);
-
-    const sidebarScrollContainer = document.getElementById("gantt-sidebar-scroll-container") as HTMLDivElement;
-    if (!sidebarScrollContainer) return;
-
-    sidebarScrollContainer.scrollTop = e.currentTarget.scrollTop;
-  };
-
   return (
     <div
-      className="relative z-[5] mt-[72px] h-full overflow-hidden overflow-y-auto"
-      style={{ width: `${itemsContainerWidth}px` }}
-      onScroll={handleBlocksScroll}
+      className="h-full"
+      style={{
+        width: `${itemsContainerWidth}px`,
+        marginTop: `${HEADER_HEIGHT}px`,
+      }}
     >
       {blocks?.map((block) => {
         // hide the block if it doesn't have start and target dates and showAllBlocks is false
@@ -101,26 +96,34 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
         return (
           <div
             key={`block-${block.id}`}
-            className={cn("relative h-11", {
-              "rounded bg-custom-background-80": activeBlock?.id === block.id,
-              "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
-                peekIssue?.issueId === block.data.id,
-            })}
-            onMouseEnter={() => updateActiveBlock(block)}
-            onMouseLeave={() => updateActiveBlock(null)}
+            className="relative min-w-full w-max"
+            style={{
+              height: `${BLOCK_HEIGHT}px`,
+            }}
           >
-            {isBlockVisibleOnChart ? (
-              <ChartDraggable
-                block={block}
-                blockToRender={blockToRender}
-                handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                enableBlockLeftResize={enableBlockLeftResize}
-                enableBlockRightResize={enableBlockRightResize}
-                enableBlockMove={enableBlockMove}
-              />
-            ) : (
-              <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />
-            )}
+            <div
+              className={cn("relative h-full", {
+                "rounded bg-custom-background-80": activeBlock?.id === block.id,
+                "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
+                  peekIssue?.issueId === block.data.id,
+              })}
+              onMouseEnter={() => updateActiveBlock(block)}
+              onMouseLeave={() => updateActiveBlock(null)}
+            >
+              {/* <GanttChartSidebarBlock block={block} /> */}
+              {isBlockVisibleOnChart ? (
+                <ChartDraggable
+                  block={block}
+                  blockToRender={blockToRender}
+                  handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                  enableBlockLeftResize={enableBlockLeftResize}
+                  enableBlockRightResize={enableBlockRightResize}
+                  enableBlockMove={enableBlockMove}
+                />
+              ) : (
+                <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />
+              )}
+            </div>
           </div>
         );
       })}
