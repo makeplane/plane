@@ -30,13 +30,7 @@ export class GlobalViewRootStore {
   cycleUserViewStore?: userViewRootStore;
 
   constructor(private store: RootStore) {
-    const defaultViews: any[] = [
-      {
-        id: "all-issues",
-        name: "All Issues",
-        filters: {},
-        is_local_view: true,
-      },
+    const workspaceViewMeStoreDefaultViews: any[] = [
       {
         id: "assigned",
         name: "Assigned",
@@ -62,9 +56,21 @@ export class GlobalViewRootStore {
         is_local_view: true,
       },
     ];
+    const workspaceViewStoreDefaultViews: any[] = [
+      {
+        id: "all-issues",
+        name: "All Issues",
+        filters: {},
+        is_local_view: true,
+      },
+    ];
 
-    this.workspaceViewMeStore = new ViewRootStore(this.store, new WorkspaceMeViewService());
-    this.workspaceViewStore = new ViewRootStore(this.store, new WorkspaceViewService(), defaultViews);
+    this.workspaceViewMeStore = new ViewRootStore(
+      this.store,
+      new WorkspaceMeViewService(),
+      workspaceViewMeStoreDefaultViews
+    );
+    this.workspaceViewStore = new ViewRootStore(this.store, new WorkspaceViewService(), workspaceViewStoreDefaultViews);
     this.projectViewStore = new ViewRootStore(this.store, new ProjectViewService());
     this.projectViewMeStore = new ViewRootStore(this.store, new ProjectViewMeService());
 

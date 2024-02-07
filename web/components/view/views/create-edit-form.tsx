@@ -1,15 +1,15 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-import { Trash2, Plus, X } from "lucide-react";
+import { Briefcase, Globe2, Plus, X } from "lucide-react";
 // hooks
-import { useViewDetail } from "hooks/store";
+import { useViewDetail, useProject } from "hooks/store";
 // components
 import { ViewAppliedFiltersRoot } from "../";
 // ui
 import { Input, Button } from "@plane/ui";
 // types
-import { TView, TViewTypes } from "@plane/types";
+import { TViewTypes } from "@plane/types";
 import { TViewOperations } from "../types";
 
 type TViewCreateEditForm = {
@@ -18,28 +18,50 @@ type TViewCreateEditForm = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
-  modalToggle: boolean;
-  handleModalClose: () => void;
-  onSubmit: (viewData: Partial<TView>) => void;
 };
 
 export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, modalToggle, handleModalClose, onSubmit } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const { getProjectById } = useProject();
+  // states
+  const [modalToggle, setModalToggle] = useState(false);
+  const [loader, setLoader] = useState(false);
+
+  const modalOpen = useCallback(() => setModalToggle(true), [setModalToggle]);
+  const modalClose = useCallback(() => {
+    setModalToggle(false);
+    setTimeout(() => {
+      viewOperations.localViewCreateEditClear(viewId);
+    }, 200);
+  }, [viewId, setModalToggle, viewOperations]);
+
+  useEffect(() => {
+    if (viewId) modalOpen();
+  }, [viewId, modalOpen, modalClose]);
 
   const onContinue = async () => {
-    const payload: Partial<TView> = {
-      id: viewDetailStore?.id,
-      name: viewDetailStore?.name,
-      filters: viewDetailStore?.filters,
-    };
-    onSubmit(payload);
+    setLoader(true);
+    if (viewDetailStore?.is_create) {
+      const payload = viewDetailStore?.filtersToUpdate;
+      await viewOperations.create(payload);
+      modalClose();
+    } else {
+      const payload = viewDetailStore?.filtersToUpdate;
+      if (!payload) return;
+      await viewOperations.update();
+      modalClose();
+    }
+    setLoader(false);
   };
 
+  const projectDetails = projectId ? getProjectById(projectId) : undefined;
+
+  if (!viewDetailStore?.id) return <></>;
   return (
     <Transition.Root show={modalToggle} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleModalClose}>
+      <Dialog as="div" className="relative z-20" onClose={modalClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -65,13 +87,22 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem] py-5 border-[0.1px] border-custom-border-100">
                 <div className="p-3 px-5 relative flex items-center gap-2">
-                  {/* <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
-                    <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
-                      <Trash2 className="w-3.5 h-3.5" />
+                  {projectId && projectDetails ? (
+                    <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
+                      <div className="flex-shrink-0 relative flex justify-center items-center w-5 h-5 overflow-hidden">
+                        <Briefcase className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="text-xs uppercase font-medium">{projectDetails?.identifier || "Project"}</div>
                     </div>
-                    <div className="text-xs uppercase">Project Identifier</div>
-                  </div> */}
-                  <div className="">Create View</div>
+                  ) : (
+                    <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
+                      <div className="flex-shrink-0 relative flex justify-center items-center w-5 h-5 overflow-hidden">
+                        <Globe2 className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="text-xs uppercase font-medium">Workspace</div>
+                    </div>
+                  )}
+                  <div className="font-medium text-lg">Save View</div>
                 </div>
 
                 <div className="p-3 px-5">
@@ -79,7 +110,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     id="name"
                     name="name"
                     type="text"
-                    value={viewDetailStore?.name || ""}
+                    value={viewDetailStore?.filtersToUpdate?.name || ""}
                     onChange={(e) => {
                       viewDetailStore?.setName(e.target.value);
                     }}
@@ -90,13 +121,13 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                 </div>
 
                 <div className="p-3 px-5 relative flex justify-between items-center gap-2">
-                  <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
+                  <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
                     <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
                       <Plus className="w-3 h-3" />
                     </div>
                     <div className="text-xs">Filters</div>
                   </div>
-                  <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-dashed border-custom-border-100 bg-custom-background-80">
+                  <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-dashed border-custom-border-100 bg-custom-background-80">
                     <div className="text-xs">Clear all filters</div>
                     <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
                       <X className="w-3 h-3" />
@@ -115,11 +146,11 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                 </div>
 
                 <div className="p-3 px-5 relative flex justify-end items-center gap-2">
-                  <Button variant="neutral-primary" onClick={handleModalClose}>
+                  <Button variant="neutral-primary" onClick={modalClose} disabled={loader}>
                     Cancel
                   </Button>
-                  <Button variant="primary" onClick={onContinue}>
-                    Create View
+                  <Button variant="primary" onClick={onContinue} disabled={loader}>
+                    {loader ? `Saving...` : `${viewDetailStore?.is_create ? `Create` : `Update`} View`}
                   </Button>
                 </div>
               </Dialog.Panel>

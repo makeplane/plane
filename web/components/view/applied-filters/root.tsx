@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 import isEmpty from "lodash/isEmpty";
@@ -43,13 +43,15 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
       {filterKeys.map((key) => {
         const filterKey = key as keyof TViewFilters;
         return (
-          <ViewAppliedFilters
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            viewId={viewId}
-            viewType={viewType}
-            filterKey={filterKey}
-          />
+          <Fragment key={filterKey}>
+            <ViewAppliedFilters
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewId}
+              viewType={viewType}
+              filterKey={filterKey}
+            />
+          </Fragment>
         );
       })}
       <div

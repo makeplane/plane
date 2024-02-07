@@ -3,7 +3,10 @@ export * from "./all-issues-root";
 // views
 export * from "./views/root";
 export * from "./views/view-item";
-export * from "./views/create-edit";
+
+export * from "./views/dropdown/root";
+export * from "./views/dropdown/dropdown-item";
+
 export * from "./views/create-edit-form";
 
 // layouts

@@ -48,7 +48,9 @@ export const ProfileSidebar = observer(() => {
   ];
 
   return (
-    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80 border-l border-custom-border-100">
+    <div
+      className={`w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80 border-l border-custom-border-100`}
+    >
       {userProjectsData ? (
         <>
           <div className="relative h-32">

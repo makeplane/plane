@@ -13,9 +13,9 @@ export const viewLocalPayload: Partial<TView> = {
   id: uuidV4(),
   name: "",
   description: "",
-  filters: {},
-  display_filters: {},
-  display_properties: {},
+  filters: undefined,
+  display_filters: undefined,
+  display_properties: undefined,
   is_local_view: false,
   is_create: true,
 };

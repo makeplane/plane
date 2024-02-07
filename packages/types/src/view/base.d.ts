@@ -44,4 +44,5 @@ export type TView = {
   // local view variables
   is_local_view: boolean;
   is_create: boolean;
+  is_editable: boolean;
 };

@@ -47,7 +47,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
         <InstanceLayout>
           <StoreWrapper>
             <CrispWrapper user={currentUser}>
-              <PostHogProvider
+              {/* <PostHogProvider
                 user={currentUser}
                 workspaceRole={currentWorkspaceRole}
                 projectRole={currentProjectRole}
@@ -55,7 +55,8 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
                 posthogHost={envConfig?.posthog_host || null}
               >
                 <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PostHogProvider>
+              </PostHogProvider> */}
+              <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
             </CrispWrapper>
           </StoreWrapper>
         </InstanceLayout>

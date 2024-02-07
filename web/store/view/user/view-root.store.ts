@@ -51,13 +51,13 @@ export class userViewRootStore implements TUserViewRootStore {
     const view = await this.service.fetch(this.workspaceSlug, this.projectId, this.featureId);
     if (!view) return;
 
-    runInAction(() => {
-      if (this.workspaceSlug && view.id)
-        set(
-          this.viewMap,
-          [view.id],
-          new UserViewStore(view, this.service, this.workspaceSlug, this.projectId, this.featureId)
-        );
-    });
+    // runInAction(() => {
+    //   if (this.workspaceSlug && view.id)
+    //     set(
+    //       this.viewMap,
+    //       [view.id],
+    //       new UserViewStore(view, this.service, this.workspaceSlug, this.projectId, this.featureId)
+    //     );
+    // });
   };
 }

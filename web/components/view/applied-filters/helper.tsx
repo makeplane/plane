@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import isEmpty from "lodash/isEmpty";
 // types
-import { TFilters } from "@plane/types";
+import { TViewFilters } from "@plane/types";
 
 type TComputedAppliedFilters = {
   key: string;
@@ -10,7 +10,7 @@ type TComputedAppliedFilters = {
   dropdownOptions?: { id: string; icon: ""; title: ""; component: ReactNode }[];
 }[];
 
-export const filterOptions = (key: keyof TFilters, selectedFilters: string[]) => {
+export const filterOptions = (key: keyof TViewFilters, selectedFilters: string[]) => {
   switch (key) {
     case "project":
       return [];
@@ -45,12 +45,12 @@ export const generateTitle = (title: string) =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-export const constructAppliedFilters = (filters: TFilters): TComputedAppliedFilters => {
+export const constructAppliedFilters = (filters: TViewFilters): TComputedAppliedFilters => {
   const appliedFilters: TComputedAppliedFilters = [];
 
   if (filters && !isEmpty(filters)) {
     Object.keys(filters).forEach((_filterKey) => {
-      const _key = _filterKey as keyof TFilters;
+      const _key = _filterKey as keyof TViewFilters;
       const _value = filters[_key];
 
       if (_value && !isEmpty(_value)) {

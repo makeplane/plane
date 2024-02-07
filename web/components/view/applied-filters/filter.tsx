@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import isEmpty from "lodash/isEmpty";
 import { X } from "lucide-react";
@@ -33,21 +33,20 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
 
   if (!filterKeyValue || filterKeyValue.length <= -1) return <></>;
   return (
-    <div
-      key={filterKey}
-      className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 py-1 min-h-[32px]"
-    >
+    <div className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 py-1 min-h-[32px]">
       <div className="flex-shrink-0 text-xs text-custom-text-200">{generateTitle(filterKey)}</div>
       <div className="relative flex items-center gap-1 flex-wrap">
         {["1", "2", "3", "4"].map((filterId) => (
-          <ViewAppliedFiltersItem
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            viewId={viewId}
-            viewType={viewType}
-            filterKey={filterKey}
-            filterId={filterId}
-          />
+          <Fragment key={filterId}>
+            <ViewAppliedFiltersItem
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewId}
+              viewType={viewType}
+              filterKey={filterKey}
+              filterId={filterId}
+            />
+          </Fragment>
         ))}
       </div>
       <div
