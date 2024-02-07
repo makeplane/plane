@@ -29,7 +29,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
   viewFlags = {
     enableQuickAdd: false,
     enableIssueCreation: true,
-    enableInlineEditing: false,
+    enableInlineEditing: true,
   };
   // root store
   rootIssueStore: IIssueRootStore;
