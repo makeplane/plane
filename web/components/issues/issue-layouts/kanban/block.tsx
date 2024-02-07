@@ -66,16 +66,22 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         </div>
       </WithDisplayPropertiesHOC>
 
-      <ControlLink
-        href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-        target="_blank"
-        onClick={() => handleIssuePeekOverview(issue)}
-        className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
-      >
+      {issue?.is_draft ? (
         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
-      </ControlLink>
+      ) : (
+        <ControlLink
+          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+          target="_blank"
+          onClick={() => handleIssuePeekOverview(issue)}
+          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+        >
+          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+            <span>{issue.name}</span>
+          </Tooltip>
+        </ControlLink>
+      )}
 
       <IssueProperties
         className="flex flex-wrap items-center gap-2 whitespace-nowrap"

@@ -69,16 +69,22 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
         )}
 
-        <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
-          target="_blank"
-          onClick={() => handleIssuePeekOverview(issue)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
-        >
+        {issue?.is_draft ? (
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>
           </Tooltip>
-        </ControlLink>
+        ) : (
+          <ControlLink
+            href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+            target="_blank"
+            onClick={() => handleIssuePeekOverview(issue)}
+            className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          >
+            <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <span>{issue.name}</span>
+            </Tooltip>
+          </ControlLink>
+        )}
 
         <div className="ml-auto flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (
