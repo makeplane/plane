@@ -21,6 +21,7 @@ export interface DraftIssueProps {
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
   onSubmit: (formData: Partial<TIssue>) => Promise<void>;
   projectId: string;
+  isDraft: boolean;
 }
 
 const issueDraftService = new IssueDraftService();
@@ -35,6 +36,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     projectId,
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
+    isDraft,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -107,6 +109,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onClose={handleClose}
         onSubmit={onSubmit}
         projectId={projectId}
+        isDraft={isDraft}
       />
     </>
   );
