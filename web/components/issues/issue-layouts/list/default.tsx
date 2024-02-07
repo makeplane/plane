@@ -1,5 +1,8 @@
+import { useRef } from "react";
 // components
-import { IssueBlock, IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+import { IssueBlock, ListQuickAddIssueForm } from "components/issues";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import RenderIfVisible from "components/core/render-if-visible-HOC";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
@@ -14,11 +17,8 @@ import {
 } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
-import { HeaderGroupByCard } from "./headers/group-by-card";
-import { getGroupByColumns, getIssueFlatList } from "../utils";
 import { EIssueListRow, TCreateModalStoreTypes } from "constants/issue";
-import { useRef } from "react";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
+import { getGroupByColumns, getIssueFlatList } from "../utils";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -108,7 +108,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     <div ref={containerRef} className="relative overflow-auto h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map((listRow: IIssueListRow) => {
+        list.map((listRow: IIssueListRow, index) => {
           switch (listRow.type) {
             case EIssueListRow.HEADER:
               return (
@@ -159,6 +159,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   defaultHeight={45}
                   root={containerRef}
                   classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
+                  index={index}
                 >
                   <IssueBlock
                     issueId={listRow.id}
@@ -237,5 +238,3 @@ export const List: React.FC<IList> = (props) => {
     </div>
   );
 };
-
-

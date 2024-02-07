@@ -139,6 +139,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               defaultHeight={100}
               horizonatlOffset={50}
               alwaysRender={snapshot.isDragging}
+              index={index}
             >
               <KanbanIssueDetailsBlock
                 issue={issue}

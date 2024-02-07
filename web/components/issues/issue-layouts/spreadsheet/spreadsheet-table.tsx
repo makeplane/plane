@@ -5,9 +5,8 @@ import { EIssueActions } from "../types";
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
-import { MutableRefObject, useRef } from "react";
+import { MutableRefObject } from "react";
 import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { cn } from "helpers/common.helper";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -49,8 +48,15 @@ export const SpreadsheetTable = observer((props: Props) => {
         isEstimateEnabled={isEstimateEnabled}
       />
       <tbody>
-        {issueIds.map((id) => (
-          <RenderIfVisible key={id} as="tr" defaultHeight={44.5} root={containerRef}>
+        {issueIds.map((id, index) => (
+          <RenderIfVisible
+            key={id}
+            as="tr"
+            defaultHeight={44.5}
+            root={containerRef}
+            placeholderChildren={<td colSpan={100} className="border-b-[0.5px]" />}
+            index={index}
+          >
             <SpreadsheetIssueRow
               issueId={id}
               displayProperties={displayProperties}

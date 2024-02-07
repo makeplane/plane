@@ -10,6 +10,10 @@ type Props = {
   as?: keyof JSX.IntrinsicElements;
   classNames?: string;
   alwaysRender?: boolean;
+  getShouldRender?: (index: number) => boolean;
+  updateRenderTracker?: (index: number, isVisble: boolean) => void;
+  placeholderChildren?: ReactNode;
+  index: number;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -22,13 +26,25 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     children,
     classNames = "",
     alwaysRender = false,
-    ...others
+    getShouldRender,
+    updateRenderTracker,
+    placeholderChildren = null,
+    index,
   } = props;
-  const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender);
+  const defaultVisible = !!getShouldRender && getShouldRender(index);
+  const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender || defaultVisible);
   const placeholderHeight = useRef<number>(defaultHeight);
   const intersectionRef = useRef<HTMLElement | null>(null);
 
   const isVisible = alwaysRender || shouldVisible;
+
+  useEffect(() => {
+    if (getShouldRender && getShouldRender(index)) setShouldVisible(true);
+  }, [getShouldRender, index]);
+
+  useEffect(() => {
+    updateRenderTracker && updateRenderTracker(index, shouldVisible);
+  }, [index, shouldVisible]);
 
   // Set visibility with intersection observer
   useEffect(() => {
@@ -64,9 +80,9 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     }
   }, [isVisible, intersectionRef, alwaysRender]);
 
-  const child = isVisible ? <>{children}</> : null;
+  const child = isVisible ? <>{children}</> : placeholderChildren;
   const style = isVisible ? {} : { height: placeholderHeight.current, width: "100%" };
-  const className = isVisible ? classNames : cn(classNames, "animate-pulse");
+  const className = isVisible ? classNames : cn(classNames, "animate-pulse bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
 };
