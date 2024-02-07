@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
 from plane.db.models import User, Workspace, WorkspaceMember
-from plane.bgtasks.create_faker import create_fake_data
 
 class Command(BaseCommand):
     help = "Create dump issues, cycles etc. for a project in a given workspace"
@@ -39,6 +38,8 @@ class Command(BaseCommand):
 
             members = input("Enter Member emails (comma separated): ")
             members = members.split(",") if members != "" else []
+
+            from plane.bgtasks.create_faker import create_fake_data
             create_fake_data.delay(slug=workspace_slug, email=creator, members=members)
 
             self.stdout.write(self.style.SUCCESS("Data is pushed to the queue"))
