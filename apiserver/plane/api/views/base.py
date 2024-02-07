@@ -1,6 +1,8 @@
 # Python imports
 import zoneinfo
 import json
+from urllib.parse import urlparse
+
 
 # Django imports
 from django.conf import settings
@@ -51,6 +53,11 @@ class WebhookMixin:
             and self.request.method in ["POST", "PATCH", "DELETE"]
             and response.status_code in [200, 201, 204]
         ):
+            url = request.build_absolute_uri()
+            parsed_url = urlparse(url)
+            # Extract the scheme and netloc
+            scheme = parsed_url.scheme
+            netloc = parsed_url.netloc
             # Push the object to delay
             send_webhook.delay(
                 event=self.webhook_event,
@@ -59,6 +66,7 @@ class WebhookMixin:
                 action=self.request.method,
                 slug=self.workspace_slug,
                 bulk=self.bulk,
+                current_site=f"{scheme}://{netloc}",
             )
 
         return response
