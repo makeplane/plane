@@ -56,7 +56,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // toast alert
   const { setToastAlert } = useToast();
 
-
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
@@ -87,9 +86,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const pageStore = usePage(pageId as string);
 
-  //TODO:fix reload confirmations, with mobx
-  const { setShowAlert } = useReloadConfirmations(undefined, pageStore?.isSubmitting === "submitting");
-
+  const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
 
   useEffect(
     () => () => {
