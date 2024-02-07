@@ -639,7 +639,8 @@
                                  State:
                               </p>
                            </td>
-                           <td >
+                           {% if update.changes.state.old_value.0 == 'Backlog' or  update.changes.state.old_value.0 == 'In Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 == 'Cancelled' %}
+                           <td>
                               <img
                                  src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
                                  width="12"
@@ -648,6 +649,7 @@
                                  style="display: block; margin-left: 5px;"
                                  />
                            </td>
+                           {% endif %}
                            <td>
                               <p
                                  style="
@@ -668,7 +670,8 @@
                                  style="display: block;"
                                  />
                            </td>
-                           <td >
+                           {% if update.changes.state.new_value|last == 'Backlog' or  update.changes.state.new_value|last == 'In Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last == 'Cancelled' %}
+                           <td>
                               <img
                                  src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.png{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
                                  width="12"
@@ -677,6 +680,7 @@
                                  style="display: block;"
                                  />
                            </td>
+                           {% endif %}
                            <td>
                               <p
                                  style="
