@@ -282,10 +282,8 @@ if REDIS_SSL:
     redis_url = os.environ.get("REDIS_URL")
     broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
     CELERY_BROKER_URL = broker_url
-    CELERY_RESULT_BACKEND = broker_url
 else:
     CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
 
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",

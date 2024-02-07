@@ -108,25 +108,33 @@
                   margin-bottom: 15px;
                   "
                   />
-               {% if actors_involved == 1 %}
-               <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
-                  {{summary}}
-                  <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
-                  {{ data.0.actor_detail.first_name}}
-                  {{data.0.actor_detail.last_name}}
-                  </span>.
-               </p>
-               {% else %}
-               <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
-                  {{summary}}
-                  <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
-                  {{ data.0.actor_detail.first_name}}
-                  {{data.0.actor_detail.last_name }}
-                  </span>and others.
-               </p>
-               {% endif %}
-
-
+                  {% if actors_involved == 1 %}
+                  <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
+                     {{summary}}
+                     <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+                     {% if data|length > 0 %}
+                     {{ data.0.actor_detail.first_name}}
+                     {{data.0.actor_detail.last_name}}
+                     {% else %}
+                     {{ comments.0.actor_detail.first_name}}
+                     {{comments.0.actor_detail.last_name}}
+                     {% endif %}
+                     </span>.
+                  </p>
+                  {% else %}
+                  <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">
+                     {{summary}}
+                     <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+                     {% if data|length > 0 %}
+                     {{ data.0.actor_detail.first_name}}
+                     {{data.0.actor_detail.last_name}}
+                     {% else %}
+                     {{ comments.0.actor_detail.first_name}}
+                     {{comments.0.actor_detail.last_name}}
+                     {% endif %}
+                     </span>and others.
+                  </p>
+                  {% endif %}
                <!-- {% if actors_involved == 1 %}
                {% if data|length > 0 and comments|length == 0 %}
                <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px">

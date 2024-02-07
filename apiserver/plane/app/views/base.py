@@ -64,6 +64,7 @@ class WebhookMixin:
                 action=self.request.method,
                 slug=self.workspace_slug,
                 bulk=self.bulk,
+                current_site=request.META.get("HTTP_ORIGIN"),
             )
 
         return response
