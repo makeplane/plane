@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
+import { MutableRefObject, useEffect, useRef } from "react";
 //types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
-import { MutableRefObject } from "react";
 import RenderIfVisible from "components/core/render-if-visible-HOC";
 
 type Props = {
@@ -39,6 +39,42 @@ export const SpreadsheetTable = observer((props: Props) => {
     containerRef,
   } = props;
 
+  // states
+  const isScrolled = useRef(false);
+
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    const scrollLeft = containerRef.current.scrollLeft;
+
+    const columnShadow = "8px 22px 22px 10px rgba(0, 0, 0, 0.05)"; // shadow for regular columns
+    const headerShadow = "8px -22px 22px 10px rgba(0, 0, 0, 0.05)"; // shadow for headers
+
+    //The shadow styles are added this way to avoid re-render of all the rows of table, which could be costly
+    if (scrollLeft > 0 !== isScrolled.current) {
+      const firtColumns = containerRef.current.querySelectorAll("table tr td:first-child, th:first-child");
+
+      for (let i = 0; i < firtColumns.length; i++) {
+        const shadow = i === 0 ? headerShadow : columnShadow;
+        if (scrollLeft > 0) {
+          (firtColumns[i] as HTMLElement).style.boxShadow = shadow;
+        } else {
+          (firtColumns[i] as HTMLElement).style.boxShadow = "none";
+        }
+      }
+      isScrolled.current = scrollLeft > 0;
+    }
+  };
+
+  useEffect(() => {
+    const currentContainerRef = containerRef.current;
+
+    if (currentContainerRef) currentContainerRef.addEventListener("scroll", handleScroll);
+
+    return () => {
+      if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <table className="overflow-y-auto">
       <SpreadsheetHeader
@@ -66,6 +102,7 @@ export const SpreadsheetTable = observer((props: Props) => {
               isEstimateEnabled={isEstimateEnabled}
               handleIssues={handleIssues}
               portalElement={portalElement}
+              isScrolled={isScrolled}
             />
           </RenderIfVisible>
         ))}

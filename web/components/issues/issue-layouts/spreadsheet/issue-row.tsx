@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // icons
@@ -31,6 +31,7 @@ interface Props {
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
+  isScrolled: MutableRefObject<boolean>;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -43,6 +44,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     handleIssues,
     quickActions,
     canEditProperties,
+    isScrolled,
   } = props;
 
   // router
@@ -106,6 +108,9 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           },
           {
             "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issueDetail.id,
+          },
+          {
+            "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
           }
         )}
       >
@@ -196,6 +201,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             isEstimateEnabled={isEstimateEnabled}
             handleIssues={handleIssues}
             portalElement={portalElement}
+            isScrolled={isScrolled}
           />
         ))}
     </>
