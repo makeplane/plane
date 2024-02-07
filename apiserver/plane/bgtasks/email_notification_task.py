@@ -1,4 +1,6 @@
 from datetime import datetime
+from bs4 import BeautifulSoup
+
 
 # Third party imports
 from celery import shared_task
@@ -122,6 +124,25 @@ def create_payload(notification_data):
 
     return data
 
+def process_mention(mention_component):
+    soup = BeautifulSoup(mention_component, 'html.parser')
+    mentions = soup.find_all('mention-component')
+    for mention in mentions:
+        user_id = mention['id']
+        user = User.objects.get(pk=user_id)
+        user_name = user.display_name
+        highlighted_name = f'<span style="background-color: blue;">@{user_name}</span>'
+        mention.replace_with(highlighted_name)
+    if soup.p:
+        soup.p['id'] = 'mention-box'
+    return str(soup)
+
+def process_html_content(content):
+    processed_content_list = []
+    for html_content in content:
+        processed_content = process_mention(html_content)
+        processed_content_list.append(processed_content)  
+    return processed_content_list
 
 @shared_task
 def send_email_notification(
@@ -152,11 +173,25 @@ def send_email_notification(
             actor = User.objects.get(pk=actor_id)
             total_changes = total_changes + len(changes)
             comment = changes.pop("comment", False)
+            mention = changes.pop("mention", False)
             actors_involved.append(actor_id)
             if comment:
                 comments.append(
                     {
                         "actor_comments": comment,
+                        "actor_detail": {
+                            "avatar_url": actor.avatar,
+                            "first_name": actor.first_name,
+                            "last_name": actor.last_name,
+                        },
+                    }
+                )
+            if mention:
+                mention["new_value"] = process_html_content(mention.get("new_value"))
+                mention["old_value"] = process_html_content(mention.get("old_value"))
+                comments.append(
+                    {
+                        "actor_comments": mention,
                         "actor_detail": {
                             "avatar_url": actor.avatar,
                             "first_name": actor.first_name,
