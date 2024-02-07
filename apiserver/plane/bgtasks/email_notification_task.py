@@ -131,10 +131,8 @@ def process_mention(mention_component):
         user_id = mention['id']
         user = User.objects.get(pk=user_id)
         user_name = user.display_name
-        highlighted_name = f'<span style="background-color: blue;">@{user_name}</span>'
+        highlighted_name = f'<span id="mention-box">@{user_name}</span>'
         mention.replace_with(highlighted_name)
-    if soup.p:
-        soup.p['id'] = 'mention-box'
     return str(soup)
 
 def process_html_content(content):
