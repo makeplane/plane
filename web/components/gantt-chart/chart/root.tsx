@@ -55,8 +55,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     showAllBlocks,
   } = props;
   // states
-  const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
-  const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
+  const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
+  const [fullScreenMode, setFullScreenMode] = useState(false);
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
   // hooks
   const { currentView, currentViewData, renderView, dispatch } = useChart();
@@ -143,9 +143,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const scrollContainer = document.getElementById("scroll-container") as HTMLDivElement;
-
   const updatingCurrentLeftScrollPosition = (width: number) => {
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
     if (!scrollContainer) return;
 
     scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
@@ -153,6 +152,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   };
 
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
     if (!scrollContainer) return;
 
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
