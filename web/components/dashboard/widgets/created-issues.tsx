@@ -17,7 +17,7 @@ import { getCustomDates, getRedirectionFilters } from "helpers/dashboard.helper"
 // types
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // constants
-import { ISSUES_TABS_LIST } from "constants/dashboard";
+import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 const WIDGET_KEY = "created_issues";
 
@@ -30,6 +30,8 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TCreatedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const selectedTab = widgetDetails?.widget_filters.tab ?? "pending";
+  const selectedDurationFilter = widgetDetails?.widget_filters.target_date ?? "none";
 
   const handleUpdateFilters = async (filters: Partial<TCreatedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -41,64 +43,76 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       filters,
     });
 
+    const filterDates = getCustomDates(filters.target_date ?? selectedDurationFilter);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      issue_type: filters.tab ?? widgetDetails.widget_filters.tab ?? "upcoming",
-      target_date: getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "this_week"),
+      issue_type: filters.tab ?? selectedTab,
+      ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
     }).finally(() => setFetching(false));
   };
 
   useEffect(() => {
+    const filterDates = getCustomDates(selectedDurationFilter);
+
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
-      issue_type: widgetDetails?.widget_filters.tab ?? "upcoming",
-      target_date: getCustomDates(widgetDetails?.widget_filters.target_date ?? "this_week"),
+      issue_type: selectedTab,
+      ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filterParams = getRedirectionFilters(widgetDetails?.widget_filters.tab ?? "upcoming");
+  const filterParams = getRedirectionFilters(selectedTab);
+  const tabsList = selectedDurationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col min-h-96">
-      <div className="flex items-start justify-between gap-2 p-6 pl-7">
-        <div>
-          <Link
-            href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
-            className="text-lg font-semibold text-custom-text-300 hover:underline"
-          >
-            Created by you
-          </Link>
-          <p className="mt-3 text-xs font-medium text-custom-text-300">
-            Filtered by{" "}
-            <span className="border-[0.5px] border-custom-border-300 rounded py-1 px-2 ml-0.5">Due date</span>
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-2 p-6 pl-7">
+        <Link
+          href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
+          className="text-lg font-semibold text-custom-text-300 hover:underline"
+        >
+          Created by you
+        </Link>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.target_date ?? "this_week"}
-          onChange={(val) =>
-            handleUpdateFilters({
-              target_date: val,
-            })
-          }
+          value={selectedDurationFilter}
+          onChange={(val) => {
+            if (val === selectedDurationFilter) return;
+
+            // switch to pending tab if target date is changed to none
+            if (val === "none" && selectedTab !== "completed") {
+              handleUpdateFilters({ target_date: val, tab: "pending" });
+              return;
+            }
+            // switch to upcoming tab if target date is changed to other than none
+            if (val !== "none" && selectedDurationFilter === "none" && selectedTab !== "completed") {
+              handleUpdateFilters({
+                target_date: val,
+                tab: "upcoming",
+              });
+              return;
+            }
+
+            handleUpdateFilters({ target_date: val });
+          }}
         />
       </div>
       <Tab.Group
         as="div"
-        defaultIndex={ISSUES_TABS_LIST.findIndex((t) => t.key === widgetDetails.widget_filters.tab ?? "upcoming")}
+        selectedIndex={tabsList.findIndex((tab) => tab.key === selectedTab)}
         onChange={(i) => {
-          const selectedTab = ISSUES_TABS_LIST[i];
-          handleUpdateFilters({ tab: selectedTab.key ?? "upcoming" });
+          const selectedTab = tabsList[i];
+          handleUpdateFilters({ tab: selectedTab.key ?? "pending" });
         }}
         className="h-full flex flex-col"
       >
         <div className="px-6">
-          <TabsList />
+          <TabsList durationFilter={selectedDurationFilter} selectedTab={selectedTab} />
         </div>
         <Tab.Panels as="div" className="h-full">
-          {ISSUES_TABS_LIST.map((tab) => (
+          {tabsList.map((tab) => (
             <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col">
               <WidgetIssuesList
                 issues={widgetStats.issues}
