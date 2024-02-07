@@ -55,7 +55,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
         (entries) => {
           if (typeof window !== undefined && window.requestIdleCallback) {
             window.requestIdleCallback(() => setShouldVisible(entries[0].isIntersecting), {
-              timeout: 600,
+              timeout: 300,
             });
           } else {
             setShouldVisible(entries[0].isIntersecting);
