@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
 import {
   useApplication,
@@ -29,6 +29,7 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { renderEmoji } from "helpers/emoji.helper";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
+import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -114,118 +115,111 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-          <SidebarHamburgerToggle />
-          <div className="block md:hidden">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft fontSize={14} strokeWidth={2} />
-            </button>
+      <div className=" relative z-10 items-center gap-x-2 gap-y-4">
+        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+          <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+            <SidebarHamburgerToggle />
+            <div>
+              <Breadcrumbs>
+                <Breadcrumbs.BreadcrumbItem
+                  type="text"
+                  link={
+                      <BreadcrumbLink
+                        href={`/${workspaceSlug}/projects`}
+                        label={currentProjectDetails?.name ?? "Project"}
+                        icon={
+                          currentProjectDetails ? (
+                            currentProjectDetails?.emoji ? (
+                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                                {renderEmoji(currentProjectDetails.emoji)}
+                              </span>
+                            ) : currentProjectDetails?.icon_prop ? (
+                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                                {renderEmoji(currentProjectDetails.icon_prop)}
+                              </div>
+                            ) : (
+                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                                {currentProjectDetails?.name.charAt(0)}
+                              </span>
+                            )
+                          ) : (
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                              <Briefcase className="h-4 w-4" />
+                            </span>
+                          )
+                        }
+                      />
+                  }
+                />
+
+                <Breadcrumbs.BreadcrumbItem
+                  type="text"
+                  link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+                />
+              </Breadcrumbs>
+            </div>
+            {currentProjectDetails?.is_deployed && deployUrl && (
+              <a
+                href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
+                className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+                Public
+                <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+              </a>
+            )}
           </div>
-          <div>
-            <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    href={`/${workspaceSlug}/projects`}
-                    label={currentProjectDetails?.name ?? "Project"}
-                    icon={
-                      currentProjectDetails ? (
-                        currentProjectDetails?.emoji ? (
-                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                            {renderEmoji(currentProjectDetails.emoji)}
-                          </span>
-                        ) : currentProjectDetails?.icon_prop ? (
-                          <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                            {renderEmoji(currentProjectDetails.icon_prop)}
-                          </div>
-                        ) : (
-                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                            {currentProjectDetails?.name.charAt(0)}
-                          </span>
-                        )
-                      ) : (
-                        <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                          <Briefcase className="h-4 w-4" />
-                        </span>
-                      )
-                    }
-                  />
+          <div className="items-center gap-2 hidden md:flex">
+            <LayoutSelection
+              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+              onChange={(layout) => handleLayoutChange(layout)}
+              selectedLayout={activeLayout}
+            />
+            <FiltersDropdown title="Filters" placement="bottom-end">
+              <FilterSelection
+                filters={issueFilters?.filters ?? {}}
+                handleFiltersUpdate={handleFiltersUpdate}
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
                 }
+                labels={projectLabels}
+                memberIds={projectMemberIds ?? undefined}
+                states={projectStates}
               />
+            </FiltersDropdown>
+            <FiltersDropdown title="Display" placement="bottom-end">
+              <DisplayFiltersSelection
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                }
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                displayProperties={issueFilters?.displayProperties ?? {}}
+                handleDisplayPropertiesUpdate={handleDisplayProperties}
+              />
+            </FiltersDropdown>
 
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
-              />
-            </Breadcrumbs>
+            {currentProjectDetails?.inbox_view && inboxDetails && (
+              <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
+                <span>
+                  <Button variant="neutral-primary" size="sm" className="relative">
+                    Inbox
+                    {inboxDetails?.pending_issue_count > 0 && (
+                      <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
+                        {inboxDetails?.pending_issue_count}
+                      </span>
+                    )}
+                  </Button>
+                </span>
+              </Link>
+            )}
+
           </div>
-          {currentProjectDetails?.is_deployed && deployUrl && (
-            <a
-              href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
-              className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-              Public
-              <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
-            </a>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <LayoutSelection
-            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
-            onChange={(layout) => handleLayoutChange(layout)}
-            selectedLayout={activeLayout}
-          />
-          <FiltersDropdown title="Filters" placement="bottom-end">
-            <FilterSelection
-              filters={issueFilters?.filters ?? {}}
-              handleFiltersUpdate={handleFiltersUpdate}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-              labels={projectLabels}
-              memberIds={projectMemberIds ?? undefined}
-              states={projectStates}
-            />
-          </FiltersDropdown>
-          <FiltersDropdown title="Display" placement="bottom-end">
-            <DisplayFiltersSelection
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-              displayFilters={issueFilters?.displayFilters ?? {}}
-              handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
-              handleDisplayPropertiesUpdate={handleDisplayProperties}
-            />
-          </FiltersDropdown>
-
-          {currentProjectDetails?.inbox_view && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
-              <span>
-                <Button variant="neutral-primary" size="sm" className="relative">
-                  Inbox
-                  {inboxDetails?.pending_issue_count > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
-                      {inboxDetails?.pending_issue_count}
-                    </span>
-                  )}
-                </Button>
-              </span>
-            </Link>
-          )}
-
           {canUserCreateIssue && (
             <>
-              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
                 Analytics
               </Button>
               <Button
@@ -240,6 +234,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
             </>
           )}
+        </div>
+        <div className="block md:hidden">
+          <IssuesMobileHeader />
         </div>
       </div>
     </>
