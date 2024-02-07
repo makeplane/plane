@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 // hooks
 import { IGanttBlock, useChart } from "components/gantt-chart";
 // helpers
@@ -20,11 +20,11 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  const [posFromLeft, setPosFromLeft] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentViewData, renderView, scrollLeft } = useChart();
+  const { currentViewData, scrollLeft } = useChart();
   // check if cursor reaches either end while resizing/dragging
   const checkScrollEnd = (e: MouseEvent): number => {
     const SCROLL_THRESHOLD = 70;
@@ -206,53 +206,52 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     // update container's scroll position to the block's position
     scrollContainer.scrollLeft = block.position.marginLeft - 4;
   };
-  // update block position from viewport's left end on scroll
-  useEffect(() => {
-    const resizableBlock = resizableRef.current;
-
-    if (!resizableBlock) return;
-
-    setPosFromLeft(resizableBlock.getBoundingClientRect().left);
-  }, [block, scrollLeft]);
   // check if block is hidden on either side
   const isBlockHiddenOnLeft =
     block.position?.marginLeft &&
     block.position?.width &&
     scrollLeft > block.position.marginLeft + block.position.width;
-  const isBlockHiddenOnRight = posFromLeft && window && posFromLeft > window.innerWidth;
 
   const textDisplacement = scrollLeft - (block.position?.marginLeft ?? 0);
 
-  console.log("currentViewData", renderView);
+  const intersectionRoot = document.querySelector("#scroll-container") as HTMLDivElement;
+  useEffect(() => {
+    const resizableBlock = resizableRef.current;
+    if (!resizableBlock || !intersectionRoot) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(!entry.isIntersecting);
+        });
+      },
+      { root: intersectionRoot }
+    );
+
+    observer.observe(resizableBlock);
+
+    return () => {
+      observer.unobserve(resizableBlock);
+    };
+  }, [block.data.name, intersectionRoot]);
 
   return (
     <>
-      {/* move to left side hidden block button */}
-      {isBlockHiddenOnLeft && (
-        <div
-          className="absolute top-1/2 z-[1] grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+      {/* move to the hidden block */}
+      {isVisible && (
+        <button
+          type="button"
+          className="sticky left-1 z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
           onClick={handleScrollToBlock}
-          style={{
-            transform: `translate(${scrollLeft + 4}px, -50%)`,
-          }}
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-        </div>
-      )}
-      {/* move to right side hidden block button */}
-      {isBlockHiddenOnRight && (
-        <div
-          className="fixed z-0 right-1 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
-          onClick={handleScrollToBlock}
-          style={{
-            top: `${(resizableRef.current?.getBoundingClientRect().top ?? 0) + 6}px`,
-          }}
-        >
-          <ArrowRight className="h-3.5 w-3.5" />
-        </div>
+          <ArrowRight
+            className={cn("h-3.5 w-3.5", {
+              "rotate-180": isBlockHiddenOnLeft,
+            })}
+          />
+        </button>
       )}
       <div
-        id={`block-${block.id}`}
         ref={resizableRef}
         className="group relative inline-flex h-full cursor-pointer items-center font-medium transition-all"
         style={{

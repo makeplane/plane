@@ -103,14 +103,13 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
           >
             <div
               className={cn("relative h-full", {
-                "rounded bg-custom-background-80": activeBlock?.id === block.id,
+                "bg-custom-background-80": activeBlock?.id === block.id,
                 "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                   peekIssue?.issueId === block.data.id,
               })}
               onMouseEnter={() => updateActiveBlock(block)}
               onMouseLeave={() => updateActiveBlock(null)}
             >
-              {/* <GanttChartSidebarBlock block={block} /> */}
               {isBlockVisibleOnChart ? (
                 <ChartDraggable
                   block={block}

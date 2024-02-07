@@ -5,6 +5,7 @@ import { useChart } from "components/gantt-chart";
 import { cn } from "helpers/common.helper";
 // types
 import { IMonthBlock } from "../../views";
+// constants
 import { HEADER_HEIGHT } from "components/gantt-chart/constants";
 
 export const MonthChartView: FC<any> = () => {
@@ -24,31 +25,25 @@ export const MonthChartView: FC<any> = () => {
                 height: `${HEADER_HEIGHT}px`,
               }}
             >
-              <div
-                className="relative"
-                style={{
-                  height: `${HEADER_HEIGHT / 2}px`,
-                }}
-              >
+              <div className="h-1/2">
                 <div className="sticky left-0 inline-flex whitespace-nowrap px-3 py-2 text-xs font-medium capitalize">
                   {block?.title}
                 </div>
               </div>
-              <div
-                className="flex w-full"
-                style={{
-                  height: `${HEADER_HEIGHT / 2}px`,
-                }}
-              >
-                {block?.children?.map((monthDay, _idx) => (
+              <div className="h-1/2 w-full flex">
+                {block?.children?.map((monthDay, index) => (
                   <div
-                    key={`sub-title-${rootIndex}-${_idx}`}
+                    key={`sub-title-${rootIndex}-${index}`}
                     className="flex-shrink-0 border-b-[0.5px] border-custom-border-200 py-1 text-center capitalize"
                     style={{ width: `${currentViewData?.data.width}px` }}
                   >
                     <div className="space-x-1 text-xs">
                       <span className="text-custom-text-200">{monthDay.dayData.shortTitle[0]}</span>{" "}
-                      <span className={monthDay.today ? "rounded-full bg-custom-primary-100 px-1 text-white" : ""}>
+                      <span
+                        className={cn({
+                          "rounded-full bg-custom-primary-100 px-1 text-white": monthDay.today,
+                        })}
+                      >
                         {monthDay.day}
                       </span>
                     </div>
