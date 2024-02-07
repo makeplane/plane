@@ -24,6 +24,8 @@ export const getProjectEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.id,
   identifier: payload.identifier,
+  project_visibility: payload.network == 2 ? "Public" : "Private",
+  lead_id: payload.project_lead,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
   state: payload.state,
@@ -186,5 +188,9 @@ export const USER_DETAILS = "User details added";
 export const PRODUCT_TOUR_STARTED = "Product tour started";
 export const PRODUCT_TOUR_COMPLETED = "Product tour completed";
 export const PRODUCT_TOUR_SKIPPED = "Product tour skipped";
+// Global View Events
+export const GLOBAL_VIEW_CREATED = "Global view created";
+export const GLOBAL_VIEW_UPDATED = "Global view updated";
+export const GLOBAL_VIEW_DELETED = "Global view deleted";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";

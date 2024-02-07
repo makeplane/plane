@@ -84,7 +84,7 @@ export const WorkspaceDashboardView = observer(() => {
               primaryButton={{
                 text: "Build your first project",
                 onClick: () => {
-                  setTrackElement("Dashboard");
+                  setTrackElement("Dashboard empty state");
                   toggleCreateProjectModal(true);
                 },
               }}
