@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { LayoutGrid, Zap } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -6,18 +5,16 @@ import { useTheme } from "next-themes";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // components
-import { BreadcrumbLink, ProductUpdatesModal } from "components/common";
+import { BreadcrumbLink } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 export const WorkspaceDashboardHeader = () => {
-  const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
   // hooks
   const { resolvedTheme } = useTheme();
 
   return (
     <>
-      <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
       <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
