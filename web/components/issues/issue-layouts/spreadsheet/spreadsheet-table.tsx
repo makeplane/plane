@@ -88,7 +88,7 @@ export const SpreadsheetTable = observer((props: Props) => {
           <RenderIfVisible
             key={id}
             as="tr"
-            defaultHeight={44.5}
+            defaultHeight="2.75rem"
             root={containerRef}
             placeholderChildren={<td colSpan={100} className="border-b-[0.5px]" />}
             index={index}

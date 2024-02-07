@@ -27,7 +27,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
           return (
             <RenderIfVisible
               key={`${issueId}`}
-              defaultHeight={45}
+              defaultHeight="3rem"
               root={containerRef}
               classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
               index={index}

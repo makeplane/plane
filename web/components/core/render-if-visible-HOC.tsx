@@ -2,7 +2,7 @@ import { cn } from "helpers/common.helper";
 import React, { useState, useRef, useEffect, ReactNode, MutableRefObject } from "react";
 
 type Props = {
-  defaultHeight?: number;
+  defaultHeight?: string;
   verticalOffset?: number;
   horizonatlOffset?: number;
   root?: MutableRefObject<HTMLElement | null>;
@@ -19,7 +19,7 @@ type Props = {
 
 const RenderIfVisible: React.FC<Props> = (props) => {
   const {
-    defaultHeight = 300,
+    defaultHeight = "300px",
     root,
     verticalOffset = 50,
     horizonatlOffset = 0,
@@ -35,7 +35,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
   } = props;
   const defaultVisible = !!getShouldRender && getShouldRender(index);
   const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender || defaultVisible);
-  const placeholderHeight = useRef<number>(defaultHeight);
+  const placeholderHeight = useRef<string>(defaultHeight);
   const intersectionRef = useRef<HTMLElement | null>(null);
 
   const isVisible = alwaysRender || shouldVisible;
@@ -78,7 +78,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
   // Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible) {
-      placeholderHeight.current = intersectionRef.current.offsetHeight;
+      placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
     }
   }, [isVisible, intersectionRef, alwaysRender, pauseHeightUpdateWhileRendering]);
 
