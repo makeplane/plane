@@ -162,14 +162,14 @@ def create_labels(workspace, project, user_id):
     )
 
 
-def create_cycles(workspace, project, user_id):
+def create_cycles(workspace, project, user_id, cycle_count):
     fake = Faker()
     Faker.seed(0)
 
     cycles = []
     used_date_ranges = set()  # Track used date ranges
 
-    while len(cycles) < 50:
+    while len(cycles) <= cycle_count:
         # Generate a start date, allowing for None
         start_date_option = [None, fake.date_this_year()]
         start_date = start_date_option[random.randint(0, 1)]
@@ -192,9 +192,11 @@ def create_cycles(workspace, project, user_id):
             end_date = fake.date_this_year()
 
         # Add the unique date range to the set
-        used_date_ranges.add((start_date, end_date)) if (
-            end_date is not None and start_date is not None
-        ) else None
+        (
+            used_date_ranges.add((start_date, end_date))
+            if (end_date is not None and start_date is not None)
+            else None
+        )
 
         # Append the cycle with unique date range
         cycles.append(
@@ -212,12 +214,12 @@ def create_cycles(workspace, project, user_id):
     return Cycle.objects.bulk_create(cycles, ignore_conflicts=True)
 
 
-def create_modules(workspace, project, user_id):
+def create_modules(workspace, project, user_id, module_count):
     fake = Faker()
     Faker.seed(0)
 
     modules = []
-    for _ in range(0, 50):
+    for _ in range(0, module_count):
         start_date = [None, fake.date_this_year()][random.randint(0, 1)]
         end_date = (
             None
@@ -242,7 +244,7 @@ def create_modules(workspace, project, user_id):
     return Module.objects.bulk_create(modules, ignore_conflicts=True)
 
 
-def create_issues(workspace, project, user_id):
+def create_issues(workspace, project, user_id, issue_count):
     fake = Faker()
     Faker.seed(0)
 
@@ -270,7 +272,7 @@ def create_issues(workspace, project, user_id):
         65535 if largest_sort_order is None else largest_sort_order + 10000
     )
 
-    for _ in range(0, 5000):
+    for _ in range(0, issue_count):
         start_date = [None, fake.date_this_year()][random.randint(0, 1)]
         end_date = (
             None
@@ -340,22 +342,27 @@ def create_issues(workspace, project, user_id):
     return
 
 
-def create_issue_parent(workspace, project, user_id):
+def create_issue_parent(workspace, project, user_id, issue_count):
+
+    parent_count = issue_count / 4
+
     parent_issues = Issue.objects.filter(project=project).values_list(
         "id", flat=True
-    )[:1000]
+    )[: int(parent_count)]
     sub_issues = Issue.objects.filter(project=project).exclude(
         pk__in=parent_issues
-    )[:3000]
+    )[: int(issue_count / 2)]
 
     bulk_sub_issues = []
     for sub_issue in sub_issues:
-        sub_issue.parent_id = parent_issues[random.randint(0, 999)]
+        sub_issue.parent_id = parent_issues[
+            random.randint(0, int(parent_count - 1))
+        ]
 
     Issue.objects.bulk_update(bulk_sub_issues, ["parent"], batch_size=1000)
 
 
-def create_issue_assignees(workspace, project, user_id):
+def create_issue_assignees(workspace, project, user_id, issue_count):
     # assignees
     assignees = ProjectMember.objects.filter(project=project).values_list(
         "member_id", flat=True
@@ -364,7 +371,7 @@ def create_issue_assignees(workspace, project, user_id):
         list(
             Issue.objects.filter(project=project).values_list("id", flat=True)
         ),
-        3000,
+        int(issue_count / 2),
     )
 
     # Bulk issue
@@ -388,14 +395,14 @@ def create_issue_assignees(workspace, project, user_id):
     )
 
 
-def create_issue_labels(workspace, project, user_id):
+def create_issue_labels(workspace, project, user_id, issue_count):
     # assignees
     labels = Label.objects.filter(project=project).values_list("id", flat=True)
     issues = random.sample(
         list(
             Issue.objects.filter(project=project).values_list("id", flat=True)
         ),
-        3000,
+        int(issue_count / 2),
     )
 
     # Bulk issue
@@ -419,14 +426,14 @@ def create_issue_labels(workspace, project, user_id):
     )
 
 
-def create_cycle_issues(workspace, project, user_id):
+def create_cycle_issues(workspace, project, user_id, issue_count):
     # assignees
     cycles = Cycle.objects.filter(project=project).values_list("id", flat=True)
     issues = random.sample(
         list(
             Issue.objects.filter(project=project).values_list("id", flat=True)
         ),
-        3000,
+        int(issue_count / 2),
     )
 
     # Bulk issue
@@ -448,7 +455,7 @@ def create_cycle_issues(workspace, project, user_id):
     )
 
 
-def create_module_issues(workspace, project, user_id):
+def create_module_issues(workspace, project, user_id, issue_count):
     # assignees
     modules = Module.objects.filter(project=project).values_list(
         "id", flat=True
@@ -457,7 +464,7 @@ def create_module_issues(workspace, project, user_id):
         list(
             Issue.objects.filter(project=project).values_list("id", flat=True)
         ),
-        3000,
+        int(issue_count / 2),
     )
 
     # Bulk issue
@@ -479,7 +486,9 @@ def create_module_issues(workspace, project, user_id):
 
 
 @shared_task
-def create_fake_data(slug, email, members):
+def create_fake_data(
+    slug, email, members, issue_count, cycle_count, module_count
+):
     workspace = Workspace.objects.get(slug=slug)
 
     user = User.objects.get(email=email)
@@ -519,14 +528,20 @@ def create_fake_data(slug, email, members):
     # create cycles
     print("Creating cycles")
     cycles = create_cycles(
-        workspace=workspace, project=project, user_id=user_id
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        cycle_count=cycle_count,
     )
     print("Done creating cycles")
 
     # create modules
     print("Creating modules")
     modules = create_modules(
-        workspace=workspace, project=project, user_id=user_id
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        module_count=module_count,
     )
     print("Done creating modules")
 
@@ -535,29 +550,53 @@ def create_fake_data(slug, email, members):
         workspace=workspace,
         project=project,
         user_id=user_id,
+        issue_count=issue_count,
     )
     print("Done creating issues")
 
     print("Creating parent and sub issues")
-    create_issue_parent(workspace=workspace, project=project, user_id=user_id)
+    create_issue_parent(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        issue_count=issue_count,
+    )
     print("Done creating parent and sub issues")
 
     print("Creating issue assignees")
     create_issue_assignees(
-        workspace=workspace, project=project, user_id=user_id
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        issue_count=issue_count,
     )
     print("Done creating issue assignees")
 
     print("Creating issue labels")
-    create_issue_labels(workspace=workspace, project=project, user_id=user_id)
+    create_issue_labels(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        issue_count=issue_count,
+    )
     print("Done creating issue labels")
 
     print("Creating cycle issues")
-    create_cycle_issues(workspace=workspace, project=project, user_id=user_id)
+    create_cycle_issues(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        issue_count=issue_count,
+    )
     print("Done creating cycle issues")
 
     print("Creating module issues")
-    create_module_issues(workspace=workspace, project=project, user_id=user_id)
+    create_module_issues(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        issue_count=issue_count,
+    )
     print("Done creating module issues")
 
     return
