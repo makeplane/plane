@@ -41,6 +41,7 @@ USER captain
 
 # Add in Django deps and generate Django's static files
 COPY manage.py manage.py
+COPY server.py server.py
 COPY plane plane/
 COPY templates templates/
 COPY package.json package.json
