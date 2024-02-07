@@ -4,18 +4,18 @@ import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useEventTracker, useIssues } from "hooks/store";
+import { useEventTracker, useIssues ,useUser} from "hooks/store";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-// constants
+import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, customActionButton, portalElement } = props;
+  const { issue, handleDelete, customActionButton, portalElement, readOnly = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -23,6 +23,13 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
+
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
@@ -64,17 +71,19 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
             Copy link
           </div>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() => {
-            setTrackElement(activeLayout);
+        {isEditingAllowed && !readOnly && (
+          <CustomMenu.MenuItem
+            onClick={() => {
+              setTrackElement(activeLayout);
             setDeleteIssueModal(true);
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <Trash2 className="h-3 w-3" />
-            Delete issue
-          </div>
-        </CustomMenu.MenuItem>
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <Trash2 className="h-3 w-3" />
+              Delete issue
+            </div>
+          </CustomMenu.MenuItem>
+        )}
       </CustomMenu>
     </>
   );

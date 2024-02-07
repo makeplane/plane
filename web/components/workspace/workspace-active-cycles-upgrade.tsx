@@ -19,7 +19,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = currentUser?.theme.theme === "dark";
 
   return (
-    <div className="flex flex-col gap-10 p-8 rounded-xl">
+    <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full">
       <div
         className={cn("flex item-center justify-between rounded-xl min-h-[25rem]", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": currentUser?.theme.theme === "dark",
@@ -42,17 +42,6 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             >
               <Crown className="h-3.5 w-3.5" />
               Upgrade
-            </a>
-            <a
-              className={cn("text-sm underline", {
-                "text-white": currentUser?.theme.theme === "dark",
-                "text-blue-600": currentUser?.theme.theme === "light",
-              })}
-              href="https://plane.so/pricing"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Talk custom pricing
             </a>
           </div>
           <span className="absolute left-0 top-0">
@@ -84,7 +73,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-8 h-full">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
           <div className="flex flex-col gap-2 p-4 min-h-32 w-full bg-custom-background-80 rounded-md">
             <div className="flex items-center gap-2">

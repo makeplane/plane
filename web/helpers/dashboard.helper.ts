@@ -9,6 +9,8 @@ export const getCustomDates = (duration: TDurationFilterOptions): string => {
   let firstDay, lastDay;
 
   switch (duration) {
+    case "none":
+      return "";
     case "today":
       firstDay = renderFormattedPayloadDate(today);
       lastDay = renderFormattedPayloadDate(today);
@@ -32,7 +34,9 @@ export const getRedirectionFilters = (type: TIssuesListTypes): string => {
   const today = renderFormattedPayloadDate(new Date());
 
   const filterParams =
-    type === "upcoming"
+    type === "pending"
+      ? "?state_group=backlog,unstarted,started"
+      : type === "upcoming"
       ? `?target_date=${today};after`
       : type === "overdue"
       ? `?target_date=${today};before`

@@ -159,10 +159,10 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
-        <div className="group flex h-16 w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
-          <div className="flex w-full items-center gap-3 truncate">
-            <div className="flex items-center gap-4 truncate">
-              <span className="flex-shrink-0">
+        <div className="group flex flex-col md:flex-row w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
+          <div className="relative w-full flex items-center justify-between gap-3 overflow-hidden">
+            <div className="relative w-full flex items-center gap-3 overflow-hidden">
+              <div className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {isCompleted ? (
                     progress === 100 ? (
@@ -176,95 +176,97 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
                 </CircularProgressIndicator>
-              </span>
+              </div>
 
-              <div className="flex items-center gap-2.5">
-                <span className="flex-shrink-0">
-                  <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
-                </span>
+              <div className="relative flex items-center gap-2.5 overflow-hidden">
+                <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
                 <Tooltip tooltipContent={cycleDetails.name} position="top">
-                  <span className="truncate text-base font-medium">{cycleDetails.name}</span>
+                  <span className="truncate line-clamp-1 inline-block overflow-hidden text-base font-medium">
+                    {cycleDetails.name}
+                  </span>
                 </Tooltip>
               </div>
-            </div>
-            <button onClick={openCycleOverview} className="z-10 hidden flex-shrink-0 group-hover:flex">
-              <Info className="h-4 w-4 text-custom-text-400" />
-            </button>
-          </div>
 
-          <div className="flex w-full items-center justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
-            <div className="flex items-center justify-center">
-              {currentCycle && (
-                <span
-                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
-                  style={{
-                    color: currentCycle.color,
-                    backgroundColor: `${currentCycle.color}20`,
-                  }}
-                >
-                  {currentCycle.value === "current"
-                    ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
-                    : `${currentCycle.label}`}
-                </span>
-              )}
+              <button onClick={openCycleOverview} className="flex-shrink-0 z-10 invisible group-hover:visible">
+                <Info className="h-4 w-4 text-custom-text-400" />
+              </button>
             </div>
 
-            {renderDate && (
-              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
-              </span>
-            )}
-
-            <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
-              <div className="flex w-16 cursor-default items-center justify-center gap-1">
-                {cycleDetails.assignees.length > 0 ? (
-                  <AvatarGroup showTooltip={false}>
-                    {cycleDetails.assignees.map((assignee) => (
-                      <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                    ))}
-                  </AvatarGroup>
-                ) : (
-                  <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-                    <User2 className="h-4 w-4 text-custom-text-400" />
-                  </span>
-                )}
+            {currentCycle && (
+              <div
+                className="flex-shrink-0 relative flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
+                style={{
+                  color: currentCycle.color,
+                  backgroundColor: `${currentCycle.color}20`,
+                }}
+              >
+                {currentCycle.value === "current"
+                  ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
+                  : `${currentCycle.label}`}
               </div>
-            </Tooltip>
-            {isEditingAllowed &&
-              (cycleDetails.is_favorite ? (
-                <button type="button" onClick={handleRemoveFromFavorites}>
-                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                </button>
-              ) : (
-                <button type="button" onClick={handleAddToFavorites}>
-                  <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                </button>
-              ))}
+            )}
+          </div>
+          <div className="flex-shrink-0 relative overflow-hidden flex w-full items-center justify-between md:justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
+            <div className="text-xs text-custom-text-300">
+              {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
+            </div>
 
-            <CustomMenu ellipsis>
-              {!isCompleted && isEditingAllowed && (
+            <div className="flex-shrink-0 relative flex items-center gap-3">
+              <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
+                <div className="flex w-10 cursor-default items-center justify-center">
+                  {cycleDetails.assignees.length > 0 ? (
+                    <AvatarGroup showTooltip={false}>
+                      {cycleDetails.assignees.map((assignee) => (
+                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                      ))}
+                    </AvatarGroup>
+                  ) : (
+                    <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+                      <User2 className="h-4 w-4 text-custom-text-400" />
+                    </span>
+                  )}
+                </div>
+              </Tooltip>
+
+              {isEditingAllowed && (
                 <>
-                  <CustomMenu.MenuItem onClick={handleEditCycle}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit cycle</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-3 w-3" />
-                      <span>Delete cycle</span>
-                    </span>
-                  </CustomMenu.MenuItem>
+                  {cycleDetails.is_favorite ? (
+                    <button type="button" onClick={handleRemoveFromFavorites}>
+                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleAddToFavorites}>
+                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                    </button>
+                  )}
+
+                  <CustomMenu ellipsis>
+                    {!isCompleted && isEditingAllowed && (
+                      <>
+                        <CustomMenu.MenuItem onClick={handleEditCycle}>
+                          <span className="flex items-center justify-start gap-2">
+                            <Pencil className="h-3 w-3" />
+                            <span>Edit cycle</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                          <span className="flex items-center justify-start gap-2">
+                            <Trash2 className="h-3 w-3" />
+                            <span>Delete cycle</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      </>
+                    )}
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <span className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-3 w-3" />
+                        <span>Copy cycle link</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
                 </>
               )}
-              <CustomMenu.MenuItem onClick={handleCopyText}>
-                <span className="flex items-center justify-start gap-2">
-                  <LinkIcon className="h-3 w-3" />
-                  <span>Copy cycle link</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            </div>
           </div>
         </div>
       </Link>

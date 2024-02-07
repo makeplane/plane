@@ -16,15 +16,6 @@ export const WorkspaceAnalyticsHeader = () => {
       >
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
-          <div className="block md:hidden">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft fontSize={14} strokeWidth={2} />
-            </button>
-          </div>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
