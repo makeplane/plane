@@ -75,7 +75,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
       {STATS_LIST.map((stat, index) => (
         <div
           className={cn(
-            `w-full flex flex-col gap-2 hover:bg-custom-background-80`,
+            `w-full flex flex-col gap-2 hover:bg-neutral-component-surface-dark`,
             index === 0 ? "rounded-tl-xl lg:rounded-l-xl" : "",
             index === STATS_LIST.length - 1 ? "rounded-br-xl lg:rounded-r-xl" : "",
             index === 1 ? "rounded-tr-xl lg:rounded-[0px]" : "",

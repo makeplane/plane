@@ -111,7 +111,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
           (_list: any) =>
             validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
               <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-neutral-border-medium bg-neutral-component-surface-medium px-3 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-neutral-border-medium bg-neutral-page-surface-default px-3 py-1">
                   <HeaderGroupByCard
                     icon={_list.icon}
                     title={_list.name || ""}

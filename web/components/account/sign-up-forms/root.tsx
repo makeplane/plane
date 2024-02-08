@@ -86,7 +86,7 @@ export const SignUpRoot = observer(() => {
           <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_up" />
           <p className="text-xs text-onboarding-text-300 text-center mt-6">
             Already using Plane?{" "}
-            <Link href="/" className="text-custom-primary-100 font-medium underline">
+            <Link href="/" className="text-primary-text-subtle font-medium underline">
               Sign in
             </Link>
           </p>

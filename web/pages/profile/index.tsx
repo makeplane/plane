@@ -213,7 +213,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
               </div>
 
               {/* <Link href={`/profile/${myProfile.id}`}>
-              <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
+              <span className="flex item-center gap-1 text-sm text-primary-text-subtle underline font-medium">
                 <ExternalLink className="h-4 w-4" />
                 Activity Overview
               </span>

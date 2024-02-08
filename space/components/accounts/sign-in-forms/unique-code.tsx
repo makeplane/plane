@@ -157,7 +157,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
         Get on your flight deck
       </h1>
       <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Paste the code you got at <span className="font-semibold text-custom-primary-100">{email}</span> below.
+        Paste the code you got at <span className="font-semibold text-primary-text-subtle">{email}</span> below.
       </p>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-5 space-y-4 sm:w-96">
@@ -227,7 +227,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               className={`text-xs ${
                 isRequestNewCodeDisabled
                   ? "text-onboarding-text-300"
-                  : "text-onboarding-text-200 hover:text-custom-primary-100"
+                  : "text-onboarding-text-200 hover:text-primary-text-subtle"
               }`}
               disabled={isRequestNewCodeDisabled}
             >

@@ -165,7 +165,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 onClick={() => setSelectedTab(tab.value)}
                 className={`whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium outline-none ${
                   tab.value === selectedTab
-                    ? "border-custom-primary-100 text-custom-primary-100"
+                    ? "border-custom-primary-100 text-primary-text-subtle"
                     : "border-transparent text-neutral-text-medium"
                 }`}
               >

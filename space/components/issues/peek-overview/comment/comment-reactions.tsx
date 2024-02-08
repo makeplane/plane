@@ -117,7 +117,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                     commentReactions?.some(
                       (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
                     )
-                      ? "text-custom-primary-100"
+                      ? "text-primary-text-subtle"
                       : ""
                   }
                 >

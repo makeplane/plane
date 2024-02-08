@@ -217,11 +217,11 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         <div className="flex items-center">
           <button
             type="button"
-            className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-custom-primary-100"
+            className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-primary-text-subtle"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+            <span className="text-sm font-medium text-primary-text-subtle">New Issue</span>
           </button>
         </div>
       )}

@@ -106,7 +106,7 @@ const IntegrationGuide = observer(() => {
                 <button
                   disabled={!exporterServices?.prev_page_results}
                   onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
-                  className={`flex items-center rounded border border-custom-primary-100 px-1 text-custom-primary-100 ${
+                  className={`flex items-center rounded border border-custom-primary-100 px-1 text-primary-text-subtle ${
                     exporterServices?.prev_page_results
                       ? "cursor-pointer hover:bg-custom-primary-100 hover:text-white"
                       : "cursor-not-allowed opacity-75"
@@ -118,7 +118,7 @@ const IntegrationGuide = observer(() => {
                 <button
                   disabled={!exporterServices?.next_page_results}
                   onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
-                  className={`flex items-center rounded border border-custom-primary-100 px-1 text-custom-primary-100 ${
+                  className={`flex items-center rounded border border-custom-primary-100 px-1 text-primary-text-subtle ${
                     exporterServices?.next_page_results
                       ? "cursor-pointer hover:bg-custom-primary-100 hover:text-white"
                       : "cursor-not-allowed opacity-75"

@@ -59,7 +59,7 @@ export const InstanceAdminSidebarMenu = () => {
                 <div
                   className={`group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none ${
                     isActive
-                      ? "bg-custom-primary-100/10 text-custom-primary-100"
+                      ? "bg-custom-primary-100/10 text-primary-text-subtle"
                       : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                   } ${sidebarCollapsed ? "justify-center" : ""}`}
                 >
@@ -68,7 +68,7 @@ export const InstanceAdminSidebarMenu = () => {
                     <div className="flex flex-col leading-snug">
                       <span
                         className={`text-sm font-medium ${
-                          isActive ? "text-custom-primary-100" : "text-sidebar-neutral-text-medium"
+                          isActive ? "text-primary-text-subtle" : "text-sidebar-neutral-text-medium"
                         }`}
                       >
                         {item.name}

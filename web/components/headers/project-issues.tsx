@@ -163,7 +163,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             {currentProjectDetails?.is_deployed && deployUrl && (
               <a
                 href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
-                className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+                className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-primary-text-subtle"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -209,7 +209,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails?.pending_issue_count > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-custom-sidebar-background-80 text-neutral-text-strong">
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-dark text-neutral-text-strong">
                       {inboxDetails?.pending_issue_count}
                     </span>
                   )}

@@ -37,13 +37,13 @@ export const WorkspaceDashboardHeader = () => {
             href="https://plane.so/changelog"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-neutral-component-surface-dark px-3 py-1.5"
           >
             <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
             <span className="text-xs hidden sm:hidden md:block font-medium">{"What's new?"}</span>
           </a>
           <a
-            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 "
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-neutral-component-surface-dark px-3 py-1.5 "
             href="https://github.com/makeplane/plane"
             target="_blank"
             rel="noopener noreferrer"

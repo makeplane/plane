@@ -172,7 +172,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                       </div>
                       <span
                         className={`flex-shrink-0 ${
-                          isSelected ? "text-custom-primary-100" : "text-neutral-text-medium"
+                          isSelected ? "text-primary-text-subtle" : "text-neutral-text-medium"
                         }`}
                       >
                         <CheckCircle2 className="h-5 w-5" />

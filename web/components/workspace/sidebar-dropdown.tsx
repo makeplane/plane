@@ -227,7 +227,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     >
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-sidebar-neutral-text-strong hover:bg-sidebar-neutral-component-surface-dark font-medium"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark font-medium"
                       >
                         <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
                         Create workspace
@@ -291,7 +291,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
           >
             <Menu.Items
               className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
-          divide-custom-sidebar-border-200 rounded-md border border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+          divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -330,7 +330,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <div className="p-2 pb-0">
                   <Link href="/god-mode">
                     <Menu.Item as="button" type="button" className="w-full">
-                      <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                      <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-primary-text-subtle hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
                         Enter God Mode
                       </span>
                     </Menu.Item>

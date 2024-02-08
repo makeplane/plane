@@ -120,7 +120,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
                   <div
                     key={label?.id}
-                    className={`flex overflow-hidden hover:bg-custom-background-80 ${
+                    className={`flex overflow-hidden hover:bg-neutral-component-surface-dark ${
                       !disabled && "cursor-pointer"
                     } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium px-2.5 py-1 text-xs`}
                   >
@@ -227,8 +227,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                      active ? "bg-custom-background-80" : ""
+                    `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-neutral-component-surface-dark ${
+                      active ? "bg-neutral-component-surface-dark" : ""
                     } ${selected ? "text-neutral-text-strong" : "text-neutral-text-medium"}`
                   }
                 >

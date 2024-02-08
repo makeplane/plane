@@ -211,7 +211,7 @@ const TransparentButton = (props: ButtonProps) => {
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
             "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
-            "bg-custom-background-80": isActive,
+            "bg-neutral-component-surface-dark": isActive,
           },
           className
         )}
@@ -350,7 +350,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       className={cn(
         "h-full",
         {
-          "bg-custom-background-80": isOpen,
+          "bg-neutral-component-surface-dark": isOpen,
         },
         className
       )}

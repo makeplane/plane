@@ -68,7 +68,7 @@ export const NotificationPopover = observer(() => {
                 <Popover.Button
                   className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
-                      ? "bg-custom-primary-100/10 text-custom-primary-100"
+                      ? "bg-custom-primary-100/10 text-primary-text-subtle"
                       : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark"
                   } ${isSidebarCollapsed ? "justify-center" : ""}`}
                 >
@@ -156,7 +156,7 @@ export const NotificationPopover = observer(() => {
                         {hasMore && !isLoadingMore && (
                           <button
                             type="button"
-                            className="my-6 flex w-full items-center justify-center text-sm font-medium text-custom-primary-100"
+                            className="my-6 flex w-full items-center justify-center text-sm font-medium text-primary-text-subtle"
                             disabled={isLoadingMore}
                             onClick={() => {
                               setSize((prev) => prev + 1);

@@ -53,7 +53,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                   <h4 className="text-base font-medium capitalize text-neutral-text-medium">{group}</h4>
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-2 text-custom-primary-100 outline-none hover:text-custom-primary-200"
+                    className="flex items-center gap-2 px-2 text-primary-text-subtle outline-none hover:text-custom-primary-200"
                     onClick={() => {
                       setTrackElement("PROJECT_SETTINGS_STATES_PAGE");
                       setActiveGroup(group as keyof StateGroup);
@@ -122,7 +122,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                     <h4 className="text-base font-medium text-neutral-text-medium capitalize">{key}</h4>
                     <button
                       type="button"
-                      className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
+                      className="flex items-center gap-2 text-primary-text-subtle px-2 hover:text-custom-primary-200 outline-none"
                       onClick={() => setActiveGroup(key as keyof StateGroup)}
                     >
                       <Plus className="h-4 w-4" />

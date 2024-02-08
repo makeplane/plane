@@ -416,7 +416,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
             </div>
             <button
               type="button"
-              className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-semibold text-custom-primary-100 outline-custom-primary-100"
+              className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-semibold text-primary-text-subtle outline-custom-primary-100"
               onClick={appendField}
             >
               <Plus className="h-3 w-3" />

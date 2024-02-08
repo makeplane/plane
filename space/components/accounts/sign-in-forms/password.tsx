@@ -191,7 +191,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
               type="button"
               onClick={handleForgotPassword}
               className={`text-xs font-medium ${
-                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-custom-primary-100"
+                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-primary-text-subtle"
               }`}
               disabled={isSendingResetPasswordLink}
             >
@@ -222,7 +222,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to board</span> above, you agree with our{" "}
+          When you click <span className="text-primary-text-subtle">Go to board</span> above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

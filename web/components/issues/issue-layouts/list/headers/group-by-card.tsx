@@ -99,7 +99,7 @@ export const HeaderGroupByCard = observer(
               </CustomMenu>
             ) : (
               <div
-                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-neutral-component-surface-dark"
                 onClick={() => {
                   setTrackElement("List layout");
                   setIsOpen(true);

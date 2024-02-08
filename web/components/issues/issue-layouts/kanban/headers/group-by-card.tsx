@@ -160,7 +160,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
             </CustomMenu>
           ) : (
             <div
-              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-neutral-component-surface-dark"
               onClick={() => {
                 setTrackElement("Kanban layout");
                 setIsOpen(true);

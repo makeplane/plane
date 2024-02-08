@@ -307,7 +307,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 {!disabled && (
                   <div className="ml-auto flex flex-shrink-0 select-none items-center gap-2">
                     <div
-                      className="cursor-pointer rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                      className="cursor-pointer rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-neutral-component-surface-dark"
                       onClick={() => {
                         setTrackElement("Issue detail add sub-issue");
                         handleIssueCrudState("create", parentIssueId, null);
@@ -316,7 +316,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                       Add sub-issue
                     </div>
                     <div
-                      className="cursor-pointer rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                      className="cursor-pointer rounded border border-neutral-border-subtle p-1.5 px-2 shadow transition-all hover:bg-neutral-component-surface-dark"
                       onClick={() => {
                         setTrackElement("Issue detail add sub-issue");
                         handleIssueCrudState("existing", parentIssueId, null);

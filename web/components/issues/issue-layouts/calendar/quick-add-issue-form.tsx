@@ -181,11 +181,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
         <div className="hidden rounded border-[0.5px] border-neutral-border-medium group-hover:block">
           <button
             type="button"
-            className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
+            className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-primary-text-subtle"
             onClick={handleOpen}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+            <span className="text-sm font-medium text-primary-text-subtle">New Issue</span>
           </button>
         </div>
       )}

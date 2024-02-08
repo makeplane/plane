@@ -63,8 +63,8 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
           "group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-custom-background-80": !disabled,
-            "bg-custom-background-80": isParentIssueModalOpen,
+            "hover:bg-neutral-component-surface-dark": !disabled,
+            "bg-neutral-component-surface-dark": isParentIssueModalOpen,
           },
           className
         )}

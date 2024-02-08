@@ -26,7 +26,7 @@ export const ForgotPasswordPopover = () => {
         <button
           type="button"
           ref={setReferenceElement}
-          className="text-xs font-medium text-custom-primary-100 outline-none"
+          className="text-xs font-medium text-primary-text-subtle outline-none"
         >
           Forgot your password?
         </button>

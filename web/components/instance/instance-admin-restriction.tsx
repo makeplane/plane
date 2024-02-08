@@ -55,7 +55,7 @@ export const InstanceAdminRestriction: FC<InstanceAdminRestrictionProps> = ({ re
               <a
                 href="https://discord.com/channels/1031547764020084846/1094927053867995176"
                 target="_blank"
-                className="font-medium text-custom-primary-100 hover:underline"
+                className="font-medium text-primary-text-subtle hover:underline"
                 rel="noreferrer"
               >
                 Talk to us.

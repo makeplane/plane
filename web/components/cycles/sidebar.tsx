@@ -403,7 +403,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={isCompleted || !isEditingAllowed}
@@ -460,7 +460,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={isCompleted || !isEditingAllowed}

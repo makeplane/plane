@@ -118,7 +118,7 @@ export const Invitations: React.FC<Props> = (props) => {
                     <p className="text-xs text-neutral-text-medium">{ROLE[invitation.role]}</p>
                   </div>
                   <span
-                    className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-neutral-text-medium"}`}
+                    className={`flex-shrink-0 ${isSelected ? "text-primary-text-subtle" : "text-neutral-text-medium"}`}
                   >
                     <CheckCircle2 className="h-5 w-5" />
                   </span>

@@ -90,7 +90,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
               return (
                 <div
                   key={moduleId}
-                  className="flex items-center gap-1 bg-custom-background-80 text-neutral-text-medium rounded px-1.5 py-1"
+                  className="flex items-center gap-1 bg-neutral-component-surface-dark text-neutral-text-medium rounded px-1.5 py-1"
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
@@ -349,7 +349,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
                         cn(
                           "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
                           {
-                            "bg-custom-background-80": active,
+                            "bg-neutral-component-surface-dark": active,
                             "text-neutral-text-strong": selected,
                             "text-neutral-text-medium": !selected,
                           }

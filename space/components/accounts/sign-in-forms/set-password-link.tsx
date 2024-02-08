@@ -66,7 +66,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
         Get on your flight deck
       </h1>
       <p className="mt-2.5 px-20 text-center text-sm text-onboarding-text-200">
-        We have sent a link to <span className="font-semibold text-custom-primary-100">{email},</span> so you can set a
+        We have sent a link to <span className="font-semibold text-primary-text-subtle">{email},</span> so you can set a
         password
       </p>
 

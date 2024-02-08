@@ -66,7 +66,7 @@ export const AvatarGroup: React.FC<Props> = (props) => {
           <div
             className={`${
               !isAValidNumber(size) ? sizeInfo.avatarSize : ""
-            } grid place-items-center rounded-full bg-custom-primary-10 text-[9px] text-custom-primary-100 ring-1 ring-custom-background-100`}
+            } grid place-items-center rounded-full bg-custom-primary-10 text-[9px] text-primary-text-subtle ring-1 ring-custom-background-100`}
             style={
               isAValidNumber(size)
                 ? {

@@ -93,7 +93,7 @@ export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
               key={`block-${block.id}`}
               className={cn(
                 "h-11",
-                { "rounded bg-custom-background-80": activeBlock?.id === block.id },
+                { "rounded bg-neutral-component-surface-dark": activeBlock?.id === block.id },
                 {
                   "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                     peekIssue?.issueId === block.data.id,

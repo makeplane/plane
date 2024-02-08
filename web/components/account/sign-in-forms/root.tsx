@@ -110,7 +110,7 @@ export const SignInRoot = observer(() => {
             <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_in" />
             <p className="text-xs text-onboarding-text-300 text-center mt-6">
               Don{"'"}t have an account?{" "}
-              <Link href="/accounts/sign-up" className="text-custom-primary-100 font-medium underline">
+              <Link href="/accounts/sign-up" className="text-primary-text-subtle font-medium underline">
                 Sign up
               </Link>
             </p>

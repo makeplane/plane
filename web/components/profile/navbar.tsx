@@ -29,7 +29,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
             <span
               className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${
                 router.pathname === tab.selected
-                  ? "border-custom-primary-100 text-custom-primary-100"
+                  ? "border-custom-primary-100 text-primary-text-subtle"
                   : "border-transparent"
               }`}
             >

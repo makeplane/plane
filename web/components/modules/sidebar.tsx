@@ -349,7 +349,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={!isEditingAllowed}
@@ -405,7 +405,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={!isEditingAllowed}
@@ -629,7 +629,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             {isEditingAllowed && (
                               <div className="flex w-full items-center justify-end">
                                 <button
-                                  className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                  className="flex items-center gap-1.5 text-sm font-medium text-primary-text-subtle"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
                                   <Plus className="h-3 w-3" />
@@ -657,7 +657,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               <span className="p-0.5 text-xs text-neutral-text-medium">No links added yet</span>
                             </div>
                             <button
-                              className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                              className="flex items-center gap-1.5 text-sm font-medium text-primary-text-subtle"
                               onClick={() => setModuleLinkModal(true)}
                             >
                               <Plus className="h-3 w-3" />

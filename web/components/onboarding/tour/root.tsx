@@ -108,7 +108,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   </Button>
                   <button
                     type="button"
-                    className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
+                    className="bg-transparent text-xs font-medium text-primary-text-subtle outline-custom-text-100"
                     onClick={onComplete}
                   >
                     No thanks, I will explore it myself

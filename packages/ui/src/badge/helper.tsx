@@ -46,12 +46,12 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-10 text-custom-primary-100`,
+    default: `bg-custom-primary-10 text-primary-text-subtle`,
     hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-neutral-component-surface-light border border-custom-primary-100`,
+    default: `text-primary-text-subtle bg-neutral-component-surface-light border border-custom-primary-100`,
     hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },

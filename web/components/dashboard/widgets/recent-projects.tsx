@@ -110,7 +110,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
               toggleCreateProjectModal(true);
             }}
           >
-            <div className="h-[3.375rem] w-[3.375rem] bg-custom-primary-100/20 text-custom-primary-100 grid place-items-center rounded border border-dashed border-custom-primary-60 flex-shrink-0">
+            <div className="h-[3.375rem] w-[3.375rem] bg-custom-primary-100/20 text-primary-text-subtle grid place-items-center rounded border border-dashed border-custom-primary-60 flex-shrink-0">
               <Plus className="h-6 w-6" />
             </div>
             <p className="text-sm text-neutral-text-medium font-medium group-hover:underline group-hover:text-neutral-text-strong">

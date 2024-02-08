@@ -143,7 +143,7 @@ export const InstanceSidebarDropdown = observer(() => {
               <div className="p-2 pb-0">
                 <Menu.Item as="button" type="button" className="w-full">
                   <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                    <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-primary-text-subtle hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
                       Exit God Mode
                     </span>
                   </Link>

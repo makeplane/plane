@@ -264,7 +264,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             )}
             <button
               type="button"
-              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-sidebar-neutral-component-surface-dark"
               onClick={toggleSidebar}
             >
               <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
@@ -272,7 +272,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </div>
           <button
             type="button"
-            className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-sidebar-neutral-component-surface-dark"
             onClick={toggleSidebar}
           >
             <PanelRight

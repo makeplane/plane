@@ -64,7 +64,7 @@ export const FilterMentions: React.FC<Props> = observer((props: Props) => {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-xs font-medium text-primary-text-subtle"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}

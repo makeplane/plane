@@ -28,7 +28,7 @@ const ViewTab = observer((props: { viewId: string }) => {
         id={`global-view-${viewId}`}
         className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
           viewId === globalViewId
-            ? "border-custom-primary-100 text-custom-primary-100"
+            ? "border-custom-primary-100 text-primary-text-subtle"
             : "border-transparent hover:border-neutral-border-medium hover:text-neutral-text-subtle"
         }`}
       >
@@ -71,7 +71,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
               <span
                 className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
                   tab.key === globalViewId
-                    ? "border-custom-primary-100 text-custom-primary-100"
+                    ? "border-custom-primary-100 text-primary-text-subtle"
                     : "border-transparent hover:border-neutral-border-medium hover:text-neutral-text-subtle"
                 }`}
               >

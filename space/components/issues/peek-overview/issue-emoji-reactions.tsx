@@ -94,7 +94,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
                   <span
                     className={
                       reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
-                        ? "text-custom-primary-100"
+                        ? "text-primary-text-subtle"
                         : ""
                     }
                   >

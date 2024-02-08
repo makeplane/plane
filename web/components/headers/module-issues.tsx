@@ -274,7 +274,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             )}
             <button
               type="button"
-              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-sidebar-neutral-component-surface-dark"
               onClick={toggleSidebar}
             >
               <ArrowRight

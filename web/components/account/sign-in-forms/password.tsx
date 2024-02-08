@@ -186,7 +186,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             {isSmtpConfigured ? (
               <Link
                 href={`/accounts/forgot-password?email=${email}`}
-                className="text-xs font-medium text-custom-primary-100"
+                className="text-xs font-medium text-primary-text-subtle"
               >
                 Forgot your password?
               </Link>

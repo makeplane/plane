@@ -80,7 +80,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
             <a
               href="https://platform.openai.com/docs/models/overview"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               Learn more
@@ -129,7 +129,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
             <a
               href="https://platform.openai.com/api-keys"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               here.

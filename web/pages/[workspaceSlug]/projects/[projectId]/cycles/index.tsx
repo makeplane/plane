@@ -115,7 +115,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                   key={tab.key}
                   className={({ selected }) =>
                     `border-b-2 p-4 text-sm font-medium outline-none ${
-                      selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
+                      selected ? "border-custom-primary-100 text-primary-text-subtle" : "border-transparent"
                     }`
                   }
                 >
@@ -125,7 +125,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             </Tab.List>
             <div className="hidden sm:block">
               {cycleTab !== "active" && (
-                <div className="flex items-center self-end sm:self-center md:self-center lg:self-center gap-1 rounded bg-custom-background-80 p-1">
+                <div className="flex items-center self-end sm:self-center md:self-center lg:self-center gap-1 rounded bg-neutral-component-surface-dark p-1">
                   {CYCLE_VIEW_LAYOUTS.map((layout) => {
                     if (layout.key === "gantt" && cycleTab === "draft") return null;
 

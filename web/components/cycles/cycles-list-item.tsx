@@ -166,12 +166,12 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {isCompleted ? (
                     progress === 100 ? (
-                      <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+                      <Check className="h-3 w-3 stroke-[2] text-primary-text-subtle" />
                     ) : (
-                      <span className="text-sm text-custom-primary-100">{`!`}</span>
+                      <span className="text-sm text-primary-text-subtle">{`!`}</span>
                     )
                   ) : progress === 100 ? (
-                    <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+                    <Check className="h-3 w-3 stroke-[2] text-primary-text-subtle" />
                   ) : (
                     <span className="text-xs text-neutral-text-medium">{`${progress}%`}</span>
                   )}
@@ -221,7 +221,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                       ))}
                     </AvatarGroup>
                   ) : (
-                    <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+                    <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-neutral-component-surface-dark">
                       <User2 className="h-4 w-4 text-neutral-text-subtle" />
                     </span>
                   )}

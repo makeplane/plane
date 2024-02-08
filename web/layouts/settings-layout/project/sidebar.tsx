@@ -28,7 +28,7 @@ export const ProjectSettingsSidebar = () => {
                   <div
                     className={`rounded-md px-4 py-2 text-sm font-medium ${
                       link.highlight(router.asPath, `/${workspaceSlug}/projects/${projectId}`)
-                        ? "bg-custom-primary-100/10 text-custom-primary-100"
+                        ? "bg-custom-primary-100/10 text-primary-text-subtle"
                         : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                     }`}
                   >

@@ -98,7 +98,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               }`}
             >
               {sub_group_by === null && (
-                <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-neutral-component-surface-medium py-1">
+                <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-neutral-page-surface-default py-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}

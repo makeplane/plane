@@ -194,7 +194,7 @@ export const WorkspaceDetails: FC = observer(() => {
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
-                className="flex items-center gap-1.5 text-left text-xs font-medium text-custom-primary-100"
+                className="flex items-center gap-1.5 text-left text-xs font-medium text-primary-text-subtle"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (

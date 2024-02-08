@@ -84,7 +84,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
                   <p>Slack-like emails for authentication.</p>
                   You need to have set up email{" "}
                   <Link href="email">
-                    <span className="text-custom-primary-100 hover:underline">here</span>
+                    <span className="text-primary-text-subtle hover:underline">here</span>
                   </Link>{" "}
                   to enable this.
                 </div>

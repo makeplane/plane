@@ -325,7 +325,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                               <CopyLinkToClipboard copy_link={`${plane_deploy_url}/${workspaceSlug}/${project.id}`} />
                             </div>
                           </div>
-                          <div className="mt-3 flex items-center gap-1 text-custom-primary-100">
+                          <div className="mt-3 flex items-center gap-1 text-primary-text-subtle">
                             <div className="flex h-5 w-5 items-center overflow-hidden">
                               <CircleDot className="h-5 w-5" />
                             </div>

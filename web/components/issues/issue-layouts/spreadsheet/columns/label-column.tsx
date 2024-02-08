@@ -27,7 +27,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
       value={issue.label_ids}
       defaultOptions={defaultLabelOptions}
       onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
-      className="h-11 w-full border-b-[0.5px] border-neutral-border-medium hover:bg-custom-background-80"
+      className="h-11 w-full border-b-[0.5px] border-neutral-border-medium hover:bg-neutral-component-surface-dark"
       buttonClassName="px-2.5 h-full"
       hideDropdownArrow
       maxRender={1}

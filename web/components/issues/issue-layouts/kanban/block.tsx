@@ -62,7 +62,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <div className="line-clamp-1 text-xs text-neutral-text-medium">
             {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
           </div>
-          <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
+          <div className="absolute top-0 -right-1 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
         </div>
       </WithDisplayPropertiesHOC>
 

@@ -3,7 +3,7 @@ import { Theme } from "@nivo/core";
 
 export const CHARTS_THEME: Theme = {
   background: "transparent",
-  textColor: "rgb(var(--color-text-200))",
+  textColor: "rgb(var(--color-neutral-110))",
   axis: {
     domain: {
       line: {
@@ -15,14 +15,14 @@ export const CHARTS_THEME: Theme = {
   tooltip: {
     container: {
       background: "rgb(var(--color-background-80))",
-      color: "rgb(var(--color-text-200))",
+      color: "rgb(var(--color-neutral-110))",
       fontSize: "0.8rem",
-      border: "1px solid rgb(var(--color-border-300))",
+      border: "1px solid rgb(var(--color-neutral-70))",
     },
   },
   grid: {
     line: {
-      stroke: "rgb(var(--color-border-100))",
+      stroke: "rgb(var(--color-neutral-60))",
     },
   },
 };

@@ -132,7 +132,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                         <div
                           className={cn(
                             "h-11",
-                            { "rounded bg-custom-background-80": snapshot.isDragging },
+                            { "rounded bg-neutral-component-surface-dark": snapshot.isDragging },
                             {
                               "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                                 peekIssue?.issueId === block.data.id,

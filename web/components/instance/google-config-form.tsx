@@ -80,7 +80,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
             <a
               href="https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#creatingcred"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               Learn more
@@ -109,7 +109,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
             <a
               href="https://console.cloud.google.com/apis/credentials/oauthclient"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               here.

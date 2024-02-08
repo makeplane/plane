@@ -91,7 +91,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
                   }`}
                 >
                   <span>{renderEmoji(reaction)}</span>
-                  <span className={userReactions.includes(reaction) ? "text-custom-primary-100" : ""}>
+                  <span className={userReactions.includes(reaction) ? "text-primary-text-subtle" : ""}>
                     {(reactionIds || {})[reaction].length}{" "}
                   </span>
                 </button>

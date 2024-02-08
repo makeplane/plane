@@ -208,7 +208,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                       value={option.value}
                       className={({ active, selected }) =>
                         `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                          active ? "bg-custom-background-80" : ""
+                          active ? "bg-neutral-component-surface-dark" : ""
                         } ${selected ? "text-neutral-text-strong" : "text-neutral-text-medium"}`
                       }
                     >

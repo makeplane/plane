@@ -82,7 +82,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             <a
               href="https://github.com/settings/applications/new"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               GitHub OAuth application settings.
@@ -131,7 +131,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             <a
               href="https://github.com/settings/applications/new"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               GitHub OAuth application settings.
@@ -160,7 +160,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             <a
               href="https://github.com/settings/applications/new"
               target="_blank"
-              className="text-custom-primary-100 hover:underline"
+              className="text-primary-text-subtle hover:underline"
               rel="noreferrer"
             >
               here.
