@@ -248,7 +248,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       )}
 
       <div
-        className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90"
+        className="flex horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90"
         ref={scrollableContainerRef}
       >
         <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
