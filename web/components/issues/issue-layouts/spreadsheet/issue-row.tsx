@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // icons
@@ -7,6 +7,7 @@ import { ChevronRight, MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import RenderIfVisible from "components/core/render-if-visible-HOC";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
@@ -32,6 +33,7 @@ interface Props {
   nestingLevel: number;
   issueId: string;
   isScrolled: MutableRefObject<boolean>;
+  containerRef: MutableRefObject<HTMLTableElement | null>;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -45,8 +47,92 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     quickActions,
     canEditProperties,
     isScrolled,
+    containerRef,
   } = props;
 
+  const [isExpanded, setExpanded] = useState<boolean>(false);
+  const { subIssues: subIssuesStore } = useIssueDetail();
+
+  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+
+  return (
+    <>
+      {/* first column/ issue name and key column */}
+      <RenderIfVisible
+        as="tr"
+        defaultHeight="calc(2.75rem - 1px)"
+        root={containerRef}
+        placeholderChildren={<td colSpan={100} className="border-b-[0.5px]" />}
+      >
+        <IssueRowDetails
+          issueId={issueId}
+          displayProperties={displayProperties}
+          quickActions={quickActions}
+          canEditProperties={canEditProperties}
+          nestingLevel={nestingLevel}
+          isEstimateEnabled={isEstimateEnabled}
+          handleIssues={handleIssues}
+          portalElement={portalElement}
+          isScrolled={isScrolled}
+          isExpanded={isExpanded}
+          setExpanded={setExpanded}
+        />
+      </RenderIfVisible>
+
+      {isExpanded &&
+        subIssues &&
+        subIssues.length > 0 &&
+        subIssues.map((subIssueId: string) => (
+          <SpreadsheetIssueRow
+            key={subIssueId}
+            issueId={subIssueId}
+            displayProperties={displayProperties}
+            quickActions={quickActions}
+            canEditProperties={canEditProperties}
+            nestingLevel={nestingLevel + 1}
+            isEstimateEnabled={isEstimateEnabled}
+            handleIssues={handleIssues}
+            portalElement={portalElement}
+            isScrolled={isScrolled}
+            containerRef={containerRef}
+          />
+        ))}
+    </>
+  );
+});
+
+interface IssueRowDetailsProps {
+  displayProperties: IIssueDisplayProperties;
+  isEstimateEnabled: boolean;
+  quickActions: (
+    issue: TIssue,
+    customActionButton?: React.ReactElement,
+    portalElement?: HTMLDivElement | null
+  ) => React.ReactNode;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  portalElement: React.MutableRefObject<HTMLDivElement | null>;
+  nestingLevel: number;
+  issueId: string;
+  isScrolled: MutableRefObject<boolean>;
+  isExpanded: boolean;
+  setExpanded: Dispatch<SetStateAction<boolean>>;
+}
+
+const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
+  const {
+    displayProperties,
+    issueId,
+    isEstimateEnabled,
+    nestingLevel,
+    portalElement,
+    handleIssues,
+    quickActions,
+    canEditProperties,
+    isScrolled,
+    isExpanded,
+    setExpanded,
+  } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -56,8 +142,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const { captureIssueEvent } = useEventTracker();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
-  const [isExpanded, setExpanded] = useState<boolean>(false);
-
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: TIssue) => {
@@ -68,7 +152,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
   const issueDetail = issue.getIssueById(issueId);
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   const paddingLeft = `${nestingLevel * 54}px`;
 
@@ -93,14 +176,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
       <MoreHorizontal className="h-3.5 w-3.5" />
     </div>
   );
-
   if (!issueDetail) return null;
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
 
   return (
     <>
-      {/* first column/ issue name and key column */}
       <td
         className={cn(
           "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200",
@@ -198,24 +279,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           </WithDisplayPropertiesHOC>
         );
       })}
-
-      {isExpanded &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssueId: string) => (
-          <SpreadsheetIssueRow
-            key={subIssueId}
-            issueId={subIssueId}
-            displayProperties={displayProperties}
-            quickActions={quickActions}
-            canEditProperties={canEditProperties}
-            nestingLevel={nestingLevel + 1}
-            isEstimateEnabled={isEstimateEnabled}
-            handleIssues={handleIssues}
-            portalElement={portalElement}
-            isScrolled={isScrolled}
-          />
-        ))}
     </>
   );
 });
