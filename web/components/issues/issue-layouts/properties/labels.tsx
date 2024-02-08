@@ -4,6 +4,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // hooks
 import { useApplication, useLabel } from "hooks/store";
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // components
 import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
@@ -25,6 +26,7 @@ export interface IIssuePropertyLabels {
   maxRender?: number;
   noLabelBorder?: boolean;
   placeholderText?: string;
+  onClose?: () => void;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -33,6 +35,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     value,
     defaultOptions = [],
     onChange,
+    onClose,
     disabled,
     hideDropdownArrow = false,
     className,
@@ -63,6 +66,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
     }
   };
+
+  const handleClose = () => {
+    onClose && onClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(openDropDown, handleClose, false);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -171,13 +180,14 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       value={value}
       onChange={onChange}
       disabled={disabled}
+      onKeyDownCapture={handleKeyDown}
       multiple
     >
       <Combobox.Button as={Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex w-full items-center justify-between gap-1 text-xs ${
+          className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
@@ -205,7 +215,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
-              displayValue={(assigned: any) => assigned?.name}
+              displayValue={(assigned: any) => assigned?.name || ""}
             />
           </div>
           <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
@@ -216,10 +226,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 <Combobox.Option
                   key={option.value}
                   value={option.value}
-                  className={({ selected }) =>
+                  className={({ active, selected }) =>
                     `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                      selected ? "text-custom-text-100" : "text-custom-text-200"
-                    }`
+                      active ? "bg-custom-background-80" : ""
+                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
                 >
                   {({ selected }) => (

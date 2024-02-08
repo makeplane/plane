@@ -5,6 +5,7 @@ import { EIssueActions } from "../types";
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
+import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -35,8 +36,10 @@ export const SpreadsheetTable = observer((props: Props) => {
     canEditProperties,
   } = props;
 
+  const handleKeyBoardNavigation = useTableKeyboardNavigation();
+
   return (
-    <table className="overflow-y-auto">
+    <table className="overflow-y-auto" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}

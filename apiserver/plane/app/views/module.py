@@ -334,7 +334,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
                 issue_module__module_id=self.kwargs.get("module_id")
