@@ -34,6 +34,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByStateGroupsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByStateGroupsWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -43,7 +44,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       filters,
     });
 
-    const filterDates = getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "none");
+    const filterDates = getCustomDates(filters.duration ?? selectedDuration);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -52,7 +53,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
 
   // fetch widget stats
   useEffect(() => {
-    const filterDates = getCustomDates(widgetDetails?.widget_filters.target_date ?? "none");
+    const filterDates = getCustomDates(selectedDuration);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -138,10 +139,10 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           Assigned by state
         </Link>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.target_date ?? "none"}
+          value={selectedDuration}
           onChange={(val) =>
             handleUpdateFilters({
-              target_date: val,
+              duration: val,
             })
           }
         />
