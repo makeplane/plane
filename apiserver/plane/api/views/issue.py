@@ -712,7 +712,7 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             if (
                 str(request.data.get("external_id"))
                 and (issue_comment.external_id != str(request.data.get("external_id")))
-                and Issue.objects.filter(
+                and IssueComment.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
                     issue_id=issue_id,
