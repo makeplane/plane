@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 // hooks
 import { useProjectState } from "hooks/store";
@@ -13,7 +14,6 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { EIssueActions } from "../types";
-import { MutableRefObject } from "react";
 
 interface IKanbanGroup {
   groupId: string;

@@ -24,10 +24,10 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     as = "div",
     children,
     classNames = "",
-    alwaysRender = false,
-    placeholderChildren = null,
-    pauseHeightUpdateWhileRendering = false,
-    changingReference,
+    alwaysRender = false, //render the children even if it is not visble in root
+    placeholderChildren = null, //placeholder children
+    pauseHeightUpdateWhileRendering = false, //while this is true the height of the blocks are maintained
+    changingReference, //This is to force render when this reference is changed
   } = props;
   const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender);
   const placeholderHeight = useRef<string>(defaultHeight);
@@ -53,7 +53,6 @@ const RenderIfVisible: React.FC<Props> = (props) => {
           rootMargin: `${verticalOffset}% ${horizonatlOffset}% ${verticalOffset}% ${horizonatlOffset}%`,
         }
       );
-      observer.unobserve(intersectionRef.current);
       observer.observe(intersectionRef.current);
       return () => {
         if (intersectionRef.current) {

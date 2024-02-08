@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { KanBan } from "./default";
@@ -20,7 +21,6 @@ import { EIssueActions } from "../types";
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
-import { MutableRefObject } from "react";
 
 interface ISubGroupSwimlaneHeader {
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
