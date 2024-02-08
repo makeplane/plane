@@ -649,6 +649,31 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and IssueComment.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    issue_id=issue_id,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                issue_comment = IssueComment.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_id=issue_id,
+                    external_id=request.data.get("external_id"),
+                    external_source=request.data.get("external_source"),
+                ).first()
+                return Response(
+                    {
+                        "error": "Issue Comment with the same external id and external source already exists",
+                        "id": str(issue_comment.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save(
                 project_id=project_id,
                 issue_id=issue_id,
@@ -684,6 +709,26 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             issue_comment, data=request.data, partial=True
         )
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (issue_comment.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    issue_id=issue_id,
+                    external_source=request.data.get(
+                        "external_source", issue_comment.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Issue Comment with the same external id and external source already exists",
+                        "id": str(issue_comment.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             issue_activity.delay(
                 type="comment.activity.updated",
