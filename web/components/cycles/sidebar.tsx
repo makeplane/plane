@@ -83,20 +83,30 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     defaultValues,
   });
 
-  const submitChanges = (data: Partial<ICycle>) => {
+  const submitChanges = (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
     updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data)
       .then((res) => {
         captureCycleEvent({
           eventName: CYCLE_UPDATED,
-          payload: { ...res, state: "SUCCESS" },
+          payload: {
+            ...res,
+            changed_properties: [changedProperty],
+            element: "Right side-peek",
+            state: "SUCCESS",
+          },
         });
       })
+
       .catch((_) => {
         captureCycleEvent({
           eventName: CYCLE_UPDATED,
-          payload: { ...data, state: "FAILED" },
+          payload: {
+            ...data,
+            element: "Right side-peek",
+            state: "FAILED",
+          },
         });
       });
   };
@@ -158,10 +168,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          });
+          submitChanges(
+            {
+              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+            },
+            "start_date"
+          );
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -186,10 +199,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
 
       if (isDateValid) {
-        submitChanges({
-          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-        });
+        submitChanges(
+          {
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+          },
+          "start_date"
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -231,10 +247,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          });
+          submitChanges(
+            {
+              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+            },
+            "end_date"
+          );
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -258,10 +277,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
 
       if (isDateValid) {
-        submitChanges({
-          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-        });
+        submitChanges(
+          {
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+          },
+          "end_date"
+        );
         setToastAlert({
           type: "success",
           title: "Success!",

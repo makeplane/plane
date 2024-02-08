@@ -33,7 +33,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   // router
   const router = useRouter();
   // store
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -90,39 +90,55 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent("Cycle favorited", {
+          cycle_id: cycleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent("Cycle unfavorited", {
+          cycle_id: cycleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Cycles page board layout");
+    setTrackElement("Cycles page grid layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Cycles page board layout");
+    setTrackElement("Cycles page grid layout");
     setDeleteModal(true);
   };
 
