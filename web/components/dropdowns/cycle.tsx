@@ -23,6 +23,7 @@ type Props = TDropdownProps & {
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;
+  onClose?: () => void;
   projectId: string;
   value: string | null;
 };
@@ -47,6 +48,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    onClose,
     placeholder = "Cycle",
     placement,
     projectId,
@@ -123,8 +125,10 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -163,7 +167,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
             onClick={handleOnClick}
           >
             {button}
