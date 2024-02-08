@@ -1020,7 +1020,11 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .order_by("label_name")
         )
 
-        old_cycle.progress_snapshot = {
+        current_cycle = Cycle.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk=cycle_id
+        ).first()
+
+        current_cycle.progress_snapshot = {
             "total_issues": old_cycle.first().total_issues,
             "completed_issues": old_cycle.first().completed_issues,
             "cancelled_issues": old_cycle.first().cancelled_issues,
@@ -1031,15 +1035,12 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             "completed_estimates": old_cycle.first().completed_estimates,
             "started_estimates": old_cycle.first().started_estimates,
             "distribution":{
-                "assignees": json.dumps(list(assignee_distribution), cls=DjangoJSONEncoder),
-                "labels": json.dumps(list(label_distribution), cls=DjangoJSONEncoder),
+                "labels": list(label_distribution),
+                "assignees": list(assignee_distribution),
                 "completion_chart": completion_chart,
             },
-            "name": old_cycle.first().name,
-            "start_date": str(old_cycle.first().start_date),
-            "end_date": str(old_cycle.first().end_date),
         }
-        old_cycle.save(update_fields=["progress_snapshot"])
+        current_cycle.save(update_fields=["progress_snapshot"])
 
         if (
             new_cycle.end_date is not None
