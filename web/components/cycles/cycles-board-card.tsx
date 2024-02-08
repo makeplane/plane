@@ -137,7 +137,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     });
   };
 
-  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
     <div>

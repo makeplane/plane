@@ -103,7 +103,7 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project === projectId);
-    allCycles = sortBy(allCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    allCycles = sortBy(allCycles, [(c) => c.sort_order]);
     const allCycleIds = allCycles.map((c) => c.id);
     return allCycleIds;
   }
@@ -118,7 +118,7 @@ export class CycleStore implements ICycleStore {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
       return c.project === projectId && hasEndDatePassed;
     });
-    completedCycles = sortBy(completedCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
     return completedCycleIds;
   }
@@ -133,7 +133,7 @@ export class CycleStore implements ICycleStore {
       const isStartDateUpcoming = isFuture(new Date(c.start_date ?? ""));
       return c.project === projectId && isStartDateUpcoming;
     });
-    upcomingCycles = sortBy(upcomingCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    upcomingCycles = sortBy(upcomingCycles, [(c) => c.sort_order]);
     const upcomingCycleIds = upcomingCycles.map((c) => c.id);
     return upcomingCycleIds;
   }
@@ -148,7 +148,7 @@ export class CycleStore implements ICycleStore {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
       return c.project === projectId && !hasEndDatePassed;
     });
-    incompleteCycles = sortBy(incompleteCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);
     return incompleteCycleIds;
   }
@@ -162,7 +162,7 @@ export class CycleStore implements ICycleStore {
     let draftCycles = Object.values(this.cycleMap ?? {}).filter(
       (c) => c.project === projectId && !c.start_date && !c.end_date
     );
-    draftCycles = sortBy(draftCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    draftCycles = sortBy(draftCycles, [(c) => c.sort_order]);
     const draftCycleIds = draftCycles.map((c) => c.id);
     return draftCycleIds;
   }
@@ -203,7 +203,7 @@ export class CycleStore implements ICycleStore {
     if (!this.fetchedMap[projectId]) return null;
 
     let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project === projectId);
-    cycles = sortBy(cycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    cycles = sortBy(cycles, [(c) => c.sort_order]);
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds || null;
   });

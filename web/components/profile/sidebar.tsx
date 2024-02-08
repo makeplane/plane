@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // components
@@ -18,6 +18,8 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useEffect, useRef } from "react";
 
 // services
 const userService = new UserService();
@@ -28,6 +30,8 @@ export const ProfileSidebar = observer(() => {
   const { workspaceSlug, userId } = router.query;
   // store hooks
   const { currentUser } = useUser();
+  const { theme: themStore } = useApplication();
+  const ref = useRef<HTMLDivElement>(null);
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
@@ -35,6 +39,14 @@ export const ProfileSidebar = observer(() => {
       ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
       : null
   );
+
+  useOutsideClickDetector(ref, () => {
+    if (themStore.profileSidebarCollapsed === false) {
+      if (window.innerWidth < 768) {
+        themStore.toggleProfileSidebar();
+      }
+    }
+  });
 
   const userDetails = [
     {
@@ -47,9 +59,25 @@ export const ProfileSidebar = observer(() => {
     },
   ];
 
+  useEffect(() => {
+    const handleToggleProfileSidebar = () => {
+      if (window && window.innerWidth < 768) {
+        themStore.toggleProfileSidebar(true);
+      }
+      if (window && themStore.profileSidebarCollapsed && window.innerWidth >= 768) {
+        themStore.toggleProfileSidebar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleToggleProfileSidebar);
+    handleToggleProfileSidebar();
+    return () => window.removeEventListener("resize", handleToggleProfileSidebar);
+  }, [themStore]);
+
   return (
     <div
-      className={`w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80 border-l border-custom-border-100`}
+      className={`flex-shrink-0 overflow-hidden overflow-y-auto shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
+      style={themStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
         <>
