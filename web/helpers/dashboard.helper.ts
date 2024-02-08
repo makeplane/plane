@@ -4,6 +4,10 @@ import { renderFormattedPayloadDate } from "./date-time.helper";
 // types
 import { TDurationFilterOptions, TIssuesListTypes } from "@plane/types";
 
+/**
+ * @description returns date range based on the duration filter
+ * @param duration
+ */
 export const getCustomDates = (duration: TDurationFilterOptions): string => {
   const today = new Date();
   let firstDay, lastDay;
@@ -30,6 +34,10 @@ export const getCustomDates = (duration: TDurationFilterOptions): string => {
   }
 };
 
+/**
+ * @description returns redirection filters for the issues list
+ * @param type
+ */
 export const getRedirectionFilters = (type: TIssuesListTypes): string => {
   const today = renderFormattedPayloadDate(new Date());
 
@@ -45,6 +53,11 @@ export const getRedirectionFilters = (type: TIssuesListTypes): string => {
   return filterParams;
 };
 
+/**
+ * @description returns the tab key based on the duration filter
+ * @param duration
+ * @param tab
+ */
 export const getTabKey = (duration: TDurationFilterOptions, tab: TIssuesListTypes | undefined): TIssuesListTypes => {
   if (!tab) return "completed";
 
