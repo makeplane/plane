@@ -18,7 +18,7 @@ export class ThemeStore implements IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
-  profileSidebarCollapsed: boolean | undefined = true;
+  profileSidebarCollapsed: boolean | undefined = undefined;
   // root store
   rootStore;
 

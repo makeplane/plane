@@ -41,7 +41,7 @@ export const ProfileSidebar = observer(() => {
   );
 
   useOutsideClickDetector(ref, () => {
-    if (themStore.sidebarCollapsed === false) {
+    if (themStore.profileSidebarCollapsed === false) {
       if (window.innerWidth < 768) {
         themStore.toggleProfileSidebar();
       }
@@ -70,6 +70,7 @@ export const ProfileSidebar = observer(() => {
     };
 
     window.addEventListener("resize", handleToggleProfileSidebar);
+    handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
   }, [themStore]);
 
